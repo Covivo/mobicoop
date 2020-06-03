@@ -267,10 +267,11 @@ class SolidaryManager
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
             $solidaries = $solidaryUserStructure->getSolidaries();
         }
-
         $fullSolidaries = [];
-        foreach ($solidaries as $solidary) {
-            $fullSolidaries[] = $this->getSolidary($solidary->getId());
+        if (!empty($solidaries)) {
+            foreach ($solidaries as $solidary) {
+                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+            }
         }
 
         return $fullSolidaries;
@@ -447,7 +448,12 @@ class SolidaryManager
             $messages = [];
             foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
                 if ($solidaryAskHistory->getMessage() !== null) {
-                    $messages[$solidaryAskHistory->getMessage()->getText()] = $solidaryAskHistory->getMessage()->getCreatedDate();
+                    $messages[] = [
+                        "userId" => $solidaryAskHistory->getMessage()->getUser()->getId(),
+                        "userFamilyName" => $solidaryAskHistory->getMessage()->getUser()->getFamilyName(),
+                        "userGivenName" => $solidaryAskHistory->getMessage()->getUser()->getGivenName(),
+                        "text" => $solidaryAskHistory->getMessage()->getText(),
+                        "createdDate" => $solidaryAskHistory->getMessage()->getCreatedDate()];
                 }
             }
             $solidaryAsksItem->setMessages($messages);
@@ -638,21 +644,8 @@ class SolidaryManager
     private function solidaryCreateUser(Solidary $solidary): User
     {
 
-        // We check if the user exist
-        $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
-        if ($user == null) {
-            // We create a new user
-            $user = new User();
-            $user->setEmail($solidary->getEmail());
-            $user->setPassword($solidary->getPassword());
-            $user->setGivenName($solidary->getGivenName());
-            $user->setFamilyName($solidary->getFamilyName());
-            $user->setBirthDate($solidary->getBirthDate());
-            $user->setTelephone($solidary->getTelephone());
-            $user->setGender($solidary->getGender());
-            $user->setNewsSubscription(true);
-            
-            // we add homeAddress to the user
+        // we set the home address
+        if ($solidary->getHomeAddress()) {
             $homeAddress = new Address;
             $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
             $homeAddress->setStreet($solidary->getHomeAddress()['street']);
@@ -669,6 +662,20 @@ class SolidaryManager
             $homeAddress->setCountryCode($solidary->getHomeAddress()['countryCode']);
             $homeAddress->setLatitude($solidary->getHomeAddress()['latitude']);
             $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
+        }
+        // We check if the user exist
+        $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        if ($user == null) {
+            // We create a new user
+            $user = new User();
+            $user->setEmail($solidary->getEmail());
+            $user->setPassword($solidary->getPassword());
+            $user->setGivenName($solidary->getGivenName());
+            $user->setFamilyName($solidary->getFamilyName());
+            $user->setBirthDate($solidary->getBirthDate());
+            $user->setTelephone($solidary->getTelephone());
+            $user->setGender($solidary->getGender());
+            $user->setNewsSubscription(true);
             
             $homeAddress->setHome(true);
             $user->addAddress($homeAddress);
@@ -679,7 +686,7 @@ class SolidaryManager
         if (is_null($user->getSolidaryUser())) {
             $solidaryUser = new SolidaryUser();
             $solidaryUser->setBeneficiary(true);
-            $solidaryUser->setAddress(clone $user->getAddresses()[0]);
+            $solidaryUser->setAddress($homeAddress);
             $user->setSolidaryUser($solidaryUser);
             // we add the userAuthItemAssignment associated
             $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
