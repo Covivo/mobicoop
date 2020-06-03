@@ -10,6 +10,7 @@ import {
   AutocompleteInput,
   useGetList,
 } from 'react-admin';
+
 import {
   LinearProgress,
   Box,
@@ -23,12 +24,12 @@ import {
   StepLabel,
   Button,
 } from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
+
 import SolidaryUserBeneficiaryCreateFields from '../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
-//import DateTimeSelector from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
-//import SolidaryNeeds from './SolidaryNeeds';
 import SolidaryProofField from './SolidaryProofField';
 import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 
@@ -49,7 +50,6 @@ const SolidaryCreate = (props) => {
     { field: 'id', order: 'ASC' }
   );
   const proofs = Object.values(data);
-  console.log('Proof:', proofs);
 
   const [hasDestinationAddress, setHasDestinationAddress] = useState(1);
   const [activeStep, setActiveStep] = useState(4);
@@ -74,8 +74,6 @@ const SolidaryCreate = (props) => {
     <FormWithRedirect
       {...props}
       render={(formProps) => {
-        console.log('formProps:', formProps);
-        console.log('state :', formProps.form.getState());
         return (
           // here starts the custom form layout
           <form>
@@ -107,8 +105,8 @@ const SolidaryCreate = (props) => {
                 <SolidaryQuestion question="Cherchez le demandeur s'il existe, ou passez directement à l'étape suivante.">
                   <ReferenceInput label="Utilisateur" fullWidth source="user_id" reference="users">
                     <AutocompleteInput
-                      allowEmpty={true}
-                      optionText={(record) => record.givenName + ' ' + record.familyName}
+                      allowEmpty
+                      optionText={(record) => `${record.givenName} ${record.familyName}`}
                     />
                   </ReferenceInput>
                 </SolidaryQuestion>

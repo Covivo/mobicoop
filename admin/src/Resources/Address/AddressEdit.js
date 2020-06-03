@@ -4,7 +4,6 @@ import GeocompleteInput from '../../components/geolocation/geocomplete';
 
 const userOptionRenderer = (choice) => `${choice.givenName} ${choice.familyName}`;
 
-// Edit
 const AddressEdit = (props) => (
   <Edit {...props} title="Adresse > éditer">
     <SimpleForm>

@@ -22,8 +22,8 @@ import {
   Grid,
 } from '@material-ui/core';
 
-import { fetchHydra } from '../../../../dataProvider';
 import { resolveVoluntaryAvailabilityHourRanges } from '../utils/resolveVoluntaryAvailabilityHourRanges';
+import { fetchJson } from '../../../../fetchJson';
 
 const entrypoint = process.env.REACT_APP_API;
 
@@ -124,7 +124,7 @@ export const SolidaryVolunteerPlanningField = ({ record }) => {
   useEffect(() => {
     dispatch(fetchStart());
 
-    fetchHydra(
+    fetchJson(
       `${entrypoint}/solidary_volunteer_plannings?${stringify({
         startDate: format(startOfToday(), 'Y-M-d'),
         endDate: format(addDays(startOfToday(), 30), 'Y-M-d'),

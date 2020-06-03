@@ -1,8 +1,5 @@
 import React from 'react';
-import { Login, Resource } from 'react-admin';
-import { HydraAdmin, ResourceGuesser } from '@api-platform/admin';
-import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
-import { Redirect } from 'react-router-dom';
+import { Login, Resource, Admin } from 'react-admin';
 
 import authProvider from './auth/authProvider';
 import isAuthorized from './auth/permissions';
@@ -22,7 +19,6 @@ import StructureProofResource from './Resources/Solidary/StructureProof';
 import SolidaryResource from './Resources/Solidary/Solidary';
 import SolidaryUsersBeneficiaryResource from './Resources/Solidary/SolidaryUserBeneficiary';
 import SolidaryUsersVolunteerResource from './Resources/Solidary/SolidaryUserVolunteer';
-// import StructureResource from './Resources/Solidary/Structure';
 import ArticleResource from './Resources/Article/Article';
 import EventResource from './Resources/Event';
 import SectionResource from './Resources/Article/Section';
@@ -31,46 +27,16 @@ import RelayPointResource from './Resources/RelayPoint/RelayPoint';
 import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
 
 // Temporary disabled resources (Don't known why ?)
+// import StructureResource from './Resources/Solidary/Structure';
 // import TerritoryResource from './Resources/Territory';
 // import AddressResource from './Resources/Address';
 
 const LoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
-const entrypoint = process.env.REACT_APP_API;
-
-const fetchHeaders = () => {
-  return { Authorization: `Bearer ${global.localStorage.getItem('token')}` };
-};
-
-const apiDocumentationParser = (entrypoint) =>
-  parseHydraDocumentation(entrypoint, { headers: new global.Headers(fetchHeaders()) }).then(
-    ({ api }) => ({ api }),
-    (result) => {
-      switch (result.status) {
-        case 401:
-          return Promise.resolve({
-            api: result.api,
-            customRoutes: [
-              {
-                props: {
-                  path: '/',
-                  render: () => <Redirect to="/login" />,
-                },
-              },
-            ],
-          });
-
-        default:
-          return Promise.reject(result);
-      }
-    }
-  );
 
 export default () => (
-  <HydraAdmin
-    apiDocumentationParser={apiDocumentationParser}
+  <Admin
     dataProvider={dataProvider}
     authProvider={authProvider}
-    entrypoint={entrypoint}
     loginPage={LoginPage}
     i18nProvider={i18nProvider}
     theme={theme}
@@ -87,12 +53,12 @@ export default () => (
         isAuthorized('campaign_manage') && (
           <Resource name="campaigns/owned" {...CampaignResource} />
         ),
-        isAuthorized('event_manage') && <ResourceGuesser name="events" {...EventResource} />,
+        isAuthorized('event_manage') && <Resource name="events" {...EventResource} />,
         isAuthorized('article_manage') && <Resource name="articles" {...ArticleResource} />,
         isAuthorized('article_manage') && <Resource name="sections" {...SectionResource} />,
         isAuthorized('article_manage') && <Resource name="paragraphs" {...ParagraphResource} />,
         isAuthorized('relay_point_manage') && (
-          <Resource names="relay_points" {...RelayPointResource} />
+          <Resource name="relay_points" {...RelayPointResource} />
         ),
         isAuthorized('relay_point_manage') && (
           <Resource name="relay_point_types" {...RelayPointTypeResource} />
@@ -119,5 +85,5 @@ export default () => (
         // <Resource name="territories" {...TerritoryResource} />,
       ].filter((x) => x)
     }
-  </HydraAdmin>
+  </Admin>
 );
