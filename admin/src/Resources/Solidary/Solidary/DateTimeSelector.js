@@ -12,24 +12,24 @@ const useStyles = makeStyles({
 /*
 
 const fromDateChoices = [
-  { id: 0, label: 'A une date fixe', outwardDateTime : ({selectedDateTime}) => selectedDateTime },
-  { id: 1, label: 'Dans la semaine', outwardDateTime : () => today(), outwardDeadlineDateTime : () => addDays(today, 7) },
-  { id: 2, label: 'Dans la quinzaine', outwardDateTime : () => today(), outwardDeadlineDateTime : () => addDays(today,14) },
-  { id: 3, label: 'Dans le mois', outwardDateTime : () => today(), outwardDeadlineDateTime : () => addDays(today,30) },
+  { id: 0, label: 'A une date fixe', outwardDatetime : ({selectedDateTime}) => selectedDateTime },
+  { id: 1, label: 'Dans la semaine', outwardDatetime : () => today(), outwardDeadlineDatetime : () => addDays(today, 7) },
+  { id: 2, label: 'Dans la quinzaine', outwardDatetime : () => today(), outwardDeadlineDatetime : () => addDays(today,14) },
+  { id: 3, label: 'Dans le mois', outwardDatetime : () => today(), outwardDeadlineDatetime : () => addDays(today,30) },
 ];
 
 const fromTimeChoices = [
-  { id: 0, label: 'A une heure fixe', outwardDateTime : ({selectedDateTime}) => selectedDateTime },
-  { id: 1, label: 'Entre 8h et 13h', outwardDateTime : ({outwardDateTime}) => setHours(outwardDateTime, 8),  marginDuration: () => 5 * 3600 },
-  { id: 2, label: 'Entre 13h et 18h', outwardDateTime : ({outwardDateTime}) => setHours(outwardDateTime, 13), marginDuration: () => 5 * 3600 },
-  { id: 3, label: 'Entre 18h et 21h', outwardDateTime : ({outwardDateTime}) => setHours(outwardDateTime, 18), marginDuration: () => 3 * 3600 },
+  { id: 0, label: 'A une heure fixe', outwardDatetime : ({selectedDateTime}) => selectedDateTime },
+  { id: 1, label: 'Entre 8h et 13h', outwardDatetime : ({outwardDatetime}) => setHours(outwardDatetime, 8),  marginDuration: () => 5 * 3600 },
+  { id: 2, label: 'Entre 13h et 18h', outwardDatetime : ({outwardDatetime}) => setHours(outwardDatetime, 13), marginDuration: () => 5 * 3600 },
+  { id: 3, label: 'Entre 18h et 21h', outwardDatetime : ({outwardDatetime}) => setHours(outwardDatetime, 18), marginDuration: () => 3 * 3600 },
 ];
 
 const toTimeChoices = [
-  { id: 0, label: 'A une heure fixe',  returnDateTime : ({selectedDateTime}) => selectedDateTime },
-  { id: 1, label: 'Une heure plus tard', returnDateTime : ({outwardDateTime}) => addHours(outwardDateTime, 1) },
-  { id: 2, label: 'Deux heures plus tard',  returnDateTime : ({outwardDateTime}) => addHours(outwardDateTime,2)  },
-  { id: 3, label: 'Trois heures plus tard',  returnDateTime : ({outwardDateTime}) => addHours(outwardDateTime,3)  },
+  { id: 0, label: 'A une heure fixe',  returnDatetime : ({selectedDateTime}) => selectedDateTime },
+  { id: 1, label: 'Une heure plus tard', returnDatetime : ({outwardDatetime}) => addHours(outwardDatetime, 1) },
+  { id: 2, label: 'Deux heures plus tard',  returnDatetime : ({outwardDatetime}) => addHours(outwardDatetime,2)  },
+  { id: 3, label: 'Trois heures plus tard',  returnDatetime : ({outwardDatetime}) => addHours(outwardDatetime,3)  },
   { id: 4, label: "Pas besoin qu'on me ramène", },
 ];
 
@@ -86,14 +86,14 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
   const [selectedDateTime, setSelectedDateTime] = useState(null);
 
   const {
-    input: { value: outwardDateTime, onChange: onChangeOutwardDateTime },
-  } = useField('outwardDateTime');
+    input: { value: outwardDatetime, onChange: onChangeOutwardDateTime },
+  } = useField('outwardDatetime');
   const {
-    input: { value: outwardDeadlineDateTime, onChange: onChangeOutwardDeadlineDateTime },
-  } = useField('outwardDeadlineDateTime');
+    input: { value: outwardDeadlineDatetime, onChange: onChangeOutwardDeadlineDateTime },
+  } = useField('outwardDeadlineDatetime');
   const {
-    input: { value: returnDateTime, onChange: onChangeReturnDateTime },
-  } = useField('returnDateTime');
+    input: { value: returnDatetime, onChange: onChangeReturnDateTime },
+  } = useField('returnDatetime');
   const {
     input: { value: marginDuration, onChange: onChangeMarginDuration },
   } = useField('marginDuration');
@@ -101,34 +101,34 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
   useEffect(() => {
     // Set datetime fields according to choice and selectedDateTime
 
-    if (choice.outwardDateTime) {
+    if (choice.outwardDatetime) {
       onChangeOutwardDateTime(
-        choice.outwardDateTime({
-          outwardDateTime,
-          outwardDeadlineDateTime,
-          returnDateTime,
+        choice.outwardDatetime({
+          outwardDatetime,
+          outwardDeadlineDatetime,
+          returnDatetime,
           marginDuration,
           selectedDateTime,
         })
       );
     }
-    if (choice.outwardDeadlineDateTime) {
+    if (choice.outwardDeadlineDatetime) {
       onChangeOutwardDeadlineDateTime(
-        choice.outwardDeadlineDateTime({
-          outwardDateTime,
-          outwardDeadlineDateTime,
-          returnDateTime,
+        choice.outwardDeadlineDatetime({
+          outwardDatetime,
+          outwardDeadlineDatetime,
+          returnDatetime,
           marginDuration,
           selectedDateTime,
         })
       );
     }
-    if (choice.returnDateTime) {
+    if (choice.returnDatetime) {
       onChangeReturnDateTime(
-        choice.returnDateTime({
-          outwardDateTime,
-          outwardDeadlineDateTime,
-          returnDateTime,
+        choice.returnDatetime({
+          outwardDatetime,
+          outwardDeadlineDatetime,
+          returnDatetime,
           marginDuration,
           selectedDateTime,
         })
@@ -137,9 +137,9 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
     if (choice.marginDuration) {
       onChangeMarginDuration(
         choice.marginDuration({
-          outwardDateTime,
-          outwardDeadlineDateTime,
-          returnDateTime,
+          outwardDatetime,
+          outwardDeadlineDatetime,
+          returnDatetime,
           marginDuration,
           selectedDateTime,
         })

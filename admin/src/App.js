@@ -29,7 +29,7 @@ import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
 // Temporary disabled resources (Don't known why ?)
 // import StructureResource from './Resources/Solidary/Structure';
 // import TerritoryResource from './Resources/Territory';
-import AddressResource from './Resources/Address';
+// import AddressResource from './Resources/Address';
 
 const LoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
 

@@ -6,6 +6,7 @@
     "@api-platform/admin": "^2.2.0",
     "@api-platform/api-doc-parser": "^0.10.0",
     "@date-io/date-fns": "^2.6.1",
+    "@material-ui/lab": "^4.0.0-alpha.55",
     "date-fns": "^2.0.0-beta.5",
     "dotenv": "^8.2.0",
     "downshift": "^5.4.2",

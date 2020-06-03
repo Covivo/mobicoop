@@ -42,7 +42,7 @@ const GeocompleteInput = (props) => {
 
   const formState = form.getState();
   const errorMessage = props.validate(input);
-  const errorState = formState.submitFailed && errorMessage;
+  const errorState = !!(formState.submitFailed && errorMessage);
 
   useEffect(() => {
     if (debouncedInput) {

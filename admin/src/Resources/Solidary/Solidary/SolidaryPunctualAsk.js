@@ -18,27 +18,27 @@ const fromDateChoices = [
   {
     id: 0,
     label: 'A une date fixe',
-    outwardDateTime: ({ outwardDateTime, selectedDateTime }) =>
-      setDateFromString(outwardDateTime, selectedDateTime),
-    outwardDeadlineDateTime: () => null,
+    outwardDatetime: ({ outwardDatetime, selectedDateTime }) =>
+      setDateFromString(outwardDatetime, selectedDateTime),
+    outwardDeadlineDatetime: () => null,
   },
   {
     id: 1,
     label: 'Dans la semaine',
-    outwardDateTime: ({ outwardDateTime }) => setDateFromString(outwardDateTime, today), // preserve hours
-    outwardDeadlineDateTime: () => addDays(today, 7),
+    outwardDatetime: ({ outwardDatetime }) => setDateFromString(outwardDatetime, today), // preserve hours
+    outwardDeadlineDatetime: () => addDays(today, 7),
   },
   {
     id: 2,
     label: 'Dans la quinzaine',
-    outwardDateTime: ({ outwardDateTime }) => setDateFromString(outwardDateTime, today),
-    outwardDeadlineDateTime: () => addDays(today, 14),
+    outwardDatetime: ({ outwardDatetime }) => setDateFromString(outwardDatetime, today),
+    outwardDeadlineDatetime: () => addDays(today, 14),
   },
   {
     id: 3,
     label: 'Dans le mois',
-    outwardDateTime: ({ outwardDateTime }) => setDateFromString(outwardDateTime, today),
-    outwardDeadlineDateTime: () => addDays(today, 30),
+    outwardDatetime: ({ outwardDatetime }) => setDateFromString(outwardDatetime, today),
+    outwardDeadlineDatetime: () => addDays(today, 30),
   },
 ];
 
@@ -46,25 +46,26 @@ const fromTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
-    outwardDateTime: ({ selectedDateTime, outwardDateTime }) =>
-      setTimeFromString(outwardDateTime, selectedDateTime),
+    outwardDatetime: ({ selectedDateTime, outwardDatetime }) =>
+      setTimeFromString(outwardDatetime, selectedDateTime),
+    marginDuration: () => null,
   },
   {
     id: 1,
     label: 'Entre 8h et 13h',
-    outwardDateTime: ({ outwardDateTime }) => setHours(outwardDateTime, 8),
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 8),
     marginDuration: () => 5 * 3600,
   },
   {
     id: 2,
     label: 'Entre 13h et 18h',
-    outwardDateTime: ({ outwardDateTime }) => setHours(outwardDateTime, 13),
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 13),
     marginDuration: () => 5 * 3600,
   },
   {
     id: 3,
     label: 'Entre 18h et 21h',
-    outwardDateTime: ({ outwardDateTime }) => setHours(outwardDateTime, 18),
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 18),
     marginDuration: () => 3 * 3600,
   },
 ];
@@ -73,25 +74,25 @@ const toTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
-    returnDateTime: ({ outwardDateTime, selectedDateTime }) =>
-      setTimeFromString(outwardDateTime, selectedDateTime),
+    returnDatetime: ({ outwardDatetime, selectedDateTime }) =>
+      setTimeFromString(outwardDatetime, selectedDateTime),
   },
   {
     id: 1,
     label: 'Une heure plus tard',
-    returnDateTime: ({ outwardDateTime }) => addHours(outwardDateTime, 1),
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 1),
   },
   {
     id: 2,
     label: 'Deux heures plus tard',
-    returnDateTime: ({ outwardDateTime }) => addHours(outwardDateTime, 2),
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 2),
   },
   {
     id: 3,
     label: 'Trois heures plus tard',
-    returnDateTime: ({ outwardDateTime }) => addHours(outwardDateTime, 3),
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 3),
   },
-  { id: 4, label: "Pas besoin qu'on me ramène", returnDateTime: () => null },
+  { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
 const useStyles = makeStyles({
@@ -101,14 +102,14 @@ const useStyles = makeStyles({
 const SolidaryPunctualAsk = () => {
   const classes = useStyles();
   const {
-    input: { value: outwardDateTime },
-  } = useField('outwardDateTime');
+    input: { value: outwardDatetime },
+  } = useField('outwardDatetime');
   const {
-    input: { value: outwardDeadlineDateTime },
-  } = useField('outwardDeadlineDateTime');
+    input: { value: outwardDeadlineDatetime },
+  } = useField('outwardDeadlineDatetime');
   const {
-    input: { value: returnDateTime },
-  } = useField('returnDateTime');
+    input: { value: returnDatetime },
+  } = useField('returnDatetime');
   const {
     input: { value: marginDuration },
   } = useField('marginDuration');
@@ -129,7 +130,7 @@ const SolidaryPunctualAsk = () => {
             type="datetime-local"
             choices={toTimeChoices}
             initialChoice={4}
-            depedencies={[outwardDateTime]}
+            depedencies={[outwardDatetime]}
           />
         </SolidaryQuestion>
 
@@ -139,16 +140,12 @@ const SolidaryPunctualAsk = () => {
       </Box>
       <Box flex={1}>
         <SolidaryQuestion question="Récapitulatif">
-          <p>Départ : {outwardDateTime ? outwardDateTime.toLocaleString() : 'Pas de date'}</p>
-          <p>
-            Départ limite:{' '}
-            {outwardDeadlineDateTime ? outwardDeadlineDateTime.toLocaleString() : 'Pas de date'}
-          </p>
-          <p>Retour : {returnDateTime ? returnDateTime.toLocaleString() : 'Pas de date'}</p>
-          <p>
-            Marge :{' '}
-            {marginDuration ? `${Math.round(marginDuration / 3600)} heures` : 'Pas de marge'}
-          </p>
+          {outwardDatetime && <p>Départ : {outwardDatetime.toLocaleString()}</p>}
+          {outwardDeadlineDatetime && (
+            <p>Départ limite : {outwardDeadlineDatetime.toLocaleString()}</p>
+          )}
+          {returnDatetime && <p>Retour : {returnDatetime.toLocaleString()}</p>}
+          {returnDatetime && <p>Marge : {`${Math.round(marginDuration / 3600)} heures`}</p>}
         </SolidaryQuestion>
       </Box>
     </Box>
