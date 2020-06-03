@@ -1,14 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 
 import {
   FormWithRedirect,
-  SaveButton,
-  CheckboxGroupInput,
+  RadioButtonGroupInput,
   ReferenceInput,
   AutocompleteInput,
   useGetList,
   useTranslate,
-  useNotify,
 } from 'react-admin';
 import {
   LinearProgress,
@@ -24,16 +22,15 @@ import {
   Button,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import { useForm } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
-import SolidaryUserBeneficiaryCreateFields from '../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
-import GeocompleteInput from '../../../components/geolocation/geocomplete';
+import SolidaryUserBeneficiaryCreateFields from '../../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
+import GeocompleteInput from '../../../../components/geolocation/geocomplete';
 import SolidaryQuestion from './SolidaryQuestion';
 import SolidaryProofField from './SolidaryProofField';
 import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 import SolidaryRegularAsk from './SolidaryRegularAsk';
-import SolidaryStatus from './SolidaryStatus';
 import SolidaryFrequency from './SolidaryFrequency';
+import SaveSolidaryAsk from './SaveSolidaryAsk';
 
 const useStyles = makeStyles({
   layout: {
@@ -43,45 +40,6 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
 });
-
-const SaveSolidaryAsk = ({ handleSubmitWithRedirect, ...props }) => {
-  const form = useForm();
-
-  const dateObjectToString = (date) => {
-    if (date && typeof date === 'object' && date.toJSON) {
-      return date.toJSON();
-    }
-    if (date && typeof date === 'string') {
-      return new Date(date).toJSON();
-    }
-    return null;
-  };
-
-  const handleClick = useCallback(() => {
-    const values = form.getState().values;
-    // Alter proofs
-    form.change(
-      'proofs',
-      values.proofs && Object.keys(values.proofs).map((k) => ({ id: k, value: values.proofs[k] }))
-    );
-    // Format datetimes objects
-    form.change('outwardDatetime', dateObjectToString(values.outwardDatetime));
-    form.change('outwardDeadlineDatetime', dateObjectToString(values.outwardDeadlineDatetime));
-    form.change('returnDatetime', dateObjectToString(values.returnDatetime));
-    form.change('returnDeadlineDatetime', dateObjectToString(values.returnDeadlineDatetime));
-    // remove days if frequency=1 (punctual)
-    if (values.frequency === 1) {
-      form.change('days', null);
-    }
-
-    console.log('Saving :', form.getState().values);
-    console.log('JSON :', JSON.stringify(form.getState().values));
-    handleSubmitWithRedirect('list');
-  }, [form]);
-
-  // override handleSubmitWithRedirect with custom logic
-  return <SaveButton {...props} handleSubmitWithRedirect={handleClick} />;
-};
 
 const SolidaryForm = (props) => {
   const classes = useStyles();
@@ -113,10 +71,6 @@ const SolidaryForm = (props) => {
       render={(formProps) => {
         const formState = formProps.form.getState();
         const frequencyRegular = formState.values && formState.values.frequency === 2;
-
-        console.log('state :', formState);
-        console.log('formProps :', formProps);
-
         return (
           // here starts the custom form layout
           <form>
@@ -184,7 +138,7 @@ const SolidaryForm = (props) => {
               <Box display={activeStep === 3 ? 'flex' : 'none'} p="1rem" flexDirection="column">
                 <SolidaryQuestion question="Que voulez-vous faire ?">
                   {subjects && subjects.length && subjectsLoaded ? (
-                    <CheckboxGroupInput
+                    <RadioButtonGroupInput
                       source="subject"
                       label=""
                       choices={subjects.map((s) => ({ id: s.id, name: s.label }))}
@@ -240,7 +194,7 @@ const SolidaryForm = (props) => {
 
               {activeStep === 4 && formState.errors && Object.keys(formState.errors).length ? (
                 <Alert severity="error">
-                  Le formulaire comporte des erreurs. Corrigez-les avant d'enregistrer.
+                  Le formulaire comporte des erreurs. Corrigez-les avant d&paos;enregistrer.
                 </Alert>
               ) : null}
 

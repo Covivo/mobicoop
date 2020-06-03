@@ -1,7 +1,6 @@
 import React from 'react';
 import { useField } from 'react-final-form';
 import { Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   DateTimeSelector,
   today,
@@ -95,12 +94,7 @@ const toTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
-const useStyles = makeStyles({
-  invisible: { display: 'block' },
-});
-
 const SolidaryPunctualAsk = () => {
-  const classes = useStyles();
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
@@ -140,12 +134,12 @@ const SolidaryPunctualAsk = () => {
       </Box>
       <Box flex={1}>
         <SolidaryQuestion question="Récapitulatif">
-          {outwardDatetime && <p>Départ : {outwardDatetime.toLocaleString()}</p>}
+          {outwardDatetime && <p>{`Départ : ${new Date(outwardDatetime).toLocaleString()} `}</p>}
           {outwardDeadlineDatetime && (
-            <p>Départ limite : {outwardDeadlineDatetime.toLocaleString()}</p>
+            <p>{`Départ limite : ${new Date(outwardDeadlineDatetime).toLocaleString()} `}</p>
           )}
-          {returnDatetime && <p>Retour : {returnDatetime.toLocaleString()}</p>}
-          {returnDatetime && <p>Marge : {`${Math.round(marginDuration / 3600)} heures`}</p>}
+          {returnDatetime && <p>{`Retour : ${new Date(returnDatetime).toLocaleString()} `}</p>}
+          {returnDatetime && <p>{`Marge : ${Math.round(marginDuration / 3600)} heures`}</p>}
         </SolidaryQuestion>
       </Box>
     </Box>
@@ -153,22 +147,3 @@ const SolidaryPunctualAsk = () => {
 };
 
 export default SolidaryPunctualAsk;
-
-/*
-un demandeur souhaite partir "dans la semaine", "entre 8h et 13h" et revenir "Deux heures plus tard"  :
-
-"outwardDatetime": "2020-05-29T08:00:00+00:00",
-"outwardDeadlineDatetime": "2020-06-05T08:00:00+00:00",
-"returnDatetime": "2020-05-29T10:00:00+00:00",
-"returnDeadlineDatetime": "2020-06-05T10:00:00+00:00", 
-"marginDuration":"18000" // s'applique à l'aller et au retour 5h * 3600s
-
-Pour un régulier
-
-"outwardDatetime": "2020-05-29T08:00:00+00:00",       -> début
-"outwardDeadlineDatetime": "2020-06-05T08:00:00+00:00",-> fin
-days: []
-"returnDatetime": "2020-05-29T10:00:00+00:00",  --> heure du retour
-"returnDeadlineDatetime": "2020-06-05T10:00:00+00:00", 
-
-*/

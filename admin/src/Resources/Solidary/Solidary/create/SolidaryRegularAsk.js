@@ -66,29 +66,6 @@ const toTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
-/*
-Important :
-
-- Le champ destination est optionnel.
-- S’il ne s’agit que d’un aller sans retour ne pas indiquer returnDatetime et
-returnDeadlineDatetime
-
-- Ne pas indiquer outwardDeadlineDatetime et returnDeadlineDatetime s’il s’agit
-d’un jour fixe. (l’indiquer s’il s’agit d’un régulier ou
-si l’utilisateur à indiqué ‘dans la semaine’)
-
-- S’il s’agit d’un
-trajet régulier (frequency = 2) indiquer days.
-
-Attention :
-- marginDuration
-indique la marge en secondes de l’heure de départ. Si un
-utilisateur sélectionne départ entre 8h et 13h. Indiquer comme
-heure de départ dans originDatetime 10h30 et comme
-marginDuration 2h30 soit 9000 secondes. Si un utilisateur
-indique une heure précise ne pas renseigner marginDuration.
-*/
-
 const SolidaryRegularAsk = ({ form }) => {
   return (
     <>
