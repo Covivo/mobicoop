@@ -533,8 +533,6 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
             'address'           => $this->getAddress(),
             'relayPointTypes'   => $this->getRelayPointTypes(),
             'images'            => $this->getImages(),
-            'lat'               => $this->getLat(),
-            'lon'               => $this->getLon()
         ];
     }
 }

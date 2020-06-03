@@ -63,6 +63,7 @@
             </v-card-title>
             <v-card-actions>
               <v-btn
+                class="ml-8"
                 color="primary"
                 text
                 @click="selectRelayPointAsOrigin "
