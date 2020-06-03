@@ -47,9 +47,9 @@ export const UserInformationField = ({ record }) => {
 };
 
 UserInformationField.propTypes = {
-  record: PropTypes.shape({
-    familyName: PropTypes.string.isRequired,
-    givenName: PropTypes.string.isRequired,
-    telephone: PropTypes.string.isRequired,
-  }).isRequired,
+  record: PropTypes.object,
+};
+
+UserInformationField.defaultProps = {
+  record: {},
 };

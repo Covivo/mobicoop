@@ -35,6 +35,12 @@ const fr = {
         solidary: 'Demande solidaire',
       },
     },
+    solidary: {
+      internalMessages: 'Messages internes',
+      internalMessagesWith: 'Messages interne avec %{username}',
+      associatedAsk: 'Demande associée',
+      onBehalfOf: 'Pour le compte de',
+    },
     dashboard: {
       pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
       accessDenied: "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",

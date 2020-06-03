@@ -65,6 +65,7 @@ export default {
       return Promise.resolve();
     }
 
+    // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject({ redirectTo: '/login' });
   },
   getPermissions: () => {

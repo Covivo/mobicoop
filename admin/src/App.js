@@ -83,6 +83,8 @@ export default () => (
         <Resource name="addresses" />,
         // <Resource name="images" />,
         <Resource name="territories" />,
+        <Resource name="solidary_users" />,
+        <Resource name="solidary_contacts" />,
       ].filter((x) => x);
     }}
   </Admin>
