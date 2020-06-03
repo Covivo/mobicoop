@@ -1,5 +1,4 @@
 import React from 'react';
-import { isAuthorized } from '../../auth/authorization';
 
 import {
   List,
@@ -14,6 +13,8 @@ import {
   EditButton,
   Filter,
 } from 'react-admin';
+
+import isAuthorized from '../../auth/permissions';
 
 const UserFilter = (props) => (
   <Filter {...props}>
