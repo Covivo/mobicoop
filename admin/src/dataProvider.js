@@ -11,6 +11,15 @@ const hydraDataProvider = dataProvider(
   false
 );
 
+// "transformReactAdminDataToRequestBody" from original data provider returns a Promise.resolve
+// It doesn't stringify data before sending it, so we take care by ourself to stringify it
+// Original data provider => https://github.com/api-platform/admin/blob/master/src/hydra/dataProvider.js
+const applyActionStringify = (originalFunc) => (resource, params) =>
+  originalFunc(resource, { ...params, data: JSON.stringify(params.data) });
+
+hydraDataProvider.update = applyActionStringify(hydraDataProvider.update);
+hydraDataProvider.create = applyActionStringify(hydraDataProvider.create);
+
 // Override getMany because of "hasIdSearchFilter" that need to have a schema entry for each resource
 // https://github.com/api-platform/admin/blob/master/src/hydra/dataProvider.js#L418
 hydraDataProvider.getMany = (resource, params) =>

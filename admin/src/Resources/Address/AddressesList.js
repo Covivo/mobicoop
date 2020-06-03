@@ -1,5 +1,4 @@
 import React from 'react';
-import { isAuthorized } from '../../auth/authorization';
 
 import {
   List,
@@ -15,12 +14,14 @@ import {
   Filter,
 } from 'react-admin';
 
+import isAuthorized from '../../auth/authorization';
+
 const UserFilter = (props) => (
   <Filter {...props}>
     <TextInput source="givenName" label="Prénom" />
     <TextInput source="familyName" label="Nom" alwaysOn />
     <TextInput source="email" label="Email" alwaysOn />
-    <BooleanInput source="solidary" label="Solidaire" allowEmpty={false} defaultValue={true} />
+    <BooleanInput source="solidary" label="Solidaire" allowEmpty={false} defaultValue />
     <ReferenceInput
       source="homeAddressODTerritory"
       label="Territoire"
