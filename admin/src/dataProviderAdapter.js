@@ -57,6 +57,23 @@ const pickManagedSolidaryVolunteerData = (params) => ({
   ]),
 });
 
+const userRoles = [
+  '/auth_items/1',
+  '/auth_items/2',
+  '/auth_items/4',
+  '/auth_items/5',
+  '/auth_items/6',
+  '/auth_items/7',
+  '/auth_items/8',
+  '/auth_items/9',
+  '/auth_items/10',
+  '/auth_items/11',
+  '/auth_items/12',
+  '/auth_items/13',
+  '/auth_items/171',
+  '/auth_items/172',
+];
+
 /**
  * Custom getOne Provider for "users"
  * Because we need to map roles territies
@@ -77,7 +94,7 @@ const getOneUser = async (provider, params) => {
     )
   );
 
-  user.rolesTerritory = rolesTerritory;
+  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem));
 
   return { data: user };
 };

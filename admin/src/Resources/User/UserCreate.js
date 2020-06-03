@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import GestionRoles from './GestionRoles';
 
@@ -32,11 +32,12 @@ const UserCreate = (props) => {
   const classes = useStyles();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
+  const [verifPhoneDisplaycount, setVerifPhoneDisplaycount] = useState(0);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
 
-  const minPassword = (message = 'Au minimum 8 caractères') => (value) =>
+  const minPassword = (message = translate('custom.label.user.errors.minPassword')) => (value) =>
     value && value.length >= 8 ? undefined : message;
 
   const upperPassword = regex(
@@ -51,6 +52,9 @@ const UserCreate = (props) => {
     /^(?=.*[0-9]).*$/,
     translate('custom.label.user.errors.numberPassword')
   );
+  const verifPhoneDisplaycountRules = (
+    message = translate('custom.label.user.errors.phoneDisplayMandatory')
+  ) => () => (verifPhoneDisplaycount > 0 ? undefined : message);
 
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
@@ -76,16 +80,24 @@ const UserCreate = (props) => {
     { id: 0, name: translate('custom.label.user.phoneDisplay.forAll') },
     { id: 1, name: translate('custom.label.user.phoneDisplay.forCarpooler') },
   ];
+  const changePhoneDisplay = () => {
+    setVerifPhoneDisplaycount(1);
+  };
 
   const validateRequired = [required()];
   const paswwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
+  const phoneRules = [verifPhoneDisplaycountRules()];
   const emailRules = [required(), email()];
   const validateUserCreation = (values) =>
     values.address ? {} : { address: translate('custom.label.user.adresseMandatory') };
 
   return (
     <Create {...props} title={translate('custom.label.user.title.create')}>
-      <TabbedForm validate={validateUserCreation} initialValues={{ newsSubscription: true }}>
+      <TabbedForm
+        validate={validateUserCreation}
+        initialValues={{ newsSubscription: true }}
+        redirect="list"
+      >
         <FormTab label={translate('custom.label.user.indentity')}>
           <TextInput
             fullWidth
@@ -155,10 +167,11 @@ const UserCreate = (props) => {
           />
 
           <SelectInput
-            fullWidth
             source="phoneDisplay"
             label={translate('custom.label.user.phoneDisplay.visibility')}
             choices={phoneDisplay}
+            onChange={changePhoneDisplay}
+            validate={phoneRules}
             formClassName={classes.spacedHalfwidth}
           />
 
