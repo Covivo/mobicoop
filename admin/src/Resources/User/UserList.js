@@ -75,8 +75,7 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-  const addTerritoryHistory = (e) => {
-    console.info(router);
+  const handleAddTerritoryHistory = (e) => {
     return null;
   };
 
@@ -128,7 +127,7 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
-      {/* <TerritoryInput alwaysOn setTerritory={addTerritoryHistory} /> */}
+      {/* <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
     </Filter>
   );
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Login, Resource } from 'react-admin';
 import { HydraAdmin, ResourceGuesser } from '@api-platform/admin';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
