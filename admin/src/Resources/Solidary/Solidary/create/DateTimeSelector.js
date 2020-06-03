@@ -145,6 +145,7 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choice, selectedDateTime, ...depedencies]);
 
   return (

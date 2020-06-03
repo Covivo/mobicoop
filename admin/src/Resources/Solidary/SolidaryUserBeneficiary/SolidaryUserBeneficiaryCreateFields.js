@@ -6,7 +6,6 @@ import {
   TextInput,
   SelectInput,
   email,
-  regex,
   BooleanInput,
   useTranslate,
   useDataProvider,
@@ -29,6 +28,10 @@ const useStyles = makeStyles({
     maxWidth: '400px',
     marginBottom: '0.5rem',
   },
+});
+
+const useStylesForGeocompleteInput = makeStyles({
+  root: { width: '100%', maxWidth: '400px', marginBottom: '0.5rem' },
 });
 
 const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
@@ -67,29 +70,13 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   );
   useEffect(() => {
     if (userId) {
-      console.log('--- useEffect : ', userId);
       prefillUserData(userId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
-
-  const minPassword = (message = 'Au minimum 8 caractères') => (value) =>
-    value && value.length >= 8 ? undefined : message;
-
-  const upperPassword = regex(
-    /^(?=.*[A-Z]).*$/,
-    translate('custom.label.user.errors.upperPassword')
-  );
-  const lowerPassword = regex(
-    /^(?=.*[a-z]).*$/,
-    translate('custom.label.user.errors.lowerPassword')
-  );
-  const numberPassword = regex(
-    /^(?=.*[0-9]).*$/,
-    translate('custom.label.user.errors.numberPassword')
-  );
 
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
@@ -98,7 +85,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   ];
 
   const validateRequired = [required()];
-  const paswwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
   const emailRules = [required(), email()];
 
   return (
@@ -118,17 +104,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={emailRules}
         className={classes.spacedHalfwidth}
       />
-      {/*
-      <TextInput
-        fullWidth
-        required
-        source="password"
-        label={translate('custom.label.user.password')}
-        type="password"
-        validate={paswwordRules}
-        className={classes.spacedHalfwidth}
-      />
-      */}
 
       <TextInput
         fullWidth
@@ -180,7 +155,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         source="homeAddress"
         label="Adresse"
         validate={(a) => (a ? '' : 'Champs obligatoire')}
-        classes={classes}
+        classes={useStylesForGeocompleteInput()}
       />
 
       <BooleanInput
