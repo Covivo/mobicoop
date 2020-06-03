@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
-import { DateTimeSelector } from './DateTimeSelector';
+import { DateTimeSelector, setHours, addHours, setTimeFromString } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
 import SolidaryNeeds from './SolidaryNeeds';
 import DayChipInput from './DayChipInput';
@@ -14,18 +14,56 @@ const intervalChoices = [
 ];
 
 const fromTimeChoices = [
-  { id: 0, label: 'A une heure fixe', offsetHour: 0, offsetDays: 0 },
-  { id: 1, label: 'Entre 8h et 13h', offsetHour: 5, offsetDays: 0, fromHour: 8 },
-  { id: 2, label: 'Entre 13h et 18h', offsetHour: 5, offsetDays: 0, fromHour: 13 },
-  { id: 3, label: 'Entre 18h et 21h', offsetHour: 3, offsetDays: 0, fromHour: 18 },
+  {
+    id: 0,
+    label: 'A une heure fixe',
+    outwardDatetime: ({ selectedDateTime, outwardDatetime }) =>
+      setTimeFromString(outwardDatetime, selectedDateTime),
+    marginDuration: () => null,
+  },
+  {
+    id: 1,
+    label: 'Entre 8h et 13h',
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 8),
+    marginDuration: () => 5 * 3600,
+  },
+  {
+    id: 2,
+    label: 'Entre 13h et 18h',
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 13),
+    marginDuration: () => 5 * 3600,
+  },
+  {
+    id: 3,
+    label: 'Entre 18h et 21h',
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 18),
+    marginDuration: () => 3 * 3600,
+  },
 ];
 
 const toTimeChoices = [
-  { id: 0, label: 'A une heure fixe', offsetHour: 0, offsetDays: 0 },
-  { id: 1, label: 'Une heure plus tard', offsetHour: 1, offsetDays: 0 },
-  { id: 2, label: 'Deux heures plus tard', offsetHour: 2, offsetDays: 0 },
-  { id: 3, label: 'Trois heures plus tard', offsetHour: 3, offsetDays: 0 },
-  { id: 4, label: "Pas besoin qu'on me ramène", offsetHour: 0, offsetDays: 0 },
+  {
+    id: 0,
+    label: 'A une heure fixe',
+    returnDatetime: ({ outwardDatetime, selectedDateTime }) =>
+      setTimeFromString(outwardDatetime, selectedDateTime),
+  },
+  {
+    id: 1,
+    label: 'Une heure plus tard',
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 1),
+  },
+  {
+    id: 2,
+    label: 'Deux heures plus tard',
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 2),
+  },
+  {
+    id: 3,
+    label: 'Trois heures plus tard',
+    returnDatetime: ({ outwardDatetime }) => addHours(outwardDatetime, 3),
+  },
+  { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
 /*
@@ -56,13 +94,13 @@ const SolidaryRegularAsk = ({ form }) => {
     <>
       <SolidaryQuestion question="Quels jours devez-vous voyager ?">
         <Box>
-          <DayChipInput source="days.mon" label="L" form={form} />
-          <DayChipInput source="days.tue" label="Ma" form={form} />
-          <DayChipInput source="days.wed" label="Me" form={form} />
-          <DayChipInput source="days.thu" label="J" form={form} />
-          <DayChipInput source="days.fri" label="V" form={form} />
-          <DayChipInput source="days.sat" label="S" form={form} />
-          <DayChipInput source="days.sun" label="D" form={form} />
+          <DayChipInput source="days.mon" label="L" />
+          <DayChipInput source="days.tue" label="Ma" />
+          <DayChipInput source="days.wed" label="Me" />
+          <DayChipInput source="days.thu" label="J" />
+          <DayChipInput source="days.fri" label="V" />
+          <DayChipInput source="days.sat" label="S" />
+          <DayChipInput source="days.sun" label="D" />
         </Box>
       </SolidaryQuestion>
 
@@ -85,7 +123,7 @@ const SolidaryRegularAsk = ({ form }) => {
           fieldnameStart="toStartDatetime"
           fieldnameEnd="toEndDatetime"
           choices={toTimeChoices}
-          initialChoice={0}
+          initialChoice={4}
         />
       </SolidaryQuestion>
 

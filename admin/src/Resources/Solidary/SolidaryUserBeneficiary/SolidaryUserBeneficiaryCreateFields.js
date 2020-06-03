@@ -15,9 +15,11 @@ import {
 import { useField } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, CircularProgress } from '@material-ui/core';
+import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
 const useStyles = makeStyles({
   spacedHalfwidth: { maxWidth: '400px', marginBottom: '0.5rem' },
+  root: { width: '100%', maxWidth: '400px', marginBottom: '0.5rem' },
   loadingHeader: {
     display: 'flex',
     width: '100%',
@@ -54,7 +56,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
               form.change('gender', result.data.gender);
               form.change('birthDate', result.data.birthDate);
               form.change('telephone', result.data.telephone);
-              form.change('newsSubscription', result.data.newsSubscription);
+              form.change('newsSubscription', result.data.newsSubscription || false);
             }
           })
           .catch((error) => notify(error.message, 'warning'))
@@ -171,6 +173,14 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         label={translate('custom.label.user.telephone')}
         validate={validateRequired}
         className={classes.spacedHalfwidth}
+      />
+
+      <GeocompleteInput
+        fullWidth
+        source="homeAddress"
+        label="Adresse"
+        validate={(a) => (a ? '' : 'Champs obligatoire')}
+        classes={classes}
       />
 
       <BooleanInput

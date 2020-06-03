@@ -7,7 +7,7 @@ import {
   ReferenceInput,
   AutocompleteInput,
   useGetList,
-  useCreate,
+  useTranslate,
   useNotify,
 } from 'react-admin';
 import {
@@ -23,6 +23,7 @@ import {
   StepLabel,
   Button,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import { useForm } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
 import SolidaryUserBeneficiaryCreateFields from '../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
@@ -46,12 +47,35 @@ const useStyles = makeStyles({
 const SaveSolidaryAsk = ({ handleSubmitWithRedirect, ...props }) => {
   const form = useForm();
 
+  const dateObjectToString = (date) => {
+    if (date && typeof date === 'object' && date.toJSON) {
+      return date.toJSON();
+    }
+    if (date && typeof date === 'string') {
+      return new Date(date).toJSON();
+    }
+    return null;
+  };
+
   const handleClick = useCallback(() => {
+    const values = form.getState().values;
     // Alter proofs
+    form.change(
+      'proofs',
+      values.proofs && Object.keys(values.proofs).map((k) => ({ id: k, value: values.proofs[k] }))
+    );
+    // Format datetimes objects
+    form.change('outwardDatetime', dateObjectToString(values.outwardDatetime));
+    form.change('outwardDeadlineDatetime', dateObjectToString(values.outwardDeadlineDatetime));
+    form.change('returnDatetime', dateObjectToString(values.returnDatetime));
+    form.change('returnDeadlineDatetime', dateObjectToString(values.returnDeadlineDatetime));
+    // remove days if frequency=1 (punctual)
+    if (values.frequency === 1) {
+      form.change('days', null);
+    }
+
     console.log('Saving :', form.getState().values);
-    console.log('handleSubmitWithRedirect:', handleSubmitWithRedirect);
-    const proofs = form.getState().values.proofs;
-    form.change('proofs', proofs && Object.keys(proofs).map((k) => ({ id: k, value: proofs[k] })));
+    console.log('JSON :', JSON.stringify(form.getState().values));
     handleSubmitWithRedirect('list');
   }, [form]);
 
@@ -61,6 +85,9 @@ const SaveSolidaryAsk = ({ handleSubmitWithRedirect, ...props }) => {
 
 const SolidaryForm = (props) => {
   const classes = useStyles();
+  const translate = useTranslate();
+  const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
+    value ? undefined : message;
 
   // List of proofs
   const { data: proofsList, loaded: proofsLoaded } = useGetList(
@@ -161,6 +188,7 @@ const SolidaryForm = (props) => {
                       source="subject"
                       label=""
                       choices={subjects.map((s) => ({ id: s.id, name: s.label }))}
+                      validate={[required()]}
                     />
                   ) : (
                     <LinearProgress />
@@ -208,8 +236,13 @@ const SolidaryForm = (props) => {
                 ) : (
                   <SolidaryPunctualAsk form={formProps.form} />
                 )}
-                <SolidaryStatus defaultValue={0} />
               </Box>
+
+              {activeStep === 4 && formState.errors && Object.keys(formState.errors).length ? (
+                <Alert severity="error">
+                  Le formulaire comporte des erreurs. Corrigez-les avant d'enregistrer.
+                </Alert>
+              ) : null}
 
               <Toolbar>
                 <Box display="flex" justifyContent="flex-start" width="100%">
