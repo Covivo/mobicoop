@@ -111,7 +111,7 @@ class MassMigrateManager
         // If there is a community to create, we create it
         $community = null;
         if (!empty($mass->getCommunityName())) {
-            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $community = new Community();
             $community->setName($mass->getCommunityName());
 

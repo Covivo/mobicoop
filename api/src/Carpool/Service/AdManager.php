@@ -650,6 +650,10 @@ class AdManager
 
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
+            /* TO DO : This if is ugly... we could use a better method in ProposalRepository **/
+            if ($proposal->getType()==Proposal::TYPE_RETURN) {
+                continue;
+            }
             if (!in_array($proposal->getId(), $refIdProposals)) {
                 $ads[] = $this->makeAd($proposal, $userId);
                 if (!is_null($proposal->getProposalLinked())) {
@@ -1228,6 +1232,7 @@ class AdManager
      * Returns an ad and its results matching the parameters.
      * Used for RDEX export.
      *
+     * @param string $external                  The external client
      * @param bool $offer
      * @param bool $request
      * @param float $from_longitude
@@ -1237,7 +1242,6 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
-     * @param string $external                  The external client
      */
     public function getAdForRdex(
         ?string $external,
