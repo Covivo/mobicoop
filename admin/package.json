@@ -27,7 +27,6 @@
     "react-dom": "^16.13.1",
     "react-final-form": "^6.3.5",
     "react-scripts": "^3.4.1",
-    "material-ui-popup-state": "1.5.4",
     "qs": "6.9.4"
   },
   "devDependencies": {
