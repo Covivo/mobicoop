@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -448,6 +449,13 @@ class Structure
      * @MaxDepth(1)
      */
     private $users;
+
+    /**
+     * @var Address|null The address of the Structure
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure")
+     * @MaxDepth(1)
+     */
+    private $address;
 
     public function __construct()
     {
@@ -1096,6 +1104,18 @@ class Structure
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
         }
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }
