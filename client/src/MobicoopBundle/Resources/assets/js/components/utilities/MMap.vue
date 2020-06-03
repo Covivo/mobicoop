@@ -18,6 +18,7 @@
           :lat-lng="point.latLng"
           :draggable="markersDraggable"
           @update:latLng="updateLatLng"
+          @click="clickOnPoint(point.address)"
         >
           <l-icon
             v-if="point.icon.url!==undefined"
@@ -52,6 +53,33 @@
             </p>
           </l-popup>
         </l-marker>
+        <v-dialog
+          v-model="dialog"
+          max-width="300"
+        >
+          <v-card>
+            <v-card-title class="headline">
+              {{ $t('dialog.title') }}
+            </v-card-title>
+            <v-card-actions>
+              <v-btn
+                class="ml-8"
+                color="primary"
+                text
+                @click="selectRelayPointAsOrigin "
+              >
+                {{ $t('dialog.origin') }}
+              </v-btn>
+              <v-btn
+                color="primary"
+                text
+                @click="selectRelayPointAsDestination"
+              >
+                {{ $t('dialog.destination') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <l-polyline
           v-for="(way, i) in ways"
           :key="'w'+i"
@@ -76,8 +104,15 @@
 
 <script>
 import L from "leaflet";
+import {merge} from "lodash";
+import Translations from "@translations/components/utilities/MMap.json";
+import ClientTranslations from "@clientTranslations/components/utilities/MMap.json";
 
+let TranslationsMerged = merge(Translations, ClientTranslations);
 export default {
+  i18n: {
+    messages: TranslationsMerged
+  },
   props: {
     provider: {
       type: String,
@@ -119,6 +154,10 @@ export default {
     markersDraggable: {
       type: Boolean,
       default: false
+    },
+    relayPoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -126,7 +165,10 @@ export default {
       center: L.latLng(this.centerDefault[0], this.centerDefault[1]),
       url:this.urlTiles,
       attribution:this.attributionCopyright,
-      markers:this.points
+      markers:this.points,
+      dialog: false,
+      point: null,
+      address: null
     };
   },
   computed: {
@@ -163,6 +205,27 @@ export default {
     clickOnPolyline(data){
       // data contains a LatLng object.
       this.$emit("clickOnPolyline",data);
+    },
+    clickOnPoint(point){
+      if (this.relayPoints) {
+        this.dialog = true;
+        this.address = point;
+      }
+    },
+    selectRelayPointAsOrigin() {
+      if (this.relayPoints) {
+        this.$emit("SelectedAsOrigin",this.address);
+        this.address= null;
+        this.dialog= false;
+      }
+    },
+    selectRelayPointAsDestination() {
+      if (this.relayPoints) {
+        this.$emit("SelectedAsDestination",this.address);
+        this.address= null;
+        this.dialog= false;
+
+      }
     }
   }
 };

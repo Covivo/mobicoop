@@ -157,6 +157,15 @@ services:
     Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\:
         resource: '@MobicoopBundle/PublicTransport/Service/*'
 
+    # Relay point
+    Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\:
+        resource: '@MobicoopBundle/RelayPoint/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service\:
+        resource: '@MobicoopBundle/RelayPoint/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service\RelayPointManager:
+        arguments:
+            $bbox: '%env(json:BBOX)%'
+
     # Solidary
     Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
         resource: '@MobicoopBundle/Solidary/Controller/*'

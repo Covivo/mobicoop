@@ -433,7 +433,7 @@ class DataProvider
         if ($resource != null) {
             $this->resource = $resource;
         } else {
-            $this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());
+            $this->resource = $this->pluralize((new \ReflectionClass($class))->getShortName());
         }
     }
 
@@ -485,7 +485,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $value);
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -526,7 +526,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $value);
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -551,10 +551,10 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
-                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+                return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody()));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -583,10 +583,10 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
-                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+                return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody()));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -607,7 +607,7 @@ class DataProvider
     {
         $route = $subClassRoute;
         if (is_null($route)) {
-            $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
+            $route = $this->pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
 
         try {
@@ -623,10 +623,10 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
-                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
+                return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -734,7 +734,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -786,7 +786,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -819,7 +819,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -859,7 +859,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -883,7 +883,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode());
             }
         } catch (ClientException|ServerException $e) {
-            return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }

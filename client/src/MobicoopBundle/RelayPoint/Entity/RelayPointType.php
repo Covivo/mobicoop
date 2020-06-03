@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,117 +21,72 @@
  *    LICENSE
  **************************/
 
-namespace App\RelayPoint\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Image\Entity\Image;
 use App\Image\Entity\Icon;
+use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A relay point type.
- *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readRelayPoint"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeRelayPoint"}},
- *          "pagination_client_items_per_page"=true
- *      },
- *      collectionOperations={
- *          "get"={
- *              "security_post_denormalize"="is_granted('relay_point_type_list',object)"
- *          },
- *          "post"={
- *              "security_post_denormalize"="is_granted('relay_point_type_create',object)"
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "security"="is_granted('relay_point_type_read',object)"
- *          },
- *          "put"={
- *              "security"="is_granted('relay_point_type_update',object)"
- *          },
- *          "delete"={
- *              "security"="is_granted('relay_point_type_delete',object)"
- *          }
- *      }
- * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
-class RelayPointType
+class RelayPointType implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this relay point type.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
-     * @Groups("readRelayPoint")
      */
     private $id;
 
     /**
+     * @var string|null The iri of this relay point type.
+     *
+     * @Groups({"post","put"})
+     */
+    private $iri;
+
+    /**
      * @var string Name of the type.
      *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $name;
 
     /**
     * @var ArrayCollection|null The images of the relay point type.
     *
-    * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist","remove"}, orphanRemoval=true)
-    * @ORM\OrderBy({"position" = "ASC"})
-    * @Groups({"readRelayPoint","writeRelayPoint"})
-    * @MaxDepth(1)
-    * @ApiSubresource(maxDepth=1)
+    * @Groups({"post","put"})
     */
     private $images;
 
     /**
      * @var Icon|null The icon related to the relayPointType.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
-     * @Groups("readRelayPoint")
-     * @MaxDepth(1)
+     * @Groups({"post","put"})
      */
     private $icon;
 
     /**
      * @var \DateTimeInterface Creation date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readRelayPoint"})
+     * @Groups("post")
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Updated date.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readRelayPoint"})
+     * @Groups("post")
      */
     private $updatedDate;
 
-    public function __construct()
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/relay_point_types/".$id);
+        }
         $this->images = new ArrayCollection();
     }
     
@@ -139,12 +94,20 @@ class RelayPointType
     {
         return $this->id;
     }
-    
-    public function setId(int $id): self
+
+    public function setId($id)
     {
         $this->id = $id;
-        
-        return $this;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
     
     public function getName(): ?string
@@ -223,25 +186,15 @@ class RelayPointType
         return $this;
     }
 
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
+    public function jsonSerialize()
     {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
+        return
+        [
+            'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
+            'name'              => $this->getName(),
+            'images'            => $this->getImages(),
+            'icon'              => $this->getIcon()
+        ];
     }
 }

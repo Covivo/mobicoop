@@ -1,0 +1,20 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}relaypoints.relaypoints.title{% endtrans %} - {{ app_name }}{% endblock %}
+
+{% block main %}
+    {# <div>
+        <pre>
+            {{ dump(relayPoints) }}
+        </pre>
+    </div> #}
+    <div>
+        <relay-points
+            geo-search-url="{{ geoCompleteUri }}" 
+            :user="{{ app.user|json_encode }}"
+            :map-provider="{{ mapProvider|json_encode }}"
+            :url-tiles="{{ urlTiles|json_encode }}"
+            :attribution-copyright="{{ attributionCopyright|json_encode }}"
+        ><relay-points/>
+    </div>
+{% endblock %}

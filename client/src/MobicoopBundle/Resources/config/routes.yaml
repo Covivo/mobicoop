@@ -776,6 +776,26 @@ event_report:
         id: '\d+'
 
 
+######################
+# relay point routes #
+######################
+
+# Get the relay points (AJAX)
+relay_point_get_list:
+    methods: [POST]
+    path:
+        fr: /points-relais/getRelayPointList
+        en: /relay-points/getRelayPointList
+    controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::getRelayPointList
+
+# display relay points
+relay_point_list:
+    path:
+        fr: /points-relais
+        en: /relay-points
+    controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::relayPointList    
+
+
 ###############
 # misc routes #
 ###############

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,67 +21,21 @@
  *    LICENSE
  **************************/
 
-namespace App\RelayPoint\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\User\Entity\User;
-use App\Community\Entity\Community;
-use App\Geography\Entity\Address;
-use App\RelayPoint\Entity\RelayPointType;
-use App\Image\Entity\Image;
-use App\Solidary\Entity\Structure;
-use App\RelayPoint\Filter\TerritoryFilter;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A relay point.
- *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readRelayPoint"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeRelayPoint"}},
- *          "pagination_client_items_per_page"=true
- *      },
- *      collectionOperations={
- *          "get"={
- *              "security_post_denormalize"="is_granted('relay_point_list',object)"
- *          },
- *          "post"={
- *              "security_post_denormalize"="is_granted('relay_point_create',object)"
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "security"="is_granted('relay_point_read',object)"
- *          },
- *          "put"={
- *              "security"="is_granted('relay_point_update',object)"
- *          },
- *          "delete"={
- *              "security"="is_granted('relay_point_delete',object)"
- *          }
- *      }
- * )
- * @ApiFilter(BooleanFilter::class, properties={"official"})
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointTypes.id":"exact"})
- * @ApiFilter(RangeFilter::class, properties={"address.longitude","address.latitude"})
- * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
-class RelayPoint
+class RelayPoint implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_ACTIVE = 1;
@@ -89,186 +43,176 @@ class RelayPoint
 
     /**
      * @var int The id of this relay point.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("readRelayPoint")
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this relay point.
+     *
+     * @Groups({"post","put"})
+     */
+    private $iri;
             
     /**
      * @var string The name of the relay point.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $name;
 
     /**
      * @var boolean|null The relay point is private to a community or a solidary structure.
      *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $private;
     
     /**
      * @var string The short description of the relay point.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $description;
     
     /**
      * @var string The full description of the relay point.
      *
-     * @ORM\Column(type="text")
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $fullDescription;
 
     /**
      * @var int The status of the relay point (active/inactive/pending).
      *
-     * @ORM\Column(type="smallint")
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $status;
 
     /**
      * @var int|null The number of places.
      *
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $places;
 
     /**
      * @var int|null The number of places for disabled people.
      *
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $placesDisabled;
 
     /**
     * @var boolean|null The relay point is free.
     *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"readRelayPoint","writeRelayPoint"})
+    * @Groups({"post","put"})
     */
     private $free;
 
     /**
     * @var boolean|null The relay point is secured.
     *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"readRelayPoint","writeRelayPoint"})
+    * @Groups({"post","put"})
     */
     private $secured;
 
     /**
     * @var boolean|null The relay point is official.
     *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"readRelayPoint","writeRelayPoint"})
+    * @Groups({"post","put"})
     */
     private $official;
 
     /**
     * @var boolean|null The relay point appears in the autocompletion.
     *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"readRelayPoint","writeRelayPoint"})
+    * @Groups({"post","put"})
     */
     private $suggested;
 
     /**
      * @var string|null The permalink of the relay point.
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $permalink;
 
     /**
     * @var \DateTimeInterface Creation date of the relay point.
     *
-    * @ORM\Column(type="datetime")
-    * @Groups("readRelayPoint")
+    * @Groups("post")
     */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Updated date of the relay point.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("readRelayPoint")
+     * @Groups("post")
      */
     private $updatedDate;
 
     /**
      * @var Address The address of the relay point.
      *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"readRelayPoint","writeRelayPoint"})
-     * @MaxDepth(1)
+     * @Groups({"post","put"})
      */
     private $address;
 
     /**
      * @var User The creator of the relay point.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $user;
 
     /**
      * @var Community|null The community of the relay point.
      *
-     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
-     * @ORM\JoinColumn(nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $community;
 
     /**
      * @var Structure|null The solidary structure of the relay point.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
-     * @ORM\JoinColumn(nullable=true)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $structure;
 
     /**
      * @var ArrayCollection|null The relay point types.
      *
-     * @ORM\ManyToMany(targetEntity="\App\RelayPoint\Entity\RelayPointType")
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"post","put"})
      */
     private $relayPointTypes;
 
     /**
      * @var ArrayCollection|null The images of the relay point.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPoint", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"readRelayPoint","writeRelayPoint"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
+     * @Groups({"post","put"})
      */
     private $images;
 
-    public function __construct()
+    /**
+     * Undocumented variable
+     *
+     * @var string|null
+     */
+    private $lat;
+
+    /**
+     * Undocumented variable
+     *
+     * @var string|null
+     */
+    private $lon;
+
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/relay_points/".$id);
+        }
         $this->relayPointTypes = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
@@ -276,6 +220,21 @@ class RelayPoint
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
         
     public function getName(): string
@@ -532,25 +491,48 @@ class RelayPoint
         return $this;
     }
 
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
+    public function getLat(): ?string
     {
-        $this->setCreatedDate(new \Datetime());
+        return $this->address->getLatitude();
+    }
+    
+    public function setLat(?string $lat)
+    {
+        $this->lat = $lat;
     }
 
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
+    public function getLon(): ?string
     {
-        $this->setUpdatedDate(new \Datetime());
+        return $this->address->getLongitude();
+    }
+    
+    public function setLon(?string $lon)
+    {
+        $this->lon = $lon;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
+            'name'              => $this->getName(),
+            'private'           => $this->isPrivate(),
+            'description'       => $this->getDescription(),
+            'fullDescription'   => $this->getFullDescription(),
+            'status'            => $this->getStatus(),
+            'places'            => $this->getPlaces(),
+            'placesDisabled'    => $this->getPlacesDisabled(),
+            'free'              => $this->isFree(),
+            'secured'           => $this->isSecured(),
+            'official'          => $this->isOfficial(),
+            'suggested'         => $this->isSuggested(),
+            'permalink'         => $this->getPermalink(),
+            'images'            => $this->getImages(),
+            'address'           => $this->getAddress(),
+            'relayPointTypes'   => $this->getRelayPointTypes(),
+            'images'            => $this->getImages(),
+        ];
     }
 }

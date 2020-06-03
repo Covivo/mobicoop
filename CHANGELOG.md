@@ -5,6 +5,12 @@
 * New related mobile app versioning system
 * A Proposal can now have a specific Subject
 
+## CLIENT
+
+* Display relay points:
+    * Display relay points on a map
+    * Can use relay point as origin or destination by clicking on it
+
 # Release 1.5.0
 
 ## API
