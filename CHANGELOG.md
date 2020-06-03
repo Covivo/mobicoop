@@ -4,6 +4,12 @@
 
 * New related mobile app versioning system
 
+## CLIENT
+
+* Display relay points:
+    * Display relay points on a map
+    * Can use relay point as origin or destination by clicking on it
+
 # Release 1.5.0
 
 ## API

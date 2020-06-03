@@ -19,7 +19,6 @@
       <v-col>
         <m-map
           ref="mmap"
-          type-map="community"
           :points="pointsToMap"
           :provider="mapProvider"
           :url-tiles="urlTiles"
@@ -54,7 +53,6 @@
         :default-destination="selectedDestination"
         :geo-search-url="geoSearchUrl"
         :user="user"
-        :punctual-date-optional="punctualDateOptional"
       />
     </v-row>
       
@@ -135,39 +133,22 @@ export default {
     },
     showRelayPoints () {
       this.pointsToMap.length = 0;
-      // add the community address to display on the map
+      // add relay point address to display on the map
       if (this.relayPointsToMap.length > 0) {
         this.relayPointsToMap.forEach(relayPoint => {
-          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,"",[],[],"",relayPoint.address));
+          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address));
         });
       }
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc="",address){
+    buildPoint: function(lat,lng,title="",address=""){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {},
         address:address
       };
-
-      if(pictoUrl!==""){
-        point.icon = {
-          url:pictoUrl,
-          size:size,
-          anchor:anchor
-        }
-      }
-      if(popupDesc!==""){
-        point.popup = {
-          title:title,
-          description:popupDesc
-        }
-      }
       return point;
-    },
-    searchMatchings(){
-      console.error("searchMatchings");
     },
     selectedAsDestination(destination) {
       console.error(destination);
