@@ -698,7 +698,13 @@ class SolidaryManager
 
         // We create the solidaryUserStructure associated to the demand
         $solidaryUserStructure = new SolidaryUserStructure();
-        $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
+        $structure = null;
+
+        if ($solidary->getStructure()) {
+            $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
+        } else {
+            $structure = $this->security->getUser()->getSolidaryStructures()[0];
+        }
         $solidaryUserStructure->setStructure($structure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
