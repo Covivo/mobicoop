@@ -13,7 +13,7 @@
           <iframe
             :src="$t('externalRoute')"
             width="100%"
-            height="440px"
+            height="540px"
             frameborder="0"
             scrolling="no"
           />
