@@ -70,7 +70,11 @@ export default {
   getPermissions: () => {
     return Promise.resolve(getPermissions());
   },
-  checkError: (error) => {
-    console.log(error);
+  checkError: ({ status }) => {
+    if (status === 401 || status === 403) {
+      clearAuthStorage();
+      return Promise.reject();
+    }
+    return Promise.resolve();
   },
 };
