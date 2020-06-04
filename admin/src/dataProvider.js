@@ -8,7 +8,7 @@ const hydraDataProvider = dataProvider(
   process.env.REACT_APP_API,
   fetchJson,
   getEmptyHydraSchema,
-  false
+  true
 );
 
 // "transformReactAdminDataToRequestBody" from original data provider returns a Promise.resolve
