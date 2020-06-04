@@ -666,6 +666,10 @@ class AdManager
 
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
+            /* TO DO : This if is ugly... we could use a better method in ProposalRepository **/
+            if ($proposal->getType()==Proposal::TYPE_RETURN) {
+                continue;
+            }
             if (!in_array($proposal->getId(), $refIdProposals)) {
                 $ads[] = $this->makeAd($proposal, $userId);
                 if (!is_null($proposal->getProposalLinked())) {
@@ -1244,6 +1248,7 @@ class AdManager
      * Returns an ad and its results matching the parameters.
      * Used for RDEX export.
      *
+     * @param string $external                  The external client
      * @param bool $offer
      * @param bool $request
      * @param float $from_longitude
@@ -1253,7 +1258,6 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
-     * @param string $external                  The external client
      */
     public function getAdForRdex(
         ?string $external,
@@ -1304,6 +1308,7 @@ class AdManager
             $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
 
             // if days is null, we are using today
+            
             if (is_null($days)) {
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
                 $days = [strtolower($today->format('l'))=>1];
@@ -1337,17 +1342,33 @@ class AdManager
         // var_dump($outward);
 
         // if days is null, we make an array using outward
+        $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
         if (is_null($days)) {
             $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             foreach ($outward as $day => $times) {
-                $days = [$day=>1];
+                if (in_array($day, $daysList)) {
+                    $days = [$day=>1];
+                } elseif ($day=="mindate") {
+                    // It's the mindate field. We use it to create a day
+                    $dayMinDate = new \DateTime($times);
+                    $textDayMinDate = strtolower($dayMinDate->format('l'));
+                    $days = [$textDayMinDate=>1];
+
+                    // We also need to set mintime and maxtime in the current outward record
+                    if (!isset($outward[$textDayMinDate]['mintime'])) {
+                        $outward[$textDayMinDate]['mintime'] = $today->format("H:i:s");
+                        $outward[$textDayMinDate]['maxtime'] = $today->modify("+1 hour")->format("H:i:s");
+                    }
+                }
             }
         }
 
+        // var_dump($outward);
         // var_dump($days);
         // die;
 
         $schedules = $this->buildSchedule($days, $outward);
+        // var_dump($schedules);die;
         if (count($schedules)>0) {
             if ($frequency=="punctual") {
                 // Punctual journey
