@@ -41,6 +41,7 @@
             :carpooler-rate="carpoolerRate"
             :external-rdex-journeys="externalRdexJourneys"
             @carpool="carpool(result)"
+            @loginOrRegister="loginOrRegister(result)"
           />
         </v-col>
       </v-row>
@@ -105,6 +106,9 @@ export default {
   methods:{
     carpool(carpool){
       this.$emit("carpool", carpool);
+    },
+    loginOrRegister(carpool){
+      this.$emit("loginOrRegister", carpool);
     }
   }
 }

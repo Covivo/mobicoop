@@ -25,13 +25,11 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Security\AdVoter;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
@@ -92,7 +90,7 @@ class CarpoolController extends AbstractController
     }
 
     /**
-     * Create a carpooling ad.
+     * Update a carpooling ad.
      */
     public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
     {
@@ -217,8 +215,24 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id, AdManager $adManager)
+    public function carpoolAdResults($id)
     {
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
+            'proposalId' => $id,
+            'platformName' => $this->platformName,
+            'externalRDEXJourneys' => false, // No RDEX, this not a new search
+            'defaultRole'=>$this->defaultRole
+        ]);
+    }
+
+    /**
+     * Ad results after authentication.
+     * (POST)
+     */
+    public function carpoolAdResultsAfterAuthentication($id, AdManager $adManager)
+    {
+        // first we need to clone the source proposal, as it should be anonymous
+        $adManager->claimAd($id);
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
             'platformName' => $this->platformName,
@@ -317,19 +331,27 @@ class CarpoolController extends AbstractController
      *
      * @param Request $request              The request
      * @param UserManager $userManager      The userManager
-     * @param string $communityProposalId   The community proposal ID from which we want to make a search
+     * @param int $communityProposalId      The community proposal ID from which we want to make a search
      * @return Response|null                The response
      */
-    public function carpoolSearchResultFromCommunityProposal(Request $request, UserManager $userManager, string $communityProposalId)
+    public function carpoolSearchResultFromCommunityProposal(Request $request, UserManager $userManager, AdManager $adManager, int $communityProposalId)
     {
-        // TODO : check the auth, create the proposal
-        return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'communityProposalId' => $communityProposalId,
-            'user' => $userManager->getLoggedUser(),
-            'platformName' => $this->platformName,
-            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
-            'defaultRole'=>$this->defaultRole
-        ]);
+        // TODO : check the auth
+        // TODO : get the original ad
+        // $ad = $adManager->getAd($communityProposalId);
+        // $origin = $ad->getOutwardWaypoints()->???;
+        // $destination = $ad->getOutwardWaypoints()->???;
+        // return $this->render('@Mobicoop/carpool/results.html.twig', [
+        //     'origin' => $origin,
+        //     'destination' => $destination,
+        //     'date' => $request->get('date'),
+        //     'regular' => (bool) $request->get('regular'),
+        //     'communityId' => $request->get('cid'),
+        //     'user' => $userManager->getLoggedUser(),
+        //     'platformName' => $this->platformName,
+        //     'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+        //     'defaultRole'=>$this->defaultRole
+        // ]);
     }
 
     /**

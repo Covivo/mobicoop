@@ -88,6 +88,11 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}/full",
  *              "security"="is_granted('ad_read_self',object)"
  *          },
+ *          "claim"={
+ *              "method"="GET",
+ *              "path"="/carpools/{id}/claim",
+ *              "security"="is_granted('ad_search_create',object)"
+ *          },
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",

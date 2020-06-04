@@ -9,6 +9,7 @@
 ##################
 # default routes #
 ##################
+
 home:
     path:
         fr: /
@@ -33,6 +34,12 @@ user_login:
         en: /user/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+user_login_result:
+    path:
+        fr: /utilisateur/connexion/{proposalId}
+        en: /user/login/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
+
 user_login_token:
     path:
         fr: /utilisateur/login-token
@@ -50,6 +57,12 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
+user_sign_up_result:
+    path:
+        fr: /utilisateur/inscription/{proposalId}
+        en: /user/signup/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+
 user_sign_up_validation:
     path:
         fr: /utilisateur/inscription/validation/{email}/{token}
@@ -57,7 +70,6 @@ user_sign_up_validation:
     defaults:
         token: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
-
 
 # user update address
 user_homeAddress_update:
@@ -190,7 +202,7 @@ user_message_actions_infos:
         en: /user/messages/actions/infos
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
 
-    # send an internal message
+# send an internal message
 user_message_send:
     path:
         fr: /utilisateur/messages/envoyer
@@ -261,9 +273,13 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
+
 ##################
 # carpool routes #
 ##################
+
+# post & edit
+#############
 
 # post an ad
 carpool_ad_post:
@@ -307,7 +323,10 @@ carpool_ad_post_search:
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# ad results list
+# results
+#########
+
+# ad results list (full page)
 carpool_ad_results:
     path:
         fr: /covoiturage/annonce/{id}/resultats
@@ -316,7 +335,16 @@ carpool_ad_results:
     requirements:
         id: '\d+'
 
-# ad result detail
+# ad results list after authentication (login or register) (full page)
+carpool_ad_results_after_authentication:
+    path:
+        fr: /covoiturage/annonce/{id}/covoiturer
+        en: /carpool/ad/{id}/carpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResultsAfterAuthentication
+    requirements:
+        id: '\d+'
+
+# ad result detail : results of a specific proposal (AJAX json)
 carpool_ad_detail:
     methods: [GET]
     path:
@@ -326,7 +354,7 @@ carpool_ad_detail:
     requirements:
         id: '\d+'
 
-# ad result detail (with filters : POST)
+# ad result detail (with filters : POST) (AJAX json)
 carpool_ad_detail_filtered:
     methods: [POST]
     path:
@@ -336,7 +364,7 @@ carpool_ad_detail_filtered:
     requirements:
         id: '\d+'
 
-# search results (POST)
+# search results (POST) (full page)
 carpool_search_result:
     methods: [POST]
     path:
@@ -344,7 +372,7 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
-# search results (GET)
+# search results (GET) (full page)
 carpool_search_result_get:
     methods: [GET]
     path:
@@ -352,7 +380,7 @@ carpool_search_result_get:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGet
 
-# search results (GET RDEX)
+# search results (GET RDEX) (full page)
 carpool_search_result_rdex:
     methods: [GET]
     path:
@@ -360,7 +388,7 @@ carpool_search_result_rdex:
         en: /carpool/rdex/{externalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromRdexLink
 
-# search results for a community proposal (GET)
+# search results for a community proposal (GET) (full page)
 carpool_search_result_community:
     methods: [GET]
     path:
@@ -368,7 +396,7 @@ carpool_search_result_community:
         en: /carpool/community/{communityName}/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromCommunityProposal
 
-# search results for city to city (GET)
+# search results for city to city (GET) (full page)
 carpool_search_result_city_to_city:
     methods: [GET]
     path:
@@ -376,7 +404,7 @@ carpool_search_result_city_to_city:
         en: /carpool/{originLocality}/{destinationLocality}/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultForCityToCity
 
-# search matching (AJAX POST)
+# search matching (POST) (AJAX json)
 carpool_search_matching:
     methods: [POST]
     path:
@@ -384,7 +412,10 @@ carpool_search_matching:
         en: /carpool/search/matching
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchMatching
 
-# carpool contact (POST)
+# contact
+#########
+
+# carpool contact (POST) (AJAX json)
 carpool_contact:
     methods: [POST]
     path:
@@ -392,7 +423,7 @@ carpool_contact:
         en: /carpool/contact
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
-# carpool ask from results (POST)
+# carpool ask from results (POST) (AJAX json)
 carpool_result_ask:
     methods: [POST]
     path:
@@ -400,14 +431,17 @@ carpool_result_ask:
         en: /carpool/ask
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAsk
 
-# rdex provider (AJAX)
+# rdex
+#########
+
+# rdex provider (AJAX json)
 rdex_provider:
     path:
         fr: /provider/rdex/
         en: /provider/rdex/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider
 
-# rdex journey (AJAX)
+# rdex journey (POST) (AJAX json)
 rdex_journey:
     methods: [POST]
     path:

@@ -26,7 +26,7 @@
             :communities="communities"
             :disabled-filters="loading"
             :disable-role="!includePassenger"
-            :default-community-id="communityIdSearch"
+            :default-community-id="lCommunityId"
             :init-filters-chips="initFiltersChips"
             @updateFilters="updateFilters"
           />
@@ -61,7 +61,7 @@
               align="end"
             >
               <v-btn
-                v-if="!fromMyProposals"
+                v-if="displayNewSearch"
                 rounded
                 color="secondary"
                 @click="startNewSearch()"
@@ -70,7 +70,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-row v-if="!fromMyProposals">
+          <v-row v-if="displayNewSearch">
             <v-col
               cols="12"
               class="text-left"
@@ -91,7 +91,6 @@
               </v-alert>
             </v-col>
           </v-row>
-
 
           <v-row v-if="newSearch">
             <v-col cols="12">
@@ -144,6 +143,7 @@
                 :user="user"
                 :loading-prop="loading"
                 @carpool="carpool"
+                @loginOrRegister="loginOrRegister"
               />
             </v-tab-item>
             <v-tab-item
@@ -180,6 +180,61 @@
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
       />
     </v-dialog>
+    
+    <!-- login or register dialog -->
+    <v-dialog
+      v-model="loginOrRegisterDialog"
+      max-width="800"
+    >
+      <v-card>
+        <v-toolbar
+          color="primary"
+        >
+          <v-toolbar-title class="toolbar">
+            {{ $t('loginOrRegisterTitle') }}
+          </v-toolbar-title>
+        
+          <v-spacer />
+
+          <v-btn 
+            icon
+            @click="loginOrRegisterDialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text>
+          <div class="text--primary">
+            {{ $t('loginOrRegister') }}
+          </div>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            rounded
+            color="secondary"
+            large
+            :href="$t('loginUrl',{'id':lProposalId})"
+          >
+            <span>
+              {{ $t('login') }}
+            </span>
+          </v-btn>
+          <v-btn
+            rounded
+            color="secondary"
+            large
+            :href="$t('registerUrl',{'id':lProposalId})"
+          >
+            <span>
+              {{ $t('register') }}
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -213,13 +268,15 @@ export default {
       default: null
     },
     // external Id after external search
+    // NOT USED YET
     externalId: {
       type: String,
       default: null
     },
-    // community proposal Id for a specific proposal search of a community
-    communityProposalId: {
-      type: Number,
+    // limit the result to the given matching proposal Id
+    // NOT USED YET
+    targetProposalId: {
+      type: String,
       default: null
     },
     origin: {
@@ -279,15 +336,13 @@ export default {
     return {
       locale: this.$i18n.locale,
       carpoolDialog: false,
-      proposal: null,
+      loginOrRegisterDialog: false,
       results: null,
       externalRDEXResults:null,
       result: null,
       loading : true,
       loadingExternal : false,
-      lOrigin: null,
-      lDestination: null,
-      lProposalId: this.proposalId,
+      lProposalId: this.proposalId ? this.proposalId : (this.externalId ? this.externalId : null),
       filters: null,
       newSearch: false,
       modelTabs:"carpools",
@@ -295,10 +350,10 @@ export default {
       nbCarpoolOther:0,
       role:this.defaultRole,
       includePassenger:false,
-      fromMyProposals:false,
+      displayNewSearch:true,
       initFiltersChips:false,
-      communityIdSearch: this.communityId,
-      communityIdSearchBak: this.communityId,
+      lCommunityId: this.communityId,
+      lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false
     };
   },
@@ -338,12 +393,12 @@ export default {
     communities(){
       this.initFiltersChips = true;
     },
-    communityIdSearch(){
-      this.communityIdSearchBak = this.communityIdSearch;
+    lCommunityId(){
+      this.lCommunityIdBak = this.lCommunityId;
     }
   },
   created() {
-    if(this.proposalId) this.fromMyProposals = true;
+    if(this.proposalId) this.displayNewSearch = false;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
   },
@@ -354,8 +409,19 @@ export default {
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
     },
+    loginOrRegister(carpool) {
+      this.result = carpool;
+      // open the dialog
+      this.loginOrRegisterDialog = true;
+    },
+    login() {
+      
+    },
+    register() {
+      
+    },
     search(){
-    // if a proposalId is provided, we load the proposal results
+      // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
         let postParams = {
@@ -385,7 +451,7 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityIdSearch,
+          "communityId": this.lCommunityId,
           "filters": this.filters,
           "role": this.role
         };
@@ -462,7 +528,6 @@ export default {
         })
     },
     launchCarpool(params) {
-      console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
@@ -487,11 +552,11 @@ export default {
     updateFilters(data){
       this.filters = data;
       // Update the default filters also
-      this.communityIdSearch = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+      this.lCommunityId = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
 
       // If the communityid for a research has been modified, we need to post a new proposal for the search
       // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
-      if(this.communityIdSearch !== this.communityIdSearchBak){
+      if(this.lCommunityId !== this.lCommunityIdBak){
         this.lProposalId = null;
       }
       this.search();

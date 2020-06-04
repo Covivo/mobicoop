@@ -2,7 +2,9 @@
     "fr":{
         "title":"Inscription",
         "urlSignUp":"/utilisateur/inscription",
+        "urlSignUpResult":"/utilisateur/inscription/{id}",
         "urlRedirectAfterSignUp":"/utilisateur/inscription/validation/{email}",
+        "urlRedirectAfterSignUpResult":"/covoiturage/annonce/{id}/covoiturer",
         "checkEmail":{
             "url":"/utilisateur/verif/email",
             "error":"Cet email est déjà pris"
@@ -35,7 +37,9 @@
     "en":{
         "title":"Sign Up",
         "urlSignUp":"/user/signup",
+        "urlSignUpResult":"/user/signup/{id}",
         "urlRedirectAfterSignUp":"/user/signup/validation/{email}",
+        "urlRedirectAfterSignUpResult":"/carpool/ad/{id}/carpool",
         "checkEmail":{
             "url":"/user/check/email",
             "error":"This email is already attached to an account"

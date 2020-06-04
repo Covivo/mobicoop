@@ -638,6 +638,31 @@ class AdManager
     }
 
     /**
+     * Claim a anonymous private ad
+     *
+     * @param int $id       The ad id to claim
+     * @return void
+     */
+    public function claimAd(int $id)
+    {
+        if (!$proposal = $this->proposalManager->get($id)) {
+            throw new AdException('Unknown source ad #' . $id);
+        }
+        if (!$proposal->isPrivate() || (!is_null($proposal->getUser()) && $proposal->getUser()->getId() != $this->security->getUser()->getId())) {
+            throw new AdException('Acces denied');
+        }
+
+        // we claim the proposal
+        $proposal->setUser($this->security->getUser());
+        // check if there's a linked proposal
+        if ($proposal->getProposalLinked()) {
+            $proposal->getProposalLinked()->setUser($this->security->getUser());
+        }
+        $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
+    }
+
+    /**
      * Get an ad for permission check.
      * Returns the ad based on the proposal without results.
      *

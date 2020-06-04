@@ -522,7 +522,8 @@ class Address implements ResourceInterface, \JsonSerializable
              'home'                 => $this->isHome(),
              'icon'                 => $this->getIcon(),
              'venue'                => $this->getVenue(),
-             'event'                => $this->getEvent()
+             'event'                => $this->getEvent(),
+             'layer'                => $this->getLayer()
          ];
     }
 }

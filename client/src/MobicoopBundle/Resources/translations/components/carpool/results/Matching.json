@@ -20,7 +20,13 @@
     "tabs":{
       "carpools":"Covoiturages {platform}",
       "otherCarpools":"Autres covoiturages"
-    }
+    },
+    "loginOrRegisterTitle": "Connexion ou inscription requise",
+    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
+    "login": "Connexion",
+    "register": "Inscription",
+    "loginUrl": "/utilisateur/connexion/{id}",
+    "registerUrl": "/utilisateur/inscription/{id}"
   },
   "en":{
     "title": "Carpool results",
@@ -41,6 +47,12 @@
     "tabs":{
       "carpools":"{platform} carpools",
       "otherCarpools":"Other carpools"
-    }
+    },
+    "loginOrRegisterTitle": "Connection or registering required",
+    "loginOrRegister": "You need to login or register to continue",
+    "login": "Login",
+    "register": "Register",
+    "loginUrl": "/user/login/{id}",
+    "registerUrl": "/user/register/{id}"
   }
 }

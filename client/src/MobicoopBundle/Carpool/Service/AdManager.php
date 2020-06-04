@@ -81,6 +81,20 @@ class AdManager
     }
 
     /**
+     * Claim an Ad (useful for login or register after an anonymous search)
+     *
+     * @param int $id   The Ad id to claim
+     * @return void
+     */
+    public function claimAd(int $id)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, 'claim')) {
+            return;
+        }
+        return;
+    }
+
+    /**
      * Create an ad. The ad can be a search.
      *
      * @param array $data   The data used to create the ad
@@ -113,7 +127,7 @@ class AdManager
      * @param integer|null $userId          User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
      * @param array|null $filters           Filters and order choices
-     * @return array|null The matchings found or null if not found.
+     * @return Ad|null The matchings found or null if not found.
      */
     public function getResultsForSearch(
         array $origin,
