@@ -41,10 +41,12 @@
 
 export const getPermissions = () => {
   const storagePermissions = localStorage.getItem('permission');
-  return storagePermissions ? JSON.parse(storagePermissions) : [];
+  const permissions = storagePermissions && JSON.parse(storagePermissions);
+  return Array.isArray(permissions) ? permissions : [];
 };
 
-export const createPermissionChecker = (permissions) => (action) => permissions.includes(action);
+export const createPermissionChecker = (permissions = []) => (action) =>
+  permissions.includes(action);
 
 export default (action) => {
   const hasPermission = createPermissionChecker(getPermissions());
