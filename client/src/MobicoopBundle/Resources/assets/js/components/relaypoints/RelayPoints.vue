@@ -62,18 +62,15 @@
 
 <script>
 import axios from "axios";
-import {merge} from "lodash";
 import Translations from "@translations/components/relayPoints/RelayPoints.json";
-import ClientTranslations from "@clientTranslations/components/relayPoints/RelayPoints.json";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
 
-let TranslationsMerged = merge(Translations, ClientTranslations);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   components: {
     Search, MMap
