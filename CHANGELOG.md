@@ -5,6 +5,12 @@
 * New related mobile app versioning system
 * A Proposal can now have a specific Subject
 
+## CLIENT
+
+* Display relay points:
+    * Display relay points on a map
+    * Can use relay point as origin or destination by clicking on it
+
 # Release 1.5.0
 
 ## API
@@ -15,6 +21,7 @@
     * Link with proof registry via cron job
 * New entities for SolidaryUser : SolidaryBeneficiary and SolidaryVolunteer.
 * Several utility routes.
+* RDEX : Fix bad handling days and times when there is no outward array given
 
 # Release 1.4.0
 

@@ -368,8 +368,12 @@ class RdexManager
             $driver->setUuid($result->getCarpooler()->getId());
             $driver->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
             
-            ($result->getCarpooler()->getGender()==1) ? $driver->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $driver->setGender('male') : null;
-            
+            if ($result->getCarpooler()->getGender()==1) {
+                $driver->setGender('female');
+            } else {
+                $driver->setGender('male');
+            }
+
             $driver->setSeats($result->getSeatsDriver());
             $driver->setState(($carpoolerIsDriver) ? 1 : 0);
 
@@ -382,8 +386,13 @@ class RdexManager
             $passenger->setUuid($result->getCarpooler()->getId());
             $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
             
-            ($result->getCarpooler()->getGender()==1) ? $passenger->setGender('female') : ($result->getCarpooler()->getGender()==2) ? $passenger->setGender('male') : null;
+            if ($result->getCarpooler()->getGender()==1) {
+                $passenger->setGender('female');
+            } else {
+                $passenger->setGender('male');
+            }
             
+
             $passenger->setState(($carpoolerIsPassenger) ? 1 : 0);
 
             if (count($result->getCarpooler()->getImages())>0) {

@@ -20,8 +20,10 @@ const KibanaWidget = ({
   // Full rights granted to   territory_manage
   // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
   const roles = localStorage.roles ? localStorage.roles.split(',') : [];
+
   const isCommunityManager =
     isAuthorized('community_dashboard_self') && !isAuthorized('user_manage');
+
   const isAdmin =
     !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true; // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
 

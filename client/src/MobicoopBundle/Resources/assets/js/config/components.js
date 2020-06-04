@@ -51,6 +51,9 @@ import MArticle from "@components/article/MArticle";
 import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
 import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
 
+// RELAY POINT
+import RelayPoints from "@components/relaypoints/RelayPoints";
+
 export default {
   MHeader,
   MFooter,
@@ -82,5 +85,6 @@ export default {
   EventReport,
   MArticle,
   PlatformWidget,
-  PlatformGetWidget
+  PlatformGetWidget,
+  RelayPoints
 }

@@ -127,7 +127,18 @@ class SolidaryContactManager
         $message = new Message();
         $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
         $message->setText($object->getContent());
-        
+
+        // If there is already a message in the thread, we need to set it
+        $solidaryAskHistories = $object->getSolidarySolution()->getSolidaryAsk()->getSolidaryAskHistories();
+        if (!is_null($solidaryAskHistories)) {
+            foreach ($solidaryAskHistories as $solidaryAskHistory) {
+                if (!is_null($solidaryAskHistory->getMessage())) {
+                    $message->setMessage($solidaryAskHistory->getMessage());
+                    break;
+                }
+            }
+        }
+
         return $message;
     }
 

@@ -55,7 +55,7 @@ const TerritoryInput = (props) => {
   const debouncedInput = useDebounce(input, 500);
 
   const formState = form.getState();
-  const errorMessage = props.validate(input);
+  const errorMessage = props.validate ? props.validate(input) : null;
   const errorState = formState.submitFailed && errorMessage;
 
   useEffect(() => {

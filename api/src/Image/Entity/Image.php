@@ -53,7 +53,7 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
- *  TO DO : Secure the DELETE in itemOperations
+ *  TO DO : Secure the DELETE, GET AND PUT in itemOperations,
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -70,13 +70,7 @@ use App\User\Entity\User;
  *          },
  *      },
  *      itemOperations={
- *          "get" = {
- *              "security"="is_granted('image_read',object)"
- *          },
- *          "put" = {
- *              "security"="is_granted('image_update',object)"
- *          },
- *          "delete"
+ *          "get","put", "delete"
  *      }
  * )
  * @Vich\Uploadable

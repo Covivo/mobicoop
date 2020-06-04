@@ -40,7 +40,6 @@ class CommunityVoter extends Voter
     const COMMUNITY_LIST = 'community_list';
     const COMMUNITY_ADS = 'community_ads';
 
-    private $permissionManager;
     private $request;
     private $communityManager;
 

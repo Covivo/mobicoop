@@ -337,7 +337,7 @@ class Proposal
     private $position;
 
     /**
-     * @var string The external origin of this proposal
+     * @var string The external origin of this proposal (i.e. for an RDEX request we store the public api key)
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */

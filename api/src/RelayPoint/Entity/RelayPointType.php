@@ -44,11 +44,30 @@ use App\Image\Entity\Icon;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readRelayPoint"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeRelayPoint"}},
+ *          "pagination_client_items_per_page"=true
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "security_post_denormalize"="is_granted('relay_point_type_list',object)"
+ *          },
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('relay_point_type_create',object)"
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('relay_point_type_read',object)"
+ *          },
+ *          "put"={
+ *              "security"="is_granted('relay_point_type_update',object)"
+ *          },
+ *          "delete"={
+ *              "security"="is_granted('relay_point_type_delete',object)"
+ *          }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
@@ -62,7 +81,7 @@ class RelayPointType
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read")
+     * @Groups("readRelayPoint")
      */
     private $id;
 
@@ -71,7 +90,7 @@ class RelayPointType
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write","pt"})
+     * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $name;
 
@@ -80,7 +99,7 @@ class RelayPointType
     *
     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist","remove"}, orphanRemoval=true)
     * @ORM\OrderBy({"position" = "ASC"})
-    * @Groups({"read","write"})
+    * @Groups({"readRelayPoint","writeRelayPoint"})
     * @MaxDepth(1)
     * @ApiSubresource(maxDepth=1)
     */
@@ -90,7 +109,7 @@ class RelayPointType
      * @var Icon|null The icon related to the relayPointType.
      *
      * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
-     * @Groups("read")
+     * @Groups("readRelayPoint")
      * @MaxDepth(1)
      */
     private $icon;
@@ -99,7 +118,7 @@ class RelayPointType
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readRelayPoint"})
      */
     private $createdDate;
 
@@ -107,7 +126,7 @@ class RelayPointType
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"readRelayPoint"})
      */
     private $updatedDate;
 
