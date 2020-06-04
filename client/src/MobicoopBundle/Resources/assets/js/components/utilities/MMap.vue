@@ -104,14 +104,11 @@
 
 <script>
 import L from "leaflet";
-import {merge} from "lodash";
 import Translations from "@translations/components/utilities/MMap.json";
-import ClientTranslations from "@clientTranslations/components/utilities/MMap.json";
 
-let TranslationsMerged = merge(Translations, ClientTranslations);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: Translations
   },
   props: {
     provider: {
