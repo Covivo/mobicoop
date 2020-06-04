@@ -8,7 +8,7 @@ const UserReferenceField = (props) => {
   // If he dont : he's a community manager, we dont show the detail of user
   let stateLink = true;
   if (localStorage && localStorage.roles) {
-    const roles = localStorage.roles.split(',');
+    const roles = JSON.parse(localStorage.getItem('roles') || '[]');
     if (!roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN')) {
       stateLink = false;
     }
