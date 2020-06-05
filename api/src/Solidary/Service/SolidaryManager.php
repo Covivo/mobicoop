@@ -155,7 +155,9 @@ class SolidaryManager
         
         date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
         $solidary->setOutwardDatetime($outwardDatetime);
-
+        // we set the margin duration
+        $marginDuration = $solidary->getProposal()->getCriteria()->getMarginDuration();
+        $solidary->setMarginDuration($marginDuration);
         // we do the same if we have a return
         if ($solidary->getProposal()->getProposalLinked() !== null) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
@@ -223,7 +225,7 @@ class SolidaryManager
             }
             $solidary->setDays($days);
         }
-
+        $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
 
         // We find the last entry of diary for this solidary to get the progression

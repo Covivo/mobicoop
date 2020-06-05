@@ -307,20 +307,20 @@ class Solidary
     private $structure;
 
     /**
-     * @var Int frequency of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @var Int|null frequency of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $frequency;
 
     /**
      * @var Array|null Origin address of the solidary
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $days;
 
     /**
     * @var Int|null margin time of the solidary demand
-    * @Groups ({"writeSolidary"})
+    * @Groups ({"writeSolidary", "readSolidary"})
     */
     private $marginDuration;
     
@@ -737,7 +737,7 @@ class Solidary
         return $this;
     }
 
-    public function getFrequency(): int
+    public function getFrequency(): ?int
     {
         return $this->frequency;
     }
@@ -749,7 +749,7 @@ class Solidary
         return $this;
     }
 
-    public function getDays(): array
+    public function getDays(): ?array
     {
         return $this->days;
     }
