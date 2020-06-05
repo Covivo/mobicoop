@@ -314,7 +314,7 @@ class SolidaryManager
         $this->entityManager->flush();
 
         // We trigger the event
-        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         return $solidary;
