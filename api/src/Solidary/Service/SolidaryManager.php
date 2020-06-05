@@ -156,8 +156,7 @@ class SolidaryManager
         date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
         $solidary->setOutwardDatetime($outwardDatetime);
         // we set the margin duration
-        $marginDuration = $solidary->getProposal()->getCriteria()->getMarginDuration();
-        $solidary->setMarginDuration($marginDuration);
+        $solidary->setMarginDuration($solidary->getProposal()->getCriteria()->getMarginDuration());
         // we do the same if we have a return
         if ($solidary->getProposal()->getProposalLinked() !== null) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
