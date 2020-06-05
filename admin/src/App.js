@@ -84,7 +84,7 @@ export default () => (
         <Resource name="images" />,
         <Resource name="needs" />,
         <Resource name="subjects" />,
-        // <Resource name="territories" {...TerritoryResource} />,
+        <Resource name="territories" />,
       ].filter((x) => x);
     }}
   </Admin>
