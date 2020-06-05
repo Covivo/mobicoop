@@ -47,6 +47,7 @@
                 <v-btn
                   v-if="!eventPassed"
                   color="secondary"
+                  :disabled="!isLogged"
                   rounded
                   @click="publish"
                 >
@@ -125,7 +126,6 @@
           :params="params"
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
-          :hide-publish="true"
           :default-destination="defaultDestination"
         />
       </v-row>
@@ -242,6 +242,7 @@ export default {
   mounted() {
     this.showEventProposals();
     this.checkIfEventIsPassed();
+    this.checkIfUserLogged();
   },
   methods:{
     searchChanged: function (search) {
