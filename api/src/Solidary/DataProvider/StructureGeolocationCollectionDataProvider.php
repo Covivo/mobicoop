@@ -48,7 +48,7 @@ final class StructureGeolocationCollectionDataProvider implements CollectionData
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return Structure::class === $resourceClass && $operationName = "structure_geolocation";
+        return Structure::class === $resourceClass && $operationName == "structure_geolocation";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
