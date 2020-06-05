@@ -81,7 +81,9 @@ export default () => (
         // These resources were commented on during my refacto, why ?
         // @TODO: Talk between us about that
         <Resource name="addresses" />,
-        // <Resource name="images" />,
+        <Resource name="images" />,
+        <Resource name="needs" />,
+        <Resource name="subjects" />,
         <Resource name="territories" />,
       ].filter((x) => x);
     }}

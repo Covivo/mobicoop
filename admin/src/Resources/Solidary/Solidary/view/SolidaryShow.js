@@ -8,7 +8,6 @@ import {
   Avatar,
   LinearProgress,
   Button,
-  Chip,
   Stepper,
   Step,
   StepLabel,
@@ -19,9 +18,10 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core';
+import fakeData from './fakeSolidary.json';
 
-import fakeProposal from './fakeSolidary';
-import DropDownButton from '../../../components/button/DropDownButton';
+import DropDownButton from '../../../../components/button/DropDownButton';
+import DayChip from './DayChip';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -47,20 +47,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DayChip = ({ condition, label }) =>
-  condition ? <Chip label={label} color="primary" /> : <Chip label={label} />;
-
 const SMS_CONTACT_OPTION = 'SMS';
 const EMAIL_CONTACT_OPTION = 'Email';
 const PHONE_CONTACT_OPTION = 'Téléphone';
 
 const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
 
-const SolidaryView = (props) => {
+const SolidaryShow = (props) => {
   const classes = useStyles();
 
   // For test only. Should be sourced by props
-  const record = fakeProposal;
+  const record = fakeData;
 
   const { monCheck, tueCheck, wedCheck, thuCheck, friCheck, satCheck, sunCheck } = record.criteria;
   const { createdDate, updatedDate, id } = record;
@@ -103,7 +100,7 @@ const SolidaryView = (props) => {
 
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
-            <h1>Demande solidaire #{id}</h1>
+            <h1>{`Demande solidaire # ${id}`}</h1>
           </Grid>
           <Grid item>
             <Grid
@@ -157,7 +154,10 @@ const SolidaryView = (props) => {
 
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
-            Aller &lt;-&gt; Retour <i>Les horaires diffèrent selon les jours</i>
+            <span>
+              Aller &lt;-&gt; Retour
+              <i>Les horaires diffèrent selon les jours</i>
+            </span>
           </Grid>
           <Grid item>
             {[
@@ -298,4 +298,4 @@ const SolidaryView = (props) => {
   );
 };
 
-export default SolidaryView;
+export default SolidaryShow;
