@@ -29,6 +29,7 @@ use App\Match\Repository\MassRepository;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
 use DateInterval;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Mass public transport potential manager.
@@ -39,12 +40,14 @@ class MassPublicTransportPotentialManager
 {
     private $massRepository;
     private $pTDataProvider;
+    private $entityManager;
     private $params;
 
-    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, array $params)
+    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, EntityManagerInterface $entityManager, array $params)
     {
         $this->massRepository = $massRepository;
         $this->pTDataProvider = $pTDataProvider;
+        $this->entityManager = $entityManager;
         $this->params = $params;
     }
 
@@ -79,16 +82,25 @@ class MassPublicTransportPotentialManager
             foreach ($results as $ptjourney) {
                 $PTPotentialJourney = $this->computeDataPTJourney($ptjourney);
                 if ($this->checkValidPTJourney($PTPotentialJourney)) {
-
                     $ptjourney->setMassPerson($person);
                     $TPPotential[$person->getId()][] = $PTPotentialJourney;
 
+                    // For now, we don't want to persist PTDeparture, PTArrival and PTLeg
+                    $ptjourney->setPTLegs(null);
+                    $ptjourney->setPTDeparture(null);
+                    $ptjourney->setPTArrival(null);
+
+                    
                     // We persist the PTJourney
+                    $this->entityManager->persist($ptjourney);
                 }
             }
         }
 
+        $this->entityManager->flush();
+
         $mass->setPublicTransportPotential($TPPotential);
+
         return $mass;
     }
 
@@ -101,8 +113,6 @@ class MassPublicTransportPotentialManager
      */
     public function computeDataPTJourney(PTJourney $ptjourney): PTJourney
     {
-
-
         $interval = new DateInterval($ptjourney->getDuration());
         $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
         $ptjourney->setDurationInSeconds($duration);

@@ -206,7 +206,7 @@ class PTJourney
     private $co2;
         
     /**
-     * @var PTDeparture The departure of this journey.
+     * @var PTDeparture|null The departure of this journey.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @ORM\JoinColumn(nullable=false)
@@ -215,7 +215,7 @@ class PTJourney
     private $ptdeparture;
     
     /**
-     * @var PTArrival The arrival of this journey.
+     * @var PTArrival|null The arrival of this journey.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @ORM\JoinColumn(nullable=false)
@@ -224,7 +224,7 @@ class PTJourney
     private $ptarrival;
     
     /**
-     * @var ArrayCollection The legs of this journey.
+     * @var ArrayCollection|null The legs of this journey.
      *
      * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups("pt")
@@ -369,7 +369,7 @@ class PTJourney
         return $this->ptdeparture;
     }
     
-    public function setPTDeparture(PTDeparture $ptdeparture): self
+    public function setPTDeparture(?PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
         
@@ -381,7 +381,7 @@ class PTJourney
         return $this->ptarrival;
     }
     
-    public function setPTArrival(PTArrival $ptarrival): self
+    public function setPTArrival(?PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
         
@@ -393,7 +393,7 @@ class PTJourney
         return $this->ptlegs->getValues();
     }
 
-    public function setPTLegs(ArrayCollection $ptlegs): self
+    public function setPTLegs(?ArrayCollection $ptlegs): self
     {
         $this->ptlegs = $ptlegs;
         
