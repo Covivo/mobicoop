@@ -231,7 +231,7 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdResultsAfterAuthentication($id, AdManager $adManager)
     {
-        // first we need to clone the source proposal, as it should be anonymous
+        // first we need to claim the source proposal, as it should be anonymous
         $adManager->claimAd($id);
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
