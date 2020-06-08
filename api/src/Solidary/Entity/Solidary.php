@@ -323,6 +323,13 @@ class Solidary
     * @Groups ({"writeSolidary", "readSolidary"})
     */
     private $marginDuration;
+
+    /**
+    * @var String|null Label to display for the solidary subject+origin+destination
+    *
+    * @Groups({"writeSolidary", "readSolidary"})
+    */
+    private $displayLabel;
     
     public function __construct()
     {
@@ -770,6 +777,18 @@ class Solidary
     {
         $this->marginDuration = $marginDuration;
 
+        return $this;
+    }
+
+    public function getDisplayLabel(): ?string
+    {
+        return $this->displayLabel;
+    }
+    
+    public function setDisplayLabel(?string $displayLabel): self
+    {
+        $this->displayLabel = $displayLabel;
+        
         return $this;
     }
 
