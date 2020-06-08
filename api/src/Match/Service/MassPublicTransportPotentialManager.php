@@ -83,6 +83,9 @@ class MassPublicTransportPotentialManager
                 $PTPotentialJourney = $this->buildPTPotentialJourney($person, $result);
                 if ($this->checkValidPTJourney($PTPotentialJourney)) {
                     $TPPotential[$person->getId()][] = $PTPotentialJourney;
+
+                    // We persist the PTJourney
+                    $ptjourney = new PTJourney();
                 }
             }
         }

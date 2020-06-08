@@ -142,10 +142,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={"get"={"path"="/journeys/{id}"}}
  * )
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PTJourney
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this journey.
      *
@@ -221,9 +224,12 @@ class PTJourney
      */
     private $ptlegs;
     
-    public function __construct($id)
+    public function __construct($id = null)
     {
-        $this->id = $id;
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
         $this->ptlegs = new ArrayCollection();
     }
     
