@@ -42,11 +42,13 @@ class MassPublicTransportPotentialManager
 {
     private $massRepository;
     private $pTDataProvider;
+    private $params;
 
-    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider)
+    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, array $params)
     {
         $this->massRepository = $massRepository;
         $this->pTDataProvider = $pTDataProvider;
+        $this->params = $params;
     }
 
     /**
@@ -65,15 +67,15 @@ class MassPublicTransportPotentialManager
              * @var MassPerson $person
              */
             $results = $this->pTDataProvider->getJourneys(
-                Mass::PT_PROVIDER,
+                $this->params['ptProvider'],
                 1,
                 $person->getPersonalAddress()->getLatitude(),
                 $person->getPersonalAddress()->getLongitude(),
                 $person->getWorkAddress()->getLatitude(),
                 $person->getWorkAddress()->getLongitude(),
-                new \DateTime('2020-06-01 15:00:00', new \DateTimeZone('Europe/Paris')),
+                new \DateTime(Date("Y-m-d").' '.$person->getOutwardTime()->format("H:i:s"), new \DateTimeZone('Europe/Paris')),
                 "departure",
-                Mass::PT_ALGORITHM,
+                $this->params['ptAlgorithm'],
                 "PT"
             );
             
@@ -146,17 +148,17 @@ class MassPublicTransportPotentialManager
     public function checkValidPTJourney(PTPotentialJourney $pTPotentialJourney): bool
     {
         // Number of connections
-        if ($pTPotentialJourney->getChangeNumber() > Mass::PT_MAXIMAL_CONNECTIONS) {
+        if ($pTPotentialJourney->getChangeNumber() > $this->params['ptMaxConnections']) {
             return false;
         }
         
         // The maximum distance of walk from home to the last step
-        if ($pTPotentialJourney->getDistanceWalkFromHome()> Mass::PT_MAXIMUM_DISTANCE_WALK_FROM_HOME) {
+        if ($pTPotentialJourney->getDistanceWalkFromHome()> $this->params['ptMaxDistanceWalkFromHome']) {
             return false;
         }
 
         // The maximum distance of walk to work from the last step
-        if ($pTPotentialJourney->getDistanceWalkFromWork()> Mass::PT_MAXIMUM_DISTANCE_WALK_FROM_WORK) {
+        if ($pTPotentialJourney->getDistanceWalkFromWork()> $this->params['ptMaxDistanceWalkFromWork']) {
             return false;
         }
 

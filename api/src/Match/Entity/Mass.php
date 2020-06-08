@@ -249,12 +249,6 @@ class Mass
     const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
     const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
 
-    const PT_PROVIDER = "cityway";
-    const PT_ALGORITHM = "fastest";
-    const PT_MAXIMAL_CONNECTIONS = 2;
-    const PT_MAXIMUM_DISTANCE_WALK_FROM_HOME = 500; // in meters
-    const PT_MAXIMUM_DISTANCE_WALK_FROM_WORK = 600; // in meters
-
     /**
      * @var int The id of this import.
      *
