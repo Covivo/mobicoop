@@ -24,6 +24,11 @@ import {
 
 import { resolveVoluntaryAvailabilityHourRanges } from '../utils/resolveVoluntaryAvailabilityHourRanges';
 import { fetchJson } from '../../../../fetchJson';
+import {
+  solidaryAskStatusColors,
+  solidaryAskStatusIcons,
+  solidaryAskStatusLabels,
+} from '../../../../constants/solidaryAskStatus';
 
 const entrypoint = process.env.REACT_APP_API;
 
@@ -51,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 const AvaibilitySlot = ({ slot }) => {
   const classes = useStyles();
   const router = useHistory();
+  const translate = useTranslate();
 
   if (!slot) {
     return <div className={classes.availabilitySlotZone} style={{ background: '#aaa' }} />;
@@ -71,6 +77,8 @@ const AvaibilitySlot = ({ slot }) => {
     router.push(`/solidaries/${slot.solidaryId}/show`);
   };
 
+  const StatusIcon = solidaryAskStatusIcons[slot.status];
+
   return (
     <PopupState variant="popover">
       {(popupState) => (
@@ -81,7 +89,15 @@ const AvaibilitySlot = ({ slot }) => {
             {...bindTrigger(popupState)}
           >
             <Grid container justify="space-between" alignItems="center">
-              <Grid item>{`${slot.solidaryId} - ${slot.beneficiary}`}</Grid>
+              <Grid item>
+                <span
+                  title={translate(solidaryAskStatusLabels[slot.status])}
+                  style={{ color: solidaryAskStatusColors[slot.status] }}
+                >
+                  <StatusIcon style={{ verticalAlign: 'middle' }} />
+                  <span>{` ${slot.solidaryId} - ${slot.beneficiary}`}</span>
+                </span>
+              </Grid>
               <Grid item>
                 <ArrowDropDownIcon />
               </Grid>

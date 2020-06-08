@@ -18,6 +18,17 @@ const fr = {
     },
   },
   custom: {
+    solidaryask: {
+      status: {
+        asked: 'Demande ',
+        refused: 'Refusé',
+        pending: 'En attente',
+        lookforresolution: 'En recherche de solution',
+        followup: 'A suivre',
+        closed: 'Fermé',
+        accepted: 'Accepté',
+      },
+    },
     solidary_volunteers: {
       edit: {
         availability: 'Disponibilité',
