@@ -176,6 +176,12 @@ class PTJourney
     private $duration;
 
     /**
+     * @var int The total duration of this journey (in seconds).
+     * @Groups("pt")
+     */
+    private $durationInSeconds;
+
+    /**
      * @var int The number of changes of this journey.
      *
      * @Groups("pt")
@@ -223,7 +229,35 @@ class PTJourney
      * @Groups("pt")
      */
     private $ptlegs;
+
+    /**
+     * @var int The distance from home of this potential journey
+     *
+     * @Groups("pt")
+     */
+    private $distanceWalkFromHome;
     
+    /**
+     * @var int The duration from home of this potential journey (in seconds)
+     *
+     * @Groups("pt")
+     */
+    private $durationWalkFromHome;
+
+    /**
+     * @var int The distance from work of this potential journey
+     *
+     * @Groups("pt")
+     */
+    private $distanceWalkFromWork;
+
+    /**
+     * @var int The duration from work of this potential journey (in seconds)
+     *
+     * @Groups("pt")
+     */
+    private $durationWalkFromWork;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -265,6 +299,18 @@ class PTJourney
     public function setDuration(?string $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
+    }
+
+    public function getDurationInSeconds(): ?int
+    {
+        return $this->durationInSeconds;
+    }
+    
+    public function setDurationInSeconds(?int $durationInSeconds): self
+    {
+        $this->durationInSeconds = $durationInSeconds;
         
         return $this;
     }
@@ -360,6 +406,54 @@ class PTJourney
                 $ptleg->setPTJourney(null);
             }
         }
+        
+        return $this;
+    }
+
+    public function getDistanceWalkFromHome(): ?int
+    {
+        return $this->distanceWalkFromHome;
+    }
+    
+    public function setDistanceWalkFromHome(?int $distanceWalkFromHome): self
+    {
+        $this->distanceWalkFromHome = $distanceWalkFromHome;
+        
+        return $this;
+    }
+    
+    public function getDurationWalkFromHome(): ?int
+    {
+        return $this->durationWalkFromHome;
+    }
+    
+    public function setDurationWalkFromHome(?int $durationWalkFromHome): self
+    {
+        $this->durationWalkFromHome = $durationWalkFromHome;
+        
+        return $this;
+    }
+
+    public function getDistanceWalkFromWork(): ?int
+    {
+        return $this->distanceWalkFromWork;
+    }
+    
+    public function setDistanceWalkFromWork(?int $distanceWalkFromWork): self
+    {
+        $this->distanceWalkFromWork = $distanceWalkFromWork;
+        
+        return $this;
+    }
+
+    public function getDurationWalkFromWork(): ?int
+    {
+        return $this->durationWalkFromWork;
+    }
+    
+    public function setDurationWalkFromWork(?int $durationWalkFromWork): self
+    {
+        $this->durationWalkFromWork = $durationWalkFromWork;
         
         return $this;
     }
