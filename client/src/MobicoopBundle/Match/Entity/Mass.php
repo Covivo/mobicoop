@@ -175,6 +175,10 @@ class Mass implements ResourceInterface
      */
     private $checkLegit;
 
+    /**
+     * @var array Potential of Public Transport of this Mass
+     */
+    private $publicTransportPotential;
 
     public function __construct($id = null)
     {
@@ -472,5 +476,17 @@ class Mass implements ResourceInterface
     public function setCheckLegit(bool $checkLegit)
     {
         $this->checkLegit = $checkLegit;
+    }
+
+    public function getPublicTransportPotential(): ?array
+    {
+        return $this->publicTransportPotential;
+    }
+
+    public function setPublicTransportPotential(?array $publicTransportPotential): self
+    {
+        $this->publicTransportPotential = $publicTransportPotential;
+
+        return $this;
     }
 }
