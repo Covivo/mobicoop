@@ -28,7 +28,7 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Match\Entity\Mass;
 use App\Match\Service\MassPublicTransportPotentialManager;
 
-final class MassComputePotentialPTItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class MassGetPotentialPTItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $massPublicTransportPotentialManager;
 
@@ -39,11 +39,11 @@ final class MassComputePotentialPTItemDataProvider implements ItemDataProviderIn
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Mass::class === $resourceClass && $operationName == "computePTPotential";
+        return Mass::class === $resourceClass && $operationName == "getPTPotential";
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Mass
     {
-        return $this->massPublicTransportPotentialManager->computePublicTransportPotential($id);
+        return $this->massPublicTransportPotentialManager->getPublicTransportPotential($id);
     }
 }

@@ -217,9 +217,9 @@ use Doctrine\Common\Collections\Collection;
  *              "security"="is_granted('mass_create',object)",
  *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
- *          "computePTPotential"={
+ *          "getPTPotential"={
  *              "method"="GET",
- *              "path"="/masses/{id}/computePTPotential",
+ *              "path"="/masses/{id}/getPTPotential",
  *              "normalization_context"={"groups"={"mass","pt"}},
  *              "security"="is_granted('mass_create',object)"
  *          }
@@ -485,7 +485,7 @@ class Mass
 
     /**
      * @var array Potential of Public Transport of this Mass
-     * @Groups({"mass","pt"})
+     * @Groups({"massPTPotential"})
      */
     private $publicTransportPotential;
 

@@ -53,12 +53,12 @@ class MassPublicTransportPotentialManager
     }
 
     /**
-     * Compute the public transport potential of a Mass
+     * Get the public transport potential of a Mass from a PT Api
      *
      * @param integer $id   Id of the Mass
      * @return Mass
      */
-    public function computePublicTransportPotential(int $id): Mass
+    public function getPublicTransportPotential(int $id): Mass
     {
         $mass = $this->massRepository->find($id);
 
