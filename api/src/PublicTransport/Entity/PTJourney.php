@@ -26,6 +26,7 @@ namespace App\PublicTransport\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Match\Entity\MassPerson;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -233,6 +234,7 @@ class PTJourney
     /**
      * @var int The distance from home of this potential journey
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distanceWalkFromHome;
@@ -240,6 +242,7 @@ class PTJourney
     /**
      * @var int The duration from home of this potential journey (in seconds)
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $durationWalkFromHome;
@@ -247,6 +250,7 @@ class PTJourney
     /**
      * @var int The distance from work of this potential journey
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distanceWalkFromWork;
@@ -254,9 +258,18 @@ class PTJourney
     /**
      * @var int The duration from work of this potential journey (in seconds)
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $durationWalkFromWork;
+
+    /**
+     * @var MassPerson|null The mass person this ptjourney belongs to
+     *
+     * @ORM\ManyToOne(targetEntity="App\Match\Entity\Massperson", inversedBy="ptJourneys")
+     * @Groups("pt")
+     */
+    private $massPerson;
 
     public function __construct($id = null)
     {
@@ -454,6 +467,18 @@ class PTJourney
     public function setDurationWalkFromWork(?int $durationWalkFromWork): self
     {
         $this->durationWalkFromWork = $durationWalkFromWork;
+        
+        return $this;
+    }
+
+    public function getMassPerson(): ?MassPerson
+    {
+        return $this->massPerson;
+    }
+    
+    public function setMassPerson(?MassPerson $massPerson): self
+    {
+        $this->massPerson = $massPerson;
         
         return $this;
     }

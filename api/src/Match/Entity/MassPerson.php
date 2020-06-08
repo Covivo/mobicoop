@@ -26,6 +26,7 @@ namespace App\Match\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
+use App\PublicTransport\Entity\PTJourney;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -245,10 +246,20 @@ class MassPerson
      */
     private $user;
 
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is driver.
+     *
+     * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups({"pt"})
+     */
+    private $ptJourneys;
+
     public function __construct()
     {
         $this->matchingsAsDriver = new ArrayCollection();
         $this->matchingsAsPassenger = new ArrayCollection();
+        $this->ptJourneys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -523,6 +534,29 @@ class MassPerson
     {
         $this->user = $user;
         
+        return $this;
+    }
+
+    public function getPtJourneys()
+    {
+        return $this->ptJourneys->getValues();
+    }
+
+    public function addPtJourney(PTJourney $pTJourney): self
+    {
+        if (!$this->ptJourneys->contains($pTJourney)) {
+            $this->ptJourneys->add($pTJourney);
+        }
+
+        return $this;
+    }
+
+    public function removePtJourney(PTJourney $pTJourney): self
+    {
+        if ($this->ptJourneys->contains($pTJourney)) {
+            $this->ptJourneys->removeElement($pTJourney);
+        }
+
         return $this;
     }
 

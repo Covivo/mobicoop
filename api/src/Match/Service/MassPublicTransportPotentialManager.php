@@ -77,8 +77,10 @@ class MassPublicTransportPotentialManager
             );
             
             foreach ($results as $ptjourney) {
-                $PTPotentialJourney = $this->buildPTPotentialJourney($person, $ptjourney);
+                $PTPotentialJourney = $this->computeDataPTJourney($ptjourney);
                 if ($this->checkValidPTJourney($PTPotentialJourney)) {
+
+                    $ptjourney->setMassPerson($person);
                     $TPPotential[$person->getId()][] = $PTPotentialJourney;
 
                     // We persist the PTJourney
@@ -91,10 +93,16 @@ class MassPublicTransportPotentialManager
     }
 
     
-    public function buildPTPotentialJourney(MassPerson $person, PTJourney $ptjourney): PTJourney
+    /**
+     * Compute the complex data of a PTJourney
+     *
+     * @param PTJourney $ptjourney  The PTJourney
+     * @return PTJourney
+     */
+    public function computeDataPTJourney(PTJourney $ptjourney): PTJourney
     {
 
-//        $PTPotentialJourney->setMassPerson($person);
+
         $interval = new DateInterval($ptjourney->getDuration());
         $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
         $ptjourney->setDurationInSeconds($duration);
