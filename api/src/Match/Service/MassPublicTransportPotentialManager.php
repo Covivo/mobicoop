@@ -29,6 +29,7 @@ use App\Match\Repository\MassRepository;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
 use DateInterval;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -83,10 +84,10 @@ class MassPublicTransportPotentialManager
                 $PTPotentialJourney = $this->computeDataPTJourney($ptjourney);
                 if ($this->checkValidPTJourney($PTPotentialJourney)) {
                     $ptjourney->setMassPerson($person);
-                    $TPPotential[$person->getId()][] = $PTPotentialJourney;
+                    $TPPotential[] = $PTPotentialJourney;
 
                     // For now, we don't want to persist PTDeparture, PTArrival and PTLeg
-                    $ptjourney->setPTLegs(null);
+                    $ptjourney->setPTLegs(new ArrayCollection());
                     $ptjourney->setPTDeparture(null);
                     $ptjourney->setPTArrival(null);
 

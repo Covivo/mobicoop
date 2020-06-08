@@ -178,6 +178,7 @@ class PTJourney
 
     /**
      * @var int The total duration of this journey (in seconds).
+     * @ORM\Column(type="integer", length=100, nullable=true)
      * @Groups("pt")
      */
     private $durationInSeconds;
