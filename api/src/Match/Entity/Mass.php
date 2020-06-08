@@ -217,6 +217,12 @@ use Doctrine\Common\Collections\Collection;
  *              "security"="is_granted('mass_create',object)",
  *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
+ *          "computePTPotential"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/computePTPotential",
+ *              "normalization_context"={"groups"={"mass","pt"}},
+ *              "security"="is_granted('mass_create',object)"
+ *          }
  *      }
  * )
  * @Vich\Uploadable
@@ -476,6 +482,12 @@ class Mass
      * @Groups({"mass","massMigrate"})
      */
     private $communityAddress;
+
+    /**
+     * @var array Potential of Public Transport of this Mass
+     * @Groups({"mass","pt"})
+     */
+    private $publicTransportPotential;
 
     public function __construct($id = null)
     {
@@ -869,6 +881,18 @@ class Mass
     public function setCommunityAddress(?Address $communityAddress)
     {
         $this->communityAddress = $communityAddress;
+    }
+
+    public function getPublicTransportPotential(): ?array
+    {
+        return $this->publicTransportPotential;
+    }
+
+    public function setPublicTransportPotential(array $publicTransportPotential): self
+    {
+        $this->publicTransportPotential = $publicTransportPotential;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS
