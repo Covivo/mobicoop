@@ -234,12 +234,15 @@ export default {
         .post(this.$t('urlGetCommunities'),params)
         .then(response => {
           //console.error(response.data);
-          this.communities = response.data.communities;
-          this.communitiesUser = response.data.communitiesUser;
-          this.canCreate = response.data.canCreate;
-          this.communitiesView = response.data.communitiesView;
-          this.totalItems = response.data.totalItems;
+          if(response.data.communities){
+            this.communities = response.data.communities;
+            this.communitiesUser = response.data.communitiesUser;
+            this.canCreate = response.data.canCreate;
+            this.communitiesView = response.data.communitiesView;
+            this.totalItems = response.data.totalItems;
+          }
           this.loading = false;
+
         })
         .catch(function (error) {
           console.error(error);
