@@ -217,6 +217,12 @@ use Doctrine\Common\Collections\Collection;
  *              "security"="is_granted('mass_create',object)",
  *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
+ *          "computePTPotential"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/computePTPotential",
+ *              "normalization_context"={"groups"={"mass","pt"}},
+ *              "security"="is_granted('mass_create',object)"
+ *          }
  *      }
  * )
  * @Vich\Uploadable
