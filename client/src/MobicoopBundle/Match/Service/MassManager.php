@@ -192,4 +192,17 @@ class MassManager
         $response = $this->dataProvider->getSpecialItem($id, "workingplaces");
         return $response->getValue();
     }
+
+    /**
+     * Compute the public transport potential of a mass
+     *
+     * @param int $id The mass id
+     *
+     * @return array|null The mass or null if error.
+     */
+    public function computePTPotential(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "computePTPotential");
+        return $response->getValue();
+    }
 }
