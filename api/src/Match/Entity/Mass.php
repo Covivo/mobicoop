@@ -222,6 +222,12 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/getPTPotential",
  *              "normalization_context"={"groups"={"mass","pt"}},
  *              "security"="is_granted('mass_create',object)"
+ *          },
+ *          "computePTPotential"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/computePTPotential",
+ *              "normalization_context"={"groups"={"massPTPotential"}},
+ *              "security"="is_granted('mass_create',object)"
  *          }
  *      }
  * )
@@ -364,6 +370,12 @@ class Mass
      * @Groups({"massCompute"})
      */
     private $persons;
+
+    /**
+     * @var int Number of persons in this Mass
+     * @Groups({"mass", "massCompute", "massPTPotential"})
+     */
+    private $numberOfPersons;
 
     /**
      * @var File|null
@@ -668,6 +680,16 @@ class Mass
         }
 
         return $this;
+    }
+
+    public function getNumberOfPersons(): ?int
+    {
+        return (!is_null($this->getPersons())) ? count($this->getPersons()) : 0;
+    }
+
+    public function setNumberOfPersons(?int $numberOfPersons)
+    {
+        $this->numberOfPersons = $numberOfPersons;
     }
 
     public function getFile(): ?File

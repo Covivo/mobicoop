@@ -25,6 +25,7 @@ namespace App\Match\Service;
 
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
+use App\Match\Exception\MassException;
 use App\Match\Repository\MassRepository;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
@@ -173,5 +174,36 @@ class MassPublicTransportPotentialManager
         }
 
         return true;
+    }
+
+    /**
+     * Compute the public transport potential of a Mass from a PT Api
+     *
+     * @param integer $id   Id of the Mass
+     * @return Mass         The mass with the publicTransportPotential property filled
+     */
+    public function computePublicTransportPotential(int $id): Mass
+    {
+        $mass = $this->massRepository->find($id);
+        
+        if (is_null($mass->getPersons())) {
+            throw new MassException(MassException::NO_MASSPERSON);
+        }
+
+        // Total person of this Mass
+        $persons = $mass->getPersons();
+
+        $computedData = [
+            "totalPerson" => count($persons),
+            "totalPersonWithValidPTSolution" => 0,
+            "savedDistance" => 0,
+            "savedDuration" => 0,
+            "savedCO2" => 0,
+            "humanReadableSavedDuration" => ""
+        ];
+
+        $mass->setPublicTransportPotential($computedData);
+
+        return $mass;
     }
 }

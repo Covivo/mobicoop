@@ -25,7 +25,9 @@ namespace App\Match\Exception;
 
 class MassException extends \LogicException
 {
-    # Migrate
+    const NO_MASSPERSON = "This Mass has no MassPerson";
+
+    // Migrate
     const NO_WORK_PLACES = "No work places found";
     const INVALIDE_COMMUNITY_COORDINATES = "Invalides coordinates for this community's address";
     const COMMUNITY_MISSING_DESCRIPTION = "Missing the community description";
