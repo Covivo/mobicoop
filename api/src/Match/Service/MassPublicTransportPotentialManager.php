@@ -31,6 +31,7 @@ use App\PublicTransport\Service\PTDataProvider;
 use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use App\PublicTransport\Repository\PTJourneyRepository;
 
 /**
  * Mass public transport potential manager.
@@ -42,13 +43,15 @@ class MassPublicTransportPotentialManager
     private $massRepository;
     private $pTDataProvider;
     private $entityManager;
+    private $pTJourneyRepository;
     private $params;
 
-    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, EntityManagerInterface $entityManager, array $params)
+    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, EntityManagerInterface $entityManager, PTJourneyRepository $pTJourneyRepository, array $params)
     {
         $this->massRepository = $massRepository;
         $this->pTDataProvider = $pTDataProvider;
         $this->entityManager = $entityManager;
+        $this->pTJourneyRepository = $pTJourneyRepository;
         $this->params = $params;
     }
 
@@ -61,6 +64,9 @@ class MassPublicTransportPotentialManager
     public function getPublicTransportPotential(int $id): Mass
     {
         $mass = $this->massRepository->find($id);
+
+        // We remove the previous PTJourneys
+        $this->pTJourneyRepository->deletePTJourneysOfAMass($id);
 
         $TPPotential = [];
         foreach ($mass->getPersons() as $person) {

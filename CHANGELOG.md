@@ -4,6 +4,7 @@
 
 * New related mobile app versioning system
 * A Proposal can now have a specific Subject
+* [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
 
 ## CLIENT
 
