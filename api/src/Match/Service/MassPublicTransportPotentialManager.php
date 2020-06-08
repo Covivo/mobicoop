@@ -24,6 +24,8 @@
 namespace App\Match\Service;
 
 use App\Match\Entity\Mass;
+use App\Match\Entity\MassJourney;
+use App\Match\Entity\MassMatrix;
 use App\Match\Entity\MassPerson;
 use App\Match\Exception\MassException;
 use App\Match\Repository\MassRepository;
@@ -33,6 +35,7 @@ use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use App\PublicTransport\Repository\PTJourneyRepository;
+use App\Geography\Service\GeoTools;
 
 /**
  * Mass public transport potential manager.
@@ -45,14 +48,22 @@ class MassPublicTransportPotentialManager
     private $pTDataProvider;
     private $entityManager;
     private $pTJourneyRepository;
+    private $geoTools;
     private $params;
 
-    public function __construct(MassRepository $massRepository, PTDataProvider $pTDataProvider, EntityManagerInterface $entityManager, PTJourneyRepository $pTJourneyRepository, array $params)
-    {
+    public function __construct(
+        MassRepository $massRepository,
+        PTDataProvider $pTDataProvider,
+        EntityManagerInterface $entityManager,
+        PTJourneyRepository $pTJourneyRepository,
+        GeoTools $geoTools,
+        array $params
+    ) {
         $this->massRepository = $massRepository;
         $this->pTDataProvider = $pTDataProvider;
         $this->entityManager = $entityManager;
         $this->pTJourneyRepository = $pTJourneyRepository;
+        $this->geoTools = $geoTools;
         $this->params = $params;
     }
 
@@ -193,14 +204,51 @@ class MassPublicTransportPotentialManager
         // Total person of this Mass
         $persons = $mass->getPersons();
 
+        $matrix = new MassMatrix();
+
         $computedData = [
             "totalPerson" => count($persons),
             "totalPersonWithValidPTSolution" => 0,
+            "totalTravelDistance" => 0,
+            "totalPTDistance" => 0,
+            "totalTravelDistanceCO2" => 0,
+            "totalTravelDistancePerYear" => 0,
+            "totalTravelDistancePerYearCO2" => 0,
+            "totalTravelDuration" => 0,
+            "totalPTDuration" => 0,
+            "totalTravelDurationPerYear" => 0,
             "savedDistance" => 0,
             "savedDuration" => 0,
             "savedCO2" => 0,
             "humanReadableSavedDuration" => ""
         ];
+
+        foreach ($persons as $person) {
+            $computedData["totalTravelDistance"] += $person->getDistance();
+            $computedData["totalTravelDuration"] += $person->getDuration();
+
+            $ptjourney = $person->getPtJourneys()[0];
+
+            $computedData['totalPTDistance'] += $ptjourney->getDistance();
+            $computedData['totalPTDuration'] += $ptjourney->getDurationInSeconds();
+
+            // Store the original journey to calculate the gains between original and carpool
+            if ($mass->getStatus()==Mass::STATUS_MATCHED && $person->getDistance()!==null) {
+                // Only if the analyse has been done.
+                $journey = new MassJourney(
+                    $person->getDistance(),
+                    $person->getDuration(),
+                    $this->geoTools->getCO2($person->getDistance()),
+                    $person->getId()
+                );
+                $matrix->addOriginalsJourneys($journey);
+            }
+        }
+
+        // CO2 consumption
+        $computedData["totalTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistance"]);
+        $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+
 
         $mass->setPublicTransportPotential($computedData);
 
