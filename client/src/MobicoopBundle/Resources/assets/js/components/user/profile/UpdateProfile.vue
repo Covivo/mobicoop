@@ -315,7 +315,8 @@
       </v-col>
     </v-row>
     <v-row class="justify-center">
-      <v-col cols="7" xl="9" md="9" sm="7" >
+      <v-col cols="12"
+ >
         <!--GeoComplete-->
         <GeoComplete
           :url="geoSearchUrl"
@@ -327,8 +328,8 @@
         />
       </v-col>
       <v-col 
-        cols="3" xl="3" md="4" sm="12"
-        class="justify-center"
+        cols="3" 
+        align="center"
       >
         <v-btn 
           rounded 
@@ -337,7 +338,7 @@
           :disabled='disabledAddress' 
           :loading='loadingAddress' 
           type="button"
-          @click='updateAddress' 
+          @click='updateAddress'
         >
           {{$t('address.update.label')}}
         </v-btn>
