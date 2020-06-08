@@ -226,6 +226,8 @@ class SolidaryManager
         }
         $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
+        // the display label of the solidary 'subject : origin -> destination'
+        $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
 
         // We find the last entry of diary for this solidary to get the progression
         // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
