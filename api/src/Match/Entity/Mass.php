@@ -270,7 +270,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massCompute", "massMigrate"})
+     * @Groups({"mass","massPost", "massCompute", "massMigrate", "massPTPotential"})
      */
     private $status;
 
@@ -507,7 +507,7 @@ class Mass
      * @var \DateTimeInterface Date of getting the public transportation information from external API end
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass"})
+     * @Groups({"mass", "massPTPotential", "massAnalyze", "massMatch", "massCompute", "massMigrate"})
      */
     private $gotPublicTransportationPotentialDate;
 

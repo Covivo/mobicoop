@@ -231,7 +231,12 @@ class MassPublicTransportPotentialManager
             "savedDurationByCarPerYear" => 0,
             "savedCO2" => 0,
             "savedCO2PerYear" => 0,
-            "humanReadableSavedDuration" => ""
+            "humanReadableSavedDuration" => "",
+            "criteria" => [
+                "ptMaxConnections" => $this->params['ptMaxConnections'],
+                "ptMaxDistanceWalkFromHome" => $this->params['ptMaxDistanceWalkFromHome'],
+                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork']
+            ]
         ];
 
         foreach ($persons as $person) {
