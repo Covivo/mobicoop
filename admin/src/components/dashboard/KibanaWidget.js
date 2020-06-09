@@ -27,8 +27,6 @@ const KibanaWidget = ({
   const isAdmin =
     !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true; // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
 
-  console.info(roles);
-  console.info(isAdmin);
   // List of communities the user manage
   const dataProvider = useDataProvider();
   // eslint-disable-next-line no-lone-blocks

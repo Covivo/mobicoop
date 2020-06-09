@@ -273,7 +273,7 @@ const MailComposer = ({
               <Button
                 variant="contained"
                 color="primary"
-                disabled={etat < etats.MAIL_TEST_ENVOYE}
+                disabled={etat != etats.MAIL_TEST_ENVOYE}
                 onClick={handleClickEnvoiMasse}
               >
                 Envoyer aux {ids.length || 0} destinataires
