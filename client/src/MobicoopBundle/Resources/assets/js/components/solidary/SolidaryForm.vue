@@ -5,7 +5,7 @@
       align="center"
     >
       <v-col
-        cols="8"
+        cols="12"
         align="center"
       >
         <v-stepper
@@ -31,7 +31,7 @@
               editable
               edit-icon
             >
-              Votre trajet
+              {{ $t('stepper.service') }}
             </v-stepper-step>
 
             <v-divider />
@@ -41,7 +41,7 @@
               editable
               edit-icon
             >
-              Vos horaires
+              {{ $t('stepper.yourJourney') }}
             </v-stepper-step>
 
             <v-divider />
@@ -51,92 +51,275 @@
               editable
               edit-icon
             >
-              Récapitulatif
+              {{ $t('stepper.ponctual') }}
+            </v-stepper-step>
+
+            <v-divider />
+
+            <v-stepper-step
+              :step="5"
+              editable
+              edit-icon
+            >
+              {{ $t('stepper.summary') }}
             </v-stepper-step>
           </v-stepper-header>
 
+
+          <!-- ORIGIN -->
           <v-stepper-items>
             <v-stepper-content step="1">
-              <v-card
-                class="mb-12"
-                height="200px"
+              <v-form
+                ref="step 1"
+                v-model="step1"
+                class="pb-2"
+                @submit.prevent
               >
-                <!--GeoComplete origin-->
-                <GeoComplete
-                  :url="geoSearchUrl"
-                  :label="$t('origin.placeholder')"
-                  :token="user ? user.geoToken : ''"
-                  :display-name-in-selected="false"
-                  @address-selected="originSelected"
-                />
-              </v-card>
-
-              <v-btn
-                color="primary"
-                @click="stepper = 2"
-              >
-                Continue
-              </v-btn>
-
-              <v-btn text>
-                Cancel
-              </v-btn>
+                <v-card
+                  class="mb-12"
+                  flat
+                >
+                  <v-row
+                    justify="center"
+                  >
+                    <v-col
+                      cols="8"
+                    >
+                      <!--GeoComplete -->
+                      <GeoComplete
+                        :url="geoSearchUrl"
+                        :label="$t('origin.placeholder')"
+                        :token="user ? user.geoToken : ''"
+                        :display-name-in-selected="false"
+                        required
+                        @address-selected="originSelected"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card>
+                
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  width="150px"
+                  @click="nextStep(1)"
+                >
+                  {{ $t('ui.button.next') }}
+                </v-btn>
+              </v-form>
             </v-stepper-content>
 
+            <!-- SERVICE -->
             <v-stepper-content step="2">
-              <v-card
-                class="mb-12"
-                color="grey lighten-1"
-                height="200px"
-              />
-
-              <v-btn
-                color="primary"
-                @click="stepper = 3"
+              <v-form
+                ref="step 2"
+                v-model="step2"
+                class="pb-2"
+                @submit.prevent
               >
-                Continue
-              </v-btn>
+                <v-card
+                  class="mb-12"
+                  flat
+                >
+                  <!--Structure and subject-->
+                  <v-row
+                    justify="center"
+                  >
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('structure.title') }}</span> 
+                      </p>
+                      <v-select
+                        v-model="form.structure"
+                        :items="structures"
+                        item-text="name"
+                        item-value="id"
+                        :label="$t('structure.placeholder')"
+                      />
 
-              <v-btn text>
-                Cancel
-              </v-btn>
+                      {{ $t('structure.text') }}
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('criteria') }}</span> 
+                      </p>
+                      <v-switch
+                        v-model="form.hasRSA"
+                        color="primary"
+                        inset
+                        :label="$t('hasRSA.placeholder')"
+                      />
+                      <v-switch
+                        v-model="form.city"
+                        color="primary"
+                        inset
+                        :label="$t('city.placeholder')" 
+                      />
+                      <!-- TODO: "j'habite dans une commune de "structure.name" -->
+                    </v-col>
+
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('info') }}</span> 
+                      </p>
+                      <v-text-field
+                        v-model="name"
+                        :rules="nameRules"
+                        :label="$t('territory')"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <div class="text-left">
+                        <v-btn
+                          ref="button"
+                          rounded
+                          color="primary"
+                          outlined
+                          width="325px"    
+                        >
+                          {{ $t('send') }}
+                        </v-btn>
+                      </div>
+                    </v-col>
+                  </v-row>
+                </v-card>
+
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  width="150px"
+
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  color="secondary"
+                  width="150px"
+                  @click="nextStep(2)"
+                >
+                  {{ $t('ui.button.next') }}
+                </v-btn>
+              </v-form>
             </v-stepper-content>
 
             <v-stepper-content step="3">
-              <v-card
-                class="mb-12"
-                color="grey lighten-1"
-                height="200px"
-              />
-
-              <v-btn
-                color="primary"
-                @click="stepper = 1"
+              <v-form
+                ref="step 3"
+                v-model="step3"
+                class="pb-2"
+                @submit.prevent
               >
-                Continue
-              </v-btn>
+                <v-card
+                  class="mb-12"
+                  flat
+                />
 
-              <v-btn text>
-                Cancel
-              </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  width="150px"
+
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  color="secondary"
+                  width="150px"
+
+                  @click="nextStep(3)"
+                >
+                  {{ $t('ui.button.next') }}
+                </v-btn>
+              </v-form>
             </v-stepper-content>
             <v-stepper-content step="4">
-              <v-card
-                class="mb-12"
-                color="grey lighten-1"
-                height="200px"
-              />
-
-              <v-btn
-                color="primary"
-                @click="stepper = 4"
+              <v-form
+                ref="step 4"
+                v-model="step4"
+                class="pb-2"
+                @submit.prevent
               >
-                Continue
-              </v-btn>
+                <v-card
+                  class="mb-12"
+                  flat
+                />
 
-              <v-btn text>
-                Cancel
-              </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  color="secondary"
+                  width="150px"
+
+                  @click="nextStep(5)"
+                >
+                  {{ $t('ui.button.next') }}
+                </v-btn>
+              </v-form>
+            </v-stepper-content>
+            <v-stepper-content step="5">
+              <v-form
+                ref="step 1"
+                v-model="step4"
+                class="pb-2"
+                @submit.prevent
+              >
+                <v-card
+                  class="mb-12"
+                  flat
+                />
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  color="secondary"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  :loading="loading"
+                  width="150px"
+
+                  @click="validate"
+                >
+                  {{ $t('ui.button.register') }}
+                </v-btn>
+              </v-form>
             </v-stepper-content>
           </v-stepper-items>
         </v-stepper>
@@ -216,18 +399,6 @@
           :label="$t('structure.placeholder')"
         />
       </v-col>
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-text-field
-          v-model="form.otherStructure"
-          :disabled="!isOtherStructureActive"
-          :label="$t('other.label')"
-        />
-      </v-col>
-    </v-row>
     <v-row
       justify="center"
     >
@@ -476,6 +647,7 @@ export default {
         phoneNumber: this.user && this.user.telephone ? this.user.telephone : null,
         yearOfBirth: this.user && this.user.birthYear ? moment(this.user.birthYear.toString()).format("YYYY-MM-DD") : null,
         hasRSA: false,
+        city: false,
         search: null
       },
       genderItems: [
@@ -527,13 +699,6 @@ export default {
     },
     isValid () {
       return this.valid && (this.form.search && this.form.search.origin && this.form.search.destination && this.form.search.date)
-    },
-    // todo: trouver une meilleure solution, modifier en utilisant un slug ?
-    isOtherStructureActive() {
-      return this.form.structure ? find(this.structures, {id: this.form.structure}).name === "Autre" : false;
-    },
-    isOtherSubjectActive() {
-      return this.form.subject ? find(this.subjects, {id: this.form.subject}).label === "Autre" : false;
     }
   },
   watch: {
@@ -545,6 +710,12 @@ export default {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
+    nextStep (n) {
+      this.step += 1
+    },
+    previousStep (n) {
+      this.step -= 1
+    },
     save (date) {
       this.$refs.menu.save(date);
       this.$refs.picker.activePicker = 'YEAR';
@@ -601,6 +772,17 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.v-stepper{
+  box-shadow:none;
+  .v-stepper__step{
+      padding-top:5px;
+      padding-bottom:5px;
+    .v-stepper__label{
+      span{
+        text-shadow:none !important;
+      }
+    }
+  }
+}
 </style>
