@@ -2,23 +2,165 @@
   <v-container>
     <v-row
       justify="center"
+      align="center"
+    >
+      <v-col
+        cols="8"
+        align="center"
+      >
+        <v-stepper
+          v-model="step"
+          non-linear
+          class="elevation-0"
+        >
+          <v-stepper-header
+            class="elevation-0"
+          >
+            <v-stepper-step
+              :step="1"
+              editable
+              edit-icon
+            >
+              {{ $t('stepper.origin') }}
+            </v-stepper-step>
+
+            <v-divider />
+
+            <v-stepper-step
+              :step="2"
+              editable
+              edit-icon
+            >
+              Votre trajet
+            </v-stepper-step>
+
+            <v-divider />
+
+            <v-stepper-step
+              :step="3"
+              editable
+              edit-icon
+            >
+              Vos horaires
+            </v-stepper-step>
+
+            <v-divider />
+
+            <v-stepper-step 
+              :step="4"
+              editable
+              edit-icon
+            >
+              Récapitulatif
+            </v-stepper-step>
+          </v-stepper-header>
+
+          <v-stepper-items>
+            <v-stepper-content step="1">
+              <v-card
+                class="mb-12"
+                height="200px"
+              >
+                <!--GeoComplete origin-->
+                <GeoComplete
+                  :url="geoSearchUrl"
+                  :label="$t('origin.placeholder')"
+                  :token="user ? user.geoToken : ''"
+                  :display-name-in-selected="false"
+                  @address-selected="originSelected"
+                />
+              </v-card>
+
+              <v-btn
+                color="primary"
+                @click="stepper = 2"
+              >
+                Continue
+              </v-btn>
+
+              <v-btn text>
+                Cancel
+              </v-btn>
+            </v-stepper-content>
+
+            <v-stepper-content step="2">
+              <v-card
+                class="mb-12"
+                color="grey lighten-1"
+                height="200px"
+              />
+
+              <v-btn
+                color="primary"
+                @click="stepper = 3"
+              >
+                Continue
+              </v-btn>
+
+              <v-btn text>
+                Cancel
+              </v-btn>
+            </v-stepper-content>
+
+            <v-stepper-content step="3">
+              <v-card
+                class="mb-12"
+                color="grey lighten-1"
+                height="200px"
+              />
+
+              <v-btn
+                color="primary"
+                @click="stepper = 1"
+              >
+                Continue
+              </v-btn>
+
+              <v-btn text>
+                Cancel
+              </v-btn>
+            </v-stepper-content>
+            <v-stepper-content step="4">
+              <v-card
+                class="mb-12"
+                color="grey lighten-1"
+                height="200px"
+              />
+
+              <v-btn
+                color="primary"
+                @click="stepper = 4"
+              >
+                Continue
+              </v-btn>
+
+              <v-btn text>
+                Cancel
+              </v-btn>
+            </v-stepper-content>
+          </v-stepper-items>
+        </v-stepper>
+      </v-col>
+    </v-row>
+    <!-- <v-row
+      justify="center"
     >
       <v-col
         cols="12"
         sm="6"
         md="4"
         align="center"
-      >
-        <!--<v-alert-->
-        <!--dismissible-->
-        <!--:value="alert.show"-->
-        <!--:type="alert.type"-->
-        <!--&gt;-->
-        <!--&lt;!&ndash;Use of span and v-html to handle multiple lines errors if needed&ndash;&gt;-->
-        <!--<span v-html="alert.message" />-->
-        <!--</v-alert>-->
+      > -->
+    <!--<v-alert-->
+    <!--dismissible-->
+    <!--:value="alert.show"-->
+    <!--:type="alert.type"-->
+    <!--&gt;-->
+    <!--&lt;!&ndash;Use of span and v-html to handle multiple lines errors if needed&ndash;&gt;-->
+    <!--<span v-html="alert.message" />-->
+    <!--</v-alert>-->
 
-        <v-snackbar
+    <!-- <v-snackbar
           v-model="alert.show"
           :color="(alert.type === 'error')?'error':'primary'"
           top
@@ -33,9 +175,9 @@
           </v-btn>
         </v-snackbar>
       </v-col>
-    </v-row>
+    </v-row> -->
 
-    <v-row
+    <!-- <v-row
       justify="center"
     >
       <v-col
@@ -43,10 +185,10 @@
         sm="8"
         md="6"
         align="center"
-      >
-        <!--SearchJourney-->
+      > -->
+    <!--SearchJourney-->
         
-        <search-journey
+    <!-- <search-journey
           :geo-search-url="geoSearchUrl"
           :user="user"
           :init-regular="regular"
@@ -55,10 +197,10 @@
           @change="searchChanged"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
     
     <!--Structure and subject-->
-    <v-row
+    <!-- <v-row
       justify="center"
     >
       <v-col
@@ -113,11 +255,11 @@
           :label="$t('other.label')"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
     
     <!--user data-->
     
-    <v-row
+    <!-- <v-row
       justify="center"
     >
       <v-col
@@ -130,9 +272,9 @@
           id="formSolidary"
           ref="form"
           v-model="valid"
-        >
-          <!--<v-container>-->
-          <v-row>
+        > -->
+    <!--<v-container>-->
+    <!-- <v-row>
             <v-col
               cols="12"
             >
@@ -243,10 +385,10 @@
                 :label="$t('hasRSA.placeholder')"
               />
             </v-col>
-          </v-row>
+          </v-row> -->
             
-          <!--submission-->
-          <v-btn
+    <!--submission-->
+    <!-- <v-btn
             :disabled="!isValid"
             :loading="loading"
             color="secondary"
@@ -257,7 +399,7 @@
           </v-btn>
         </v-form>
       </v-col>
-    </v-row>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -268,6 +410,9 @@ import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.js";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
 import SearchJourney from "@components/carpool/search/SearchJourney";
+import GeoComplete from "@js/components/utilities/GeoComplete";
+
+
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -276,7 +421,7 @@ export default {
     messages: TranslationsMerged
   },
   components: {
-    SearchJourney
+    GeoComplete
   },
   props: {
     geoSearchUrl: {
@@ -315,6 +460,10 @@ export default {
         message: ""
       },
       pickerActive: false,
+
+      // stepper
+      step: 1,
+
       form: {
         structure: null,
         otherStructure: "",

@@ -15,6 +15,7 @@
     <v-row>
       <v-col
         cols="12"
+        align="center"
       >
         <p>{{ $t('introduction1') }}</p>
         <p>{{ $t('introduction2') }}</p>

@@ -11,6 +11,12 @@ export default {
         }
       }
     },
+    stepper: {
+      origin: "Départ"
+    },
+    origin: {
+      placeholder: "Lieu de départ"
+    },
     yearOfBirth: {
       label: "Année de naissance",
       placeholder: "Année de naissance"
@@ -44,6 +50,12 @@ export default {
           label: "Cancel"
         }
       }
+    },
+    stepper: {
+      origin: "Départ"
+    },
+    origin: {
+      placeholder: "Lieu de départ"
     },
     yearOfBirth: {
       label: "Year of birth",
