@@ -229,9 +229,18 @@ class SolidaryManager
         // the display label of the solidary 'subject : origin -> destination'
         $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
 
-        // We find the last entry of diary for this solidary to get the progression
-        // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+        // We find the last entry of diary for this solidary to get the progression and the author of the last update
+        $solidary->setProgression(0);
+        $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
+        if (count($diariesEntires)>0) {
+            $solidary->setProgression($diariesEntires[0]->getProgression());
+            if ($diariesEntires[0]->getAuthor()->getId() == $solidary->getSolidaryUser()->getUser()->getId()) {
+                $solidary->setLastOperator(null);
+            }else {
+                $solidary->setLastOperator($diariesEntires[0]->getAuthor());
+            }
+           
+        }
 
         return $solidary;
     }
