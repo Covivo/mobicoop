@@ -187,7 +187,7 @@ export default {
     return {
       rerenderKey: 0,
       search: '',
-      itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
+      itemsPerPageOptions: [1, 10, 20, 50, 100],
       headers: [
         {
           text: 'Id',
