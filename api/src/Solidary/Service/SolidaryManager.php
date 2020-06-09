@@ -230,8 +230,8 @@ class SolidaryManager
         $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
 
         // We find the last entry of diary for this solidary to get the progression
-        // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+        $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
+        (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
 
         return $solidary;
     }
