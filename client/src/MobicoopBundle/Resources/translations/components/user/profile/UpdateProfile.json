@@ -99,7 +99,7 @@
         },
         "address" : {
             "update" : {
-                "label": "Enregistrer",
+                "label": "Enregistrer adresse",
                 "route": "/utilisateur/profil/modifier/adresse"
             }
         },
