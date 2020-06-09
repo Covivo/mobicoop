@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -58,6 +59,7 @@ use App\User\Repository\UserRepository;
 use DateTime;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use Negotiation\Accept;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -234,14 +236,12 @@ class SolidaryManager
         $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
         if (count($diariesEntires)>0) {
             $solidary->setProgression($diariesEntires[0]->getProgression());
-            if ($diariesEntires[0]->getAuthor()->getId() == $solidary->getSolidaryUser()->getUser()->getId()) {
-                $solidary->setLastOperator(null);
-            }else {
-                $solidary->setLastOperator($diariesEntires[0]->getAuthor());
+            foreach ($diariesEntires as $diary) {
+                if ($diary->getAction()->getId() === 37) {
+                    $solidary->setLastOperator($diary->getAuthor());
+                }
             }
-           
         }
-
         return $solidary;
     }
 
@@ -326,7 +326,7 @@ class SolidaryManager
         $this->entityManager->flush();
 
         // We trigger the event
-        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         return $solidary;
