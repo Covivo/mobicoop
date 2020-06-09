@@ -169,7 +169,7 @@ class Structure
     /**
      * @var \DateTimeInterface Morning min time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $mMinTime;
@@ -177,7 +177,7 @@ class Structure
     /**
      * @var \DateTimeInterface Morning max time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $mMaxTime;
@@ -185,7 +185,7 @@ class Structure
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $aMinTime;
@@ -193,7 +193,7 @@ class Structure
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $aMaxTime;
@@ -201,7 +201,7 @@ class Structure
     /**
      * @var \DateTimeInterface Evening min time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $eMinTime;
@@ -209,7 +209,7 @@ class Structure
     /**
      * @var \DateTimeInterface Evening max time.
      *
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="time")
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $eMaxTime;
@@ -588,7 +588,7 @@ class Structure
         return $this;
     }
 
-    public function getMMinTime(): ?\DateTimeInterface
+    public function getMMinTime(): \DateTimeInterface
     {
         return $this->mMinTime;
     }
@@ -600,7 +600,7 @@ class Structure
         return $this;
     }
     
-    public function getMMaxTime(): ?\DateTimeInterface
+    public function getMMaxTime(): \DateTimeInterface
     {
         return $this->mMaxTime;
     }
@@ -612,7 +612,7 @@ class Structure
         return $this;
     }
     
-    public function getAMinTime(): ?\DateTimeInterface
+    public function getAMinTime(): \DateTimeInterface
     {
         return $this->aMinTime;
     }
@@ -624,7 +624,7 @@ class Structure
         return $this;
     }
     
-    public function getAMaxTime(): ?\DateTimeInterface
+    public function getAMaxTime(): \DateTimeInterface
     {
         return $this->aMaxTime;
     }
@@ -636,7 +636,7 @@ class Structure
         return $this;
     }
     
-    public function getEMinTime(): ?\DateTimeInterface
+    public function getEMinTime(): \DateTimeInterface
     {
         return $this->eMinTime;
     }
@@ -648,7 +648,7 @@ class Structure
         return $this;
     }
     
-    public function getEMaxTime(): ?\DateTimeInterface
+    public function getEMaxTime(): \DateTimeInterface
     {
         return $this->eMaxTime;
     }
