@@ -16,6 +16,17 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    solidary_beneficiaries: {
+      fields: {
+        id: 'ID',
+        givenName: 'Prénom',
+        familyName: 'Nom',
+        email: 'Email',
+        birthDate: 'Date de naissance',
+        telephone: 'Téléphone',
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
   },
   custom: {
     solidaryask: {
@@ -51,6 +62,11 @@ const fr = {
       internalMessagesWith: 'Messages interne avec %{username}',
       associatedAsk: 'Demande associée',
       onBehalfOf: 'Pour le compte de',
+    },
+    solidary_beneficiaries: {
+      input: {
+        validatedCandidate: 'Candidature acceptée',
+      },
     },
     dashboard: {
       pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
