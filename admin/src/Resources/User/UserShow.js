@@ -33,6 +33,7 @@ import {
 
 import { addressRenderer } from '../../utils/renderers';
 import isAuthorized from '../../auth/permissions';
+import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
 
 const renderSmoke = (smoke) => {
   let text = '';
@@ -217,15 +218,11 @@ const UserShow = (props) => {
             label={translate('custom.label.user.phoneDisplay.visibility')}
             choices={phoneDisplay}
           />
-
-          <ReferenceField
-            source="addresses"
+          <FunctionField
             label={translate('custom.label.user.currentAdresse')}
-            reference="addresses"
-            link=""
-          >
-            <FunctionField render={addressRenderer} />
-          </ReferenceField>
+            source="addresses"
+            render={({ addresses }) => addresses.map(addressRenderer)}
+          />
         </Tab>
         <Tab label="Préférences">
           <FunctionField
@@ -244,23 +241,25 @@ const UserShow = (props) => {
           <ConditionalChatFavoritesField />
         </Tab>
         <Tab label="Adresses">
-          <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
-            <Datagrid>
-              <BooleanField source="home" label="Domicile" />
-              <TextField source="name" label="Nom" />
-              <FunctionField
-                label="Address"
-                render={(address) =>
-                  address.houseNumber && address.street
-                    ? address.houseNumber + ' ' + address.street
-                    : address.streetAddress
-                }
-              />
-              <TextField source="postalCode" label="Code postal" />
-              <TextField source="addressLocality" label="Ville" />
-              <TextField source="addressCountry" label="Pays" />
-            </Datagrid>
-          </ReferenceArrayField>
+          <ReferenceRecordIdMapper attribute="addresses">
+            <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
+              <Datagrid>
+                <BooleanField source="home" label="Domicile" />
+                <TextField source="name" label="Nom" />
+                <FunctionField
+                  label="Address"
+                  render={(address) =>
+                    address.houseNumber && address.street
+                      ? address.houseNumber + ' ' + address.street
+                      : address.streetAddress
+                  }
+                />
+                <TextField source="postalCode" label="Code postal" />
+                <TextField source="addressLocality" label="Ville" />
+                <TextField source="addressCountry" label="Pays" />
+              </Datagrid>
+            </ReferenceArrayField>
+          </ReferenceRecordIdMapper>
         </Tab>
         <Tab label="Communautés">
           <ReferenceManyField

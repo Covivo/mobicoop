@@ -36,7 +36,12 @@ export const RelayPointEdit = (props) => (
           <SelectInput optionText={<UserRenderer />} />
         </ReferenceInput>
         <TextInput source="name" label="Nom" validate={required()} />
-        <ReferenceField source="address" label="Adresse actuelle" reference="addresses" linkType="">
+        <ReferenceField
+          source="address.id"
+          label="Adresse actuelle"
+          reference="addresses"
+          linkType=""
+        >
           <FunctionField render={addressRenderer} />
         </ReferenceField>
         <GeocompleteInput source="address" label="Nouvelle addresse" validate={required()} />

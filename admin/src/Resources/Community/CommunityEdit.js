@@ -13,7 +13,6 @@ import {
   ReferenceInput,
   SelectInput,
   FunctionField,
-  ReferenceField,
   ReferenceArrayField,
   Button,
   DeleteButton,
@@ -29,8 +28,9 @@ import AddIcon from '@material-ui/icons/Add';
 import { UserRenderer, addressRenderer } from '../../utils/renderers';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { validationChoices } from './communityChoices';
-import UserReferenceField from '../User/UserReferenceField';
 import SelectNewStatus from '../CommunityUser/SelectNewStatus';
+import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+import FullNameField from '../User/FullNameField';
 
 const useStyles = makeStyles({
   hiddenField: { display: 'none' },
@@ -81,22 +81,17 @@ export const CommunityEdit = (props) => {
             formClassName={classes.title}
           />
           <TextInput disabled source="originId" formClassName={classes.hiddenField} />
-          <ReferenceField
-            source="address"
+          <FunctionField
             label={translate('custom.label.community.oldAdress')}
-            reference="addresses"
-            link=""
-            formClassName={classes.fullwidthDense}
-          >
-            <FunctionField render={addressRenderer} />
-          </ReferenceField>
-          <GeocompleteInput
             source="address"
+            render={(r) => addressRenderer(r.address)}
+          />
+          <GeocompleteInput
+            source="address.id"
             label={translate('custom.label.community.newAdress')}
             validate={required()}
             formClassName={classes.fullwidth}
           />
-
           <BooleanInput
             source="membersHidden"
             label={translate('custom.label.community.memberHidden')}
@@ -118,7 +113,6 @@ export const CommunityEdit = (props) => {
             source="domain"
             label={translate('custom.label.community.domainName')}
           />
-
           <TextInput
             fullWidth
             source="description"
@@ -133,7 +127,6 @@ export const CommunityEdit = (props) => {
             validate={required()}
             formClassName={classes.richtext}
           />
-
           <DateInput
             disabled
             source="createdDate"
@@ -154,7 +147,7 @@ export const CommunityEdit = (props) => {
           />
           <ReferenceInput
             disabled
-            source="user"
+            source="user.id"
             label={translate('custom.label.community.createdBy')}
             reference="users"
             formClassName={classes.inlineBlock}
@@ -164,26 +157,22 @@ export const CommunityEdit = (props) => {
         </FormTab>
         <FormTab label={translate('custom.label.community.members')}>
           {!communityManager && <AddNewMemberButton />}
-          <ReferenceArrayField
-            fullWidth
-            source="communityUsers"
-            reference="community_users"
-            label="Tags"
-          >
-            <Datagrid>
-              <UserReferenceField
-                label={translate('custom.label.community.member')}
-                source="user"
-                sortBy="user.givenName"
-                reference="users"
-              />
-
-              <SelectNewStatus label={translate('custom.label.community.newStatus')} />
-              <DeleteButton
-                onClick={() => redirect('edit', '/communities', encodeURIComponent(communityId))}
-              />
-            </Datagrid>
-          </ReferenceArrayField>
+          <ReferenceRecordIdMapper attribute="communityUsers">
+            <ReferenceArrayField
+              fullWidth
+              source="communityUsers"
+              reference="community_users"
+              label="Tags"
+            >
+              <Datagrid>
+                <FullNameField source="user" label={translate('custom.label.community.member')} />
+                <SelectNewStatus label={translate('custom.label.community.newStatus')} />
+                <DeleteButton
+                  onClick={() => redirect('edit', '/communities', encodeURIComponent(communityId))}
+                />
+              </Datagrid>
+            </ReferenceArrayField>
+          </ReferenceRecordIdMapper>
         </FormTab>
       </TabbedForm>
     </Edit>

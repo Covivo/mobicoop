@@ -482,7 +482,7 @@ class UserManager
             // If there is no availability time information, we get the one from the structure
             $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
-
+        
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();

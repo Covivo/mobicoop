@@ -22,9 +22,7 @@ export const ParagraphEdit = (props) => {
   return (
     <Edit {...props} title="Articles > éditer un paragraphe">
       <SimpleForm redirect={redirect}>
-        <ReferenceField source="section" label="Section" reference="sections" linkType="">
-          <TextField source="title" />
-        </ReferenceField>
+        <TextField label="Section" source="section.title" />
         <SelectInput source="status" label="Statut" choices={statusChoices} />
         <RichTextInput source="text" label="Texte" validate={required()} />
         <NumberInput source="position" label="Position" />
