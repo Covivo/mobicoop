@@ -56,10 +56,10 @@ const SolidarySchedule = ({
   }
   return (
     <Grid container spacing={1}>
-      <Grid item xs={2}>
+      <Grid item xs={4}>
         Aller :
       </Grid>
-      <Grid item xs={10}>
+      <Grid item xs={8}>
         {outwardDeadlineDatetime
           ? `entre le ${formatDateTime(outwardDatetime)} et le ${formatDate(
               outwardDeadlineDatetime
@@ -68,10 +68,10 @@ const SolidarySchedule = ({
       </Grid>
       {returnDatetime && (
         <>
-          <Grid item xs={2}>
+          <Grid item xs={4}>
             Retour :
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             {returnDeadlineDatetime
               ? `entre le ${formatDateTime(returnDatetime)} et le ${formatDate(
                   returnDeadlineDatetime
@@ -82,10 +82,10 @@ const SolidarySchedule = ({
       )}
       {marginDuration && (
         <>
-          <Grid item xs={2}>
+          <Grid item xs={4}>
             Marge :
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             {Math.round(marginDuration / 3600)} heures
           </Grid>
         </>

@@ -194,11 +194,11 @@ const SolidaryShow = (props) => {
         </Grid>
 
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item md={4} xs={12}>
             {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'} &nbsp;
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item md={4} xs={12}>
             <SolidarySchedule
               frequency={frequency}
               outwardDatetime={outwardDatetime}
@@ -215,7 +215,7 @@ const SolidaryShow = (props) => {
               marginDuration={marginDuration}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item md={4} xs={12}>
             {frequency === 1 ? (
               <i>Trajet ponctuel</i>
             ) : (
@@ -240,7 +240,7 @@ const SolidaryShow = (props) => {
 
         <Divider light />
         <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
-          <Grid item className={classes.path}>
+          <Grid item lg={8} md={12} className={classes.path}>
             <Stepper>
               <Step active key={1}>
                 <StepLabel icon={<RoomIcon />}>
@@ -268,16 +268,16 @@ const SolidaryShow = (props) => {
         </Grid>
 
         <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={6}>
             <b>Structure accompagnante :</b>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={6}>
             {solidaryUserStructure.structure && solidaryUserStructure.structure.name}
           </Grid>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={6}>
             <b>Opérateur ayant enregistré la demande :</b>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item md={3} xs={6}>
             Solenne Ayzel
           </Grid>
         </Grid>

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useGetList } from 'react-admin';
 import {
@@ -14,6 +13,8 @@ import {
   ListItemAvatar,
   ListItemText,
 } from '@material-ui/core';
+import CreateRelatedActionButton from './CreateRelatedActionButton';
+import SolidaryAnimationItem from './SolidaryAnimationItem';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -21,30 +22,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '2rem',
   },
 }));
-
-const CreateRelatedActionButton = ({ record }) => (
-  <Button
-    variant="contained"
-    color="primary"
-    component={Link}
-    to={{
-      pathname: '/solidary_animations/create',
-      state: {
-        record: {
-          solidary: record.id,
-          user: record.solidaryUser.user['@id'],
-          actionName: 'solidary_update_progress_manually',
-        },
-      },
-    }}
-  >
-    Nouvelle action
-  </Button>
-);
-
-CreateRelatedActionButton.propTypes = {
-  record: PropTypes.object.isRequired,
-};
 
 const SolidaryAnimation = ({ record }) => {
   const classes = useStyles();
@@ -55,7 +32,10 @@ const SolidaryAnimation = ({ record }) => {
     { field: 'createdDate', order: 'ASC' },
     { solidary: record.id }
   );
-  console.log('data :', data);
+  const animations = Object.values(data) || [];
+  console.log('data :', animations);
+  const [seeAllAnimations, setSeeAllAnimations] = useState(false);
+
   return (
     <Card raised className={classes.card}>
       <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
@@ -67,25 +47,16 @@ const SolidaryAnimation = ({ record }) => {
         </Grid>
       </Grid>
       {loaded ? (
-        data && data.length ? (
+        animations && animations.length ? (
           <List>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              </ListItemAvatar>
-              <ListItemText primary="Solenne Ayzel" secondary="20/02/2020 14:35" />
-              <ListItemText
-                primary="Contact d'un conducteur par mail"
-                secondary="Covoitureur : Umberto Picaldi"
-              />
-            </ListItem>
-            <ListItem>
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a href="#">Voir toutes les actions</a>
-            </ListItem>
+            {animations
+              .filter((a) => seeAllAnimations || a.id === animations[0].id)
+              .map((a) => (
+                <SolidaryAnimationItem item={a} />
+              ))}
           </List>
         ) : (
-          <List>Pas encore d'action pour cette demande</List>
+          <List>Pas encore d&apos;action pour cette demande</List>
         )
       ) : (
         <LinearProgress />
