@@ -190,6 +190,11 @@ class Mass implements ResourceInterface
      */
     private $publicTransportPotential;
 
+    /**
+     * @var int Number of person in this mass
+     */
+    private $numberOfPersons;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -520,6 +525,18 @@ class Mass implements ResourceInterface
     public function setPublicTransportPotential(?array $publicTransportPotential): self
     {
         $this->publicTransportPotential = $publicTransportPotential;
+
+        return $this;
+    }
+
+    public function getNumberOfPersons(): ?int
+    {
+        return $this->numberOfPersons;
+    }
+
+    public function setNumberOfPersons(?int $numberOfPersons): self
+    {
+        $this->numberOfPersons = $numberOfPersons;
 
         return $this;
     }

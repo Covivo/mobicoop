@@ -33,4 +33,7 @@ class MassException extends \LogicException
     const COMMUNITY_MISSING_DESCRIPTION = "Missing the community description";
     const COMMUNITY_MISSING_FULL_DESCRIPTION = "Missing community full description";
     const COMMUNITY_MISSING_ADDRESS = "Missing community address";
+
+    // Public transport potential
+    const MASS_NOT_ANALYZED = "The mass hasn't been previously analyzed";
 }

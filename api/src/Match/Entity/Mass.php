@@ -703,9 +703,11 @@ class Mass
         return (!is_null($this->getPersons())) ? count($this->getPersons()) : 0;
     }
 
-    public function setNumberOfPersons(?int $numberOfPersons)
+    public function setNumberOfPersons(?int $numberOfPersons): self
     {
         $this->numberOfPersons = $numberOfPersons;
+
+        return $this;
     }
 
     public function getFile(): ?File

@@ -77,6 +77,10 @@ class MassPublicTransportPotentialManager
     {
         $mass = $this->massRepository->find($id);
 
+        if ($mass->getStatus() < 4) {
+            throw new MassException(MassException::MASS_NOT_ANALYZED);
+        }
+
         // Update the gettingPublicTransportationPotentialDate
         $mass->setGettingPublicTransportationPotentialDate(new \DateTime());
         $this->entityManager->flush();
