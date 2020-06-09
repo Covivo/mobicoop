@@ -41,6 +41,7 @@ const SolidaryUserVolunteerFilter = (props) => (
 export const SolidaryUserVolunteerList = (props) => (
   <List
     {...props}
+    bulkActionButtons={false}
     title="Transporteurs Bénévoles > liste"
     perPage={25}
     filters={<SolidaryUserVolunteerFilter />}
