@@ -496,6 +496,22 @@ class Mass
     private $communityAddress;
 
     /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $gettingPublicTransportationPotentialDate;
+
+    /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API end
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $gotPublicTransportationPotentialDate;
+
+    /**
      * @var array Potential of Public Transport of this Mass
      * @Groups({"massPTPotential"})
      */
@@ -905,6 +921,30 @@ class Mass
         $this->communityAddress = $communityAddress;
     }
 
+    public function getGettingPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gettingPublicTransportationPotentialDate;
+    }
+
+    public function setGettingPublicTransportationPotentialDate(?\DateTimeInterface $gettingPublicTransportationPotentialDate): self
+    {
+        $this->gettingPublicTransportationPotentialDate = $gettingPublicTransportationPotentialDate;
+
+        return $this;
+    }
+    
+    public function getGotPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gotPublicTransportationPotentialDate;
+    }
+
+    public function setGotPublicTransportationPotentialDate(?\DateTimeInterface $gotPublicTransportationPotentialDate): self
+    {
+        $this->gotPublicTransportationPotentialDate = $gotPublicTransportationPotentialDate;
+
+        return $this;
+    }
+    
     public function getPublicTransportPotential(): ?array
     {
         return $this->publicTransportPotential;

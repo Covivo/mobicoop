@@ -77,6 +77,10 @@ class MassPublicTransportPotentialManager
     {
         $mass = $this->massRepository->find($id);
 
+        // Update the gettingPublicTransportationPotentialDate
+        $mass->setGettingPublicTransportationPotentialDate(new \DateTime());
+        $this->entityManager->flush();
+
         // We remove the previous PTJourneys
         $this->pTJourneyRepository->deletePTJourneysOfAMass($id);
 
@@ -115,6 +119,9 @@ class MassPublicTransportPotentialManager
                 }
             }
         }
+
+        // Update the gotPublicTransportationPotentialDate
+        $mass->setGotPublicTransportationPotentialDate(new \DateTime());
 
         $this->entityManager->flush();
 
