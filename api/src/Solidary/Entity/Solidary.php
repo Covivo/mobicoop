@@ -337,7 +337,7 @@ class Solidary
      *
      * @Groups({"writeSolidary", "readSolidary"})
      */
-    private $lastOperator;
+    private $operator;
     
     public function __construct()
     {
@@ -800,14 +800,14 @@ class Solidary
         return $this;
     }
 
-    public function getLastOperator(): ?User
+    public function getOperator(): ?User
     {
-        return $this->lastOperator;
+        return $this->operator;
     }
 
-    public function setLastOperator(?User $lastOperator): self
+    public function setOperator(?User $operator): self
     {
-        $this->lastOperator = $lastOperator;
+        $this->operator = $operator;
 
         return $this;
     }

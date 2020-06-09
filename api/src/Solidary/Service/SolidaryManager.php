@@ -233,12 +233,13 @@ class SolidaryManager
 
         // We find the last entry of diary for this solidary to get the progression and the author of the last update
         $solidary->setProgression(0);
+        $solidary->setOperator(null);
         $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
         if (count($diariesEntires)>0) {
             $solidary->setProgression($diariesEntires[0]->getProgression());
             foreach ($diariesEntires as $diary) {
-                if ($diary->getAction()->getId() === 37) {
-                    $solidary->setLastOperator($diary->getAuthor());
+                if ($diary->getAction()->getId() === 37 && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                    $solidary->setOperator($diary->getAuthor());
                 }
             }
         }
