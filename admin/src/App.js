@@ -25,6 +25,7 @@ import SectionResource from './Resources/Article/Section';
 import ParagraphResource from './Resources/Article/Paragraph';
 import RelayPointResource from './Resources/RelayPoint/RelayPoint';
 import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
+import SolidaryAnimationResource from './Resources/Solidary/SolidaryAnimation';
 
 // Temporary disabled resources (Don't known why ?)
 // import StructureResource from './Resources/Solidary/Structure';
@@ -74,6 +75,10 @@ export default () => (
         <Resource
           name="structure_proofs"
           {...(can('user_manage') ? StructureProofResource : {})}
+        />,
+        <Resource
+          name="solidary_animations"
+          {...(can('user_manage') ? SolidaryAnimationResource : {})}
         />,
         // API Fail during "/structures" GET
         // @TODO: Fix API and remove the comment bellow

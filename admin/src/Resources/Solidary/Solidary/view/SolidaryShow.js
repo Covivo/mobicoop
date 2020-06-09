@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import RoomIcon from '@material-ui/icons/Room';
-
+import { useShowController, ReferenceField, TextField } from 'react-admin';
 import {
   Card,
   Grid,
@@ -18,10 +18,12 @@ import {
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core';
-import fakeData from './fakeSolidary.json';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
+import SolidaryPlace from './SolidaryPlace';
+import SolidarySchedule from './SolidarySchedule';
+import SolidaryAnimation from './SolidaryAnimation';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -55,9 +57,48 @@ const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_
 
 const SolidaryShow = (props) => {
   const classes = useStyles();
+  const {
+    basePath, // deduced from the location, useful for action buttons
+    defaultTitle, // the translated title based on the resource, e.g. 'Post #123'
+    loaded, // boolean that is false until the record is available
+    loading, // boolean that is true on mount, and false once the record was fetched
+    record, // record fetched via dataProvider.getOne() based on the id from the location
+    resource, // the resource name, deduced from the location. e.g. 'posts'
+    version, // integer used by the refresh feature
+  } = useShowController(props);
 
-  // For test only. Should be sourced by props
-  const record = fakeData;
+  console.log('record:', record);
+  if (!record) {
+    return null;
+  }
+
+  const monCheck = false,
+    tueCheck = true,
+    wedCheck = true,
+    thuCheck = false,
+    friCheck = false,
+    satCheck = false,
+    sunCheck = false;
+  const {
+    createdDate,
+    updatedDate,
+    id,
+    originId,
+    deadlineDate,
+    marginDuration,
+    frequency,
+    outwardDatetime,
+    outwardDeadlineDatetime,
+    returnDatetime,
+    returnDeadlineDatetime,
+    origin,
+    destination,
+    needs,
+    subject,
+    displayLabel,
+    progression,
+    solidaryUserStructure,
+  } = record;
 
   const { id, criteria, user, createdDate, updatedDate } = record;
   const { monCheck, tueCheck, wedCheck, thuCheck, friCheck, satCheck, sunCheck } = criteria || {};
@@ -100,7 +141,7 @@ const SolidaryShow = (props) => {
 
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
-            <h1>{`Demande solidaire # ${id}`}</h1>
+            <h1>{`Demande solidaire # ${originId}`}</h1>
           </Grid>
           <Grid item>
             <Grid
@@ -127,7 +168,7 @@ const SolidaryShow = (props) => {
               <Grid item>
                 <b>Dernière modification</b>
               </Grid>
-              <Grid item>{updatedDate}</Grid>
+              <Grid item>{new Date(updatedDate || createdDate).toLocaleDateString()}</Grid>
             </Grid>
           </Grid>
           <Grid item>
@@ -141,7 +182,7 @@ const SolidaryShow = (props) => {
               <Grid item>
                 <b>Création</b>
               </Grid>
-              <Grid item>{createdDate}</Grid>
+              <Grid item>{new Date(createdDate).toLocaleDateString()}</Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -149,28 +190,51 @@ const SolidaryShow = (props) => {
           <Grid item>
             <b>Objet du déplacement :</b>
           </Grid>
-          <Grid item>Emploi intérimaire</Grid>
+          <Grid item>{displayLabel}</Grid>
         </Grid>
 
-        <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
-          <Grid item>
-            <span>
-              Aller &lt;-&gt; Retour
-              <i>Les horaires diffèrent selon les jours</i>
-            </span>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'} &nbsp;
           </Grid>
-          <Grid item>
-            {[
-              { label: 'L', condition: monCheck },
-              { label: 'M', condition: tueCheck },
-              { label: 'Me', condition: wedCheck },
-              { label: 'J', condition: thuCheck },
-              { label: 'V', condition: friCheck },
-              { label: 'S', condition: satCheck },
-              { label: 'D', condition: sunCheck },
-            ].map(({ label, condition }) => (
-              <DayChip key={label} label={label} condition={condition} />
-            ))}
+
+          <Grid item xs={4}>
+            <SolidarySchedule
+              frequency={frequency}
+              outwardDatetime={outwardDatetime}
+              outwardDeadlineDatetime={outwardDeadlineDatetime}
+              returnDatetime={returnDatetime}
+              returnDeadlineDatetime={returnDeadlineDatetime}
+              monCheck={monCheck}
+              tueCheck={tueCheck}
+              wedCheck={wedCheck}
+              thuCheck={thuCheck}
+              friCheck={friCheck}
+              satCheck={satCheck}
+              sunCheck={sunCheck}
+              marginDuration={marginDuration}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            {frequency === 1 ? (
+              <i>Trajet ponctuel</i>
+            ) : (
+              <span>
+                <i>Trajet régulier</i>
+                <br />
+                {[
+                  { label: 'L', condition: monCheck },
+                  { label: 'M', condition: tueCheck },
+                  { label: 'Me', condition: wedCheck },
+                  { label: 'J', condition: thuCheck },
+                  { label: 'V', condition: friCheck },
+                  { label: 'S', condition: satCheck },
+                  { label: 'D', condition: sunCheck },
+                ].map(({ label, condition }) => (
+                  <DayChip key={label} label={label} condition={condition} />
+                ))}
+              </span>
+            )}
           </Grid>
         </Grid>
 
@@ -180,14 +244,12 @@ const SolidaryShow = (props) => {
             <Stepper>
               <Step active key={1}>
                 <StepLabel icon={<RoomIcon />}>
-                  <b>Morlaix</b>
+                  <SolidaryPlace place={origin} />
                 </StepLabel>
               </Step>
               <Step active key={1}>
                 <StepLabel icon={<RoomIcon />}>
-                  1 Place de la mairie
-                  <br />
-                  <b>Carhaix-Plouguer</b>
+                  <SolidaryPlace place={destination} />
                 </StepLabel>
               </Step>
             </Stepper>
@@ -197,25 +259,25 @@ const SolidaryShow = (props) => {
         <Divider light className={classes.divider} />
 
         <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item className={classes.quarter}>
+          <Grid item xs={3}>
             <b>Autres besoins :</b>
           </Grid>
-          <Grid item className={classes.quarter}>
-            Venir me chercher à la porte
+          <Grid item xs={9}>
+            {needs && needs.length ? needs.map((n) => n.label).join(' ') : 'Aucun'}
           </Grid>
         </Grid>
 
         <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item className={classes.quarter}>
+          <Grid item xs={3}>
             <b>Structure accompagnante :</b>
           </Grid>
-          <Grid item className={classes.quarter}>
-            Autre "Association BAJ"
+          <Grid item xs={3}>
+            {solidaryUserStructure.structure && solidaryUserStructure.structure.name}
           </Grid>
-          <Grid item className={classes.quarter}>
+          <Grid item xs={3}>
             <b>Opérateur ayant enregistré la demande :</b>
           </Grid>
-          <Grid item className={classes.quarter}>
+          <Grid item xs={3}>
             Solenne Ayzel
           </Grid>
         </Grid>
@@ -265,35 +327,7 @@ const SolidaryShow = (props) => {
         </List>
       </Card>
 
-      <Card raised className={classes.card}>
-        <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
-          <Grid item>
-            <b>Dernière action</b>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" color="primary">
-              Nouvelle action
-            </Button>
-          </Grid>
-        </Grid>
-
-        <List>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            </ListItemAvatar>
-            <ListItemText primary="Solenne Ayzel" secondary="20/02/2020 14:35" />
-            <ListItemText
-              primary="Contact d'un conducteur par mail"
-              secondary="Covoitureur : Umberto Picaldi"
-            />
-          </ListItem>
-          <ListItem>
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-            <a href="#">Voir toutes les actions</a>
-          </ListItem>
-        </List>
-      </Card>
+      <SolidaryAnimation record={record} />
     </Card>
   );
 };
