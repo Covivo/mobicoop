@@ -1003,7 +1003,7 @@ class SolidaryUserManager
                 $structure = $structures[0];
             }
         }
-        
+      
         // We search the right solidaryUserStructure to update
         $solidaryUserStructureToUpdate = null;
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
@@ -1023,7 +1023,7 @@ class SolidaryUserManager
 
 
             $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
-            
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_ACCEPTED);
             // We add the role to the user
             if ($solidaryUser->isVolunteer()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
@@ -1046,7 +1046,7 @@ class SolidaryUserManager
             }
     
             $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
-
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_REFUSED);
             // We dispatch the event
             $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);
