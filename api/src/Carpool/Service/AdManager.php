@@ -1292,6 +1292,7 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
+     * @return Ad|RdexError
      */
     public function getAdForRdex(
         ?string $external,
@@ -1432,7 +1433,7 @@ class AdManager
         } else {
             return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
         }
-
+            
         return $this->createAd($ad);
     }
 

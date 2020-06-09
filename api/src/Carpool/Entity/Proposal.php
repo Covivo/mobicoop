@@ -430,7 +430,7 @@ class Proposal
 
     public function setExternalId(): self
     {
-        $this->externalId = $this->generateRandomId();
+        $this->externalId = $this->generateRandomId(10);
 
         return $this;
     }

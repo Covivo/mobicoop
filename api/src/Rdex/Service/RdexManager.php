@@ -41,6 +41,8 @@ use App\Rdex\Entity\RdexTripDate;
 use App\Rdex\Entity\RdexDayTime;
 use Symfony\Component\HttpFoundation\Request;
 use App\Communication\Service\NotificationManager;
+use App\Rdex\Entity\RdexClient;
+use App\Rdex\Entity\RdexOperator;
 use App\Rdex\Event\RdexConnectionEvent;
 use App\User\Service\UserManager;
 
@@ -52,35 +54,48 @@ use App\User\Service\UserManager;
  */
 class RdexManager
 {
-    private const RDEX_CONFIG_FILE = "../config/rdex/clients.json";
-    private const RDEX_OPERATOR_FILE = "../config/rdex/operator.json";
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
     private const IMAGE_VERSION = "square_250";
+    private const DEFAULT_LANGUAGE = "fr";
 
     // false for testing purpose only
-    private const CHECK_SIGNATURE = true;
+    private const CHECK_SIGNATURE = false;
     
     private $adManager;
     private $notificationManager;
     private $userManager;
+    private $clients;   // Clients list
 
-    private $clientKey; // Current client key in configuration file (clients.json)
-    private $operator; // Operator information (operator.json)
+    /**
+     * Operator
+     *
+     * @var RdexOperator
+     */
+    private $operator;
+
+    /**
+     * Current client
+     * 
+     * @var RdexClient
+     */
+    private $client;    // Current client
     
     /**
      * Constructor.
      *
      * @param ProposalManager $proposalManager
      */
-    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager)
+    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, array $operator, array $clients)
     {
         $this->adManager = $adManager;
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
+        $this->clients = $clients;
+        $this->operator = new RdexOperator($operator['name'],$operator['origin'],$operator['url'],$operator['resultRoute']);
+        $this->client = null;
     }
-    
     
     /**
      * Check if the request signature is valid
@@ -93,8 +108,6 @@ class RdexManager
     {
         // we check the signature
         if (self::CHECK_SIGNATURE) {
-            $signatureValid = false;
-
             if ($request->getMethod()=="POST") {
                 $baseUrl = explode("?", $request->getUri());
 
@@ -135,9 +148,8 @@ class RdexManager
             $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $privateApiKey);
 
             if ($expectedSignature == $request->get("signature")) {
-                $signatureValid = true;
-            }
-            if (!$signatureValid) {
+                return true;
+            } else {
                 return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Signature mismatch");
             }
         } else {
@@ -190,6 +202,12 @@ class RdexManager
         if (!isset($p['to']['latitude'])) {
             return new RdexError("p[to][latitude]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
         }
+
+        // get the client
+        $this->client = $this->getClient($apikey);
+        if (is_null($this->client)) {
+            return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
+        }
         
         // we verify the timestamp
         $minTime = new \DateTime();
@@ -203,36 +221,8 @@ class RdexManager
 //            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
         }
 
-        // we check if the client exists in config
-        if (!file_exists(self::RDEX_CONFIG_FILE)) {
-            return new RdexError(null, RdexError::ERROR_MISSING_CONFIG);
-        }
-        $clientList = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-        $apikeyFound = false;
-        $urlApikey = $request->get('apikey');
-        $privateApiKey = null;
-        foreach ($clientList as $currentClientKey => $currentClient) {
-            if ($currentClient["public_key"]==$urlApikey) {
-                $apikeyFound = true;
-                $this->clientKey = $currentClientKey;
-                $privateApiKey = $currentClient["private_key"];
-            }
-            
-            if (!$apikeyFound) {
-                return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
-            }
-        }
-
-        // we check the operator file. It's the id of the site and it will be sent by RDEX response
-        // we check if the client exists in config
-        if (!file_exists(self::RDEX_OPERATOR_FILE)) {
-            return new RdexError(null, RdexError::ERROR_MISSING_OPERATOR);
-        } else {
-            $this->operator = json_decode(file_get_contents(self::RDEX_OPERATOR_FILE), true);
-        }
-
         // we check the signature
-        $checkSignature = $this->checkSignature($request, $privateApiKey);
+        $checkSignature = $this->checkSignature($request, $this->client->getPrivateKey());
         if ($checkSignature instanceof RdexError) {
             return $checkSignature;
         }
@@ -304,19 +294,18 @@ class RdexManager
      * Get the journeys from the proposals.
      *
      * @param array $parameters
-     * @return array
-     * @throws \Exception
+     * @return array|RdexError
      */
-    public function getJourneys(array $parameters): array
+    public function getJourneys(array $parameters)
     {
         $returnArray = [];
 
-        if (is_null($this->clientKey)) {
+        if (is_null($this->client)) {
             return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
         }
 
         $ad = $this->adManager->getAdForRdex(
-            $this->clientKey,
+            $this->client->getName(),
             $parameters["driver"]["state"],
             $parameters["passenger"]["state"],
             $parameters["from"]["longitude"],
@@ -328,16 +317,20 @@ class RdexManager
             isset($parameters["outward"]) ? $parameters["outward"] : null
         );
 
+        if ($ad instanceof RdexError) {
+            return $ad;
+        }
+
         /**
          * @var Result $result
          */
         foreach ($ad->getResults() as $result) {
             $journey = new RdexJourney($result->getId());
-            $journey->setOperator($this->operator['name']);
-            $journey->setOrigin($this->operator['origin']);
+            $journey->setOperator($this->operator->getName());
+            $journey->setOrigin($this->operator->getOrigin());
 
-            /** The url should be the detail of a the matching */
-            $journey->setUrl($this->operator['url']);
+            // for now we use the default language as languages are not handled yet
+            $journey->setUrl($this->operator->getUrl() . str_replace('{id}',$ad->getId(),$this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
             
             $journey->setType(RdexJourney::TYPE_ONE_WAY);
             if ($result->hasReturn()) {
@@ -435,10 +428,8 @@ class RdexManager
             $journey->setCost(['variable'=>$kilometersPrice]);
 
             // Frequency
-            $journey->setFrequency(($result->getFrequency()==1) ? 'puntual' : 'regular');
+            $journey->setFrequency(($result->getFrequency()==1) ? 'punctual' : 'regular');
             
-            
-
             // there's always an outward
             $infos = $this->buildJourneyDetails($result, $roleRequester, "outward");
             $journey->setDays($infos['days']);
@@ -651,26 +642,13 @@ class RdexManager
             return new RdexError("timestamp", RdexError::ERROR_MISSING_MANDATORY_FIELD);
         }
 
-        // we check if the client exists in config
-        if (!file_exists(self::RDEX_CONFIG_FILE)) {
-            return new RdexError(null, RdexError::ERROR_MISSING_CONFIG);
-        }
-        $clientList = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-        $apikeyFound = false;
-        $urlApikey = $request->get('apikey');
-        $privateApiKey = null;
-        foreach ($clientList as $currentClientKey => $currentClient) {
-            if ($currentClient["public_key"]==$urlApikey) {
-                $apikeyFound = true;
-                $this->clientKey = $currentClientKey;
-                $privateApiKey = $currentClient["private_key"];
-            }
-            
-            if (!$apikeyFound) {
-                return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
-            }
-        }
+        $apikey = $request->get('apikey');
 
+        // get the client
+        $this->client = $this->getClient($apikey);
+        if (is_null($this->client)) {
+            return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
+        }
 
         // Is there a driver
         if (
@@ -746,7 +724,7 @@ class RdexManager
         }
 
         // Finally we check the signature
-        $checkSignature = $this->checkSignature($request, $privateApiKey);
+        $checkSignature = $this->checkSignature($request, $this->client->getPrivateKey());
         if ($checkSignature instanceof RdexError) {
             return $checkSignature;
         }
@@ -763,23 +741,14 @@ class RdexManager
      */
     public function sendConnection(Request $request)
     {
-        // we check the operator file. It's the id of the site and it will be sent by RDEX response
-        // we check if the client exists in config
-        if (!file_exists(self::RDEX_OPERATOR_FILE)) {
-            return new RdexError(null, RdexError::ERROR_MISSING_OPERATOR);
-        } else {
-            $this->operator = json_decode(file_get_contents(self::RDEX_OPERATOR_FILE), true);
-        }
-
         $rdexConnection = new RdexConnection();
 
         // The message
         $rdexConnection->setDetails($request->get("details"));
 
-        $rdexConnection->setOperator($this->operator['name']);
-        $rdexConnection->setOrigin($this->operator['origin']);
+        $rdexConnection->setOperator($this->operator->getName());
+        $rdexConnection->setOrigin($this->operator->getOrigin());
 
-        
         // The futur recipient of the message
         $recipient = null;
         
@@ -818,5 +787,22 @@ class RdexManager
         }
 
         return true;
+    }
+
+
+    /**
+     * Get a client by its apikey
+     *
+     * @param string $apikey    The apikey
+     * @return RdexClient|null  The client found or null if not found
+     */
+    private function getClient(string $apikey)
+    {
+        foreach ($this->clients as $key => $client) {
+            if ($client['public_key'] == $apikey) {
+                return new RdexClient($key,$client['public_key'],$client['private_key']);
+            }
+        }
+        return null;
     }
 }

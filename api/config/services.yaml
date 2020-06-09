@@ -400,6 +400,11 @@ services:
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
         tags: ['controller.service_arguments']
+
+    App\Rdex\Service\RdexManager:
+        arguments:
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
     
     # User
     App\User\Controller\:

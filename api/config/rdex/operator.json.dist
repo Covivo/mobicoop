@@ -1,5 +1,9 @@
 {
     "name": "mobicoop",
     "origin": "mobicoop.io",
-    "url": "https://www.mobicoop.io/"
+    "url": "https://www.mobicoop.io/",
+    "resultRoute": {
+        "fr": "covoiturage/annonce/{id}/resultats",
+        "en": "carpool/ad/{id}/results"
+    }
 }
