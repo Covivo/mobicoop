@@ -209,6 +209,7 @@ class MassPublicTransportPotentialManager
         $computedData = [
             "totalPerson" => count($persons),
             "totalPersonWithValidPTSolution" => 0,
+            "PTPotential" => 0,
             "totalTravelDistance" => 0,
             "totalPTDistance" => 0,
             "totalTravelDistanceCO2" => 0,
@@ -217,13 +218,18 @@ class MassPublicTransportPotentialManager
             "totalTravelDuration" => 0,
             "totalPTDuration" => 0,
             "totalTravelDurationPerYear" => 0,
-            "savedDistance" => 0,
-            "savedDuration" => 0,
+            "savedDistanceByCar" => 0,
+            "savedDurationByCar" => 0,
+            "savedDistanceByCarPerYear" => 0,
+            "savedDurationByCarPerYear" => 0,
             "savedCO2" => 0,
+            "savedCO2PerYear" => 0,
             "humanReadableSavedDuration" => ""
         ];
 
         foreach ($persons as $person) {
+            
+            // Original travel
             $computedData["totalTravelDistance"] += $person->getDistance();
             $computedData["totalTravelDuration"] += $person->getDuration();
 
@@ -231,6 +237,10 @@ class MassPublicTransportPotentialManager
 
             $computedData['totalPTDistance'] += $ptjourney->getDistance();
             $computedData['totalPTDuration'] += $ptjourney->getDurationInSeconds();
+
+            if (count($person->getPTjourneys())>0) {
+                $computedData['totalPersonWithValidPTSolution']++;
+            }
 
             // Store the original journey to calculate the gains between original and carpool
             if ($mass->getStatus()==Mass::STATUS_MATCHED && $person->getDistance()!==null) {
@@ -245,9 +255,31 @@ class MassPublicTransportPotentialManager
             }
         }
 
-        // CO2 consumption
+
+        // CO2 consumption of original travel
         $computedData["totalTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistance"]);
         $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+
+        // PT Potential
+        $computedData['PTPotential'] = $computedData['totalPersonWithValidPTSolution'] / $computedData['totalPerson'] * 100;
+
+        // Co2 saved
+        // It's a percentage of the total CO2 of a regular travel by car using the PT Potential.
+        // We assume that PT travel consume 0 Co2
+        $computedData['savedCO2'] = $computedData["totalTravelDistanceCO2"] * $computedData['PTPotential'] / 100;
+
+        // Distance and Duration saved
+        // It's a percentage of the total distance and duration of a regular travel by car using the PT Potential.
+        // It's the distance and duration that are not made by car.
+        $computedData['savedDurationByCar'] = $computedData["totalTravelDuration"] * $computedData['PTPotential'] / 100;
+        $computedData['savedDistanceByCar'] = $computedData["totalTravelDistance"] * $computedData['PTPotential'] / 100;
+        
+        // Per year
+        $computedData["totalTravelDistancePerYear"] = $computedData["totalTravelDistance"] * Mass::NB_WORKING_DAY;
+        $computedData["totalTravelDurationPerYear"] = $computedData["totalTravelDuration"] * Mass::NB_WORKING_DAY;
+        $computedData['savedCO2PerYear'] = $computedData["savedCO2PerYear"] * Mass::NB_WORKING_DAY;
+        $computedData["savedDurationByCarPerYear"] = $computedData["savedDurationByCar"] * Mass::NB_WORKING_DAY;
+        $computedData["savedDistanceByCarPerYear"] = $computedData["savedDistanceByCar"] * Mass::NB_WORKING_DAY;
 
 
         $mass->setPublicTransportPotential($computedData);

@@ -194,11 +194,24 @@ class MassManager
     }
 
     /**
+     * Get the public transport potential of a mass from an external API
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass or null if error.
+     */
+    public function getPTPotential(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "getPTPotential");
+        return $response->getValue();
+    }
+
+    /**
      * Compute the public transport potential of a mass
      *
      * @param int $id The mass id
      *
-     * @return array|null The mass or null if error.
+     * @return Mass|null The mass or null if error.
      */
     public function computePTPotential(int $id)
     {
