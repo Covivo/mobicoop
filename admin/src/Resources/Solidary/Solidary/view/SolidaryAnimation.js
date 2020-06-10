@@ -2,17 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { useGetList } from 'react-admin';
-import {
-  Card,
-  Grid,
-  Avatar,
-  LinearProgress,
-  Button,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-} from '@material-ui/core';
+import { Card, Grid, LinearProgress, List, Button } from '@material-ui/core';
 import CreateRelatedActionButton from './CreateRelatedActionButton';
 import SolidaryAnimationItem from './SolidaryAnimationItem';
 
@@ -48,13 +38,20 @@ const SolidaryAnimation = ({ record }) => {
       </Grid>
       {loaded ? (
         animations && animations.length ? (
-          <List>
-            {animations
-              .filter((a) => seeAllAnimations || a.id === animations[0].id)
-              .map((a) => (
-                <SolidaryAnimationItem item={a} />
-              ))}
-          </List>
+          <>
+            <List>
+              {animations
+                .filter((a) => seeAllAnimations || a.id === animations[0].id)
+                .map((a) => (
+                  <SolidaryAnimationItem item={a} />
+                ))}
+            </List>
+            {!seeAllAnimations && animations.length > 1 && (
+              <Button onClick={() => setSeeAllAnimations((a) => !a)}>
+                Voir toutes les actions
+              </Button>
+            )}
+          </>
         ) : (
           <List>Pas encore d&apos;action pour cette demande</List>
         )

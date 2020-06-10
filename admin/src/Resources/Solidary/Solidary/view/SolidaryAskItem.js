@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import { Avatar, Grid, Card } from '@material-ui/core';
 import DropDownButton from '../../../../components/button/DropDownButton';
@@ -24,6 +24,7 @@ schedule: Array(1)
 solidarySolutionId: 6
 status: 0
 telephone: "0604050802"
+
 */
 
 const useStyles = makeStyles((theme) => ({
@@ -37,13 +38,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SMS_CONTACT_OPTION = 'SMS';
-const EMAIL_CONTACT_OPTION = 'Email';
-const PHONE_CONTACT_OPTION = 'Téléphone';
+const contactOptions = ['SMS', 'Email', 'Téléphone'];
 
-const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
-
-const SolidarySolutionItem = ({ item }) => {
+const SolidaryAskItem = ({ item }) => {
   const handleContactChoice = (choice, index) => {
     console.log(`@TODO: handling handleContactChoice ${choice}`);
   };
@@ -71,7 +68,14 @@ const SolidarySolutionItem = ({ item }) => {
       {item.schedule &&
         item.schedule.length &&
         item.schedule.map((schedule, i) => (
-          <Grid container spacing={1} alignItems="center" className={classes.divider} key={i}>
+          <Grid
+            container
+            spacing={1}
+            alignItems="center"
+            className={classes.divider}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`schedule-${i}`}
+          >
             <Grid item xs={12} md={4}>
               {[
                 { label: 'L', condition: schedule.mon },
@@ -86,10 +90,10 @@ const SolidarySolutionItem = ({ item }) => {
               ))}
             </Grid>
             <Grid item xs={6} md={2}>
-              Aller : {schedule.outwardTime}
+              {`Aller : ${schedule.outwardTime}`}
             </Grid>
             <Grid item xs={6} md={2}>
-              Retour : {schedule.returnTime || ' - '}
+              {`Retour : ${schedule.returnTime || ' - '}`}
             </Grid>
           </Grid>
         ))}
@@ -99,7 +103,7 @@ const SolidarySolutionItem = ({ item }) => {
         </Grid>
         <Grid item>{item.driver || 'Inconnu'}</Grid>
         <Grid item>{item.driverType ? 'Bénévole' : 'Covoitureur'}</Grid>
-        <Grid item> {item.telephone || 'pas de numéro de téléphone.'}</Grid>
+        <Grid item>{item.telephone || 'pas de numéro de téléphone.'}</Grid>
         <Grid item>
           <DropDownButton
             label="Contacter demandeur"
@@ -112,7 +116,7 @@ const SolidarySolutionItem = ({ item }) => {
   );
 };
 
-SolidarySolutionItem.propTypes = {
+SolidaryAskItem.propTypes = {
   item: PropTypes.object.isRequired,
 };
-export default SolidarySolutionItem;
+export default SolidaryAskItem;

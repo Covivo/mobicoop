@@ -1,9 +1,9 @@
 import React from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useShowController } from 'react-admin';
 import { Card, AppBar, Tabs, Tab } from '@material-ui/core';
 import SolidaryShowInformation from './SolidaryShowInformation';
-import SolidarySolution from './SolidarySolution';
+import SolidaryAsks from './SolidaryAsks';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -28,7 +28,7 @@ const SolidaryShow = (props) => {
     version, // integer used by the refresh feature
   } = useShowController(props);
   const [tabActif, setTabActif] = React.useState(0);
-  const theme = useTheme();
+
   console.log('record:', record);
   if (!record) {
     return null;
@@ -50,7 +50,7 @@ const SolidaryShow = (props) => {
       </AppBar>
 
       {tabActif === 0 && <SolidaryShowInformation {...props} record={record} />}
-      {tabActif === 1 && <SolidarySolution {...props} record={record} />}
+      {tabActif === 1 && <SolidaryAsks {...props} record={record} />}
     </Card>
   );
 };

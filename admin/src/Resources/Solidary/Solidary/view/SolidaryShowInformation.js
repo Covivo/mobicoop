@@ -1,23 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import RoomIcon from '@material-ui/icons/Room';
 import {
   Card,
   Grid,
   Avatar,
   LinearProgress,
-  Button,
   Stepper,
   Step,
   StepLabel,
   Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
 } from '@material-ui/core';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
@@ -25,7 +19,7 @@ import DayChip from './DayChip';
 import SolidaryPlace from './SolidaryPlace';
 import SolidarySchedule from './SolidarySchedule';
 import SolidaryAnimation from './SolidaryAnimation';
-import SolidarySolutionItem from './SolidarySolutionItem';
+import SolidarySolutions from './SolidarySolutions';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -77,7 +71,6 @@ const driverSearchOptions = [
 const SolidaryShowInformation = ({ record, history }) => {
   const classes = useStyles();
 
-  const theme = useTheme();
   console.log('record:', record);
   if (!record) {
     return null;
@@ -103,7 +96,7 @@ const SolidaryShowInformation = ({ record, history }) => {
     solidaryUser,
     operator,
     days,
-    asksList,
+    solutions,
   } = record;
 
   const user = solidaryUser.user || {};
@@ -164,7 +157,7 @@ const SolidaryShowInformation = ({ record, history }) => {
               <Grid item className={classes.progress}>
                 <LinearProgress variant="determinate" value={progression || 0} />
               </Grid>
-              <Grid item>Avancement : {progression || 0}%</Grid>
+              <Grid item>{`Avancement : ${progression || 0}% `}</Grid>
             </Grid>
           </Grid>
           <Grid item>
@@ -308,11 +301,7 @@ const SolidaryShowInformation = ({ record, history }) => {
           </Grid>
         </Grid>
 
-        <List>
-          {asksList.map((a) => (
-            <SolidarySolutionItem item={a} />
-          ))}
-        </List>
+        <SolidarySolutions solutions={solutions} />
       </Card>
 
       <SolidaryAnimation record={record} />

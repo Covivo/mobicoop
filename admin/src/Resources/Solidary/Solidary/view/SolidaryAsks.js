@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Card, Grid, Avatar, LinearProgress, Divider } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Card, Grid, Avatar, LinearProgress } from '@material-ui/core';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
 import SolidarySchedule from './SolidarySchedule';
-import SolidarySolutionItem from './SolidarySolutionItem';
+import SolidaryAskItem from './SolidaryAskItem';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -33,36 +33,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SMS_CONTACT_OPTION = 'SMS';
-const EMAIL_CONTACT_OPTION = 'Email';
-const PHONE_CONTACT_OPTION = 'Téléphone';
+const contactOptions = ['SMS', 'Email', 'Téléphone'];
 
-const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
-const driverSearchOptions = [
-  {
-    label: 'Rechercher aller covoiturage',
-    filter: (solidaryId) => ({ way: 'outward', type: 'carpool', solidary: solidaryId }),
-  },
-  {
-    label: 'Rechercher retour covoiturage',
-    filter: (solidaryId) => `/solidary_searches?way=return&type=carpool&solidary=${solidaryId}`,
-  },
-  {
-    label: 'Rechercher bénévole aller',
-    filter: (solidaryId) => `/solidary_searches?way=outward&type=transport&solidary=${solidaryId}`,
-  },
-  {
-    label: 'Rechercher bénévole retour',
-    filter: (solidaryId) => `/solidary_searches?way=return&type=transport&solidary=${solidaryId}`,
-  },
-];
-const SolidarySolution = ({ record, history }) => {
+const SolidaryAsks = ({ record, history }) => {
   const classes = useStyles();
 
   const {
     createdDate,
     updatedDate,
-    id,
     originId,
     marginDuration,
     frequency,
@@ -70,14 +48,9 @@ const SolidarySolution = ({ record, history }) => {
     outwardDeadlineDatetime,
     returnDatetime,
     returnDeadlineDatetime,
-    origin,
-    destination,
-    needs,
     displayLabel,
     progression,
-    solidaryUserStructure,
     solidaryUser,
-    operator,
     days,
     asksList,
   } = record;
@@ -87,13 +60,6 @@ const SolidarySolution = ({ record, history }) => {
 
   const handleContactChoice = (choice, index) => {
     console.log(`@TODO: handling handleContactChoice ${choice}`);
-  };
-
-  const handleDriverSearch = (choice, index) => {
-    const url = `/solidary_searches?filter=${encodeURIComponent(
-      JSON.stringify(driverSearchOptions[index].filter(id))
-    )}`;
-    history.push(url);
   };
 
   return (
@@ -140,7 +106,7 @@ const SolidarySolution = ({ record, history }) => {
               <Grid item className={classes.progress}>
                 <LinearProgress variant="determinate" value={progression || 0} />
               </Grid>
-              <Grid item>Avancement : {progression || 0}%</Grid>
+              <Grid item>{`Avancement : ${progression || 0}%`}</Grid>
             </Grid>
           </Grid>
           <Grid item>
@@ -181,7 +147,7 @@ const SolidarySolution = ({ record, history }) => {
 
         <Grid container spacing={2} className={classes.divider}>
           <Grid item md={4} xs={12}>
-            {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'} &nbsp;
+            {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'}
           </Grid>
 
           <Grid item md={4} xs={12}>
@@ -225,16 +191,16 @@ const SolidarySolution = ({ record, history }) => {
         </Grid>
 
         {asksList.map((a) => (
-          <SolidarySolutionItem item={a} />
+          <SolidaryAskItem item={a} />
         ))}
       </Card>
     </>
   );
 };
 
-SolidarySolution.propTypes = {
+SolidaryAsks.propTypes = {
   record: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export default SolidarySolution;
+export default SolidaryAsks;
