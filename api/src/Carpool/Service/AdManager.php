@@ -48,6 +48,9 @@ use App\Rdex\Entity\RdexError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
+use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Exception\ProofException;
+use DateTime;
 
 /**
  * Ad manager service.
@@ -72,6 +75,7 @@ class AdManager
     private $eventDispatcher;
     private $security;
     private $authManager;
+    private $proofManager;
 
     /**
      * Constructor.
@@ -79,7 +83,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -96,6 +100,7 @@ class AdManager
         $this->eventDispatcher = $eventDispatcher;
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->proofManager = $proofManager;
     }
 
     /**
@@ -645,6 +650,10 @@ class AdManager
 
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
+            /* TO DO : This if is ugly... we could use a better method in ProposalRepository **/
+            if ($proposal->getType()==Proposal::TYPE_RETURN) {
+                continue;
+            }
             if (!in_array($proposal->getId(), $refIdProposals)) {
                 $ads[] = $this->makeAd($proposal, $userId);
                 if (!is_null($proposal->getProposalLinked())) {
@@ -1010,8 +1019,6 @@ class AdManager
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
-
-
         // checks for regular and punctual
         if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
@@ -1225,6 +1232,7 @@ class AdManager
      * Returns an ad and its results matching the parameters.
      * Used for RDEX export.
      *
+     * @param string $external                  The external client
      * @param bool $offer
      * @param bool $request
      * @param float $from_longitude
@@ -1234,7 +1242,6 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
-     * @param string $external                  The external client
      */
     public function getAdForRdex(
         ?string $external,
@@ -1285,6 +1292,7 @@ class AdManager
             $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
 
             // if days is null, we are using today
+            
             if (is_null($days)) {
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
                 $days = [strtolower($today->format('l'))=>1];
@@ -1318,17 +1326,33 @@ class AdManager
         // var_dump($outward);
 
         // if days is null, we make an array using outward
+        $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
         if (is_null($days)) {
             $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             foreach ($outward as $day => $times) {
-                $days = [$day=>1];
+                if (in_array($day, $daysList)) {
+                    $days = [$day=>1];
+                } elseif ($day=="mindate") {
+                    // It's the mindate field. We use it to create a day
+                    $dayMinDate = new \DateTime($times);
+                    $textDayMinDate = strtolower($dayMinDate->format('l'));
+                    $days = [$textDayMinDate=>1];
+
+                    // We also need to set mintime and maxtime in the current outward record
+                    if (!isset($outward[$textDayMinDate]['mintime'])) {
+                        $outward[$textDayMinDate]['mintime'] = $today->format("H:i:s");
+                        $outward[$textDayMinDate]['maxtime'] = $today->modify("+1 hour")->format("H:i:s");
+                    }
+                }
             }
         }
 
+        // var_dump($outward);
         // var_dump($days);
         // die;
 
         $schedules = $this->buildSchedule($days, $outward);
+        // var_dump($schedules);die;
         if (count($schedules)>0) {
             if ($frequency=="punctual") {
                 // Punctual journey
@@ -1498,5 +1522,66 @@ class AdManager
         }
         // We return the ads array with only the ads with accepted asks associated
         return $ads;
+    }
+
+
+
+    /**********
+     *  PROOF *
+     **********/
+
+    
+    /**
+     * Create a proof for an ask.
+     *
+     * @param ClassicProof  $classicProof   The proof to create
+     * @return ClassicProof                 The created proof.
+     */
+    public function createCarpoolProof(ClassicProof $classicProof)
+    {
+        // search the ask
+        if (!$ask = $this->askManager->getAsk($classicProof->getAskId())) {
+            throw new AdException("Ask not found for classic proof");
+        }
+
+        // check that the ask is accepted
+        if (!($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+            throw new AdException("Ask not accepted");
+        }
+
+        // check if a proof already exists for this day
+        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new DateTime())) {
+            // the proof already exists, it's an update
+            return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
+        }
+
+        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), $this->params['proofType'], $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $classicProof->setId($carpoolProof->getId());
+
+        return $classicProof;
+    }
+
+    /**
+     * Update a proof.
+     *
+     * @param integer $id                       The id of the proof to update
+     * @param ClassicProof $classicProofData    The data to update the proof
+     * @return ClassicProof The classic proof updated
+     */
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    {
+        // search the proof
+        if (!$carpoolProof = $this->proofManager->getProof($id)) {
+            throw new AdException("Classic proof not found");
+        }
+
+        try {
+            $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
+            $classicProofData->setId($carpoolProof->getId());
+        } catch (ProofException $proofException) {
+            throw new AdException($proofException->getMessage());
+        }
+        
+        return $classicProofData;
     }
 }

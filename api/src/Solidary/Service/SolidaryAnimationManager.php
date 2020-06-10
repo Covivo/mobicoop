@@ -22,9 +22,12 @@
 
 namespace App\Solidary\Service;
 
+use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\SolidaryAnimation;
 use App\Solidary\Event\SolidaryAnimationPostedEvent;
+use App\Solidary\Repository\SolidaryRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Action\Entity\Diary;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -32,15 +35,52 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class SolidaryAnimationManager
 {
     private $dispatcher;
+    private $diaryRepository;
+    private $solidaryRepository;
 
-    public function __construct(EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher, SolidaryRepository $solidaryRepository, DiaryRepository $diaryRepository)
     {
         $this->dispatcher = $dispatcher;
+        $this->diaryRepository = $diaryRepository;
+        $this->solidaryRepository = $solidaryRepository;
     }
 
     public function treatSolidaryAnimation(SolidaryAnimation $solidaryAnimation)
     {
         $event = new SolidaryAnimationPostedEvent($solidaryAnimation);
         $this->dispatcher->dispatch(SolidaryAnimationPostedEvent::NAME, $event);
+    }
+
+    /**
+     * Get the SolidaryAnimations for a Solidary
+     *
+     * @param integer $solidaryId   The id of the Solidary
+     * @return array
+     */
+    public function getSolidaryAnimations(int $solidaryId): array
+    {
+        $solidary = $this->solidaryRepository->find($solidaryId);
+        
+        $diaries = $this->diaryRepository->findBy(['solidary'=>$solidary]);
+
+        $return = [];
+        foreach ($diaries as $diary) {
+            /**
+             * @var Diary $diary
+             */
+            $solidaryAnimation = new SolidaryAnimation();
+            $solidaryAnimation->setActionName($diary->getAction()->getName());
+            $solidaryAnimation->setComment($diary->getComment());
+            $solidaryAnimation->setUser($diary->getUser());
+            $solidaryAnimation->setAuthor($diary->getAuthor());
+            $solidaryAnimation->setProgression($diary->getProgression());
+            $solidaryAnimation->setSolidary($diary->getSolidary());
+            $solidaryAnimation->setSolidarySolution($diary->getSolidarySolution());
+            $solidaryAnimation->setCreatedDate($diary->getCreatedDate());
+            $solidaryAnimation->setUpdatedDate($diary->getUpdatedDate());
+            $return[] = $solidaryAnimation;
+        }
+
+        return $return;
     }
 }

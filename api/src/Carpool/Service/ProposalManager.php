@@ -127,15 +127,15 @@ class ProposalManager
     }
 
     /**
-     * Get the last active dynamic ad for a user.
+     * Get the last unfinished dynamic ad for a user.
      *
      * @param User $user        The user
      * @return Proposal|null    The proposal found or null if not found
      */
-    public function getLastDynamicActive(User $user)
+    public function getLastDynamicUnfinished(User $user)
     {
-        if ($lastActiveProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true], ['createdDate'=>'DESC'], 1)) {
-            return $lastActiveProposal[0];
+        if ($lastUnfinishedProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'finished'=>false], ['createdDate'=>'DESC'], 1)) {
+            return $lastUnfinishedProposal[0];
         }
         return null;
     }
@@ -678,149 +678,151 @@ class ProposalManager
         $criterias = null;
         unset($criterias);
 
-        $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
+        if (count($ids)>0) {
+            $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
 
-        $iterableResult = $qCriteria->iterate();
-        $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $pool = 0;
-        foreach ($iterableResult as $row) {
-            $criteria = $row[0];
-            // foreach ($criterias as $criteria) {
-            if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
-                $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
-                //$direction = $this->zoneManager->createZonesForDirection($direction);
-                $direction->setSaveGeoJson(true);
-                $criteria->setDirectionDriver($direction);
-                $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-                $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
-            }
-            if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
-                $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
-                //$direction = $this->zoneManager->createZonesForDirection($direction);
-                $direction->setSaveGeoJson(true);
-                $criteria->setDirectionPassenger($direction);
+            $iterableResult = $qCriteria->iterate();
+            $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $pool = 0;
+            foreach ($iterableResult as $row) {
+                $criteria = $row[0];
+                // foreach ($criterias as $criteria) {
+                if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
+                    $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
+                    //$direction = $this->zoneManager->createZonesForDirection($direction);
+                    $direction->setSaveGeoJson(true);
+                    $criteria->setDirectionDriver($direction);
+                    $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
+                    $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+                }
+                if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
+                    $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
+                    //$direction = $this->zoneManager->createZonesForDirection($direction);
+                    $direction->setSaveGeoJson(true);
+                    $criteria->setDirectionPassenger($direction);
+                }
+
+                if (is_null($criteria->getAnyRouteAsPassenger())) {
+                    $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+                }
+                if (is_null($criteria->isStrictDate())) {
+                    $criteria->setStrictDate($this->params['defaultStrictDate']);
+                }
+                if (is_null($criteria->getPriceKm())) {
+                    $criteria->setPriceKm($this->params['defaultPriceKm']);
+                }
+                if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    if (is_null($criteria->isStrictPunctual())) {
+                        $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
+                    }
+                    if (is_null($criteria->getMarginDuration())) {
+                        $criteria->setMarginDuration($this->params['defaultMarginTime']);
+                    }
+                } else {
+                    if (is_null($criteria->isStrictRegular())) {
+                        $criteria->setStrictRegular($this->params['defaultStrictRegular']);
+                    }
+                    if (is_null($criteria->getMonMarginDuration())) {
+                        $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getTueMarginDuration())) {
+                        $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getWedMarginDuration())) {
+                        $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getThuMarginDuration())) {
+                        $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getFriMarginDuration())) {
+                        $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getSatMarginDuration())) {
+                        $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getSunMarginDuration())) {
+                        $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
+                    }
+                    if (is_null($criteria->getToDate())) {
+                        // end date is usually null, except when creating a proposal after a matching search
+                        $endDate = clone $criteria->getFromDate();
+                        // the date can be immutable
+                        $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+                        $criteria->setToDate($toDate);
+                    }
+                }
+
+                if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $criteria->getFromTime()) {
+                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
+                    $criteria->setMinTime($minTime);
+                    $criteria->setMaxTime($maxTime);
+                } else {
+                    if ($criteria->isMonCheck() && $criteria->getMonTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
+                        $criteria->setMonMinTime($minTime);
+                        $criteria->setMonMaxTime($maxTime);
+                    }
+                    if ($criteria->isTueCheck() && $criteria->getTueTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
+                        $criteria->setTueMinTime($minTime);
+                        $criteria->setTueMaxTime($maxTime);
+                    }
+                    if ($criteria->isWedCheck() && $criteria->getWedTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
+                        $criteria->setWedMinTime($minTime);
+                        $criteria->setWedMaxTime($maxTime);
+                    }
+                    if ($criteria->isThuCheck() && $criteria->getThuTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
+                        $criteria->setThuMinTime($minTime);
+                        $criteria->setThuMaxTime($maxTime);
+                    }
+                    if ($criteria->isFriCheck() && $criteria->getFriTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
+                        $criteria->setFriMinTime($minTime);
+                        $criteria->setFriMaxTime($maxTime);
+                    }
+                    if ($criteria->isSatCheck() && $criteria->getSatTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
+                        $criteria->setSatMinTime($minTime);
+                        $criteria->setSatMaxTime($maxTime);
+                    }
+                    if ($criteria->isSunCheck() && $criteria->getSunTime()) {
+                        list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
+                        $criteria->setSunMinTime($minTime);
+                        $criteria->setSunMaxTime($maxTime);
+                    }
+                    if ($criteria->getDirectionDriver()) {
+                        $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
+                    }
+                    if ($criteria->getDirectionPassenger()) {
+                        $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
+                    }
+                }
+                    
+                // batch
+                $pool++;
+                if ($pool>=$batch) {
+                    $this->logger->info('Batch ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                    $this->entityManager->flush();
+                    $this->entityManager->clear();
+                    gc_collect_cycles();
+                    $pool = 0;
+                }
             }
 
-            if (is_null($criteria->getAnyRouteAsPassenger())) {
-                $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
-            }
-            if (is_null($criteria->isStrictDate())) {
-                $criteria->setStrictDate($this->params['defaultStrictDate']);
-            }
-            if (is_null($criteria->getPriceKm())) {
-                $criteria->setPriceKm($this->params['defaultPriceKm']);
-            }
-            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                if (is_null($criteria->isStrictPunctual())) {
-                    $criteria->setStrictPunctual($this->params['defaultStrictPunctual']);
-                }
-                if (is_null($criteria->getMarginDuration())) {
-                    $criteria->setMarginDuration($this->params['defaultMarginTime']);
-                }
-            } else {
-                if (is_null($criteria->isStrictRegular())) {
-                    $criteria->setStrictRegular($this->params['defaultStrictRegular']);
-                }
-                if (is_null($criteria->getMonMarginDuration())) {
-                    $criteria->setMonMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getTueMarginDuration())) {
-                    $criteria->setTueMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getWedMarginDuration())) {
-                    $criteria->setWedMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getThuMarginDuration())) {
-                    $criteria->setThuMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getFriMarginDuration())) {
-                    $criteria->setFriMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getSatMarginDuration())) {
-                    $criteria->setSatMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getSunMarginDuration())) {
-                    $criteria->setSunMarginDuration($this->params['defaultMarginTime']);
-                }
-                if (is_null($criteria->getToDate())) {
-                    // end date is usually null, except when creating a proposal after a matching search
-                    $endDate = clone $criteria->getFromDate();
-                    // the date can be immutable
-                    $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-                    $criteria->setToDate($toDate);
-                }
-            }
-
-            if ($criteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $criteria->getFromTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
-                $criteria->setMinTime($minTime);
-                $criteria->setMaxTime($maxTime);
-            } else {
-                if ($criteria->isMonCheck() && $criteria->getMonTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
-                    $criteria->setMonMinTime($minTime);
-                    $criteria->setMonMaxTime($maxTime);
-                }
-                if ($criteria->isTueCheck() && $criteria->getTueTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
-                    $criteria->setTueMinTime($minTime);
-                    $criteria->setTueMaxTime($maxTime);
-                }
-                if ($criteria->isWedCheck() && $criteria->getWedTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
-                    $criteria->setWedMinTime($minTime);
-                    $criteria->setWedMaxTime($maxTime);
-                }
-                if ($criteria->isThuCheck() && $criteria->getThuTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
-                    $criteria->setThuMinTime($minTime);
-                    $criteria->setThuMaxTime($maxTime);
-                }
-                if ($criteria->isFriCheck() && $criteria->getFriTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
-                    $criteria->setFriMinTime($minTime);
-                    $criteria->setFriMaxTime($maxTime);
-                }
-                if ($criteria->isSatCheck() && $criteria->getSatTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
-                    $criteria->setSatMinTime($minTime);
-                    $criteria->setSatMaxTime($maxTime);
-                }
-                if ($criteria->isSunCheck() && $criteria->getSunTime()) {
-                    list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
-                    $criteria->setSunMinTime($minTime);
-                    $criteria->setSunMaxTime($maxTime);
-                }
-                if ($criteria->getDirectionDriver()) {
-                    $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
-                    $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
-                }
-                if ($criteria->getDirectionPassenger()) {
-                    $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
-                    $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
-                }
-            }
-
-            // batch
-            $pool++;
-            if ($pool>=$batch) {
-                $this->logger->info('Batch ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('Stop treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // final flush for pending persists
+            if ($pool>0) {
+                $this->logger->info('Start final flush ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $this->entityManager->flush();
+                $this->logger->info('Start clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $this->entityManager->clear();
                 gc_collect_cycles();
-                $pool = 0;
+                $this->logger->info('End flush clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             }
-        }
-
-        $this->logger->info('Stop treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        // final flush for pending persists
-        if ($pool>0) {
-            $this->logger->info('Start final flush ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $this->entityManager->flush();
-            $this->logger->info('Start clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $this->entityManager->clear();
-            gc_collect_cycles();
-            $this->logger->info('End flush clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
 
         $this->logger->info('End update status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));

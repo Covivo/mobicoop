@@ -21,28 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\EventListener;
+namespace App\Solidary\Repository;
 
-use App\Geography\Entity\Direction;
-use App\Geography\Service\DirectionManager;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\Need;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
- * Direction Write Event listener
- */
-class DirectionWriteListener
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*/
+class NeedRepository
 {
-    private $directionManager;
-
-    public function __construct(DirectionManager $directionManager)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->directionManager = $directionManager;
+        $this->repository = $entityManager->getRepository(Need::class);
     }
 
-    public function setTerritories(Direction $direction, LifecycleEventArgs $args)
+    public function find(int $id): ?Need
     {
-        // we create the link to territories only for some selected entities
-        // desactivated for now as the calculation can be very long for long distance directions
-        // $this->directionManager->createDirectionTerritoriesForUsefulEntity($direction, true);
+        return $this->repository->find($id);
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 }

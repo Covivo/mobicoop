@@ -28,7 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use App\User\Service\UserManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 
 class DefaultController extends AbstractController
 {
@@ -74,5 +74,28 @@ class DefaultController extends AbstractController
             return $this->render('@Mobicoop/hydra/error.html.twig', ['hydra'=> $hydra]);
         }
         return null;
+    }
+
+    /**
+     * Show the platform widget.
+     */
+    public function platformWidget(UserManager $userManager)
+    {
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+
+        return $this->render('@Mobicoop/platform-widget.html.twig', [
+            'user' => $user,
+            'searchRoute' => 'covoiturage/recherche'
+        ]);
+    }
+
+    /**
+     * Show the platform widget page to get the widget code.
+     */
+    public function getPlatformWidget()
+    {
+        //$this->denyAccessUnlessGranted('show', $community);
+        return $this->render('@Mobicoop/platform-get-widget.html.twig');
     }
 }

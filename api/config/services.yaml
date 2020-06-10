@@ -61,48 +61,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # Direction Write Listener
-    App\Geography\EventListener\DirectionWriteListener:
-        tags:
-            -
-                # these are the basic options that define the entity listener
-                name: 'doctrine.orm.entity_listener'
-                event: 'postPersist'
-                entity: 'App\Geography\Entity\Direction'
-
-                # set the 'lazy' option to TRUE to only instantiate listeners when they are used
-                lazy: true
-
-                # configure a custom method name with the 'method' option
-                method: 'setTerritories'
-            -
-                name: 'doctrine.orm.entity_listener'
-                event: 'postUpdate'
-                entity: 'App\Geography\Entity\Direction'
-                lazy: true
-                method: 'setTerritories'
-
     # Address Load Listener
     mobicoop.address.address_load_listener:
         class: App\Geography\EventListener\AddressLoadListener
         arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected for displayLabel
         tags:
             - { name: doctrine.event_listener, event: postLoad }
-
-    # Address Write Listener
-    App\Geography\EventListener\AddressWriteListener:
-        tags:
-            -
-                # these are the basic options that define the entity listener
-                name: 'doctrine.orm.entity_listener'
-                event: 'preFlush'
-                entity: 'App\Geography\Entity\Address'
-
-                # set the 'lazy' option to TRUE to only instantiate listeners when they are used
-                lazy: true
-
-                # configure a custom method name with the 'method' option
-                method: 'setTerritories'
 
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
@@ -160,8 +124,19 @@ services:
                 defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
+                carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
+                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
+
+    App\Carpool\Service\ProofManager:
+        arguments:
+            $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
+            $uri: '%env(string:CARPOOL_PROOF_URI)%'
+            $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
+            $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+        tags:
+            - { name: monolog.logger, channel: carpool_proof }
 
     App\Carpool\Service\DynamicManager:
         arguments:
@@ -173,8 +148,9 @@ services:
                 dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
                 dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
                 dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
+                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
-            - { name: monolog.logger, channel: carpool }
+            - { name: monolog.logger, channel: carpool_dynamic }
 
     App\Carpool\Service\ProposalManager:
         arguments:
@@ -466,3 +442,10 @@ services:
     App\Solidary\Service\SolidaryContactManager:
         arguments:
             $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+
+    App\Solidary\Service\SolidaryUserManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'            

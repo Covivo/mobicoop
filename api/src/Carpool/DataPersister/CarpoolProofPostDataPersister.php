@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,38 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataPersister;
+ namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidarySearch;
-use App\Solidary\Service\SolidaryManager;
+use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Exception\AdException;
+use App\Carpool\Service\AdManager;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class SolidarySearchDataPersister implements ContextAwareDataPersisterInterface
+final class CarpoolProofPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $solidaryManager;
+    private $security;
+    private $adManager;
     
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(Security $security, AdManager $adManager)
     {
-        $this->solidaryManager = $solidaryManager;
+        $this->security = $security;
+        $this->adManager = $adManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof SolidarySearch;
+        return $data instanceof ClassicProof && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'transport') {
-            $data = $this->solidaryManager->getSolidaryTransportSearchResults($data);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'carpool') {
-            $data = $this->solidaryManager->getSolidaryCarpoolSearchSearchResults($data);
+        /**
+         * @var ClassicProof $data
+         */
+        // we check if the request is sent by a real user
+        if ($this->security->getUser() instanceof User) {
+            $data->setUser($this->security->getUser());
+        } else {
+            throw new AdException("Operation not permitted");
         }
-        return $data;
+        return $this->adManager->createCarpoolProof($data);
     }
 
     public function remove($data, array $context = [])

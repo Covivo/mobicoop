@@ -1,21 +1,5 @@
 <template>
   <v-content>
-    <!--SnackBar-->
-    <v-snackbar
-      v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
-      top
-    >
-      <!--      {{ (errorUpdate)?textSnackError:textSnackOk }}-->
-      <v-btn
-        color="white"
-        text
-        @click="snackbar = false"
-      >
-        <v-icon>mdi-close-circle-outline</v-icon>
-      </v-btn>
-    </v-snackbar>
-
     <v-container>
       <!-- eventGetWidget buttons and map -->
       <v-row
@@ -28,7 +12,7 @@
           class="justify-center"
         >
           <iframe
-            :src="`/evenement-widget/${event.id}`"
+            :src="$t('buttons.widget.externalRoute', {'id':event.id})"
             width="100%"
             height="640px"
             frameborder="0"
@@ -41,15 +25,13 @@
           class="mt-12"
         >
           <v-row class="mt-12">
-            <h4>Intégrer le widget</h4>
-            <p class="mt-8">
-              Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br>
-              Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.
-            </p>
-            <p>
-              &lt;iframe src="{{ getUrl() }}" width="<strong>100%</strong>" height="<strong>440px</strong>" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;
-            </p>
-            <p><strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame.</p>
+            <h4>{{ $t('buttons.widget.textDetails.title') }}</h4>
+            <p
+              class="mt-8"
+              v-html="$t('buttons.widget.textDetails.p1')"
+            />
+            <p v-html="$t('buttons.widget.textDetails.p2', {'url':getUrl()})" />
+            <p v-html="$t('buttons.widget.textDetails.p3')" />
           </v-row>
         </v-col>
       </v-row>
@@ -72,58 +54,14 @@ export default {
     messages: TranslationsMerged,
   },
   props:{
-    user: {
-      type: Object,
-      default: null
-    },
-    geodata: {
-      type: Object,
-      default: null
-    },
-    users: {
-      type: Array,
-      default: null
-    },
     event:{
       type: Object,
       default: null
-    },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
-    urlAltAvatar: {
-      type: String,
-      default: null
-    },
-    regular: {
-      type: Boolean,
-      default: false
-    },
-    punctualDateOptional: {
-      type: Boolean,
-      default: false
-    },
-  },
-  data () {
-    return {
-      search: '',
-      loading: false,
-      snackbar: false,
-      errorUpdate: false,
-      isLogged: false,
-      params: { 'eventId' : this.event.id },
-
     }
   },
   methods:{
-    checkIfUserLogged() {
-      if (this.user !== null) {
-        this.isLogged = true;
-      }
-    },
     getUrl() {
-      return window.location.protocol +"//"+ window.location.host + "/evenement-widget/" + this.event.id;
+      return window.location.protocol +"//"+ window.location.host + this.$t('buttons.widget.externalRoute', {'id':this.event.id});
     }
   }
 }

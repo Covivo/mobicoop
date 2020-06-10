@@ -155,22 +155,15 @@
                   <span>{{ $t('tooltips.connected') }}</span>
                 </v-tooltip>
               </div>
-              <!-- button for acces to the admin : only for creator -->
-              <div
-                v-if="(isCreator && canAccessAdminFromCommunity !== false)"
+              <v-btn
+                class="mt-3"
+
+                color="primary"
+                rounded
+                :href="$t('widget.route', {'id':community.id})"
               >
-                <v-btn
-                  id="accessAdminBtn"
-                  color="secondary"
-                  class="mt-5"
-                  rounded
-                  target="_blank"
-                  :href="urlAdmin"
-                  :width="250"
-                >
-                  {{ $t('buttons.accessAdmin.label') }}
-                </v-btn>
-              </div>
+                {{ $t('widget.label') }}
+              </v-btn>
             </v-col>
             <!-- map -->
             <v-col
@@ -185,11 +178,23 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
-                class="ml-1"
+                class="pa-4 mt-5"
               />
             </v-col>
           </v-row>
-     
+          <!-- button for acces to the admin : only for creator -->
+          <div
+            v-if="(isCreator && canAccessAdminFromCommunity !== false)"
+          >
+            <v-btn
+              color="secondary"
+              rounded
+              target="_blank"
+              :href="urlAdmin"
+            >
+              {{ $t('buttons.accessAdmin.label') }}
+            </v-btn>
+          </div>
           <!-- community members list + last 3 users -->
           <v-row
             v-if="isLogged && isAccepted && !loading"
@@ -710,7 +715,5 @@ export default {
 .vue2leaflet-map {
     z-index: 1;
 }
-#accessAdminBtn {
-   letter-spacing: -0.01px
-}
+
 </style>

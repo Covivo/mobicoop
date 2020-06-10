@@ -20,6 +20,8 @@ import CommunityHelp from "@components/community/CommunityHelp";
 import Community from '@components/community/Community'
 import CommunitySecuredSignIn from '@components/community/CommunitySecuredSignIn'
 import CommunityCreate from "@components/community/CommunityCreate";
+import CommunityWidget from "@components/community/CommunityWidget";
+import CommunityGetWidget from "@components/community/CommunityGetWidget";
 
 // USER
 import Login from '@components/user/Login'
@@ -45,6 +47,10 @@ import EventReport from "@components/event/EventReport";
 // ARTICLE
 import MArticle from "@components/article/MArticle";
 
+// PLATFORM WIDGET
+import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
+import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
+
 export default {
   MHeader,
   MFooter,
@@ -57,6 +63,8 @@ export default {
   Community,
   CommunitySecuredSignIn,
   CommunityCreate,
+  CommunityWidget,
+  CommunityGetWidget,
   Login,
   Messages,
   PasswordRecovery,
@@ -72,5 +80,7 @@ export default {
   EventWidget,
   EventGetWidget,
   EventReport,
-  MArticle
+  MArticle,
+  PlatformWidget,
+  PlatformGetWidget
 }

@@ -20,33 +20,49 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\EventListener;
+namespace App\Action\Repository;
 
-use App\Geography\Entity\Address;
-use App\Geography\Service\AddressManager;
+use App\Action\Entity\Diary;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\EntityRepository;
 
 /**
- * Address Write Event listener, called on preFlush.
- * @author Sylvain <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class AddressWriteListener
+class DiaryRepository
 {
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
     private $entityManager;
-    private $addressManager;
-
-    public function __construct(EntityManagerInterface $entityManager, AddressManager $addressManager)
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->addressManager = $addressManager;
+        $this->repository = $entityManager->getRepository(Diary::class);
     }
 
-    public function setTerritories(Address $address, PreFlushEventArgs $args)
+
+    public function find(int $id): ?Diary
     {
-        // we create the link to territories only for some selected entities
-        //$address = $this->addressManager->createAddressTerritoriesForUsefulEntity($address);
-        // we persist here, the flush is be made elsewhere
-        //$this->entityManager->persist($address);
+        return $this->repository->find($id);
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?Diary
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }

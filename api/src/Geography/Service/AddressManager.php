@@ -57,14 +57,35 @@ class AddressManager
     }
 
     /**
-     * Create or update territories for an Address.
+     * Create territories for an Address.
      *
      * @param Address $address  The address
      * @return Address          The address with its territories
      */
     public function createAddressTerritories(Address $address)
     {
-        $this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        //$this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // first we check that the address is not linked yet to territories
+        if (count($address->getTerritories())==0) {
+            // we search the territories
+            if ($territories = $this->territoryRepository->findAddressTerritories($address)) {
+                foreach ($territories as $territory) {
+                    $address->addTerritory($territory);
+                }
+            }
+        }
+        return $address;
+    }
+
+    /**
+     * Update territories for an Address.
+     *
+     * @param Address $address  The address
+     * @return Address          The address with its territories
+     */
+    public function updateAddressTerritories(Address $address)
+    {
+        //$this->logger->info('Address Manager | Update address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we remove all territories
         $address->removeTerritories();
         // then we search the territories
@@ -78,7 +99,7 @@ class AddressManager
 
 
     /**
-     * Create or update territories for an Address, only if the address is directly related to 'useful' entities :
+     * Create territories for an Address, only if the address is directly related to 'useful' entities :
      * - user (home)
      * - community
      * - event

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,39 +20,51 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Dynamic;
-use App\Carpool\Service\DynamicManager;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Service\StructureManager;
 use Symfony\Component\Security\Core\Security;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Collection data provider used to get a current active dynamic ad.
- *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class DynamicActiveCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class StructureGeolocationCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $security;
-    private $dynamicManager;
-    
-    public function __construct(Security $security, DynamicManager $dynamicManager)
+    private $structureManager;
+    private $context;
+
+    public function __construct(StructureManager $structureManager)
     {
-        $this->security = $security;
-        $this->dynamicManager = $dynamicManager;
+        $this->structureManager = $structureManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && $operationName =="active";
+        $this->context = $context;
+        return Structure::class === $resourceClass && $operationName = "structure_geolocation";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($last = $this->dynamicManager->getLastDynamicActive($this->security->getUser())) {
-            return [$last];
+        if (!isset($this->context['filters'])) {
+            throw new SolidaryException(SolidaryException::INVALID_DATA_PROVIDED);
         }
-        return [];
+
+        if (!isset($this->context['filters']['lat'])) {
+            throw new SolidaryException(SolidaryException::MISSING_LATITUDE);
+        }
+
+        if (!isset($this->context['filters']['lon'])) {
+            throw new SolidaryException(SolidaryException::MISSING_LONGITUDE);
+        }
+
+        return $this->structureManager->getGeolocalisedStructures($this->context['filters']['lat'], $this->context['filters']['lon']);
     }
 }

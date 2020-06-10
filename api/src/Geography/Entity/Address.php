@@ -323,7 +323,7 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
-     * @var Community|null The waypoint of the address.
+     * @var Waypoint|null The waypoint of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
      */
@@ -387,6 +387,8 @@ class Address implements \JsonSerializable
     {
         // when we clone an Address we exclude the id
         $this->id = null;
+        $this->setHome(null);
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int

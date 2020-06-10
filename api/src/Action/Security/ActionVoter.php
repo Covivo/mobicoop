@@ -23,32 +23,39 @@
 
 namespace App\Action\Security;
 
-use App\Action\Entity\Action;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Auth\Service\PermissionManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Action\Entity\Action;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class ActionVoter extends Voter
 {
-    const READ_ACTION = 'action_read';
-    const READ_ACTIONS = 'actions_read';
+    const ACTION_CREATE = 'action_create';
+    const ACTION_READ = 'action_read';
+    const ACTION_UPDATE = 'action_update';
+    const ACTION_DELETE = 'action_delete';
+    const ACTION_LIST = 'action_list';
     
-    private $permissionManager;
+    private $authManager;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(AuthManager $authManager)
     {
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::READ_ACTION,
-            self::READ_ACTIONS
+            self::ACTION_CREATE,
+            self::ACTION_READ,
+            self::ACTION_UPDATE,
+            self::ACTION_DELETE,
+            self::ACTION_LIST
             ])) {
             return false;
         }
@@ -56,8 +63,12 @@ class ActionVoter extends Voter
         // only vote on Action objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::READ_ACTION,
-            ]) && !$subject instanceof Action) {
+            self::ACTION_CREATE,
+            self::ACTION_READ,
+            self::ACTION_UPDATE,
+            self::ACTION_DELETE,
+            self::ACTION_LIST
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Action)) {
             return false;
         }
 
@@ -66,23 +77,44 @@ class ActionVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $requester = $token->getUser();
-
         switch ($attribute) {
-            case self::READ_ACTION:
-            case self::READ_ACTIONS:
-                return $this->canReadAction($requester);
+            case self::ACTION_CREATE:
+                return $this->canCreateAction();
+            case self::ACTION_READ:
+                return $this->canReadAction($subject);
+            case self::ACTION_UPDATE:
+                return $this->canUpdateAction($subject);
+            case self::ACTION_DELETE:
+                return $this->canDeleteAction($subject);
+            case self::ACTION_LIST:
+                return $this->canListAction();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canReadAction(UserInterface $requester)
+    private function canCreateAction()
     {
-        // only registered users/apps can read actions
-        if (!$requester instanceof UserInterface) {
-            return false;
-        }
-        return $this->permissionManager->checkPermission('action_read', $requester);
+        return $this->authManager->isAuthorized(self::ACTION_CREATE);
+    }
+
+    private function canReadAction(Action $action)
+    {
+        return $this->authManager->isAuthorized(self::ACTION_READ, ['action'=>$action]);
+    }
+
+    private function canUpdateAction(Action $action)
+    {
+        return $this->authManager->isAuthorized(self::ACTION_UPDATE, ['action'=>$action]);
+    }
+    
+    private function canDeleteAction(Action $action)
+    {
+        return $this->authManager->isAuthorized(self::ACTION_DELETE, ['action'=>$action]);
+    }
+    
+    private function canListAction()
+    {
+        return $this->authManager->isAuthorized(self::ACTION_LIST);
     }
 }

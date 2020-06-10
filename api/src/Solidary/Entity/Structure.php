@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\RelayPoint\Entity\RelayPoint;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -53,6 +54,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('structure_create',object)"
+ *          },
+ *          "structure_geolocation"={
+ *              "method"="GET",
+ *              "path"="/structures/geolocation",
+ *              "normalization_context"={"groups"={"readSolidary"}},
+ *              "security"="is_granted('structure_read',object)"
  *          }
  *      },
  *      itemOperations={
@@ -395,7 +402,6 @@ class Structure
      * @var ArrayCollection|null The solidary user for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
@@ -404,7 +410,6 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -413,7 +418,7 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $needs;
 
@@ -421,7 +426,6 @@ class Structure
      * @var ArrayCollection|null The relay points related to the structure.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -430,11 +434,18 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $structureProofs;
+
+    /**
+     * @var ArrayCollection|null A Structure can have multiple users that work for it
+     *
+     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="solidaryStructures")
+     * @MaxDepth(1)
+     */
+    private $users;
 
     public function __construct()
     {
@@ -444,6 +455,7 @@ class Structure
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -987,6 +999,13 @@ class Structure
         return $this->needs->getValues();
     }
 
+    public function setNeeds(?ArrayCollection $needs): self
+    {
+        $this->needs = $needs;
+
+        return $this;
+    }
+
     public function addNeed(Need $need): self
     {
         if (!$this->needs->contains($need)) {
@@ -1051,6 +1070,29 @@ class Structure
     {
         if ($this->needs->contains($structureProof)) {
             $this->needs->removeElement($structureProof);
+        }
+
+        return $this;
+    }
+
+    public function getUsers()
+    {
+        return $this->users->getValues();
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
         }
 
         return $this;

@@ -111,7 +111,7 @@ class MassMigrateManager
         // If there is a community to create, we create it
         $community = null;
         if (!empty($mass->getCommunityName())) {
-            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $community = new Community();
             $community->setName($mass->getCommunityName());
 
@@ -157,7 +157,7 @@ class MassMigrateManager
 
             if (!is_null($user)) {
                 // This MassPerson has already an existing account
-                // We're returning the founded User
+                // We're returning the found User
                 $user->setAlreadyRegistered(true);
                 $migratedUsers[] = $user;
             } else {
@@ -234,6 +234,10 @@ class MassMigrateManager
         $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrated | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATED);
         $mass->setMigratedDate(new \Datetime());
+
+        // Link the Mass to the Community
+        $mass->setCommunity($community);
+
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 

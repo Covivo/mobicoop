@@ -20,7 +20,7 @@
       <v-col cols="3">
         <v-img
           v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_250']"
+          :src="item['images'][0]['versions']['square_800']"
           aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"

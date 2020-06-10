@@ -51,7 +51,6 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
             return $this->solidaryManager->getAsksList($id);
         }
         
-        // Retrieve the blog post item from somewhere then return it or null if not found
         return $this->solidaryManager->getSolidary($id);
     }
 }
