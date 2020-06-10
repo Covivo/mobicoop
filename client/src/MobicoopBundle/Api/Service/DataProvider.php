@@ -545,9 +545,13 @@ class DataProvider
         try {
             if ($this->format == self::RETURN_JSON) {
                 $headers = $this->getHeaders(['json']);
+                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
+                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
