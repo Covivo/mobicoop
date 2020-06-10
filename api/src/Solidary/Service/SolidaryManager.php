@@ -47,6 +47,7 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
@@ -243,6 +244,29 @@ class SolidaryManager
                 }
             }
         }
+
+        // we display solutions associated to the solidary.
+        $solutions = [];
+        $solidarySolutions = $solidary->getSolidarySolutions();
+        foreach ($solidarySolutions as $solidarySolution) {
+            $solution = [];
+            if ($solidarySolution->getSolidaryMatching()->getSolidaryUser()) {
+                $solution['Type'] = SolidarySolution::TRANSPORTER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId();
+            } elseif ($solidarySolution->getSolidaryMatching()->getMatching()) {
+                $solution['Type'] = SolidarySolution::CARPOOLER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId();
+            }
+            $solutions[]=$solution;
+        }
+        $solidary->setSolutions($solutions);
+
         return $solidary;
     }
 

@@ -149,7 +149,7 @@ class Solidary
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $proposal;
@@ -338,6 +338,12 @@ class Solidary
      * @Groups({"writeSolidary", "readSolidary"})
      */
     private $operator;
+
+    /**
+     * @var Array|null Solutions associated to this demand
+     * @Groups ({"readSolidary"})
+     */
+    private $solutions;
     
     public function __construct()
     {
@@ -351,6 +357,7 @@ class Solidary
         $this->proof = [];
         $this->days = [];
         $this->homeAddress = [];
+        $this->solutions = [];
     }
 
     public function getId(): int
@@ -809,6 +816,18 @@ class Solidary
     {
         $this->operator = $operator;
 
+        return $this;
+    }
+
+    public function getSolutions(): ?array
+    {
+        return $this->solutions;
+    }
+    
+    public function setSolutions(?array $solutions): self
+    {
+        $this->solutions = $solutions;
+        
         return $this;
     }
 
