@@ -234,6 +234,10 @@ class MassMigrateManager
         $this->logger->info('Mass Migrate | Set status of Mass #' . $mass->getId() . ' to migrated | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_MIGRATED);
         $mass->setMigratedDate(new \Datetime());
+
+        // Link the Mass to the Community
+        $mass->setCommunity($community);
+
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
