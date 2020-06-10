@@ -55,8 +55,25 @@ const EMAIL_CONTACT_OPTION = 'Email';
 const PHONE_CONTACT_OPTION = 'Téléphone';
 
 const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
-
-const SolidaryShowInformation = ({ record }) => {
+const driverSearchOptions = [
+  {
+    label: 'Rechercher aller covoiturage',
+    filter: (solidaryId) => ({ way: 'outward', type: 'carpool', solidary: solidaryId }),
+  },
+  {
+    label: 'Rechercher retour covoiturage',
+    filter: (solidaryId) => `/solidary_searches?way=return&type=carpool&solidary=${solidaryId}`,
+  },
+  {
+    label: 'Rechercher bénévole aller',
+    filter: (solidaryId) => `/solidary_searches?way=outward&type=transport&solidary=${solidaryId}`,
+  },
+  {
+    label: 'Rechercher bénévole retour',
+    filter: (solidaryId) => `/solidary_searches?way=return&type=transport&solidary=${solidaryId}`,
+  },
+];
+const SolidaryShowInformation = ({ record, history }) => {
   const classes = useStyles();
 
   const theme = useTheme();
@@ -91,15 +108,22 @@ const SolidaryShowInformation = ({ record }) => {
     displayLabel,
     progression,
     solidaryUserStructure,
+    solidaryUser,
+    operator,
   } = record;
 
-  const givenName = 'John',
-    familyName = 'Doe',
-    phone = '1653763',
-    avatars = '';
+  const user = solidaryUser.user || {};
+  console.log('User : ', user);
 
-  const handleContactChoice = (choice) => {
-    console.log(`@TODO: handling ${choice}`);
+  const handleContactChoice = (choice, index) => {
+    console.log(`@TODO: handling handleContactChoice ${choice}`);
+  };
+
+  const handleDriverSearch = (choice, index) => {
+    const url = `/solidary_searches?filter=${encodeURIComponent(
+      JSON.stringify(driverSearchOptions[index].filter(id))
+    )}`;
+    history.push(url);
   };
 
   return (
@@ -109,13 +133,16 @@ const SolidaryShowInformation = ({ record }) => {
           <Grid item>
             <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
               <Grid item>
-                <Avatar alt="Remy Sharp" src={avatars.length && avatars[0]} />
+                <Avatar
+                  alt="Remy Sharp"
+                  src={user.avatars && user.avatars.length && user.avatars[0]}
+                />
               </Grid>
               <Grid item>
-                <h2>{`${givenName} ${familyName}`}</h2>
+                <h2>{`${user.givenName} ${user.familyName}`}</h2>
               </Grid>
               <Grid item>
-                <small>{phone}</small>
+                <small>{user.telephone}</small>
               </Grid>
               <Grid item>
                 <DropDownButton
@@ -146,9 +173,9 @@ const SolidaryShowInformation = ({ record }) => {
               spacing={1}
             >
               <Grid item className={classes.progress}>
-                <LinearProgress variant="determinate" value={63} />
+                <LinearProgress variant="determinate" value={progression || 0} />
               </Grid>
-              <Grid item>Recherche de solution</Grid>
+              <Grid item>Avancement : {progression || 0}%</Grid>
             </Grid>
           </Grid>
           <Grid item>
@@ -272,7 +299,7 @@ const SolidaryShowInformation = ({ record }) => {
             <b>Opérateur ayant enregistré la demande :</b>
           </Grid>
           <Grid item md={3} xs={6}>
-            Solenne Ayzel
+            {operator ? `${operator.givenName} ${operator.familyName}` : 'Non renseigné.'}
           </Grid>
         </Grid>
       </Card>
@@ -283,9 +310,12 @@ const SolidaryShowInformation = ({ record }) => {
             <b>Conducteurs potentiels</b>
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary">
-              Rechercher nouveau conducteur
-            </Button>
+            <DropDownButton
+              size="small"
+              label="Rechercher nouveau conducteur"
+              options={driverSearchOptions.map((o) => o.label)}
+              onSelect={handleDriverSearch}
+            />
           </Grid>
         </Grid>
 
@@ -328,6 +358,7 @@ const SolidaryShowInformation = ({ record }) => {
 
 SolidaryShowInformation.propTypes = {
   record: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default SolidaryShowInformation;
