@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -330,6 +331,13 @@ class Solidary
     * @Groups({"writeSolidary", "readSolidary"})
     */
     private $displayLabel;
+
+    /**
+     * @var User|null The last User who made an action on that solidary
+     *
+     * @Groups({"writeSolidary", "readSolidary"})
+     */
+    private $operator;
     
     public function __construct()
     {
@@ -791,6 +799,19 @@ class Solidary
         
         return $this;
     }
+
+    public function getOperator(): ?User
+    {
+        return $this->operator;
+    }
+
+    public function setOperator(?User $operator): self
+    {
+        $this->operator = $operator;
+
+        return $this;
+    }
+
 
     
    

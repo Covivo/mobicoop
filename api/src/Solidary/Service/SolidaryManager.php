@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -58,6 +59,7 @@ use App\User\Repository\UserRepository;
 use DateTime;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use Negotiation\Accept;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -229,10 +231,18 @@ class SolidaryManager
         // the display label of the solidary 'subject : origin -> destination'
         $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
 
-        // We find the last entry of diary for this solidary to get the progression
+        // We find the last entry of diary for this solidary to get the progression and the author of the last update
+        $solidary->setProgression(0);
+        $solidary->setOperator(null);
         $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
-
+        if (count($diariesEntires)>0) {
+            $solidary->setProgression($diariesEntires[0]->getProgression());
+            foreach ($diariesEntires as $diary) {
+                if ($diary->getAction()->getId() === 37 && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                    $solidary->setOperator($diary->getAuthor());
+                }
+            }
+        }
         return $solidary;
     }
 
@@ -317,7 +327,7 @@ class SolidaryManager
         $this->entityManager->flush();
 
         // We trigger the event
-        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         return $solidary;
