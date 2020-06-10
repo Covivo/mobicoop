@@ -236,6 +236,8 @@ const fr = {
           lowerPassword: 'Au minimum 1 minuscule',
           numberPassword: 'Au minimum 1 chiffre',
           minPassword: 'Au minimum 8 caractères',
+          phoneDisplayMandatory: 'Préférence du numéro de téléphone obligatoire',
+          rolesMandatory: 'Vous devez sélectionner au moins 1 rôles',
         },
         phoneDisplay: {
           visibility: 'Visibilité de mon numéro de téléphone',

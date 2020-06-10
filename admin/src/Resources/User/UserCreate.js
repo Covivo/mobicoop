@@ -88,8 +88,19 @@ const UserCreate = (props) => {
   const paswwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
   const phoneRules = [verifPhoneDisplaycountRules()];
   const emailRules = [required(), email()];
-  const validateUserCreation = (values) =>
-    values.address ? {} : { address: translate('custom.label.user.adresseMandatory') };
+
+  //Used for check if adresses is not empty AND at least 1 roles exist
+  const validateUserCreation = (values) => {
+    let errors = {};
+    console.info(values);
+    if (!values.address) {
+      errors = [translate('custom.label.user.adresseMandatory')];
+    }
+    if (!values.fields) {
+      errors = [translate('custom.label.user.errors.rolesMandatory')];
+    }
+    return errors;
+  };
 
   return (
     <Create {...props} title={translate('custom.label.user.title.create')}>
