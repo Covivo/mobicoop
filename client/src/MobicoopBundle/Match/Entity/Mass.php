@@ -129,7 +129,6 @@ class Mass implements ResourceInterface
 
     /**
      * @var int|null The user id associated with the file.
-     * @Groups({"post","put"})
      */
     private $userId;
 

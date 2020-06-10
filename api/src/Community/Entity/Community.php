@@ -338,6 +338,15 @@ class Community
      */
     private $ads;
 
+    /**
+     * @var Mass The community created after the migration of this mass users
+     *
+     * @ORM\OneToOne(targetEntity="App\Match\Entity\Mass", mappedBy="community")
+     * @Groups({"readCommunity","communities"})
+     */
+    private $mass;
+
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -648,6 +657,18 @@ class Community
     public function setAds(?array $ads): self
     {
         $this->ads = $ads;
+
+        return $this;
+    }
+
+    public function getMass(): ?Mass
+    {
+        return $this->mass;
+    }
+
+    public function setMass(?Mass $mass): self
+    {
+        $this->mass = $mass;
 
         return $this;
     }
