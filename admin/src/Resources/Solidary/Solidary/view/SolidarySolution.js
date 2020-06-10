@@ -2,29 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import RoomIcon from '@material-ui/icons/Room';
-import {
-  Card,
-  Grid,
-  Avatar,
-  LinearProgress,
-  Button,
-  Stepper,
-  Step,
-  StepLabel,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemSecondaryAction,
-} from '@material-ui/core';
+import { Card, Grid, Avatar, LinearProgress, Divider } from '@material-ui/core';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
-import SolidaryPlace from './SolidaryPlace';
 import SolidarySchedule from './SolidarySchedule';
-import SolidaryAnimation from './SolidaryAnimation';
 import SolidarySolutionItem from './SolidarySolutionItem';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,14 +56,8 @@ const driverSearchOptions = [
     filter: (solidaryId) => `/solidary_searches?way=return&type=transport&solidary=${solidaryId}`,
   },
 ];
-const SolidaryShowInformation = ({ record, history }) => {
+const SolidarySolution = ({ record, history }) => {
   const classes = useStyles();
-
-  const theme = useTheme();
-  console.log('record:', record);
-  if (!record) {
-    return null;
-  }
 
   const {
     createdDate,
@@ -205,7 +181,7 @@ const SolidaryShowInformation = ({ record, history }) => {
 
         <Grid container spacing={2} className={classes.divider}>
           <Grid item md={4} xs={12}>
-            {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'}
+            {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'} &nbsp;
           </Grid>
 
           <Grid item md={4} xs={12}>
@@ -248,81 +224,17 @@ const SolidaryShowInformation = ({ record, history }) => {
           </Grid>
         </Grid>
 
-        <Divider light className={classes.divider} />
-        <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
-          <Grid item lg={8} md={12} className={classes.path}>
-            <Stepper>
-              <Step active key={1}>
-                <StepLabel icon={<RoomIcon />}>
-                  <SolidaryPlace place={origin} />
-                </StepLabel>
-              </Step>
-              <Step active key={1}>
-                <StepLabel icon={<RoomIcon />}>
-                  <SolidaryPlace place={destination} />
-                </StepLabel>
-              </Step>
-            </Stepper>
-          </Grid>
-        </Grid>
-
-        <Divider light className={classes.divider} />
-
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item xs={3}>
-            <b>Autres besoins :</b>
-          </Grid>
-          <Grid item xs={9}>
-            {needs && needs.length ? needs.map((n) => n.label).join(' ') : 'Aucun'}
-          </Grid>
-        </Grid>
-
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item md={3} xs={6}>
-            <b>Structure accompagnante :</b>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            {solidaryUserStructure.structure && solidaryUserStructure.structure.name}
-          </Grid>
-          <Grid item md={3} xs={6}>
-            <b>Opérateur ayant enregistré la demande :</b>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            {operator ? `${operator.givenName} ${operator.familyName}` : 'Non renseigné.'}
-          </Grid>
-        </Grid>
+        {asksList.map((a) => (
+          <SolidarySolutionItem item={a} />
+        ))}
       </Card>
-
-      <Card raised className={classes.card}>
-        <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
-          <Grid item>
-            <b>Conducteurs potentiels</b>
-          </Grid>
-          <Grid item>
-            <DropDownButton
-              size="small"
-              label="Rechercher nouveau conducteur"
-              options={driverSearchOptions.map((o) => o.label)}
-              onSelect={handleDriverSearch}
-            />
-          </Grid>
-        </Grid>
-
-        <List>
-          {asksList.map((a) => (
-            <SolidarySolutionItem item={a} />
-          ))}
-        </List>
-      </Card>
-
-      <SolidaryAnimation record={record} />
     </>
   );
 };
 
-SolidaryShowInformation.propTypes = {
+SolidarySolution.propTypes = {
   record: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export default SolidaryShowInformation;
+export default SolidarySolution;

@@ -159,10 +159,11 @@ const createHydraResponseToReactAdminResponseConverter = (type) => (response) =>
               : -3), // no information
         }));
       }
-      if (response.json['results']) {
-        const results = response.json['results'];
+      if (response.json.results) {
+        const { results } = response.json;
         return Promise.resolve({ data: results, total: results.length });
       }
+      return Promise.resolve({ data: [], total: 0 });
 
     case DELETE:
       return Promise.resolve({ data: { id: null } });

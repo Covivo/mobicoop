@@ -3,6 +3,7 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useShowController } from 'react-admin';
 import { Card, AppBar, Tabs, Tab } from '@material-ui/core';
 import SolidaryShowInformation from './SolidaryShowInformation';
+import SolidarySolution from './SolidarySolution';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -49,7 +50,7 @@ const SolidaryShow = (props) => {
       </AppBar>
 
       {tabActif === 0 && <SolidaryShowInformation {...props} record={record} />}
-      {tabActif === 1 && <p>Soliday Solutions</p>}
+      {tabActif === 1 && <SolidarySolution {...props} record={record} />}
     </Card>
   );
 };
