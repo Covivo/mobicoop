@@ -59,7 +59,7 @@ justPublished : "vient d'être publiée"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-youHaveAMessage: "Vous avez reçu un nouveau message :"
+youHaveAMessage: "Vous avez reçu un nouveau message"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
