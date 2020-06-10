@@ -5,7 +5,7 @@ import {
   Datagrid,
   TextField,
   ShowButton,
-  ReferenceField,
+  FunctionField,
   DateField,
   Filter,
 } from 'react-admin';
@@ -24,14 +24,12 @@ export const SolidaryList = (props) => (
   >
     <Datagrid>
       <TextField source="originId" label="ID" />
-      <ReferenceField source="subject" reference="subjects" link={false}>
-        <TextField source="label" />
-      </ReferenceField>
+      <TextField source="subject.label" />
       <TodoField label="Trajet demandé" detail="Champ 'trajet'" />
-      <TodoField label="Prénom" detail="/!\ Accès deep" />
-      <TodoField label="Nom" detail="/!\ Accès deep" />
-      <TodoField label="% avanc." detail="/!\ Accès deep" />
-      <TodoField label="Dernière action" detail="/!\ Accès deep" />
+      <TextField label="Prénom" source="solidaryUser.user.givenName" />
+      <TextField label="Nom" source="solidaryUser.user.familyName" />
+      <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />
+      <TodoField label="Dernière action" detail="Où trouver l'info?" />
       <DateField source="createdDate" label="Date" />
       <ShowButton />
     </Datagrid>

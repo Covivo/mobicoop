@@ -94,7 +94,7 @@ const getOneUser = async (provider, params) => {
     )
   );
 
-  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem));
+  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
 
   return { data: user };
 };

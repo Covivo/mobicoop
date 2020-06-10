@@ -89,12 +89,16 @@ const GestionRoles = ({ record }) => {
             .then(({ data }) => {
               setFields((t) => [
                 ...t,
-                { roles: element.authItem, territory: element.territory, territoryName: data.name },
+                {
+                  roles: element.authItem.id,
+                  territory: element.territory,
+                  territoryName: data.name,
+                },
               ]);
             })
             .catch((error) => {});
         } else {
-          setFields((t) => [...t, { roles: element.authItem }]);
+          setFields((t) => [...t, { roles: element.authItem.id }]);
         }
       });
     }

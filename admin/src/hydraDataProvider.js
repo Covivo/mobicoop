@@ -12,6 +12,32 @@ import isPlainObject from 'lodash.isplainobject';
  */
 const cache = new Map();
 
+/**
+ * Transform object with deep fields to a flat map to be handled by the API
+ * Eg: { name: "foo", address: { @id: "/addresses/12" } }
+ * Will be transformed to: { name: "foo", address: "/addresses/12" }
+ *
+ * Other Eg: { name: "foo", addresses: [{ @id: "/addresses/12" }] }
+ * Will be transformed to: { name: "foo", addresses: ["/addresses/12"] }
+ */
+const stringifyDeepObjects = (obj) =>
+  Object.keys(obj).reduce((agg, key) => {
+    if (isPlainObject(obj[key]) && obj[key]['@id']) {
+      agg[key] = obj[key]['@id'];
+    } else if (
+      Array.isArray(obj[key]) &&
+      obj[key].length &&
+      isPlainObject(obj[key][0]) &&
+      obj[key][0]['@id']
+    ) {
+      agg[key] = obj[key].map((object) => object['@id']);
+    } else {
+      agg[key] = obj[key];
+    }
+
+    return agg;
+  }, {});
+
 const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource, params) => {
   const entrypointUrl = new URL(entrypoint, window.location.href);
   const collectionUrl = new URL(`${entrypoint}/${resource}`, entrypointUrl);
@@ -21,7 +47,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource,
     case CREATE:
       return Promise.resolve({
         options: {
-          body: JSON.stringify(params.data),
+          body: JSON.stringify(stringifyDeepObjects(params.data)),
           method: 'POST',
         },
         url: collectionUrl,
@@ -103,7 +129,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource,
     case UPDATE:
       return Promise.resolve({
         options: {
-          body: JSON.stringify(params.data),
+          body: JSON.stringify(stringifyDeepObjects(params.data)),
           method: 'PUT',
         },
         url: itemUrl,
@@ -140,10 +166,8 @@ const createHydraResponseToReactAdminResponseConverter = (type) => (response) =>
   }
 };
 
-export const jsonLdDocumentToReactAdminDocument = (document) => {
-  let obj = JSON.parse(JSON.stringify(document));
-
-  obj = obj['@id']
+const normalizeObject = (obj) =>
+  obj['@id']
     ? {
         ...obj,
         originId: obj.id,
@@ -151,10 +175,13 @@ export const jsonLdDocumentToReactAdminDocument = (document) => {
       }
     : obj;
 
+export const jsonLdDocumentToReactAdminDocument = (document) => {
+  let obj = normalizeObject(JSON.parse(JSON.stringify(document)));
+
   Object.keys(obj).forEach((key) => {
     // to-one
     if (isPlainObject(obj[key]) && obj[key]['@id']) {
-      obj[key] = obj[key]['@id'];
+      obj[key] = normalizeObject(obj[key]);
       cache[obj[key]['@id']] = jsonLdDocumentToReactAdminDocument(document[key]);
 
       return;
@@ -169,7 +196,7 @@ export const jsonLdDocumentToReactAdminDocument = (document) => {
     ) {
       obj[key] = obj[key].map((object) => {
         cache[object['@id']] = jsonLdDocumentToReactAdminDocument(object);
-        return object['@id'];
+        return normalizeObject(object);
       });
     }
   });
@@ -201,7 +228,11 @@ export default (entrypoint, httpClient) => {
       }
       return Promise.all(
         params.ids.map((id) =>
-          cache[id] ? Promise.resolve({ data: cache[id] }) : fetchApi(GET_ONE, resource, { id })
+          cache[id]
+            ? Promise.resolve({ data: cache[id] })
+            : fetchApi(GET_ONE, resource, {
+                id,
+              })
         )
       ).then((responses) => ({ data: responses.map(({ data }) => data) }));
     },

@@ -77,15 +77,11 @@ export const EventEdit = (props) => {
           label={translate('custom.label.event.site')}
           formClassName={classes.spacedFullwidth}
         />
-        <ReferenceField
-          source="address"
+
+        <FunctionField
           label={translate('custom.label.event.currentAdresse')}
-          reference="addresses"
-          link=""
-          className={classes.fullwidth}
-        >
-          <FunctionField render={addressRenderer} />
-        </ReferenceField>
+          render={(r) => addressRenderer(r.address)}
+        />
         <GeocompleteInput
           source="address"
           label={translate('custom.label.event.newAdresse')}
