@@ -14,6 +14,7 @@
     "jwt-decode": "^2.2.0",
     "lodash.merge": "4.6.2",
     "lodash.pick": "4.4.0",
+    "lodash.omit": "4.5.0",
     "prop-types": "15.7.2",
     "query-string": "^6.12.1",
     "ra-i18n-polyglot": "3.5.2",
