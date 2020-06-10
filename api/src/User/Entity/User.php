@@ -431,7 +431,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation"})
      */
     private $givenName;
 
@@ -439,7 +439,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities", "readSolidary"})
+     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation"})
      */
     private $familyName;
 
@@ -944,7 +944,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary"})
+     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
 

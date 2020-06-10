@@ -194,7 +194,7 @@ class Solidary
 
     /**
      * @var float Progression of this solidary
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary", "writeSolidary"})
      */
     private $progression;
 
