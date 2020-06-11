@@ -71,6 +71,13 @@ class MassPTJourney
      */
     private $duration;
 
+    /**
+     * @var int The number of changes of this journey.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("pt")
+     */
+    private $changeNumber;
 
     /**
      * @var int The distance from home of this journey
@@ -145,6 +152,18 @@ class MassPTJourney
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
+    }
+
+    public function getChangeNumber(): ?int
+    {
+        return $this->changeNumber;
+    }
+    
+    public function setChangeNumber(?int $changeNumber): self
+    {
+        $this->changeNumber = $changeNumber;
         
         return $this;
     }

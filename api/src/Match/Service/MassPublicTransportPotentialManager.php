@@ -34,8 +34,9 @@ use App\PublicTransport\Service\PTDataProvider;
 use DateInterval;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use App\PublicTransport\Repository\PTJourneyRepository;
 use App\Geography\Service\GeoTools;
+use App\Match\Entity\MassPTJourney;
+use App\Match\Repository\MassPTJourneyRepository;
 
 /**
  * Mass public transport potential manager.
@@ -47,7 +48,7 @@ class MassPublicTransportPotentialManager
     private $massRepository;
     private $pTDataProvider;
     private $entityManager;
-    private $pTJourneyRepository;
+    private $massPTJourneyRepository;
     private $geoTools;
     private $params;
 
@@ -55,14 +56,14 @@ class MassPublicTransportPotentialManager
         MassRepository $massRepository,
         PTDataProvider $pTDataProvider,
         EntityManagerInterface $entityManager,
-        PTJourneyRepository $pTJourneyRepository,
+        MassPTJourneyRepository $massPTJourneyRepository,
         GeoTools $geoTools,
         array $params
     ) {
         $this->massRepository = $massRepository;
         $this->pTDataProvider = $pTDataProvider;
         $this->entityManager = $entityManager;
-        $this->pTJourneyRepository = $pTJourneyRepository;
+        $this->massPTJourneyRepository = $massPTJourneyRepository;
         $this->geoTools = $geoTools;
         $this->params = $params;
     }
@@ -86,7 +87,7 @@ class MassPublicTransportPotentialManager
         $this->entityManager->flush();
 
         // We remove the previous PTJourneys
-        $this->pTJourneyRepository->deletePTJourneysOfAMass($id);
+        $this->massPTJourneyRepository->deleteMassPTJourneysOfAMass($id);
 
         $TPPotential = [];
         foreach ($mass->getPersons() as $person) {
@@ -107,19 +108,13 @@ class MassPublicTransportPotentialManager
             );
             
             foreach ($results as $ptjourney) {
-                $PTPotentialJourney = $this->computeDataPTJourney($ptjourney);
-                if ($this->checkValidPTJourney($PTPotentialJourney)) {
-                    $ptjourney->setMassPerson($person);
-                    $TPPotential[] = $PTPotentialJourney;
+                $massPTJourney = $this->buildMassPTJourney($ptjourney);
+                if ($this->checkValidMassPTJourney($massPTJourney)) {
+                    $massPTJourney->setMassPerson($person);
+                    $TPPotential[] = $massPTJourney;
 
-                    // For now, we don't want to persist PTDeparture, PTArrival and PTLeg
-                    $ptjourney->setPTLegs(new ArrayCollection());
-                    $ptjourney->setPTDeparture(null);
-                    $ptjourney->setPTArrival(null);
-
-                    
-                    // We persist the PTJourney
-                    $this->entityManager->persist($ptjourney);
+                    // We persist the MassPTJourney
+                    $this->entityManager->persist($massPTJourney);
                 }
             }
         }
@@ -136,62 +131,67 @@ class MassPublicTransportPotentialManager
 
     
     /**
-     * Compute the complex data of a PTJourney
+     * Build the MassPTJourney from a PTJourney
      *
      * @param PTJourney $ptjourney  The PTJourney
-     * @return PTJourney
+     * @return MassPTJourney
      */
-    public function computeDataPTJourney(PTJourney $ptjourney): PTJourney
+    public function buildMassPTJourney(PTJourney $ptjourney): MassPTJourney
     {
+        $massPTJourney = new MassPTJourney();
+        
         $interval = new DateInterval($ptjourney->getDuration());
         $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
-        $ptjourney->setDurationInSeconds($duration);
+        $massPTJourney->setDuration($duration);
 
 
         // Duration from home
         $legFromHome = $ptjourney->getPTLegs()[0];
         $interval = new DateInterval($legFromHome->getDuration());
         $durationFromHome = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
-        $ptjourney->setDurationWalkFromHome($durationFromHome);
+        $massPTJourney->setDurationWalkFromHome($durationFromHome);
 
 
         // Distance from home
         $distanceFromHome = 4000 * $durationFromHome / 3600;
-        $ptjourney->setDistanceWalkFromHome($distanceFromHome);
+        $massPTJourney->setDistanceWalkFromHome($distanceFromHome);
 
         // Duration from Work
         $legFromWork = $ptjourney->getPTLegs()[count($ptjourney->getPTLegs())-1];
         $interval = new DateInterval($legFromWork->getDuration());
         $durationFromWork = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
-        $ptjourney->setDurationWalkFromWork($durationFromWork);
+        $massPTJourney->setDurationWalkFromWork($durationFromWork);
 
         // Distance from Work
         $distanceFromWork = 4000 * $durationFromWork / 3600;
-        $ptjourney->setDistanceWalkFromWork($distanceFromWork);
+        $massPTJourney->setDistanceWalkFromWork($distanceFromWork);
 
-        return $ptjourney;
+        // Number of changes
+        $massPTJourney->setChangeNumber($ptjourney->getChangeNumber());
+
+        return $massPTJourney;
     }
      
 
     /**
-     * Check if a PTPotentialJourney is valid for public transport potential
-     * @var PTJourney $pTPotentialJourney The potential journey to check
+     * Check if a MassPTJourney is valid for public transport potential
+     * @var MassPTJourney $pTPotentialJourney The potential journey to check
      * @return boolean
      */
-    public function checkValidPTJourney(PTJourney $ptjourney): bool
+    public function checkValidMassPTJourney(MassPTJourney $massPTJourney): bool
     {
         // Number of connections
-        if ($ptjourney->getChangeNumber() > $this->params['ptMaxConnections']) {
+        if ($massPTJourney->getChangeNumber() > $this->params['ptMaxConnections']) {
             return false;
         }
         
         // The maximum distance of walk from home to the last step
-        if ($ptjourney->getDistanceWalkFromHome()> $this->params['ptMaxDistanceWalkFromHome']) {
+        if ($massPTJourney->getDistanceWalkFromHome()> $this->params['ptMaxDistanceWalkFromHome']) {
             return false;
         }
 
         // The maximum distance of walk to work from the last step
-        if ($ptjourney->getDistanceWalkFromWork()> $this->params['ptMaxDistanceWalkFromWork']) {
+        if ($massPTJourney->getDistanceWalkFromWork()> $this->params['ptMaxDistanceWalkFromWork']) {
             return false;
         }
 
