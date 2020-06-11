@@ -443,7 +443,7 @@ class Mass
     /**
      * @var Community The community created after the migration of this mass users
      *
-     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
      * @Groups({"mass","massMigrate"})
      */
     private $community;

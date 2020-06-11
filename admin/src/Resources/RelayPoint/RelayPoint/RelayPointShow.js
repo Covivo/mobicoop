@@ -17,6 +17,7 @@ import {
 } from 'react-admin';
 
 import { addressRenderer } from '../../../utils/renderers';
+import { ReferenceRecordIdMapper } from '../../../components/utils/ReferenceRecordIdMapper';
 
 const statusChoices = [
   { id: 0, name: 'En attente' },
@@ -34,16 +35,18 @@ const RelayPointShow = (props) => {
             <FunctionField render={addressRenderer} />
           </ReferenceField>
           <SelectField source="status" label="Status" choices={statusChoices} />
-          <ReferenceArrayField
-            source="relayPointTypes"
-            label="Types"
-            reference="relay_point_types"
-            allowEmpty
-          >
-            <SingleFieldList>
-              <ChipField source="name" />
-            </SingleFieldList>
-          </ReferenceArrayField>
+          <ReferenceRecordIdMapper attribute="relayPointTypes">
+            <ReferenceArrayField
+              source="relayPointTypes"
+              label="Types"
+              reference="relay_point_types"
+              allowEmpty
+            >
+              <SingleFieldList>
+                <ChipField source="name" />
+              </SingleFieldList>
+            </ReferenceArrayField>
+          </ReferenceRecordIdMapper>
           <TextField source="description" label="Description" />
           <RichTextField source="fullDescription" label="Description complète" />
         </Tab>

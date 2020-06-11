@@ -11,6 +11,8 @@ import {
   EditButton,
 } from 'react-admin';
 
+import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+
 export const RoleShow = (props) => (
   <Show {...props} title="Rôles > afficher">
     <SimpleShowLayout>
@@ -20,11 +22,13 @@ export const RoleShow = (props) => (
       <ReferenceField source="parent" label="Rôle parent" reference="rights" allowEmpty>
         <TextField source="name" />
       </ReferenceField>
-      <ReferenceArrayField source="rights" label="Droits" reference="rights">
-        <SingleFieldList>
-          <ChipField source="name" />
-        </SingleFieldList>
-      </ReferenceArrayField>
+      <ReferenceRecordIdMapper attribute="rights">
+        <ReferenceArrayField source="rights" label="Droits" reference="rights">
+          <SingleFieldList>
+            <ChipField source="name" />
+          </SingleFieldList>
+        </ReferenceArrayField>
+      </ReferenceRecordIdMapper>
       <EditButton />
     </SimpleShowLayout>
   </Show>

@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -148,7 +149,7 @@ class Solidary
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $proposal;
@@ -193,7 +194,7 @@ class Solidary
 
     /**
      * @var float Progression of this solidary
-     * @Groups({"readSolidary"})
+     * @Groups({"readSolidary", "writeSolidary"})
      */
     private $progression;
 
@@ -307,22 +308,49 @@ class Solidary
     private $structure;
 
     /**
-     * @var Int frequency of the solidary demand
-     * @Groups ({"writeSolidary"})
+     * @var Int|null frequency of the solidary demand
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $frequency;
 
     /**
      * @var Array|null Origin address of the solidary
-     * @Groups ({"writeSolidary"})
+     * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $days;
 
     /**
     * @var Int|null margin time of the solidary demand
-    * @Groups ({"writeSolidary"})
+    * @Groups ({"writeSolidary", "readSolidary"})
     */
     private $marginDuration;
+
+    /**
+    * @var String|null Label to display for the solidary subject+origin+destination
+    *
+    * @Groups({"readSolidary"})
+    */
+    private $displayLabel;
+
+    /**
+    * @var String|null Name of the last action associted to the solidary
+    *
+    * @Groups({ "readSolidary"})
+    */
+    private $lastAction;
+
+    /**
+     * @var User|null The last User who made an action on that solidary
+     *
+     * @Groups({"readSolidary"})
+     */
+    private $operator;
+
+    /**
+     * @var Array|null Solutions associated to this demand
+     * @Groups ({"readSolidary"})
+     */
+    private $solutions;
     
     public function __construct()
     {
@@ -336,6 +364,7 @@ class Solidary
         $this->proof = [];
         $this->days = [];
         $this->homeAddress = [];
+        $this->solutions = [];
     }
 
     public function getId(): int
@@ -737,7 +766,7 @@ class Solidary
         return $this;
     }
 
-    public function getFrequency(): int
+    public function getFrequency(): ?int
     {
         return $this->frequency;
     }
@@ -749,7 +778,7 @@ class Solidary
         return $this;
     }
 
-    public function getDays(): array
+    public function getDays(): ?array
     {
         return $this->days;
     }
@@ -772,6 +801,55 @@ class Solidary
 
         return $this;
     }
+
+    public function getDisplayLabel(): ?string
+    {
+        return $this->displayLabel;
+    }
+    
+    public function setDisplayLabel(?string $displayLabel): self
+    {
+        $this->displayLabel = $displayLabel;
+        
+        return $this;
+    }
+
+    public function getLastAction(): ?string
+    {
+        return $this->lastAction;
+    }
+    
+    public function setLastAction(?string $lastAction): self
+    {
+        $this->lastAction = $lastAction;
+        
+        return $this;
+    }
+
+    public function getOperator(): ?User
+    {
+        return $this->operator;
+    }
+
+    public function setOperator(?User $operator): self
+    {
+        $this->operator = $operator;
+
+        return $this;
+    }
+
+    public function getSolutions(): ?array
+    {
+        return $this->solutions;
+    }
+    
+    public function setSolutions(?array $solutions): self
+    {
+        $this->solutions = $solutions;
+        
+        return $this;
+    }
+
 
     
    

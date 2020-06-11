@@ -122,6 +122,18 @@ class SolidaryAnimation
      */
     private $updatedDate;
 
+    /**
+    * @var User|null The transporter associated to the SolidaryAnimation action.
+    * @Groups({"readAnimation","writeAnimation"})
+    */
+    private $transporter;
+
+    /**
+    * @var User|null The carpooler associated to the SolidaryAnimation action.
+    * @Groups({"readAnimation","writeAnimation"})
+    */
+    private $carpooler;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -243,6 +255,30 @@ class SolidaryAnimation
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getTransporter(): ?User
+    {
+        return $this->transporter;
+    }
+
+    public function setTransporter(?User $transporter): self
+    {
+        $this->transporter = $transporter;
+
+        return $this;
+    }
+
+    public function getCarpooler(): ?User
+    {
+        return $this->carpooler;
+    }
+
+    public function setCarpooler(?User $carpooler): self
+    {
+        $this->carpooler = $carpooler;
 
         return $this;
     }

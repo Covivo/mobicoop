@@ -51,6 +51,7 @@ use App\User\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Solidary\Repository\StructureProofRepository;
 use App\User\Service\UserManager;
+use App\Solidary\Repository\NeedRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -70,6 +71,7 @@ class SolidaryUserManager
     private $params;
     private $encoder;
     private $userManager;
+    private $needRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -84,6 +86,7 @@ class SolidaryUserManager
         UserPasswordEncoderInterface $encoder,
         StructureProofRepository $structureProofRepository,
         UserManager $userManager,
+        NeedRepository $needRepository,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -99,6 +102,7 @@ class SolidaryUserManager
         $this->params = $params;
         $this->encoder = $encoder;
         $this->userManager = $userManager;
+        $this->needRepository = $needRepository;
     }
 
     // Probably obsolete... to do check !
@@ -282,6 +286,9 @@ class SolidaryUserManager
         $solidaryVolunteer->setBirthDate($user->getBirthDate());
         $solidaryVolunteer->setGender($user->getGender());
         $solidaryVolunteer->setComment($solidaryUser->getComment());
+        $solidaryVolunteer->setNeeds($solidaryUser->getNeeds());
+        $solidaryVolunteer->setVehicle($solidaryUser->hasVehicle());
+        $solidaryVolunteer->setMaxDistance($solidaryUser->getMaxDistance());
 
         // Home address
         foreach ($user->getAddresses() as $address) {
@@ -712,11 +719,20 @@ class SolidaryUserManager
         $solidaryUser->setAddress($address);
 
         $solidaryUser->setComment($solidaryVolunteer->getComment());
-
+        $solidaryUser->setVehicle($solidaryVolunteer->hasVehicle());
+        $solidaryUser->setMaxDistance($solidaryVolunteer->getMaxDistance());
+       
+        //we create the needs associated to the solidary user
+        if ($solidaryVolunteer->getNeeds()) {
+            foreach ($solidaryVolunteer->getNeeds() as $need) {
+                $needId = (substr($need, strrpos($need, '/') + 1));
+                $solidaryUser->addNeed($this->needRepository->find($needId));
+            }
+        }
+       
         // We set the link between User and SolidaryUser
         $user->setSolidaryUser($solidaryUser);
 
-        
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure)) {
@@ -987,7 +1003,7 @@ class SolidaryUserManager
                 $structure = $structures[0];
             }
         }
-        
+      
         // We search the right solidaryUserStructure to update
         $solidaryUserStructureToUpdate = null;
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
@@ -1007,7 +1023,7 @@ class SolidaryUserManager
 
 
             $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
-            
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_ACCEPTED);
             // We add the role to the user
             if ($solidaryUser->isVolunteer()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
@@ -1030,7 +1046,7 @@ class SolidaryUserManager
             }
     
             $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
-
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_REFUSED);
             // We dispatch the event
             $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);

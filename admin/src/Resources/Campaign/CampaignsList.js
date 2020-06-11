@@ -12,8 +12,8 @@ import {
   EditButton,
 } from 'react-admin';
 
-import UserReferenceField from '../User/UserReferenceField';
 import MailComposer from '../../components/email/MailComposer';
+import FullNameField from '../User/FullNameField';
 
 const CampaignsList = (props) => {
   const translate = useTranslate();
@@ -74,11 +74,7 @@ const CampaignsList = (props) => {
             label={translate('custom.label.campaign.numberMember')}
             render={(record) => `${record.deliveries.length}`}
           />
-          <UserReferenceField
-            label={translate('custom.label.campaign.sender')}
-            source="user"
-            reference="users"
-          />
+          <FullNameField source="user" label={translate('custom.label.campaign.sender')} />
           <SelectField
             source="status"
             abel={translate('custom.label.campaign.state')}

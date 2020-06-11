@@ -16,8 +16,39 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    solidary_beneficiaries: {
+      fields: {
+        id: 'ID',
+        givenName: 'Prénom',
+        familyName: 'Nom',
+        email: 'Email',
+        birthDate: 'Date de naissance',
+        telephone: 'Téléphone',
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
+    solidaries: {
+      fields: {
+        'subject.label': 'Objet',
+        'solidaryUser.user.givenName': 'Prénom',
+        'solidaryUser.user.familyName': 'Nom',
+        createdDate: 'Date',
+        displayLabel: 'Trajet demandé',
+      },
+    },
   },
   custom: {
+    solidaryask: {
+      status: {
+        asked: 'Demande ',
+        refused: 'Refusé',
+        pending: 'En attente',
+        lookforresolution: 'En recherche de solution',
+        followup: 'A suivre',
+        closed: 'Fermé',
+        accepted: 'Accepté',
+      },
+    },
     solidary_volunteers: {
       edit: {
         availability: 'Disponibilité',
@@ -33,6 +64,17 @@ const fr = {
         acceptCandidate: 'Accepter candidature',
         rejectCandidate: 'Rejeter candidature',
         solidary: 'Demande solidaire',
+      },
+    },
+    solidary: {
+      internalMessages: 'Messages internes',
+      internalMessagesWith: 'Messages interne avec %{username}',
+      associatedAsk: 'Demande associée',
+      onBehalfOf: 'Pour le compte de',
+    },
+    solidary_beneficiaries: {
+      input: {
+        validatedCandidate: 'Candidature acceptée',
       },
     },
     dashboard: {

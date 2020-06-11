@@ -13,7 +13,7 @@ import {
 } from 'react-admin';
 import { useField } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress, TextField } from '@material-ui/core';
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
 const useStyles = makeStyles({
@@ -36,9 +36,11 @@ const useStylesForGeocompleteInput = makeStyles({
 
 const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const classes = useStyles();
+  const classesForGeocompleteInput = useStylesForGeocompleteInput();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
   const [loading, setLoading] = useState(false);
+  const [oldAddress, setOldAddress] = useState(null);
   // Pre-fill user data
   const {
     input: { value: userId },
@@ -60,6 +62,12 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
               form.change('birthDate', result.data.birthDate);
               form.change('telephone', result.data.telephone);
               form.change('newsSubscription', result.data.newsSubscription || false);
+              if (result.data.addresses && result.data.addresses.length) {
+                const homeAddress = result.data.addresses.find((a) => a.home);
+                if (homeAddress) {
+                  setOldAddress(homeAddress);
+                }
+              }
             }
           })
           .catch((error) => notify(error.message, 'warning'))
@@ -86,6 +94,19 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
 
   const validateRequired = [required()];
   const emailRules = [required(), email()];
+
+  if (loading) {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center" width="100%">
+        {loading && (
+          <Box className={classes.loadingHeader}>
+            <CircularProgress />
+            <p>Recherche de l&lsquo;utilisateur...</p>
+          </Box>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" width="100%">
@@ -150,12 +171,25 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         className={classes.spacedHalfwidth}
       />
 
+      <TextField
+        defaultValue={
+          oldAddress &&
+          oldAddress.displayLabel &&
+          oldAddress.displayLabel.length &&
+          oldAddress.displayLabel.join(' ')
+        }
+        fullWidth
+        disabled
+        label="Adresse actuelle"
+        className={classes.spacedHalfwidth}
+      />
+
       <GeocompleteInput
         fullWidth
         source="homeAddress"
-        label="Adresse"
+        label="Nouvelle Adresse"
         validate={(a) => (a ? '' : 'Champs obligatoire')}
-        classes={useStylesForGeocompleteInput()}
+        classes={classesForGeocompleteInput}
       />
 
       <BooleanInput

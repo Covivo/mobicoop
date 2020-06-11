@@ -38,9 +38,7 @@ export const SectionEdit = (props) => {
   return (
     <Edit {...props} title="Articles > éditer une section">
       <SimpleForm redirect={redirect}>
-        <ReferenceField source="article" label="Article" reference="articles" linkType="show">
-          <TextField source="title" />
-        </ReferenceField>
+        <TextField label="Article" source="article.title" />
         <SelectInput source="status" label="Status" choices={statusChoices} />
         <TextInput source="title" label="Titre" />
         <TextInput source="subTitle" label="Sous-titre" />

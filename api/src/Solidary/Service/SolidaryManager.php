@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -46,6 +47,7 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
@@ -58,6 +60,7 @@ use App\User\Repository\UserRepository;
 use DateTime;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use Negotiation\Accept;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -155,7 +158,8 @@ class SolidaryManager
         
         date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
         $solidary->setOutwardDatetime($outwardDatetime);
-
+        // we set the margin duration
+        $solidary->setMarginDuration($solidary->getProposal()->getCriteria()->getMarginDuration());
         // we do the same if we have a return
         if ($solidary->getProposal()->getProposalLinked() !== null) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
@@ -223,12 +227,48 @@ class SolidaryManager
             }
             $solidary->setDays($days);
         }
-
+        $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
+        // the display label of the solidary 'subject : origin -> destination'
+        if ($solidary->getOrigin() && $solidary->getDestination()) {
+            $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
+        }
+        $solidary->setDisplayLabel($solidary->getSubject()->getLabel());
+        // We find the last entry of diary for this solidary to get the progression and the author of the last update
+        $solidary->setProgression(0);
+        $solidary->setOperator(null);
+        $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
+        if (count($diariesEntires)>0) {
+            $solidary->setProgression($diariesEntires[0]->getProgression());
+            $solidary->setLastAction($diariesEntires[0]->getAction()->getName());
+            foreach ($diariesEntires as $diary) {
+                if ($diary->getAction()->getId() === 37 && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                    $solidary->setOperator($diary->getAuthor());
+                }
+            }
+        }
 
-        // We find the last entry of diary for this solidary to get the progression
-        // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+        // we display solutions associated to the solidary.
+        $solutions = [];
+        $solidarySolutions = $solidary->getSolidarySolutions();
+        foreach ($solidarySolutions as $solidarySolution) {
+            $solution = [];
+            if ($solidarySolution->getSolidaryMatching()->getSolidaryUser()) {
+                $solution['Type'] = SolidarySolution::TRANSPORTER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId();
+            } elseif ($solidarySolution->getSolidaryMatching()->getMatching()) {
+                $solution['Type'] = SolidarySolution::CARPOOLER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId();
+            }
+            $solutions[]=$solution;
+        }
+        $solidary->setSolutions($solutions);
 
         return $solidary;
     }
@@ -314,7 +354,7 @@ class SolidaryManager
         $this->entityManager->flush();
 
         // We trigger the event
-        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser());
+        $event = new SolidaryCreatedEvent($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         return $solidary;
