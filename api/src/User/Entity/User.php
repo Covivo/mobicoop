@@ -2305,7 +2305,7 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        return array_unique($this->roles);
+        return $this->roles ? array_unique($this->roles) : array(AuthItem::ROLE_USER_REGISTERED_FULL);
     }
 
     public function getSalt()

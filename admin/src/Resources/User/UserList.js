@@ -30,6 +30,7 @@ const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
   const router = useHistory();
+  const queryString = require('query-string');
 
   const BooleanStatusField = ({ record = {}, source }) => {
     const theRecord = { ...record };
@@ -74,9 +75,6 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-  const handleAddTerritoryHistory = (e) => {
-    return null;
-  };
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
@@ -114,7 +112,7 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
-      {/* <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
+      <TerritoryInput source="homeAddressODTerritory" alwaysOn />
     </Filter>
   );
 

@@ -87,9 +87,8 @@ const TerritoryInput = (props) => {
               const territory = suggestions.find((element) => element.name === selectedItem);
               if (territory) {
                 territory.link = '/territories/' + territory.id;
-                form.change('territory', null);
-                form.change('territory.id', territory.id);
-                props.setTerritory(territory);
+                form.change(props.source, null);
+                form.change(`${props.source}.id`, territory.id);
               }
             }}
           >
