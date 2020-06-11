@@ -328,14 +328,21 @@ class Solidary
     /**
     * @var String|null Label to display for the solidary subject+origin+destination
     *
-    * @Groups({"writeSolidary", "readSolidary"})
+    * @Groups({"readSolidary"})
     */
     private $displayLabel;
 
     /**
+    * @var String|null Name of the last action associted to the solidary
+    *
+    * @Groups({ "readSolidary"})
+    */
+    private $lastAction;
+
+    /**
      * @var User|null The last User who made an action on that solidary
      *
-     * @Groups({"writeSolidary", "readSolidary"})
+     * @Groups({"readSolidary"})
      */
     private $operator;
 
@@ -803,6 +810,18 @@ class Solidary
     public function setDisplayLabel(?string $displayLabel): self
     {
         $this->displayLabel = $displayLabel;
+        
+        return $this;
+    }
+
+    public function getLastAction(): ?string
+    {
+        return $this->lastAction;
+    }
+    
+    public function setLastAction(?string $lastAction): self
+    {
+        $this->lastAction = $lastAction;
         
         return $this;
     }

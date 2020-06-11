@@ -230,14 +230,17 @@ class SolidaryManager
         $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
         // the display label of the solidary 'subject : origin -> destination'
-        $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
-
+        if ($solidary->getOrigin() && $solidary->getDestination()) {
+            $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
+        }
+        $solidary->setDisplayLabel($solidary->getSubject()->getLabel());
         // We find the last entry of diary for this solidary to get the progression and the author of the last update
         $solidary->setProgression(0);
         $solidary->setOperator(null);
         $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
         if (count($diariesEntires)>0) {
             $solidary->setProgression($diariesEntires[0]->getProgression());
+            $solidary->setLastAction($diariesEntires[0]->getAction()->getName());
             foreach ($diariesEntires as $diary) {
                 if ($diary->getAction()->getId() === 37 && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
                     $solidary->setOperator($diary->getAuthor());
