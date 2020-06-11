@@ -145,18 +145,25 @@ const createHydraResponseToReactAdminResponseConverter = (type) => (response) =>
   switch (type) {
     case GET_LIST:
     case GET_MANY_REFERENCE:
-      return Promise.resolve(
-        response.json['hydra:member'].map((doc) => jsonLdDocumentToReactAdminDocument(doc))
-      ).then((data) => ({
-        data,
-        total:
-          response.json?.['hydra:totalItems'] ||
-          (response.json?.['hydra:view']
-            ? response.json['hydra:view']?.['hydra:next']
-              ? -2 // there is a next page
-              : -1 // no next page
-            : -3), // no information
-      }));
+      if (response.json['hydra:member']) {
+        return Promise.resolve(
+          response.json['hydra:member'].map((doc) => jsonLdDocumentToReactAdminDocument(doc))
+        ).then((data) => ({
+          data,
+          total:
+            response.json?.['hydra:totalItems'] ||
+            (response.json?.['hydra:view']
+              ? response.json['hydra:view']?.['hydra:next']
+                ? -2 // there is a next page
+                : -1 // no next page
+              : -3), // no information
+        }));
+      }
+      if (response.json.results) {
+        const { results } = response.json;
+        return Promise.resolve({ data: results, total: results.length });
+      }
+      return Promise.resolve({ data: [], total: 0 });
 
     case DELETE:
       return Promise.resolve({ data: { id: null } });
