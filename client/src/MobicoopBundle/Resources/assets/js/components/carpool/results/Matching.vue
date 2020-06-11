@@ -110,7 +110,7 @@
           </v-row>
 
           <v-tabs
-            v-if="externalRdexJourneys"
+            v-if="displayTab"
             v-model="modelTabs"
           >
             <v-tab href="#carpools">
@@ -134,6 +134,18 @@
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
             </v-tab>
+            <v-tab
+              v-if="ptResults"
+              href="#ptResults"
+            >
+              <v-badge
+                color="primary"
+                :content="nbPtResults"
+                icon="mdi-timer-sand"
+              >              
+                {{ $t('tabs.ptresults') }}
+              </v-badge>
+            </v-tab>            
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="carpools">
@@ -160,6 +172,12 @@
                 @carpool="carpool"
               />
             </v-tab-item>
+            <v-tab-item
+              v-if="ptResults"
+              value="ptResults"
+            >
+              cool
+            </v-tab-item>            
           </v-tabs-items>
         </v-col>
       </v-row>
@@ -263,6 +281,10 @@ export default {
     defaultRole:{
       type: Number,
       default: 3
+    },
+    ptResults: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -275,6 +297,7 @@ export default {
       result: null,
       loading : true,
       loadingExternal : false,
+      loadingPtResults : false,
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
@@ -283,6 +306,7 @@ export default {
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
       nbCarpoolOther:0,
+      nbPtResults:0,
       role:this.defaultRole,
       includePassenger:false,
       fromMyProposals:false,
@@ -312,6 +336,9 @@ export default {
         }
       });
       return communities;
+    },
+    displayTab(){
+      return (this.externalRdexJourneys || this.ptResults) ? true : false;
     }
   },
   watch:{
@@ -428,6 +455,10 @@ export default {
           console.log(error);
         });
 
+    },
+    searchPTJourneys(){
+      //(response.data.length>0) ? this.nbPtResults = response.data.length : this.nbPtResults = '-';
+      this.nbPtResults = "-";
     },
     contact(params) {
       axios.post(this.$t("contactUrl"), params,

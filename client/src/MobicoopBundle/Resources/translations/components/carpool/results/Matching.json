@@ -19,7 +19,8 @@
     },
     "tabs":{
       "carpools":"Covoiturages {platform}",
-      "otherCarpools":"Autres covoiturages"
+      "otherCarpools":"Autres covoiturages",
+      "ptresults":"Transport en commun"
     }
   },
   "en":{
@@ -40,7 +41,8 @@
     },
     "tabs":{
       "carpools":"{platform} carpools",
-      "otherCarpools":"Other carpools"
+      "otherCarpools":"Other carpools",
+      "ptresults":"Public transports"
     }
   }
 }
