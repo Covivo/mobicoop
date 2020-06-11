@@ -26,7 +26,6 @@ namespace App\Match\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
-use App\PublicTransport\Entity\PTJourney;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -249,17 +248,17 @@ class MassPerson
     /**
      * @var ArrayCollection|null The potential matchings if the person is driver.
      *
-     * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      * @Groups({"pt"})
      */
-    private $ptJourneys;
+    private $massPTJourneys;
 
     public function __construct()
     {
         $this->matchingsAsDriver = new ArrayCollection();
         $this->matchingsAsPassenger = new ArrayCollection();
-        $this->ptJourneys = new ArrayCollection();
+        $this->massPTJourneys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -537,24 +536,24 @@ class MassPerson
         return $this;
     }
 
-    public function getPtJourneys()
+    public function getMassPTJourneys()
     {
-        return $this->ptJourneys->getValues();
+        return $this->massPTJourneys->getValues();
     }
 
-    public function addPtJourney(PTJourney $pTJourney): self
+    public function addMassPTJourney(MassPTJourney $massPTJourney): self
     {
-        if (!$this->ptJourneys->contains($pTJourney)) {
-            $this->ptJourneys->add($pTJourney);
+        if (!$this->massPTJourneys->contains($massPTJourney)) {
+            $this->massPTJourneys->add($massPTJourney);
         }
 
         return $this;
     }
 
-    public function removePtJourney(PTJourney $pTJourney): self
+    public function removeMassPTJourneys(MassPTJourney $massPTJourney): self
     {
-        if ($this->ptJourneys->contains($pTJourney)) {
-            $this->ptJourneys->removeElement($pTJourney);
+        if ($this->massPTJourneys->contains($massPTJourney)) {
+            $this->massPTJourneys->removeElement($massPTJourney);
         }
 
         return $this;
