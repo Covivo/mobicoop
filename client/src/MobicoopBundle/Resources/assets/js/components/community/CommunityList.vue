@@ -111,7 +111,7 @@
           'items-per-page-all-text': $t('all'),
           'itemsPerPageText': $t('linePerPage')
         }"
-        loading
+        :loading="loading"
         @update:options="updateOptions"
       >
         <template>
