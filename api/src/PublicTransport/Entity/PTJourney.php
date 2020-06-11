@@ -169,9 +169,9 @@ class PTJourney
     private $distance;
     
     /**
-     * @var string The total duration of this journey (in iso8601 format).
+     * @var string The total duration of this journey (in seconds).
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -259,12 +259,12 @@ class PTJourney
         return $this;
     }
 
-    public function getDuration(): ?string
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(?string $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
