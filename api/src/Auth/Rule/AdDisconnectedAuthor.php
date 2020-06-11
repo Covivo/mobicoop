@@ -41,14 +41,14 @@ class AdDisconnectedAuthor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if (!isset($params['Ad'])) {
+        if (!isset($params['ad'])) {
             return false;
         }
 
         /**
          * @var Ad $ad
          */
-        $ad = $params['Ad'];
+        $ad = $params['ad'];
         $now = new \DateTime(('UTC'));
         return is_null($ad->getUser()) && $now->sub(new DateInterval('PT' . self::DELAY . 'S')) <= $ad->getCreatedDate();
     }
