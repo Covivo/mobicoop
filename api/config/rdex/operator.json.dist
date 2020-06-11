@@ -3,7 +3,7 @@
     "origin": "mobicoop.io",
     "url": "https://www.mobicoop.io/",
     "resultRoute": {
-        "fr": "covoiturage/annonce/{id}/resultats",
-        "en": "carpool/ad/{id}/results"
+        "fr": "covoiturage/rdex/{externalId}",
+        "en": "carpool/rdex/{externalId}"
     }
 }

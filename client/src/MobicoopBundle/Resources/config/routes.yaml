@@ -364,6 +364,22 @@ carpool_ad_detail_filtered:
     requirements:
         id: '\d+'
 
+# ad result detail from an external link : results of a specific proposal (AJAX json)
+carpool_ad_detail_external:
+    methods: [GET]
+    path:
+        fr: /covoiturage/annonce/{id}/externe
+        en: /carpool/ad/{id}/external
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetailExternal
+
+# ad result detail from an external link (with filters : POST) (AJAX json)
+carpool_ad_detail_external_filtered:
+    methods: [POST]
+    path:
+        fr: /covoiturage/annonce/{id}/externe
+        en: /carpool/ad/{id}/external
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetailExternal
+
 # search results (POST) (full page)
 carpool_search_result:
     methods: [POST]

@@ -100,7 +100,7 @@ class AuthManager
 
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
-
+        ;
         if (is_string($requester)) {
             // the requester could contain only the id under certain circumstances (eg. refresh token), we check if the user was set by another way
             if ($this->user instanceof User) {

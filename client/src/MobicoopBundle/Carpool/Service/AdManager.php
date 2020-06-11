@@ -67,6 +67,21 @@ class AdManager
     }
 
     /**
+     * Get an ad and its results from its external id
+     *
+     * @param string $id    The ad external id
+     * @param array|null    The filters to apply to the results
+     * @return Ad|null
+     */
+    public function getAdFromExternalId(string $id, ?array $filters = null)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, 'external', $filters)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get full ad data
      *
      * @param int $id

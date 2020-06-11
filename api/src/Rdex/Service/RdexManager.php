@@ -59,6 +59,7 @@ class RdexManager
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
     private const IMAGE_VERSION = "square_250";
     private const DEFAULT_LANGUAGE = "fr";
+    private const EXTERNAL_ID_EXPR = "externalId";  // expression representing the external id in the exposed route
 
     // false for testing purpose only
     private const CHECK_SIGNATURE = false;
@@ -77,7 +78,7 @@ class RdexManager
 
     /**
      * Current client
-     * 
+     *
      * @var RdexClient
      */
     private $client;    // Current client
@@ -93,7 +94,7 @@ class RdexManager
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
         $this->clients = $clients;
-        $this->operator = new RdexOperator($operator['name'],$operator['origin'],$operator['url'],$operator['resultRoute']);
+        $this->operator = new RdexOperator($operator['name'], $operator['origin'], $operator['url'], $operator['resultRoute']);
         $this->client = null;
     }
     
@@ -330,7 +331,7 @@ class RdexManager
             $journey->setOrigin($this->operator->getOrigin());
 
             // for now we use the default language as languages are not handled yet
-            $journey->setUrl($this->operator->getUrl() . str_replace('{id}',$ad->getId(),$this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
+            $journey->setUrl($this->operator->getUrl() . str_replace('{' . self::EXTERNAL_ID_EXPR . '}', $ad->getExternalId(), $this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
             
             $journey->setType(RdexJourney::TYPE_ONE_WAY);
             if ($result->hasReturn()) {
@@ -800,7 +801,7 @@ class RdexManager
     {
         foreach ($this->clients as $key => $client) {
             if ($client['public_key'] == $apikey) {
-                return new RdexClient($key,$client['public_key'],$client['private_key']);
+                return new RdexClient($key, $client['public_key'], $client['private_key']);
             }
         }
         return null;

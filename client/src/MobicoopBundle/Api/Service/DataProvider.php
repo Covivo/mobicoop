@@ -495,14 +495,14 @@ class DataProvider
     /**
      * Get special item operation
      *
-     * @param int           $id                 The id of the item
+     * @param mixed         $id                 The id of the item (usually an int, can be a string in rare cases !)
      * @param string        $operation          The name of the special operation
      * @param array|null    $params             An array of parameters
      * @param bool          $reverseOperationId if true Generate an alternate uri /resource/operation/id
      *
      * @return Response The response of the operation.
      */
-    public function getSpecialItem(int $id, string $operation, array $params=null, bool $reverseOperationId=false): Response
+    public function getSpecialItem($id, string $operation, array $params=null, bool $reverseOperationId=false): Response
     {
         try {
             if ($this->format == self::RETURN_ARRAY) {

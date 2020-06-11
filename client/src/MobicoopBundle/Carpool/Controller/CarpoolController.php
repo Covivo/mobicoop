@@ -262,6 +262,26 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Ad result detail data from external link.
+     * (AJAX)
+     */
+    public function carpoolAdDetailExternal($id, AdManager $adManager, Request $request)
+    {
+        $filters = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['filters'])) {
+                $filters = $data['filters'];
+            }
+        }
+        if ($ad = $adManager->getAdFromExternalId($id, $filters)) {
+            //$this->denyAccessUnlessGranted('results_ad', $ad);
+            return $this->json($ad->getResults());
+        }
+        return $this->json([]);
+    }
+
+    /**
      * Simple search results.
      * (POST)
      */

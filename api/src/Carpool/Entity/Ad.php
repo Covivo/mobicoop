@@ -81,17 +81,22 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools/{id}",
- *              "security"="is_granted('ad_read_self',object)"
+ *              "security"="is_granted('ad_read',object)"
+ *          },
+ *          "get_external"={
+ *              "method"="GET",
+ *              "path"="/carpools/{id}/external",
+ *              "security"="is_granted('ad_read_external',object)"
  *          },
  *          "get_full"={
  *              "method"="GET",
  *              "path"="/carpools/{id}/full",
- *              "security"="is_granted('ad_read_self',object)"
+ *              "security"="is_granted('ad_read',object)"
  *          },
  *          "claim"={
  *              "method"="GET",
  *              "path"="/carpools/{id}/claim",
- *              "security"="is_granted('ad_search_create',object)"
+ *              "security"="is_granted('ad_claim',object)"
  *          },
  *          "put_ask"={
  *              "method"="PUT",
@@ -508,6 +513,16 @@ class Ad
      * @Groups({"read","write"})
      */
     private $marginDuration;
+
+    /**
+     * @var \DateTimeInterface Creation date of the Ad.
+     */
+    private $createdDate;
+
+    /**
+     * @var string|null The external Id if the ad was created for an external search.
+     */
+    private $externalId;
 
     public function __construct()
     {
@@ -1153,6 +1168,30 @@ class Ad
     public function setMarginDuration(?int $marginDuration): self
     {
         $this->marginDuration = $marginDuration;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?String
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
 
         return $this;
     }

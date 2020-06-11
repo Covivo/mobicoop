@@ -14,7 +14,7 @@
 
           <!-- Matching header -->
           <matching-header
-            v-if="!lProposalId"
+            v-if="!lProposalId && !lExternalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -205,9 +205,9 @@
         </v-toolbar>
 
         <v-card-text>
-          <div class="text--primary">
+          <p class="text--primary ma-1">
             {{ $t('loginOrRegister') }}
-          </div>
+          </p>
         </v-card-text>
 
         <v-card-actions>
@@ -268,7 +268,6 @@ export default {
       default: null
     },
     // external Id after external search
-    // NOT USED YET
     externalId: {
       type: String,
       default: null
@@ -342,7 +341,8 @@ export default {
       result: null,
       loading : true,
       loadingExternal : false,
-      lProposalId: this.proposalId ? this.proposalId : (this.externalId ? this.externalId : null),
+      lProposalId: this.proposalId ? this.proposalId : null,
+      lExternalId: this.externalId ? this.externalId : null,
       filters: null,
       newSearch: false,
       modelTabs:"carpools",
@@ -436,6 +436,29 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data;
+            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else if (this.lExternalId) {
+        // if an externalId is provided, we load the corresponding proposal results
+        this.loading = true;
+        let postParams = {
+          "filters": this.filters
+        };
+        axios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then((response) => {
+            this.loading = false;
+            this.results = response.data;
+            if (this.results.length>0 && this.results[0].id) {
+              this.lProposalId = this.results[0].id;
+            }
             (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
           })
           .catch((error) => {

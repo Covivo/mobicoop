@@ -97,5 +97,4 @@ class RdexOperator
     {
         $this->resultRoute = $resultRoute;
     }
-    
 }
