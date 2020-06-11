@@ -34,10 +34,43 @@ const fr = {
         'solidaryUser.user.familyName': 'Nom',
         createdDate: 'Date',
         displayLabel: 'Trajet demandé',
+        lastAction: 'Dernière action',
+      },
+    },
+    solidary_searches: {
+      fields: {
+        author: 'Auteur',
+        journey: 'Trajet',
+        schedule: 'Date',
+        type: 'Type',
+        role: 'Rôle',
+        exclusive: 'Solidaire Exclusif',
+        origin: 'Origine',
+        volunteer: 'Transporteur',
       },
     },
   },
   custom: {
+    days: {
+      mon: 'Lun',
+      tue: 'Mar',
+      wed: 'Mer',
+      thu: 'Jeu',
+      fri: 'Ven',
+      sat: 'Sam',
+      sun: 'Dim',
+    },
+    solidary_search: {
+      frequency: {
+        regular: 'Régulier',
+        punctual: 'Ponctuel',
+      },
+      role: {
+        driver: 'Conducteur',
+        passenger: 'Passager',
+        both: 'Conducteur et passager',
+      },
+    },
     solidaryask: {
       status: {
         asked: 'Demande ',

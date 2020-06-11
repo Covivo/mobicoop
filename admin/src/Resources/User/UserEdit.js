@@ -11,7 +11,6 @@ import {
   SelectInput,
   email,
   BooleanInput,
-  ReferenceField,
   FunctionField,
   useTranslate,
 } from 'react-admin';

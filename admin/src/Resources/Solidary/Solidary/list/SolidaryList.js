@@ -10,8 +10,6 @@ import {
   Filter,
 } from 'react-admin';
 
-const TodoField = ({ detail }) => <span>@TODO: {detail}</span>;
-
 const SolidaryFilter = (props) => <Filter {...props}>{/* TODO: See questions */}</Filter>;
 
 export const SolidaryList = (props) => (
@@ -29,7 +27,7 @@ export const SolidaryList = (props) => (
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />
-      <TodoField label="Dernière action" detail="Où trouver l'info?" />
+      <TextField source="lastAction" />
       <DateField source="createdDate" />
       <ShowButton />
     </Datagrid>

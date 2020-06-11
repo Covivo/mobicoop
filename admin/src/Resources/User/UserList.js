@@ -8,7 +8,6 @@ import {
   TextInput,
   SelectInput,
   ReferenceInput,
-  BooleanInput,
   TextField,
   EmailField,
   DateField,
@@ -23,30 +22,29 @@ import {
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
-import TerritoryInput from '../../components/geolocation/TerritoryInput';
-import { useHistory } from 'react-router-dom';
+
+const BooleanStatusField = ({ record = {}, source }) => {
+  const theRecord = { ...record };
+  theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
+
+  return (
+    <BooleanField
+      record={theRecord}
+      source={source + 'Num'}
+      valueLabelTrue="custom.label.user.accountEnabled"
+      valueLabelFalse="custom.label.user.accountDisabled"
+    />
+  );
+};
 
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
-  const router = useHistory();
-
-  const BooleanStatusField = ({ record = {}, source }) => {
-    const theRecord = { ...record };
-    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
-    return (
-      <BooleanField
-        record={theRecord}
-        source={source + 'Num'}
-        valueLabelTrue="custom.label.user.accountEnabled"
-        valueLabelFalse="custom.label.user.accountDisabled"
-      />
-    );
-  };
 
   const checkValue = ({ selected, record }) => {
     if (record.newsSubscription === false) setCount(selected === false ? count + 1 : count - 1);
   };
+
   const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
     if (selected && record.newsSubscription === false) setCount(1);
     return (
