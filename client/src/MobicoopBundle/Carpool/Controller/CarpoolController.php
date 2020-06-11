@@ -57,8 +57,18 @@ class CarpoolController extends AbstractController
     private $platformName;
     private $carpoolRDEXJourneys;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys)
-    {
+    public function __construct(
+        $midPrice,
+        $highPrice,
+        $forbiddenPrice,
+        $defaultRole,
+        bool $defaultRegular,
+        string $platformName,
+        bool $carpoolRDEXJourneys,
+        int $ptResults,
+        string $ptProvider,
+        string $ptAlgorithm
+    ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;
@@ -66,6 +76,9 @@ class CarpoolController extends AbstractController
         $this->defaultRegular = $defaultRegular;
         $this->platformName = $platformName;
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
+        $this->ptResults = $ptResults;
+        $this->ptProvider = $ptProvider;
+        $this->ptAlgorithm = $ptAlgorithm;
     }
     
     /**
