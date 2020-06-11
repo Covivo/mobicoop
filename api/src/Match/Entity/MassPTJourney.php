@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * A potential matching between 2 persons from a mass file import.
+ * A public transport journey of a Mass Person.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class MassPTJourney
 {
     /**
-     * @var int The id of this PTJourney.
+     * @var int The id of this journey.
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")

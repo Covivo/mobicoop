@@ -246,7 +246,7 @@ class MassPerson
     private $user;
 
     /**
-     * @var ArrayCollection|null The potential matchings if the person is driver.
+     * @var ArrayCollection|null The MassPTJourneys linked to this mass person
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
