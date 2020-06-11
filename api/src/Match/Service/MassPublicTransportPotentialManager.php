@@ -140,16 +140,13 @@ class MassPublicTransportPotentialManager
     {
         $massPTJourney = new MassPTJourney();
         
-        $interval = new DateInterval($ptjourney->getDuration());
-        $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
-        $massPTJourney->setDuration($duration);
+        $massPTJourney->setDuration($ptjourney->getDuration());
 
         $massPTJourney->setDistance($ptjourney->getDistance());
 
         // Duration from home
         $legFromHome = $ptjourney->getPTLegs()[0];
-        $interval = new DateInterval($legFromHome->getDuration());
-        $durationFromHome = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+        $durationFromHome = $legFromHome->getDuration();
         $massPTJourney->setDurationWalkFromHome($durationFromHome);
 
 
@@ -159,8 +156,7 @@ class MassPublicTransportPotentialManager
 
         // Duration from Work
         $legFromWork = $ptjourney->getPTLegs()[count($ptjourney->getPTLegs())-1];
-        $interval = new DateInterval($legFromWork->getDuration());
-        $durationFromWork = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+        $durationFromWork = $legFromWork->getDuration();
         $massPTJourney->setDurationWalkFromWork($durationFromWork);
 
         // Distance from Work
