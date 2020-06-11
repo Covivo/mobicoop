@@ -235,13 +235,13 @@ export default {
         .post(this.$t('urlGetCommunities'),params)
         .then(response => {
           //console.error(response.data);
-          // if(response.data.communities){
-          this.communities = response.data.communities;
-          this.communitiesUser = response.data.communitiesUser;
-          this.canCreate = response.data.canCreate;
-          this.communitiesView = response.data.communitiesView;
-          this.totalItems = response.data.totalItems;
-          // }
+          if(response.data.communities){
+            this.communities = response.data.communities;
+            this.communitiesUser = response.data.communitiesUser;
+            this.canCreate = response.data.canCreate;
+            this.communitiesView = response.data.communitiesView;
+            this.totalItems = response.data.totalItems;
+          }
           this.loading = false;
 
         })
@@ -250,9 +250,9 @@ export default {
         });          
           
     },
-    updateOptions(data){
-      this.itemsPerPage = data.itemsPerPage;
-      this.page = data.page;
+    updateOptions(value){
+      this.itemsPerPage = value.itemsPerPage;
+      this.page = value.page;
       this.getCommunities();
     },
     updateSearch: debounce(function(value) {
