@@ -27,6 +27,15 @@ const fr = {
         validatedCandidate: 'Candidature acceptée',
       },
     },
+    solidaries: {
+      fields: {
+        'subject.label': 'Objet',
+        'solidaryUser.user.givenName': 'Prénom',
+        'solidaryUser.user.familyName': 'Nom',
+        createdDate: 'Date',
+        displayLabel: 'Trajet demandé',
+      },
+    },
   },
   custom: {
     solidaryask: {

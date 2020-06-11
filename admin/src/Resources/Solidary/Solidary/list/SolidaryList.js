@@ -25,12 +25,12 @@ export const SolidaryList = (props) => (
     <Datagrid>
       <TextField source="originId" label="ID" />
       <TextField source="subject.label" />
-      <TodoField label="Trajet demandé" detail="Champ 'trajet'" />
-      <TextField label="Prénom" source="solidaryUser.user.givenName" />
-      <TextField label="Nom" source="solidaryUser.user.familyName" />
+      <TextField source="displayLabel" />
+      <TextField source="solidaryUser.user.givenName" />
+      <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />
       <TodoField label="Dernière action" detail="Où trouver l'info?" />
-      <DateField source="createdDate" label="Date" />
+      <DateField source="createdDate" />
       <ShowButton />
     </Datagrid>
   </List>

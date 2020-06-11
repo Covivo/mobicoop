@@ -31,6 +31,8 @@ const stringifyDeepObjects = (obj) =>
       obj[key][0]['@id']
     ) {
       agg[key] = obj[key].map((object) => object['@id']);
+    } else if (isPlainObject(obj[key])) {
+      agg[key] = stringifyDeepObjects(obj[key]);
     } else {
       agg[key] = obj[key];
     }

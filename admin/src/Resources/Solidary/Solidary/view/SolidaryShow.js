@@ -59,9 +59,9 @@ const SolidaryShow = (props) => {
   // For test only. Should be sourced by props
   const record = fakeData;
 
-  const { monCheck, tueCheck, wedCheck, thuCheck, friCheck, satCheck, sunCheck } = record.criteria;
-  const { createdDate, updatedDate, id } = record;
-  const { givenName, familyName, phone, avatars } = record.user;
+  const { id, criteria, user, createdDate, updatedDate } = record;
+  const { monCheck, tueCheck, wedCheck, thuCheck, friCheck, satCheck, sunCheck } = criteria || {};
+  const { givenName, familyName, phone, avatars = [] } = user || {};
 
   const handleContactChoice = (choice) => {
     console.log(`@TODO: handling ${choice}`);
