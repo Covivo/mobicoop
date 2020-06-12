@@ -44,7 +44,7 @@
               {{ $t('details') }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <MatchingPTResultDetails :pt-legs="ptResult.pTLegs" />
+              <MatchingPTResultDetails :pt-result="ptResult" />
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>

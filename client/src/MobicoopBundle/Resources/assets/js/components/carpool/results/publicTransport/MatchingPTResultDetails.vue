@@ -1,7 +1,16 @@
 <template>
   <div>
+    <v-row>
+      <v-col cols="2">
+        <v-icon>mdi-home</v-icon>
+      </v-col>
+      <v-col cols="10">
+        {{ departureLabel }}
+      </v-col>
+    </v-row>
+    
     <v-row
-      v-for="(ptLeg,index) in ptLegs"
+      v-for="(ptLeg,index) in ptResult.pTLegs"
       :key="index"
       align="center"
     >
@@ -17,6 +26,14 @@
         le détail...
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="2">
+        <v-icon>mdi-flag-checkered</v-icon>
+      </v-col>
+      <v-col cols="10">
+        {{ arrivalLabel }}
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -26,13 +43,21 @@ export default {
     MatchingPTResultLeg
   },
   props:{
-    ptLegs: {
-      type: Array,
+    ptResult: {
+      type: Object,
       default:null
     }
   },  
   data(){
     return {
+    }
+  },
+  computed:{
+    departureLabel(){
+      return this.ptResult.pTDeparture.address.displayLabel[0];
+    },
+    arrivalLabel(){
+      return this.ptResult.pTArrival.address.displayLabel[0];
     }
   },
   methods: {
