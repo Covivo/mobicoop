@@ -83,7 +83,7 @@ class PTJourney
         $this->ptlegs = new ArrayCollection();
     }
     
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

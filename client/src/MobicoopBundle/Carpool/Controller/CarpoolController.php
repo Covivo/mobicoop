@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -56,8 +57,14 @@ class CarpoolController extends AbstractController
     private $defaultRegular;
     private $platformName;
     private $carpoolRDEXJourneys;
+    private $ptResults;
+    private $ptProvider;
+    private $ptAlgorithm;
+    private $ptDateCriteria;
+    private $publicTransportManager;
 
     public function __construct(
+        PublicTransportManager $publicTransportManager,
         $midPrice,
         $highPrice,
         $forbiddenPrice,
@@ -67,7 +74,8 @@ class CarpoolController extends AbstractController
         bool $carpoolRDEXJourneys,
         int $ptResults,
         string $ptProvider,
-        string $ptAlgorithm
+        string $ptAlgorithm,
+        string $ptDateCriteria
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -79,6 +87,8 @@ class CarpoolController extends AbstractController
         $this->ptResults = $ptResults;
         $this->ptProvider = $ptProvider;
         $this->ptAlgorithm = $ptAlgorithm;
+        $this->ptDateCriteria = $ptDateCriteria;
+        $this->publicTransportManager = $publicTransportManager;
     }
     
     /**
@@ -409,8 +419,23 @@ class CarpoolController extends AbstractController
     {
         $params = json_decode($request->getContent(), true);
                 
-        if (1==1) {
-            return $this->json("ok");
+        $date = new \DateTime();
+        
+        $journeys = $this->publicTransportManager->getJourneys(
+            $this->ptProvider,
+            '1',
+            $params['from_latitude'],
+            $params['from_longitude'],
+            $params['to_latitude'],
+            $params['to_longitude'],
+            $date->format(\DateTime::RFC3339),
+            $this->ptDateCriteria,
+            $this->ptAlgorithm,
+            "PT"
+        );
+        
+        if (!is_null($journeys)) {
+            return $this->json($journeys);
         } else {
             return $this->json("error");
         }

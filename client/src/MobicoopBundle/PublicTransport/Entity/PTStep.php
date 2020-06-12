@@ -139,7 +139,7 @@ class PTStep
         return $this;
     }
     
-    public function isLast(): bool
+    public function isLast(): ?bool
     {
         return $this->isLast;
     }

@@ -35,7 +35,7 @@ class PTDeparture
 {
     
     /**
-     * @var int The id of this departure.
+     * @var int|null The id of this departure.
      */
     private $id;
     
@@ -59,7 +59,7 @@ class PTDeparture
      */
     private $individualStop;
     
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

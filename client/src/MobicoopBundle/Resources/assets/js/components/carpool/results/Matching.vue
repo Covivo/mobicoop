@@ -461,7 +461,10 @@ export default {
     searchPTJourneys(){
       this.loadingPtResults = true;
       let postParams = {
-        "test": 1,
+        "from_latitude": this.origin.latitude,
+        "from_longitude": this.origin.longitude,
+        "to_latitude": this.destination.latitude,
+        "to_longitude": this.destination.longitude
       };
       axios.post(this.$t("ptSearchUrl"), postParams,
         {

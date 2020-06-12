@@ -40,7 +40,7 @@ class PTCompany
      */
     private $name;
     
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -52,7 +52,7 @@ class PTCompany
         return $this;
     }
     
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

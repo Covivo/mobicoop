@@ -82,7 +82,7 @@ class PTLine
      */
     private $color;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -154,7 +154,7 @@ class PTLine
         return $this;
     }
     
-    public function getPTCompany(): PTCompany
+    public function getPTCompany(): ?PTCompany
     {
         return $this->ptcompany;
     }
@@ -166,7 +166,7 @@ class PTLine
         return $this;
     }
     
-    public function getTravelMode(): TravelMode
+    public function getTravelMode(): ?TravelMode
     {
         return $this->travelMode;
     }
@@ -178,7 +178,7 @@ class PTLine
         return $this;
     }
 
-    public function getTransportMode(): int
+    public function getTransportMode(): ?int
     {
         return $this->transportMode;
     }
@@ -190,7 +190,7 @@ class PTLine
         return $this;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }

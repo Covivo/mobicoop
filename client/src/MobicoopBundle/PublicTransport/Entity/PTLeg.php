@@ -116,7 +116,7 @@ class PTLeg
         $this->ptsteps = new ArrayCollection();
     }
     
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -176,7 +176,7 @@ class PTLeg
         return $this;
     }
     
-    public function isLast(): bool
+    public function isLast(): ?bool
     {
         return $this->isLast;
     }
