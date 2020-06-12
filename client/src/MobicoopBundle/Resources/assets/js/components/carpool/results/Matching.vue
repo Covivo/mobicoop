@@ -135,8 +135,8 @@
               </v-badge>
             </v-tab>
             <v-tab
-              v-if="ptResults"
-              href="#ptResults"
+              v-if="ptSearch"
+              href="#ptSearch"
             >
               <v-badge
                 color="primary"
@@ -173,8 +173,8 @@
               />
             </v-tab-item>
             <v-tab-item
-              v-if="ptResults"
-              value="ptResults"
+              v-if="ptSearch"
+              value="ptSearch"
             >
               cool
             </v-tab-item>            
@@ -282,7 +282,7 @@ export default {
       type: Number,
       default: 3
     },
-    ptResults: {
+    ptSearch: {
       type: Boolean,
       default: false
     }
@@ -295,6 +295,7 @@ export default {
       results: null,
       externalRDEXResults:null,
       result: null,
+      ptResults:null,
       loading : true,
       loadingExternal : false,
       loadingPtResults : false,
@@ -338,7 +339,7 @@ export default {
       return communities;
     },
     displayTab(){
-      return (this.externalRdexJourneys || this.ptResults) ? true : false;
+      return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     }
   },
   watch:{
@@ -363,6 +364,7 @@ export default {
     if(this.proposalId) this.fromMyProposals = true;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
+    if(this.ptSearch) this.searchPTJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -457,8 +459,25 @@ export default {
 
     },
     searchPTJourneys(){
-      //(response.data.length>0) ? this.nbPtResults = response.data.length : this.nbPtResults = '-';
-      this.nbPtResults = "-";
+      this.loadingPtResults = true;
+      let postParams = {
+        "test": 1,
+      };
+      axios.post(this.$t("ptSearchUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          console.error(response.data);
+          this.loadingPtResults = false;
+          this.ptResults = response.data;
+          (response.data.length>0) ? this.nbPtResults = response.data.length : this.nbPtResults = '-';
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     contact(params) {
       axios.post(this.$t("contactUrl"), params,

@@ -236,7 +236,7 @@ class CarpoolController extends AbstractController
             'proposalId' => $id,
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => false, // No RDEX, this not a new search
-            'ptResults' => false, // No PT Results, this not a new search
+            'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -277,7 +277,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
-            'ptResults' => $this->ptResults,
+            'ptSearch' => $this->ptResults,
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -299,7 +299,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
-            'ptResults' => $this->ptResults,
+            'ptSearch' => $this->ptResults,
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -400,5 +400,19 @@ class CarpoolController extends AbstractController
         }
 
         return $this->json("");
+    }
+
+    /**
+     * Public Transport search (POST)
+     */
+    public function PTSearch(Request $request)
+    {
+        $params = json_decode($request->getContent(), true);
+                
+        if (1==1) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
     }
 }
