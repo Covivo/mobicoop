@@ -134,7 +134,7 @@ const UserEdit = (props) => {
             render={({ addresses }) => addresses.map(addressRenderer)}
           />
           <GeocompleteInput
-            source="addresses"
+            source="addresses[0]"
             label={translate('custom.label.user.newsAdresse')}
             validate={required()}
             formClassName={classes.fullwidth}
