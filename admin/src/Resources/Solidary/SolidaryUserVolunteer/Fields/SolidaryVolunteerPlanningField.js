@@ -24,6 +24,7 @@ import {
 
 import { resolveVoluntaryAvailabilityHourRanges } from '../utils/resolveVoluntaryAvailabilityHourRanges';
 import { fetchJson } from '../../../../fetchJson';
+
 import {
   solidaryAskStatusColors,
   solidaryAskStatusIcons,
@@ -64,7 +65,8 @@ const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
 
   const handleOpenSolidary = (popupState) => () => {
     popupState.close();
-    router.push(`/solidaries/${slot.solidaryId}/show`);
+    const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
+    router.push(`/solidaries/${raSolidaryId}/show`);
   };
 
   const handleOpenSolidaryDiscuss = (popupState) => () => {
@@ -74,7 +76,8 @@ const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
 
   const handleOpenSolidarySolicitation = (popupState) => () => {
     popupState.close();
-    router.push(`/solidaries/${slot.solidaryId}/show`);
+    const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
+    router.push(`/solidaries/${raSolidaryId}/show`);
   };
 
   const StatusIcon = solidaryAskStatusIcons[slot.status];
@@ -193,9 +196,10 @@ export const SolidaryVolunteerPlanningField = ({ record, onOpenMessaging }) => {
                   slot={
                     // Use lines bellow for tests
                     // {
-                    // solidaryId: 18,
-                    // solidarySolutionId: 6,
-                    // beneficiary: `${record.givenName} ${record.familyName}`,
+                    //   status: 0,
+                    //   solidaryId: 18,
+                    //   solidarySolutionId: 6,
+                    //   beneficiary: `${record.givenName} ${record.familyName}`,
                     // } ||
                     row.morningSlot
                   }
