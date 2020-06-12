@@ -19,6 +19,7 @@ import {
 
 import { solidarySearchFrequencyLabels } from '../../../constants/solidarySearchFrequency';
 import { carpoolRoleLabels } from '../../../constants/solidarySearchRole';
+import { solidaryLabelRenderer } from '../../../utils/renderers';
 
 const CreateSolidarySolutionButton = ({ record, source }) => {
   const solidaryMatching = get(record, source);
@@ -75,10 +76,7 @@ const SolidarySearchFilter = (props) => (
       source="solidary"
       reference="solidaries"
     >
-      <AutocompleteInput
-        allowEmpty
-        optionText={(record) => `${record.originId} - ${record.displayLabel}`}
-      />
+      <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
     </ReferenceInput>
   </Filter>
 );
