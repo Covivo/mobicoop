@@ -1,8 +1,10 @@
 {
     "fr":{
-      "at":"à"
+      "at":"à",
+      "details":"Détails"
     },
     "en":{
-      "at":"at"
+      "at":"at",
+      "details":"Details"
     }
 }  

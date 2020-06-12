@@ -1,11 +1,22 @@
 <template>
   <div>
-    <MatchingPTResultLeg
+    <v-row
       v-for="(ptLeg,index) in ptLegs"
       :key="index"
-      :pt-leg="ptLeg"
-      :arrow="index == ptLegs.length-1 ? false : true"
-    />
+      align="center"
+    >
+      <v-col
+        cols="2"
+      >
+        <MatchingPTResultLeg
+          :pt-leg="ptLeg"
+          :arrow="false"
+        />
+      </v-col>
+      <v-col cols="10">
+        le détail...
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -22,6 +33,11 @@ export default {
   },  
   data(){
     return {
+    }
+  },
+  methods: {
+    icon(currentLeg){
+      return currentLeg.travelMode.mdiIcon;
     }
   }
 }

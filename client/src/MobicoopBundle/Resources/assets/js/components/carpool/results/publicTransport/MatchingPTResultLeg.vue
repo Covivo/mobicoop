@@ -7,7 +7,7 @@
     >
       {{ line }}
     </v-chip>    
-    <v-icon v-if="!last">
+    <v-icon v-if="arrow">
       mdi-arrow-right
     </v-icon>
   </span>
@@ -15,14 +15,14 @@
 <script>
 export default {
   props:{
-    last:{
-      type: Boolean,
-      default:false
-    },
     ptLeg: {
       type: Object,
       default:null
-    }
+    },
+    arrow:{
+      type: Boolean,
+      default:true
+    },
   },
   data(){
     return {
