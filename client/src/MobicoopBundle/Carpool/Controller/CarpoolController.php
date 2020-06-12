@@ -419,8 +419,12 @@ class CarpoolController extends AbstractController
     {
         $params = json_decode($request->getContent(), true);
                 
-        $date = new \DateTime();
-        
+        // If there is no date in params, we use 'now'
+        $date = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+        if (!empty($params['date'])) {
+            $date = new \DateTime($params['date']." 08:00:00", new \DateTimeZone('Europe/Paris'));
+        }
+
         $journeys = $this->publicTransportManager->getJourneys(
             $this->ptProvider,
             '1',

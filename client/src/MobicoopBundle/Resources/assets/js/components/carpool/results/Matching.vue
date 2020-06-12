@@ -464,7 +464,8 @@ export default {
         "from_latitude": this.origin.latitude,
         "from_longitude": this.origin.longitude,
         "to_latitude": this.destination.latitude,
-        "to_longitude": this.destination.longitude
+        "to_longitude": this.destination.longitude,
+        "date": this.date
       };
       axios.post(this.$t("ptSearchUrl"), postParams,
         {
