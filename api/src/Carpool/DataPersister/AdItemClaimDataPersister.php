@@ -21,32 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Carpool\DataPersister;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Ad;
 use App\Carpool\Service\AdManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Item data provider for clone Ad.
+ * Item data persister for claim Ad.
  */
-final class AdItemClaimDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
+final class AdItemClaimDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $adManager;
+    private $adManager;
+    private $request;
 
-    public function __construct(AdManager $adManager)
+    public function __construct(AdManager $adManager, RequestStack $requestStack)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+  
+    public function supports($data, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "claim";
+        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'claim';
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function persist($data, array $context = [])
     {
-        return $this->adManager->claimAd($id);
+        return $this->adManager->claimAd($this->request->get("id"));
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

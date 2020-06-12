@@ -17,7 +17,7 @@ final class Version20200609135500 extends AbstractMigration
 
         $this->addSql('INSERT INTO `auth_rule` (`id`, `name`) VALUES (23, \'AdDisconnectedAuthor\');');
         $this->addSql('INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (226, 23, 1, \'ad_claim\', \'Claim an ad\');');
-        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (5, 226)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 226)');
     }
 
     public function down(Schema $schema) : void

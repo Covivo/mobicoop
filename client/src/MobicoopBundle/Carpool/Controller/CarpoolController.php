@@ -231,14 +231,17 @@ class CarpoolController extends AbstractController
      */
     public function carpoolAdResultsAfterAuthentication($id, AdManager $adManager)
     {
-        // first we need to claim the source proposal, as it should be anonymous
-        $adManager->claimAd($id);
-        return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'proposalId' => $id,
-            'platformName' => $this->platformName,
-            'externalRDEXJourneys' => false, // No RDEX, this not a new search
-            'defaultRole'=>$this->defaultRole
-        ]);
+        // we need to claim the source proposal, as it should be anonymous
+        if ($adManager->claimAd($id)) {
+            return $this->render('@Mobicoop/carpool/results.html.twig', [
+                'proposalId' => $id,
+                'platformName' => $this->platformName,
+                'externalRDEXJourneys' => false, // No RDEX, this not a new search
+                'defaultRole'=>$this->defaultRole
+            ]);
+        }
+        // for now if the claim fails we redirect to home !
+        return $this->redirectToRoute('home');
     }
 
     /**

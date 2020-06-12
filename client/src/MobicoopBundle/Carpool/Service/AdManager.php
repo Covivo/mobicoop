@@ -99,14 +99,15 @@ class AdManager
      * Claim an Ad (useful for login or register after an anonymous search)
      *
      * @param int $id   The Ad id to claim
-     * @return void
+     * @return bool     Result of the claim
      */
     public function claimAd(int $id)
     {
-        if ($data = $this->dataProvider->getSpecialItem($id, 'claim')) {
-            return;
+        $ad = new Ad($id);
+        if ($response = $this->dataProvider->putSpecial($ad, null, 'claim')) {
+            return $response->getCode() == 200;
         }
-        return;
+        return false;
     }
 
     /**

@@ -705,6 +705,9 @@ class AdManager
             throw new AdException('Acces denied');
         }
 
+        $ad = new Ad();
+        $ad->setId($id);
+
         // we claim the proposal
         $proposal->setUser($this->security->getUser());
         // check if there's a linked proposal
@@ -713,6 +716,8 @@ class AdManager
         }
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
+
+        return $ad;
     }
 
     /**

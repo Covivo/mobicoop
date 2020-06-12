@@ -94,8 +94,9 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "security"="is_granted('ad_read',object)"
  *          },
  *          "claim"={
- *              "method"="GET",
+ *              "method"="PUT",
  *              "path"="/carpools/{id}/claim",
+ *              "read"=false,
  *              "security"="is_granted('ad_claim',object)"
  *          },
  *          "put_ask"={
