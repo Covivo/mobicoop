@@ -39,7 +39,7 @@ class SolidaryCreatedEvent extends Event
     protected $user;
     protected $author;
 
-    public function __construct(User $user, $author, $solidary)
+    public function __construct(User $user, $author, $solidary=null)
     {
         $this->user = $user;
         $this->author = $author;
