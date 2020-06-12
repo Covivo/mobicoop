@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { makeStyles } from '@material-ui/core/styles';
 import RoomIcon from '@material-ui/icons/Room';
+import { useHistory } from 'react-router-dom';
+
 import {
   Card,
   Grid,
@@ -57,19 +58,20 @@ const driverSearchOptions = [
   },
   {
     label: 'Rechercher retour covoiturage',
-    filter: (solidaryId) => `/solidary_searches?way=return&type=carpool&solidary=${solidaryId}`,
+    filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole aller',
-    filter: (solidaryId) => `/solidary_searches?way=outward&type=transport&solidary=${solidaryId}`,
+    filter: (solidaryId) => ({ way: 'outward', type: 'transport', solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole retour',
-    filter: (solidaryId) => `/solidary_searches?way=return&type=transport&solidary=${solidaryId}`,
+    filter: (solidaryId) => ({ way: 'return', type: 'transport', solidary: solidaryId }),
   },
 ];
-const SolidaryShowInformation = ({ record, history }) => {
+const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
+  const history = useHistory();
 
   console.log('record:', record);
   if (!record) {
@@ -110,6 +112,7 @@ const SolidaryShowInformation = ({ record, history }) => {
     const url = `/solidary_searches?filter=${encodeURIComponent(
       JSON.stringify(driverSearchOptions[index].filter(id))
     )}`;
+
     history.push(url);
   };
 

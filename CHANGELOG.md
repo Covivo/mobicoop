@@ -1,3 +1,9 @@
+# Release 1.7.0
+
+## API
+
+* [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
+
 # Release 1.6.0
 
 ## API

@@ -15,10 +15,8 @@ import {
   RichTextField,
   SelectField,
   ReferenceArrayField,
-  ReferenceField,
   FunctionField,
   useTranslate,
-  BulkDeleteButton,
   List,
 } from 'react-admin';
 

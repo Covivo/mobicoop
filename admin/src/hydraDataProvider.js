@@ -141,7 +141,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource,
   }
 };
 
-const createHydraResponseToReactAdminResponseConverter = (type) => (response) => {
+const createHydraResponseToReactAdminResponseConverter = (type, resource) => (response) => {
   switch (type) {
     case GET_LIST:
     case GET_MANY_REFERENCE:
@@ -213,12 +213,26 @@ export const jsonLdDocumentToReactAdminDocument = (document) => {
   return obj;
 };
 
-export default (entrypoint, httpClient) => {
+const defaultResponseTransporter = (type, resource) => (response) => response;
+const defaultErrorHandler = (type, resource) => (error) => {
+  throw error;
+};
+
+export default (
+  entrypoint,
+  httpClient,
+  responseTransformer = defaultResponseTransporter,
+  errorHandler = defaultErrorHandler
+) => {
   const reactAdminRequestConverter = createReactAdminToHydraRequestConverter(entrypoint);
   const fetchApi = (type, resource, params) =>
     reactAdminRequestConverter(type, resource, params)
-      .then(({ url, options }) => httpClient(url, options))
-      .then(createHydraResponseToReactAdminResponseConverter(type));
+      .then(({ url, options }) =>
+        httpClient(url, options)
+          .then(responseTransformer(type, resource))
+          .catch(errorHandler(type, resource))
+      )
+      .then(createHydraResponseToReactAdminResponseConverter(type, resource));
 
   return {
     getList: (resource, params) => fetchApi(GET_LIST, resource, params),
