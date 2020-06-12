@@ -591,9 +591,6 @@ class SolidaryUserManager
         // dispatch SolidaryUser event
         $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
-        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
-
         return $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
     }
 
@@ -855,8 +852,6 @@ class SolidaryUserManager
         // // dispatch SolidaryUser event
         $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
-        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         
         return $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
     }
