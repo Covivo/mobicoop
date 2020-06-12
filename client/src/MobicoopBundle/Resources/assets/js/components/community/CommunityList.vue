@@ -105,12 +105,13 @@
         :items="communities"
         :items-per-page.sync="itemsPerPage"
         :server-items-length="totalItems"
+        :no-data-text="$t('noCommunity')"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
           'items-per-page-all-text': $t('all'),
           'itemsPerPageText': $t('linePerPage')
         }"
-        loading
+        :loading="loading"
         @update:options="updateOptions"
       >
         <template>
