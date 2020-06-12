@@ -50,7 +50,7 @@ class PTLeg
     private $distance;
     
     /**
-     * @var string The duration of this leg.
+     * @var int The duration of this leg.
      */
     private $duration;
     
@@ -152,12 +152,12 @@ class PTLeg
         return $this;
     }
     
-    public function getDuration(): ?string
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(?string $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         

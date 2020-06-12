@@ -44,7 +44,7 @@ class PTJourney
     private $distance;
     
     /**
-     * @var string The total duration of this journey.
+     * @var int The total duration of this journey.
      */
     private $duration;
 
@@ -107,12 +107,12 @@ class PTJourney
         return $this;
     }
     
-    public function getDuration(): ?string
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(?string $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
