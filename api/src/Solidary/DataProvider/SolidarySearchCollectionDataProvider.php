@@ -28,7 +28,6 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\SolidaryManager;
-use App\Solidary\Repository\SolidaryRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -37,12 +36,10 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
 {
     private $filters;
     private $solidaryManager;
-    private $solidaryRepository;
 
-    public function __construct(SolidaryManager $solidaryManager, SolidaryRepository $solidaryRepository)
+    public function __construct(SolidaryManager $solidaryManager)
     {
         $this->solidaryManager = $solidaryManager;
-        $this->solidaryRepository = $solidaryRepository;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -81,12 +78,9 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         $solidarySearch = new SolidarySearch();
         $solidarySearch->setWay($this->filters['way']);
 
-        $solidary = $this->solidaryRepository->find($solidaryId);
-        if (empty($solidary)) {
-            throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
-        }
+        $solidary = $this->solidaryManager->getSolidary($solidaryId);
+       
         $solidarySearch->setSolidary($solidary);
-
         if ($this->filters['type'] == 'transport') {
             return $this->solidaryManager->getSolidaryTransportSearchResults($solidarySearch);
         } elseif ($this->filters['type'] == 'carpool') {
