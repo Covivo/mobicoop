@@ -1,15 +1,7 @@
 import React from 'react';
 import RichTextInput from 'ra-input-rich-text';
 
-import {
-  Edit,
-  SimpleForm,
-  required,
-  SelectInput,
-  NumberInput,
-  ReferenceField,
-  TextField,
-} from 'react-admin';
+import { Edit, SimpleForm, required, SelectInput, NumberInput, TextField } from 'react-admin';
 
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },

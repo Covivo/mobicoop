@@ -7,7 +7,6 @@ import {
   SelectInput,
   TextInput,
   NumberInput,
-  ReferenceField,
   TextField,
   SelectField,
   Link,
