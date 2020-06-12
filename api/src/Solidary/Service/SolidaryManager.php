@@ -108,6 +108,9 @@ class SolidaryManager
     public function getSolidary($id): ?Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
+        if (empty($solidary)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
+        }
 
         // we get the origin and destination associated to the demand
         $solidary->setOrigin(json_decode(json_encode($solidary->getProposal()->getWaypoints()[0]->getAddress()), true));
