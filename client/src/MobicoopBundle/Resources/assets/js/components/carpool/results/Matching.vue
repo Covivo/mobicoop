@@ -176,7 +176,10 @@
               v-if="ptSearch"
               value="ptSearch"
             >
-              cool
+              <MatchingPTResults
+                :pt-results="ptResults"
+                :loading-pt-results="loadingPtResults"
+              />
             </v-tab-item>            
           </v-tabs-items>
         </v-col>
@@ -210,6 +213,7 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -219,7 +223,8 @@ export default {
     MatchingFilter,
     MatchingResults,
     MatchingJourney,
-    Search
+    Search,
+    MatchingPTResults
   },
   i18n: {
     messages: TranslationsMerged,
@@ -474,10 +479,10 @@ export default {
           }
         })
         .then((response) => {
-          console.error(response.data);
+          //console.error(response.data);
           this.loadingPtResults = false;
-          this.ptResults = response.data;
-          (response.data.length>0) ? this.nbPtResults = response.data.length : this.nbPtResults = '-';
+          (response.data.member) ? this.ptResults = response.data.member : this.ptResults = [];
+          (response.data.member && response.data.member.length>0) ? this.nbPtResults = response.data.member.length : this.nbPtResults = '-';
         })
         .catch((error) => {
           console.log(error);
