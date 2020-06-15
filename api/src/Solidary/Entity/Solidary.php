@@ -771,7 +771,7 @@ class Solidary
         return $this->frequency;
     }
     
-    public function setFrequency(?bool $frequency): self
+    public function setFrequency(?int $frequency): self
     {
         $this->frequency = $frequency;
         
