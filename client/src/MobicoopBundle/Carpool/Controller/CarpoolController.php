@@ -59,8 +59,10 @@ class CarpoolController extends AbstractController
     private $carpoolRDEXJourneys;
     private $ptResults;
     private $ptProvider;
+    private $ptKey;
     private $ptAlgorithm;
     private $ptDateCriteria;
+    private $ptMode;
     private $publicTransportManager;
 
     public function __construct(
@@ -74,8 +76,10 @@ class CarpoolController extends AbstractController
         bool $carpoolRDEXJourneys,
         int $ptResults,
         string $ptProvider,
+        string $ptKey,
         string $ptAlgorithm,
-        string $ptDateCriteria
+        string $ptDateCriteria,
+        string $ptMode
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -86,8 +90,10 @@ class CarpoolController extends AbstractController
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
         $this->ptResults = $ptResults;
         $this->ptProvider = $ptProvider;
+        $this->ptKey = $ptKey;
         $this->ptAlgorithm = $ptAlgorithm;
         $this->ptDateCriteria = $ptDateCriteria;
+        $this->ptMode = $ptMode;
         $this->publicTransportManager = $publicTransportManager;
     }
     
@@ -427,7 +433,7 @@ class CarpoolController extends AbstractController
 
         $journeys = $this->publicTransportManager->getJourneys(
             $this->ptProvider,
-            '1',
+            $this->ptKey,
             $params['from_latitude'],
             $params['from_longitude'],
             $params['to_latitude'],
@@ -435,7 +441,7 @@ class CarpoolController extends AbstractController
             $date->format(\DateTime::RFC3339),
             $this->ptDateCriteria,
             $this->ptAlgorithm,
-            "PT"
+            $this->ptMode
         );
         
         if (!is_null($journeys)) {
