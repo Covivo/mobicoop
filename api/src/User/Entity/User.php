@@ -413,7 +413,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -431,7 +431,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation"})
      */
     private $givenName;
 
@@ -439,7 +439,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities"})
+     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation"})
      */
     private $familyName;
 
@@ -464,7 +464,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
 
@@ -540,7 +540,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","results"})
+     * @Groups({"readUser","write","checkPhoneToken","results", "readSolidary"})
      */
     private $telephone;
 
@@ -944,7 +944,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney"})
+     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
 

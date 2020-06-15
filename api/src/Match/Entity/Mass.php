@@ -217,6 +217,18 @@ use Doctrine\Common\Collections\Collection;
  *              "security"="is_granted('mass_create',object)",
  *              "normalization_context"={"groups"={"massMigrate"}}
  *          },
+ *          "getPTPotential"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/getPTPotential",
+ *              "normalization_context"={"groups"={"mass","pt"}},
+ *              "security"="is_granted('mass_create',object)"
+ *          },
+ *          "computePTPotential"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/computePTPotential",
+ *              "normalization_context"={"groups"={"massPTPotential"}},
+ *              "security"="is_granted('mass_create',object)"
+ *          }
  *      }
  * )
  * @Vich\Uploadable
@@ -249,7 +261,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate", "massPTPotential"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -258,7 +270,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massCompute", "massMigrate"})
+     * @Groups({"mass","massPost", "massCompute", "massMigrate", "massPTPotential"})
      */
     private $status;
 
@@ -360,6 +372,12 @@ class Mass
     private $persons;
 
     /**
+     * @var int Number of persons in this Mass
+     * @Groups({"mass", "massCompute", "massPTPotential"})
+     */
+    private $numberOfPersons;
+
+    /**
      * @var File|null
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
@@ -425,7 +443,7 @@ class Mass
     /**
      * @var Community The community created after the migration of this mass users
      *
-     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
      * @Groups({"mass","massMigrate"})
      */
     private $community;
@@ -476,6 +494,28 @@ class Mass
      * @Groups({"mass","massMigrate"})
      */
     private $communityAddress;
+
+    /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass"})
+     */
+    private $gettingPublicTransportationPotentialDate;
+
+    /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API end
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass", "massPTPotential", "massAnalyze", "massMatch", "massCompute", "massMigrate"})
+     */
+    private $gotPublicTransportationPotentialDate;
+
+    /**
+     * @var array Potential of Public Transport of this Mass
+     * @Groups({"massPTPotential"})
+     */
+    private $publicTransportPotential;
 
     public function __construct($id = null)
     {
@@ -654,6 +694,18 @@ class Mass
                 $person->setMass(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNumberOfPersons(): ?int
+    {
+        return (!is_null($this->getPersons())) ? count($this->getPersons()) : 0;
+    }
+
+    public function setNumberOfPersons(?int $numberOfPersons): self
+    {
+        $this->numberOfPersons = $numberOfPersons;
 
         return $this;
     }
@@ -869,6 +921,42 @@ class Mass
     public function setCommunityAddress(?Address $communityAddress)
     {
         $this->communityAddress = $communityAddress;
+    }
+
+    public function getGettingPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gettingPublicTransportationPotentialDate;
+    }
+
+    public function setGettingPublicTransportationPotentialDate(?\DateTimeInterface $gettingPublicTransportationPotentialDate): self
+    {
+        $this->gettingPublicTransportationPotentialDate = $gettingPublicTransportationPotentialDate;
+
+        return $this;
+    }
+    
+    public function getGotPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gotPublicTransportationPotentialDate;
+    }
+
+    public function setGotPublicTransportationPotentialDate(?\DateTimeInterface $gotPublicTransportationPotentialDate): self
+    {
+        $this->gotPublicTransportationPotentialDate = $gotPublicTransportationPotentialDate;
+
+        return $this;
+    }
+    
+    public function getPublicTransportPotential(): ?array
+    {
+        return $this->publicTransportPotential;
+    }
+
+    public function setPublicTransportPotential(array $publicTransportPotential): self
+    {
+        $this->publicTransportPotential = $publicTransportPotential;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

@@ -169,8 +169,7 @@ class ActionManager
 
     private function onSolidaryCreated(Action $action, SolidaryCreatedEvent $event)
     {
-        // To do : The solidary is not persisted yet so we can't pass it to addDiaryEntrey... But it would be cool :)
-        $this->treatDiary($action, $event->getUser(), $event->getAuthor());
+        $this->treatDiary($action, $event->getUser(), $event->getAuthor(), null, $event->getSolidary());
     }
 
     private function onSolidaryUpdated(Action $action, SolidaryUpdatedEvent $event)

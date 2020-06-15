@@ -15,6 +15,7 @@ import {
 import { DayField } from './Fields/DayField';
 import { AddressField } from './Fields/AddressField';
 import { RoleField } from './Fields/RoleField';
+import { solidaryLabelRenderer } from '../../../utils/renderers';
 
 const SolidaryUserVolunteerFilter = (props) => (
   <Filter {...props}>
@@ -26,7 +27,7 @@ const SolidaryUserVolunteerFilter = (props) => (
       source="solidary"
       reference="solidaries"
     >
-      <SelectInput optionText="id" />
+      <SelectInput optionText={(record) => solidaryLabelRenderer({ record })} />
     </ReferenceInput>
     <NullableBooleanInput
       alwaysOn
@@ -41,6 +42,7 @@ const SolidaryUserVolunteerFilter = (props) => (
 export const SolidaryUserVolunteerList = (props) => (
   <List
     {...props}
+    bulkActionButtons={false}
     title="Transporteurs Bénévoles > liste"
     perPage={25}
     filters={<SolidaryUserVolunteerFilter />}

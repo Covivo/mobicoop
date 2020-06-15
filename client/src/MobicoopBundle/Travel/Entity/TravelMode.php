@@ -43,6 +43,11 @@ class TravelMode
      */
     private $name;
 
+    /**
+     * @var string The Material design icon code of this travel mode
+     */
+    private $mdiIcon;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +76,18 @@ class TravelMode
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getMdiIcon(): ?string
+    {
+        return $this->mdiIcon;
+    }
+
+    public function setMdiIcon(string $mdiIcon): self
+    {
+        $this->mdiIcon = $mdiIcon;
 
         return $this;
     }

@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
 import {
   TextInput,
   SelectInput,
   email,
-  regex,
   BooleanInput,
   useTranslate,
   useDataProvider,
   useNotify,
 } from 'react-admin';
-
+import { useField } from 'react-final-form';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress, TextField } from '@material-ui/core';
+import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
 const useStyles = makeStyles({
   spacedHalfwidth: { maxWidth: '400px', marginBottom: '0.5rem' },
+  root: { width: '100%', maxWidth: '400px', marginBottom: '0.5rem' },
   loadingHeader: {
     display: 'flex',
     width: '100%',
@@ -28,55 +30,61 @@ const useStyles = makeStyles({
   },
 });
 
-const SolidaryUserBeneficiaryCreateFields = (props) => {
+const useStylesForGeocompleteInput = makeStyles({
+  root: { width: '100%', maxWidth: '400px', marginBottom: '0.5rem' },
+});
+
+const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const classes = useStyles();
+  const classesForGeocompleteInput = useStylesForGeocompleteInput();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
   const [loading, setLoading] = useState(false);
+  const [oldAddress, setOldAddress] = useState(null);
   // Pre-fill user data
+  const {
+    input: { value: userId },
+  } = useField('already_registered_user');
   const dataProvider = useDataProvider();
   const notify = useNotify();
+  const prefillUserData = useCallback(
+    (id) => {
+      if (id) {
+        setLoading(true);
+        dataProvider
+          .getOne('users', { id })
+          .then((result) => {
+            if (result.data.email) {
+              form.change('email', result.data.email);
+              form.change('familyName', result.data.familyName);
+              form.change('givenName', result.data.givenName);
+              form.change('gender', result.data.gender);
+              form.change('birthDate', result.data.birthDate);
+              form.change('telephone', result.data.telephone);
+              form.change('newsSubscription', result.data.newsSubscription || false);
+              if (result.data.addresses && result.data.addresses.length) {
+                const homeAddress = result.data.addresses.find((a) => a.home);
+                if (homeAddress) {
+                  setOldAddress(homeAddress);
+                }
+              }
+            }
+          })
+          .catch((error) => notify(error.message, 'warning'))
+          .finally(() => setLoading(false));
+      }
+    },
+    [dataProvider, notify, form]
+  );
   useEffect(() => {
-    if (props.user) {
-      setLoading(true);
-      dataProvider
-        .getOne('users', { id: props.user })
-        .then((result) => {
-          console.log('Results : ', result.data);
-          if (result.data.email) {
-            props.form.change('email', result.data.email);
-            props.form.change('familyName', result.data.familyName);
-            props.form.change('givenName', result.data.givenName);
-            props.form.change('gender', result.data.gender);
-            props.form.change('birthDate', result.data.birthDate);
-            props.form.change('telephone', result.data.telephone);
-            props.form.change('newsSubscription', result.data.newsSubscription);
-          }
-        })
-        .catch((error) => notify(error.message, 'warning'))
-        .finally(() => setLoading(false));
+    if (userId) {
+      prefillUserData(userId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.user]);
+  }, [userId]);
 
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
-
-  const minPassword = (message = 'Au minimum 8 caractères') => (value) =>
-    value && value.length >= 8 ? undefined : message;
-
-  const upperPassword = regex(
-    /^(?=.*[A-Z]).*$/,
-    translate('custom.label.user.errors.upperPassword')
-  );
-  const lowerPassword = regex(
-    /^(?=.*[a-z]).*$/,
-    translate('custom.label.user.errors.lowerPassword')
-  );
-  const numberPassword = regex(
-    /^(?=.*[0-9]).*$/,
-    translate('custom.label.user.errors.numberPassword')
-  );
 
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
@@ -85,15 +93,27 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
   ];
 
   const validateRequired = [required()];
-  const paswwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
   const emailRules = [required(), email()];
+
+  if (loading) {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center" width="100%">
+        {loading && (
+          <Box className={classes.loadingHeader}>
+            <CircularProgress />
+            <p>Recherche de l&lsquo;utilisateur...</p>
+          </Box>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" width="100%">
       {loading && (
         <Box className={classes.loadingHeader}>
           <CircularProgress />
-          <p>Recherche de l'utilisateur...</p>
+          <p>Recherche de l&lsquo;utilisateur...</p>
         </Box>
       )}
 
@@ -103,15 +123,6 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
         source="email"
         label={translate('custom.label.user.email')}
         validate={emailRules}
-        className={classes.spacedHalfwidth}
-      />
-      <TextInput
-        fullWidth
-        required
-        source="password"
-        label={translate('custom.label.user.password')}
-        type="password"
-        validate={paswwordRules}
         className={classes.spacedHalfwidth}
       />
 
@@ -160,6 +171,27 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
         className={classes.spacedHalfwidth}
       />
 
+      <TextField
+        defaultValue={
+          oldAddress &&
+          oldAddress.displayLabel &&
+          oldAddress.displayLabel.length &&
+          oldAddress.displayLabel.join(' ')
+        }
+        fullWidth
+        disabled
+        label="Adresse actuelle"
+        className={classes.spacedHalfwidth}
+      />
+
+      <GeocompleteInput
+        fullWidth
+        source="homeAddress"
+        label="Nouvelle Adresse"
+        validate={(a) => (a ? '' : 'Champs obligatoire')}
+        classes={classesForGeocompleteInput}
+      />
+
       <BooleanInput
         fullWidth
         label={translate('custom.label.user.newsSubscription', { instanceName: instance })}
@@ -168,6 +200,10 @@ const SolidaryUserBeneficiaryCreateFields = (props) => {
       />
     </Box>
   );
+};
+
+SolidaryUserBeneficiaryCreateFields.propTypes = {
+  form: PropTypes.object.isRequired,
 };
 
 export default SolidaryUserBeneficiaryCreateFields;

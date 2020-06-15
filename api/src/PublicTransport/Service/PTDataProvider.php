@@ -25,6 +25,7 @@ namespace App\PublicTransport\Service;
 
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
+use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
 
@@ -51,6 +52,13 @@ class PTDataProvider
     const ALGORITHM_FASTEST = "fastest";
     const ALGORITHM_SHORTEST = "shortest";
     const ALGORITHM_MINCHANGES = "minchanges";
+    
+    private $geoTools;
+
+    public function __construct(GeoTools $geoTools)
+    {
+        $this->geoTools = $geoTools;
+    }
     
     /**
      * Get journeys from an external Public Transport data provider.
@@ -84,7 +92,7 @@ class PTDataProvider
         }
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
+        $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
                 "origin_latitude" => $origin_latitude,
                 "origin_longitude" => $origin_longitude,
                 "destination_latitude" => $destination_latitude,
@@ -94,6 +102,26 @@ class PTDataProvider
                 "algorithm" => $algorithm,
                 "modes" => $modes
         ]]);
+
+        // Set the display label of the departure and arrival
+        foreach ($journeys as $journey) {
+            /**
+             * @var PTJourney $journey
+             */
+            $departureAddress = $journey->getPTDeparture()->getAddress();
+            $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+            $arrivalAddress = $journey->getPTArrival()->getAddress();
+            $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+
+            foreach ($journey->getPTLegs() as $leg) {
+                $departureAddress = $leg->getPTDeparture()->getAddress();
+                $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+                $arrivalAddress = $leg->getPTArrival()->getAddress();
+                $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+            }
+        }
+
+        return $journeys;
     }
 
     /**

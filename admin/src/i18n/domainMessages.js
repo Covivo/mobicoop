@@ -16,8 +16,72 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    solidary_beneficiaries: {
+      fields: {
+        id: 'ID',
+        givenName: 'Prénom',
+        familyName: 'Nom',
+        email: 'Email',
+        birthDate: 'Date de naissance',
+        telephone: 'Téléphone',
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
+    solidaries: {
+      fields: {
+        'subject.label': 'Objet',
+        'solidaryUser.user.givenName': 'Prénom',
+        'solidaryUser.user.familyName': 'Nom',
+        createdDate: 'Date',
+        displayLabel: 'Trajet demandé',
+        lastAction: 'Dernière action',
+      },
+    },
+    solidary_searches: {
+      fields: {
+        author: 'Auteur',
+        journey: 'Trajet',
+        schedule: 'Date',
+        type: 'Type',
+        role: 'Rôle',
+        exclusive: 'Solidaire Exclusif',
+        origin: 'Origine',
+        volunteer: 'Transporteur',
+      },
+    },
   },
   custom: {
+    days: {
+      mon: 'Lun',
+      tue: 'Mar',
+      wed: 'Mer',
+      thu: 'Jeu',
+      fri: 'Ven',
+      sat: 'Sam',
+      sun: 'Dim',
+    },
+    solidary_search: {
+      frequency: {
+        regular: 'Régulier',
+        punctual: 'Ponctuel',
+      },
+      role: {
+        driver: 'Conducteur',
+        passenger: 'Passager',
+        both: 'Conducteur et passager',
+      },
+    },
+    solidaryask: {
+      status: {
+        asked: 'Demande ',
+        refused: 'Refusé',
+        pending: 'En attente',
+        lookforresolution: 'En recherche de solution',
+        followup: 'A suivre',
+        closed: 'Fermé',
+        accepted: 'Accepté',
+      },
+    },
     solidary_volunteers: {
       edit: {
         availability: 'Disponibilité',
@@ -33,6 +97,17 @@ const fr = {
         acceptCandidate: 'Accepter candidature',
         rejectCandidate: 'Rejeter candidature',
         solidary: 'Demande solidaire',
+      },
+    },
+    solidary: {
+      internalMessages: 'Messages internes',
+      internalMessagesWith: 'Messages interne avec %{username}',
+      associatedAsk: 'Demande associée',
+      onBehalfOf: 'Pour le compte de',
+    },
+    solidary_beneficiaries: {
+      input: {
+        validatedCandidate: 'Candidature acceptée',
       },
     },
     dashboard: {

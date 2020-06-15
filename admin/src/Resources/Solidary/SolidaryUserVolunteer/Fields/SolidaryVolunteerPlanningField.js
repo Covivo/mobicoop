@@ -25,6 +25,12 @@ import {
 import { resolveVoluntaryAvailabilityHourRanges } from '../utils/resolveVoluntaryAvailabilityHourRanges';
 import { fetchJson } from '../../../../fetchJson';
 
+import {
+  solidaryAskStatusColors,
+  solidaryAskStatusIcons,
+  solidaryAskStatusLabels,
+} from '../../../../constants/solidaryAskStatus';
+
 const entrypoint = process.env.REACT_APP_API;
 
 const useStyles = makeStyles((theme) => ({
@@ -48,9 +54,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AvaibilitySlot = ({ slot }) => {
+const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
   const classes = useStyles();
   const router = useHistory();
+  const translate = useTranslate();
 
   if (!slot) {
     return <div className={classes.availabilitySlotZone} style={{ background: '#aaa' }} />;
@@ -58,18 +65,22 @@ const AvaibilitySlot = ({ slot }) => {
 
   const handleOpenSolidary = (popupState) => () => {
     popupState.close();
-    router.push(`/solidaries/${slot.solidaryId}/show`);
+    const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
+    router.push(`/solidaries/${raSolidaryId}/show`);
   };
 
   const handleOpenSolidaryDiscuss = (popupState) => () => {
     popupState.close();
-    router.push(`/solidaries/${slot.solidaryId}/show`);
+    onOpenMessaging(slot);
   };
 
   const handleOpenSolidarySolicitation = (popupState) => () => {
     popupState.close();
-    router.push(`/solidaries/${slot.solidaryId}/show`);
+    const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
+    router.push(`/solidaries/${raSolidaryId}/show`);
   };
+
+  const StatusIcon = solidaryAskStatusIcons[slot.status];
 
   return (
     <PopupState variant="popover">
@@ -81,7 +92,15 @@ const AvaibilitySlot = ({ slot }) => {
             {...bindTrigger(popupState)}
           >
             <Grid container justify="space-between" alignItems="center">
-              <Grid item>{`${slot.solidaryId} - ${slot.beneficiary}`}</Grid>
+              <Grid item>
+                <span
+                  title={translate(solidaryAskStatusLabels[slot.status])}
+                  style={{ color: solidaryAskStatusColors[slot.status] }}
+                >
+                  <StatusIcon style={{ verticalAlign: 'middle' }} />
+                  <span>{` ${slot.solidaryId} - ${slot.beneficiary}`}</span>
+                </span>
+              </Grid>
               <Grid item>
                 <ArrowDropDownIcon />
               </Grid>
@@ -104,16 +123,17 @@ const AvaibilitySlot = ({ slot }) => {
   );
 };
 
-AvaibilitySlot.defaultProps = { slot: null };
+AvaibilitySlot.defaultProps = { slot: null, onOpenMessaging: () => {} };
 
 AvaibilitySlot.propTypes = {
+  onOpenMessaging: PropTypes.func,
   slot: PropTypes.shape({
-    solidaryId: PropTypes.string,
+    solidaryId: PropTypes.number,
     beneficiary: PropTypes.string,
   }),
 };
 
-export const SolidaryVolunteerPlanningField = ({ record }) => {
+export const SolidaryVolunteerPlanningField = ({ record, onOpenMessaging }) => {
   const dispatch = useDispatch();
   const translate = useTranslate();
   const classes = useStyles();
@@ -165,20 +185,32 @@ export const SolidaryVolunteerPlanningField = ({ record }) => {
         </TableHead>
         <TableBody>
           {plannings.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow key={row.date}>
               <TableCell component="th" scope="row">
                 {format(new Date(row.date), 'eee dd LLL', {
                   locale: fr,
                 })}
               </TableCell>
               <TableCell align="center">
-                <AvaibilitySlot slot={row.morningSlot} />
+                <AvaibilitySlot
+                  slot={
+                    // Use lines bellow for tests
+                    // {
+                    //   status: 0,
+                    //   solidaryId: 18,
+                    //   solidarySolutionId: 6,
+                    //   beneficiary: `${record.givenName} ${record.familyName}`,
+                    // } ||
+                    row.morningSlot
+                  }
+                  onOpenMessaging={onOpenMessaging}
+                />
               </TableCell>
               <TableCell align="center">
-                <AvaibilitySlot slot={row.afternoonSlot} />
+                <AvaibilitySlot slot={row.afternoonSlot} onOpenMessaging={onOpenMessaging} />
               </TableCell>
               <TableCell align="center">
-                <AvaibilitySlot slot={row.eveningSlot} />
+                <AvaibilitySlot slot={row.eveningSlot} onOpenMessaging={onOpenMessaging} />
               </TableCell>
             </TableRow>
           ))}
@@ -189,5 +221,11 @@ export const SolidaryVolunteerPlanningField = ({ record }) => {
 };
 
 SolidaryVolunteerPlanningField.propTypes = {
-  record: PropTypes.object.isRequired,
+  record: PropTypes.object,
+  onOpenMessaging: PropTypes.func,
+};
+
+SolidaryVolunteerPlanningField.defaultProps = {
+  record: {},
+  onOpenMessaging: () => {},
 };

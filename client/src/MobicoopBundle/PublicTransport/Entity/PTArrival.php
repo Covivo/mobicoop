@@ -58,7 +58,7 @@ class PTArrival
      */
     private $individualStop;
         
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

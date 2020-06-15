@@ -15,10 +15,8 @@ import {
   RichTextField,
   SelectField,
   ReferenceArrayField,
-  ReferenceField,
   FunctionField,
   useTranslate,
-  BulkDeleteButton,
   List,
 } from 'react-admin';
 
@@ -32,12 +30,13 @@ import {
   CardHeader,
 } from '@material-ui/core';
 
-import UserReferenceField from '../User/UserReferenceField';
 import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
 import isAuthorized from '../../auth/permissions';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
+import FullNameField from '../User/FullNameField';
+import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
 
 const UserBulkActionButtons = (props) => (
   <>
@@ -135,24 +134,18 @@ const CommunityTitle = ({ record }) => {
 export const CommunityShow = (props) => {
   const translate = useTranslate();
   const communityId = props.id;
+
   return (
     <Show {...props} title={<CommunityTitle />} aside={<Aside />}>
       <TabbedShowLayout>
         <Tab label={translate('custom.label.community.detail')}>
           <TextField source="name" label={translate('custom.label.community.name')} />
-          <UserReferenceField
-            label={translate('custom.label.community.createdBy')}
-            source="user"
-            reference="users"
-          />
-          <ReferenceField
+          <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
+          <FunctionField
             source="address"
             label={translate('custom.label.community.adress')}
-            reference="addresses"
-            link=""
-          >
-            <FunctionField render={addressRenderer} />
-          </ReferenceField>
+            render={(r) => addressRenderer(r.address)}
+          />
           <TextField source="domain" label={translate('custom.label.community.domainName')} />
           <TextField source="description" label={translate('custom.label.community.description')} />
           <RichTextField
@@ -165,48 +158,49 @@ export const CommunityShow = (props) => {
           />
         </Tab>
         <Tab label={translate('custom.label.community.membersModerator')}>
-          <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
-            <List
-              {...props}
-              perPage={25}
-              bulkActionButtons={<UserBulkActionButtons />}
-              actions={null}
-              sort={{ field: 'id', order: 'ASC' }}
-              filter={{ is_published: true, community: communityId }}
+          <ReferenceRecordIdMapper attribute="communityUsers">
+            <ReferenceArrayField
+              source="communityUsers"
+              reference="community_users"
+              addLabel={false}
             >
-              <Datagrid>
-                <UserReferenceField
-                  label={translate('custom.label.community.member')}
-                  source="user"
-                  reference="users"
-                  sortBy="user.givenName"
-                />
-                <SelectField
-                  source="status"
-                  label={translate('custom.label.community.status')}
-                  choices={statusChoices}
-                />
-                <DateField
-                  source="createdDate"
-                  label={translate('custom.label.community.joinAt')}
-                />
-                <DateField
-                  source="acceptedDate"
-                  label={translate('custom.label.community.acceptedAt')}
-                />
-                <DateField
-                  source="refusedDate"
-                  label={translate('custom.label.community.refusedAt')}
-                />
+              <List
+                {...props}
+                perPage={25}
+                bulkActionButtons={<UserBulkActionButtons />}
+                actions={null}
+                sort={{ field: 'id', order: 'ASC' }}
+                filter={{ is_published: true, community: communityId }}
+              >
+                <Datagrid>
+                  <FullNameField source="user" label={translate('custom.label.community.member')} />
+                  <SelectField
+                    source="status"
+                    label={translate('custom.label.community.status')}
+                    choices={statusChoices}
+                  />
+                  <DateField
+                    source="createdDate"
+                    label={translate('custom.label.community.joinAt')}
+                  />
+                  <DateField
+                    source="acceptedDate"
+                    label={translate('custom.label.community.acceptedAt')}
+                  />
+                  <DateField
+                    source="refusedDate"
+                    label={translate('custom.label.community.refusedAt')}
+                  />
 
-                {/*
+                  {/*
                             Edit and Delete button should be in an Community Edit view
                             <EditButton />
                             <DeleteButton />
                             */}
-              </Datagrid>
-            </List>
-          </ReferenceArrayField>
+                </Datagrid>
+              </List>
+            </ReferenceArrayField>
+          </ReferenceRecordIdMapper>
           {/*  <AddNewMemberButton /> should be in an Community Edit view */}
         </Tab>
       </TabbedShowLayout>

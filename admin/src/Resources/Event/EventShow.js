@@ -32,7 +32,7 @@ export const EventShow = (props) => {
       <SimpleShowLayout className={classes.form}>
         <ReferenceField
           reference="images"
-          source="images[0]"
+          source="images[0].id"
           addLabel={false}
           className={classes.fullwidth}
         >
@@ -42,16 +42,11 @@ export const EventShow = (props) => {
         <TextField source="description" addLabel={false} className={classes.fullwidth} />
         <RichTextField source="fullDescription" addLabel={false} />
         <UrlField source="url" className={classes.fullwidth} label="Site internet" />
-
-        <ReferenceField
-          reference="addresses"
-          source="address"
+        <FunctionField
           label="Adresse"
           className={classes.fullwidth}
-        >
-          <FunctionField render={addressRenderer} />
-        </ReferenceField>
-
+          render={(r) => addressRenderer(r.address)}
+        />
         <DateField
           source="fromDate"
           label="Date de début"
@@ -60,16 +55,9 @@ export const EventShow = (props) => {
         />
         <DateField source="toDate" label="Date de fin" showTime className={classes.quarterwidth} />
 
-        <ReferenceField
-          reference="users"
-          source="user"
-          addLabel={false}
-          className={classes.quarterwidth}
-        >
-          <Labeled label="Créé par">
-            <FunctionField render={(record) => <UserRenderer record={record} />} />
-          </Labeled>
-        </ReferenceField>
+        <Labeled label="Créé par" className={classes.quarterwidth}>
+          <FunctionField render={({ user }) => <UserRenderer record={user} />} />
+        </Labeled>
 
         <SelectField
           source="status"

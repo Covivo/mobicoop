@@ -209,6 +209,7 @@
                 :init-return-time="returnTime"
                 :regular="regular"
                 :default-margin-duration="defaultMarginDuration"
+                :default-time-precision="defaultTimePrecision"
                 :init-schedule="initSchedule"
                 :route="route"
                 @change="planificationChanged"
@@ -788,6 +789,10 @@ export default {
     hasPotentialAds: {
       type: Boolean,
       default: false
+    },
+    defaultTimePrecision: {
+      type: Number,
+      default: null
     }
   },
   data() {

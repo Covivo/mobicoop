@@ -42,7 +42,7 @@ export const RelayPointList = (props) => (
     <Datagrid expand={<RelayPointPanel />} rowClick="show">
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="name" label="Nom" />
-      <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
+      <ReferenceField source="address.id" label="Adresse" reference="addresses" linkType="">
         <FunctionField render={addressRenderer} />
       </ReferenceField>
       <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />

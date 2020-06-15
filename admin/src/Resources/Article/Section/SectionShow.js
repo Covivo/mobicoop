@@ -1,9 +1,7 @@
 import React from 'react';
-import { RichTextField } from 'react-admin';
 
 import {
   Show,
-  ReferenceField,
   TextField,
   SelectField,
   Link,
@@ -12,9 +10,12 @@ import {
   Datagrid,
   Button,
   EditButton,
+  RichTextField,
   DeleteButton,
   ReferenceArrayField,
 } from 'react-admin';
+
+import { ReferenceRecordIdMapper } from '../../../components/utils/ReferenceRecordIdMapper';
 
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },
@@ -36,9 +37,7 @@ export const SectionShow = (props) => (
     <TabbedShowLayout>
       <Tab label="Détails">
         <TextField source="originId" label="ID" />
-        <ReferenceField source="article" label="Article" reference="articles" linkType="show">
-          <TextField source="title" />
-        </ReferenceField>
+        <TextField label="Article" source="article.title" />
         <SelectField source="status" label="Status" choices={statusChoices} />
         <TextField source="title" label="Titre" />
         <TextField source="subtitle" label="Sous-titre" />
@@ -46,14 +45,16 @@ export const SectionShow = (props) => (
         <EditButton />
       </Tab>
       <Tab label="Paragraphes" path="paragraphs">
-        <ReferenceArrayField source="paragraphs" reference="paragraphs" addLabel={false}>
-          <Datagrid>
-            <RichTextField source="text" label="Texte" />
-            <TextField source="position" label="Position" />
-            <EditButton />
-            <DeleteButton />
-          </Datagrid>
-        </ReferenceArrayField>
+        <ReferenceRecordIdMapper attribute="paragraphs">
+          <ReferenceArrayField source="paragraphs" reference="paragraphs" addLabel={false}>
+            <Datagrid>
+              <RichTextField source="text" label="Texte" />
+              <TextField source="position" label="Position" />
+              <EditButton />
+              <DeleteButton />
+            </Datagrid>
+          </ReferenceArrayField>
+        </ReferenceRecordIdMapper>
         <AddParagraphButton />
       </Tab>
     </TabbedShowLayout>

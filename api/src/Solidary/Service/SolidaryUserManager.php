@@ -51,6 +51,7 @@ use App\User\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Solidary\Repository\StructureProofRepository;
 use App\User\Service\UserManager;
+use App\Solidary\Repository\NeedRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -70,6 +71,7 @@ class SolidaryUserManager
     private $params;
     private $encoder;
     private $userManager;
+    private $needRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -84,6 +86,7 @@ class SolidaryUserManager
         UserPasswordEncoderInterface $encoder,
         StructureProofRepository $structureProofRepository,
         UserManager $userManager,
+        NeedRepository $needRepository,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -99,6 +102,7 @@ class SolidaryUserManager
         $this->params = $params;
         $this->encoder = $encoder;
         $this->userManager = $userManager;
+        $this->needRepository = $needRepository;
     }
 
     // Probably obsolete... to do check !
@@ -282,6 +286,9 @@ class SolidaryUserManager
         $solidaryVolunteer->setBirthDate($user->getBirthDate());
         $solidaryVolunteer->setGender($user->getGender());
         $solidaryVolunteer->setComment($solidaryUser->getComment());
+        $solidaryVolunteer->setNeeds($solidaryUser->getNeeds());
+        $solidaryVolunteer->setVehicle($solidaryUser->hasVehicle());
+        $solidaryVolunteer->setMaxDistance($solidaryUser->getMaxDistance());
 
         // Home address
         foreach ($user->getAddresses() as $address) {
@@ -461,42 +468,47 @@ class SolidaryUserManager
         $user = $solidaryBeneficiary->getUser();
         if (is_null($user)) {
 
-            // We check if there no User with this email
-            if (!is_null($this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]))) {
-                throw new SolidaryException(SolidaryException::ALREADY_USER);
+            // If there is basic information given, we recheck if there is an existing user.
+            // If it exists, we use it, else, we create a new one
+            
+            if (empty($solidaryBeneficiary->getEmail())) {
+                throw new SolidaryException(SolidaryException::MANDATORY_EMAIL);
             }
+            
+            $user = $this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]);
 
+            if (is_null($user)) {
+                $user = new User();
+                $user->setEmail($solidaryBeneficiary->getEmail());
+                $user->setGivenName($solidaryBeneficiary->getGivenName());
+                $user->setFamilyName($solidaryBeneficiary->getFamilyName());
+                $user->setNewsSubscription($solidaryBeneficiary->hasNewsSubscription());
+                $user->setTelephone($solidaryBeneficiary->getTelephone());
+                $user->setBirthDate($solidaryBeneficiary->getBirthDate());
+                $user->setGender($solidaryBeneficiary->getGender());
 
-            $user = new User();
-            $user->setEmail($solidaryBeneficiary->getEmail());
-            $user->setGivenName($solidaryBeneficiary->getGivenName());
-            $user->setFamilyName($solidaryBeneficiary->getFamilyName());
-            $user->setNewsSubscription($solidaryBeneficiary->hasNewsSubscription());
-            $user->setTelephone($solidaryBeneficiary->getTelephone());
-            $user->setBirthDate($solidaryBeneficiary->getBirthDate());
-            $user->setGender($solidaryBeneficiary->getGender());
+                $user->setPhoneDisplay(1);
+                $user->setSmoke($this->params['smoke']);
+                $user->setMusic($this->params['music']);
+                $user->setChat($this->params['chat']);
+                // To do : Dynamic Language
+                $user->setLanguage('fr_FR');
 
-            $user->setPhoneDisplay(1);
-            $user->setSmoke($this->params['smoke']);
-            $user->setMusic($this->params['music']);
-            $user->setChat($this->params['chat']);
-            // To do : Dynamic Language
-            $user->setLanguage('fr_FR');
+                // Set an encrypted password
+                $password = $this->randomPassword();
+                $user->setPassword($this->encoder->encodePassword($user, $password));
+                $user->setClearPassword($password); // Used to be send by email (not persisted)
 
-            // Set an encrypted password
-            $password = $this->randomPassword();
-            $user->setPassword($this->encoder->encodePassword($user, $password));
-            $user->setClearPassword($password); // Used to be send by email (not persisted)
-
-            // auto valid the registration
-            $user->setValidatedDate(new \DateTime());
+                // auto valid the registration
+                $user->setValidatedDate(new \DateTime());
+            }
         } else {
             // We check if this User does'nt already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
                 throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
             }
         }
-        
+
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
         $userAuthAssignment = new UserAuthAssignment();
         $userAuthAssignment->setAuthItem($authItem);
@@ -579,9 +591,6 @@ class SolidaryUserManager
         // dispatch SolidaryUser event
         $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
-        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
-
         return $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
     }
 
@@ -639,35 +648,40 @@ class SolidaryUserManager
         $user = $solidaryVolunteer->getUser();
         if (is_null($user)) {
 
-            // We check if there no User with this email
-            if (!is_null($this->userRepository->findOneBy(['email'=>$solidaryVolunteer->getEmail()]))) {
-                throw new SolidaryException(SolidaryException::ALREADY_USER);
+            // If there is basic information given, we recheck if there is an existing user.
+            // If it exists, we use it, else, we create a new one
+            
+            if (empty($solidaryVolunteer->getEmail())) {
+                throw new SolidaryException(SolidaryException::MANDATORY_EMAIL);
             }
+            
+            $user = $this->userRepository->findOneBy(['email'=>$solidaryVolunteer->getEmail()]);
 
+            if (is_null($user)) {
+                $user = new User();
+                $user->setEmail($solidaryVolunteer->getEmail());
+                $user->setGivenName($solidaryVolunteer->getGivenName());
+                $user->setFamilyName($solidaryVolunteer->getFamilyName());
+                $user->setNewsSubscription($solidaryVolunteer->hasNewsSubscription());
+                $user->setTelephone($solidaryVolunteer->getTelephone());
+                $user->setBirthDate($solidaryVolunteer->getBirthDate());
+                $user->setGender($solidaryVolunteer->getGender());
 
-            $user = new User();
-            $user->setEmail($solidaryVolunteer->getEmail());
-            $user->setGivenName($solidaryVolunteer->getGivenName());
-            $user->setFamilyName($solidaryVolunteer->getFamilyName());
-            $user->setNewsSubscription($solidaryVolunteer->hasNewsSubscription());
-            $user->setTelephone($solidaryVolunteer->getTelephone());
-            $user->setBirthDate($solidaryVolunteer->getBirthDate());
-            $user->setGender($solidaryVolunteer->getGender());
+                $user->setPhoneDisplay(1);
+                $user->setSmoke($this->params['smoke']);
+                $user->setMusic($this->params['music']);
+                $user->setChat($this->params['chat']);
+                // To do : Dynamic Language
+                $user->setLanguage('fr_FR');
 
-            $user->setPhoneDisplay(1);
-            $user->setSmoke($this->params['smoke']);
-            $user->setMusic($this->params['music']);
-            $user->setChat($this->params['chat']);
-            // To do : Dynamic Language
-            $user->setLanguage('fr_FR');
+                // Set an encrypted password
+                $password = $this->randomPassword();
+                $user->setPassword($this->encoder->encodePassword($user, $password));
+                $user->setClearPassword($password); // Used to be send by email (not persisted)
 
-            // Set an encrypted password
-            $password = $this->randomPassword();
-            $user->setPassword($this->encoder->encodePassword($user, $password));
-            $user->setClearPassword($password); // Used to be send by email (not persisted)
-
-            // auto valid the registration
-            $user->setValidatedDate(new \DateTime());
+                // auto valid the registration
+                $user->setValidatedDate(new \DateTime());
+            }
         } else {
             // We check if this User does'nt already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
@@ -702,11 +716,20 @@ class SolidaryUserManager
         $solidaryUser->setAddress($address);
 
         $solidaryUser->setComment($solidaryVolunteer->getComment());
-
+        $solidaryUser->setVehicle($solidaryVolunteer->hasVehicle());
+        $solidaryUser->setMaxDistance($solidaryVolunteer->getMaxDistance());
+       
+        //we create the needs associated to the solidary user
+        if ($solidaryVolunteer->getNeeds()) {
+            foreach ($solidaryVolunteer->getNeeds() as $need) {
+                $needId = (substr($need, strrpos($need, '/') + 1));
+                $solidaryUser->addNeed($this->needRepository->find($needId));
+            }
+        }
+       
         // We set the link between User and SolidaryUser
         $user->setSolidaryUser($solidaryUser);
 
-        
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure)) {
@@ -829,8 +852,6 @@ class SolidaryUserManager
         // // dispatch SolidaryUser event
         $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
         $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
-        $event = new SolidaryCreatedEvent($user, $this->security->getUser());
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         
         return $this->getSolidaryVolunteer($user->getSolidaryUser()->getId());
     }
@@ -977,7 +998,7 @@ class SolidaryUserManager
                 $structure = $structures[0];
             }
         }
-        
+      
         // We search the right solidaryUserStructure to update
         $solidaryUserStructureToUpdate = null;
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
@@ -997,7 +1018,7 @@ class SolidaryUserManager
 
 
             $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
-            
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_ACCEPTED);
             // We add the role to the user
             if ($solidaryUser->isVolunteer()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
@@ -1020,7 +1041,7 @@ class SolidaryUserManager
             }
     
             $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
-
+            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_REFUSED);
             // We dispatch the event
             $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);

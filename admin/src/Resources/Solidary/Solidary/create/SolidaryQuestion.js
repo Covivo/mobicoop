@@ -1,5 +1,6 @@
 import React from 'react';
-import {  Box } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { Box } from '@material-ui/core';
 
 const SolidaryQuestion = ({ question, children }) => (
   <Box display="flex" flexDirection="column" mb="2rem" p={2} boxShadow={1}>
@@ -9,5 +10,10 @@ const SolidaryQuestion = ({ question, children }) => (
     {children}
   </Box>
 );
+
+SolidaryQuestion.propTypes = {
+  question: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
 export default SolidaryQuestion;

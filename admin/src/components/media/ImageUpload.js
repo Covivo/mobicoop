@@ -117,7 +117,7 @@ const ImageUpload = ({
       {image && image.versions && (
         <img className={classes.img} src={image.versions.square_250} alt={image.name} />
       )}
-      {error && <p>{error}</p>}
+      {/* {error && <p>{error}</p>} */}
       <div className={classes.upload}>
         <input
           accept="image/*"
