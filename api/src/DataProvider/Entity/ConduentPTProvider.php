@@ -41,7 +41,7 @@ use App\PublicTransport\Entity\PTLeg;
 use App\PublicTransport\Service\PTDataProvider;
 use App\Geography\Entity\Address;
 use App\PublicTransport\Entity\PTCompany;
-use App\Solidary\Exception\DataProviderException;
+use App\DataProvider\Exception\DataProviderException;
 
 /**
  * Conduent Public Transportation data provider.
@@ -69,7 +69,10 @@ class ConduentPTProvider implements ProviderInterface
     private const COLLECTION_RESSOURCE_JOURNEYS = "MCP.TSUP.API/travelQueries/full";
 
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
-    private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
+    private const DATETIME_INPUT_FORMAT = "Y-m-d\TH:i:s";
+
+    private const NB_TRAVELERS = 3;
+    private const ALLOW_EXTENDED_QUERIES_IN_PAST = 1;
 
     private $collection;
 
@@ -83,11 +86,9 @@ class ConduentPTProvider implements ProviderInterface
      */
     public function getCollection(string $class, string $apikey, array $params)
     {
-        var_dump($params);
-        die;
         switch ($class) {
             case PTJourney::class:
-                $this->getCollectionJourneys($class, $params);
+                $this->getCollectionJourneys($class, $params, $apikey);
                 return $this->collection;
                break;
             default:
@@ -127,15 +128,15 @@ class ConduentPTProvider implements ProviderInterface
     }
 
 
-    private function getCollectionJourneys($class, array $params)
+    private function getCollectionJourneys($class, array $params, string $apikey)
     {
         // Get auth token
         $dataProvider = new DataProvider(self::URI, self::AUTH_RESSOURCE);
-        $params = [
-            "login"=>"covivo",
-            "password"=>"COVIVO"
+        $paramsPost = [
+            "login"=>$params["username"],
+            "password"=>$apikey
         ];
-        $response = $dataProvider->postCollection($params);
+        $response = $dataProvider->postCollection($paramsPost);
 
         $securityToken = null;
         if ($response->getCode() == 200) {
@@ -148,12 +149,59 @@ class ConduentPTProvider implements ProviderInterface
         if (is_null($securityToken) || $securityToken=="") {
             throw new DataProviderException(DataProviderException::NO_SECURITY_TOKEN);
         }
-
+        
         // Get profile id
         $dataProvider = new DataProvider(self::URI, self::PROFILE_RESSOURCE);
-        $params = [
-            "criteria.name"=>"covivo"
+        $paramsGet = [
+            "criteria.name"=>$params["username"]
         ];
+        $headers = [
+            "Cookie"=>"XAuthToken=".$securityToken
+        ];
+        $response = $dataProvider->getCollection($paramsGet, $headers);
+        
+        $profileId = null;
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            $profileId = (isset($data['data']['list'][0]['data']['profileId'])) ? $data['data']['list'][0]['data']['profileId'] : null;
+        } else {
+            throw new DataProviderException(DataProviderException::ERROR_RETREIVING_PROFILE_ID);
+        }
+
+        if (is_null($profileId) || $profileId=="") {
+            throw new DataProviderException(DataProviderException::NO_PROFILE_ID);
+        }
+
+        // Do the PT search
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_JOURNEYS);
+
+        $paramsPost = [
+            "origin"=> [
+                'latitude'=> $params["origin_latitude"],
+                'longitude'=> $params["origin_longitude"],
+            ],
+            'destination'=> [
+                'latitude'=> $params["destination_latitude"],
+                'longitude'=> $params["destination_longitude"],
+            ],
+            "travelerProfileId" => $profileId,
+            "nbTravelers" => self::NB_TRAVELERS,
+            "allowExtendedQueriesInPast" => self::ALLOW_EXTENDED_QUERIES_IN_PAST,
+            "departureDate" => $params["date"]->format(self::DATETIME_INPUT_FORMAT)
+        ];
+        $response = $dataProvider->postCollection($paramsPost, $headers);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            
+            foreach ($data['data']['list'] as $trip) {
+                $this->collection[] = self::deserialize($class, $trip);
+            }
+        } elseif ($response->getCode() == 510) {
+            // Out of bound for conduent
+            throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
+        } else {
+            throw new DataProviderException(DataProviderException::ERROR_COLLECTION_RESSOURCE_JOURNEYS);
+        }
     }
 
 
