@@ -258,12 +258,14 @@ class SolidaryManager
         foreach ($solidarySolutions as $solidarySolution) {
             $solution = [];
             if ($solidarySolution->getSolidaryMatching()->getSolidaryUser()) {
+                $solution['id'] = $solidarySolution->getId();
                 $solution['Type'] = SolidarySolution::TRANSPORTER;
                 $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName();
                 $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName();
                 $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone();
                 $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId();
             } elseif ($solidarySolution->getSolidaryMatching()->getMatching()) {
+                $solution['id'] = $solidarySolution->getId();
                 $solution['Type'] = SolidarySolution::CARPOOLER;
                 $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName();
                 $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName();
