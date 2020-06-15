@@ -17,6 +17,7 @@
             :default-margin-time="{{ marginDuration }}"
             :has-asks="{% if (hasAsks == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
             :has-potential-ads="{% if (hasPotentialAds == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
+    		:default-time-precision="{{ timePrecision }}"
     />
 
 {% endblock %}
