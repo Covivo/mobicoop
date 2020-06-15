@@ -57,7 +57,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
+ *          },
+ *          "postUl"={
+ *              "method"="POST"
+ *              "path"="/solidaries/postUl",
+ *              "security_post_denormalize"="is_granted('user_register',object)"
  *          }
+ *
  *      },
  *      itemOperations={
  *          "get"={
@@ -248,10 +254,17 @@ class Solidary
     private $returnDatetime;
 
     /**
-     * @var \DateTimeInterface|null return deadline date and time of the solidary demand
+     * @var \DateTimeInterface|null Return deadline date and time of the solidary demand
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDeadlineDatetime;
+
+    /**
+     * @var User The source user for the solidaryUser
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $user;
 
     /**
      * @var String|null Email of the user who ask for the solidary demand
@@ -669,6 +682,18 @@ class Solidary
     {
         $this->returnDeadlineDatetime = $returnDeadlineDatetime;
 
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
         return $this;
     }
 

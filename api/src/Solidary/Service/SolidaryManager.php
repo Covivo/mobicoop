@@ -335,7 +335,7 @@ class SolidaryManager
         
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
-        if ($solidary->getEmail()) {
+        if ($solidary->getEmail() || $solidary->getUser()) {
             $user = $this->solidaryCreateUser($solidary);
             $userId = $user->getId();
         }
@@ -717,7 +717,10 @@ class SolidaryManager
             $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
         }
         // We check if the user exist
-        $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        $user = $solidary->getUser();
+        if (is_null($solidary->getUser())) {
+            $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        }
         if ($user == null) {
             // We create a new user
             $user = new User();
