@@ -61,7 +61,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "postUl"={
  *              "method"="POST",
  *              "path"="/solidaries/postUl",
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('ad_create',object)"
  *          }
  *
  *      },
