@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchStart, fetchEnd, useTranslate } from 'react-admin';
-import { format, startOfToday, addDays } from 'date-fns';
+import { format, startOfToday, addDays, getISOWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import MenuItem from '@material-ui/core/MenuItem';
+import { MenuItem, Typography } from '@material-ui/core';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { stringify } from 'qs';
@@ -35,7 +35,7 @@ const entrypoint = process.env.REACT_APP_API;
 
 const useStyles = makeStyles((theme) => ({
   table: {
-    maxHeight: '400px',
+    maxHeight: '600px',
     '& .MuiTableCell-stickyHeader': {
       backgroundColor: theme.palette.background.paper,
     },
@@ -133,6 +133,17 @@ AvaibilitySlot.propTypes = {
   }),
 };
 
+const groupByDateWeek = (objects) =>
+  objects.reduce((agg, obj) => {
+    const week = getISOWeek(new Date(obj.date));
+    if (!agg[week]) {
+      agg[week] = [];
+    }
+
+    agg[week].push(obj);
+    return agg;
+  }, {});
+
 export const SolidaryVolunteerPlanningField = ({ record, onOpenMessaging }) => {
   const dispatch = useDispatch();
   const translate = useTranslate();
@@ -163,6 +174,8 @@ export const SolidaryVolunteerPlanningField = ({ record, onOpenMessaging }) => {
     return null;
   }
 
+  const planningWeeks = groupByDateWeek(plannings);
+
   return (
     <TableContainer className={classes.table}>
       <Table stickyHeader aria-label="simple table">
@@ -184,36 +197,49 @@ export const SolidaryVolunteerPlanningField = ({ record, onOpenMessaging }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {plannings.map((row) => (
-            <TableRow key={row.date}>
-              <TableCell component="th" scope="row">
-                {format(new Date(row.date), 'eee dd LLL', {
-                  locale: fr,
-                })}
-              </TableCell>
-              <TableCell align="center">
-                <AvaibilitySlot
-                  slot={
-                    // Use lines bellow for tests
-                    // {
-                    //   status: 0,
-                    //   solidaryId: 18,
-                    //   solidarySolutionId: 6,
-                    //   beneficiary: `${record.givenName} ${record.familyName}`,
-                    // } ||
-                    row.morningSlot
-                  }
-                  onOpenMessaging={onOpenMessaging}
-                />
-              </TableCell>
-              <TableCell align="center">
-                <AvaibilitySlot slot={row.afternoonSlot} onOpenMessaging={onOpenMessaging} />
-              </TableCell>
-              <TableCell align="center">
-                <AvaibilitySlot slot={row.eveningSlot} onOpenMessaging={onOpenMessaging} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {Object.keys(planningWeeks).map((week) => {
+            const plannings = planningWeeks[week];
+
+            const rows = plannings.map((row) => (
+              <TableRow key={row.date}>
+                <TableCell component="th" scope="row">
+                  {format(new Date(row.date), 'eee dd LLL', {
+                    locale: fr,
+                  })}
+                </TableCell>
+                <TableCell align="center">
+                  <AvaibilitySlot
+                    slot={
+                      // Use lines bellow for tests
+                      // {
+                      //   status: 0,
+                      //   solidaryId: 18,
+                      //   solidarySolutionId: 6,
+                      //   beneficiary: `${record.givenName} ${record.familyName}`,
+                      // } ||
+                      row.morningSlot
+                    }
+                    onOpenMessaging={onOpenMessaging}
+                  />
+                </TableCell>
+                <TableCell align="center">
+                  <AvaibilitySlot slot={row.afternoonSlot} onOpenMessaging={onOpenMessaging} />
+                </TableCell>
+                <TableCell align="center">
+                  <AvaibilitySlot slot={row.eveningSlot} onOpenMessaging={onOpenMessaging} />
+                </TableCell>
+              </TableRow>
+            ));
+
+            return [
+              <TableRow key={week}>
+                <TableCell colSpan={3} component="th" scope="row">
+                  <Typography variant="h5">{`${translate('custom.week')} ${week}`}</Typography>
+                </TableCell>
+              </TableRow>,
+              ...rows,
+            ];
+          })}
         </TableBody>
       </Table>
     </TableContainer>
