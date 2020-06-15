@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -56,9 +57,30 @@ class CarpoolController extends AbstractController
     private $defaultRegular;
     private $platformName;
     private $carpoolRDEXJourneys;
+    private $ptResults;
+    private $ptProvider;
+    private $ptKey;
+    private $ptAlgorithm;
+    private $ptDateCriteria;
+    private $ptMode;
+    private $publicTransportManager;
 
-    public function __construct($midPrice, $highPrice, $forbiddenPrice, $defaultRole, bool $defaultRegular, string $platformName, bool $carpoolRDEXJourneys)
-    {
+    public function __construct(
+        PublicTransportManager $publicTransportManager,
+        $midPrice,
+        $highPrice,
+        $forbiddenPrice,
+        $defaultRole,
+        bool $defaultRegular,
+        string $platformName,
+        bool $carpoolRDEXJourneys,
+        int $ptResults,
+        string $ptProvider,
+        string $ptKey,
+        string $ptAlgorithm,
+        string $ptDateCriteria,
+        string $ptMode
+    ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;
@@ -66,6 +88,13 @@ class CarpoolController extends AbstractController
         $this->defaultRegular = $defaultRegular;
         $this->platformName = $platformName;
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
+        $this->ptResults = $ptResults;
+        $this->ptProvider = $ptProvider;
+        $this->ptKey = $ptKey;
+        $this->ptAlgorithm = $ptAlgorithm;
+        $this->ptDateCriteria = $ptDateCriteria;
+        $this->ptMode = $ptMode;
+        $this->publicTransportManager = $publicTransportManager;
     }
     
     /**
@@ -223,6 +252,7 @@ class CarpoolController extends AbstractController
             'proposalId' => $id,
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => false, // No RDEX, this not a new search
+            'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -263,6 +293,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'ptSearch' => $this->ptResults,
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -284,6 +315,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'ptSearch' => $this->ptResults,
             'defaultRole'=>$this->defaultRole
         ]);
     }
@@ -384,5 +416,38 @@ class CarpoolController extends AbstractController
         }
 
         return $this->json("");
+    }
+
+    /**
+     * Public Transport search (POST)
+     */
+    public function PTSearch(Request $request)
+    {
+        $params = json_decode($request->getContent(), true);
+                
+        // If there is no date in params, we use 'now'
+        $date = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+        if (!empty($params['date'])) {
+            $date = new \DateTime($params['date']." 08:00:00", new \DateTimeZone('Europe/Paris'));
+        }
+
+        $journeys = $this->publicTransportManager->getJourneys(
+            $this->ptProvider,
+            $this->ptKey,
+            $params['from_latitude'],
+            $params['from_longitude'],
+            $params['to_latitude'],
+            $params['to_longitude'],
+            $date->format(\DateTime::RFC3339),
+            $this->ptDateCriteria,
+            $this->ptAlgorithm,
+            $this->ptMode
+        );
+        
+        if (!is_null($journeys)) {
+            return $this->json($journeys);
+        } else {
+            return $this->json("error");
+        }
     }
 }

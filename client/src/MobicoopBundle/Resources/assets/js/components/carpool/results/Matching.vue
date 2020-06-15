@@ -110,7 +110,7 @@
           </v-row>
 
           <v-tabs
-            v-if="externalRdexJourneys"
+            v-if="displayTab"
             v-model="modelTabs"
           >
             <v-tab href="#carpools">
@@ -134,6 +134,18 @@
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
             </v-tab>
+            <v-tab
+              v-if="ptSearch"
+              href="#ptSearch"
+            >
+              <v-badge
+                color="primary"
+                :content="nbPtResults"
+                icon="mdi-timer-sand"
+              >              
+                {{ $t('tabs.ptresults') }}
+              </v-badge>
+            </v-tab>            
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="carpools">
@@ -160,6 +172,15 @@
                 @carpool="carpool"
               />
             </v-tab-item>
+            <v-tab-item
+              v-if="ptSearch"
+              value="ptSearch"
+            >
+              <MatchingPTResults
+                :pt-results="ptResults"
+                :loading-pt-results="loadingPtResults"
+              />
+            </v-tab-item>            
           </v-tabs-items>
         </v-col>
       </v-row>
@@ -192,6 +213,7 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -201,7 +223,8 @@ export default {
     MatchingFilter,
     MatchingResults,
     MatchingJourney,
-    Search
+    Search,
+    MatchingPTResults
   },
   i18n: {
     messages: TranslationsMerged,
@@ -263,6 +286,10 @@ export default {
     defaultRole:{
       type: Number,
       default: 3
+    },
+    ptSearch: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -273,8 +300,10 @@ export default {
       results: null,
       externalRDEXResults:null,
       result: null,
+      ptResults:null,
       loading : true,
       loadingExternal : false,
+      loadingPtResults : false,
       lOrigin: null,
       lDestination: null,
       lProposalId: this.proposalId,
@@ -283,6 +312,7 @@ export default {
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
       nbCarpoolOther:0,
+      nbPtResults:0,
       role:this.defaultRole,
       includePassenger:false,
       fromMyProposals:false,
@@ -312,6 +342,9 @@ export default {
         }
       });
       return communities;
+    },
+    displayTab(){
+      return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     }
   },
   watch:{
@@ -336,6 +369,7 @@ export default {
     if(this.proposalId) this.fromMyProposals = true;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
+    if(this.ptSearch) this.searchPTJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -428,6 +462,31 @@ export default {
           console.log(error);
         });
 
+    },
+    searchPTJourneys(){
+      this.loadingPtResults = true;
+      let postParams = {
+        "from_latitude": this.origin.latitude,
+        "from_longitude": this.origin.longitude,
+        "to_latitude": this.destination.latitude,
+        "to_longitude": this.destination.longitude,
+        "date": this.date
+      };
+      axios.post(this.$t("ptSearchUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          //console.error(response.data);
+          this.loadingPtResults = false;
+          (response.data.member) ? this.ptResults = response.data.member : this.ptResults = [];
+          (response.data.member && response.data.member.length>0) ? this.nbPtResults = response.data.member.length : this.nbPtResults = '-';
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     contact(params) {
       axios.post(this.$t("contactUrl"), params,

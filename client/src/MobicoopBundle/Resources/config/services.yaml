@@ -59,6 +59,12 @@ services:
             $defaultRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
             $platformName: '%env(resolve:APP_NAME)%'
             $carpoolRDEXJourneys: '%env(bool:CARPOOL_RDEX_JOURNEYS)%'
+            $ptResults: '%env(int:PT_RESULTS)%'
+            $ptProvider: '%env(string:PT_PROVIDER)%'
+            $ptKey: '%env(string:PT_KEY)%'
+            $ptAlgorithm: '%env(string:PT_ALGORITHM)%'
+            $ptDateCriteria: '%env(string:PT_DATE_CRITERIA)%'
+            $ptMode: '%env(string:PT_MODE)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
