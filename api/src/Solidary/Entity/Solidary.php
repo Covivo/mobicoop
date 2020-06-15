@@ -326,6 +326,20 @@ class Solidary
     private $marginDuration;
 
     /**
+     * @var boolean|null The user can be a driver.
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $driver;
+
+    /**
+     * @var boolean|null The user can be a passenger.
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $passenger;
+
+    /**
     * @var String|null Label to display for the solidary subject+origin+destination
     *
     * @Groups({"readSolidary"})
@@ -799,6 +813,30 @@ class Solidary
     {
         $this->marginDuration = $marginDuration;
 
+        return $this;
+    }
+
+    public function isDriver(): ?bool
+    {
+        return $this->driver;
+    }
+    
+    public function setDriver(bool $isDriver): self
+    {
+        $this->driver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): ?bool
+    {
+        return $this->passenger;
+    }
+    
+    public function setPassenger(bool $isPassenger): self
+    {
+        $this->passenger = $isPassenger;
+        
         return $this;
     }
 
