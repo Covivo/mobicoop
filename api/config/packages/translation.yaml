@@ -1,6 +1,6 @@
 framework:
     default_locale: '%locale%'
     translator:
-        default_path: '%env(TRANSLATION_PATH)%'
+        default_path: '%env(resolve:TRANSLATION_PATH)%'
         fallbacks:
             - '%locale%'
