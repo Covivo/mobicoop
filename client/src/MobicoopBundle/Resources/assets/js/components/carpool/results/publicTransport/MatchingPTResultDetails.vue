@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-row>
-      <v-col cols="2">
+      <v-col :cols="nbColumn1">
         <v-icon>mdi-home</v-icon>
       </v-col>
-      <v-col cols="1">
+      <v-col :cols="nbColumn2">
         {{ departureTime }}
       </v-col>
-      <v-col cols="9">
+      <v-col :cols="nbColumn3">
         {{ departureLabel }}
       </v-col>
     </v-row>
@@ -18,17 +18,17 @@
       align="center"
     >
       <v-col
-        cols="2"
+        :cols="nbColumn1"
       >
         <MatchingPTResultLeg
           :pt-leg="ptLeg"
           :arrow="false"
         />
       </v-col>
-      <v-col cols="1">
+      <v-col :cols="nbColumn2">
         {{ travelTime(ptLeg) }}
       </v-col>
-      <v-col cols="9">
+      <v-col :cols="nbColumn3">
         <MatchingPTResultDetailsLeg
           :pt-leg="ptLeg"
           :last="(index==ptResult.pTLegs.length-1) ? true : false"
@@ -36,13 +36,13 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="2">
+      <v-col :cols="nbColumn1">
         <v-icon>mdi-flag-checkered</v-icon>
       </v-col>
-      <v-col cols="1">
+      <v-col :cols="nbColumn2">
         {{ arrivalTime }}
       </v-col>
-      <v-col cols="9">
+      <v-col :cols="nbColumn3">
         {{ arrivalLabel }}
       </v-col>
     </v-row>
@@ -65,6 +65,9 @@ export default {
   },  
   data(){
     return {
+      nbColumn1:2,
+      nbColumn2:1,
+      nbColumn3:9
     }
   },
   computed:{

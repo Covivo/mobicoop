@@ -15,7 +15,9 @@
     </v-row>
     <v-row v-else>
       <v-col cols="12">
-        autre
+        <div><span class="primary--text">{{ ptLeg.pTLine.number }}</span> {{ ptLeg.pTLine.name }}</div>
+        <div>{{ $t('direction') }} <span class="primary--text">{{ ptLeg.direction }}</span></div>
+        <div>{{ $t('hopOn') }} <span class="primary--text">{{ departure }}</span> {{ $t('hopOff') }} <span class="primary--text">{{ arrival }}</span></div>
       </v-col>
     </v-row>
   </div>
