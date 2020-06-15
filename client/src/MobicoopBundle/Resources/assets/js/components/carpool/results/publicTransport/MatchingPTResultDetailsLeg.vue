@@ -18,6 +18,7 @@
         <div><span class="primary--text">{{ ptLeg.pTLine.number }}</span> {{ ptLeg.pTLine.name }}</div>
         <div>{{ $t('direction') }} <span class="primary--text">{{ ptLeg.direction }}</span></div>
         <div>{{ $t('hopOn') }} <span class="primary--text">{{ departure }}</span> {{ $t('hopOff') }} <span class="primary--text">{{ arrival }}</span></div>
+        <div>{{ $t('estimatedDuration',{'duration':humanReadableDuration(ptLeg.duration)}) }}</div>
       </v-col>
     </v-row>
   </div>
