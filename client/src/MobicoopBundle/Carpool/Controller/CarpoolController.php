@@ -267,6 +267,7 @@ class CarpoolController extends AbstractController
                 'proposalId' => $id,
                 'platformName' => $this->platformName,
                 'externalRDEXJourneys' => false, // No RDEX, this not a new search
+                'ptSearch' => false, // No PT Results, this not a new search
                 'defaultRole'=>$this->defaultRole
             ]);
         }
@@ -375,6 +376,7 @@ class CarpoolController extends AbstractController
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole
         ]);
     }
