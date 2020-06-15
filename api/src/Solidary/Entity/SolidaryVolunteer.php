@@ -47,7 +47,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *             "security"="is_granted('solidary_volunteer_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_volunteer_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_volunteer_register',object)"
  *          }
  *      },
  *      itemOperations={
