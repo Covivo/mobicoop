@@ -63,6 +63,7 @@ class CarpoolController extends AbstractController
     private $ptAlgorithm;
     private $ptDateCriteria;
     private $ptMode;
+    private $ptUsername;
     private $publicTransportManager;
 
     public function __construct(
@@ -79,7 +80,8 @@ class CarpoolController extends AbstractController
         string $ptKey,
         string $ptAlgorithm,
         string $ptDateCriteria,
-        string $ptMode
+        string $ptMode,
+        string $ptUsername
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -94,6 +96,7 @@ class CarpoolController extends AbstractController
         $this->ptAlgorithm = $ptAlgorithm;
         $this->ptDateCriteria = $ptDateCriteria;
         $this->ptMode = $ptMode;
+        $this->ptUsername = $ptUsername;
         $this->publicTransportManager = $publicTransportManager;
     }
     
@@ -430,7 +433,6 @@ class CarpoolController extends AbstractController
         if (!empty($params['date'])) {
             $date = new \DateTime($params['date']." 08:00:00", new \DateTimeZone('Europe/Paris'));
         }
-
         $journeys = $this->publicTransportManager->getJourneys(
             $this->ptProvider,
             $this->ptKey,
@@ -441,7 +443,8 @@ class CarpoolController extends AbstractController
             $date->format(\DateTime::RFC3339),
             $this->ptDateCriteria,
             $this->ptAlgorithm,
-            $this->ptMode
+            $this->ptMode,
+            $this->ptUsername
         );
         
         if (!is_null($journeys)) {
