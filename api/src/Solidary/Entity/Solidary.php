@@ -59,7 +59,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
  *          },
  *          "postUl"={
- *              "method"="POST"
+ *              "method"="POST",
  *              "path"="/solidaries/postUl",
  *              "security_post_denormalize"="is_granted('user_register',object)"
  *          }
@@ -385,10 +385,9 @@ class Solidary
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
-        $this->proofs = new ArrayCollection();
+        $this->proofs = [];
         $this->origin = [];
         $this->destination = [];
-        $this->proof = [];
         $this->days = [];
         $this->homeAddress = [];
         $this->solutions = [];
