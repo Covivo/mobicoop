@@ -112,6 +112,13 @@ class PTDataProvider
             $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
             $arrivalAddress = $journey->getPTArrival()->getAddress();
             $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+
+            foreach ($journey->getPTLegs() as $leg) {
+                $departureAddress = $leg->getPTDeparture()->getAddress();
+                $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+                $arrivalAddress = $leg->getPTArrival()->getAddress();
+                $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+            }
         }
 
         return $journeys;
