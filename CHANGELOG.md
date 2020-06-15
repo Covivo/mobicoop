@@ -3,6 +3,11 @@
 ## API
 
 * [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
+* New ad public link for external search (like RDEX)
+
+## CLIENT
+
+* A disconnected user can now login or register after a search, and get back to the search results
 
 # Release 1.6.0
 
