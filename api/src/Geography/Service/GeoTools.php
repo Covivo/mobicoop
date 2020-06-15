@@ -253,7 +253,7 @@ class GeoTools
         // locality
         if (isset($this->params['displayLocality']) && trim($this->params['displayLocality'])==="true") {
             if (trim($address->getAddressLocality())!=="") {
-                $displayLabelTab[0][] = $address->getAddressLocality();
+                $displayLabelTab[0][] = ucfirst(strtolower($address->getAddressLocality()));
             }
         }
 
@@ -262,21 +262,21 @@ class GeoTools
         // subregion
         if (isset($this->params['displaySubRegion']) && trim($this->params['displaySubRegion'])==="true") {
             if (trim($address->getRegion())!=="") {
-                $displayLabelTab[1][] = $address->getRegion();
+                $displayLabelTab[1][] = ucfirst(strtolower($address->getRegion()));
             }
         }
 
         // region
         if (isset($this->params['displayRegion']) && trim($this->params['displayRegion'])==="true") {
             if (trim($address->getMacroRegion())!=="") {
-                $displayLabelTab[1][] = $address->getMacroRegion();
+                $displayLabelTab[1][] = ucfirst(strtolower($address->getMacroRegion()));
             }
         }
 
         // country
         if (isset($this->params['displayCountry']) && trim($this->params['displayCountry'])==="true") {
             if (trim($address->getAddressCountry())!=="") {
-                $displayLabelTab[1][] = $address->getAddressCountry();
+                $displayLabelTab[1][] = ucfirst(strtolower($address->getAddressCountry()));
             }
         }
 

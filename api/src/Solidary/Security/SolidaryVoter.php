@@ -95,9 +95,10 @@ class SolidaryVoter extends Voter
             case self::SOLIDARY_CREATE:
                 return $this->canCreateSolidary();
             case self::SOLIDARY_READ:
-                return $this->canReadSolidary($subject);
-            case self::SOLIDARY_UPDATE:
                 ($subject instanceof Solidary) ? $solidary = $subject : $solidary = $subject->getSolidary();
+                return $this->canReadSolidary($solidary);
+            case self::SOLIDARY_UPDATE:
+                ($subject instanceof Solidary) ? $solidary = $subject : $solidary = $subject->getSolidaryMatching()->getSolidary();
                 return $this->canUpdateSolidary($solidary);
             case self::SOLIDARY_DELETE:
                 return $this->canDeleteSolidary($subject);

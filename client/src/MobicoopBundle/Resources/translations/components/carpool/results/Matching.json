@@ -7,6 +7,7 @@
     "contactUrl": "/covoiturage/contact",
     "mailboxUrl": "/utilisateur/messages",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
+    "ptSearchUrl": "/transport-public/recherche",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
     "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
@@ -19,7 +20,8 @@
     },
     "tabs":{
       "carpools":"Covoiturages {platform}",
-      "otherCarpools":"Autres covoiturages"
+      "otherCarpools":"Autres covoiturages",
+      "ptresults":"Transport en commun"
     }
   },
   "en":{
@@ -30,6 +32,7 @@
     "contactUrl": "/carpool/contact",
     "mailboxUrl": "/user/messages",
     "externalJourneyUrl": "/carpool/rdexJourney",
+    "ptSearchUrl": "/public-transport/search",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
     "includePassengers":"Show also passengers carpools",
@@ -40,7 +43,8 @@
     },
     "tabs":{
       "carpools":"{platform} carpools",
-      "otherCarpools":"Other carpools"
+      "otherCarpools":"Other carpools",
+      "ptresults":"Public transports"
     }
   }
 }

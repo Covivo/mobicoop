@@ -392,6 +392,13 @@ rdex_journey:
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+# public transport journey (AJAX)
+public_transport_journey:
+    methods: [POST]
+    path:
+        fr: /transport-public/recherche
+        en: /public-transport/search
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::PTSearch
 
 ####################
 # community routes #

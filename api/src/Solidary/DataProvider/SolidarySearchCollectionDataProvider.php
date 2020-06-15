@@ -79,11 +79,8 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         $solidarySearch->setWay($this->filters['way']);
 
         $solidary = $this->solidaryManager->getSolidary($solidaryId);
-        if (empty($solidary)) {
-            throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
-        }
+       
         $solidarySearch->setSolidary($solidary);
-
         if ($this->filters['type'] == 'transport') {
             return $this->solidaryManager->getSolidaryTransportSearchResults($solidarySearch);
         } elseif ($this->filters['type'] == 'carpool') {

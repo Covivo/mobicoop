@@ -1,77 +1,29 @@
 import React from 'react';
-import get from 'lodash/get';
-import { List, Datagrid, TextField, DateField, BooleanField, Mutation, Button } from 'react-admin';
-import { Chip, Grid, Typography } from '@material-ui/core';
+import get from 'lodash.get';
+import { useListController } from 'ra-core';
 
-const ScheduleDisplay = ({ record, source }) => {
-  const schedule = get(record, source);
-  if (schedule) {
-    return (
-      <Grid container spacing={1}>
-        {Object.keys(schedule).map((e) => (
-          <Grid container>
-            <Grid item xs={4}>
-              <Chip color="primary" label={e} />
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="body2" gutterBottom>
-                Début : {schedule[e].minTime && new Date(schedule[e].minTime).toLocaleString()}
-                <br />
-                Fin : {schedule[e].maxTime && new Date(schedule[e].maxTime).toLocaleString()}
-              </Typography>
-            </Grid>
-          </Grid>
-        ))}
-      </Grid>
-    );
-  }
-  return null;
-};
+import {
+  List,
+  Datagrid,
+  Mutation,
+  Button,
+  TextInput,
+  TextField,
+  Filter,
+  useTranslate,
+  AutocompleteInput,
+  ReferenceInput,
+  BooleanField,
+  SelectInput,
+} from 'react-admin';
 
-const RoleDisplay = ({ record, source }) => {
-  const type = get(record, source);
-  switch (type) {
-    case 1:
-      return (
-        <Typography variant="body2" gutterBottom>
-          Conducteur
-        </Typography>
-      );
-    case 2:
-      return (
-        <Typography variant="body2" gutterBottom>
-          Passager
-        </Typography>
-      );
-    default:
-      return (
-        <Typography variant="body2" gutterBottom>
-          Peu importe
-        </Typography>
-      );
-  }
-};
-
-const FrequencyDisplay = ({ record, source }) => {
-  const type = get(record, source);
-  switch (type) {
-    case 1:
-      return (
-        <Typography variant="body2" gutterBottom>
-          Occasionnel
-        </Typography>
-      );
-    default:
-      return (
-        <Typography variant="body2" gutterBottom>
-          Régulier
-        </Typography>
-      );
-  }
-};
+import { solidarySearchFrequencyLabels } from '../../../constants/solidarySearchFrequency';
+import { carpoolRoleLabels } from '../../../constants/solidarySearchRole';
+import { solidaryLabelRenderer } from '../../../utils/renderers';
 
 const CreateSolidarySolutionButton = ({ record, source }) => {
   const solidaryMatching = get(record, source);
+
   return (
     <Mutation
       type="create"
@@ -96,42 +48,160 @@ const CreateSolidarySolutionButton = ({ record, source }) => {
   );
 };
 
-const SolidarySearchList = (props) => {
-  console.log('SolidarySearchList:', props);
-  const filter =
-    props.location.search &&
-    props.location.search.startsWith('?filter=') &&
-    decodeURIComponent(props.location.search.slice(8));
+const SolidarySearchFilter = (props) => (
+  <Filter {...props}>
+    <TextInput source="name" label="Nom" alwaysOn />
+    <SelectInput
+      source="type"
+      label="Type"
+      choices={[
+        { id: 'carpool', name: 'Covoiturage' },
+        { id: 'transport', name: 'Transport' },
+      ]}
+      defaultValue="carpool"
+    />
+    <SelectInput
+      source="way"
+      label="Way"
+      choices={[
+        { id: 'outward', name: 'Aller' },
+        { id: 'return', name: 'Retour' },
+      ]}
+      defaultValue="outward"
+    />
+    <ReferenceInput
+      alwaysOn
+      fullWidth
+      label="Demande solidaire"
+      source="solidary"
+      reference="solidaries"
+    >
+      <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
+    </ReferenceInput>
+  </Filter>
+);
 
-  if (filter.includes('carpool')) {
-    return (
-      <List {...props} title="Liste des covoiturages" perPage={25}>
-        <Datagrid>
-          <TextField label="Auteur" source="solidaryResultCarpool.author" />
-          <TextField label="Origine" source="solidaryResultCarpool.origin" />
-          <TextField label="Destination" source="solidaryResultCarpool.destination" />
-          <DateField label="Date" source="solidaryResultCarpool.date" />
-          <FrequencyDisplay label="Fréquence" source="solidaryResultCarpool.frequency" />
-          <RoleDisplay label="Role" source="solidaryResultCarpool.role" />
-          <BooleanField
-            label="Solidaire exclusif"
-            source="solidaryResultCarpool.solidaryExlusive"
-          />
-          <ScheduleDisplay source="solidaryResultCarpool.schedule" label="Horaires" />
-          <CreateSolidarySolutionButton source="solidaryMatching.@id" label="Action" />
-        </Datagrid>
-      </List>
-    );
-  }
+const JourneyField = ({ record, source }) => {
+  const journey = get(record, source);
+  return `${journey.origin} -> ${journey.destination}`;
+};
+
+const ScheduleDaysField = ({ record, source }) => {
+  const translate = useTranslate();
+  const schedule = get(record, source);
+
   return (
-    <List {...props} title="Liste des transports" perPage={25}>
-      <Datagrid>
-        <TextField label="Auteur" source="solidaryResultTransport.author" />
-        <TextField label="Origine" source="solidaryResultTransport.origin" />
-        <TextField label="Destination" source="solidaryResultTransport.destination" />
-      </Datagrid>
+    <span>
+      {Object.keys(schedule)
+        .map((day) => {
+          return translate(`custom.days.${day}`);
+        })
+        .join(' ')}
+    </span>
+  );
+};
+
+export const DayField = ({ record, source }) => {
+  const morning = get(record, source).m;
+  const afternoon = get(record, source).a;
+  const evening = get(record, source).e;
+
+  const display = [morning ? 'Mat.' : '-', afternoon ? 'Ap.' : '-', evening ? 'Soir' : '-'].join(
+    '<br/>/'
+  );
+
+  // eslint-disable-next-line react/no-danger
+  return <div dangerouslySetInnerHTML={{ __html: display }} />;
+};
+
+const FrequencyField = ({ record, source }) => {
+  const translate = useTranslate();
+  const frequency = get(record, source);
+
+  return translate(solidarySearchFrequencyLabels[frequency]) || '-';
+};
+
+const RoleField = ({ record, source }) => {
+  const translate = useTranslate();
+  const role = get(record, source);
+
+  return translate(carpoolRoleLabels[role]);
+};
+
+const CarpoolDatagrid = (
+  <Datagrid>
+    <TextField
+      source="solidaryResultCarpool.author"
+      label="resources.solidary_searches.fields.author"
+    />
+    <JourneyField
+      source="solidaryResultCarpool"
+      label="resources.solidary_searches.fields.journey"
+    />
+    <ScheduleDaysField
+      source="solidaryResultCarpool.schedule"
+      label="resources.solidary_searches.fields.schedule"
+    />
+    <FrequencyField
+      source="solidaryResultCarpool.frequency"
+      label="resources.solidary_searches.fields.type"
+    />
+    <RoleField
+      source="solidaryResultCarpool.role"
+      label="resources.solidary_searches.fields.role"
+    />
+    <BooleanField
+      source="solidaryResultCarpool.solidaryExlusive"
+      label="resources.solidary_searches.fields.exclusive"
+    />
+    <CreateSolidarySolutionButton source="solidaryMatching.id" label="Action" />
+  </Datagrid>
+);
+
+const TransportDatagrid = (
+  <Datagrid>
+    <TextField
+      source="solidaryResultTransport.home"
+      label="resources.solidary_searches.fields.origin"
+    />
+    <TextField
+      source="solidaryResultTransport.volunteer"
+      label="resources.solidary_searches.fields.volunteer"
+    />
+    <DayField label="custom.days.mon" source="solidaryResultTransport.schedule.mon" />
+    <DayField label="custom.days.tue" source="solidaryResultTransport.schedule.tue" />
+    <DayField label="custom.days.wed" source="solidaryResultTransport.schedule.wed" />
+    <DayField label="custom.days.thu" source="solidaryResultTransport.schedule.thu" />
+    <DayField label="custom.days.fri" source="solidaryResultTransport.schedule.fri" />
+    <DayField label="custom.days.sat" source="solidaryResultTransport.schedule.sat" />
+    <DayField label="custom.days.sun" source="solidaryResultTransport.schedule.sun" />
+  </Datagrid>
+);
+
+export const SolidarySearchListGuesser = (props) => {
+  // Resolve datagrid fields from return data
+  // if loading => display null because fields should not match previous data
+  // if solidaryResultCarpool is not null => it's a carpool list
+  // if solidaryResultTransport is not null => it's a transport list
+  const dynamicDatagrid = props.loading
+    ? null
+    : props.ids.length > 0 && props.data[props.ids[0]].solidaryResultCarpool !== null
+    ? CarpoolDatagrid
+    : TransportDatagrid;
+
+  return (
+    <List
+      {...props}
+      title="Covoiturages"
+      perPage={25}
+      filters={<SolidarySearchFilter />}
+      filterDefaultValues={{ way: 'outward', type: 'carpool' }}
+    >
+      {dynamicDatagrid}
     </List>
   );
 };
 
-export default SolidarySearchList;
+export const SolidarySearchList = (props) => (
+  <SolidarySearchListGuesser {...props} {...useListController(props)} />
+);
