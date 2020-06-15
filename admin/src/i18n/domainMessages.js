@@ -60,6 +60,7 @@ const fr = {
       sat: 'Sam',
       sun: 'Dim',
     },
+    week: 'Semaine',
     solidary_search: {
       frequency: {
         regular: 'Régulier',
