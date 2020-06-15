@@ -46,51 +46,14 @@ export default {
       label: "Structure accompagnante",
       placeholder: "Structure accompagnante",
       text: "Chaque structure a ses propres critères. Si vous ne remplissez pas les critères pour l'une, peut-être les remplisserez-vous pour une autre qui dessert aussi votre domicile ?",
-      title: "Structure accompagnante : "
+      title: "Structure accompagnante : ",
+      "route": "/structures/liste-des-communautes"
+
     },
     other: {
       label: "Autre",
       placeholder: "Autre"
     },
-    success: "Votre demande de coup de pouce a bien été envoyée !"
-  },
-  en: {
-    ui: {
-      buttons: {
-        validate: {
-          label: "Validate",
-          route: "/solidary/ask"
-        },
-        cancel: {
-          label: "Cancel"
-        }
-      }
-    },
-    stepper: {
-      origin: "Départ"
-    },
-    origin: {
-      placeholder: "Lieu de départ"
-    },
-    yearOfBirth: {
-      label: "Year of birth",
-      placeholder: "Year of birth"
-    },
-    hasRSA: {
-      label: "",
-      placeholder: ""
-    },
-    subject: {
-      label: "",
-      placeholder: ""
-    },
-    structure: {
-      label: "",
-      placeholder: ""
-    },
-    other: {
-      label: "Other",
-      placeholder: "Other"
-    }
+    success: "Votre demande de coup de pouce a bien été envoyée !",
   }
 }

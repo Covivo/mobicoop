@@ -56,8 +56,18 @@
 
             <v-divider />
 
-            <v-stepper-step
+            <v-stepper-step 
               :step="5"
+              editable
+              edit-icon
+            >
+              {{ $t('stepper.you') }}
+            </v-stepper-step>
+
+            <v-divider />
+
+            <v-stepper-step
+              :step="6"
               editable
               edit-icon
             >
@@ -71,7 +81,6 @@
             <v-stepper-content step="1">
               <v-form
                 ref="step 1"
-                v-model="step1"
                 class="pb-2"
                 @submit.prevent
               >
@@ -92,7 +101,6 @@
                         :token="user ? user.geoToken : ''"
                         :display-name-in-selected="false"
                         required
-                        @address-selected="originSelected"
                       />
                     </v-col>
                   </v-row>
@@ -115,7 +123,6 @@
             <v-stepper-content step="2">
               <v-form
                 ref="step 2"
-                v-model="step2"
                 class="pb-2"
                 @submit.prevent
               >
@@ -171,8 +178,6 @@
                         <span class="font-weight-black  "> {{ $t('info') }}</span> 
                       </p>
                       <v-text-field
-                        v-model="name"
-                        :rules="nameRules"
                         :label="$t('territory')"
                       />
                     </v-col>
@@ -221,7 +226,6 @@
             <v-stepper-content step="3">
               <v-form
                 ref="step 3"
-                v-model="step3"
                 class="pb-2"
                 @submit.prevent
               >
@@ -257,7 +261,6 @@
             <v-stepper-content step="4">
               <v-form
                 ref="step 4"
-                v-model="step4"
                 class="pb-2"
                 @submit.prevent
               >
@@ -288,10 +291,148 @@
                 </v-btn>
               </v-form>
             </v-stepper-content>
+
+            <!--YOU-->
             <v-stepper-content step="5">
               <v-form
-                ref="step 1"
-                v-model="step4"
+                ref="step 5"
+                class="pb-2"
+                @submit.prevent
+              >
+                <v-card
+                  class="mb-12"
+                  flat
+                >
+                  <v-row justify="center">
+                    <v-col
+                      cols="8"
+                    >
+                      <v-select
+                        v-model="form.gender"
+                        :items="genderItems"
+                        :rules="rules.genderRules"
+                        item-text="genderItem"
+                        item-value="genderValue"
+                        :label="$t('models.user.gender.placeholder') + ' *'"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <v-text-field
+                        v-model="form.familyName"
+                        :label="$t('models.user.familyName.placeholder') + ' *'"
+                        :rules="rules.familyNameRules"
+                        name="lastName"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <v-text-field
+                        v-model="form.givenName"
+                        :label="$t('models.user.givenName.placeholder') + ' *'"
+                        :rules="rules.givenNameRules"
+                        name="firstName"
+                      />
+                    </v-col>
+              
+                    <v-col
+                      cols="8"
+                    >
+                      <v-menu
+                        ref="menu"
+                        v-model="pickerActive"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="yearOfBirth"
+                            :label="$t('yearOfBirth.placeholder') + ' *'"
+                            :rules="rules.yearsOfBirthRules"
+                            v-on="on"
+                          />
+                        </template>
+                        <v-date-picker
+                          ref="picker"
+                          v-model="form.yearOfBirth"
+                          no-title
+                          reactive
+                          first-day-of-week="1"
+                          :max="years.max"
+                          :min="years.min"
+                          @input="save"
+                        >
+                          <v-spacer />
+                          <v-btn
+                            text
+                            color="error"
+                            @click="menu = false"
+                          >
+                            {{ $t('ui.buttons.cancel.label') }}
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="secondary"
+                            @click="$refs.menu.save(form.yearOfBirth)"
+                          >
+                            {{ $t('ui.buttons.validate.label') }}
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <v-text-field
+                        v-model="form.email"
+                        :label="$t('models.user.email.placeholder') + ' *'"
+                        :rules="rules.emailRules"
+                        name="email"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <v-text-field
+                        v-model="form.phoneNumber"
+                        :label="$t('models.user.phone.placeholder') + ' *'"
+                        :rules="rules.phoneNumberRules"
+                        name="phone"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card>
+
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="my-13 mr-12 mt-12 "
+                  color="secondary"
+                  @click="--step"
+                >
+                  {{ $t('ui.button.previous') }}
+                </v-btn>
+                <v-btn
+                  ref="button"
+                  rounded
+                  class="mr-4 mb-100 mt-12"
+                  color="secondary"
+                  width="150px"
+
+                  @click="nextStep(6)"
+                >
+                  {{ $t('ui.button.next') }}
+                </v-btn>
+              </v-form>
+            </v-stepper-content>
+
+            <v-stepper-content step="6">
+              <v-form
+                ref="step 6"
                 class="pb-2"
                 @submit.prevent
               >
@@ -314,8 +455,6 @@
                   class="mr-4 mb-100 mt-12"
                   :loading="loading"
                   width="150px"
-
-                  @click="validate"
                 >
                   {{ $t('ui.button.register') }}
                 </v-btn>
@@ -325,252 +464,6 @@
         </v-stepper>
       </v-col>
     </v-row>
-    <!-- <v-row
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        sm="6"
-        md="4"
-        align="center"
-      > -->
-    <!--<v-alert-->
-    <!--dismissible-->
-    <!--:value="alert.show"-->
-    <!--:type="alert.type"-->
-    <!--&gt;-->
-    <!--&lt;!&ndash;Use of span and v-html to handle multiple lines errors if needed&ndash;&gt;-->
-    <!--<span v-html="alert.message" />-->
-    <!--</v-alert>-->
-
-    <!-- <v-snackbar
-          v-model="alert.show"
-          :color="(alert.type === 'error')?'error':'primary'"
-          top
-        >
-          {{ alert.message }}
-          <v-btn
-            color="white"
-            text
-            @click="alert.show = false"
-          >
-            <v-icon>mdi-close-circle-outline</v-icon>
-          </v-btn>
-        </v-snackbar>
-      </v-col>
-    </v-row> -->
-
-    <!-- <v-row
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        sm="8"
-        md="6"
-        align="center"
-      > -->
-    <!--SearchJourney-->
-        
-    <!-- <search-journey
-          :geo-search-url="geoSearchUrl"
-          :user="user"
-          :init-regular="regular"
-          :punctual-date-optional="punctualDateOptional"
-          :show-required="true"
-          @change="searchChanged"
-        />
-      </v-col>
-    </v-row> -->
-    
-    <!--Structure and subject-->
-    <!-- <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-select
-          v-model="form.structure"
-          :items="structures"
-          item-text="name"
-          item-value="id"
-          :label="$t('structure.placeholder')"
-        />
-      </v-col>
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-select
-          v-model="form.subject"
-          :items="subjects"
-          item-text="label"
-          item-value="id"
-          :label="$t('subject.placeholder')"
-        />
-      </v-col>
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-text-field
-          v-model="form.otherSubject"
-          :disabled="!isOtherSubjectActive"
-          :label="$t('other.label')"
-        />
-      </v-col>
-    </v-row> -->
-    
-    <!--user data-->
-    
-    <!-- <v-row
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        sm="8"
-        md="6"
-        align="center"
-      >
-        <v-form
-          id="formSolidary"
-          ref="form"
-          v-model="valid"
-        > -->
-    <!--<v-container>-->
-    <!-- <v-row>
-            <v-col
-              cols="12"
-            >
-              <v-select
-                v-model="form.gender"
-                :items="genderItems"
-                :rules="rules.genderRules"
-                item-text="genderItem"
-                item-value="genderValue"
-                :label="$t('models.user.gender.placeholder') + ' *'"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-            >
-              <v-text-field
-                v-model="form.familyName"
-                :label="$t('models.user.familyName.placeholder') + ' *'"
-                :rules="rules.familyNameRules"
-                name="lastName"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-            >
-              <v-text-field
-                v-model="form.givenName"
-                :label="$t('models.user.givenName.placeholder') + ' *'"
-                :rules="rules.givenNameRules"
-                name="firstName"
-              />
-            </v-col>
-              
-            <v-col
-              cols="12"
-            >
-              <v-menu
-                ref="menu"
-                v-model="pickerActive"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="yearOfBirth"
-                    :label="$t('yearOfBirth.placeholder') + ' *'"
-                    :rules="rules.yearsOfBirthRules"
-                    v-on="on"
-                  />
-                </template>
-                <v-date-picker
-                  ref="picker"
-                  v-model="form.yearOfBirth"
-                  no-title
-                  reactive
-                  first-day-of-week="1"
-                  :max="years.max"
-                  :min="years.min"
-                  @input="save"
-                >
-                  <v-spacer />
-                  <v-btn
-                    text
-                    color="error"
-                    @click="menu = false"
-                  >
-                    {{ $t('ui.buttons.cancel.label') }}
-                  </v-btn>
-                  <v-btn
-                    text
-                    color="secondary"
-                    @click="$refs.menu.save(form.yearOfBirth)"
-                  >
-                    {{ $t('ui.buttons.validate.label') }}
-                  </v-btn>
-                </v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col
-              cols="12"
-            >
-              <v-text-field
-                v-model="form.email"
-                :label="$t('models.user.email.placeholder') + ' *'"
-                :rules="rules.emailRules"
-                name="email"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-            >
-              <v-text-field
-                v-model="form.phoneNumber"
-                :label="$t('models.user.phone.placeholder') + ' *'"
-                :rules="rules.phoneNumberRules"
-                name="phone"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-            >
-              <v-switch
-                v-model="form.hasRSA"
-                color="primary"
-                inset
-                :label="$t('hasRSA.placeholder')"
-              />
-            </v-col>
-          </v-row> -->
-            
-    <!--submission-->
-    <!-- <v-btn
-            :disabled="!isValid"
-            :loading="loading"
-            color="secondary"
-            rounded
-            @click="validate"
-          >
-            {{ $t('ui.buttons.validate.label') }}
-          </v-btn>
-        </v-form>
-      </v-col>
-    </v-row> -->
   </v-container>
 </template>
 
@@ -580,7 +473,6 @@ import axios from "axios";
 import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.js";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
-import SearchJourney from "@components/carpool/search/SearchJourney";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
 
@@ -604,10 +496,6 @@ export default {
       default: null
     },
     regular: {
-      type: Boolean,
-      default: false
-    },
-    punctualDateOptional: {
       type: Boolean,
       default: false
     },
@@ -635,11 +523,15 @@ export default {
       // stepper
       step: 1,
 
-      form: {
+      form: {      
+        address: null,
         structure: null,
-        otherStructure: "",
         subject: null,
-        otherSubject: "",
+        proof: null,
+        comments: null,
+        destination: null,
+        regular: false,
+        need: null,
         gender: this.user && this.user.gender ? this.user.gender : null,
         givenName: this.user && this.user.givenName ? this.user.givenName : "",
         familyName: this.user && this.user.familyName ? this.user.familyName : "",
@@ -647,8 +539,6 @@ export default {
         phoneNumber: this.user && this.user.telephone ? this.user.telephone : null,
         yearOfBirth: this.user && this.user.birthYear ? moment(this.user.birthYear.toString()).format("YYYY-MM-DD") : null,
         hasRSA: false,
-        city: false,
-        search: null
       },
       genderItems: [
         { genderItem: this.$t('models.user.gender.values.female'), genderValue: 1 },
@@ -684,9 +574,6 @@ export default {
     }
   },
   computed: {
-    // we can't get only year from v-datepicker so we have to create custom getter and setter 
-    // to handle what we want in case user wants to type for the year
-    // no autocompletion from typing
     yearOfBirth: {
       get () {
         return this.form.yearOfBirth && moment(this.form.yearOfBirth, "YYYY-MM-DD", true).isValid() ? 
@@ -696,9 +583,6 @@ export default {
         value && moment(value, "YYYY", true).isValid() ?
           this.form.yearOfBirth = moment(value).format("YYYY-MM-DD") : null;
       }
-    },
-    isValid () {
-      return this.valid && (this.form.search && this.form.search.origin && this.form.search.destination && this.form.search.date)
     }
   },
   watch: {
@@ -721,46 +605,13 @@ export default {
       this.$refs.picker.activePicker = 'YEAR';
       this.menu = false;
     },
-    searchChanged(data) {
-      this.form.search = data
-    },
-    validate() {
-      const self = this;
-      this.resetAlert();
-      if (this.$refs.form.validate()) {
-        this.loading = true;
-        axios.post(this.$t('ui.buttons.validate.route'), this.form)
-          .then(function (response) {
-            console.log(response.data);
-            if (response.data && response.data.message) {
-              self.alert = {
-                type: "success",
-                message: self.$t(response.data.message)
-              };
-            }
-          })
-          .catch(function (error) {
-            console.error(error.response);
-            let messages = "";
-            if (error.response.data && error.response.data.errors) {
-              error.response.data.errors.forEach(error => {
-                messages += self.$t(error) + "<br>"
-              });
-            } else if (error.response.data && error.response.data.message) {
-              messages = self.$t(error.response.data.message);
-            }
-            self.alert = {
-              type: "error",
-              message: messages
-            };
-          }).finally(function () {
-            self.loading = false;
-            if (self.alert.message.length > 0) {
-              self.alert.show = true;
-            }
-          })
-      }
-    },
+    // // should be get all structures
+    // getStructures() {
+    //   axios.post(this.$t("structures.route")) //TODO : find route list of strauctures by territory
+    //     .then(res => {
+    //       this.structures = res.data; 
+    //     });
+    // },
     resetAlert() {
       this.alert = {
         type: "success",
