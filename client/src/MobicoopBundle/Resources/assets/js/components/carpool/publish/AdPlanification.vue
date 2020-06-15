@@ -79,6 +79,7 @@
               format="24hr"
               :min="maxTimeIfToday"
               header-color="secondary"
+              :allowed-minutes="allowedStep"
               @click:minute="changeTime()"
             />
           </v-menu>
@@ -193,6 +194,7 @@
               format="24hr"
               header-color="secondary"
               :min="minReturnTime"
+              :allowed-minutes="allowedStep"
               @click:minute="checkDateReturn($event)"
             />
           </v-menu>
@@ -336,6 +338,7 @@
                     format="24hr"
                     header-color="secondary"
                     :disabled="item.outwardDisabled"
+                    :allowed-minutes="allowedStep"
                     @click:minute="closeOutwardTime(item.id)"
                     @change="blockTimeRegular($event,item.id)"
                   />
@@ -402,6 +405,7 @@
                     header-color="secondary"
                     :disabled="item.returnDisabled"
                     :min="item.minReturnTime ? item.minReturnTime : null"
+                    :allowed-minutes="allowedStep"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change()"
                   />
@@ -526,6 +530,10 @@ export default {
       type: Object,
       default: null
     },
+    defaultTimePrecision: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -545,7 +553,8 @@ export default {
       maxDateFromOutward : null,
       maxTimeFromOutward : null,
       maxTimeIfToday : null,
-      nowDate : new Date().toISOString().slice(0,10)
+      nowDate : new Date().toISOString().slice(0,10),
+      timePrecision: this.defaultTimePrecision,
     };
   },
   computed: {
@@ -588,6 +597,9 @@ export default {
       return this.returnDate === this.outwardDate
         ? moment(this.outwardDate + ' ' + this.outwardTime).add(this.route.direction.duration, 'seconds').format("HH:mm")
         : null;
+    },
+    allowedStep: function () {
+      return m => m % this.timePrecision === 0
     }
   },
   watch: {
