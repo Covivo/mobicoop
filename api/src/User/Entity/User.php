@@ -35,6 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Action\Entity\Diary;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -68,6 +69,8 @@ use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserMe;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
+use App\User\Filter\IsInCommunityFilter;
+use App\User\Filter\ProposalValidFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
@@ -350,9 +353,11 @@ use App\User\Controller\UserCanUseEmail;
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
+ * @ApiFilter(IsInCommunityFilter::class)
+ * @ApiFilter(ProposalValidFilter::class)
  * @ApiFilter(HomeAddressDirectionTerritoryFilter::class, properties={"homeAddressDirectionTerritory"})
  * @ApiFilter(HomeAddressODTerritoryFilter::class, properties={"homeAddressODTerritory"})
  * @ApiFilter(HomeAddressWaypointTerritoryFilter::class, properties={"homeAddressWaypointTerritory"})
@@ -365,6 +370,9 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
+ * @ApiFilter(NumericFilter::class, properties={"gender"})
+ * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
+ * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
