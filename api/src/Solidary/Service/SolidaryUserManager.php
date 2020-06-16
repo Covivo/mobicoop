@@ -249,13 +249,6 @@ class SolidaryUserManager
      */
     public function getSolidaryVolunteer(int $id): SolidaryVolunteer
     {
-        // Get the structure of the Admin
-        $structures = $this->security->getUser()->getSolidaryStructures();
-        $structureAdmin = null;
-        if (!is_null($structures) || count($structures)>0) {
-            $structureAdmin = $structures[0];
-        }
-
         // Get the Solidary User
         $solidaryUser = $this->solidaryUserRepository->find($id);
         $user = $solidaryUser->getUser();
@@ -311,12 +304,21 @@ class SolidaryUserManager
 
         // We take the first solidaryUser structure.
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
-        // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
-        if (!is_null($structureAdmin)) {
-            foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
-                if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
-                    $solidaryUserStructure = $currentSolidaryUserStructure;
-                    break;
+
+        // Get the structure of the Admin
+        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+            // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
+            if (!is_null($structureAdmin)) {
+                foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
+                    if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
+                        $solidaryUserStructure = $currentSolidaryUserStructure;
+                        break;
+                    }
                 }
             }
         }
@@ -656,7 +658,6 @@ class SolidaryUserManager
             }
             
             $user = $this->userRepository->findOneBy(['email'=>$solidaryVolunteer->getEmail()]);
-
             if (is_null($user)) {
                 $user = new User();
                 $user->setEmail($solidaryVolunteer->getEmail());
@@ -682,39 +683,40 @@ class SolidaryUserManager
                 // auto valid the registration
                 $user->setValidatedDate(new \DateTime());
             }
-        } else {
-            // We check if this User does'nt already have a Solidary User
-            if (!is_null($user->getSolidaryUser())) {
-                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
-            }
         }
-
+        if (!is_null($user->getSolidaryUser())) {
+            $solidaryUser = $user->getSolidaryUser();
+        } else {
+            $solidaryUser = new SolidaryUser();
+            // We set the link between User and SolidaryUser
+            $user->setSolidaryUser($solidaryUser);
+            // we add the home address to the solidary user
+            $homeAddress = $solidaryVolunteer->getHomeAddress();
+            $address = new Address();
+            $address->setStreetAddress($homeAddress['streetAddress']);
+            $address->setAddressLocality($homeAddress['addressLocality']);
+            $address->setLocalAdmin($homeAddress['localAdmin']);
+            $address->setCounty($homeAddress['county']);
+            $address->setMacroCounty($homeAddress['macroCounty']);
+            $address->setRegion($homeAddress['region']);
+            $address->setMacroRegion($homeAddress['macroRegion']);
+            $address->setAddressCountry($homeAddress['addressCountry']);
+            $address->setCountryCode($homeAddress['countryCode']);
+            $address->setLatitude($homeAddress['latitude']);
+            $address->setLongitude($homeAddress['longitude']);
+            $address->setName($homeAddress['name']);
+            $address->setHome(true);
+            $address->setUser($user);
+            $solidaryUser->setAddress($address);
+        }
+        
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
         $userAuthAssignment = new UserAuthAssignment();
         $userAuthAssignment->setAuthItem($authItem);
         $user->addUserAuthAssignment($userAuthAssignment);
 
         // We create the SolidaryUser
-        $solidaryUser = new SolidaryUser();
         $solidaryUser->setVolunteer(true);
-        $homeAddress = $solidaryVolunteer->getHomeAddress();
-        $address = new Address();
-        $address->setStreetAddress($homeAddress['streetAddress']);
-        $address->setAddressLocality($homeAddress['addressLocality']);
-        $address->setLocalAdmin($homeAddress['localAdmin']);
-        $address->setCounty($homeAddress['county']);
-        $address->setMacroCounty($homeAddress['macroCounty']);
-        $address->setRegion($homeAddress['region']);
-        $address->setMacroRegion($homeAddress['macroRegion']);
-        $address->setAddressCountry($homeAddress['addressCountry']);
-        $address->setCountryCode($homeAddress['countryCode']);
-        $address->setLatitude($homeAddress['latitude']);
-        $address->setLongitude($homeAddress['longitude']);
-        $address->setName($homeAddress['name']);
-        $address->setHome(true);
-        $address->setUser($user);
-        $solidaryUser->setAddress($address);
-
         $solidaryUser->setComment($solidaryVolunteer->getComment());
         $solidaryUser->setVehicle($solidaryVolunteer->hasVehicle());
         $solidaryUser->setMaxDistance($solidaryVolunteer->getMaxDistance());
@@ -727,9 +729,6 @@ class SolidaryUserManager
             }
         }
        
-        // We set the link between User and SolidaryUser
-        $user->setSolidaryUser($solidaryUser);
-
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure)) {

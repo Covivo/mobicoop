@@ -7,7 +7,9 @@
 
 ## CLIENT
 
-* Public Transport results
+* Public Transport solutions can be shown at the same time that carpools researchs.
+* New ad public link for external search (like RDEX)
+* A disconnected user can now login or register after a search, and get back to the search results
 
 # Release 1.6.0
 

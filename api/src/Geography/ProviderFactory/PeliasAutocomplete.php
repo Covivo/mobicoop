@@ -139,9 +139,15 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 $id = $props['id'];
             } // todo : complete with other ids if needed
 
+            // we check if there's a layer provided
+            $layer = null;
+            if (isset($props['layer'])) {
+                $layer = $props['layer'];
+            }
+
             // we check if the search is a venue
             $venue = null;
-            if ($props['layer'] == "venue") {
+            if ($layer == "venue") {
                 $venue = $props['name'];
             }
 
@@ -189,6 +195,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             $result->setId($id);
             $result->setVenue($venue);
             $result->setDistance($distance);
+            $result->setLayer($layer);
             $results[] = $result;
         }
         return new AddressCollection($results);

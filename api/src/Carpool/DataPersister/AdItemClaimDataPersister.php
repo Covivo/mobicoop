@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,44 +21,35 @@
  *    LICENSE
  **************************/
 
- namespace App\Solidary\DataPersister;
+namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
-use Symfony\Component\Security\Core\Security;
+use App\Carpool\Entity\Ad;
+use App\Carpool\Service\AdManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * Item data persister for claim Ad.
  */
-final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
+final class AdItemClaimDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $solidaryManager;
-    private $security;
-    
-    public function __construct(SolidaryManager $solidaryManager, Security $security)
-    {
-        $this->solidaryManager = $solidaryManager;
-        $this->security = $security;
-    }
+    private $adManager;
+    private $request;
 
+    public function __construct(AdManager $adManager, RequestStack $requestStack)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+        $this->adManager = $adManager;
+    }
+  
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Solidary;
+        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'claim';
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            $data = $this->solidaryManager->updateSolidary($data);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->solidaryManager->createSolidary($data);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'postUl') {
-            $data->setUser($this->security->getUser());
-            $data = $this->solidaryManager->createSolidary($data);
-        }
-        return $data;
+        return $this->adManager->claimAd($this->request->get("id"));
     }
 
     public function remove($data, array $context = [])

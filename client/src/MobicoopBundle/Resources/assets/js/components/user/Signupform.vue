@@ -435,6 +435,10 @@ export default {
     communityShow: {
       type: Boolean,
       default: false
+    },
+    proposalId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -464,6 +468,7 @@ export default {
 
       emailAlreadyTaken : false,
       loadingCheckEmailAldreadyTaken: false,
+      action: this.proposalId ? this.$t("urlSignUpResult",{"id":this.proposalId}) : this.$t("urlSignUp"),
       form: {
         createToken: this.sentToken,
         email: null,
@@ -597,7 +602,7 @@ export default {
     },
     validate: function (e) {
       this.loading = true;
-      axios.post(this.$t('urlSignUp'),
+      axios.post(this.action,
         {
           email:this.form.email,
           telephone:this.form.telephone,
@@ -615,11 +620,30 @@ export default {
           }
         })
         .then(res=>{
+          console.log(this.proposalId);
           this.errorUpdate = res.data.state;
           this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.snackbar = true;
-          var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
-          setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+          if (this.proposalId) {
+            // proposal id provided, we need to login automatically (it will redirect to the results of the proposal)
+            const loginForm = document.createElement('form');
+            loginForm.method = 'post';
+            loginForm.action = this.$t('urlRedirectAfterSignUpResult',{"id":this.proposalId});
+            const hiddenFieldEmail = document.createElement('input');
+            hiddenFieldEmail.name = 'email';
+            hiddenFieldEmail.value = this.form.email;
+            loginForm.appendChild(hiddenFieldEmail);
+            const hiddenFieldPassword = document.createElement('input');
+            hiddenFieldPassword.name = 'password';
+            hiddenFieldPassword.value = this.form.password;
+            loginForm.appendChild(hiddenFieldPassword);
+            document.body.appendChild(loginForm);
+            loginForm.submit();
+          } else {
+            // usual redirect 
+            var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});           
+            setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+          }
           //console.error(res);
         })
         .catch(function (error) {

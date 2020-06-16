@@ -153,6 +153,7 @@ class AddressManager
                     $reversedGeocodeAddress = $foundAddresses[0];
                 }
                 if (!is_null($reversedGeocodeAddress)) {
+                    $address->setLayer($reversedGeocodeAddress->getLayer());
                     $address->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
                     $address->setPostalCode($reversedGeocodeAddress->getPostalCode());
                     $address->setAddressLocality($reversedGeocodeAddress->getAddressLocality());

@@ -162,6 +162,12 @@ class AdManager
         // If the proposal is external (i.e Rdex request...) we set it
         $outwardProposal->setExternal($ad->getExternal());
 
+        // if the proposal is exposed, we also generate an external id
+        if ($ad->isExposed()) {
+            $outwardProposal->setExposed(true);
+            $outwardProposal->setExternalId();
+        }
+
         // we check if it's a round trip
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way
@@ -441,6 +447,7 @@ class AdManager
 
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
+        $ad->setExternalId($outwardProposal->getExternalId());
         return $ad;
     }
 
@@ -454,6 +461,9 @@ class AdManager
     {
         $address = new Address();
 
+        if (isset($point['layer'])) {
+            $address->setLayer($point['layer']);
+        }
         if (isset($point['houseNumber'])) {
             $address->setHouseNumber($point['houseNumber']);
         }
@@ -585,6 +595,7 @@ class AdManager
         }
 
         $ad->setId($id);
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -593,6 +604,57 @@ class AdManager
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
         }
+        $ad->setCreatedDate($proposal->getCreatedDate());
+        $aFilters = [];
+        if (!is_null($filters)) {
+            $aFilters['filters']=$filters;
+        }
+        if (!is_null($order)) {
+            $aFilters['order']=$order;
+        }
+        $ad->setFilters($aFilters);
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        return $ad;
+    }
+
+    /**
+     * Get an ad from an external Id.
+     * Returns the ad, with its outward and return results.
+     *
+     * @param int $id       The external ad id to get
+     * @param array|null    The filters to apply to the results
+     * @param array|null    The order to apply to the results
+     * @return Ad
+     */
+    public function getAdFromExternalId(string $id, ?array $filters = null, ?array $order = null)
+    {
+        $ad = new Ad();
+        $proposal = $this->proposalManager->getFromExternalId($id);
+        if (is_null($proposal)) {
+            return null;
+        }
+
+        $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
+        $ad->setFrequency($proposal->getCriteria()->getFrequency());
+        $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+        $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setPaused($proposal->isPaused());
+        if (!is_null($proposal->getUser())) {
+            $ad->setUserId($proposal->getUser()->getId());
+        }
+        $ad->setCreatedDate($proposal->getCreatedDate());
         $aFilters = [];
         if (!is_null($filters)) {
             $aFilters['filters']=$filters;
@@ -629,6 +691,36 @@ class AdManager
     }
 
     /**
+     * Claim a anonymous private ad
+     *
+     * @param int $id       The ad id to claim
+     * @return void
+     */
+    public function claimAd(int $id)
+    {
+        if (!$proposal = $this->proposalManager->get($id)) {
+            throw new AdException('Unknown source ad #' . $id);
+        }
+        if (!$proposal->isPrivate() || (!is_null($proposal->getUser()) && $proposal->getUser()->getId() != $this->security->getUser()->getId())) {
+            throw new AdException('Acces denied');
+        }
+
+        $ad = new Ad();
+        $ad->setId($id);
+
+        // we claim the proposal
+        $proposal->setUser($this->security->getUser());
+        // check if there's a linked proposal
+        if ($proposal->getProposalLinked()) {
+            $proposal->getProposalLinked()->setUser($this->security->getUser());
+        }
+        $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
+
+        return $ad;
+    }
+
+    /**
      * Get an ad for permission check.
      * Returns the ad based on the proposal without results.
      *
@@ -640,6 +732,7 @@ class AdManager
         $ad = new Ad();
         if ($proposal = $this->proposalManager->get($id)) {
             $ad->setId($id);
+            $ad->setExternalId($proposal->getExternalId());
             $ad->setFrequency($proposal->getCriteria()->getFrequency());
             $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
             $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -721,6 +814,7 @@ class AdManager
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setProposalId($proposal->getId());
         $ad->setProposalLinkedId(!is_null($proposal->getProposalLinked()) ? $proposal->getProposalLinked()->getId() : null);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
@@ -912,6 +1006,7 @@ class AdManager
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setUser($proposal->getUser());
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
@@ -1258,6 +1353,7 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
+     * @return Ad|RdexError
      */
     public function getAdForRdex(
         ?string $external,
@@ -1274,6 +1370,7 @@ class AdManager
         $ad = new Ad();
         $ad->setExternal($external);
         $ad->setSearch(true); // Only a search. This Ad won't be publish.
+        $ad->setExposed(true); // But we need to access it publicly
 
         // Role
         if ($offer && $request) {
@@ -1397,7 +1494,7 @@ class AdManager
         } else {
             return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
         }
-
+            
         return $this->createAd($ad);
     }
 

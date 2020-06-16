@@ -57,7 +57,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
+ *          },
+ *          "postUl"={
+ *              "method"="POST",
+ *              "path"="/solidaries/postUl",
+ *              "security_post_denormalize"="is_granted('ad_create',object)"
  *          }
+ *
  *      },
  *      itemOperations={
  *          "get"={
@@ -248,10 +254,17 @@ class Solidary
     private $returnDatetime;
 
     /**
-     * @var \DateTimeInterface|null return deadline date and time of the solidary demand
+     * @var \DateTimeInterface|null Return deadline date and time of the solidary demand
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDeadlineDatetime;
+
+    /**
+     * @var User The source user for the solidaryUser
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $user;
 
     /**
      * @var String|null Email of the user who ask for the solidary demand
@@ -326,6 +339,20 @@ class Solidary
     private $marginDuration;
 
     /**
+     * @var boolean|null The user can be a driver.
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $driver;
+
+    /**
+     * @var boolean|null The user can be a passenger.
+     *
+     * @Groups({"writeSolidary"})
+     */
+    private $passenger;
+
+    /**
     * @var String|null Label to display for the solidary subject+origin+destination
     *
     * @Groups({"readSolidary"})
@@ -358,10 +385,9 @@ class Solidary
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
-        $this->proofs = new ArrayCollection();
+        $this->proofs = [];
         $this->origin = [];
         $this->destination = [];
-        $this->proof = [];
         $this->days = [];
         $this->homeAddress = [];
         $this->solutions = [];
@@ -658,6 +684,18 @@ class Solidary
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -771,7 +809,7 @@ class Solidary
         return $this->frequency;
     }
     
-    public function setFrequency(?bool $frequency): self
+    public function setFrequency(?int $frequency): self
     {
         $this->frequency = $frequency;
         
@@ -799,6 +837,30 @@ class Solidary
     {
         $this->marginDuration = $marginDuration;
 
+        return $this;
+    }
+
+    public function isDriver(): ?bool
+    {
+        return $this->driver;
+    }
+    
+    public function setDriver(bool $isDriver): self
+    {
+        $this->driver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): ?bool
+    {
+        return $this->passenger;
+    }
+    
+    public function setPassenger(bool $isPassenger): self
+    {
+        $this->passenger = $isPassenger;
+        
         return $this;
     }
 

@@ -60,6 +60,7 @@ const fr = {
       sat: 'Sam',
       sun: 'Dim',
     },
+    week: 'Semaine',
     solidary_search: {
       frequency: {
         regular: 'Régulier',
@@ -304,6 +305,10 @@ const fr = {
           solidary_candidate_volunteer: 'Candidat bénévole',
           solidary_candidate_beneficiary: 'Candidat demandeur',
         },
+        createdDate: 'Inscrit depuis le',
+        lastActivityDate: 'Dernière connexion',
+        communitiesExclude: 'Exclure les usagers de la communauté',
+        proposalValidUntil: "Pas d'annonces valides depuis le",
       },
       territory: {
         territory: 'Territoire',

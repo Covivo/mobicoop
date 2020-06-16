@@ -73,7 +73,7 @@ class SolidaryRepository
      * Get the Diaries entries of a Solidary
      *
      * @param Solidary $solidary   The Solidary
-     * @return float
+     * @return array|null
      */
     public function getDiaries(Solidary $solidary)
     {

@@ -32,7 +32,7 @@ Parameters
     -h :
         This help
     -php <php_path> : str, optional
-        The absolute path to the php binary (default : /usr/bin/php7.2)
+        The absolute path to the php binary (default : php)
     -console <console_path> : str, optional
         The console command path (default : absolute path of <this_script_absolute_path>/../api/bin/)
 """
@@ -44,7 +44,7 @@ from crontab import CronTab
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 console_path = os.path.abspath(script_absolute_path+"/../api/bin/console")
 crontab_file_path = os.path.abspath(script_absolute_path+"/../api/scripts/cron-file.txt")
-php_path = "/usr/bin/php7.2"
+php_path = "php"
 
 # read arguments
 if len(sys.argv)>1:
@@ -72,7 +72,9 @@ crontab_file = open(crontab_file_path, "r")
 file_lines = crontab_file.readlines()
     
 for line in file_lines:
-    #skip lines starting with '#'
+    # skip blank lines or starting with '#'
+    if not line.strip():
+        continue
     if line[0] == '#':
         continue
     

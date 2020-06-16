@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BlockIcon from '@material-ui/icons/Block';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -17,29 +17,54 @@ import {
   Filter,
   Button,
   useTranslate,
+  useDataProvider,
 } from 'react-admin';
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
 
-const BooleanStatusField = ({ record = {}, source }) => {
-  const theRecord = { ...record };
-  theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
-
-  return (
-    <BooleanField
-      record={theRecord}
-      source={source + 'Num'}
-      valueLabelTrue="custom.label.user.accountEnabled"
-      valueLabelFalse="custom.label.user.accountDisabled"
-    />
-  );
-};
+import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
+import frLocale from 'date-fns/locale/fr';
 
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
+  const [communities, setCommunities] = useState();
+
+  const dataProvider = useDataProvider();
+  const BooleanStatusField = ({ record = {}, source }) => {
+    const theRecord = { ...record };
+    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
+    return (
+      <BooleanField
+        record={theRecord}
+        source={source + 'Num'}
+        valueLabelTrue="custom.label.user.accountEnabled"
+        valueLabelFalse="custom.label.user.accountDisabled"
+      />
+    );
+  };
+
+  const genderChoices = [
+    { id: 1, name: translate('custom.label.user.choices.women') },
+    { id: 2, name: translate('custom.label.user.choices.men') },
+    { id: 3, name: translate('custom.label.user.choices.other') },
+  ];
+
+  useEffect(() => {
+    if (localStorage.getItem('id')) {
+      dataProvider
+        .getList('communities', {
+          pagination: { page: 1, perPage: 50 },
+          sort: { field: 'id', order: 'ASC' },
+        })
+        .then(({ data }) => {
+          setCommunities(data);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const checkValue = ({ selected, record }) => {
     if (record.newsSubscription === false) setCount(selected === false ? count + 1 : count - 1);
@@ -96,13 +121,46 @@ const UserList = (props) => {
       </>
     );
   };
+
   const UserFilter = (props) => (
     <Filter {...props}>
+      <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
       <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
       <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
+      <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
+      <DateInput
+        source="createdDate[after]"
+        label={translate('custom.label.user.createdDate')}
+        options={{ format: 'dd/MM/yyyy', clearable: true }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <DateInput
+        source="lastActivityDate[after]"
+        label={translate('custom.label.user.lastActivityDate')}
+        options={{ format: 'dd/MM/yyyy' }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <DateInput
+        source="proposalValidUntil"
+        label={translate('custom.label.user.proposalValidUntil')}
+        options={{ format: 'dd/MM/yyyy' }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <SelectInput
+        source="gender"
+        label={translate('custom.label.user.gender')}
+        choices={genderChoices}
+      />
+      <SelectInput
+        source="communitiesExclude"
+        label={translate('custom.label.user.communitiesExclude')}
+        choices={communities}
+      />
+      <TextInput source="telephone" label={translate('custom.label.user.telephone')} />
+
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
 
-      <ReferenceInput
+      {/* <ReferenceInput
         source="homeAddressODTerritory"
         alwaysOn
         label={translate('custom.label.user.territory')}
@@ -112,7 +170,7 @@ const UserList = (props) => {
       >
         <SelectInput optionText="name" optionValue="id" />
       </ReferenceInput>
-      {/* <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
+       <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
     </Filter>
   );
 
@@ -124,7 +182,7 @@ const UserList = (props) => {
       filters={<UserFilter />}
       sort={{ field: 'id', order: 'ASC' }}
       bulkActionButtons={<UserBulkActionButtons />}
-      //exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
+      // exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
       exporter={false}
       hasCreate={isAuthorized('user_create')}
     >
