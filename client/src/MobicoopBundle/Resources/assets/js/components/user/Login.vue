@@ -33,7 +33,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          action="/utilisateur/connexion"
+          :action="action"
           method="POST"
         >
           <v-text-field
@@ -118,6 +118,10 @@ export default {
     facebookLoginAppId: {
       type: String,
       default: null
+    },
+    proposalId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -135,6 +139,7 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
     };
   },
   mounted() {

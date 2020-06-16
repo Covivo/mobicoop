@@ -21,28 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\Carpool\DataPersister;
 
-use App\Auth\Interfaces\AuthRuleInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Entity\Ad;
+use App\Carpool\Service\AdManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Item data persister for claim Ad.
  */
-class AdAuthor implements AuthRuleInterface
+final class AdItemClaimDataPersister implements ContextAwareDataPersisterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
+    private $adManager;
+    private $request;
+
+    public function __construct(AdManager $adManager, RequestStack $requestStack)
     {
-        if (!isset($params['ad'])) {
-            return false;
-        }
-        /**
-         * @var Ad $ad
-         */
-        $ad = $params['ad'];
-        return is_null($ad->getUser()) || $ad->getUser()->getId() == $requester->getId();
+        $this->request = $requestStack->getCurrentRequest();
+        $this->adManager = $adManager;
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'claim';
+    }
+
+    public function persist($data, array $context = [])
+    {
+        return $this->adManager->claimAd($this->request->get("id"));
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

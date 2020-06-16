@@ -115,6 +115,9 @@ class Address implements \JsonSerializable
     const DEFAULT_ID = 999999999999;
     const HOME_ADDRESS = "homeAddress";
 
+    const LAYER_LOCALITY = 1;
+    const LAYER_ADDRESS = 2;
+
     /**
      * @var int The id of this address.
      *
@@ -125,6 +128,14 @@ class Address implements \JsonSerializable
      * @ApiProperty(identifier=true)
      */
     private $id;
+
+    /**
+     * @var int|null The layer identified for the address.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","readUser","results","write","pt","mass","massCompute"})
+     */
+    private $layer;
 
     /**
      * @var string The house number.
@@ -411,6 +422,16 @@ class Address implements \JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    public function getLayer(): ?int
+    {
+        return $this->layer;
+    }
+
+    public function setLayer($layer)
+    {
+        $this->layer = $layer;
     }
 
     public function getHouseNumber(): ?string
@@ -845,7 +866,8 @@ class Address implements \JsonSerializable
                 'home'                 => $this->isHome(),
                 'icon'                 => $this->getIcon(),
                 'venue'                => $this->getVenue(),
-                'event'                => $this->getEvent()
+                'event'                => $this->getEvent(),
+                'layer'                => $this->getLayer()
             ];
     }
 }

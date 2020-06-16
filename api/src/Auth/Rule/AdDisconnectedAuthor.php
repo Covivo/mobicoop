@@ -25,12 +25,17 @@ namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Entity\Ad;
+use DateInterval;
 
 /**
- *  Check that the requester is the author of the related Ad
+ *  Check that the requester can be the author of the related Ad :
+ * - must be deconnected
+ * - the Ad should have been made less than an hour ago
  */
-class AdAuthor implements AuthRuleInterface
+class AdDisconnectedAuthor implements AuthRuleInterface
 {
+    const DELAY = 600; // max age of the Ad in seconds
+
     /**
      * {@inheritdoc}
      */
@@ -39,10 +44,12 @@ class AdAuthor implements AuthRuleInterface
         if (!isset($params['ad'])) {
             return false;
         }
+
         /**
          * @var Ad $ad
          */
         $ad = $params['ad'];
-        return is_null($ad->getUser()) || $ad->getUser()->getId() == $requester->getId();
+        $now = new \DateTime(('UTC'));
+        return is_null($ad->getUser()) && $now->sub(new DateInterval('PT' . self::DELAY . 'S')) <= $ad->getCreatedDate();
     }
 }

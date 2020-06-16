@@ -78,7 +78,7 @@ class Proposal
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","results","threads","thread",})
+     * @Groups({"read","results","threads","thread"})
      */
     private $id;
 
@@ -95,16 +95,41 @@ class Proposal
      * @var string A comment about the proposal.
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write","results","threads","thread",})
+     * @Groups({"read","write","results","threads","thread"})
      */
     private $comment;
+
+    /**
+     * @var boolean Exposed proposal.
+     * An exposed proposal is a search proposal that can be publicly visible via an url link.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $exposed;
+
+    /**
+     * @var string|null External ID : used to mask the real id for external requests.
+     *
+     * @ORM\Column(type="string", length=20, nullable=true)
+     * @Groups({"read","write","results","threads","thread"})
+     */
+    private $externalId;
+
+    /**
+     * @var boolean Proposal well suited for SEO optimization.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $seo;
 
     /**
      * @var boolean Dynamic proposal.
      * A dynamic proposal is a real-time proposal : used for dynamic carpooling.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread",})
+     * @Groups({"read","write","thread"})
      */
     private $dynamic;
 
@@ -115,7 +140,7 @@ class Proposal
      * An inactive ad can still be updated, to keep the positions till the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread",})
+     * @Groups({"read","write","thread"})
      */
     private $active;
 
@@ -125,7 +150,7 @@ class Proposal
      * An ad is set to finished when it is manually stopped, or when the destination is reached.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread",})
+     * @Groups({"read","write","thread"})
      */
     private $finished;
 
@@ -151,7 +176,7 @@ class Proposal
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"read","threads","thread",})
+     * @Groups({"read","threads","thread"})
      */
     private $createdDate;
 
@@ -159,7 +184,7 @@ class Proposal
      * @var \DateTimeInterface Updated date of the proposal.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","threads","thread",})
+     * @Groups({"read","threads","thread"})
      */
     private $updatedDate;
 
@@ -250,7 +275,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","results","write","thread",})
+     * @Groups({"read","results","write","thread"})
      * @MaxDepth(1)
      */
     private $criteria;
@@ -307,7 +332,7 @@ class Proposal
      * @var Position The last position given for dynamic carpooling.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @Groups({"read","results","write","thread",})
+     * @Groups({"read","results","write","thread"})
      */
     private $position;
 
@@ -341,6 +366,7 @@ class Proposal
         $this->notifieds = new ArrayCollection();
         $this->setPrivate(false);
         $this->setPaused(false);
+        $this->setExposed(false);
         $this->results = [];
     }
     
@@ -382,6 +408,42 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isExposed(): bool
+    {
+        return $this->exposed ? true : false;
+    }
+
+    public function setExposed(?bool $exposed): self
+    {
+        $this->exposed = $exposed;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(): self
+    {
+        $this->externalId = $this->generateRandomId(10);
+
+        return $this;
+    }
+
+    public function isSeo(): bool
+    {
+        return $this->seo ? true : false;
+    }
+
+    public function setSeo(?bool $seo): self
+    {
+        $this->seo = $seo;
+
         return $this;
     }
 
@@ -790,6 +852,17 @@ class Proposal
         $this->subject = $subject;
 
         return $this;
+    }
+
+    /**
+     * Generate random id
+     *
+     * @param integer $int  The length of the id
+     * @return string The generated id
+     */
+    public function generateRandomId(int $int=15)
+    {
+        return bin2hex(random_bytes($int));
     }
 
     // DOCTRINE EVENTS

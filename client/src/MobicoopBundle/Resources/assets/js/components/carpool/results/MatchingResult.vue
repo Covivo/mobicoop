@@ -75,6 +75,7 @@
             :external-url="(result.externalUrl) ? result.externalUrl : null"
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             @carpool="carpool"
+            @loginOrRegister="loginOrRegister"
           />
         </v-col>
       </v-row>
@@ -140,7 +141,11 @@ export default {
         //matching: this.matching
       });
     },
-
+    loginOrRegister() {
+      this.$emit("loginOrRegister", {
+        //matching: this.matching
+      });
+    },
   }
 };
 </script>
