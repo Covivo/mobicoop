@@ -3,6 +3,11 @@
 ## API
 
 * [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
+* New Public Transport DataProvider for Conduent
+
+## CLIENT
+
+* Public Transport results
 
 # Release 1.6.0
 
