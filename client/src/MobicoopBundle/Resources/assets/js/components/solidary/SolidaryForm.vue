@@ -154,19 +154,19 @@
                       cols="8"
                     >
                       <p class="title text-left">
-                        <span class="font-weight-black  "> {{ $t('criteria') }}</span> 
+                        <span class="font-weight-black  "> {{ $t('structure.criteria') }}</span> 
                       </p>
                       <v-switch
                         v-model="form.hasRSA"
                         color="primary"
                         inset
-                        :label="$t('hasRSA.placeholder')"
+                        :label="$t('structure.hasRSA.placeholder')"
                       />
                       <v-switch
                         v-model="form.city"
                         color="primary"
                         inset
-                        :label="$t('city.placeholder')" 
+                        :label="$t('structure.city.placeholder')" 
                       />
                       <!-- TODO: "j'habite dans une commune de "structure.name" -->
                     </v-col>
@@ -175,10 +175,10 @@
                       cols="8"
                     >
                       <p class="title text-left">
-                        <span class="font-weight-black  "> {{ $t('info') }}</span> 
+                        <span class="font-weight-black  "> {{ $t('structure.info') }}</span> 
                       </p>
                       <v-text-field
-                        :label="$t('territory')"
+                        :label="$t('structure.territory')"
                       />
                     </v-col>
                     <v-col
@@ -192,7 +192,7 @@
                           outlined
                           width="325px"    
                         >
-                          {{ $t('send') }}
+                          {{ $t('structure.send') }}
                         </v-btn>
                       </div>
                     </v-col>
@@ -232,7 +232,86 @@
                 <v-card
                   class="mb-12"
                   flat
-                />
+                >
+                  <v-row
+                    justify="center"
+                  >
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('yourJourney.whatdoyouWantTodo') }}</span> 
+                      </p>
+                      <v-select
+                        v-model="form.subjects"
+                        :items="subjects"
+                        item-text="name"
+                        item-value="id"
+                        :label="$t('yourJourney.whatdoyouWantTodo')"
+                      />
+                    </v-col>
+
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('yourJourney.whereShouldWeGo') }}</span> 
+                      </p>
+                      <!--GeoComplete -->
+                      <GeoComplete
+                        :url="geoSearchUrl"
+                        :label="$t('yourJourney.destination')"
+                        :token="user ? user.geoToken : ''"
+                        :display-name-in-selected="false"
+                      />                  
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('yourJourney.regularTrip.question') }}</span> 
+                      </p>
+                      <v-radio-group
+                        v-model="radios"
+                        :mandatory="false"
+                      >
+                        <v-radio
+                          :label="$t('yourJourney.regularTrip.no')"
+                          value="radio-1"
+                        />
+                        <v-radio
+                          :label="$t('yourJourney.regularTrip.yes')"
+                          value="radio-2"
+                        />
+                      </v-radio-group>                                 
+                    </v-col>
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('yourJourney.otherInfo') }}</span> 
+                      </p>
+
+                      <v-select
+                        item-text="name"
+                        item-value="id"
+                        :label="$t('yourJourney.otherInfo')"
+                      />
+                    </v-col>
+
+                    <v-col
+                      cols="8"
+                    >
+                      <p class="title text-left">
+                        <span class="font-weight-black  "> {{ $t('yourJourney.otherDetails') }}</span> 
+                      </p>
+
+                      <v-text-field
+                        :label="$t('yourJourney.otherDetails')"
+                      />  
+                    </v-col>
+                  </v-row>
+                </v-card>
 
                 <v-btn
                   ref="button"
@@ -292,7 +371,7 @@
               </v-form>
             </v-stepper-content>
 
-            <!--YOU-->
+            <!--USER-->
             <v-stepper-content step="5">
               <v-form
                 ref="step 5"
@@ -307,23 +386,21 @@
                     <v-col
                       cols="8"
                     >
-                      <v-select
-                        v-model="form.gender"
-                        :items="genderItems"
-                        :rules="rules.genderRules"
-                        item-text="genderItem"
-                        item-value="genderValue"
-                        :label="$t('models.user.gender.placeholder') + ' *'"
+                      <v-text-field
+                        v-model="form.phoneNumber"
+                        :label="$t('models.user.phone.placeholder') + ' *'"
+                        :rules="rules.phoneNumberRules"
+                        name="phone"
                       />
                     </v-col>
                     <v-col
                       cols="8"
                     >
                       <v-text-field
-                        v-model="form.familyName"
-                        :label="$t('models.user.familyName.placeholder') + ' *'"
-                        :rules="rules.familyNameRules"
-                        name="lastName"
+                        v-model="form.email"
+                        :label="$t('models.user.email.placeholder') + ' *'"
+                        :rules="rules.emailRules"
+                        name="email"
                       />
                     </v-col>
                     <v-col
@@ -333,13 +410,20 @@
                         v-model="form.givenName"
                         :label="$t('models.user.givenName.placeholder') + ' *'"
                         :rules="rules.givenNameRules"
+                        persistent-hint
                         name="firstName"
+                        :hint="$t('firstNameText')"
                       />
                     </v-col>
-              
-                    <v-col
-                      cols="8"
-                    >
+                    <v-col cols="8">
+                      <v-text-field
+                        v-model="form.familyName"
+                        :label="$t('models.user.familyName.placeholder') + ' *'"
+                        :rules="rules.familyNameRules"
+                        name="lastName"
+                      />
+                    </v-col>
+                    <v-col cols="8">
                       <v-menu
                         ref="menu"
                         v-model="pickerActive"
@@ -383,26 +467,6 @@
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
-                    </v-col>
-                    <v-col
-                      cols="8"
-                    >
-                      <v-text-field
-                        v-model="form.email"
-                        :label="$t('models.user.email.placeholder') + ' *'"
-                        :rules="rules.emailRules"
-                        name="email"
-                      />
-                    </v-col>
-                    <v-col
-                      cols="8"
-                    >
-                      <v-text-field
-                        v-model="form.phoneNumber"
-                        :label="$t('models.user.phone.placeholder') + ' *'"
-                        :rules="rules.phoneNumberRules"
-                        name="phone"
-                      />
                     </v-col>
                   </v-row>
                 </v-card>
@@ -532,30 +596,22 @@ export default {
         destination: null,
         regular: false,
         need: null,
-        gender: this.user && this.user.gender ? this.user.gender : null,
         givenName: this.user && this.user.givenName ? this.user.givenName : "",
         familyName: this.user && this.user.familyName ? this.user.familyName : "",
         email: this.user && this.user.email ? this.user.email : "",
         phoneNumber: this.user && this.user.telephone ? this.user.telephone : null,
         yearOfBirth: this.user && this.user.birthYear ? moment(this.user.birthYear.toString()).format("YYYY-MM-DD") : null,
         hasRSA: false,
+        radios: 'radio-1'
       },
-      genderItems: [
-        { genderItem: this.$t('models.user.gender.values.female'), genderValue: 1 },
-        { genderItem: this.$t('models.user.gender.values.male'), genderValue: 2 },
-        { genderItem: this.$t('models.user.gender.values.other'), genderValue: 3 },
-      ],
       rules: {
-        genderRules: [
-          v => !!v || this.$t("models.user.gender.errors.required"),
-        ],
         givenNameRules: [
           v => !!v || this.$t("models.user.givenName.errors.required"),
         ],
         familyNameRules: [
           v => !!v || this.$t("models.user.familyName.errors.required"),
         ],
-        phoneNumberRules: [
+        telephoneRules: [
           v => !!v || this.$t("models.user.phone.errors.required"),
           v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
         ],
