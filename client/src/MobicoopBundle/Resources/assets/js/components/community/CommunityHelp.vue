@@ -56,13 +56,11 @@
         <v-tab-item>
           <v-card flat>
             <v-card-text>
-              <p>
-                {{ $t("whoCanCreate") }}
-              </p>
+              <p v-html="$t('whoCanCreate')" />
             </v-card-text>
           </v-card>
         </v-tab-item>
-      </v-tabs>
+      </v-tabs>s
     </v-card>
   </v-container>
 </template>
