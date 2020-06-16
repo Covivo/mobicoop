@@ -163,7 +163,8 @@ class ConduentPTProvider implements ProviderInterface
             }
         } elseif ($response->getCode() == 510) {
             // Out of bound for conduent
-            throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
+            //throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
+            // For out of bound we do nothing. We just treat it as a no found solution
         } else {
             throw new DataProviderException(DataProviderException::ERROR_COLLECTION_RESSOURCE_JOURNEYS);
         }

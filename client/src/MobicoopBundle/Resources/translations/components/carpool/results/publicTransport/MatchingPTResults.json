@@ -1,8 +1,8 @@
 {
     "fr":{
-      "noResult":"Aucun résultat"
+      "noResult":"Aucune solution de transport en commun trouvée"
     },
     "en":{
-      "noResult":"No result"
+      "noResult":"No public transportation solution"
     }
 }  
