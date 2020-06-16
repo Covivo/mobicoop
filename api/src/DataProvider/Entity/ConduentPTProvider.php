@@ -85,30 +85,6 @@ class ConduentPTProvider implements ProviderInterface
         }
     }
 
-    private function getTripModes($modes)
-    {
-        switch ($modes) {
-            case "PT":
-                return "PT";
-                break;
-            case "BIKE":
-                return "BIKE";
-                break;
-            case "CAR":
-                return "CAR";
-                break;
-            case "PT+BIKE":
-                return "PT,BIKE";
-                break;
-            case "PT+CAR":
-                return "PT,CAR";
-                break;
-            default:
-                return "PT";
-                break;
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -183,7 +159,7 @@ class ConduentPTProvider implements ProviderInterface
             $data = json_decode($response->getValue(), true);
             
             foreach ($data['data']['list'] as $trip) {
-                $this->collection[] = self::deserialize($class, $trip);
+                $this->collection[] = $this->deserialize($class, $trip);
             }
         } elseif ($response->getCode() == 510) {
             // Out of bound for conduent
@@ -201,7 +177,7 @@ class ConduentPTProvider implements ProviderInterface
     {
         switch ($class) {
             case PTJourney::class:
-                return self::deserializeJourney($data);
+                return $this->deserializeJourney($data);
                 break;
             default:
                 break;
@@ -285,7 +261,7 @@ class ConduentPTProvider implements ProviderInterface
             $nblegs = 0;
             foreach ($data['data']['result']['travelSections'] as $travelSection) {
                 $nblegs++;
-                $journey->addPTLeg(self::deserializeTravelSection($travelSection, $nblegs));
+                $journey->addPTLeg($this->deserializeTravelSection($travelSection, $nblegs));
             }
         }
         if (isset($data['data']["environment"]["totalEnvironmentalCost"])) {
@@ -361,7 +337,17 @@ class ConduentPTProvider implements ProviderInterface
                     $departureAddress->setLongitude($data['data']['origin']['position']['longitude']);
                 }
                 $departure->setAddress($departureAddress);
-                
+
+                if (isset($data['data']['origin']['description']) && $data['data']['origin']['description'] != "") {
+                    $departure->setName($data['data']['origin']['description']);
+                } else {
+                    if (isset($data['data']['origin']['name']) && $data['data']['origin']['name'] != "") {
+                        $departure->setName($data['data']['origin']['name']);
+                    } else {
+                        $departure->setName(self::NC);
+                    }
+                }
+
                 $leg->setPTDeparture($departure);
             }
             if (isset($data["data"]["destination"])) {
@@ -385,7 +371,7 @@ class ConduentPTProvider implements ProviderInterface
                 } else {
                     $arrivalAddress->setStreetAddress(self::NC);
                 }
-        
+
                 if (isset($data['data']['destination']['position']) && isset($data['data']['destination']['position']['latitude'])) {
                     $arrivalAddress->setLatitude($data['data']['destination']['position']['latitude']);
                 }
@@ -394,6 +380,16 @@ class ConduentPTProvider implements ProviderInterface
                 }
                 $arrival->setAddress($arrivalAddress);
                 
+                if (isset($data['data']['destination']['description']) && $data['data']['destination']['description'] != "") {
+                    $arrival->setName($data['data']['destination']['description']);
+                } else {
+                    if (isset($data['data']['destination']['name']) && $data['data']['destination']['name'] != "") {
+                        $arrival->setName($data['data']['destination']['name']);
+                    } else {
+                        $arrival->setName(self::NC);
+                    }
+                }
+
                 $leg->setPTArrival($arrival);
             }
             if (isset($data["data"]['directionName']) && $data["data"]['directionName']!=="") {

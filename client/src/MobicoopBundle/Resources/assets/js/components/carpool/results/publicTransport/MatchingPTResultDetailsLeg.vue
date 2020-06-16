@@ -13,11 +13,20 @@
         <div>{{ $t('estimatedDuration',{'duration':humanReadableDuration(ptLeg.duration)}) }}</div>
       </v-col>
     </v-row>
+    <v-row v-else-if="ptLeg.travelMode && ptLeg.travelMode.name=='WAITING'">
+      <v-col cols="12">
+        <div>{{ $t('waiting',{'duration':humanReadableDuration(ptLeg.duration)}) }}</div>
+      </v-col>
+    </v-row>
     <v-row v-else>
       <v-col cols="12">
-        <div><span class="primary--text">{{ ptLeg.pTLine.number }}</span> {{ ptLeg.pTLine.name }}</div>
+        <div v-if="ptLeg.pTLine">
+          <span class="primary--text">{{ ptLeg.pTLine.number }}</span> {{ ptLeg.pTLine.name }}
+        </div>
         <div>{{ $t('direction') }} <span class="primary--text">{{ ptLeg.direction }}</span></div>
-        <div>{{ $t('hopOn') }} <span class="primary--text">{{ departure }}</span> {{ $t('hopOff') }} <span class="primary--text">{{ arrival }}</span></div>
+        <div v-if="departure || arrival">
+          <span v-if="departure">{{ $t('hopOn') }} <span class="primary--text">{{ departure }}</span></span> <span v-if="arrival">{{ $t('hopOff') }} <span class="primary--text">{{ arrival }}</span></span>
+        </div>
         <div>{{ $t('estimatedDuration',{'duration':humanReadableDuration(ptLeg.duration)}) }}</div>
       </v-col>
     </v-row>
