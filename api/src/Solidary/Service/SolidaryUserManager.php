@@ -249,13 +249,6 @@ class SolidaryUserManager
      */
     public function getSolidaryVolunteer(int $id): SolidaryVolunteer
     {
-        // Get the structure of the Admin
-        $structures = $this->security->getUser()->getSolidaryStructures();
-        $structureAdmin = null;
-        if (!is_null($structures) || count($structures)>0) {
-            $structureAdmin = $structures[0];
-        }
-
         // Get the Solidary User
         $solidaryUser = $this->solidaryUserRepository->find($id);
         $user = $solidaryUser->getUser();
@@ -311,12 +304,21 @@ class SolidaryUserManager
 
         // We take the first solidaryUser structure.
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
-        // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
-        if (!is_null($structureAdmin)) {
-            foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
-                if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
-                    $solidaryUserStructure = $currentSolidaryUserStructure;
-                    break;
+
+        // Get the structure of the Admin
+        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            $structureAdmin = null;
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+            // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
+            if (!is_null($structureAdmin)) {
+                foreach ($solidaryUser->getSolidaryUserStructures() as $currentSolidaryUserStructure) {
+                    if ($currentSolidaryUserStructure->getId() == $structureAdmin->getId()) {
+                        $solidaryUserStructure = $currentSolidaryUserStructure;
+                        break;
+                    }
                 }
             }
         }
