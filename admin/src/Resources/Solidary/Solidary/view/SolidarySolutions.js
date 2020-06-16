@@ -1,34 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { Card, Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
-import DropDownButton from '../../../../components/button/DropDownButton';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
-  card: {
-    padding: theme.spacing(2, 4, 3),
-    marginBottom: '2rem',
-  },
-}));
+import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
+import { SolidaryContactDropDown } from './SolidaryContactDropDown';
 
 /*
-
-"solutions": [
-        {
-            "Type": "transporter",
-            "FamilyName": "Solidaire",
-            "GivenName": "Jean-Michel",
-            "Telephone": "0604050802",
-            "UserId": 13
-        }
-    ]
+[
+    {
+        "Type": "transporter",
+        "FamilyName": "Solidaire",
+        "GivenName": "Jean-Michel",
+        "Telephone": "0604050802",
+        "UserId": 13
+    }
+]
 */
 
-const contactOptions = ['SMS', 'Email', 'Téléphone'];
-
-const SolidarySolutions = ({ solutions }) => {
-  const classes = useStyles();
-
+const SolidarySolutions = ({ solidaryId, solutions }) => {
   console.log('data :', solutions);
 
   if (solutions && solutions.length) {
@@ -43,9 +32,15 @@ const SolidarySolutions = ({ solutions }) => {
               primary={s.GivenName ? `${s.GivenName} ${s.FamilyName}` : 'Inconnu'}
               secondary={s.Type || ''}
             />
-            <ListItemText primary={s.Telephone || 'Téléphone non renseigné'} />
+            <ListItemText
+              primary={s.Telephone ? formatPhone(s.Telephone) : 'Téléphone non renseigné'}
+            />
             <ListItemText>
-              <DropDownButton label="Contacter conducteur" options={contactOptions} />
+              <SolidaryContactDropDown
+                solidarySolutionId={solutions.id}
+                solidaryId={solidaryId}
+                label="Contacter conducteur"
+              />
             </ListItemText>
           </ListItem>
         ))}

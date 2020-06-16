@@ -43,7 +43,7 @@ export const SolidaryUserVolunteerList = (props) => (
   <List
     {...props}
     bulkActionButtons={false}
-    title="Transporteurs Bénévoles > liste"
+    title="Transporteurs bénévoles > liste"
     perPage={25}
     filters={<SolidaryUserVolunteerFilter />}
     filterDefaultValues={{ validatedCandidate: false }}

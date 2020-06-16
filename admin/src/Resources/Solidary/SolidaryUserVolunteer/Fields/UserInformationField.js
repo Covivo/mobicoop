@@ -4,6 +4,7 @@ import { Typography, Avatar, Grid, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import { UserRenderer } from '../../../../utils/renderers';
+import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
 
 const useStyles = makeStyles({
   root: {
@@ -37,7 +38,9 @@ export const UserInformationField = ({ record }) => {
               <PhoneIcon />
             </Grid>
             <Grid item>
-              <Typography variant="subtitle1">{record.telephone}</Typography>
+              <Typography variant="subtitle1">
+                {record.telephone ? formatPhone(record.telephone) : 'N/A'}
+              </Typography>
             </Grid>
           </Grid>
         </Grid>

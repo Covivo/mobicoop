@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Loading, useDataProvider, useMutation, useTranslate } from 'react-admin';
+import React, { useEffect } from 'react';
+import { Loading, useMutation, useTranslate } from 'react-admin';
 import { Dialog, DialogTitle, makeStyles, Grid } from '@material-ui/core';
 import { SolidaryMessagesThread } from './SolidaryMessagesThread';
+import { solidaryLabelRenderer } from '../../../utils/renderers';
+import { useSolidaryMessagesController } from './hooks/useSolidaryMessagesController';
 
 const useStyles = makeStyles({
   loading: {
@@ -12,61 +14,11 @@ const useStyles = makeStyles({
   },
 });
 
-const useSolidaryMessagesThread = (solidaryId, solidarySolutionId) => {
-  const dataProvider = useDataProvider();
-
-  const [beneficiary, setBeneficiary] = useState(null);
-  const [solidary, setSolidary] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchMessages = () => {
-    setLoading(true);
-    dataProvider
-      .getOne('solidaries', { id: `/solidaries/${solidaryId}` })
-      .then(async ({ data: solidaryResult }) => {
-        setSolidary(solidaryResult);
-
-        dataProvider
-          .getOne('solidary_users', { id: solidaryResult.solidaryUser })
-          .then(({ data }) => dataProvider.getOne('users', { id: data.user }))
-          .then(({ data }) => setBeneficiary(data))
-          .catch(() => {
-            /* Silently fail */
-          });
-      })
-      .catch((e) => {
-        setError(e);
-        setLoading(false);
-      })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, [solidaryId, solidarySolutionId]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const ask =
-    solidary && solidary.asksList.find((i) => i.solidarySolutionId === solidarySolutionId);
-
-  return {
-    data: {
-      messages: ask ? ask.messages : [],
-      driver: ask ? ask.driver : null,
-      solidary,
-      beneficiary,
-    },
-    loading,
-    error,
-    refresh: fetchMessages,
-  };
-};
-
 export const SolidaryMessagesModal = ({ solidaryId, solidarySolutionId, onClose }) => {
   const classes = useStyles();
   const translate = useTranslate();
 
-  const { loading, data, error, refresh } = useSolidaryMessagesThread(
+  const { loading, data, error, refresh } = useSolidaryMessagesController(
     solidaryId,
     solidarySolutionId
   );
@@ -74,9 +26,7 @@ export const SolidaryMessagesModal = ({ solidaryId, solidarySolutionId, onClose 
   const [send, { loading: loadingSubmit }] = useMutation({}, { onSuccess: () => refresh() });
 
   useEffect(() => {
-    if (error) {
-      onClose();
-    }
+    if (error) onClose();
   }, [error]);
 
   const handleSubmit = (content) => {
@@ -118,15 +68,24 @@ export const SolidaryMessagesModal = ({ solidaryId, solidarySolutionId, onClose 
             <Grid item xs={4}>
               <div className={classes.infos}>
                 {data.beneficiary && (
-                  <p>
-                    {`${translate('custom.solidary.onBehalfOf')}: `}
-                    <b>{`${data.beneficiary.givenName} ${data.beneficiary.familyName}`}</b>
-                  </p>
+                  <>
+                    <p>{`${translate('custom.solidary.onBehalfOf')}: `}</p>
+                    <p>
+                      <strong>{`${data.beneficiary.givenName} ${data.beneficiary.familyName}`}</strong>
+                    </p>
+                  </>
                 )}
                 {data.solidary && data.solidary.displayLabel && (
-                  <p>
-                    {`${translate('custom.solidary.associatedAsk')}: ${data.solidary.displayLabel}`}
-                  </p>
+                  <>
+                    <p>{`${translate('custom.solidary.associatedAsk')}:`}</p>
+                    <p>
+                      <strong>
+                        {solidaryLabelRenderer({
+                          record: data.solidary,
+                        })}
+                      </strong>
+                    </p>
+                  </>
                 )}
               </div>
             </Grid>

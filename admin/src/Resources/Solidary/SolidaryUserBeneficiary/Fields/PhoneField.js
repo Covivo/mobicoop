@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const formatPhone = (numb) => {
+export const formatPhone = (numb) => {
   const chuncks = numb.match(/.{1,2}/g);
   return chuncks.join(' ');
 };

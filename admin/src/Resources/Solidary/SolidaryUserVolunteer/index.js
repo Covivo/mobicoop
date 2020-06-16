@@ -5,7 +5,7 @@ import { SolidaryUserVolunteerEdit } from './SolidaryUserVolunteerEdit';
 
 export default {
   options: {
-    label: 'Transporteurs Bénévoles',
+    label: 'Transporteurs bénévoles',
   },
   list: SolidaryUserVolunteerList,
   edit: SolidaryUserVolunteerEdit,

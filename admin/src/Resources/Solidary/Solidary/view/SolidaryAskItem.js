@@ -3,28 +3,29 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Avatar, Grid, Card } from '@material-ui/core';
-import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
 import SolidaryStatus from './SolidayStatus';
+import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
+import { SolidaryContactDropDown } from './SolidaryContactDropDown';
+
 /*
-Item structure :
---------------
-driver: "Jean-Michel Solidaire"
-driverType: 0
-frequency: 1
-fromDate: "2020-04-30T00:00:00+00:00"
-toDate: null
-messages: Array(3)
-  0: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:14:22+00:00"}
-  1: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:25:00+00:00"}
-  2: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:26:00+00:00"}
-schedule: Array(1)
-  0: {outwardTime: "15:57", mon: false, tue: false, wed: false, thu: false, …}
-
-solidarySolutionId: 6
-status: 0
-telephone: "0604050802"
-
+  Item structure :
+  --------------
+  driver: "Jean-Michel Solidaire"
+  driverType: 0
+  frequency: 1
+  fromDate: "2020-04-30T00:00:00+00:00"
+  toDate: null
+  messages: Array(3)
+    0: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:14:22+00:00"}
+    1: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:25:00+00:00"}
+    2: {userId: 17, userFamilyName: "Solidaire", userGivenName: "Jean-Michel", text: "La question c'est est-ce que ça marche... ?", createdDate: "2020-04-30T14:26:00+00:00"}
+  schedule: Array(1)
+    0: {outwardTime: "15:57", mon: false, tue: false, wed: false, thu: false, …}
+  
+  solidarySolutionId: 6
+  status: 0
+  telephone: "0604050802"
 */
 
 const useStyles = makeStyles((theme) => ({
@@ -38,13 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const contactOptions = ['SMS', 'Email', 'Téléphone'];
-
 const SolidaryAskItem = ({ item }) => {
-  const handleContactChoice = (choice, index) => {
-    console.log(`@TODO: handling handleContactChoice ${choice}`);
-  };
-
   const classes = useStyles();
 
   return (
@@ -103,13 +98,11 @@ const SolidaryAskItem = ({ item }) => {
         </Grid>
         <Grid item>{item.driver || 'Inconnu'}</Grid>
         <Grid item>{item.driverType ? 'Bénévole' : 'Covoitureur'}</Grid>
-        <Grid item>{item.telephone || 'pas de numéro de téléphone.'}</Grid>
         <Grid item>
-          <DropDownButton
-            label="Contacter demandeur"
-            options={contactOptions}
-            onSelect={handleContactChoice}
-          />
+          {item.telephone ? formatPhone(item.telephone) : 'pas de numéro de téléphone.'}
+        </Grid>
+        <Grid item>
+          <SolidaryContactDropDown label="Contacter demandeur" />
         </Grid>
       </Grid>
     </Card>
