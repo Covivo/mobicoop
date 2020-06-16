@@ -109,8 +109,8 @@ dev_deploy:
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
   except:
     refs:
       - tags    # job not executed on tags
@@ -161,8 +161,8 @@ test_deploy:
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/mobicoop/test    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/mobicoop/test/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
   after_script:
     #  Kill all node & php process if the e2e not passed
     - killall node || true
