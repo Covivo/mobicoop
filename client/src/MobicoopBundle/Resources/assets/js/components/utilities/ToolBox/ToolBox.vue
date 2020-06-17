@@ -12,18 +12,50 @@
         </h1>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col
+        v-for="(item, i) in items"
+        :key="i"
+        cols="4"
+      >
+        <ToolBoxItem
+          :image="item.image"
+          :link="item.link"
+          :text-link="item.textLink"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <h2>{{ $t('widget.title') }}</h2>
+        <p>
+          <a
+            :href="$t('widget.link')"
+            title=""
+          >{{ $t('widget.textLink') }}</a> {{ $t('widget.text') }}
+        </p>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
+import { merge } from "lodash";
 import Translations from "@translations/components/article/ToolBox.json";
+import TranslationsClient from "@clientTranslations/components/article/ToolBox.json";
+import ToolBoxItem from "@components/utilities/ToolBox/ToolBoxItem";
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  components:{
+    ToolBoxItem
+  },
   i18n: {
-    messages: Translations,
+    messages: TranslationsMerged,
   },
   props: {},
   data() {
     return {
+      items:this.$t('items')
     }
   }
 };
