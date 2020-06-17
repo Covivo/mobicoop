@@ -93,7 +93,7 @@ class CommunityManager
         $returnCommunitiesUser = [];
         if ($user) {
             // We get all the communities
-            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search);
+            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order);
             // We get the communities of the user
             $communitiesUser = $this->getAllCommunityUser($user->getId());
             if ($communitiesUser != null) {
@@ -102,7 +102,7 @@ class CommunityManager
                 }
             }
         } else {
-            $communities = $this->getCommunities(null, $perPage, $page, $search);
+            $communities = $this->getCommunities(null, $perPage, $page, $search, $order);
         }
 
         $return['communitiesMember'] = $communities->getMember();
@@ -144,7 +144,7 @@ class CommunityManager
         if (count($order)>0) {
             $params['order']=[];
             foreach ($order as $key => $value) {
-                $params['order'][] = [$key=>$value];
+                $params['order'][$key] = $value;
             }
         }
         if (count($this->territoryFilter)>0) {
