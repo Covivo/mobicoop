@@ -3,6 +3,7 @@
     <v-row
       align="center"
       justify="center"
+      class="text-justify"
     >
       <v-col
         v-if="article"
@@ -13,7 +14,7 @@
         </h1>
         <v-row
           v-for="section in article.sections"
-          :key="section"
+          :key="section.id"
         >
           <v-col>
             <h2
@@ -26,7 +27,7 @@
             </h3>
             <v-row
               v-for="paragraph in section.paragraphs"
-              :key="paragraph"
+              :key="paragraph.id"
             >
               <v-col>
                 <div
@@ -53,7 +54,7 @@ export default {
   },
   props: {
     articleId: {
-      type: Object,
+      type: Number,
       default: null
     }
   },
