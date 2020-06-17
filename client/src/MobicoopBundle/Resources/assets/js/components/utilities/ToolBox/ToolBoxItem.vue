@@ -3,7 +3,10 @@
     <div class="d-flex flex-no-wrap justify-space-between">
       <div>
         <v-row align="center">
-          <v-col>
+          <v-col
+            cols="6"
+            class="text-left"
+          >
             <v-avatar
               class="ma-0"
               size="125"
@@ -17,7 +20,10 @@
               </a>
             </v-avatar>
           </v-col>
-          <v-col>
+          <v-col
+            cols="6"
+            class="text-left"
+          >
             <a
               :href="link"
               :title="textLink"

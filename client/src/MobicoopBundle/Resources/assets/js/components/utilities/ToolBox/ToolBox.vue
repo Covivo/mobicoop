@@ -5,16 +5,20 @@
       justify="center"
     >
       <v-col
-        cols="12"
+        :cols="nbCols"
       >
         <h1 class="display-1 primary--text text-center font-weight-bold">
           {{ $t('title') }}
         </h1>
       </v-col>
     </v-row>
-    <v-row v-if="items.length>0">
+    <v-row  
+      v-if="items.length>0"
+      align="center"
+      justify="center"
+    >
       <v-col
-        cols="12"
+        :cols="nbCols"
       >
         <h2 class="font-weight-bold">
           {{ $t('subtitle') }}
@@ -22,21 +26,32 @@
         <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
-    <v-row v-if="items.length>0">
-      <v-col
-        v-for="(item, i) in items"
-        :key="i"
-        cols="4"
-      >
-        <ToolBoxItem
-          :image="item.image"
-          :link="item.link"
-          :text-link="item.textLink"
-        />
+    <v-row 
+      v-if="items.length>0"
+      align="center"
+      justify="center"
+    >
+      <v-col :cols="nbCols">
+        <v-row>
+          <v-col
+            v-for="(item, i) in items"
+            :key="i"
+            cols="4"
+          >
+            <ToolBoxItem
+              :image="item.image"
+              :link="item.link"
+              :text-link="item.textLink"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col :cols="nbCols">
         <h2>{{ $t('widget.title') }}</h2>
         <p>
           <a
@@ -65,7 +80,8 @@ export default {
   props: {},
   data() {
     return {
-      items:this.$t('items')
+      items:this.$t('items'),
+      nbCols:10
     }
   }
 };
