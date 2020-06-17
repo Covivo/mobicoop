@@ -14,6 +14,16 @@
     </v-row>
     <v-row>
       <v-col
+        cols="12"
+      >
+        <h2 class="font-weight-bold">
+          {{ $t('subtitle') }}
+        </h2>
+        <p>{{ $t('intro') }}</p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
         v-for="(item, i) in items"
         :key="i"
         cols="4"

@@ -1,6 +1,8 @@
 {
     "fr": {
        "title": "Boîte à outils",
+       "subtitle": "Les outils de communication",
+       "intro":"Vous pouvez télécharger les outils de communication ci-dessous :",
        "widget":{
            "title":"Le widget",
            "textLink":"Rendez-vous sur cette page",
@@ -10,6 +12,15 @@
        "items":[]
     },
     "en": {
-        "title": "Tool box"
-    }
+        "title": "Tool box",
+        "subtitle": "Communication tools",
+        "intro":"You can download thse communication tools",
+        "widget":{
+            "title":"The widget",
+            "textLink":"Go to this page",
+            "link":"/widget/get",
+            "text":"to download an embedable widget and learn the instructions to do it"
+        },
+        "items":[]
+      }
 }
