@@ -74,6 +74,14 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
+        <v-card-text>
+          <a
+            :href="$t('urlSignUp')"
+            class="font-italic"
+          >
+            {{ $t('signUp') }}
+          </a>
+        </v-card-text>
       </v-col>
     </v-row>
     <v-row
