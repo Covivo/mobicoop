@@ -84,6 +84,11 @@ class CommunityManager
         $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
         $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
         $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
+        
+        $order = [];
+        if (isset($data['order']) && isset($data['orderWay']) && !empty($data['order']) && !empty($data['orderWay'])) {
+            $order[$data['order']] = $data['orderWay'];
+        }
 
         $returnCommunitiesUser = [];
         if ($user) {
@@ -111,14 +116,15 @@ class CommunityManager
 
     /**
     * Get all communities
-    * @param int|null $userId   The id of the user you want to know if he is already an accepted member of the community
-    * @param int|null $perPage  Number of items per page
-    * @param int|null $page     Current page
-    * @param int|null $search   Array of search criterias
-    * @return array|null        The communities found or null if not found.
+    * @param int|null $userId       The id of the user you want to know if he is already an accepted member of the community
+    * @param int|null $perPage      Number of items per page
+    * @param int|null $page         Current page
+    * @param array $search          Array of search criterias
+    * @param array $order           Order criterias
+    * @return array|null            The communities found or null if not found.
     *
     */
-    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[])
+    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[], array $order=[])
     {
         $params = null;
         if ($userId!==null) {
@@ -133,6 +139,12 @@ class CommunityManager
         if (count($search)>0) {
             foreach ($search as $key => $value) {
                 $params[$key] = $value;
+            }
+        }
+        if (count($order)>0) {
+            $params['order']=[];
+            foreach ($order as $key => $value) {
+                $params['order'][] = [$key=>$value];
             }
         }
         if (count($this->territoryFilter)>0) {
