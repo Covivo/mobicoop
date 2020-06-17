@@ -47,3 +47,5 @@ events:
         title: "Widget événement"
 widget:
     title: "Widget"
+toolbox:
+    title: "Boîte à outils"
