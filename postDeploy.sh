@@ -19,7 +19,7 @@ esac
 done
 
 #Migrations
-cd /var/www/$INSTANCE/$VERSION/api;
+cd /var/www/$VERSION/$INSTANCE/api;
 php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
 #Specific Edge and exotics browsers
@@ -29,7 +29,7 @@ yarn install;
 yarn encore dev;
 
 #Admin build
-cd /var/www/$INSTANCE/$VERSION/admin;
+cd /var/www/$VERSION/$INSTANCE/admin;
 rm -Rf node_modules;
 rm package-lock.json;
 npm install;
