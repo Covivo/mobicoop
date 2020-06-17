@@ -32,7 +32,7 @@
           <a
             :href="$t('widget.link')"
             title=""
-          >{{ $t('widget.textLink') }}</a> {{ $t('widget.text') }}
+          >{{ $t('widget.textLink') }}</a> {{ $t('widget.text') }}.
         </p>
       </v-col>
     </v-row>

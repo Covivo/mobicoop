@@ -1,24 +1,28 @@
 <template>
-  <v-card>
+  <v-card flat>
     <div class="d-flex flex-no-wrap justify-space-between">
       <div>
-        <v-row>
+        <v-row align="center">
           <v-col>
             <v-avatar
-              class="ma-3"
+              class="ma-0"
               size="125"
               tile
             >
-              <v-img :src="image" />
-            </v-avatar>
-          </v-col>
-          <v-col>
-            <v-card-subtitle>
               <a
                 :href="link"
                 :title="textLink"
-              >{{ textLink }}</a>
-            </v-card-subtitle>
+              >
+                <v-img :src="image" />
+              </a>
+            </v-avatar>
+          </v-col>
+          <v-col>
+            <a
+              :href="link"
+              :title="textLink"
+              style="text-decoration:none;"
+            >{{ textLink }}</a>
           </v-col>
         </v-row>
       </div>
