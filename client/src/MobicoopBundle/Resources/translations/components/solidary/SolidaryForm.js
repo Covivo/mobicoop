@@ -26,39 +26,55 @@ export default {
     structure: {
       placeholder: "Structure accompagnante",
       text: "Chaque structure a ses propres critères. Si vous ne remplissez pas les critères pour l'une, peut-être les remplisserez-vous pour une autre qui dessert aussi votre domicile ?",
-      title: "Structure accompagnante : ",
-      territory: "Mon ancienneté sur le territoire",
+      title: "Structure accompagnante",
       "route": "/structures/liste-des-communautes",
-      city: {
-        placeholder: "J'habite dans une commune de"
-      },
-      criteria: "Critères obligatoires : ",
-      info: "Informations complémentaires : ",
-      hasRSA: {
-        label: "Bénéficiaire du RSA",
-        placeholder: "Bénéficière du RSA"
-      },
-      send: "Envoyer justificatif domicile",
+      mandatoryProofs: "Critères obligatoires",
+      optionalProofs: "Informations complémentaires"
     },
     yourJourney: {
-      whatdoyouWantTodo: "Que voulez-vous faire ?",
-      whereShouldWeGo: "Où faut-il aller ? (si adresse connue)",
-      regularTrip: {
+      subjectTitle: "Que voulez-vous faire ?",
+      subject: "Object du déplacement",
+      destinationTitle: "Où faut-il aller ? (si adresse connue)",
+      destination: "Lieu de destination (facultatif)",
+      regular: {
         question: "Est-ce un trajet régulier ?",
         no: "Non",
         yes: "Oui, je ferai le trajet régulièrement"
       },
-      otherInfo: "Autres informations",
-      otherDetails: "Autres précisions",
-      destination: "Lieu de destination (falcultatif)"
+      needs: "Autres informations",
+      otherInfoTitle: "Autres précisions",
+      otherInfo: "Choisissez des éléments ou ajoutez-en",
+    },
+    frequency: {
+      punctual: {
+        startDateTitle: "A quelle date souhaitez-vous partir ?",
+        startDateChoice1: "Date d\'arrivée",
+        startDateChoice2: "dans la semaine",
+        startDateChoice3: "dans les deux semaines",
+        startDateChoice4: "dans le mois"
+      },
+      regular: {
+        days: "Indiquez les jours pour lesquels vous avez besoin d\'un trajet régulier"
+      },
+      startTimeTitle: "A quelle heure souhaitez-vous partir ?",
+      startTimeChoice1: "Heure d\'arrivée",
+      startTimeChoice2: "Entre 8h et 13h",
+      startTimeChoice3: "Entre 13h et 18h",
+      startTimeChoice4: "Entre 18h et 21h",
+      endTimeTitle: "A quelle heure souhaitez-vous revenir ?",
+      endTimeChoice1: "Je n\'ai pas besoin qu\'on me ramène",
+      endTimeChoice2: "Heure d\'arrivée",
+      endTimeChoice3: "Une heure plus tard",
+      endTimeChoice4: "Deux heures plus tard",
+      endTimeChoice5: "Trois heures plus tard",
     },
     other: {
       label: "Autre",
       placeholder: "Autre"
     },
-    yearOfBirth: {
-      label: "Année de naissance",
-      placeholder: "Année de naissance"
+    birthDate: {
+      label: "Date de naissance",
+      placeholder: "Date de naissance"
     },
     firstNameText: "Visible pour tous",
     success: "Votre demande de coup de pouce a bien été envoyée !",

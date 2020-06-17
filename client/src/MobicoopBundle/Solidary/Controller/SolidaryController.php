@@ -55,22 +55,13 @@ class SolidaryController extends AbstractController
     }
     
     /**
-     * @param StructureManager $structureManager
-     * @param SubjectManager $subjectManager
+     * Solidary request form
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index(StructureManager $structureManager, SubjectManager $subjectManager)
+    public function index()
     {
-        $structures = $structureManager->getStructures();
-        $subjects = $subjectManager->getSubjects();
-        
-        return $this->render(
-            '@Mobicoop/solidary/solidary.html.twig',
-            [
-                "subjects" => $subjects,
-                "structures" => $structures
-            ]
-        );
+        return $this->render('@Mobicoop/solidary/solidary.html.twig');
     }
 
     /**

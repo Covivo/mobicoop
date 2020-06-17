@@ -27,10 +27,6 @@
     <solidary-form
       :geo-search-url="geoSearchUrl"
       :user="user"
-      :regular="regular"
-      :punctual-date-optional="punctualDateOptional"
-      :structures="structures"
-      :subjects="subjects"
     />
   </v-container>
 </template>
@@ -57,24 +53,8 @@ export default {
     user: {
       type: Object,
       default: null
-    },
-    regular: {
-      type: Boolean,
-      default: false
-    },
-    punctualDateOptional: {
-      type: Boolean,
-      default: false
-    },
-    structures: {
-      type: Array,
-      default: null
-    },
-    subjects: {
-      type: Array,
-      default: null
     }
-  },
+  }
 }
 </script>
 
