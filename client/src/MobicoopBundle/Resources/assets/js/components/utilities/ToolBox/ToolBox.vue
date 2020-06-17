@@ -12,7 +12,7 @@
         </h1>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="items.length>0">
       <v-col
         cols="12"
       >
@@ -22,7 +22,7 @@
         <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="items.length>0">
       <v-col
         v-for="(item, i) in items"
         :key="i"
