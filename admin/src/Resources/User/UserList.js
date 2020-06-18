@@ -50,9 +50,7 @@ const UserList = (props) => {
           sort: { field: 'id', order: 'ASC' },
         })
         .then((response) => {
-          if (response) {
-            setCommunities(response.data);
-          }
+          response && setCommunities(response.data);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,9 +155,7 @@ const UserList = (props) => {
         choices={communities}
       />
       <TextInput source="telephone" label={translate('custom.label.user.telephone')} />
-
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
-
       <ReferenceInput
         source="homeAddressODTerritory"
         label={translate('custom.label.user.territory')}

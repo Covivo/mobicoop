@@ -49,7 +49,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint, debug = false) => (
   const collectionUrl = new URL(`${entrypoint}/${resource}`, entrypointUrl);
   const itemUrl = new URL(params.id, entrypointUrl);
 
-  if (debug) {
+  if (process.env.NODE_ENV === 'development') {
     console.log({ type, resource, params });
   }
 

@@ -18,8 +18,6 @@ import { SolidaryContactDropDown } from './SolidaryContactDropDown';
 */
 
 const SolidarySolutions = ({ solidaryId, solutions }) => {
-  console.log('data :', solutions);
-
   if (solutions && solutions.length) {
     return (
       <List>
@@ -37,7 +35,7 @@ const SolidarySolutions = ({ solidaryId, solutions }) => {
             />
             <ListItemText>
               <SolidaryContactDropDown
-                solidarySolutionId={solutions.id}
+                solidarySolutionId={s.id}
                 solidaryId={solidaryId}
                 label="Contacter conducteur"
               />

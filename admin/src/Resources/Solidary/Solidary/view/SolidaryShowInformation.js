@@ -254,7 +254,7 @@ const SolidaryShowInformation = ({ record }) => {
           </Grid>
         </Grid>
 
-        <SolidarySolutions solidaryId={id} solutions={solutions} />
+        <SolidarySolutions solidaryId={originId} solutions={solutions} />
       </Card>
 
       <SolidaryAnimation record={record} />
