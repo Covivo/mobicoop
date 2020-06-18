@@ -109,7 +109,6 @@ class ConduentPTProvider implements ProviderInterface
             $data = json_decode($response->getValue(), true);
             $securityToken = $data["token"];
         } else {
-            echo $response->getCode();die;
             throw new DataProviderException(DataProviderException::ERROR_RETREIVING_TOKEN);
         }
 

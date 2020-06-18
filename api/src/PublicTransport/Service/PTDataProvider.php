@@ -95,12 +95,11 @@ class PTDataProvider
         ?string $username=null,
         ?int $territoryId=null
     ): ?array {
-
         $providerUri = null;
         // If there is a territory, we look for the right provider. If there is no, we take the default.
         $provider = $this->PTProviders['default']['dataprovider'];
         $providerUri = $this->PTProviders['default']['url'];
-        if(!is_null($territoryId) && isset($this->PTProviders[$territoryId])){
+        if (!is_null($territoryId) && isset($this->PTProviders[$territoryId])) {
             $provider = $this->PTProviders[$territoryId]['dataprovider'];
             $providerUri = $this->PTProviders[$territoryId]['url'];
         }
