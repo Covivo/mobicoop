@@ -105,7 +105,6 @@ const getOneUser = async (provider, params) => {
   );
 
   user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
-
   return { data: user };
 };
 
@@ -142,7 +141,6 @@ const updateUser = async (provider, params) => {
       : newParams.data.rolesTerritory.map(({ territory, authItem }) =>
           territory != null ? { authItem, territory } : { authItem }
         );
-
   return provider.update('users', {
     id: newParams.id,
     data: newParams.data,

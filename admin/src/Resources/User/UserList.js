@@ -18,11 +18,13 @@ import {
   Button,
   useTranslate,
   useDataProvider,
+  AutocompleteInput,
 } from 'react-admin';
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
+import TerritoryInput from '../../components/geolocation/TerritoryInputFilter';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
@@ -33,18 +35,6 @@ const UserList = (props) => {
   const [communities, setCommunities] = useState();
 
   const dataProvider = useDataProvider();
-  const BooleanStatusField = ({ record = {}, source }) => {
-    const theRecord = { ...record };
-    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
-    return (
-      <BooleanField
-        record={theRecord}
-        source={source + 'Num'}
-        valueLabelTrue="custom.label.user.accountEnabled"
-        valueLabelFalse="custom.label.user.accountDisabled"
-      />
-    );
-  };
 
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
@@ -65,6 +55,19 @@ const UserList = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const BooleanStatusField = ({ record = {}, source }) => {
+    const theRecord = { ...record };
+    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
+    return (
+      <BooleanField
+        record={theRecord}
+        source={source + 'Num'}
+        valueLabelTrue="custom.label.user.accountEnabled"
+        valueLabelFalse="custom.label.user.accountDisabled"
+      />
+    );
+  };
 
   const checkValue = ({ selected, record }) => {
     if (record.newsSubscription === false) setCount(selected === false ? count + 1 : count - 1);
@@ -97,9 +100,6 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-  const handleAddTerritoryHistory = (e) => {
-    return null;
-  };
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
@@ -107,14 +107,13 @@ const UserList = (props) => {
   const UserBulkActionButtons = (props) => {
     return (
       <>
-        {isAuthorized('mass_create') && count === 0 ? (
-          <EmailComposeButton label="Email" {...props} />
-        ) : (
-          <Button
-            label={translate('custom.email.texte.blockUnsubscribe')}
-            startIcon={<BlockIcon />}
-          />
-        )}
+        <EmailComposeButton
+          canSend={isAuthorized('mass_create') && count === 0}
+          comeFrom={0}
+          label="Email"
+          {...props}
+        />
+
         <ResetButton label="Reset email" {...props} />
         {/* default bulk delete action */}
         {/* <BulkDeleteButton {...props} /> */}
@@ -127,7 +126,6 @@ const UserList = (props) => {
       <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
       <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
       <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
-      <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
       <DateInput
         source="createdDate[after]"
         label={translate('custom.label.user.createdDate')}
@@ -160,17 +158,15 @@ const UserList = (props) => {
 
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
 
-      {/* <ReferenceInput
+      <ReferenceInput
         source="homeAddressODTerritory"
-        alwaysOn
         label={translate('custom.label.user.territory')}
         reference="territories"
         allowEmpty={false}
         resettable
       >
-        <SelectInput optionText="name" optionValue="id" />
+        <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
-       <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
     </Filter>
   );
 
@@ -197,6 +193,10 @@ const UserList = (props) => {
         />
         <BooleanStatusField source="status" label={translate('custom.label.user.accountStatus')} />
         <DateField source="createdDate" label={translate('custom.label.user.createdDate')} />
+        <DateField
+          source="lastActivityDate"
+          label={translate('custom.label.user.lastActivityDate')}
+        />
         {isAuthorized('user_update') && <EditButton />}
       </MyDatagridUser>
     </List>

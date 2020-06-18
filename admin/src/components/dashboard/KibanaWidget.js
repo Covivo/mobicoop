@@ -19,7 +19,7 @@ const KibanaWidget = ({
   // Admin or community ?
   // Full rights granted to   territory_manage
   // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
-  const roles = localStorage.roles ? localStorage.roles.split(',') : [];
+  const roles = JSON.parse(localStorage.getItem('roles') || '[]');
 
   const isCommunityManager =
     isAuthorized('community_dashboard_self') && !isAuthorized('user_manage');

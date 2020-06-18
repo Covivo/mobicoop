@@ -650,7 +650,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","readCommunity","readCommunityUser"})
      */
     private $newsSubscription;
 
@@ -2313,7 +2313,8 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        return array_unique($this->roles);
+        //Security : if an user has no roles but it shouldn't be possible
+        return $this->roles ? array_unique($this->roles) : array(AuthItem::ROLE_USER_REGISTERED_FULL);
     }
 
     public function getSalt()

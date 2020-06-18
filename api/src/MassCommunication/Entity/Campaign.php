@@ -208,6 +208,17 @@ class Campaign
      */
     private $images;
 
+    /**
+     * @var int Status to send all campaign
+     * null -> send to delevieries choosen
+     * 0 -> send to all user
+     * id community -> send to all user, in community ID
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"read_campaign","write_campaign"})
+     */
+    private $sendAll;
+
     public function __construct()
     {
         if (is_null($this->status)) {
@@ -428,6 +439,19 @@ class Campaign
 
         return $this;
     }
+
+    public function getSendAll(): ?int
+    {
+        return $this->sendAll;
+    }
+
+    public function setSendAll($sendAll): self
+    {
+        $this->sendAll = $sendAll;
+
+        return $this;
+    }
+    
 
     // DOCTRINE EVENTS
 
