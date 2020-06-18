@@ -71,12 +71,13 @@ class UserController extends AbstractController
     private $news_subscription;
     private $communityShow;
     private $userProvider;
+    private $signUpLinkInConnection;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider, $signUpLinkInConnection)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -85,6 +86,7 @@ class UserController extends AbstractController
         $this->news_subscription = $news_subscription;
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
+        $this->signUpLinkInConnection = $signUpLinkInConnection;
     }
 
     /***********
@@ -101,12 +103,13 @@ class UserController extends AbstractController
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-
+        
         return $this->render('@Mobicoop/user/login.html.twig', [
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
             "facebook_show"=>($this->facebook_show==="true") ? true : false,
             "facebook_appid"=>$this->facebook_appid,
+            "signUpLinkInConnection"=>$this->signUpLinkInConnection,
         ]);
     }
 

@@ -8,7 +8,7 @@
         lg="9"
         md="10"
         xl="6"
-        class="mt-6"
+        class="mt-12"
       >
         <h1 class="display-1 text-left font-weight-bold">
           {{ $t('title') }}

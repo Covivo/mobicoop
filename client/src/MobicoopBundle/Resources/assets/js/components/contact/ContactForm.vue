@@ -38,8 +38,10 @@
                 >
                   <v-text-field
                     v-model="form.familyName"
-                    :label="$t('lastName.placeholder')"
+                    :label="$t('lastName.placeholder')+` *`"
                     name="familyName"
+                    required
+                    :rules="form.familyNameRules"
                   />
                 </v-col>
 
@@ -48,8 +50,10 @@
                 >
                   <v-text-field
                     v-model="form.givenName"
-                    :label="$t('firstName.placeholder')"
+                    :label="$t('firstName.placeholder')+` *`"
                     name="givenName"
+                    required
+                    :rules="form.givenNameRules"
                   />
                 </v-col>
 
@@ -184,7 +188,14 @@ export default {
           v => /.+@.+/.test(v) || this.$t("email.errors.valid")
         ],
         familyName: this.user && this.user.familyName ? this.user.familyName : null,
+        familyNameRules: [
+          v => !!v || this.$t("models.user.familyName.errors.required"),
+        ],
         givenName: this.user && this.user.givenName ? this.user.givenName : null,
+        givenNameRules: [
+          v => !!v || this.$t("models.user.givenName.errors.required"),
+        ],
+
         demand: null,
         message: null,
         messageRules: [
