@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,8 @@ use App\PublicTransport\Entity\PTTripPoint;
  * - write the custom Provider class in src/DataProvider/Entity/
  * - complete the PROVIDERS array with the new provider
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PTDataProvider
 {
@@ -57,7 +58,7 @@ class PTDataProvider
     
     private $geoTools;
 
-    public function __construct(GeoTools $geoTools)
+    public function __construct(GeoTools $geoTools, array $params)
     {
         $this->geoTools = $geoTools;
     }
