@@ -42,19 +42,23 @@ const useStyles = makeStyles((theme) => ({
 const driverSearchOptions = [
   {
     label: 'Rechercher aller covoiturage',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'outward', type: 'carpool', solidary: solidaryId }),
   },
   {
     label: 'Rechercher retour covoiturage',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole aller',
-    filter: (solidaryId) => ({ way: 'outward', type: 'transport', solidary: solidaryId }),
+    target: 'solidary_beneficiaries',
+    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole retour',
-    filter: (solidaryId) => ({ way: 'return', type: 'transport', solidary: solidaryId }),
+    target: 'solidary_beneficiaries',
+    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
 ];
 const SolidaryShowInformation = ({ record }) => {
@@ -93,7 +97,7 @@ const SolidaryShowInformation = ({ record }) => {
   console.log('User : ', user);
 
   const handleDriverSearch = (choice, index) => {
-    const url = `/solidary_searches?filter=${encodeURIComponent(
+    const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
       JSON.stringify(driverSearchOptions[index].filter(id))
     )}`;
 

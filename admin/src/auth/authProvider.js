@@ -59,7 +59,7 @@ export default {
         return fetchUtils
           .fetchJson(`${process.env.REACT_APP_API}/permissions`, {
             method: 'GET',
-            headers: getAuthenticatedHeaders,
+            headers: getAuthenticatedHeaders(),
           })
           .then((result) => {
             if (result.status === 200) {

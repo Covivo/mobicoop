@@ -33,8 +33,8 @@ const SolidaryShow = (props) => {
           variant="fullWidth"
         >
           <Tab label="Informations" />
-          <Tab label="Détails" />
-          <Tab label="Journal de suivi" />
+          {/* <Tab label="Détails" /> */}
+          {/* <Tab label="Journal de suivi" /> */}
         </Tabs>
       </AppBar>
       {tabActif === 0 && <SolidaryShowInformation record={record} />}
