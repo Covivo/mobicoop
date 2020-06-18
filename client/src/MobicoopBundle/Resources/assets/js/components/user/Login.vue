@@ -74,6 +74,16 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
+        <v-card-text
+          v-if="signUpLinkInConnection"
+        >
+          <a
+            :href="$t('urlSignUp')"
+            class="font-italic"
+          >
+            {{ $t('signUp') }}
+          </a>
+        </v-card-text>
       </v-col>
     </v-row>
     <v-row
@@ -122,6 +132,10 @@ export default {
     proposalId: {
       type: Number,
       default: null
+    },
+    signUpLinkInConnection: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

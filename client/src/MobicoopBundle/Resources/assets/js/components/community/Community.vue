@@ -105,14 +105,14 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        disabled
+                        :disabled="!isLogged || !checkValidation"
                         :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
                       </v-btn>
                     </a>
                     <v-btn
-                      class="mt-5"
+                      class="mt-3"
                       color="primary"
                       rounded
                       :loading="loading"
@@ -140,9 +140,20 @@
                       href="#"
                       v-on="on"
                     >
+
+                      <v-btn
+                        color="secondary"
+                        rounded
+                        :disabled="!isLogged || !checkValidation"
+                        :loading="loading"
+                      >
+                        {{ $t('buttons.publish.label') }}
+                      </v-btn>
+                      
                       <v-btn
                         v-if="isSecured == false"
                         color="secondary"
+                        class="mt-3"
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
                         :disabled="!isLogged || checkValidation"

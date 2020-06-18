@@ -545,9 +545,13 @@ class DataProvider
         try {
             if ($this->format == self::RETURN_JSON) {
                 $headers = $this->getHeaders(['json']);
+                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
+                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -767,6 +771,7 @@ class DataProvider
                 if ($file instanceof UploadedFile) {
                     $multipart[] = [
                         'name'      => $property,
+                        'filename' => $file->getClientOriginalName(),
                         'contents'  => fopen($file->getPathname(), 'rb')
                     ];
                     $multipart[] = [
@@ -776,12 +781,14 @@ class DataProvider
                 }
             }
         }
+        // var_dump($multipart);die;
         try {
             $headers = $this->getHeaders();
             $clientResponse = $this->client->post($this->resource, [
                 'headers' => $headers,
                 'multipart' => $multipart
             ]);
+            // var_dump(json_decode((string) $clientResponse->getBody(), true));die;
             if ($clientResponse->getStatusCode() == 201) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
