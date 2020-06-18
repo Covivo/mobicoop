@@ -1,10 +1,10 @@
 {
     "default":{
-        "dataprovider":"name"
+        "dataprovider":"name",
         "url":"url of the api"
     },
     "idterritory":{
-        "dataprovider":"name"
+        "dataprovider":"name",
         "url":"url of the api"
     }
 }
