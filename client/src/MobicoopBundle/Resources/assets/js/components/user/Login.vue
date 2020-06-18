@@ -74,7 +74,9 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
-        <v-card-text>
+        <v-card-text
+          v-if="signUpLinkInConnection"
+        >
           <a
             :href="$t('urlSignUp')"
             class="font-italic"
@@ -126,6 +128,10 @@ export default {
     facebookLoginAppId: {
       type: String,
       default: null
+    },
+    signUpLinkInConnection: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

@@ -7,8 +7,8 @@
         "userFBNotFound": "Cet utilisateur facebook n'est pas inscrit sur la plateforme",
         "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
         "textRecovery": "Mot de passe oublié ?",
-        "signUp": " ",
-        "urlSignUp": " "
+        "signUp": "Vous n'êtes pas encore inscrit ?",
+        "urlSignUp": "/utilisateur/inscription"
     },
     "en": {
         "title": "Connexion",
