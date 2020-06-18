@@ -103,9 +103,7 @@ class UserController extends AbstractController
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-
-        dump($this->signUpLinkInConnection);
-
+        
         return $this->render('@Mobicoop/user/login.html.twig', [
             "errorMessage"=>$errorMessage,
             "facebook_show"=>($this->facebook_show==="true") ? true : false,
