@@ -25,6 +25,7 @@ namespace App\PublicTransport\Service;
 
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
+use App\DataProvider\Entity\ConduentPTProvider;
 use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
@@ -41,7 +42,8 @@ use App\PublicTransport\Entity\PTTripPoint;
 class PTDataProvider
 {
     const PROVIDERS = [
-        "cityway" => CitywayProvider::class
+        "cityway" => CitywayProvider::class,
+        "conduentPT" => ConduentPTProvider::class
     ];
     
     const DATETIME_FORMAT = \DateTime::RFC3339;
@@ -73,6 +75,7 @@ class PTDataProvider
      * @param string $dateType                  The date type of the trip (departure or arrival)
      * @param string $algorithm                 The algorithm used for the trip calculation (fastest, shortest or minchanges)
      * @param string $modes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param string $username                  The username for the provider
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
@@ -85,7 +88,8 @@ class PTDataProvider
         \Datetime $date,
         string $dateType,
         string $algorithm,
-        string $modes
+        string $modes,
+        ?string $username=null
     ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
@@ -100,7 +104,8 @@ class PTDataProvider
                 "date" => $date,
                 "dateType" => $dateType,
                 "algorithm" => $algorithm,
-                "modes" => $modes
+                "modes" => $modes,
+                "username" => $username
         ]]);
 
         // Set the display label of the departure and arrival

@@ -1,8 +1,9 @@
 {
     "fr":{
-        "walkFromToStop":"Marcher de <span class='primary--text'>{departure}</span> à l'arrêt <span class='primary--text'>{arrival}</span>",
+        "walkFromToStop":"Marcher de <span class='primary--text'>{departure}</span> à <span class='primary--text'>{arrival}</span>",
         "walkFromToDestination":"Marcher de <span class='primary--text'>{departure}</span> à <span class='primary--text'>{arrival}</span>",
         "estimatedDuration":"Durée estimée : {duration}",
+        "waiting":"Attendre {duration}",
         "direction":"Direction",
         "hopOn":"Monter",
         "hopOff":"descendre"
@@ -11,6 +12,7 @@
         "walkFromToStop":"Walk from {departure} to {arrival} stop",
         "walkFromToDestination":"Walk from <span class='primary--text'>{departure}</span> to <span class='primary--text'>{arrival}</span>",
         "estimatedDuration":"Estimated duration : {duration}",
+        "waiting":"Wait {duration}",
         "direction":"To",
         "hopOn":"Hop on",
         "hopOff":"hop off"

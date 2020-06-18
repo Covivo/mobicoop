@@ -54,6 +54,9 @@ class TravelMode
     const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
     const TRAVEL_MODE_BIKE = "BIKE";
     const TRAVEL_MODE_WALK = "WALK";
+    const TRAVEL_MODE_SUBWAY = "SUBWAY";
+    const TRAVEL_MODE_WAITING = "WAITING";
+    const TRAVEL_UNKNOWN = "UNKNOWN";
     
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
@@ -64,7 +67,9 @@ class TravelMode
         self::TRAVEL_MODE_TRAIN_LOCAL => 6,
         self::TRAVEL_MODE_TRAIN_HIGH_SPEED => 7,
         self::TRAVEL_MODE_BIKE => 8,
-        self::TRAVEL_MODE_WALK => 9
+        self::TRAVEL_MODE_WALK => 9,
+        self::TRAVEL_MODE_SUBWAY => 10,
+        self::TRAVEL_MODE_WAITING => 11
     ];
     
     private const TRAVEL_MODES_MDI_ICONS = [
@@ -77,7 +82,9 @@ class TravelMode
         self::TRAVEL_MODE_TRAIN_HIGH_SPEED => "mdi-train-variant",
         self::TRAVEL_MODE_BIKE => "mdi-bike",
         self::TRAVEL_MODE_WALK => "mdi-walk",
-        "UNKNOWN" => "mdi-help-circle"
+        self::TRAVEL_MODE_SUBWAY => "mdi-subway-variant",
+        self::TRAVEL_MODE_WAITING => "mdi-account-clock",
+        self::TRAVEL_UNKNOWN => "mdi-help-circle"
     ];
 
     /**

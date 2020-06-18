@@ -65,6 +65,7 @@ class PublicTransportManager
      * @param string    $dateType                   The date type (departure or arrival)
      * @param string    $algorithm                  The algorithm used for the trip calculation (fastest, shortest or minchanges)
      * @param string    $modes                      The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param string    $userName                   The username of the provider if needed
      * @return Hydra|null The journeys found (as an Hydra object) or null if not found.
      */
     public function getJourneys(
@@ -77,7 +78,8 @@ class PublicTransportManager
         string $date,
         string $dateType,
         string $algorithm,
-        string $modes
+        string $modes,
+        string $userName=null
     ) {
         $response = $this->dataProvider->getCollection([
             'provider'              => $provider,
@@ -89,7 +91,8 @@ class PublicTransportManager
             'date'                  => $date,
             'dateType'              => $dateType,
             'algorithm'             => $algorithm,
-            'modes'                 => $modes
+            'modes'                 => $modes,
+            'userName'              => $userName
         ]);
         return $response->getValue();
     }

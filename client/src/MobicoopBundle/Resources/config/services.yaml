@@ -65,6 +65,7 @@ services:
             $ptAlgorithm: '%env(string:PT_ALGORITHM)%'
             $ptDateCriteria: '%env(string:PT_DATE_CRITERIA)%'
             $ptMode: '%env(string:PT_MODE)%'
+            $ptUsername: '%env(string:PT_USERNAME)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:

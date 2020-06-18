@@ -3,10 +3,12 @@
 ## API
 
 * [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
-* New ad public link for external search (like RDEX)
+* New Public Transport DataProvider for Conduent
 
 ## CLIENT
 
+* Public Transport solutions can be shown at the same time that carpools researchs.
+* New ad public link for external search (like RDEX)
 * A disconnected user can now login or register after a search, and get back to the search results
 
 # Release 1.6.0
