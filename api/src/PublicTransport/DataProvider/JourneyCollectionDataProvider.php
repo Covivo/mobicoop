@@ -82,7 +82,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
             $this->request->get("dateType"),
             $this->request->get('algorithm'),
             $this->request->get('modes'),
-            $this->request->get('userName')
+            $this->request->get('username')
         );
     }
 }

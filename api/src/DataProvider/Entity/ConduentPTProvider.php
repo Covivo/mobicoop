@@ -53,7 +53,6 @@ class ConduentPTProvider implements ProviderInterface
     private const COUNTRY = "France";
     private const NC = "NC";
 
-    private const URI = "https://smirtvadoab.ddns.net";
     private const AUTH_RESSOURCE = "AUTH.API/auth";
     private const PROFILE_RESSOURCE = "MCP.ID.API/profiles";
     private const COLLECTION_RESSOURCE_JOURNEYS = "MCP.TSUP.API/travelQueries/full";
@@ -64,10 +63,12 @@ class ConduentPTProvider implements ProviderInterface
     private const ALLOW_EXTENDED_QUERIES_IN_PAST = 1;
 
     private $collection;
+    private $uri;
 
-    public function __construct()
+    public function __construct(string $uri)
     {
         $this->collection = [];
+        $this->uri = $uri;
     }
 
     /**
@@ -96,7 +97,7 @@ class ConduentPTProvider implements ProviderInterface
     private function getCollectionJourneys($class, array $params, string $apikey)
     {
         // Get auth token
-        $dataProvider = new DataProvider(self::URI, self::AUTH_RESSOURCE);
+        $dataProvider = new DataProvider($this->uri, self::AUTH_RESSOURCE);
         $paramsPost = [
             "login"=>$params["username"],
             "password"=>$apikey
@@ -108,6 +109,7 @@ class ConduentPTProvider implements ProviderInterface
             $data = json_decode($response->getValue(), true);
             $securityToken = $data["token"];
         } else {
+            echo $response->getCode();die;
             throw new DataProviderException(DataProviderException::ERROR_RETREIVING_TOKEN);
         }
 
@@ -116,7 +118,7 @@ class ConduentPTProvider implements ProviderInterface
         }
         
         // Get profile id
-        $dataProvider = new DataProvider(self::URI, self::PROFILE_RESSOURCE);
+        $dataProvider = new DataProvider($this->uri, self::PROFILE_RESSOURCE);
         $paramsGet = [
             "criteria.name"=>$params["username"]
         ];
@@ -138,7 +140,7 @@ class ConduentPTProvider implements ProviderInterface
         }
 
         // Do the PT search
-        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_JOURNEYS);
+        $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESSOURCE_JOURNEYS);
 
         $paramsPost = [
             "origin"=> [

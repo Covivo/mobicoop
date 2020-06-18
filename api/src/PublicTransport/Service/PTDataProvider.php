@@ -57,16 +57,18 @@ class PTDataProvider
     const ALGORITHM_MINCHANGES = "minchanges";
     
     private $geoTools;
+    private $PTProviders;
 
     public function __construct(GeoTools $geoTools, array $params)
     {
         $this->geoTools = $geoTools;
+        $this->PTProviders = $params['ptProviders'];
     }
     
     /**
      * Get journeys from an external Public Transport data provider.
      *
-     * @param string $provider                  The name of the provider
+     * @param string $provider                  The name of the provider (obsolete : not used anymore)
      * @param string $apikey                    The API Key for the provider
      * @param string $origin_latitude           The latitude of the origin point
      * @param string $origin_longitude          The longitude of the origin point
@@ -80,7 +82,7 @@ class PTDataProvider
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
-        string $provider,
+        ?string $provider,
         string $apikey,
         string $origin_latitude,
         string $origin_longitude,
@@ -90,13 +92,26 @@ class PTDataProvider
         string $dateType,
         string $algorithm,
         string $modes,
-        ?string $username=null
+        ?string $username=null,
+        ?int $territoryId=null
     ): ?array {
+
+        $providerUri = null;
+        // If there is a territory, we look for the right provider. If there is no, we take the default.
+        $provider = $this->PTProviders['default']['dataprovider'];
+        $providerUri = $this->PTProviders['default']['url'];
+        if(!is_null($territoryId) && isset($this->PTProviders[$territoryId])){
+            $provider = $this->PTProviders[$territoryId]['dataprovider'];
+            $providerUri = $this->PTProviders[$territoryId]['url'];
+        }
+
+        // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }
+
         $providerClass = self::PROVIDERS[$provider];
-        $providerInstance = new $providerClass();
+        $providerInstance = new $providerClass($providerUri);
         $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
                 "origin_latitude" => $origin_latitude,
                 "origin_longitude" => $origin_longitude,
