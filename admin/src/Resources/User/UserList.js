@@ -49,8 +49,10 @@ const UserList = (props) => {
           pagination: { page: 1, perPage: 50 },
           sort: { field: 'id', order: 'ASC' },
         })
-        .then(({ data }) => {
-          setCommunities(data);
+        .then((response) => {
+          if (response) {
+            setCommunities(response.data);
+          }
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
