@@ -48,22 +48,22 @@ export default {
     frequency: {
       punctual: {
         startDateTitle: "A quelle date souhaitez-vous partir ?",
-        startDateChoice1: "Date d\'arrivée",
+        startDateChoice1: "Date d'arrivée",
         startDateChoice2: "dans la semaine",
         startDateChoice3: "dans les deux semaines",
         startDateChoice4: "dans le mois"
       },
       regular: {
-        days: "Indiquez les jours pour lesquels vous avez besoin d\'un trajet régulier"
+        days: "Indiquez les jours pour lesquels vous avez besoin d'un trajet régulier"
       },
       startTimeTitle: "A quelle heure souhaitez-vous partir ?",
-      startTimeChoice1: "Heure d\'arrivée",
+      startTimeChoice1: "Heure d'arrivée",
       startTimeChoice2: "Entre 8h et 13h",
       startTimeChoice3: "Entre 13h et 18h",
       startTimeChoice4: "Entre 18h et 21h",
       endTimeTitle: "A quelle heure souhaitez-vous revenir ?",
-      endTimeChoice1: "Je n\'ai pas besoin qu\'on me ramène",
-      endTimeChoice2: "Heure d\'arrivée",
+      endTimeChoice1: "Je n'ai pas besoin qu'on me ramène",
+      endTimeChoice2: "Heure d'arrivée",
       endTimeChoice3: "Une heure plus tard",
       endTimeChoice4: "Deux heures plus tard",
       endTimeChoice5: "Trois heures plus tard",

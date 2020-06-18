@@ -20,7 +20,7 @@
             <!-- STEPPER HEADER 1 : ORIGIN -->
             <v-stepper-step
               :step="1"
-              :complete="step > 1"
+              :complete="step1Valid()"
             >
               {{ $t('stepper.origin') }}
             </v-stepper-step>
@@ -30,7 +30,7 @@
             <!-- STEP 2 : STRUCTURE / PROOFS -->
             <v-stepper-step
               :step="2"
-              :complete="step > 2"
+              :complete="step2Valid()"
             >
               {{ $t('stepper.service') }}
             </v-stepper-step>
@@ -40,7 +40,7 @@
             <!-- STEP 3 : SUBJECT / DESTINATION / FREQUENCY / NEEDS -->
             <v-stepper-step
               :step="3"
-              :complete="step > 3"
+              :complete="step3Valid()"
             >
               {{ $t('stepper.yourJourney') }}
             </v-stepper-step>
@@ -50,6 +50,7 @@
             <!-- STEP 4 : PUNCTUAL / REGULAR -->
             <v-stepper-step 
               :step="4"
+              :complete="step4Valid()"
             >
               {{ form.regular ? $t('stepper.regular') : $t('stepper.ponctual') }}
             </v-stepper-step>
@@ -59,6 +60,7 @@
             <!-- STEP 5 : USER -->
             <v-stepper-step 
               :step="5"
+              :complete="step5Valid()"
             >
               {{ $t('stepper.you') }}
             </v-stepper-step>
@@ -348,11 +350,34 @@
                             :value="0"
                             hide-details
                           />
-                          <v-text-field 
-                            v-model="punctualStartDate"
-                            :label="$t('frequency.punctual.startDateChoice1')"
-                            :disabled="punctualStartDateChoice != 0"
-                          />
+                          <v-menu
+                            v-model="menuPunctualStartDate"
+                            :close-on-content-click="false"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                :value="computedPunctualStartDateFormat"
+                                :label="$t('frequency.punctual.startDateChoice1')"
+                                readonly
+                                clearable
+                                :disabled="punctualStartDateChoice != 0"
+                                v-on="on"
+                                @click:clear="clearPunctualStartDate"
+                              />
+                            </template>
+                            <v-date-picker
+                              v-model="punctualStartDate"
+                              :locale="locale"
+                              no-title
+                              :min="nowDate"
+                              first-day-of-week="1"
+                              @input="menuPunctualStartDate = false"
+                              @change="changePunctualStartDate()"
+                            />
+                          </v-menu>
                         </v-row>
                         <v-radio
                           :label="$t('frequency.punctual.startDateChoice2')"
@@ -387,11 +412,33 @@
                             :value="0"
                             hide-details
                           />
-                          <v-text-field 
-                            v-model="startTime"
-                            :label="$t('frequency.startTimeChoice1')"
-                            :disabled="startTimeChoice != 0"
-                          />
+                          <v-menu
+                            v-model="menuStartTime"
+                            :close-on-content-click="false"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="startTime"
+                                :label="$t('frequency.startTimeChoice1')"
+                                prepend-icon=""
+                                readonly
+                                clearable
+                                :disabled="startTimeChoice != 0"
+                                v-on="on"
+                                @click:clear="clearStartTime"
+                              />
+                            </template>
+                            <v-time-picker
+                              v-model="startTime"
+                              format="24hr"
+                              header-color="secondary"
+                              @click:minute="menuStartTime = false"
+                              @change="changeStartTime()"
+                            />
+                          </v-menu>
                         </v-row>
                         <v-radio
                           :label="$t('frequency.startTimeChoice2')"
@@ -417,6 +464,7 @@
                       </p>
                       <v-radio-group
                         v-model="endTimeChoice"
+                        :disabled="this.form.startTime == null"
                       >
                         <v-radio
                           :label="$t('frequency.endTimeChoice1')"
@@ -430,11 +478,33 @@
                             :value="1"
                             hide-details
                           />
-                          <v-text-field 
-                            v-model="endTime"
-                            :label="$t('frequency.endTimeChoice2')"
-                            :disabled="endTimeChoice != 1"
-                          />
+                          <v-menu
+                            v-model="menuEndTime"
+                            :close-on-content-click="false"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="endTime"
+                                :label="$t('frequency.endTimeChoice2')"
+                                prepend-icon=""
+                                readonly
+                                clearable
+                                :disabled="endTimeChoice != 0"
+                                v-on="on"
+                                @click:clear="clearEndTime"
+                              />
+                            </template>
+                            <v-time-picker
+                              v-model="endTime"
+                              format="24hr"
+                              header-color="secondary"
+                              @click:minute="menuEndTime = false"
+                              @change="changeEndTime()"
+                            />
+                          </v-menu>
                         </v-row>
                         <v-radio
                           :label="$t('frequency.endTimeChoice3')"
@@ -471,6 +541,7 @@
                   class="mr-4 mb-100 mt-12"
                   color="secondary"
                   width="150px"
+                  :disabled="!step4Valid()"
                   @click="nextStep(5)"
                 >
                   {{ $t('ui.button.next') }}
@@ -606,6 +677,7 @@
                   class="mr-4 mb-100 mt-12"
                   color="secondary"
                   width="150px"
+                  :disabled="!step4Valid()"
                   @click="nextStep(5)"
                 >
                   {{ $t('ui.button.next') }}
@@ -713,6 +785,7 @@
                   class="mr-4 mb-100 mt-12"
                   color="secondary"
                   width="150px"
+                  :disabled="!step5Valid()"
                   @click="nextStep(6)"
                 >
                   {{ $t('ui.button.next') }}
@@ -769,8 +842,6 @@ import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.js";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
 import GeoComplete from "@js/components/utilities/GeoComplete";
-
-
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -832,14 +903,21 @@ export default {
       // current step
       step: 1,
 
-      // punctual
-      punctualStartDateChoice: null,
-      punctualStartDate: null,
+      // dates and times
+      punctualStartDateChoice: null,  // punctual radio start date choice
+      punctualStartDate: null,        // punctual start date picked 
+      menuPunctualStartDate: false,   
+      regularStartDateChoice: null,   // regular range start date choice
+      regularEndDateChoice: null,     // regular range end date choice
+      startTimeChoice: null,          // radio start time choice
+      endTimeChoice: null,            // radio end time choice
+      startTime: null,                // start time picked
+      menuStartTime: false,
+      endTime: null,                  // end time picked
+      menuEndTime: false,
 
-      // punctual / regular common
-      startTimeChoice: null,
-      endTimeChoice: null,
-
+      nowDate : new Date().toISOString().slice(0,10),
+      
       // form values
       form: {      
         origin: null,
@@ -850,9 +928,12 @@ export default {
         destination: null,
         regular: null,
         needs: null,
-        punctualStartDate: null,
+        startDate: null,
+        endDate: null,
+        regularDays: null,
         startTime: null,
         endTime: null,
+        marginDuration: 15,
         givenName: this.user && this.user.givenName ? this.user.givenName : "",
         familyName: this.user && this.user.familyName ? this.user.familyName : "",
         email: this.user && this.user.email ? this.user.email : "",
@@ -881,23 +962,61 @@ export default {
       }
     }
   },
+  computed: {
+    computedPunctualStartDateFormat() {
+      return this.punctualStartDate
+        ? moment(this.punctualStartDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    }
+  },
   watch: {
     pickerActive(val) {
       val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
     punctualStartDateChoice(val) {
-      if (val>0) {
-        this.form.punctualStartDate = val;
+      if (val == 0) {
+        this.form.startDate = null;
+        this.form.endDate = null;
+        if (this.punctualStartDate != null) {
+          this.form.startDate = moment(this.punctualStartDate); 
+        }
+      } else if (val == 1) {
+        this.form.startDate = moment();
+        this.form.endDate = moment().add(7, 'days');
+      } else if (val == 2) {
+        this.form.startDate = moment();
+        this.form.endDate = moment().add(14, 'days');
+      } else if (val == 3) {
+        this.form.startDate = moment();
+        this.form.endDate = moment().add(1, 'months');
       }
     },
     startTimeChoice(val) {
-      if (val>0) {
-        this.form.startTime = val;
+      this.form.startTime = null;
+      this.form.marginDuration = 15;  
+      if (val == 0 && this.startTime != null) {
+        this.form.startTime = this.startTime;
+      } else if (val == 1) {
+        this.form.startTime = "10:30";
+        this.form.marginDuration = 150;
+      } else if (val == 2) {
+        this.form.startTime = "15:30";
+        this.form.marginDuration = 150;
+      } else if (val == 3) {
+        this.form.startTime = "19:30";
+        this.form.marginDuration = 90;
       }
     },
     endTimeChoice(val) {
-      if (val!=1) {
-        this.form.endTime = val;
+      this.form.endTime = null;
+      if (val == 1 && this.endTime != null) {
+        this.form.endTime = this.endTime;
+      } else if (val == 2) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(1, 'hours').format('HH:MM');
+      } else if (val == 3) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(2, 'hours').format('HH:MM');
+      } else if (val == 4) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(3, 'hours').format('HH:MM');
       }
     },
   },
@@ -920,11 +1039,50 @@ export default {
     step3Valid() {
       return this.form.subject != null && this.form.regular != null
     },
+    step4Valid() {
+      if (!this.form.regular) {
+        return (
+          (this.startTimeChoice > 0 || this.startTime != null) && 
+          (this.endTimeChoice != 1 || this.endTime != null) && 
+          (this.punctualStartDateChoice > 0 || this.punctualStartDate != null))
+      }
+      return (
+        (this.startTimeChoice > 0 || this.startTime != null) && 
+        (this.endTimeChoice != 1 || this.endTime != null) && 
+        (this.form.regularDays != null))
+    },
+    step5Valid() {
+      return this.form.subject != null && this.form.regular != null
+    },
+    step6Valid() {
+      return this.form.subject != null && this.form.regular != null
+    },
     originSelected: function(address) {
       this.form.origin = address;
     },
     destinationSelected: function(address) {
       this.form.destination = address;
+    },
+    changePunctualStartDate() {
+      this.form.punctualStartDate = moment(this.punctualStartDate);
+    },
+    clearPunctualStartDate() {
+      this.punctualStartDate = null;
+      this.form.punctualStartDate = null;
+    },
+    changeStartTime() {
+      this.form.startTime = this.startTime;
+    },
+    clearStartTime() {
+      this.startTime = null;
+      this.form.startTime = null;
+    },
+    changeEndTime() {
+      this.form.endTime = this.endTime;
+    },
+    clearEndTime() {
+      this.endTime = null;
+      this.form.endTime = null;
     },
     save (date) {
       this.$refs.menu.save(date);
