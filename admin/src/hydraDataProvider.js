@@ -40,10 +40,18 @@ const stringifyDeepObjects = (obj) =>
     return agg;
   }, {});
 
-const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource, params) => {
+const createReactAdminToHydraRequestConverter = (entrypoint, debug = false) => (
+  type,
+  resource,
+  params
+) => {
   const entrypointUrl = new URL(entrypoint, window.location.href);
   const collectionUrl = new URL(`${entrypoint}/${resource}`, entrypointUrl);
   const itemUrl = new URL(params.id, entrypointUrl);
+
+  if (debug) {
+    console.log({ type, resource, params });
+  }
 
   switch (type) {
     case CREATE:
@@ -222,9 +230,10 @@ export default (
   entrypoint,
   httpClient,
   responseTransformer = defaultResponseTransporter,
-  errorHandler = defaultErrorHandler
+  errorHandler = defaultErrorHandler,
+  debug = false
 ) => {
-  const reactAdminRequestConverter = createReactAdminToHydraRequestConverter(entrypoint);
+  const reactAdminRequestConverter = createReactAdminToHydraRequestConverter(entrypoint, debug);
   const fetchApi = (type, resource, params) =>
     reactAdminRequestConverter(type, resource, params)
       .then(({ url, options }) =>

@@ -34,6 +34,7 @@ import {
 import { addressRenderer } from '../../utils/renderers';
 import isAuthorized from '../../auth/permissions';
 import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+import { formatPhone } from '../Solidary/SolidaryUserBeneficiary/Fields/PhoneField';
 
 const renderSmoke = (smoke) => {
   let text = '';
@@ -168,7 +169,13 @@ const UserShow = (props) => {
               <ListItemIcon>
                 <PhoneIcon />
               </ListItemIcon>
-              <ListItemText primary={<Typography variant="body2">{record.telephone}</Typography>} />
+              <ListItemText
+                primary={
+                  <Typography variant="body2">
+                    {record.telephone ? formatPhone(record.telephone) : record.telephone}
+                  </Typography>
+                }
+              />
             </ListItem>
             <ListItem>
               <ListItemIcon>{record.newsSubscription ? <CheckIcon /> : <ClearIcon />}</ListItemIcon>

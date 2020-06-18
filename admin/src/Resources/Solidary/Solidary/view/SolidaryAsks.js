@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, Grid, Avatar, LinearProgress } from '@material-ui/core';
 
-import DropDownButton from '../../../../components/button/DropDownButton';
-import DayChip from './DayChip';
 import SolidarySchedule from './SolidarySchedule';
 import SolidaryAskItem from './SolidaryAskItem';
+import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
+import { SolidaryContactDropDown } from './SolidaryContactDropDown';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -33,8 +33,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const contactOptions = ['SMS', 'Email', 'Téléphone'];
-
 const SolidaryAsks = ({ record, history }) => {
   const classes = useStyles();
 
@@ -58,10 +56,6 @@ const SolidaryAsks = ({ record, history }) => {
   const user = solidaryUser.user || {};
   console.log('User : ', user);
 
-  const handleContactChoice = (choice, index) => {
-    console.log(`@TODO: handling handleContactChoice ${choice}`);
-  };
-
   return (
     <>
       <Card raised className={classes.card}>
@@ -78,14 +72,10 @@ const SolidaryAsks = ({ record, history }) => {
                 <h2>{`${user.givenName} ${user.familyName}`}</h2>
               </Grid>
               <Grid item>
-                <small>{user.telephone}</small>
+                <small>{user.telephone ? formatPhone(user.telephone) : 'N/A'}</small>
               </Grid>
               <Grid item>
-                <DropDownButton
-                  label="Contacter demandeur"
-                  options={contactOptions}
-                  onSelect={handleContactChoice}
-                />
+                <SolidaryContactDropDown label="Contacter demandeur" />
               </Grid>
             </Grid>
           </Grid>
@@ -189,7 +179,6 @@ const SolidaryAsks = ({ record, history }) => {
             )}
           </Grid>
         </Grid>
-
         {asksList.map((a) => (
           <SolidaryAskItem item={a} />
         ))}

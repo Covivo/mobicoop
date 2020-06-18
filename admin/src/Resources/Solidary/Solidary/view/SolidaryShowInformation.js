@@ -1,26 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import RoomIcon from '@material-ui/icons/Room';
 import { useHistory } from 'react-router-dom';
 
-import {
-  Card,
-  Grid,
-  Avatar,
-  LinearProgress,
-  Stepper,
-  Step,
-  StepLabel,
-  Divider,
-} from '@material-ui/core';
+import { Card, Grid, Avatar, LinearProgress, Divider } from '@material-ui/core';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
-import SolidaryPlace from './SolidaryPlace';
 import SolidarySchedule from './SolidarySchedule';
 import SolidaryAnimation from './SolidaryAnimation';
 import SolidarySolutions from './SolidarySolutions';
+import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
+import { Trip } from './Trip';
+import { NeedsAndStructure } from './NeedsAndStructure';
+import { SolidaryContactDropDown } from './SolidaryContactDropDown';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -46,27 +39,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SMS_CONTACT_OPTION = 'SMS';
-const EMAIL_CONTACT_OPTION = 'Email';
-const PHONE_CONTACT_OPTION = 'Téléphone';
-
-const contactOptions = [SMS_CONTACT_OPTION, EMAIL_CONTACT_OPTION, PHONE_CONTACT_OPTION];
 const driverSearchOptions = [
   {
     label: 'Rechercher aller covoiturage',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'outward', type: 'carpool', solidary: solidaryId }),
   },
   {
     label: 'Rechercher retour covoiturage',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole aller',
-    filter: (solidaryId) => ({ way: 'outward', type: 'transport', solidary: solidaryId }),
+    target: 'solidary_beneficiaries',
+    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole retour',
-    filter: (solidaryId) => ({ way: 'return', type: 'transport', solidary: solidaryId }),
+    target: 'solidary_beneficiaries',
+    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
 ];
 const SolidaryShowInformation = ({ record }) => {
@@ -104,12 +96,8 @@ const SolidaryShowInformation = ({ record }) => {
   const user = solidaryUser.user || {};
   console.log('User : ', user);
 
-  const handleContactChoice = (choice, index) => {
-    console.log(`@TODO: handling handleContactChoice ${choice}`);
-  };
-
   const handleDriverSearch = (choice, index) => {
-    const url = `/solidary_searches?filter=${encodeURIComponent(
+    const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
       JSON.stringify(driverSearchOptions[index].filter(id))
     )}`;
 
@@ -132,14 +120,10 @@ const SolidaryShowInformation = ({ record }) => {
                 <h2>{`${user.givenName} ${user.familyName}`}</h2>
               </Grid>
               <Grid item>
-                <small>{user.telephone}</small>
+                <small>{user.telephone ? formatPhone(user.telephone) : 'N/A'}</small>
               </Grid>
               <Grid item>
-                <DropDownButton
-                  label="Contacter demandeur"
-                  options={contactOptions}
-                  onSelect={handleContactChoice}
-                />
+                <SolidaryContactDropDown solidaryId={originId} label="Contacter demandeur" />
               </Grid>
             </Grid>
           </Grid>
@@ -247,46 +231,12 @@ const SolidaryShowInformation = ({ record }) => {
         <Divider light className={classes.divider} />
         <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
           <Grid item lg={8} md={12} className={classes.path}>
-            <Stepper>
-              <Step active key={1}>
-                <StepLabel icon={<RoomIcon />}>
-                  <SolidaryPlace place={origin} />
-                </StepLabel>
-              </Step>
-              <Step active key={1}>
-                <StepLabel icon={<RoomIcon />}>
-                  <SolidaryPlace place={destination} />
-                </StepLabel>
-              </Step>
-            </Stepper>
+            <Trip origin={origin} destination={destination} />
           </Grid>
         </Grid>
-
         <Divider light className={classes.divider} />
 
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item xs={3}>
-            <b>Autres besoins :</b>
-          </Grid>
-          <Grid item xs={9}>
-            {needs && needs.length ? needs.map((n) => n.label).join(' ') : 'Aucun'}
-          </Grid>
-        </Grid>
-
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item md={3} xs={6}>
-            <b>Structure accompagnante :</b>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            {solidaryUserStructure.structure && solidaryUserStructure.structure.name}
-          </Grid>
-          <Grid item md={3} xs={6}>
-            <b>Opérateur ayant enregistré la demande :</b>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            {operator ? `${operator.givenName} ${operator.familyName}` : 'Non renseigné.'}
-          </Grid>
-        </Grid>
+        <NeedsAndStructure record={record} />
       </Card>
 
       <Card raised className={classes.card}>
@@ -304,7 +254,7 @@ const SolidaryShowInformation = ({ record }) => {
           </Grid>
         </Grid>
 
-        <SolidarySolutions solutions={solutions} />
+        <SolidarySolutions solidaryId={id} solutions={solutions} />
       </Card>
 
       <SolidaryAnimation record={record} />

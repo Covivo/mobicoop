@@ -1,8 +1,10 @@
-import React from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useShowController } from 'react-admin';
 import { Card, AppBar, Tabs, Tab } from '@material-ui/core';
 import SolidaryShowInformation from './SolidaryShowInformation';
+import SolidaryShowDetail from './SolidaryShowDetail';
+import { getUser } from '../../../../auth/authProvider';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -31,11 +33,13 @@ const SolidaryShow = (props) => {
           variant="fullWidth"
         >
           <Tab label="Informations" />
-          <Tab label="Détails" />
+          {/* <Tab label="Détails" /> */}
+          {/* <Tab label="Journal de suivi" /> */}
         </Tabs>
       </AppBar>
       {tabActif === 0 && <SolidaryShowInformation record={record} />}
-      {tabActif === 1 && <p>Soliday Solutions</p>}
+      {tabActif === 1 && <SolidaryShowDetail record={record} />}
+      {tabActif === 2 && <p>Journal de suivi</p>}
     </Card>
   ) : null;
 };

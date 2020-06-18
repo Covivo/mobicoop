@@ -16,8 +16,8 @@ const DropDownButton = ({ label, options, onSelect, size = 'medium', variant = '
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
-  const handleMenuItemClick = (event, index) => {
-    onSelect(options[index], index);
+  const handleMenuItemClick = (key) => {
+    onSelect(options[key], key);
     setOpen(false);
   };
 
@@ -59,9 +59,9 @@ const DropDownButton = ({ label, options, onSelect, size = 'medium', variant = '
           <Paper style={{ backgroundColor: 'white', zIndex: '10' }}>
             <ClickAwayListener onClickAway={handleClose}>
               <MenuList id="split-button-menu">
-                {options.map((option, index) => (
-                  <MenuItem key={option} onClick={(event) => handleMenuItemClick(event, index)}>
-                    {option}
+                {Object.keys(options).map((key) => (
+                  <MenuItem key={options[key]} onClick={() => handleMenuItemClick(key)}>
+                    {options[key]}
                   </MenuItem>
                 ))}
               </MenuList>

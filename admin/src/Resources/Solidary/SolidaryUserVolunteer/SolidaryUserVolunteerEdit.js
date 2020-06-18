@@ -21,7 +21,7 @@ export const SolidaryUserVolunteerEdit = (props) => {
 
   return (
     <>
-      <Edit {...props} title="Transporteurs Bénévoles > ajouter">
+      <Edit {...props} title="Transporteurs bénévoles > ajouter">
         <TabbedForm toolbar={<SolidaryUserVolunteerEditToolbar />}>
           <FormTab label="custom.solidary_volunteers.edit.availability">
             <UserInformationField />

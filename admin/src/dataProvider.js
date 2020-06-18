@@ -37,6 +37,7 @@ export default dataProviderAdapter(
     process.env.REACT_APP_API,
     fetchJson,
     customResponseTransformer,
-    customErrorHandler
+    customErrorHandler,
+    true
   )
 );
