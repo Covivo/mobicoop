@@ -407,6 +407,12 @@ services:
         resource: '../src/Price/Controller'
         tags: ['controller.service_arguments']
 
+    # Public transport
+    App\PublicTransport\Service\PTDataProvider:
+        arguments:
+            $params:
+                ptProviders: '%env(json:file:resolve:PT_PROVIDERS)%'
+
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
