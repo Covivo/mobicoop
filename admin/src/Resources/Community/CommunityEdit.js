@@ -13,12 +13,16 @@ import {
   ReferenceInput,
   SelectInput,
   FunctionField,
+  DatagridBody,
   ReferenceArrayField,
   Button,
   DeleteButton,
+  BooleanField,
   useTranslate,
   useRedirect,
+  List,
 } from 'react-admin';
+import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import RichTextInput from 'ra-input-rich-text';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +33,9 @@ import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { validationChoices } from './communityChoices';
 import SelectNewStatus from '../CommunityUser/SelectNewStatus';
 import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+import isAuthorized from '../../auth/permissions';
+import EmailComposeButton from '../../components/email/EmailComposeButton';
+import ResetButton from '../../components/button/ResetButton';
 import FullNameField from '../User/FullNameField';
 
 const useStyles = makeStyles({
@@ -59,6 +66,60 @@ export const CommunityEdit = (props) => {
   const redirect = useRedirect();
   const translate = useTranslate();
   const communityId = props.id;
+  const [count, setCount] = useState(0);
+
+  const checkValue = ({ selected, record }) => {
+    if (record.user.newsSubscription === false)
+      setCount(selected === false ? count + 1 : count - 1);
+  };
+
+  const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
+    if (selected && record.newsSubscription === false) setCount(1);
+    return (
+      <TableRow key={id} hover={true}>
+        {/* first column: selection checkbox */}
+        <TableCell padding="none">
+          <Checkbox
+            checked={selected}
+            onClick={() => {
+              onToggleItem(id);
+              checkValue({ selected, record });
+            }}
+          />
+        </TableCell>
+        {/* data columns based on children */}
+        {React.Children.map(children, (field) => (
+          <TableCell key={`${id}-${field.props.source}`}>
+            {React.cloneElement(field, {
+              record,
+              basePath,
+              resource,
+            })}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  };
+
+  const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
+  const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
+
+  const UserBulkActionButtons = (props) => {
+    return (
+      <>
+        <EmailComposeButton
+          canSend={isAuthorized('mass_create') && count === 0}
+          comeFrom={1}
+          label="Email"
+          {...props}
+        />
+
+        <ResetButton label="Reset email" {...props} />
+        {/* default bulk delete action */}
+        {/* <BulkDeleteButton {...props} /> */}
+      </>
+    );
+  };
 
   const roles = Array.isArray(localStorage.roles)
     ? localStorage.roles.split(',')
@@ -156,20 +217,38 @@ export const CommunityEdit = (props) => {
         </FormTab>
         <FormTab label={translate('custom.label.community.members')}>
           {!communityManager && <AddNewMemberButton />}
-          <ReferenceRecordIdMapper attribute="communityUsers">
+          <ReferenceRecordIdMapper fullWidth attribute="communityUsers">
             <ReferenceArrayField
               fullWidth
               source="communityUsers"
               reference="community_users"
               label="Tags"
             >
-              <Datagrid>
-                <FullNameField source="user" label={translate('custom.label.community.member')} />
-                <SelectNewStatus label={translate('custom.label.community.newStatus')} />
-                <DeleteButton
-                  onClick={() => redirect('edit', '/communities', encodeURIComponent(communityId))}
-                />
-              </Datagrid>
+              <List
+                {...props}
+                perPage={2}
+                actions={null}
+                bulkActionButtons={<UserBulkActionButtons />}
+                sort={{ field: 'id', order: 'ASC' }}
+                filter={{ is_published: true, community: communityId }}
+              >
+                <MyDatagridUser>
+                  <FullNameField source="user" label={translate('custom.label.community.member')} />
+                  <SelectNewStatus
+                    source="status"
+                    label={translate('custom.label.community.newStatus')}
+                  />
+                  <BooleanField
+                    source="user.newsSubscription"
+                    label={translate('custom.label.user.accepteEmail')}
+                  />
+                  <DeleteButton
+                    onClick={() =>
+                      redirect('edit', '/communities', encodeURIComponent(communityId))
+                    }
+                  />
+                </MyDatagridUser>
+              </List>
             </ReferenceArrayField>
           </ReferenceRecordIdMapper>
         </FormTab>

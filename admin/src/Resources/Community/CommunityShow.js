@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
@@ -13,12 +13,15 @@ import {
   TextField,
   DateField,
   RichTextField,
+  DatagridBody,
   SelectField,
   ReferenceArrayField,
   FunctionField,
   useTranslate,
+  BooleanField,
   List,
 } from 'react-admin';
+import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
   Typography,
@@ -37,14 +40,6 @@ import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import FullNameField from '../User/FullNameField';
 import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
-
-const UserBulkActionButtons = (props) => (
-  <>
-    {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
-    {/* default bulk delete action */}
-    <ResetButton label="Reset email" {...props} />
-  </>
-);
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
@@ -134,6 +129,60 @@ const CommunityTitle = ({ record }) => {
 export const CommunityShow = (props) => {
   const translate = useTranslate();
   const communityId = props.id;
+  const [count, setCount] = useState(0);
+
+  const checkValue = ({ selected, record }) => {
+    if (record.user.newsSubscription === false)
+      setCount(selected === false ? count + 1 : count - 1);
+  };
+
+  const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
+    if (selected && record.newsSubscription === false) setCount(1);
+    return (
+      <TableRow key={id} hover={true}>
+        {/* first column: selection checkbox */}
+        <TableCell padding="none">
+          <Checkbox
+            checked={selected}
+            onClick={() => {
+              onToggleItem(id);
+              checkValue({ selected, record });
+            }}
+          />
+        </TableCell>
+        {/* data columns based on children */}
+        {React.Children.map(children, (field) => (
+          <TableCell key={`${id}-${field.props.source}`}>
+            {React.cloneElement(field, {
+              record,
+              basePath,
+              resource,
+            })}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  };
+
+  const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
+  const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
+
+  const UserBulkActionButtons = (props) => {
+    return (
+      <>
+        <EmailComposeButton
+          canSend={isAuthorized('mass_create') && count === 0}
+          comeFrom={1}
+          label="Email"
+          {...props}
+        />
+
+        <ResetButton label="Reset email" {...props} />
+        {/* default bulk delete action */}
+        {/* <BulkDeleteButton {...props} /> */}
+      </>
+    );
+  };
 
   return (
     <Show {...props} title={<CommunityTitle />} aside={<Aside />}>
@@ -166,18 +215,22 @@ export const CommunityShow = (props) => {
             >
               <List
                 {...props}
-                perPage={25}
+                perPage={2}
                 bulkActionButtons={<UserBulkActionButtons />}
                 actions={null}
                 sort={{ field: 'id', order: 'ASC' }}
                 filter={{ is_published: true, community: communityId }}
               >
-                <Datagrid>
+                <MyDatagridUser>
                   <FullNameField source="user" label={translate('custom.label.community.member')} />
                   <SelectField
                     source="status"
                     label={translate('custom.label.community.status')}
                     choices={statusChoices}
+                  />
+                  <BooleanField
+                    source="user.newsSubscription"
+                    label={translate('custom.label.user.accepteEmail')}
                   />
                   <DateField
                     source="createdDate"
@@ -197,7 +250,7 @@ export const CommunityShow = (props) => {
                             <EditButton />
                             <DeleteButton />
                             */}
-                </Datagrid>
+                </MyDatagridUser>
               </List>
             </ReferenceArrayField>
           </ReferenceRecordIdMapper>

@@ -112,16 +112,20 @@ const fr = {
       },
     },
     dashboard: {
-      pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
+      pendingConnectionToKibana: "Connexion en cours à l'outil de reporting Scope....",
       accessDenied: "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",
       kibanaAuthenticationApiFetchError: 'Erreur de connexion à Scope.',
       kibanaAuthenticationApiReturnSomethingWrong: 'Erreur de connexion à Scope.',
     },
     email: {
       texte: {
-        emailTous: 'Email à tous les filtrés',
+        emailFiltre: 'Email à tous les filtrés',
         emailSelect: 'Email aux sélectionnés',
+        emailAll: 'Email à tous',
         blockUnsubscribe: "Vous ne pouvez pas envoyer de mailing à des personnes qui l'ont refusé.",
+        saveBeforeTest:
+          'Veuillez enregistrer votre envoi en masse avant de pouvoir faire un envoi de test',
+        testBeforeSend: 'Veuillez faire un envoi de test avant de pouvoir faire un envoi réel',
       },
     },
     rgpd: {
@@ -270,6 +274,8 @@ const fr = {
           lowerPassword: 'Au minimum 1 minuscule',
           numberPassword: 'Au minimum 1 chiffre',
           minPassword: 'Au minimum 8 caractères',
+          phoneDisplayMandatory: 'Préférence du numéro de téléphone obligatoire',
+          rolesMandatory: 'Vous devez sélectionner au moins 1 rôles',
         },
         phoneDisplay: {
           visibility: 'Visibilité de mon numéro de téléphone',

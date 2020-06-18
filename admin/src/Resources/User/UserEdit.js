@@ -138,11 +138,6 @@ const UserEdit = (props) => {
             validate={required()}
             formClassName={classes.fullwidth}
           />
-          <BooleanInput
-            initialValue={true}
-            label={translate('custom.label.user.accepteReceiveEmail')}
-            source="newsSubscription"
-          />
         </FormTab>
         <FormTab label={translate('custom.label.user.preference')}>
           <SelectInput

@@ -45,11 +45,11 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
         }
         
         $queryBuilder
-            ->leftJoin('u.proposals', 'p')
-            ->leftJoin('p.criteria', 'c')
+            ->leftJoin('u.proposals', 'p2')
+            ->leftJoin('p2.criteria', 'c')
             ->orWhere('c.frequency = 2 AND c.toDate <= \'' .$value . '\'')
             ->orWhere('c.frequency = 1 AND c.fromDate <= \'' .$value . '\'')
-            ->orWHere('p.id IS null');
+            ->orWHere('p2.id IS null');
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

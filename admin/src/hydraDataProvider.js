@@ -70,7 +70,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint) => (type, resource,
 
       if (order) collectionUrl.searchParams.set(`order[${field}]`, order);
       if (page) collectionUrl.searchParams.set('page', page);
-      if (perPage) collectionUrl.searchParams.set('itemsPerPage', perPage);
+      if (perPage) collectionUrl.searchParams.set('perPage', perPage);
 
       if (params.filter) {
         const buildFilterParams = (key, nestedFilter, rootKey) => {

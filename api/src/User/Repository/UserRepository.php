@@ -62,6 +62,16 @@ class UserRepository
         return $this->repository->findAll();
     }
 
+    /**
+     * Find All the users by criteria
+     *
+     * @return User|null
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
     public function findOneBy(array $criteria): ?User
     {
         $user = $this->repository->findOneBy($criteria);
@@ -74,14 +84,20 @@ class UserRepository
      * @param Community $community
      * @return User|null
      */
-    public function getUserBelongToMyCommunity(Community $community)
+    public function getUserInCommunity(Community $community, $acceptEmail = null)
     {
-        return $this->repository->createQueryBuilder('u')
-          ->leftJoin('u.communityUsers', 'c')
-          ->andWhere("c.community = :community")
-          ->setParameter('community', $community)
-          ->getQuery()
-          ->getResult();
+        $qb = $this->repository->createQueryBuilder('u')
+            ->leftJoin('u.communityUsers', 'c')
+            ->andWhere("c.community = :community")
+            ->setParameter('community', $community) ;
+
+        if ($acceptEmail != null) {
+            $qb->andWhere(('u.newsSubscription = 1'));
+        }
+            
+        return $qb
+            ->getQuery()
+            ->getResult();
     }
 
     /**

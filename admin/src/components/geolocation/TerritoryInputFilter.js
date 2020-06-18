@@ -7,6 +7,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUtils, FormDataConsumer, useTranslate } from 'react-admin';
 import { useForm } from 'react-final-form';
 import useDebounce from '../../utils/useDebounce';
+import { useInput, required } from 'react-admin';
+import { useField } from 'react-final-form';
 
 const token = localStorage.getItem('token');
 const httpClient = fetchUtils.fetchJson;
@@ -42,14 +44,14 @@ const fetchSuggestions = (input) => {
     });
 };
 
-const TerritoryInput = (props) => {
+const TerritoryInputFilter = (props) => {
+  const {
+    input: { onChange },
+    meta: { touched, error },
+  } = useField(props.name);
+
   const form = useForm();
   const translate = useTranslate();
-
-  const lelabel =
-    props.initValue != null
-      ? translate('custom.label.territory.changeTerritory')
-      : translate('custom.label.territory.territory');
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -88,23 +90,23 @@ const TerritoryInput = (props) => {
               if (territory) {
                 territory.link = '/territories/' + territory.id;
                 form.change(props.source, null);
-                form.change(`${props.source}.id`, territory.id);
+                form.change(`${props.source}`, '/territories/' + territory.id);
               }
             }}
           >
             {({ getInputProps, getItemProps, isOpen, selectedItem, highlightedIndex }) => (
               <div>
                 <TextField
-                  label={lelabel}
-                  variant="filled"
-                  error={errorState}
-                  helperText={errorState && errorMessage}
+                  name={props.name}
+                  label={props.label}
+                  onChange={onChange}
+                  error={!!(touched && error)}
+                  helperText={touched && error}
                   InputProps={{
                     ...getInputProps({
                       placeholder: 'Entrer un territoire',
                     }),
                   }}
-                  fullWidth={true}
                 />
 
                 {isOpen ? (
@@ -135,7 +137,7 @@ const TerritoryInput = (props) => {
   );
 };
 
-TerritoryInput.propTypes = {};
+TerritoryInputFilter.propTypes = {};
 
 const styles = (theme) => ({
   root: {
@@ -167,4 +169,4 @@ const styles = (theme) => ({
   },
 });
 
-export default withStyles(styles)(TerritoryInput);
+export default withStyles(styles)(TerritoryInputFilter);

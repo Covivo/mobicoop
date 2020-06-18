@@ -85,4 +85,5 @@
 /client/public/robots.txt
 /client/public/mobile_app_repository.json
 /admin/.env
+/admin/public/logo.png
 /admin/public/robots.txt

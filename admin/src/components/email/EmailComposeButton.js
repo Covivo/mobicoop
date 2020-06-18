@@ -3,11 +3,20 @@ import MailIcon from '@material-ui/icons/Mail';
 import { Button, useTranslate, useMutation, useDataProvider } from 'react-admin';
 import MailComposer from './MailComposer';
 import RgpdConsent from './RgpdConsent';
+import BlockIcon from '@material-ui/icons/Block';
 
-const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues }) => {
+const EmailComposeButton = ({
+  selectedIds,
+  resource,
+  basePath,
+  filterValues,
+  canSend,
+  comeFrom,
+}) => {
   const [open, setOpen] = useState(false); // State of the mail modal
   const [openRgpd, setOpenRgpd] = useState(false); // State of the RGPD modal
-  const [rgpdAgree, setRgpdAgree] = useState(false); // State of the RGPD modal
+  const [rgpdAgree, setRgpdAgree] = useState(false); // State the agreement of the RGPD modal
+  const [sendAll, setSendAll] = useState(null); // State the agreement of the RGPD modal
   const shouldFetch = !!Object.keys(filterValues).length;
   const [mutate, { data, loaded }] = useMutation();
   const dataProvider = useDataProvider();
@@ -64,6 +73,22 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues }) =
       setOpenRgpd(true);
     }
   };
+
+  const handleClickAll = () => {
+    setSendAll(comeFrom);
+    if (rgpdAgree) {
+      mutate({
+        type: 'create',
+        resource: 'campaigns',
+        payload: {
+          data: campaignCreateParameters,
+        },
+      });
+    } else {
+      setOpenRgpd(true);
+    }
+  };
+
   useEffect(() => {
     if (loaded && data.id) {
       setCampagneInit(data);
@@ -82,18 +107,34 @@ const EmailComposeButton = ({ selectedIds, resource, basePath, filterValues }) =
 
   return (
     <>
+      {canSend ? (
+        <>
+          <Button
+            label={
+              shouldFetch
+                ? translate('custom.email.texte.emailFiltre')
+                : translate('custom.email.texte.emailSelect')
+            }
+            onClick={handleClick}
+            startIcon={<MailIcon />}
+          />
+        </>
+      ) : (
+        <Button
+          label={translate('custom.email.texte.blockUnsubscribe')}
+          startIcon={<BlockIcon />}
+        />
+      )}
       <Button
-        label={
-          shouldFetch
-            ? translate('custom.email.texte.emailTous')
-            : translate('custom.email.texte.emailSelect')
-        }
-        onClick={handleClick}
+        label={translate('custom.email.texte.emailAll')}
+        onClick={handleClickAll}
         startIcon={<MailIcon />}
       />
+
       {open && (
         <MailComposer
           isOpen={open}
+          sendAll={sendAll}
           selectedIds={selectedIdsFormat}
           onClose={() => setOpen(false)}
           shouldFetch={shouldFetch}
