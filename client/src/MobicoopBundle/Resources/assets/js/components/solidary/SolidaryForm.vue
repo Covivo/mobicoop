@@ -413,6 +413,7 @@
                             hide-details
                           />
                           <v-menu
+                            ref="menuStartTime"
                             v-model="menuStartTime"
                             :close-on-content-click="false"
                             transition="scale-transition"
@@ -464,7 +465,7 @@
                       </p>
                       <v-radio-group
                         v-model="endTimeChoice"
-                        :disabled="this.form.startTime == null"
+                        :disabled="form.startTime == null"
                       >
                         <v-radio
                           :label="$t('frequency.endTimeChoice1')"
@@ -477,6 +478,7 @@
                           <v-radio
                             :value="1"
                             hide-details
+                            :disabled="startTimeChoice != 0"
                           />
                           <v-menu
                             v-model="menuEndTime"
@@ -492,7 +494,7 @@
                                 prepend-icon=""
                                 readonly
                                 clearable
-                                :disabled="endTimeChoice != 0"
+                                :disabled="endTimeChoice != 1"
                                 v-on="on"
                                 @click:clear="clearEndTime"
                               />
@@ -501,8 +503,9 @@
                               v-model="endTime"
                               format="24hr"
                               header-color="secondary"
+                              :min="computedStartTimeFormat"
                               @click:minute="menuEndTime = false"
-                              @change="changeEndTime()"
+                              @change="changeEndTimeValue()"
                             />
                           </v-menu>
                         </v-row>
@@ -915,6 +918,7 @@ export default {
       menuStartTime: false,
       endTime: null,                  // end time picked
       menuEndTime: false,
+      
 
       nowDate : new Date().toISOString().slice(0,10),
       
@@ -967,6 +971,11 @@ export default {
       return this.punctualStartDate
         ? moment(this.punctualStartDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
+    },
+    computedStartTimeFormat() {
+      return this.startTime
+        ? moment(moment().format('YYYY-MM-DD')+' '+this.startTime).format('HH:mm')
+        : "";
     }
   },
   watch: {
@@ -1006,18 +1015,10 @@ export default {
         this.form.startTime = "19:30";
         this.form.marginDuration = 90;
       }
+      this.changeEndTime(this.endTimeChoice);
     },
     endTimeChoice(val) {
-      this.form.endTime = null;
-      if (val == 1 && this.endTime != null) {
-        this.form.endTime = this.endTime;
-      } else if (val == 2) {
-        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(1, 'hours').format('HH:MM');
-      } else if (val == 3) {
-        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(2, 'hours').format('HH:MM');
-      } else if (val == 4) {
-        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(3, 'hours').format('HH:MM');
-      }
+      this.changeEndTime(val)
     },
   },
   created() {
@@ -1072,17 +1073,33 @@ export default {
     },
     changeStartTime() {
       this.form.startTime = this.startTime;
+      this.endTime = null;
+      this.form.endTime = null;
     },
     clearStartTime() {
       this.startTime = null;
       this.form.startTime = null;
+      this.endTime = null;
+      this.form.endTime = null;
     },
-    changeEndTime() {
+    changeEndTimeValue() {
       this.form.endTime = this.endTime;
     },
     clearEndTime() {
       this.endTime = null;
       this.form.endTime = null;
+    },
+    changeEndTime(choice) {
+      this.form.endTime = null;
+      if (choice == 1 && this.endTime != null) {
+        this.form.endTime = this.endTime;
+      } else if (choice == 2) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(1, 'hours').format('HH:mm');
+      } else if (choice == 3) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(2, 'hours').format('HH:mm');
+      } else if (choice == 4) {
+        this.form.endTime = moment(moment().format('YYYY-MM-DD')+' '+this.form.startTime).add(3, 'hours').format('HH:mm');
+      }
     },
     save (date) {
       this.$refs.menu.save(date);
