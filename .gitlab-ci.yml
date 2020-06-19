@@ -93,7 +93,8 @@ dev_deploy:
     - chmod 777 config/jwt/*
     - cp config/rdex/clients.json.dist config/rdex/clients.json 
     - cp config/rdex/operator.json.dist config/rdex/operator.json
-    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
+    - cp config/rdex/providers.json.dist config/rdex/providers.json
+    - cp config/publicTransport/providers.json.dist config/publicTransport/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     # - npm run update-db
@@ -146,7 +147,8 @@ test_deploy:
     - chmod 777 config/jwt/*
     - cp config/rdex/clients.json.dist config/rdex/clients.json 
     - cp config/rdex/operator.json.dist config/rdex/operator.json
-    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
+    - cp config/rdex/providers.json.dist config/rdex/providers.json
+    - cp config/publicTransport/providers.json.dist config/publicTransport/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db
@@ -209,7 +211,8 @@ prod_deploy:
     - chmod 777 config/jwt/*
     - cp config/rdex/clients.json.dist config/rdex/clients.json 
     - cp config/rdex/operator.json.dist config/rdex/operator.json
-    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
+    - cp config/rdex/providers.json.dist config/rdex/providers.json
+    - cp config/publicTransport/providers.json.dist config/publicTransport/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db   
