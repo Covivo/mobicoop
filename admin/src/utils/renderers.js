@@ -5,6 +5,8 @@ export const addressRenderer = (address) =>
     ? `${address.displayLabel[0]} - ${address.displayLabel[1]}`
     : '';
 
+export const journeyRenderer = ({ origin, destination }) => `${origin} -> ${destination}`;
+
 export const usernameRenderer = ({ record }) => `${record.givenName} ${record.familyName}`;
 
 export const UserRenderer = ({ record }) => <span>{usernameRenderer({ record })} </span>;

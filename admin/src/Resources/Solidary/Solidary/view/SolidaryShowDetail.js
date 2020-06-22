@@ -19,7 +19,6 @@ const SolidaryShowDetail = ({ record }) => {
   const classes = useStyles();
   const history = useHistory();
 
-  console.log('record:', record);
   if (!record) {
     return null;
   }
@@ -48,7 +47,6 @@ const SolidaryShowDetail = ({ record }) => {
   } = record;
 
   const user = solidaryUser.user || {};
-  console.log('User : ', user);
 
   return (
     <>
