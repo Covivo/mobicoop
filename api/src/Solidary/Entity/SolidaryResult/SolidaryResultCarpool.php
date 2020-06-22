@@ -67,6 +67,12 @@ class SolidaryResultCarpool
     private $author;
 
     /**
+    * @var int Id of the author
+    * @Groups({"readSolidarySearch"})
+    */
+    private $authorId;
+
+    /**
      * @var string Journey's origin
      * @Groups({"readSolidarySearch"})
      */
@@ -135,6 +141,18 @@ class SolidaryResultCarpool
     public function setAuthor(string $author): self
     {
         $this->author = $author;
+        
+        return $this;
+    }
+
+    public function getAuthorId(): ?int
+    {
+        return $this->authorId;
+    }
+    
+    public function setAuthorId(int $authorId): self
+    {
+        $this->authorId = $authorId;
         
         return $this;
     }
