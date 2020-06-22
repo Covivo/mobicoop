@@ -41,6 +41,7 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class SolidaryContactManager
 {
@@ -126,6 +127,10 @@ class SolidaryContactManager
     {
         $message = new Message();
         $message->setUser($object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+        // we set the user delegate if the message is send by an solidary operator
+        if ($this->security->getUser()->getId() !== $message->getUser()->getId()) {
+            $message->setUserDelegate($this->security->getUser());
+        }
         $message->setText($object->getContent());
 
         // If there is already a message in the thread, we need to set it
