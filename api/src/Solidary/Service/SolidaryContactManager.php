@@ -133,13 +133,15 @@ class SolidaryContactManager
         }
         $message->setText($object->getContent());
 
-        // If there is already a message in the thread, we need to set it
-        $solidaryAskHistories = $object->getSolidarySolution()->getSolidaryAsk()->getSolidaryAskHistories();
-        if (!is_null($solidaryAskHistories)) {
-            foreach ($solidaryAskHistories as $solidaryAskHistory) {
-                if (!is_null($solidaryAskHistory->getMessage())) {
-                    $message->setMessage($solidaryAskHistory->getMessage());
-                    break;
+        if ($object->getSolidarySolution()->getSolidaryAsk()) {
+            // If there is already a message in the thread, we need to set it
+            $solidaryAskHistories = $object->getSolidarySolution()->getSolidaryAsk()->getSolidaryAskHistories();
+            if (!is_null($solidaryAskHistories)) {
+                foreach ($solidaryAskHistories as $solidaryAskHistory) {
+                    if (!is_null($solidaryAskHistory->getMessage())) {
+                        $message->setMessage($solidaryAskHistory->getMessage());
+                        break;
+                    }
                 }
             }
         }
