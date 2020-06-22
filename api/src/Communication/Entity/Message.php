@@ -110,7 +110,7 @@ class Message
     /**
     * @var User|null The user who send the message in the name of the creator.
     *
-    * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
+    * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
     * @Groups({"read","write","threads","thread"})
     */
     private $userDelegate;
