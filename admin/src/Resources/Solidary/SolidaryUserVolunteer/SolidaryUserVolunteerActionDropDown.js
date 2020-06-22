@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDataProvider, useNotify } from 'react-admin';
+import omit from 'lodash.omit';
 
 import DropDownButton from '../../../components/button/DropDownButton';
 import { SolidaryMessagesModal } from '../Solidary/SolidaryMessagesModal';
 import { SolidarySMSModal } from '../Solidary/SolidarySMSModal';
 import { usernameRenderer } from '../../../utils/renderers';
 
-const SMS_CONTACT_OPTION = 'SMS_CONTACT_OPTION';
-const MESSAGE_CONTACT_OPTION = 'MESSAGE_CONTACT_OPTION';
-const ADDPOTENTIAL_OPTION = 'ADDPOTENTIAL_OPTION';
+export const SMS_CONTACT_OPTION = 'SMS_CONTACT_OPTION';
+export const MESSAGE_CONTACT_OPTION = 'MESSAGE_CONTACT_OPTION';
+export const ADDPOTENTIAL_OPTION = 'ADDPOTENTIAL_OPTION';
 
 const resolveOptions = (solidary) => ({
-  [MESSAGE_CONTACT_OPTION]: `Ajouter comme conducteur potentiel de ${usernameRenderer({
-    record: solidary.solidaryUser.user,
-  })}`,
-  [SMS_CONTACT_OPTION]: 'Écrire directement vers messagerie',
-  [ADDPOTENTIAL_OPTION]: 'Envoyer directement un SMS',
+  [ADDPOTENTIAL_OPTION]: `Ajouter comme conducteur potentiel${
+    solidary
+      ? ` de ${usernameRenderer({
+          record: solidary.solidaryUser.user,
+        })}`
+      : ''
+  }`,
+  [MESSAGE_CONTACT_OPTION]: 'Écrire directement vers messagerie',
+  [SMS_CONTACT_OPTION]: 'Envoyer directement un SMS',
 });
 
-const createSolidarySolutionResolver = (dataProvider) => async (solidaryUserId, solidary) => {
-  const matchingSolution = ((solidary && solidary.solutions) || []).find(({ UserId, id }) => {
-    return UserId === solidaryUserId;
+const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary) => {
+  // Search an existing solution with this user in solidary
+
+  const matchingSolution = ((solidary && solidary.solutions) || []).find((solution) => {
+    return solution.UserId === userId;
   });
 
   if (matchingSolution) {
@@ -37,32 +44,31 @@ const createSolidarySolutionResolver = (dataProvider) => async (solidaryUserId, 
     },
   });
 
-  let matching = matchings.find((m) => m.solidaryResultCarpool.authorId === solidaryUserId);
+  // Attempt to find a matching solution and create it
+
+  // @TODO: Will work when authorId is available on the API
+  // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
+  const matching = matchings.find((m) => m.solidaryResultCarpool.authorId === userId);
   if (!matching) {
-    return null;
+    throw new Error("Can't find matching solution");
   }
 
   return dataProvider
     .create('solidary_solutions', {
       data: { solidaryMatching: matching.solidaryMatching.id },
     })
-    .then(() => {
-      // @TODO: Retrieve the solidaryId here
-      return null;
-    });
+    .then((response) => (response ? response.data.originId : null));
 };
 
 const createActionPropsResolver = (dataProvider) => {
   const ensureSolidarySolutionId = createSolidarySolutionResolver(dataProvider);
 
-  return async (action, { solidaryUserId, solidary }) => {
+  return async (action, { userId, solidary }) => {
     if ([MESSAGE_CONTACT_OPTION, SMS_CONTACT_OPTION].includes(action)) {
-      return ensureSolidarySolutionId(solidaryUserId, solidary).then((solidarySolutionId) => {
+      return ensureSolidarySolutionId(userId, solidary).then((solidarySolutionId) => {
         if (solidarySolutionId) {
           return { solidarySolutionId, solidaryId: solidary.originId };
         }
-
-        throw new Error('Une erreur est survenue');
       });
     }
 
@@ -70,7 +76,17 @@ const createActionPropsResolver = (dataProvider) => {
   };
 };
 
-export const SolidaryUserVolunteerActionDropDown = ({ solidary, record }) => {
+const AddSolidaryNotification = () => {
+  const notify = useNotify();
+
+  useEffect(() => {
+    notify('Trajet / Transporteur associé à la demande !', 'success');
+  }, []);
+
+  return null;
+};
+
+export const SolidaryUserVolunteerActionDropDown = ({ solidary, userId, omittedOptions }) => {
   const [action, setAction] = useState(null);
   const [actionProps, setActionProps] = useState({});
   const [loading, setLoading] = useState(false);
@@ -90,19 +106,23 @@ export const SolidaryUserVolunteerActionDropDown = ({ solidary, record }) => {
 
     actionPropsResolver(action, {
       solidary,
-      solidaryUserId: record.originId,
+      userId,
     })
-      .then((a) => {
+      .then((actionProps) => {
         setAction(action);
-        setActionProps(a);
+        setActionProps(actionProps);
       })
-      .catch((e) => notify('Une erreur est survenue', 'warning'))
+      .catch((e) => notify(e.message, 'warning'))
       .finally(() => setLoading(false));
   };
 
   return (
     <>
-      <DropDownButton options={resolveOptions(solidary)} onSelect={handleSetAction} />
+      <DropDownButton
+        options={omit(resolveOptions(solidary), omittedOptions)}
+        onSelect={handleSetAction}
+      />
+      {!loading && action === ADDPOTENTIAL_OPTION && <AddSolidaryNotification />}
       {!loading && action === MESSAGE_CONTACT_OPTION && (
         <SolidaryMessagesModal {...actionProps} onClose={handleCloseModal} />
       )}
@@ -111,4 +131,8 @@ export const SolidaryUserVolunteerActionDropDown = ({ solidary, record }) => {
       )}
     </>
   );
+};
+
+SolidaryUserVolunteerActionDropDown.defaultProps = {
+  omittedOptions: [],
 };

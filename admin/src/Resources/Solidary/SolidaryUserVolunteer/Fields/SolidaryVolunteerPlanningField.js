@@ -74,11 +74,12 @@ const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
     onOpenMessaging(slot);
   };
 
-  const handleOpenSolidarySolicitation = (popupState) => () => {
-    popupState.close();
-    const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
-    router.push(`/solidaries/${raSolidaryId}/show`);
-  };
+  // @TODO: Open the right popup from the MenuItem below
+  // const handleOpenSolidarySolicitation = (popupState) => () => {
+  //   popupState.close();
+  //   const raSolidaryId = encodeURIComponent(`/solidaries/${slot.solidaryId}`);
+  //   router.push(`/solidaries/${raSolidaryId}/show`);
+  // };
 
   const StatusIcon = solidaryAskStatusIcons[slot.status];
 
@@ -113,9 +114,9 @@ const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
             <MenuItem onClick={handleOpenSolidaryDiscuss(popupState)}>
               <span>{`Contacter ${slot.beneficiary} par messagerie pour la demande #${slot.solidaryId}`}</span>
             </MenuItem>
-            <MenuItem onClick={handleOpenSolidarySolicitation(popupState)}>
+            {/* <MenuItem onClick={handleOpenSolidarySolicitation(popupState)}>
               <span>{`Soliciter réponse de ${slot.beneficiary} sur demande #${slot.solidaryId}`}</span>
-            </MenuItem>
+            </MenuItem> */}
           </Menu>
         </>
       )}

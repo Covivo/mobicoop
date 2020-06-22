@@ -23,7 +23,6 @@ const SolidaryAnimation = ({ record }) => {
     { solidary: record.id }
   );
   const animations = Object.values(data) || [];
-  console.log('data :', animations);
   const [seeAllAnimations, setSeeAllAnimations] = useState(false);
 
   return (

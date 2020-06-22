@@ -14,12 +14,16 @@ import {
 } from 'react-admin';
 
 import { solidaryLabelRenderer } from '../../../utils/renderers';
-import { CreateSolidarySolutionButton } from './CreateSolidarySolutionButton';
 import { JourneyField } from './Field/JourneyField';
 import { FrequencyField } from './Field/FrequencyField';
 import { DayField } from './Field/DayField';
 import { RoleField } from './Field/RoleField';
 import { ScheduleDaysField } from './Field/ScheduleDaysField';
+import {
+  SolidaryUserVolunteerActionDropDown,
+  ADDPOTENTIAL_OPTION,
+} from '../SolidaryUserVolunteer/SolidaryUserVolunteerActionDropDown';
+import { useSolidary } from '../Solidary/hooks/useSolidary';
 
 const SolidarySearchFilter = (props) => (
   <Filter {...props}>
@@ -54,8 +58,26 @@ const SolidarySearchFilter = (props) => (
   </Filter>
 );
 
-const CarpoolDatagrid = (
-  <Datagrid>
+const ActionsDropDown = ({ record, ...props }) => {
+  // @TODO: Will work when authorId is available on the API
+  // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
+  const isAlreadySelected = props.solidary.solutions.find(
+    (s) => s.UserId === record.solidaryResultCarpool.authorId
+  );
+
+  return (
+    <SolidaryUserVolunteerActionDropDown
+      {...props}
+      omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
+      userId={
+        6 /* @TODO: Uncomment this when API is ready => record.solidaryResultCarpool.authorUserId */
+      }
+    />
+  );
+};
+
+const CarpoolDatagrid = ({ solidary, ...props }) => (
+  <Datagrid {...props}>
     <TextField
       source="solidaryResultCarpool.author"
       label="resources.solidary_searches.fields.author"
@@ -80,7 +102,7 @@ const CarpoolDatagrid = (
       source="solidaryResultCarpool.solidaryExlusive"
       label="resources.solidary_searches.fields.exclusive"
     />
-    <CreateSolidarySolutionButton source="solidaryMatching.id" label="Action" />
+    <ActionsDropDown label="Action" solidary={solidary} />
   </Datagrid>
 );
 
@@ -105,15 +127,18 @@ const TransportDatagrid = (
 );
 
 export const SolidarySearchListGuesser = (props) => {
+  const solidary = useSolidary(props.filterValues.solidary);
+
   // Resolve datagrid fields from return data
   // if loading => display null because fields should not match previous data
   // if solidaryResultCarpool is not null => it's a carpool list
   // if solidaryResultTransport is not null => it's a transport list
-  const dynamicDatagrid = props.loading
-    ? null
-    : props.ids.length > 0 && props.data[props.ids[0]].solidaryResultCarpool !== null
-    ? CarpoolDatagrid
-    : TransportDatagrid;
+  const dynamicDatagrid = props.loading ? null : props.ids.length > 0 &&
+    props.data[props.ids[0]].solidaryResultCarpool !== null ? (
+    <CarpoolDatagrid solidary={solidary} />
+  ) : (
+    TransportDatagrid
+  );
 
   return (
     <List

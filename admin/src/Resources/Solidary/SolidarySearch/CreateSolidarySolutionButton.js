@@ -5,7 +5,7 @@ import { Mutation, Button } from 'react-admin';
 
 export const CreateSolidarySolutionButton = ({ record, source }) => {
   const solidaryMatching = get(record, source);
-  console.log({ solidaryMatching, record });
+
   return (
     <Mutation
       type="create"

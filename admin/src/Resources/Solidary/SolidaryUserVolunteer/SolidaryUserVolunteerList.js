@@ -17,8 +17,12 @@ import { DayField } from './Fields/DayField';
 import { AddressField } from './Fields/AddressField';
 import { RoleField } from './Fields/RoleField';
 import { solidaryLabelRenderer } from '../../../utils/renderers';
-import { SolidaryUserVolunteerActionDropDown } from './SolidaryUserVolunteerActionDropDown';
 import { useSolidary } from '../Solidary/hooks/useSolidary';
+
+import {
+  SolidaryUserVolunteerActionDropDown,
+  ADDPOTENTIAL_OPTION,
+} from './SolidaryUserVolunteerActionDropDown';
 
 const SolidaryUserVolunteerFilter = (props) => (
   <Filter {...props}>
@@ -41,6 +45,19 @@ const SolidaryUserVolunteerFilter = (props) => (
     />
   </Filter>
 );
+
+const ActionsDropDown = ({ record, ...props }) => {
+  // @TODO: Shouldn't we retrieve the corresponding solution matchin instead of checking user ?
+  const isAlreadySelected = props.solidary.solutions.find((s) => s.UserId === record.user.originId);
+
+  return (
+    <SolidaryUserVolunteerActionDropDown
+      {...props}
+      omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
+      userId={record.user.originId}
+    />
+  );
+};
 
 export const SolidaryUserVolunteerListGuesser = (props) => {
   const solidary = useSolidary(props.filterValues.solidary);
@@ -70,7 +87,7 @@ export const SolidaryUserVolunteerListGuesser = (props) => {
         <DayField source="Fri" />
         <DayField source="Sat" />
         <DayField source="Sun" />
-        {solidary ? <SolidaryUserVolunteerActionDropDown solidary={solidary} /> : <EditButton />}
+        {solidary ? <ActionsDropDown solidary={solidary} /> : <EditButton />}
       </Datagrid>
     </List>
   );
