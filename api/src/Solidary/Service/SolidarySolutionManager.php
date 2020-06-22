@@ -59,6 +59,10 @@ class SolidarySolutionManager
      */
     public function createSolidarySolution(SolidarySolution $solidarySolution): ?SolidarySolution
     {
+        // If the solidaryMatching have already a solidarySolution we throw an error because a solidaryMatching can only have ONE solidarySolution
+        if (is_null($solidarySolution->getSolidaryMatching()->getSolidarySolution())) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_MATCHING_ALREADY_USED);
+        }
         // If there is a SolidaryUser, it has to be a volunteer
         if (!is_null($solidarySolution->getSolidaryMatching()->getSolidaryUser()) && !$solidarySolution->getSolidaryMatching()->getSolidaryUser()->isVolunteer()) {
             throw new SolidaryException(SolidaryException::IS_NOT_VOLUNTEER);
