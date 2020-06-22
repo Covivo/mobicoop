@@ -57,6 +57,7 @@ use App\Communication\Interfaces\MessagerInterface;
  *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class SolidaryContact implements MessagerInterface
 {

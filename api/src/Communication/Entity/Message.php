@@ -108,6 +108,14 @@ class Message
     private $user;
 
     /**
+    * @var User|null The user who send the message in the name of the creator.
+    *
+    * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
+    * @Groups({"read","write","threads","thread"})
+    */
+    private $userDelegate;
+
+    /**
      * @var AskHistory|null The ask history item if the message is related to an ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
@@ -235,6 +243,18 @@ class Message
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+    
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
         
         return $this;
     }
