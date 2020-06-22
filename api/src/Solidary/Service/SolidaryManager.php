@@ -497,10 +497,12 @@ class SolidaryManager
             $messages = [];
             foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
                 if ($solidaryAskHistory->getMessage() !== null) {
+                    $userDelegate = $solidaryAskHistory->getMessage()->getUserDelegate();
+
                     $messages[] = [
-                        "userDelegateId" =>$solidaryAskHistory->getMessage()->getUserDelegate()->getId(),
-                        "userDelegateFamilyName" => $solidaryAskHistory->getMessage()->getUserDelegate()->getFamilyName(),
-                        "userDelegateGivenName" => $solidaryAskHistory->getMessage()->getUserDelegate()->getGivenName(),
+                        "userDelegateId" => $userDelegate ? $userDelegate->getId() : null,
+                        "userDelegateFamilyName" => $userDelegate ? $userDelegate->getFamilyName() : null,
+                        "userDelegateGivenName" => $userDelegate ? $userDelegate->getGivenName() : null,
                         "userId" => $solidaryAskHistory->getMessage()->getUser()->getId(),
                         "userFamilyName" => $solidaryAskHistory->getMessage()->getUser()->getFamilyName(),
                         "userGivenName" => $solidaryAskHistory->getMessage()->getUser()->getGivenName(),
