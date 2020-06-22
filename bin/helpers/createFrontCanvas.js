@@ -79,7 +79,7 @@ async function createCanvas() {
     process.exit(0);
   }
 
-  // set ASSETS_PREFIX from .env
+  // set ASSETS_PREFIX in client .env
   fs.readFile("client/.env", 'utf8', function (err,data) {
     if (err) {
       return console.log(err);
@@ -121,6 +121,7 @@ async function createCanvas() {
   console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
   let mainscss = path.resolve(__dirname, 'client-canvas/main.scss');
+  let webpackConfig = path.resolve(__dirname, 'client-canvas/webpack.config.js');
   let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
   let clientjs = path.resolve(pathToMobicoopBundle, './Resources/assets/js/client');
   let translationsComponents = path.resolve(translationsPath, './components');
@@ -139,6 +140,7 @@ async function createCanvas() {
   let bundles = path.resolve(__dirname, 'client-canvas/bundles');
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
   [err, success] = await to(fs.copy(mainscss, `${destinationAssets}/css/main.scss`));
+  [err, success] = await to(fs.copy(webpackConfig, `${destinationProject}/webpack.config.js`));
   [err, success] = await to(fs.copy(dcbd, `${destinationProject}/docker-compose-builder-darwin.yml`));
   [err, success] = await to(fs.copy(dcbl, `${destinationProject}/docker-compose-builder-linux.yml`));
   [err, success] = await to(fs.copy(dcd, `${destinationProject}/docker-compose-darwin.yml`));
