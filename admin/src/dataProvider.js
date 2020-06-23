@@ -16,6 +16,14 @@ const customResponseTransformer = (type, resource) => (response) => {
     }));
   }
 
+  if (type === GET_LIST && resource === 'solidary_animations') {
+    response.json['hydra:member'] = response.json['hydra:member'].map((item, index) => ({
+      ...item,
+      id: index, // The id is always 999999999 from the api, so we transform it for react-admin
+      '@id': item['@id'].replace('999999999999', index),
+    }));
+  }
+
   return response;
 };
 

@@ -1,6 +1,7 @@
 import get from 'lodash.get';
+import { journeyRenderer } from '../../../../utils/renderers';
 
 export const JourneyField = ({ record, source }) => {
   const journey = get(record, source);
-  return `${journey.origin} -> ${journey.destination}`;
+  return journeyRenderer({ origin: journey.origin, destination: journey.destination });
 };
