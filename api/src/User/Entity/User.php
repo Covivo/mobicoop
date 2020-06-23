@@ -310,21 +310,18 @@ use App\User\Controller\UserCanUseEmail;
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
- *              "controller"=UserThreadsDirectMessages::class,
  *              "path"="/users/{id}/threadsDirectMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
- *              "controller"=UserThreadsCarpoolMessages::class,
  *              "path"="/users/{id}/threadsCarpoolMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsSolidaryMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
- *              "controller"=UserThreadsSolidaryMessages::class,
  *              "path"="/users/{id}/threadsSolidaryMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
