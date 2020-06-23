@@ -337,6 +337,7 @@ class SolidaryManager
         
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
+        $user = null;
         if ($solidary->getEmail() || $solidary->getUser()) {
             $user = $this->solidaryCreateUser($solidary);
             $userId = $user->getId();
