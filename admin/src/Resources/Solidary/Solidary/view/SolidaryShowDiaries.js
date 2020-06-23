@@ -34,7 +34,9 @@ const SolidaryJourney = ({ solidary }) => {
     return <LinearProgress />;
   }
 
-  return referenceRecord
+  return referenceRecord &&
+    referenceRecord.origin.addressLocality &&
+    referenceRecord.destination.addressLocality
     ? journeyRenderer({
         origin: referenceRecord.origin.addressLocality,
         destination: referenceRecord.destination.addressLocality,
@@ -83,6 +85,7 @@ const DiariesTable = ({ diaries }) => {
   );
 };
 
+// Since sorting doesn't work, we sort animation by ourself
 const sortByCreatedAt = (a, b) => (new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1);
 
 export const SolidaryShowDiaries = ({ record }) => {
@@ -106,14 +109,17 @@ export const SolidaryShowDiaries = ({ record }) => {
     return <center>{translate('custom.solidaryAnimation.noActionForTheMoment')}</center>;
   }
 
-  const hasSolutions = record.solutions.length > 0;
-
   return (
     <>
       <div style={{ padding: 20 }}>
         <Grid container>
           <Grid item xs={4}>
-            <Button fullWidth disabled={!hasSolutions} onClick={() => setDisplayAddDiary(true)}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={() => setDisplayAddDiary(true)}
+            >
               {translate('custom.solidaryAnimation.addAction')}
             </Button>
           </Grid>
@@ -122,8 +128,9 @@ export const SolidaryShowDiaries = ({ record }) => {
           </Grid>
           <Grid item xs={4}>
             <Button
+              variant="contained"
+              color="primary"
               fullWidth
-              disabled={!hasSolutions}
               onClick={() => setDisplayChangeProgress(true)}
             >
               {translate('custom.solidaryAnimation.changeProgress')}

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Avatar, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import { Avatar, ListItem, ListItemAvatar, ListItemText, Grid } from '@material-ui/core';
 
 const SolidaryAnimationItem = ({ item }) => (
   <ListItem>
@@ -15,16 +15,24 @@ const SolidaryAnimationItem = ({ item }) => (
         }
       />
     </ListItemAvatar>
-    <ListItemText
-      primary={item.author ? `${item.author.givenName} ${item.author.familyName}` : 'Inconnu'}
-      secondary={new Date(item.updatedDate).toLocaleString()}
-    />
-    <ListItemText
-      primary={item.actionName || "Contact d'un conducteur par mail"}
-      secondary={
-        item.user && item.user.familyName ? `${item.user.givenName} ${item.user.familyName}` : ''
-      }
-    />
+    <Grid container>
+      <Grid item xs={6}>
+        <ListItemText
+          primary={item.author ? `${item.author.givenName} ${item.author.familyName}` : 'Inconnu'}
+          secondary={new Date(item.updatedDate).toLocaleString()}
+        />
+      </Grid>
+      <Grid item xs={6}>
+        <ListItemText
+          primary={item.actionName || "Contact d'un conducteur par mail"}
+          secondary={
+            item.user && item.user.familyName
+              ? `${item.user.givenName} ${item.user.familyName}`
+              : ''
+          }
+        />
+      </Grid>
+    </Grid>
   </ListItem>
 );
 
