@@ -26,7 +26,7 @@ const SolidaryUserBeneficiaryFilter = (props) => (
   </Filter>
 );
 
-export const SolidaryUserVolunteerList = (props) => (
+export const SolidaryUserBeneficiaryList = (props) => (
   <List
     {...props}
     bulkActionButtons={false}

@@ -1,11 +1,13 @@
 import SolidaryUserBeneficiaryIcon from '@material-ui/icons/Accessibility';
 
-import { SolidaryUserVolunteerList } from './SolidaryUserBeneficiaryList';
+import { SolidaryUserBeneficiaryList } from './SolidaryUserBeneficiaryList';
+import { SolidaryUserBeneficiaryEdit } from './SolidaryUserBeneficiaryEdit';
 
 export default {
   options: {
     label: 'Demandeurs solidaires',
   },
-  list: SolidaryUserVolunteerList,
+  list: SolidaryUserBeneficiaryList,
+  edit: SolidaryUserBeneficiaryEdit,
   icon: SolidaryUserBeneficiaryIcon,
 };
