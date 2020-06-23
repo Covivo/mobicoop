@@ -236,7 +236,6 @@ export default {
     return{
       locale: this.$i18n.locale,
       loading:this.loadingInit,
-      recipientName:"",
       dataLoadingBtn:this.loadingBtn,
       infosComplete:[],
       infos:[],
