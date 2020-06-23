@@ -44,6 +44,27 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "get"={
  *              "security"="is_granted('territory_list',object)"
  *          },
+ *          "territoriesPoint"={
+ *              "method"="GET",
+ *              "path"="/territories/point",
+ *              "security"="is_granted('territory_list',object)",
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "latitude",
+ *                          "type" = "float",
+ *                          "required" = true,
+ *                          "description" = "the point's latitude"
+ *                      },
+ *                      {
+ *                          "name" = "longitude",
+ *                          "type" = "float",
+ *                          "required" = true,
+ *                          "description" = "the point's longitude"
+ *                      }
+ *                  }
+ *              }
+ *           },
  *          "link"={
  *              "method"="GET",
  *              "path"="/territories/link",
