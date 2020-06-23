@@ -45,6 +45,7 @@ class SolidaryException extends \LogicException
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
     const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
+    const SOLIDARY_MATCHING_ALREADY_USED = "The SolidaryMatching already have a SolidarySolution";
 
     // Solidary matching
     const INVALID_HOUR_SLOT = "Hour slot invalid";
