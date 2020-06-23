@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "urlGet":"/utilisateur/messages/solidaires"
+    },
+    "en": {
+        "urlGet":"/user/messages/solidary"
+    }
+}

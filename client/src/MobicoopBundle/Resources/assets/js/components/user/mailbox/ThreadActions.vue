@@ -67,8 +67,8 @@
         />
 
         <v-journey
-          :waypoints="infos.outward.waypoints"
-          :time="!infos.outward.multipleTimes"
+          :waypoints="infos.outward && infos.outward.waypoints"
+          :time="infos.outward && !infos.outward.multipleTimes"
           :role="driver ? 'driver' : 'passenger'"
         />
         <v-simple-table v-if="infosComplete.carpooler && infosComplete.carpooler.status != 3">
@@ -294,7 +294,6 @@ export default {
         }
         axios.post(this.$t("urlGetAdAsk"), params)
           .then(response => {
-            //console.error(response.data);
             this.infosComplete = response.data;
 
             // If the user can be driver and passenger, we display driver infos by default
