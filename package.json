@@ -9,7 +9,7 @@
     "install-api": "cd api && composer install",
     "install-api-ci": "cd api && composer install",
     "install-admin": "cd admin && npm install",
-    "install-admin-ci": "cd admin && npm install && npm run build",
+    "install-admin-ci": "cd admin && npm install",
     "install-client": "cd client && npm install && composer install",
     "install-client-ci": "cd client && npm install && composer install && npm run compile",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
