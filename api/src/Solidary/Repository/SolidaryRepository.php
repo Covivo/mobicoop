@@ -136,4 +136,25 @@ class SolidaryRepository
 
         return $query->getQuery()->getResult();
     }
+
+    //  /**
+    //   * Find solidaries for a solidaryUser with a specific structure
+    //   *
+    //   * @param Int $solidaryUserId
+    //   * @param Int $structureId
+    //   * @return array|null
+    //   */
+    // public function findBySolidaryUserAndStructure(Int $solidaryUserId, Int $structureId): ?array
+    // {
+    //     $query = $this->repository->createQueryBuilder('s')
+    //     ->join('s.solidaryUserStructure', 'sus')
+    //     ->join('sus.solidaryUser', 'su')
+    //     ->join('sus.structure', 'ss')
+    //     ->where('su.id = :solidaryUser')
+    //     ->andWhere('ss.id = :structure')
+    //     ->setParameter('solidaryUser', $solidaryUserId)
+    //     ->setParameter('structure', $structureId);
+
+    //     return $query->getQuery()->getResult();
+    // }
 }

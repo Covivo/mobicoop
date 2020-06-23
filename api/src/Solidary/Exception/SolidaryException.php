@@ -69,6 +69,7 @@ class SolidaryException extends \LogicException
 
     // SolidaryUser
     const NO_SOLIDARY_USER = "This User is not a Solidary User";
+    const SOLIDARY_USER_ID_INVALID = "Invalid SolidaryUserId";
     const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
     const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
     const ALREADY_ACCEPTED = "This SolidaryUser has already be accepted for the current structure";
