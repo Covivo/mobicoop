@@ -11,10 +11,9 @@ const path = require('path');
 const to = require('await-to-js').default;
 const replace = require('replace-in-file');
 
-
 program
   .version('0.1.0')
-  .option('-n, --project  <string>', 'Name of the instance client')
+  .option('-n, --project  <string>', 'Name of the client platform')
   .parse(process.argv);
 
 if (!program.project) {
@@ -29,7 +28,6 @@ const destinationProject = path.resolve(__dirname, `../../../${program.project}`
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
 const destinationAssets = path.resolve(destinationProject, 'assets');
 const translationsPath = path.resolve(destinationProject, 'translations');
-
 
 /** -------------------------------------------------
                 Start the creation
@@ -79,18 +77,6 @@ async function createCanvas() {
     process.exit(0);
   }
 
-  // set ASSETS_PREFIX in client .env
-  fs.readFile("client/.env", 'utf8', function (err,data) {
-    if (err) {
-      return console.log(err);
-    }
-    var result = data.replace("ASSETS_PREFIX=bundle_", "ASSETS_PREFIX=");
-  
-    fs.writeFile("client/.env", result, 'utf8', function (err) {
-       if (err) return console.log(err);
-    });
-  });
-
   /**
    * Create Assets structure
    */
@@ -132,6 +118,7 @@ async function createCanvas() {
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
   let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
   let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci.yml');
+  let postDeploy = path.resolve(__dirname, 'client-canvas/postDeploy.sh');
   let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
   let makefile = path.resolve(__dirname, 'client-canvas/makefile');
   let readme = path.resolve(__dirname, 'client-canvas/Readme.md');
@@ -147,6 +134,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(dcl, `${destinationProject}/docker-compose-linux.yml`));
   [err, success] = await to(fs.copy(packagejson, `${destinationProject}/package.json`));
   [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci.yml`));
+  [err, success] = await to(fs.copy(postDeploy, `${destinationProject}/postDeploy.sh`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
   [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
   [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
@@ -157,25 +145,37 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(themes, `${destinationProject}/themes`));
   [err, success] = await to(fs.copy(clientjs, `${destinationProject}/assets/js`));
   [err, success] = await to(fs.copy(translationsComponents, `${destinationProject}/translations/components`));
-
 }
 
 /**
  * Replace some text to help the creation of the new client platform
  */
 async function replaceDataInCanvas() {
-  const options = {
+  const optionsName = {
     files: `${destinationProject}/**/*`,
     from: /\$\$NAME\$\$/gi,
     to: `${program.project}_platform`,
   };
-  const optionsEnv = {
+  const optionsInstance = {
+    files: `${destinationProject}/.gitlab-ci.yml`,
+    from: /\$\$INSTANCE\$\$/gi,
+    to: `${program.project}`,
+  };
+  const optionsPlatformNameEnv = {
     files: `${destinationProject}/.env`,
     from: /APP_NAME=mobicoop_platform/gi,
     to: `APP_NAME=${program.project}_platform`,
   };
-  await replace(options);
-  await replace(optionsEnv);
+  const optionsAssetsEnv = {
+    files: `${destinationProject}/.env`,
+    from: /ASSETS_PREFIX=bundle_/gi,
+    to: `ASSETS_PREFIX=`,
+  };
+  await replace(optionsName);
+  await replace(optionsInstance);
+  await replace(optionsPlatformNameEnv);
+  await replace(optionsAssetsEnv);
+
 }
 
 
