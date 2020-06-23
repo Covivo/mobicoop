@@ -71,6 +71,9 @@ use App\Solidary\Entity\SolidaryAskHistory;
  */
 class Message
 {
+    const TYPE_DIRECT = 'Direct';
+    const TYPE_CARPOOL = 'Carpool';
+    const TYPE_SOLIDARY = 'Solidary';
 
     /**
      * @var int The id of this message.

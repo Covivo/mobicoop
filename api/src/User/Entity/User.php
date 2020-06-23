@@ -60,6 +60,7 @@ use App\User\Controller\UserAsks;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
+use App\User\Controller\UserThreadsSolidaryMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
@@ -318,6 +319,13 @@ use App\User\Controller\UserCanUseEmail;
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreadsCarpoolMessages::class,
  *              "path"="/users/{id}/threadsCarpoolMessages",
+ *              "security"="is_granted('user_read',object)"
+ *          },
+ *          "threadsSolidaryMessages"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "controller"=UserThreadsSolidaryMessages::class,
+ *              "path"="/users/{id}/threadsSolidaryMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "put"={
