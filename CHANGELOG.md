@@ -4,6 +4,7 @@
 
 * [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
 * New Public Transport DataProvider for Conduent
+* Fix RDEX : Too much parameters needed
 
 ## CLIENT
 
