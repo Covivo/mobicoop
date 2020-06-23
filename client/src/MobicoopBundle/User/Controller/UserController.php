@@ -633,6 +633,17 @@ class UserController extends AbstractController
     }
 
     /**
+     * Get solidary related messages threads
+     */
+    public function userMessageSolidaryThreadsList(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+        $threads = $userManager->getThreadsSolidaryMessages($user);
+        return new Response(json_encode($threads));
+    }
+
+    /**
      * Get direct messages threads
      */
     public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)

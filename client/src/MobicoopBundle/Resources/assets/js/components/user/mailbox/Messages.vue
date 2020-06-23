@@ -30,8 +30,9 @@
             v-model="modelTabs"
             slider-color="secondary"
             color="secondary"
-            class="pa-0"
-            grow
+            next-icon="mdi-arrow-right-thick"
+            prev-icon="mdi-arrow-left-thick"      
+            show-arrows
           >
             <v-tab
               :key="0"
@@ -41,10 +42,15 @@
               ripple
               @click="reloadOnIcon()"
             >
-              <v-icon class="display-1">
-                mdi-car
-              </v-icon>
-              <p>{{ $t("headersCategories.titleCarpool") }}</p>
+              <div>
+                <v-icon class="headline">
+                  mdi-car
+                </v-icon>
+                <br>
+                <div class="mb-2">
+                  {{ $t("headersCategories.titleCarpool") }}
+                </div>
+              </div>
             </v-tab>
             <v-tab
               :key="1"
@@ -53,13 +59,33 @@
               ripple
               @click="reloadOnIcon()"
             >
-              <v-icon class="display-1">
-                mdi-chat
-              </v-icon>
-              <p>
-                {{ $t("headersCategories.titleLive") }}
-              </p>
+              <div>
+                <v-icon class="headline">
+                  mdi-chat
+                </v-icon>
+                <br>
+                <div class="mb-2">
+                  {{ $t("headersCategories.titleLive") }}
+                </div>
+              </div>
             </v-tab>
+            <v-tab
+              :key="2"
+              href="#tab-sm"
+              class="ma-0"
+              ripple
+              @click="reloadOnIcon()"
+            >
+              <div>
+                <v-icon class="headline">
+                  mdi-account-heart
+                </v-icon>
+                <br>
+                <div class="mb-2">
+                  {{ $t("headersCategories.titleSolidary") }}
+                </div>
+              </div>
+            </v-tab>            
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">
@@ -85,6 +111,7 @@
                   @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
                 />
               </v-tab-item>
+              <v-tab-item value="tab-sm" />
             </v-container>
           </v-tabs-items>
         </v-col>
