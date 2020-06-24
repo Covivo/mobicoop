@@ -177,6 +177,7 @@ export default {
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           name:this.name,
+          avatar:this.avatar,
           idAsk:this.idAsk
         }
       );

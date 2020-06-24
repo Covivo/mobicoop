@@ -164,6 +164,8 @@
             :loading-init="loadingDetails"
             :refresh="refreshActions"
             :loading-btn="loadingBtnAction"
+            :recipient-name="recipientName"
+            :recipient-avatar="recipientAvatar"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
           />
@@ -228,7 +230,8 @@ export default {
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
-      recipientName:"",
+      recipientName:null,
+      recipientAvatar:null,
       newThreadDirect:null,
       newThreadCarpool:null,
       loadingTypeText:false,
@@ -260,11 +263,13 @@ export default {
   },
   methods: {
     updateDetails(data){
+      console.error(data);
       this.hideClickIcon = false;
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
+      this.recipientAvatar = data.avatar;
     },
     sendInternalMessage(data){
       this.loadingTypeText = true;
@@ -337,6 +342,7 @@ export default {
       
     },
     refreshSelected(data){
+      console.error("refreshselected");
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;

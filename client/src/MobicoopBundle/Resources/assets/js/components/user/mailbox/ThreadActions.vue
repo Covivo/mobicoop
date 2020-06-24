@@ -5,6 +5,7 @@
       :hidden="hideClickIcon"
     >
       <v-card
+        v-if="idAsk"
         class="mb-3"
         flat
       >
@@ -21,14 +22,14 @@
       </v-card>
        
       <!-- Always visible (carpool or not) -->
-      <v-avatar v-if="infosComplete.carpooler && infosComplete.carpooler.avatars && !loading">
-        <img :src="infosComplete.carpooler.avatars[0]">
+      <v-avatar v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
+        <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
       </v-avatar>
       <v-card-text
-        v-if="!loading && infosComplete.carpooler && infosComplete.carpooler.status != 3"
+        v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
         class="font-weight-bold headline"
       >
-        {{ infosComplete.carpooler.givenName+' '+infosComplete.carpooler.shortFamilyName }}
+        {{ buildedRecipientName }}
       </v-card-text>
       <v-card-text
         v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
@@ -230,6 +231,14 @@ export default {
     loadingBtn: {
       type: Boolean,
       default: false
+    },
+    recipientName: {
+      type: String,
+      default: null
+    },
+    recipientAvatar: {
+      type: String,
+      default: null
     }
   },
   data(){
@@ -266,6 +275,14 @@ export default {
   computed:{
     distanceInKm(){
       return Math.round((this.infos.outward.commonDistance + this.infos.outward.detourDistance) / 1000) + ' km';
+    },
+    buildedRecipientName(){
+      if(this.recipientName){
+        return this.recipientName
+      }
+      else{
+        return this.infosComplete.carpooler.givenName+' '+this.infosComplete.carpooler.shortFamilyName
+      }
     }
   },
   watch:{
@@ -287,34 +304,39 @@ export default {
       this.hideClickIcon = false;
       if (this.idAsk != -2){
         this.loading = true;
-        let params = {
-          idAsk: this.idAsk,
-          idRecipient: this.idRecipient
-        }
-        axios.post(this.$t("urlGetAdAsk"), params)
-          .then(response => {
-            this.infosComplete = response.data;
+        if(this.idAsk){
+          let params = {
+            idAsk: this.idAsk,
+            idRecipient: this.idRecipient
+          }
+          axios.post(this.$t("urlGetAdAsk"), params)
+            .then(response => {
+              this.infosComplete = response.data;
 
-            // If the user can be driver and passenger, we display driver infos by default
-            if (this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null) {
-              this.infos = this.infosComplete.resultDriver;
-              this.driver = this.passenger = true;
-            } else if (this.infosComplete.resultPassenger !== null && this.infosComplete.resultDriver === null) {
-              this.infos = this.infosComplete.resultPassenger;
-              this.driver = false;
-              this.passenger = true;
-            } else {
-              this.infos = this.infosComplete.resultDriver;
-              this.driver = true;
-              this.passenger = false;
-            }
-          })
-          .catch(function (error) {
+              // If the user can be driver and passenger, we display driver infos by default
+              if (this.infosComplete.resultDriver !== null && this.infosComplete.resultPassenger !== null) {
+                this.infos = this.infosComplete.resultDriver;
+                this.driver = this.passenger = true;
+              } else if (this.infosComplete.resultPassenger !== null && this.infosComplete.resultDriver === null) {
+                this.infos = this.infosComplete.resultPassenger;
+                this.driver = false;
+                this.passenger = true;
+              } else {
+                this.infos = this.infosComplete.resultDriver;
+                this.driver = true;
+                this.passenger = false;
+              }
+            })
+            .catch(function (error) {
             // console.log(error);
-          })
-          .finally(() => {
-            this.$emit("refreshActionsCompleted");
-          });
+            })
+            .finally(() => {
+              this.$emit("refreshActionsCompleted");
+            });
+        }
+        else{
+          this.$emit("refreshActionsCompleted");
+        }
 
       }else{
         this.hideClickIcon = true;

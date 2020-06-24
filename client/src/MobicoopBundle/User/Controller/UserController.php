@@ -676,17 +676,6 @@ class UserController extends AbstractController
                 $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
 
                 return new JsonResponse($results);
-            } else {
-                // Direct
-                $recipient = $userManager->getUser($data['idRecipient']);
-                $response = [
-                    'carpooler' => [
-                        'avatars'=>$recipient->getAvatars(),
-                        'givenName'=>$recipient->getGivenName(),
-                        'shortFamilyName' => $recipient->getShortFamilyName()
-                    ]
-                ];
-                return new JsonResponse($response);
             }
         }
         return new JsonResponse();
