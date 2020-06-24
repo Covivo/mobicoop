@@ -348,6 +348,31 @@ class SolidaryManager
     }
 
     /**
+     * Get solidaries of a structure
+     *
+     * @param Structure $structure
+     * @return void
+     */
+    public function getClosedSolidaries(Structure $structure)
+    {
+        $solidaries = null;
+        $fullSolidaries = [];
+        $solidaryUserStructures = $structure->getSolidaryUserStructures();
+        foreach ($solidaryUserStructures as $solidaryUserStructure) {
+            $solidaries = $solidaryUserStructure->getSolidaries();
+            if (!empty($solidaries)) {
+                foreach ($solidaries as $solidary) {
+                    if ($this->getSolidary($solidary->getId())->getProgression() == Solidary::FULL_PROGRESSION) {
+                        $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                    }
+                }
+            }
+        }
+        return $fullSolidaries;
+    }
+
+
+    /**
      * Create a solidary
      *
      * @param Solidary $solidary
