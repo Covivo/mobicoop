@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from 'react-router-dom';
-
-import { Card, Grid, Divider } from '@material-ui/core';
+import { Card, Grid } from '@material-ui/core';
 
 import { Trip } from './Trip';
 import { NeedsAndStructure } from './NeedsAndStructure';
@@ -17,36 +15,12 @@ const useStyles = makeStyles((theme) => ({
 
 const SolidaryShowDetail = ({ record }) => {
   const classes = useStyles();
-  const history = useHistory();
 
   if (!record) {
     return null;
   }
 
-  const {
-    createdDate,
-    updatedDate,
-    id,
-    originId,
-    marginDuration,
-    frequency,
-    outwardDatetime,
-    outwardDeadlineDatetime,
-    returnDatetime,
-    returnDeadlineDatetime,
-    origin,
-    destination,
-    needs,
-    displayLabel,
-    progression,
-    solidaryUserStructure,
-    solidaryUser,
-    operator,
-    days,
-    solutions,
-  } = record;
-
-  const user = solidaryUser.user || {};
+  const { origin, destination, needs } = record;
 
   return (
     <>

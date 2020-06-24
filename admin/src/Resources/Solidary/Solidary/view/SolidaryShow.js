@@ -33,7 +33,7 @@ const SolidaryShow = (props) => {
           variant="fullWidth"
         >
           <Tab label="Informations" />
-          <Tab label="Détails" />
+          <Tab label="Conducteurs contactés" />
           <Tab label="Journal de suivi" />
         </Tabs>
       </AppBar>

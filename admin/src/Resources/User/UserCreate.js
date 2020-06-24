@@ -151,7 +151,6 @@ const UserCreate = (props) => {
             validate={validateRequired}
             formClassName={classes.spacedHalfwidth}
           />
-
           <DateInput
             required
             source="birthDate"
