@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useReference } from 'react-admin';
+import { useReference, useTranslate } from 'react-admin';
 import { LinearProgress } from '@material-ui/core';
 
 import {
@@ -24,6 +24,8 @@ const SolidaryJourney = ({ solidary }) => {
   }
 
   return referenceRecord &&
+    referenceRecord.origin &&
+    referenceRecord.destination &&
     referenceRecord.origin.addressLocality &&
     referenceRecord.destination.addressLocality
     ? journeyRenderer({
@@ -34,6 +36,8 @@ const SolidaryJourney = ({ solidary }) => {
 };
 
 export const DiariesTable = ({ diaries, version = 'solidary' }) => {
+  const translate = useTranslate();
+
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -67,7 +71,9 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
                 <SolidaryJourney solidary={diary.solidary} />
               </TableCell>
               <TableCell align="center">
-                {version === 'solidary' ? diary.actionName : diary.action}
+                {version === 'solidary'
+                  ? translate(`custom.actions.${diary.actionName}`)
+                  : diary.action}
               </TableCell>
               <TableCell align="center">
                 {diary.user ? usernameRenderer({ record: diary.user }) : '-'}

@@ -21,12 +21,21 @@ import { ValidateCandidateInput } from '../SolidaryUserVolunteer/Input/ValidateC
 const SolidaryUserBeneficiaryEditToolbar = (props) => (
   <Toolbar {...props}>
     {props.tabIndex === 0 && (
-      <Button
-        component={Link}
-        label="ra.action.edit"
-        icon={<ContentCreate />}
-        to={`/users/${encodeURIComponent(props.record.user.id)}`}
-      />
+      <>
+        <Button
+          component={Link}
+          label="ra.action.edit"
+          icon={<ContentCreate />}
+          to={`/users/${encodeURIComponent(props.record.user.id)}`}
+        />{' '}
+        <Button
+          component={Link}
+          label="Demandes solidaires"
+          to={`/solidaries?filter=${encodeURIComponent(
+            JSON.stringify({ solidaryUser: `/solidary_users/${props.record.originId}` })
+          )}`}
+        />
+      </>
     )}
     {props.tabIndex === 2 && <ValidateCandidateInput source="validatedCandidate" />}
     {props.tabIndex === 2 && <SaveButton />}

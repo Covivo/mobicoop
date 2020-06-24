@@ -33,10 +33,6 @@ export const SolidaryShowDiaries = ({ record }) => {
     return <Loading className={classes.loading} />;
   }
 
-  if (!ids || ids.length === 0) {
-    return <center>{translate('custom.solidaryAnimation.noActionForTheMoment')}</center>;
-  }
-
   return (
     <>
       <div style={{ padding: 20 }}>
@@ -66,7 +62,11 @@ export const SolidaryShowDiaries = ({ record }) => {
           </Grid>
         </Grid>
       </div>
-      <DiariesTable diaries={ids ? ids.map((id) => data[id]).sort(sortByCreatedAt) : []} />
+      {!ids || ids.length === 0 ? (
+        <center>{translate('custom.solidaryAnimation.noActionForTheMoment')}</center>
+      ) : (
+        <DiariesTable diaries={ids ? ids.map((id) => data[id]).sort(sortByCreatedAt) : []} />
+      )}{' '}
       {displayAddDiary && record && (
         <SolidaryAddDiaryPopup solidary={record} onClose={() => setDisplayAddDiary(false)} />
       )}
