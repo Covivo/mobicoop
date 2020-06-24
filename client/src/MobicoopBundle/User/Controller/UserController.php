@@ -72,12 +72,13 @@ class UserController extends AbstractController
     private $communityShow;
     private $userProvider;
     private $signUpLinkInConnection;
+    private $solidaryDisplay;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider, $signUpLinkInConnection)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider, $signUpLinkInConnection, $solidaryDisplay)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -87,6 +88,7 @@ class UserController extends AbstractController
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
+        $this->solidaryDisplay = $solidaryDisplay;
     }
 
     /***********
@@ -606,7 +608,8 @@ class UserController extends AbstractController
             "idMessage" => $idMessage,
             "idRecipient" => $idRecipient,
             "idAsk" => $idAsk,
-            "newThread" => $newThread
+            "newThread" => $newThread,
+            "solidaryDisplay" => $this->solidaryDisplay
         ]);
     }
 

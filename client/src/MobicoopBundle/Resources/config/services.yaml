@@ -190,6 +190,7 @@ services:
             $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
             $community_show: '%env(resolve:COMMUNITY_SHOW)%'
             $signUpLinkInConnection: '%env(bool:SIGNUP_LINK_IN_CONNECTION)%'
+            $solidaryDisplay: '%env(bool:SOLIDARY_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

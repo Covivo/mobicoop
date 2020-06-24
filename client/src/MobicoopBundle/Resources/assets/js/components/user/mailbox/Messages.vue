@@ -70,6 +70,7 @@
               </div>
             </v-tab>
             <v-tab
+              v-if="solidaryDisplay"
               :key="2"
               href="#tab-sm"
               class="ma-0"
@@ -111,7 +112,10 @@
                   @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
                 />
               </v-tab-item>
-              <v-tab-item value="tab-sm">
+              <v-tab-item
+                v-if="solidaryDisplay"
+                value="tab-sm"
+              >
                 <threads-solidary
                   :id-thread-default="idThreadDefault"
                   :id-ask-to-select="currentIdAsk"
@@ -222,6 +226,10 @@ export default {
     givenIdRecipient: {
       type: Number,
       default: null
+    },
+    solidaryDisplay: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

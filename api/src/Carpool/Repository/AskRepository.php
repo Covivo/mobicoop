@@ -60,6 +60,11 @@ class AskRepository
     {
         $query = $this->repository->createQueryBuilder('a');
 
+        // If it's a Solidary request and the user is a beneficiary, we return no messages. Beneficiaries can't see solidary exchanges
+        if ($filter==Ask::ASKS_WITH_SOLIDARY && !is_null($user->getSolidaryUser()) && $user->getSolidaryUser()->isBeneficiary()) {
+            return [];
+        }
+        
         if ($filter==Ask::ASKS_WITHOUT_SOLIDARY) {
             $query->leftJoin('a.solidaryAsk', 'sa');
         } elseif ($filter==Ask::ASKS_WITH_SOLIDARY) {
