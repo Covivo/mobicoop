@@ -69,9 +69,7 @@ const ActionsDropDown = ({ record, ...props }) => {
     <SolidaryUserVolunteerActionDropDown
       {...props}
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
-      userId={
-        6 /* @TODO: Uncomment this when API is ready => record.solidaryResultCarpool.authorUserId */
-      }
+      userId={record.solidaryResultCarpool.authorId}
     />
   );
 };

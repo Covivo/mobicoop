@@ -59,6 +59,29 @@ const pickManagedSolidaryVolunteerData = (params) => ({
 });
 
 /**
+ * The backend is not able to handle all the fields on PUT
+ * For exemple, if password is null, it'll fail (but the original GET request returns a password...)
+ * So we only send the "managed" fields as data
+ */
+const pickManagedBeneficiaryData = (params) => ({
+  ...params,
+  data: {
+    ...pick(params.data, [
+      // @TODO: Handle user data in the solidary_beneficiaries endpoint
+      // 'birthDate',
+      // 'email',
+      // 'familyName',
+      // 'gender',
+      // 'givenName',
+      // 'telephone',
+      'validatedCandidate',
+    ]),
+    // We can't submit proofs because the API fails with them...
+    proofs: [],
+  },
+});
+
+/**
  * The backend is not able to handle deep fields like diaries (and we don't need it)
  * So we omit somes unhandled fields
  */
@@ -135,12 +158,17 @@ const extractRoles = (fields) => {
 const updateUser = async (provider, params) => {
   const newParams = { ...params };
 
-  newParams.data.userAuthAssignments =
-    newParams.data.fields != null
-      ? extractRoles(newParams.data.fields)
-      : newParams.data.rolesTerritory.map(({ territory, authItem }) =>
-          territory != null ? { authItem, territory } : { authItem }
-        );
+  if (Array.isArray(newParams.data.rolesTerritory) || newParams.data.fields != null) {
+    newParams.data.userAuthAssignments =
+      newParams.data.fields != null
+        ? extractRoles(newParams.data.fields)
+        : Array.isArray(newParams.data.rolesTerritory)
+        ? newParams.data.rolesTerritory.map(({ territory, authItem }) =>
+            territory != null ? { authItem, territory } : { authItem }
+          )
+        : [];
+  }
+
   return provider.update('users', {
     id: newParams.id,
     data: newParams.data,
@@ -214,6 +242,10 @@ export const dataProviderAdapter = (originalProvider) => ({
     if (resource === 'users') {
       newParams = pickManagedUserData(newParams);
       return updateUser(originalProvider, newParams);
+    }
+
+    if (resource === 'solidary_beneficiaries') {
+      newParams = pickManagedBeneficiaryData(newParams);
     }
 
     if (resource === 'solidary_volunteers') {
