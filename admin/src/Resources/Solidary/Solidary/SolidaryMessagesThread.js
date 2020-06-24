@@ -58,7 +58,11 @@ const Message = (props) => {
 
   return (
     <li className={classes.message}>
-      <span className="from">{`${props.userFamilyName} ${props.userGivenName}`}</span>
+      {props.userDelegateId ? (
+        <span className="from">{`${props.userDelegateFamilyName} ${props.userDelegateGivenName} (pour le compte de ${props.userFamilyName} ${props.userGivenName})`}</span>
+      ) : (
+        <span className="from">{`${props.userFamilyName} ${props.userGivenName}`}</span>
+      )}
       <p>{props.text}</p>
       {props.createdDate && (
         <span className="date">
@@ -91,11 +95,17 @@ export const SolidaryMessagesThread = ({ messages, onSubmit, submitting }) => {
     setMessage(e.currentTarget.value);
   };
 
+  const firstMessageUserId = messages[0] && messages[0].userId;
+
   return (
     <>
       <ul className={classes.messageList} ref={messageListElRef}>
         {messages.map((msg) => (
-          <Message key={`${msg.createdDate}-${msg.userId}`} {...msg} />
+          <Message
+            key={`${msg.createdDate}-${msg.userId}`}
+            {...msg}
+            ongoing={msg.userId !== firstMessageUserId}
+          />
         ))}
       </ul>
       <div className={classes.messageInput}>

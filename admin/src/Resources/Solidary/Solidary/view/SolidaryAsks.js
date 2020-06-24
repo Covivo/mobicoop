@@ -54,7 +54,6 @@ const SolidaryAsks = ({ record, history }) => {
   } = record;
 
   const user = solidaryUser.user || {};
-  console.log('User : ', user);
 
   return (
     <>

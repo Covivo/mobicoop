@@ -97,6 +97,7 @@ export default () => (
         <Resource name="territories" />,
         <Resource name="solidary_users" />,
         <Resource name="solidary_contacts" />,
+        <Resource name="actions" />,
       ].filter((x) => x);
     }}
   </Admin>
