@@ -52,6 +52,7 @@ const fr = {
   },
   custom: {
     actions: {
+      solidary_update_progress_manually: 'Mise à jour de la progression',
       solidary_more_infos_sms: "Demande d'informations supplémentaires par SMS",
       solidary_more_infos_message: "Demande d'informations supplémentaires par messagerie interne",
       solidary_more_infos_email: "Demande d'informations supplémentaires par appel",
@@ -110,7 +111,7 @@ const fr = {
     },
     solidaryask: {
       status: {
-        asked: 'Demande ',
+        asked: 'Demande',
         refused: 'Refusé',
         pending: 'En attente',
         lookforresolution: 'En recherche de solution',
@@ -143,6 +144,10 @@ const fr = {
       sendSMS: 'Envoyer un SMS',
       associatedAsk: 'Demande associée',
       onBehalfOf: 'Pour le compte de',
+      driver: {
+        volunteer: 'Volunteer',
+        carpooler: 'Carpooler',
+      },
     },
     solidary_beneficiaries: {
       input: {

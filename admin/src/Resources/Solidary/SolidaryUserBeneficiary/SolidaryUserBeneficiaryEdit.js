@@ -23,12 +23,17 @@ const SolidaryUserBeneficiaryEditToolbar = (props) => (
     {props.tabIndex === 0 && (
       <>
         <Button
+          variant="contained"
+          color="primary"
           component={Link}
           label="ra.action.edit"
           icon={<ContentCreate />}
           to={`/users/${encodeURIComponent(props.record.user.id)}`}
-        />{' '}
+        />
+        &nbsp;
         <Button
+          variant="contained"
+          color="primary"
           component={Link}
           label="Demandes solidaires"
           to={`/solidaries?filter=${encodeURIComponent(
