@@ -93,8 +93,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Solidary
 {
-    const FULL_PROGRESSION = 100;
-
     const DEFAULT_ID = 999999999999;
 
     /**
