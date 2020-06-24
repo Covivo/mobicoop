@@ -1,0 +1,10 @@
+{
+    "default":{
+        "dataprovider":"cityway",
+        "url":"https://api.grandest2.cityway.fr/"
+    },
+    "other":{
+        "dataprovider":"conduentPT",
+        "url":"https://smirtvadoab.ddns.net/"
+    }
+}

@@ -14,10 +14,11 @@
             :timeout="10000"
           >
             <div>
-              {{ $t('snackbar') }}
+              {{ $t('snackbar1') }}
               <a :href="$t('profileLink')">
                 " {{ $t('myProfile') }} "
               </a>
+              {{ $t('snackbar2') }}
             </div>
             <v-btn
               color="info"
