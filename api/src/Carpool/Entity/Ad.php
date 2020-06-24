@@ -385,6 +385,13 @@ class Ad
     private $eventId;
 
     /**
+     * @var int|null The subject id associated with the ad.
+     *
+     * @Groups({"read","write"})
+     */
+    private $subjectId;
+    
+    /**
      * @var array|null The carpool results.
      *
      * @Groups("results")
@@ -482,6 +489,13 @@ class Ad
      * @Groups({"write"})
      */
     private $cancellationMessage;
+
+    /**
+     * @var int|null The margin of the ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $marginDuration;
 
     public function __construct()
     {
@@ -683,6 +697,18 @@ class Ad
     public function setEventId(?int $eventId): self
     {
         $this->eventId = $eventId;
+
+        return $this;
+    }
+
+    public function getSubjectId(): ?int
+    {
+        return $this->subjectId;
+    }
+
+    public function setSubjectId(?int $subjectId): self
+    {
+        $this->subjectId = $subjectId;
 
         return $this;
     }
@@ -1092,6 +1118,18 @@ class Ad
     public function setCancellationMessage(?string $cancellationMessage): Ad
     {
         $this->cancellationMessage = $cancellationMessage;
+        return $this;
+    }
+
+    public function getMarginDuration(): ?int
+    {
+        return $this->marginDuration;
+    }
+
+    public function setMarginDuration(?int $marginDuration): self
+    {
+        $this->marginDuration = $marginDuration;
+
         return $this;
     }
 }

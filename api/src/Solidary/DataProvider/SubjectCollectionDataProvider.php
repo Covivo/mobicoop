@@ -51,8 +51,7 @@ final class SubjectCollectionDataProvider implements CollectionDataProviderInter
         if (isset($context['filters'])) {
             $this->filters = $context['filters'];
         }
-
-        return Subject::class === $resourceClass && $operationName = "structure_subjects";
+        return Subject::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)

@@ -55,6 +55,8 @@ class SolidaryException extends \LogicException
     const NO_SOLIDARY_SOLUTION = "No solidarySolution found for this formal request";
     const NO_SOLIDARY_ASK = "No SolidaryAsk for this SolidarySolution";
     const BAD_SOLIDARY_ASK_STATUS_FOR_FORMAL = "The status of the SolidaryAsk doesn't allow a formal request";
+    const SOLIDARY_SOLUTION_MISSING = "SolidarySolution is missing";
+    const SOLIDARY_SOLUTION_ID_INVALID = "Invalid SolidarySolutionId";
 
     // SolidarySearch
     const SOLIDARY_MISSING = "Solidary is missing";
@@ -73,4 +75,17 @@ class SolidaryException extends \LogicException
     // Structure Geolocation
     const MISSING_LATITUDE = "Latitude missing";
     const MISSING_LONGITUDE = "Longitude missing";
+
+    // SolidaryVolunteerPlanning
+    const NO_SOLIDARY_VOLUNTEER_ID = "No SolidaryVolunteerId found";
+    const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
+
+    // Proof
+    const NO_SOLIDARY_ID = "Missing Solidary";
+    const SOLIDARY_NOT_FOUND = "Solidary not found";
+    const NO_FILE = "Missing file";
+    const NO_STRUCTURE_PROOF = "Missing StructureProof";
+    const STRUCTURE_PROOF_NOT_FOUND = "StructureProof not found";
+    const STRUCTURE_PROOF_NOT_FILE = "This structure_proof is not file type";
+    const PROOF_ALREADY_EXISTS = "A proof of this StructureProof type for this Solidary already exists";
 }

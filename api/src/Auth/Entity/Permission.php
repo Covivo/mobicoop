@@ -27,7 +27,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Auth\Controller\Permissions;
 use App\Auth\Controller\PermissionCheck;
-use App\Auth\Controller\PermissionsRoles;
 
 /**
  * A permission to execute an action.
@@ -40,12 +39,11 @@ use App\Auth\Controller\PermissionsRoles;
  *              "path"="/permissions",
  *              "security"="is_granted('permission',object)"
  *          },
- *          "roles"={
-*              "method"="GET",
-*              "controller"=PermissionsRoles::class,
-*              "path"="/permissions/roles",
-*              "security"="is_granted('permission',object)"
-*          },
+ *          "roles_granted_for_creation"={
+ *              "method"="GET",
+ *              "path"="/permissions/roles-granted-for-creation",
+ *              "security"="is_granted('permission',object)"
+ *          },
  *          "granted"={
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,

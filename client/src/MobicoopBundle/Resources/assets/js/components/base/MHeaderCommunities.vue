@@ -59,7 +59,7 @@ export default {
     linksColorClass: {
       type: String,
       default: ""
-    }    
+    }     
   },
   data(){
     return {

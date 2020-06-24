@@ -35,6 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\Solidary\Controller\CreateProofAction;
 
 /**
  * A solidary proof related to a solidary record or a solidaryUser
@@ -51,13 +52,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          "get"={
  *             "security"="is_granted('proof_list',object)"
  *          },
- *          "structure_proofs"={
- *              "method"="GET",
- *              "path"="/proofs/structure",
- *              "normalization_context"={"groups"={"readStructureProofs"}},
- *              "security"="is_granted('proof_list',object)"
- *          },
  *          "post"={
+ *             "controller"=CreateProofAction::class,
+ *             "deserialize"=false,
  *             "security_post_denormalize"="is_granted('proof_create',object)"
  *          }
  *      },
@@ -95,7 +92,7 @@ class Proof
      * @var string The value entered by the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary"})
+     * @Groups({"readProof","writeProof"})
      */
     private $value;
 
@@ -105,6 +102,7 @@ class Proof
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readProof","writeProof"})
      * @MaxDepth(1)
      */
     private $structureProof;
@@ -113,6 +111,7 @@ class Proof
      * @var string The final file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readProof","writeProof"})
      */
     private $fileName;
     
@@ -120,6 +119,7 @@ class Proof
      * @var string The original file name of the proof.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readProof","writeProof"})
      */
     private $originalName;
 
@@ -127,6 +127,7 @@ class Proof
      * @var int The size in bytes of the file.
      *
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readProof","writeProof"})
      */
     private $size;
     
@@ -134,21 +135,23 @@ class Proof
      * @var string The mime type of the file.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readProof","writeProof"})
      */
     private $mimeType;
 
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
+     * @Groups({"readProof","writeProof"})
      */
     private $file;
 
     /**
      * @var SolidaryUserStructure SolidaryUser Structure relation
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readProof","writeProof"})
      * @MaxDepth(1)
      */
     private $solidaryUserStructure;
@@ -157,6 +160,7 @@ class Proof
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readProof"})
      */
     private $createdDate;
 
@@ -164,6 +168,7 @@ class Proof
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readProof"})
      */
     private $updatedDate;
     

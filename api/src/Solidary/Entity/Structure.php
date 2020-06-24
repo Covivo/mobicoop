@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -59,7 +60,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/structures/geolocation",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('structure_read',object)"
+ *              "security"="is_granted('structure_list',object)"
  *          }
  *      },
  *      itemOperations={
@@ -410,6 +411,7 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -434,6 +436,7 @@ class Structure
      * @var ArrayCollection|null The solidary records for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -446,6 +449,13 @@ class Structure
      * @MaxDepth(1)
      */
     private $users;
+
+    /**
+     * @var Address|null The address of the Structure
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure")
+     * @MaxDepth(1)
+     */
+    private $address;
 
     public function __construct()
     {
@@ -1094,6 +1104,18 @@ class Structure
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
         }
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }

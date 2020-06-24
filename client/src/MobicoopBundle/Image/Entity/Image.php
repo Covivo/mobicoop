@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\File\File;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
@@ -153,6 +155,16 @@ class Image implements ResourceInterface, \JsonSerializable
     * @var User|null The user associated with the image.
     */
     private $user;
+
+    /**
+     * @var RelayPoint |null The relay point associated with the image.
+     */
+    private $relayPoint;
+
+    /**
+     * @var RelayPointType |null The relay point type associated with the image.
+     */
+    private $relayPointType;
     
     /**
      * @var array|null The versions of with the image.
@@ -195,6 +207,30 @@ class Image implements ResourceInterface, \JsonSerializable
     * @Groups({"post","put"})
     */
     private $userFile;
+
+    /**
+     * @var File|null
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 4000,
+     *     minHeight = 200,
+     *     maxHeight = 4000
+     * )
+     * @Groups({"post","put"})
+     */
+    private $relayPointFile;
+
+    /**
+     * @var File|null
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 4000,
+     *     minHeight = 200,
+     *     maxHeight = 4000
+     * )
+     * @Groups({"post","put"})
+     */
+    private $relayPointTypeFile;
     
     /**
      * @var int|null The event id associated with the image.
@@ -213,6 +249,18 @@ class Image implements ResourceInterface, \JsonSerializable
     * @Groups({"post","put"})
     */
     private $userId;
+
+    /**
+     * @var int|null The relay point id associated with the image.
+     * @Groups({"post","put"})
+     */
+    private $relayPointId;
+
+    /**
+     * @var int|null The relay point type id associated with the image.
+     * @Groups({"post","put"})
+     */
+    private $relayPointTypeId;
         
     public function __construct($id=null)
     {
@@ -433,7 +481,31 @@ class Image implements ResourceInterface, \JsonSerializable
         
         return $this;
     }
+
+    public function getRelayPoint(): ?RelayPoint
+    {
+        return $this->relayPoint;
+    }
     
+    public function setRelayPoint(?RelayPoint $relayPoint): self
+    {
+        $this->relayPoint = $relayPoint;
+        
+        return $this;
+    }
+
+    public function getRelayPointType(): ?RelayPointType
+    {
+        return $this->relayPointType;
+    }
+    
+    public function setRelayPointType(?RelayPointType $relayPointType): self
+    {
+        $this->relayPointType = $relayPointType;
+        
+        return $this;
+    }
+
     public function getVersions(): ?array
     {
         return $this->versions;
@@ -462,6 +534,26 @@ class Image implements ResourceInterface, \JsonSerializable
     public function setCommunityFile(?File $communityFile)
     {
         $this->communityFile = $communityFile;
+    }
+
+    public function getRelayPointFile(): ?File
+    {
+        return $this->relayPointFile;
+    }
+    
+    public function setRelayPointFile(?File $relayPointFile)
+    {
+        $this->relayPointFile = $relayPointFile;
+    }
+
+    public function getRelayPointTypeFile(): ?File
+    {
+        return $this->relayPointTypeFile;
+    }
+    
+    public function setRelayPointTypeFile(?File $relayPointTypeFile)
+    {
+        $this->relayPointTypeFile = $relayPointTypeFile;
     }
 
     public function getUserFile(): ?File
@@ -502,6 +594,26 @@ class Image implements ResourceInterface, \JsonSerializable
     public function setUserId($userId)
     {
         $this->userId = $userId;
+    }
+
+    public function getRelayPointId(): ?int
+    {
+        return $this->relayPointId;
+    }
+    
+    public function setRelayPointId($relayPointId)
+    {
+        $this->relayPointId = $relayPointId;
+    }
+
+    public function getRelayPointTypeId(): ?int
+    {
+        return $this->relayPointTypeId;
+    }
+    
+    public function setRelayPointTypeId($relayPointTypeId)
+    {
+        $this->relayPointTypeId = $relayPointTypeId;
     }
 
     public function jsonSerialize()

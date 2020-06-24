@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -51,12 +52,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('subject_create',object)"
- *          },
- *          "structure_subjects"={
- *              "method"="GET",
- *              "path"="/subjects/structure",
- *              "normalization_context"={"groups"={"readSubjects"}},
- *              "security"="is_granted('proof_list',object)"
  *          }
  *      },
  *      itemOperations={
@@ -104,7 +99,7 @@ class Subject
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
@@ -129,13 +124,22 @@ class Subject
      * @var ArrayCollection|null The solidary records for this subject.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"writeSolidary"})
      */
     private $solidaries;
+
+    /**
+     * @var ArrayCollection|null The Proposals linked to this subject
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="subject")
+     * @Groups({"writeSolidary"})
+     */
+    private $proposals;
 
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -220,6 +224,34 @@ class Subject
             // set the owning side to null (unless already changed)
             if ($solidary->getSubject() === $this) {
                 $solidary->setSubject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getProposals()
+    {
+        return $this->proposals->getValues();
+    }
+
+    public function addProposal(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals->add($proposal);
+            $proposal->setSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposal(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getSubject() === $this) {
+                $proposal->setSubject(null);
             }
         }
 

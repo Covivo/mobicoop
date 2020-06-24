@@ -50,7 +50,6 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
         if ($operationName=="contactsList") {
             return $this->solidaryManager->getAsksList($id);
         }
-        
         return $this->solidaryManager->getSolidary($id);
     }
 }

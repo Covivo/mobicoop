@@ -34,6 +34,7 @@ use App\Solidary\Service\SolidaryUserManager;
 final class SolidaryVolunteerCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryUserManager;
+    private $context;
 
     public function __construct(SolidaryUserManager $solidaryUserManager)
     {
@@ -42,11 +43,27 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        $this->context = $context;
         return SolidaryVolunteer::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return $this->solidaryUserManager->getSolidaryVolunteers();
+        // We check and sanitize the filters
+        $filters = null;
+        $validatedCandidate = null;
+        if (isset($this->context['filters'])) {
+            $filters = [];
+            foreach ($this->context['filters'] as $key => $value) {
+                if (in_array($key, SolidaryVolunteer::AUTHORIZED_GENERIC_FILTERS)) {
+                    $filters[$key] = $value;
+                } elseif ($key == SolidaryVolunteer::VALIDATED_CANDIDATE_FILTER) {
+                    $validatedCandidate = ($value=="true") ? $validatedCandidate = true : $validatedCandidate = false;
+                }
+            }
+        }
+        
+        
+        return $this->solidaryUserManager->getSolidaryVolunteers($filters, $validatedCandidate);
     }
 }

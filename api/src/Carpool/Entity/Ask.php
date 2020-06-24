@@ -229,7 +229,7 @@ class Ask
     /**
      * @var ArrayCollection The proofs related to the ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="ask", cascade={"persist"})
      */
     private $carpoolProofs;
 

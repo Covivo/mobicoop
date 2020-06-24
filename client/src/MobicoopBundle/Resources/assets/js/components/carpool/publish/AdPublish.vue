@@ -208,7 +208,7 @@
                 :init-return-date="returnDate"
                 :init-return-time="returnTime"
                 :regular="regular"
-                :default-margin-time="defaultMarginTime"
+                :default-margin-duration="defaultMarginDuration"
                 :init-schedule="initSchedule"
                 :route="route"
                 @change="planificationChanged"
@@ -719,7 +719,7 @@ export default {
       type: Number,
       default: 0.06
     },
-    defaultMarginTime: {
+    defaultMarginDuration: {
       type: Number,
       default: null
     },

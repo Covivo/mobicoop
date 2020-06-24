@@ -23,42 +23,46 @@
 
 namespace App\RelayPoint\Security;
 
-use App\Auth\Service\PermissionManager;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\RelayPoint\Entity\RelayPoint;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class RelayPointVoter extends Voter
 {
-    const CREATE = 'relayPoint_create';
-    const READ = 'relayPoint_read';
-    const UPDATE = 'relayPoint_update';
-    const DELETE = 'relayPoint_delete';
-
-    private $security;
-    private $permissionManager;
-
-    public function __construct(Security $security, PermissionManager $permissionManager)
+    const RELAY_POINT_CREATE = 'relay_point_create';
+    const RELAY_POINT_READ = 'relay_point_read';
+    const RELAY_POINT_UPDATE = 'relay_point_update';
+    const RELAY_POINT_DELETE = 'relay_point_delete';
+    const RELAY_POINT_LIST = 'relay_point_list';
+    
+    public function __construct(AuthManager $authManager)
     {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::CREATE,
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
+            self::RELAY_POINT_CREATE,
+            self::RELAY_POINT_READ,
+            self::RELAY_POINT_UPDATE,
+            self::RELAY_POINT_DELETE,
+            self::RELAY_POINT_LIST
             ])) {
             return false;
         }
+
         // only vote on RelayPoint objects inside this voter
-        if (!$subject instanceof RelayPoint) {
+        if (!in_array($attribute, [
+            self::RELAY_POINT_CREATE,
+            self::RELAY_POINT_READ,
+            self::RELAY_POINT_UPDATE,
+            self::RELAY_POINT_DELETE,
+            self::RELAY_POINT_LIST
+            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPoint)) {
             return false;
         }
         return true;
@@ -66,42 +70,44 @@ class RelayPointVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // TO DO : Code the real Voter
-        return true;
-
-        $requester = $token->getUser();
-        
         switch ($attribute) {
-            case self::CREATE:
-                return $this->canCreate($requester);
-            case self::READ:
-                return $this->canRead($requester);
-            case self::UPDATE:
-                return $this->canUpdate($requester);
-            case self::DELETE:
-                return $this->canDelete($requester);
+            case self::RELAY_POINT_CREATE:
+                return $this->canCreateRelayPoint();
+            case self::RELAY_POINT_READ:
+                return $this->canReadRelayPoint($subject);
+            case self::RELAY_POINT_UPDATE:
+                return $this->canUpdateRelayPoint($subject);
+            case self::RELAY_POINT_DELETE:
+                return $this->canDeleteRelayPoint($subject);
+            case self::RELAY_POINT_LIST:
+                return $this->canListRelayPoint();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreate(UserInterface $requester)
+    private function canCreateRelayPoint()
     {
-        return $this->permissionManager->checkPermission('relay_point_create', $requester);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_CREATE);
     }
 
-    private function canRead(UserInterface $requester)
+    private function canReadRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->permissionManager->checkPermission('relay_point_read', $requester);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_READ, ['relayPoint'=>$relayPoint]);
     }
 
-    private function canUpdate(UserInterface $requester)
+    private function canUpdateRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->permissionManager->checkPermission('relay_point_update', $requester);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_UPDATE, ['relayPoint'=>$relayPoint]);
     }
 
-    private function canDelete(UserInterface $requester)
+    private function canDeleteRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->permissionManager->checkPermission('relay_point_delete', $requester);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_DELETE, ['relayPoint'=>$relayPoint]);
+    }
+
+    private function canListRelayPoint()
+    {
+        return $this->authManager->isAuthorized(self::RELAY_POINT_LIST);
     }
 }

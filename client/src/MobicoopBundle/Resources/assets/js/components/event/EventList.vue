@@ -311,7 +311,7 @@ export default {
       locale: this.$i18n.locale,
       search: '',
       searchPassed : '',
-      itemsPerPageOptions: [1,10, 20, 50, 100, -1],
+      itemsPerPageOptions: [1,10, 20, 50, 100],
       itemsPerPage: this.itemsPerPageDefault,
       itemsPerPagePassed: this.itemsPerPageDefault,
       page:1,

@@ -343,7 +343,7 @@ class ProposalRepository
             }
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
-            if (self::USE_BEARING) {
+            if (self::USE_BEARING && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }
@@ -390,7 +390,7 @@ class ProposalRepository
             }
 
             // passenger proportion
-            if (self::USE_PASSENGER_PROPORTION) {
+            if (self::USE_PASSENGER_PROPORTION && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
                 }

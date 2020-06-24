@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 
 /**
  * A postal address.
@@ -447,12 +448,12 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->displayLabel = $displayLabel;
     }
 
-    public function getRelayPoint(): ?array
+    public function getRelayPoint(): ?RelayPoint
     {
         return $this->relayPoint;
     }
 
-    public function setRelayPoint(?array $relayPoint)
+    public function setRelayPoint(?RelayPoint $relayPoint)
     {
         $this->relayPoint = $relayPoint;
     }
@@ -484,28 +485,29 @@ class Address implements ResourceInterface, \JsonSerializable
     {
         return
          [
-             'id'                   => $this->getId(),
-             'houseNumber'          => $this->getHouseNumber(),
-             'street'               => $this->getStreet(),
-             'streetAddress'        => $this->getStreetAddress(),
-             'postalCode'           => $this->getPostalCode(),
-             'addressLocality'      => $this->getAddressLocality(),
-             'name'                 => $this->getName(),
-             'addressCountry'       => $this->getAddressCountry(),
-             'countryCode'          => $this->getCountryCode(),
-             'county'               => $this->getCounty(),
-             'latitude'             => $this->getLatitude(),
-             'localAdmin'           => $this->getLocalAdmin(),
-             'longitude'            => $this->getLongitude(),
-             'macroCounty'          => $this->getMacroCounty(),
-             'macroRegion'          => $this->getMacroRegion(),
-             'region'               => $this->getRegion(),
-             'subLocality'          => $this->getSubLocality(),
-             'displayLabel'         => $this->getDisplayLabel(),
-             'home'                 => $this->isHome(),
-             'icon'                 => $this->getIcon(),
-             'venue'                => $this->getVenue(),
-             'event'                => $this->getEvent()
+            'id'                   => $this->getId(),
+            'houseNumber'          => $this->getHouseNumber(),
+            'street'               => $this->getStreet(),
+            'streetAddress'        => $this->getStreetAddress(),
+            'postalCode'           => $this->getPostalCode(),
+            'addressLocality'      => $this->getAddressLocality(),
+            'name'                 => $this->getName(),
+            'addressCountry'       => $this->getAddressCountry(),
+            'countryCode'          => $this->getCountryCode(),
+            'county'               => $this->getCounty(),
+            'latitude'             => $this->getLatitude(),
+            'localAdmin'           => $this->getLocalAdmin(),
+            'longitude'            => $this->getLongitude(),
+            'macroCounty'          => $this->getMacroCounty(),
+            'macroRegion'          => $this->getMacroRegion(),
+            'region'               => $this->getRegion(),
+            'subLocality'          => $this->getSubLocality(),
+            'displayLabel'         => $this->getDisplayLabel(),
+            'home'                 => $this->isHome(),
+            'icon'                 => $this->getIcon(),
+            'venue'                => $this->getVenue(),
+            'event'                => $this->getEvent(),
+            // 'relayPoint'           => $this->getRelayPoint()
          ];
     }
 }

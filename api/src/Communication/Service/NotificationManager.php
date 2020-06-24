@@ -52,6 +52,7 @@ use App\Communication\Entity\Push;
 use App\User\Entity\PushToken;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
+use App\Community\Entity\Community;
 
 /**
  * Notification manager
@@ -292,6 +293,25 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'event' => $object];
                     break;
+                case Community::class:
+                    $sender = null;
+                    if (count($object->getCommunityUsers()) > 0) {
+                        foreach ($object->getCommunityUsers() as $communityUser) {
+                            if ($communityUser->getCommunity()->getId() === $object->getId()) {
+                                $senderGivenName = $communityUser->getUser()->getGivenName();
+                                $senderShortFamilyName = $communityUser->getUser()->getShortFamilyName();
+                            }
+                        }
+                    }
+                    $titleContext = [];
+                    $bodyContext = [
+                        'recipient'=>$recipient,
+                        'community' => $object,
+                        'senderGivenName'=>$senderGivenName,
+                        'senderShortFamilyName'=> $senderShortFamilyName
+                    ];
+                    break;
+                    
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
@@ -657,6 +677,9 @@ class NotificationManager
             switch (get_class($object)) {
                 case Proposal::class:
                     $notified->setProposal($object);
+                    break;
+                case Community::class:
+                    $notified->setCommunity($object);
                     break;
                 case Matching::class:
                     $notified->setMatching($object);

@@ -37,6 +37,8 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Service\AdManager;
+use App\Community\Event\CommunityNewMembershipRequestEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Community manager.
@@ -58,6 +60,7 @@ class CommunityManager
     private $authItemRepository;
     private $userManager;
     private $adManager;
+    private $eventDispatcher;
 
     /**
      * Constructor
@@ -74,7 +77,8 @@ class CommunityManager
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
         UserManager $userManager,
-        AdManager $adManager
+        AdManager $adManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -85,6 +89,7 @@ class CommunityManager
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
         $this->adManager = $adManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -121,6 +126,8 @@ class CommunityManager
         ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
             $authorized = false;
         }
+
+         
         return $authorized;
     }
 
@@ -329,6 +336,14 @@ class CommunityManager
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
 
+        $community = $communityUser->getCommunity();
+        $user = $community->getUser();
+
+        // We use event to send notifications if community has a status pending
+        if ($communityUser->getStatus()== CommunityUser::STATUS_PENDING) {
+            $event = new CommunityNewMembershipRequestEvent($community, $user);
+            $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
+        }
         return $communityUser;
     }
 }
