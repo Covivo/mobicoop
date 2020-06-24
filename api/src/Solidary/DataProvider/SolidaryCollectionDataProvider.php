@@ -71,7 +71,6 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
             }
             return $this->solidaryManager->getSolidaryUserSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId);
         }
-       
         return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
     }
 }
