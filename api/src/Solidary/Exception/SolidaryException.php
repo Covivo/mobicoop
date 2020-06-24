@@ -41,6 +41,7 @@ class SolidaryException extends \LogicException
     const ALREADY_USER = "Already a User with this email";
     const ALREADY_SOLIDARY_USER = "Already a SolidaryUser";
     const MANDATORY_EMAIL = "Email is mandatory and cannot be empty";
+    const INVALID_PROGRESSION = "Invalid progression provided";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";

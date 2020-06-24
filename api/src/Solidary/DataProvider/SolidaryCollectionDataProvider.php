@@ -61,16 +61,23 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         if (empty($this->security->getUser()->getSolidaryStructures())) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
         }
+
+        $progression = null;
+        $solidaryUserId = null;
         if (isset($this->filters['solidaryUser'])) {
-            $solidaryUserId = null;
             if (strrpos($this->filters['solidaryUser'], '/')) {
                 $solidaryUserId = substr($this->filters['solidaryUser'], strrpos($this->filters['solidaryUser'], '/') + 1);
             }
             if (empty($solidaryUserId) || !is_numeric($solidaryUserId)) {
                 throw new SolidaryException(SolidaryException::SOLIDARY_USER_ID_INVALID);
             }
-            return $this->solidaryManager->getSolidaryUserSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId);
         }
-        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
+        if (isset($this->filters['progression'])) {
+            $progression = $this->filters['progression'];
+            if (!is_numeric($progression)) {
+                throw new SolidaryException(SolidaryException::INVALID_PROGRESSION);
+            }
+        }
+        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId, $progression);
     }
 }

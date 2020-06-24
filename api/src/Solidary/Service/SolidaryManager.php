@@ -301,45 +301,51 @@ class SolidaryManager
     }
 
     /**
-     * Get solidaries of a structure
-     *
-     * @param Structure $structure
-     * @return void
-     */
-    public function getSolidaries(Structure $structure)
+    *  Get solidaries of a structure and can be filtered by solidaryUser and/or progression
+    *
+    * @param Structure $structure
+    * @param Int $solidaryUserId id of the solidaryUser
+    * @param Int $progression level of progression
+    * @return void
+    */
+    public function getSolidaries(Structure $structure, Int $solidaryUserId=null, Int $progression=null)
     {
         $solidaries = null;
         $fullSolidaries = [];
         $solidaryUserStructures = $structure->getSolidaryUserStructures();
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
-            $solidaries = $solidaryUserStructure->getSolidaries();
-            if (!empty($solidaries)) {
-                foreach ($solidaries as $solidary) {
-                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+            // we check if we indicate a specific solidaryUser if yes we get only his solidaries
+            if (!is_null($solidaryUserId)) {
+                if ($solidaryUserStructure->getSolidaryUser()->getId() == $solidaryUserId) {
+                    $solidaries = $solidaryUserStructure->getSolidaries();
+                    if (!empty($solidaries)) {
+                        foreach ($solidaries as $solidary) {
+                            // we check if we indicate a progression if yes we get only solidaries with that progression
+                            if (!is_null($progression)) {
+                                if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
+                                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                                }
+                                // case without progression
+                            } else {
+                                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        return $fullSolidaries;
-    }
-
-    /**
-     * Get solidaries of an solidary user
-     *
-     * @param Int $structureId
-     * @param Int $solidaryUserId
-     * @return void
-     */
-    public function getSolidaryUserSolidaries(Structure $structure, Int $solidaryUserId)
-    {
-        $solidaries = null;
-        $fullSolidaries = [];
-        $solidaryUserStructures = $structure->getSolidaryUserStructures();
-        foreach ($solidaryUserStructures as $solidaryUserStructure) {
-            if ($solidaryUserStructure->getSolidaryUser()->getId() == $solidaryUserId) {
+                // case without solidaryUser
+            } else {
                 $solidaries = $solidaryUserStructure->getSolidaries();
                 if (!empty($solidaries)) {
                     foreach ($solidaries as $solidary) {
-                        $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                        // we check if we indicate a progression if yes we get only solidaries with that progression
+                        if (!is_null($progression)) {
+                            if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
+                                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                            }
+                            // case without progression
+                        } else {
+                            $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                        }
                     }
                 }
             }
