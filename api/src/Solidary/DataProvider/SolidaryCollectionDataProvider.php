@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Security;
  */
 final class SolidaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private $filters;
     private $solidaryManager;
     private $security;
 
@@ -46,6 +47,9 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        if (isset($context['filters'])) {
+            $this->filters = $context['filters'];
+        }
         return Solidary::class === $resourceClass;
     }
 
@@ -56,6 +60,16 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         }
         if (empty($this->security->getUser()->getSolidaryStructures())) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+        if (($this->filters['solidaryUser'])) {
+            $solidaryUserId = null;
+            if (strrpos($this->filters['solidaryUser'], '/')) {
+                $solidaryUserId = substr($this->filters['solidaryUser'], strrpos($this->filters['solidaryUser'], '/') + 1);
+            }
+            if (empty($solidaryUserId) || !is_numeric($solidaryUserId)) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_USER_ID_INVALID);
+            }
+            return $this->solidaryManager->getSolidaryUserSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId);
         }
         return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
     }

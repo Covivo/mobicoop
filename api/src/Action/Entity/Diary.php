@@ -114,7 +114,7 @@ class Diary
      * @var Solidary|null The solidary record if the action concerns a solidary record.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "readSolidary"})
      * @MaxDepth(1)
      */
     private $solidary;
@@ -123,7 +123,7 @@ class Diary
      * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "readSolidary"})
      * @MaxDepth(1)
      */
     private $solidarySolution;
