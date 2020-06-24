@@ -48,17 +48,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"={
  *             "security"="is_granted('solidary_list',object)"
  *          },
- *          "getClosedSolidaries"={
- *              "method"="GET",
- *              "path"="/solidaries/closed",
- *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list',object)"
- *          },
  *          "getMySolidaries"={
  *              "method"="GET",
  *              "path"="/solidaries/mySolidaries",
  *              "normalization_context"={"groups"={"readSolidary"}},
  *              "security"="is_granted('solidary_list_self',object)"
+ *
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('solidary_create',object)"
