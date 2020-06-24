@@ -65,6 +65,7 @@
 /api/public/upload/communities/images/versions/*.jpg
 /api/public/upload/communities/images/versions/*.jpeg
 /api/public/upload/communities/images/versions/*.png
+/api/public/upload/communities/security/*
 /api/public/upload/mass/files/*.csv
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip

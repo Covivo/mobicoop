@@ -75,17 +75,8 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
-    "easycorp/easy-log-handler": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "70062abc2cd58794d2a90274502f81b55cd9951b"
-        },
-        "files": [
-            "config/packages/dev/easy_log_handler.yaml"
-        ]
+    "doctrine/sql-formatter": {
+        "version": "1.1.0"
     },
     "egulias/email-validator": {
         "version": "2.1.7"
@@ -114,20 +105,14 @@
     "guzzlehttp/psr7": {
         "version": "1.5.2"
     },
-    "jdorn/sql-formatter": {
-        "version": "v1.2.17"
-    },
     "kahlan/kahlan": {
         "version": "4.6.1"
     },
     "kriswallsmith/buzz": {
         "version": "v0.15.2"
     },
-    "markbaker/complex": {
-        "version": "1.4.7"
-    },
-    "markbaker/matrix": {
-        "version": "1.1.4"
+    "laminas/laminas-zendframework-bridge": {
+        "version": "1.0.4"
     },
     "monolog/monolog": {
         "version": "1.24.0"
@@ -153,9 +138,6 @@
     "phpdocumentor/type-resolver": {
         "version": "0.4.0"
     },
-    "phpoffice/phpspreadsheet": {
-        "version": "1.9.0"
-    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -170,9 +152,6 @@
     },
     "psr/log": {
         "version": "1.1.0"
-    },
-    "psr/simple-cache": {
-        "version": "1.0.1"
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
@@ -385,6 +364,9 @@
     },
     "symfony/polyfill-php73": {
         "version": "v1.11.0"
+    },
+    "symfony/polyfill-php80": {
+        "version": "v1.17.1"
     },
     "symfony/process": {
         "version": "v4.2.5"
