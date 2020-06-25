@@ -155,7 +155,7 @@ class InternalMessageManager
     }
 
     /**
-     * Post a Message Object, taking care of Ask and SolidaryAsk if needed
+     * Post a Message, taking care of Ask and SolidaryAsk if needed
      *
      * @param Message $message
      * @return Message
