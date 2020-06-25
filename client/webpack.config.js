@@ -97,6 +97,7 @@ if (!Encore.isProduction()) {
         const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
         if (preset !== undefined) {
             preset[1].useBuiltIns = "usage";
+            preset[1].corejs = 3;
         }
     }, {
         exclude: /node_modules[\\/](?!(vuetify)).*/
