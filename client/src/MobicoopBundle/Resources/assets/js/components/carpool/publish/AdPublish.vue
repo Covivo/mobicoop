@@ -1112,7 +1112,6 @@ export default {
       if (this.isValidUpdate && this.initWaypointsCount && this.initWaypointsCount > 0) {
         this.initWaypointsCount--;
         if (this.initWaypointsCount === 0) {
-          console.log("loaded");
           this.bodyIsFullyLoaded = true;
           this.oldUpdateObject = this.buildAdObject();
         }

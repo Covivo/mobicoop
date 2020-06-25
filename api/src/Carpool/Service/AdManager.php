@@ -857,10 +857,11 @@ class AdManager
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
-            $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-
+            $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
+            $ad->setReturnDate($returnDate);
+            
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
+                $ad->setReturnTime($returnDate->format('Y-m-d')." ".$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
