@@ -154,6 +154,12 @@ class InternalMessageManager
         return $message = $this->messageRepository->find($idMessage);
     }
 
+    /**
+     * Post a Message Object, taking care of Ask and SolidaryAsk if needed
+     *
+     * @param Message $message
+     * @return Message
+     */
     public function postMessage(Message $message)
     {
 
