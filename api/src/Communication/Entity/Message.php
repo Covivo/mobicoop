@@ -50,7 +50,6 @@ use App\Solidary\Entity\SolidaryAskHistory;
  *      },
  *      collectionOperations={
  *          "post"={
- *              "controller"=SendAction::class,
  *              "security_post_denormalize"="is_granted('user_message_create',object)"
  *          },
  *          "completeThread"={
