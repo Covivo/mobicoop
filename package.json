@@ -34,7 +34,7 @@
     "update-db": "cd api && npm run update-db",
     "transfer-copyright": "node bin/helpers/transferCopyright.js",
     "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
-    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -n",
+    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -p",
     "link-bundle": "node bin/helpers/linkBundle.js -d",
     "contributor-checker": "node bin/helpers/hooks/contributor-license-agreement-checker.js",
     "contribute": "node bin/helpers/hooks/contributor-license-agreement-adder.js"
