@@ -29,9 +29,9 @@
                     <m-header :url-mobile="{{urlMobile|json_encode}}"></m-header>
                 {% endif %}
 
-                <v-content>
+                <v-main>
                     {% block main %}{% endblock %}
-                </v-content>
+                </v-main>
 
                 {% block footer %}
                     <m-footer></m-footer>

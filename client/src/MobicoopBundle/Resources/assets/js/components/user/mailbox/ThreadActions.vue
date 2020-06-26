@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-card
       class="pa-2 text-center"
       :hidden="hideClickIcon"
@@ -186,7 +186,7 @@
         />
       </v-card>
     </v-dialog>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import Translations from "@translations/components/user/mailbox/ThreadActions.json";

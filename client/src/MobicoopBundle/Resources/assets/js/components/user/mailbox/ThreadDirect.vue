@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container class="window-scroll px-0">
       <v-card
         class="mx-auto mt-2 pt-1 pb-1"
@@ -34,7 +34,7 @@
         </v-row>
       </v-card>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import moment from "moment";

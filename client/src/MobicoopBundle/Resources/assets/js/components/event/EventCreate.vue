@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -324,7 +324,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 

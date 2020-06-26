@@ -383,7 +383,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.v-content__wrap{
+.v-main__wrap{
   #headGridMessages{
     .col{
       border-left: 2px solid white !important;

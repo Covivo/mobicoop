@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container class="window-scroll">
       <v-timeline
         v-if="items.length>0"
@@ -64,7 +64,7 @@
         :hidden="!loading"
       />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import axios from "axios";

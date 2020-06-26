@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container>
       <!-- eventGetWidget buttons and map -->
       <v-row
@@ -36,7 +36,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 
