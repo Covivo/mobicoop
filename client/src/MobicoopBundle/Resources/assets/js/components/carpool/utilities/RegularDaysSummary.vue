@@ -44,7 +44,7 @@
     </v-chip>
     <p
       v-if="dateStartOfValidity && dateEndOfValidity"
-      class="font-italic mt-1 caption"
+      class="font-italic mt-1 text-caption"
     >
       {{ $t('valid') }}&nbsp;{{ formattedDateStartOfValidity }}&nbsp;{{ $t('dateValidUntil') }}&nbsp;{{ formattedDateEndOfValidity }}
     </p>

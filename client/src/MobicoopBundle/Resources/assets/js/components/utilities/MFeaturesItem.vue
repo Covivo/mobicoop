@@ -18,7 +18,7 @@
       </v-col>
     </v-row>
     <v-row class="text-center">
-      <v-col class="font-weight-bold title">
+      <v-col class="font-weight-bold text-h6">
         {{ title }}
       </v-col>
     </v-row>

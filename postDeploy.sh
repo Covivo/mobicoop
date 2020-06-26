@@ -22,12 +22,6 @@ done
 cd /var/www/$VERSION/$INSTANCE/api;
 php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
-#Specific Edge and exotics browsers
-cd ../client;
-rm -Rf node_modules/;
-yarn install;
-yarn encore dev;
-
 #Admin build
 cd /var/www/$VERSION/$INSTANCE/admin;
 rm -Rf node_modules;

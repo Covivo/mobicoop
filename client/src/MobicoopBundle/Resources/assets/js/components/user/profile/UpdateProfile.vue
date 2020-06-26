@@ -288,7 +288,7 @@
           <!--Confirmation Popup-->
           <v-dialog v-model="dialog" persistent max-width="500">
             <v-card>
-              <v-card-title class="headline">{{ $t('news.confirmation.title') }}</v-card-title>
+              <v-card-title class="text-h5">{{ $t('news.confirmation.title') }}</v-card-title>
               <v-card-text v-html="$t('news.confirmation.content')"></v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -383,14 +383,14 @@
         <v-card>
           <v-card-title
                   v-if="hasCreatedEvents || hasOwnedCommunities"
-                  class="headline error--text"
+                  class="text-h5 error--text"
                   primary-title
           >
             {{ $t('dialog.titles.deletionImpossible') }}
           </v-card-title>
           <v-card-title
                   v-else
-                  class="headline"
+                  class="text-h5"
                   primary-title
           >
             {{ $t('dialog.titles.deleteAccount') }}

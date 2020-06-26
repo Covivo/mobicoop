@@ -38,7 +38,7 @@
           </v-card>
           <p
             v-if="item.divider===false && item.userDelegate"
-            class="caption"
+            class="text-caption"
           >
             {{ $t('sendBy', {"name":item.userDelegate.givenName+" "+item.userDelegate.shortFamilyName}) }}
           </p>
@@ -50,7 +50,7 @@
       </v-timeline>
       <v-card v-else-if="(!loading && !hideNoThreadSelected) || clearClickIcon">
         <v-card-text
-          class="font-italic subtitle-1"
+          class="font-italic text-subtitle-1"
         >
           {{ $t('notThreadSelected') }}
         </v-card-text>

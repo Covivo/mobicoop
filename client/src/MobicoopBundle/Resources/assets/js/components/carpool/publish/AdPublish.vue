@@ -642,7 +642,7 @@
       >
         <v-card>
           <v-card-title
-            class="headline"
+            class="text-h5"
             v-html="popupTitle"
           />
           <v-card-text v-html="popupContent" />

@@ -77,7 +77,7 @@
             color="info"
             right
           >
-            <template v-slot:activator="{ on }">
+            <template>
               <v-btn
                 text
                 icon

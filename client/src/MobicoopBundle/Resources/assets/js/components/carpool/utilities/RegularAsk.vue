@@ -8,7 +8,7 @@
       >
         <v-col
           cols="2"
-          class="title"
+          class="text-h6"
         >
           {{ type == 1 ? $t('outward') : $t('return') }}
         </v-col>

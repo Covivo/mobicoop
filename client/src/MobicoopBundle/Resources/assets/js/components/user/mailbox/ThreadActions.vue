@@ -27,13 +27,13 @@
       </v-avatar>
       <v-card-text
         v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
-        class="font-weight-bold headline"
+        class="font-weight-bold text-h5"
       >
         {{ buildedRecipientName }}
       </v-card-text>
       <v-card-text
         v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
-        class="font-weight-bold headline"
+        class="font-weight-bold text-h5"
       >
         {{ $t("userDelete") }}
       </v-card-text>

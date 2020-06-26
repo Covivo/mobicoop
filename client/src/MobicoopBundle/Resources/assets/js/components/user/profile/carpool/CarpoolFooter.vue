@@ -16,7 +16,7 @@
       <v-col
         v-if="!isDriver && ad.asks[0].results[0].roundedPrice"
         cols="2"
-        class="font-weight-bold primary--text headline text-right"
+        class="font-weight-bold primary--text text-h5 text-right"
       >
         {{ ad.asks[0].results[0].roundedPrice }}€
       </v-col>

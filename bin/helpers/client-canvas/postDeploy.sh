@@ -83,6 +83,9 @@ else
     #Migrations
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
+    
+    # Remove maintenance page
+    rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/admin;

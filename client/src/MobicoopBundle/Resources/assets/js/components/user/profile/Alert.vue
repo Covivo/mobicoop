@@ -41,7 +41,7 @@
       max-width="495"
     >
       <v-card>
-        <v-card-title class="headline">
+        <v-card-title class="text-h5">
           {{ $t('popup.title') }}
         </v-card-title>
         <v-card-text

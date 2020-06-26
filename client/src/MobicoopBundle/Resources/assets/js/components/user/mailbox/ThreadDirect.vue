@@ -18,7 +18,7 @@
           <v-col class="col-3 ma-0 pa-0">
             <v-card-text class="pa-0">
               <span
-                class="title font-weight-light secondary--text"
+                class="text-h6 font-weight-light secondary--text"
               >
                 {{ name }}
               </span>

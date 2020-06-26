@@ -30,14 +30,14 @@
             <h4>
               <a :href="linkToEventShow(item)">{{ item.name }}</a>
             </h4>
-            <p class="headline text-justify subtitle-1">
+            <p class="text-h5 text-justify text-subtitle-1">
               {{ item.address.addressLocality }}
             </p>
             <p v-if="dateLine1">
-              <span class="subtitle-1">{{ dateLine1 }}</span><br>
+              <span class="text-subtitle-1">{{ dateLine1 }}</span><br>
               <span
                 v-if="dateLine2"
-                class="subtitle-1"
+                class="text-subtitle-1"
               >{{ dateLine2 }}</span>
             </p>
           </div>

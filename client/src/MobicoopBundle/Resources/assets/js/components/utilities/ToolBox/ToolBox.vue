@@ -7,7 +7,7 @@
       <v-col
         :cols="nbCols"
       >
-        <h1 class="display-1 primary--text text-center font-weight-bold">
+        <h1 class="text-h4 primary--text text-center font-weight-bold">
           {{ $t('title') }}
         </h1>
       </v-col>
