@@ -1019,25 +1019,27 @@ export default {
       immediate: true,
       handler () {
         const self = this;
-        this.origin = this.ad.origin;
-        this.outwardDate = this.ad.outwardDate;
-        this.outwardTime = moment(this.ad.outwardTime).utc().format();
-        this.returnDate = this.ad.returnDate;
-        this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
-        this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});
-        this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
-        this.seats = this.ad.seatsDriver;
-        this.luggage = this.ad.luggage;
-        this.smoke = this.ad.smoke;
-        this.bike = this.ad.bike;
-        this.backSeats = this.ad.backSeats;
-        this.music = this.ad.music;
-        this.message = this.ad.message;
-        this.price = parseFloat(this.ad.outwardDriverPrice);
-        this.pricePerKm = parseFloat(this.ad.priceKm);
-        this.role = this.ad.role;
-        this.driver = this.ad.role === 1 || this.ad.role === 3;
-        this.passenger = this.ad.role === 2 || this.ad.role === 3;
+        if(this.ad){
+          this.origin = this.ad.origin;
+          this.outwardDate = this.ad.outwardDate;
+          this.outwardTime = moment(this.ad.outwardTime).utc().format();
+          this.returnDate = this.ad.returnDate;
+          this.returnTime = moment(this.ad.returnTime).isValid() ? moment(this.ad.returnTime).format() : null;
+          this.initWaypoints = this.ad.outwardWaypoints.filter(point => {return point.address.id !== self.initOrigin.id && point.address.id !== self.initDestination.id;});
+          this.initSchedule = isEmpty(this.ad.schedule) ? {} : this.ad.schedule;
+          this.seats = this.ad.seatsDriver;
+          this.luggage = this.ad.luggage;
+          this.smoke = this.ad.smoke;
+          this.bike = this.ad.bike;
+          this.backSeats = this.ad.backSeats;
+          this.music = this.ad.music;
+          this.message = this.ad.message;
+          this.price = parseFloat(this.ad.outwardDriverPrice);
+          this.pricePerKm = parseFloat(this.ad.priceKm);
+          this.role = this.ad.role;
+          this.driver = this.ad.role === 1 || this.ad.role === 3;
+          this.passenger = this.ad.role === 2 || this.ad.role === 3;
+        }
       }
     }
   },
