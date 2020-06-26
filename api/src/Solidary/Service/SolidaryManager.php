@@ -231,6 +231,11 @@ class SolidaryManager
             $solidary->setDays($days);
         }
         $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
+       
+        // we check the solidary is a demand or a volunteer proposal
+        $solidary->setPassenger($solidary->getProposal()->getCriteria()->isPassenger() ? true : false);
+        $solidary->setDriver($solidary->getProposal()->getCriteria()->isDriver() ? true : false);
+       
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
         // the display label of the solidary 'subject : origin -> destination'
         if ($solidary->getOrigin() && $solidary->getDestination()) {
