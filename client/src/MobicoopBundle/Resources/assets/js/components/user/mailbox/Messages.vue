@@ -79,7 +79,7 @@
             >
               <div>
                 <v-icon class="text-h5">
-                  mdi-account-heart
+                  mdi-hand-heart
                 </v-icon>
                 <br>
                 <div class="mb-2">
