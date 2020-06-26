@@ -43,6 +43,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Service\ProofManager;
+use App\Communication\Entity\Message;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
@@ -569,13 +570,15 @@ class UserManager
      * @param User $user    The User involved
      * @param String $type  Type of messages Direct or Carpool
      */
-    public function getThreadsMessages(User $user, $type="Direct"): array
+    public function getThreadsMessages(User $user, $type=Message::TYPE_DIRECT): array
     {
         $threads = [];
-        if ($type=="Direct") {
+        if ($type==Message::TYPE_DIRECT) {
             $threads = $this->messageRepository->findThreadsDirectMessages($user);
-        } elseif ($type=="Carpool") {
-            $threads = $this->askRepository->findAskByUser($user);
+        } elseif ($type==Message::TYPE_CARPOOL) {
+            $threads = $this->askRepository->findAskByUser($user, Ask::ASKS_WITHOUT_SOLIDARY);
+        } elseif ($type==Message::TYPE_SOLIDARY) {
+            $threads = $this->askRepository->findAskByUser($user, Ask::ASKS_WITH_SOLIDARY);
         } else {
             return [];
         }
@@ -584,11 +587,12 @@ class UserManager
             return [];
         } else {
             switch ($type) {
-                case "Direct":
+                case Message::TYPE_DIRECT:
                     $messages = $this->parseThreadsDirectMessages($user, $threads);
                 break;
-                case "Carpool":
-                    $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+                case Message::TYPE_CARPOOL:
+                case Message::TYPE_SOLIDARY:
+                        $messages = $this->parseThreadsCarpoolMessages($user, $threads);
                 break;
             }
             return $messages;
@@ -698,12 +702,17 @@ class UserManager
 
     public function getThreadsDirectMessages(User $user): array
     {
-        return $this->getThreadsMessages($user, "Direct");
+        return $this->getThreadsMessages($user, Message::TYPE_DIRECT);
     }
 
     public function getThreadsCarpoolMessages(User $user): array
     {
-        return $this->getThreadsMessages($user, "Carpool");
+        return $this->getThreadsMessages($user, Message::TYPE_CARPOOL);
+    }
+
+    public function getThreadsSolidaryMessages(User $user): array
+    {
+        return $this->getThreadsMessages($user, Message::TYPE_SOLIDARY);
     }
 
     /**

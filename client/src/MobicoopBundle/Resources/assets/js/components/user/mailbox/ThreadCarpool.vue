@@ -117,6 +117,10 @@ export default {
     idAsk:{
       type: Number,
       default: null
+    },
+    solidary:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -169,10 +173,11 @@ export default {
       this.$emit("toggleSelected",{idAsk:this.idAsk});
       this.$emit("idMessageForTimeLine",
         {
-          type:"Carpool",
+          type:this.solidary ? "Solidary" : "Carpool",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           name:this.name,
+          avatar:this.avatar,
           idAsk:this.idAsk
         }
       );

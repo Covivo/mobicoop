@@ -50,7 +50,6 @@ use App\Solidary\Entity\SolidaryAskHistory;
  *      },
  *      collectionOperations={
  *          "post"={
- *              "controller"=SendAction::class,
  *              "security_post_denormalize"="is_granted('user_message_create',object)"
  *          },
  *          "completeThread"={
@@ -71,6 +70,9 @@ use App\Solidary\Entity\SolidaryAskHistory;
  */
 class Message
 {
+    const TYPE_DIRECT = 'Direct';
+    const TYPE_CARPOOL = 'Carpool';
+    const TYPE_SOLIDARY = 'Solidary';
 
     /**
      * @var int The id of this message.

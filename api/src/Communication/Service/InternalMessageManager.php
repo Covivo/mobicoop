@@ -23,6 +23,8 @@
 
 namespace App\Communication\Service;
 
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Communication\Entity\Message;
@@ -35,6 +37,7 @@ use App\Communication\Event\InternalMessageReceivedEvent;
 use App\Communication\Exception\MessageNotFoundException;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\MessageRepository;
+use App\Solidary\Entity\SolidaryAskHistory;
 
 /**
  * Internal message manager
@@ -149,5 +152,47 @@ class InternalMessageManager
     public function getMessage($idMessage)
     {
         return $message = $this->messageRepository->find($idMessage);
+    }
+
+    /**
+     * Post a Message, taking care of Ask and SolidaryAsk if needed
+     *
+     * @param Message $message
+     * @return Message
+     */
+    public function postMessage(Message $message)
+    {
+
+        // This message is related to an Ask
+        if ($message->getIdAsk()!==null) {
+            
+            // We get the infos of the Ask
+            $ask = $this->entityManager->getRepository(Ask::class)->find($message->getIdAsk());
+            
+            // Create the new AskHistory
+            $askHistory = new AskHistory();
+
+            $askHistory->setMessage($message);
+            $askHistory->setAsk($ask);
+            $askHistory->setStatus($ask->getStatus());
+            $askHistory->setType($ask->getType());
+            $this->entityManager->persist($askHistory);
+
+            // If there is a SolidaryAsk, we create the new SolidaryAskHistory
+            if (!is_null($ask->getSolidaryAsk())) {
+                $solidaryAskHistory = new SolidaryAskHistory();
+                $solidaryAskHistory->setMessage($message);
+                $solidaryAskHistory->setSolidaryAsk($ask->getSolidaryAsk());
+                $solidaryAskHistory->setStatus($ask->getSolidaryAsk()->getStatus());
+                $this->entityManager->persist($solidaryAskHistory);
+            }
+        } else {
+            // No Ask, just persist the message
+            $this->entityManager->persist($message);
+        }
+        
+        $this->entityManager->flush();
+
+        return $message;
     }
 }
