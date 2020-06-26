@@ -10,7 +10,7 @@
         xl="6"
         class="mt-12"
       >
-        <h1 class="display-1 text-left font-weight-bold">
+        <h1 class="text-h4 text-left font-weight-bold">
           {{ $t('title') }}
         </h1>
       </v-col>
@@ -40,7 +40,7 @@
         xl="6"
         class="mt-6"
       >
-        <h3 class="headline text-justify font-weight-bold">
+        <h3 class="text-h5 text-justify font-weight-bold">
           {{ $t('search') }}
         </h3>
       </v-col>

@@ -58,7 +58,7 @@
           max-width="300"
         >
           <v-card>
-            <v-card-title class="headline">
+            <v-card-title class="text-h5">
               {{ $t('dialog.title') }}
             </v-card-title>
             <v-card-actions>

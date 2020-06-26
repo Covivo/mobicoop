@@ -6,18 +6,18 @@
       fluid
     >
       <v-row id="headGridMessages">
-        <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
+        <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
-          class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
+          class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5"
         >
           <mail-box-header>{{ recipientName }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
-          class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold headline"
+          class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold text-h5"
         >
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
         </v-col>
@@ -43,7 +43,7 @@
               @click="reloadOnIcon()"
             >
               <div>
-                <v-icon class="headline">
+                <v-icon class="text-h5">
                   mdi-car
                 </v-icon>
                 <br>
@@ -60,7 +60,7 @@
               @click="reloadOnIcon()"
             >
               <div>
-                <v-icon class="headline">
+                <v-icon class="text-h5">
                   mdi-chat
                 </v-icon>
                 <br>
@@ -78,7 +78,7 @@
               @click="reloadOnIcon()"
             >
               <div>
-                <v-icon class="headline">
+                <v-icon class="text-h5">
                   mdi-account-heart
                 </v-icon>
                 <br>
@@ -383,7 +383,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.v-content__wrap{
+.v-main__wrap{
   #headGridMessages{
     .col{
       border-left: 2px solid white !important;

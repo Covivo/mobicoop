@@ -8,13 +8,13 @@
         v-if="isRegular && !hasSameReturnTimes && !hasSameOutwardTimes"
         align="right"
       >
-        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
+        <span class="accent--text text--darken-2 font-weight-bold text-body-1">{{ $t('outward') }}</span>
 
         <v-icon class="accent--text text--darken-2 font-weight-bold">
           mdi-arrow-left-right
         </v-icon>
 
-        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
+        <span class="accent--text text--darken-2 font-weight-bold text-body-1">{{ $t('return') }}</span>
         <!--multiple times slot for outward and return-->
         <p
           class="font-italic mt-1 primary--text text--darken-3"
@@ -34,7 +34,7 @@
           >
             <span
               v-if="!isRefined"
-              class="accent--text text--accent font-weight-bold body-1"
+              class="accent--text text--accent font-weight-bold text-body-1"
             >{{ $t('outward') }}</span>
 
             <v-icon
@@ -46,13 +46,13 @@
 
             <span
               v-if="hasSameOutwardTimes"
-              class="primary--text text--darken-2 body-1 text-capitalize"
+              class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
               {{ formatTime(outwardTimes ? outwardTimes[0] : outwardTime ? outwardTime : null) }}
             </span>
             <span
               v-else
-              class="primary--text text--darken-2 body-1"
+              class="primary--text text--darken-2 text-body-1"
             >
               {{ $t('multipleTimesSlots') }}
             </span>
@@ -64,7 +64,7 @@
             class="py-0"
             :align="isRegular ? 'right' : 'left'"
           >
-            <span class="accent--text  font-weight-bold body-1">{{ $t('return') }}</span>
+            <span class="accent--text  font-weight-bold text-body-1">{{ $t('return') }}</span>
 
             <v-icon class="accent--text font-weight-bold">
               mdi-arrow-left
@@ -72,13 +72,13 @@
 
             <span
               v-if="hasSameReturnTimes"
-              class="primary--text text--darken-2 body-1 text-capitalize"
+              class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
               {{ formatTime(returnTimes ? returnTimes[0] : returnTime ? returnTime : null) }}
             </span>
             <span
               v-else
-              class="primary--text text--darken-2 body-1"
+              class="primary--text text--darken-2 text-body-1"
             >
               {{ $t('multipleTimesSlots') }}
             </span>

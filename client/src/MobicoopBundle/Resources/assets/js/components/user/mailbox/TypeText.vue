@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container>
       <v-row>
         <v-col class="col-9">
@@ -35,7 +35,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import Translations from "@translations/components/user/mailbox/TypeText.json";

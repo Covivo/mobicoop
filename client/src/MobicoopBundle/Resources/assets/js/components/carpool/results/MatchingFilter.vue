@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-row
       justify="center"
       align="center"
@@ -108,7 +108,7 @@
         </v-expansion-panels>
       </v-col>
     </v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

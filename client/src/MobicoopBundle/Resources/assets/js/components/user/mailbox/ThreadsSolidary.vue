@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <thread-carpool
       v-for="(message, index) in messages"
       :key="index"
@@ -26,7 +26,7 @@
       class="mx-auto"
       :hidden="SkeletonHidden"
     />
-  </v-content>
+  </v-main>
 </template>
 <script>
 import axios from "axios";

@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container>
       <v-row
         justify="center"
@@ -18,7 +18,7 @@
         :contact-types="contactTypes"
       />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

@@ -335,7 +335,6 @@
                 >
                   <template
                     v-slot:label
-                    v-slot:activator="{ on }"
                   >
                     <div>
                       {{ $t('chart.text') }}
@@ -665,15 +664,6 @@ export default {
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
 
-    },
-    checkAdult (value) {
-      var d1 = new Date();
-      var d2 = new Date(value);
-
-      var diff =(d1.getTime() - d2.getTime()) / 1000;
-      diff /= (60 * 60 * 24);
-
-      //var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
     },
     checkEmail(){
       this.loadingCheckEmailAldreadyTaken = true;

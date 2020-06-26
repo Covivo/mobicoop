@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container>
       <!-- <v-row
         justify="center"
@@ -47,7 +47,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 
@@ -108,7 +108,7 @@ export default {
     display: block !important;
 
   }
-  div.row p.body-2 {
+  div.row p.text-body-2 {
     font-size: 0.75rem !important;
     line-height: 1rem !important;
     padding: 0px 3px !important;

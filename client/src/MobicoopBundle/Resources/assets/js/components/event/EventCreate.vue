@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -287,7 +287,7 @@
                   </template>
                   <v-card>
                     <v-card-title
-                      class="headline grey lighten-2"
+                      class="text-h5 grey lighten-2"
                       primary-title
                     >
                       {{ $t('popUp.title') }}
@@ -324,7 +324,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 

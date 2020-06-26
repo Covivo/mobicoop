@@ -35,7 +35,7 @@
               <v-col
                 v-if="!regular"
                 cols="5"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 {{ computedDate }}
               </v-col>
@@ -43,8 +43,9 @@
               <v-col
                 v-else
                 cols="5"
-                class="title text-center"
+                class="text-h6 text-center"
               >
+                class="text-h6
                 <regular-days-summary 
                   :mon-active="lResult.monCheck"
                   :tue-active="lResult.tueCheck"
@@ -59,33 +60,32 @@
               <!-- Seats -->
               <v-col
                 cols="3"
-                class="title text-center"
+                class="text-h6 text-center"
               >
-                {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
+                class="text-h6'places', lResult.seats, { seats: lResult.seats }) }}
               </v-col>
 
               <!-- Price -->
               <v-col
                 cols="4"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
-                <v-tooltip
-                  slot="append"
-                  right
-                  color="info"
-                  :max-width="'35%'"
+                class="text-h6tip
+                slot="append"
+                right
+                color="info"
+                :max-width="'35%'"
                 >
-                  <template v-slot:activator="{ on }">
-                    <v-icon
-                      justify="left"
-                      v-on="on"
-                    >
-                      mdi-help-circle-outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('priceTooltip') }}</span>
-                </v-tooltip>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    justify="left"
+                    v-on="on"
+                  >
+                    mdi-help-circle-outline
+                  </v-icon>
+                </template>
+                <span>{{ $t('priceTooltip') }}</span>
               </v-col>
             </v-row>
 

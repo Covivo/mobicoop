@@ -263,7 +263,7 @@
           xl="6"
           class="mt-6"
         >
-          <h3 class="headline text-justify font-weight-bold">
+          <h3 class="text-h5 text-justify font-weight-bold">
             {{ $t('title.searchCarpool') }}
           </h3>
         </v-col>
@@ -287,7 +287,7 @@
         max-width="500"
       >
         <v-card>
-          <v-card-title class="headline">
+          <v-card-title class="text-h5">
             {{ $t('leaveCommunity.popup.title') }}
           </v-card-title>
           <v-card-text
@@ -320,7 +320,7 @@
         max-width="500"
       >
         <v-card>
-          <v-card-title class="headline">
+          <v-card-title class="text-h5">
             {{ $t('joinCommunity.popup.title') }}
           </v-card-title>
           <v-card-text
@@ -646,7 +646,7 @@ export default {
           currentProposal.title = currentProposal.desc;
 
           // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary overline'>"+this.$t('map.findMatchings')+"</button>";
+          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary text-overline'>"+this.$t('map.findMatchings')+"</button>";
 
           // We are closing the two p
           currentProposal.title += "</p>";
