@@ -189,6 +189,12 @@ user_message_carpool_threads_list:
         en: /user/messages/carpool
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCarpoolThreadsList
 
+user_message_solidary_threads_list:
+    path:
+        fr: /utilisateur/messages/solidaires
+        en: /user/messages/solidary
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSolidaryThreadsList
+
 user_message_complete_thread:
     path:
         fr: /utilisateur/messages/{idMessage}/fil

@@ -72,6 +72,15 @@ const fr = {
         both: 'Conducteur et passager',
       },
     },
+    solidaryAnimation: {
+      addAction: 'Ajouter une action',
+      demandeTaking: 'Prise en compte de la demande',
+      searchSolution: 'Recherche de solution',
+      carpoolTracking: 'Suivi du covoiturage',
+      askClosing: 'Cloture de la demande',
+      noActionForTheMoment: "Pas d'action dans le journal pour l'instant",
+      changeProgress: 'Modifier avancement',
+    },
     solidaryask: {
       status: {
         asked: 'Demande ',

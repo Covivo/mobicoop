@@ -15,7 +15,6 @@ const options = [SMS_CONTACT_OPTION, MESSAGE_CONTACT_OPTION /* @TODO: ASKFORRESP
 export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...props }) => {
   const [contactType, setContactType] = useState(null);
 
-  console.log({ solidaryId, solidarySolutionId });
   const closeModal = () => setContactType(null);
 
   return (

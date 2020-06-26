@@ -36,6 +36,12 @@
           >
             <v-card-text v-html="item.text" />
           </v-card>
+          <p
+            v-if="item.divider===false && item.userDelegate"
+            class="caption"
+          >
+            {{ $t('sendBy', {"name":item.userDelegate.givenName+" "+item.userDelegate.shortFamilyName}) }}
+          </p>
           <span
             v-if="item.divider===true"
             class="secondary--text font-weight-bold"

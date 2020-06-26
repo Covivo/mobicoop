@@ -40,6 +40,8 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
 
 /**
@@ -612,8 +614,29 @@ class AskManager
         $askHistory->setType($ask->getType());
         $ask->addAskHistory($askHistory);
 
-       
         $this->entityManager->persist($ask);
+
+       
+        // If there is a SolidaryAsk we update it
+        if (!is_null($ask->getSolidaryAsk())) {
+            $solidaryAsk = $ask->getSolidaryAsk();
+            if ($ad->getAskStatus()==Ask::STATUS_ACCEPTED_AS_DRIVER || $ad->getAskStatus()==Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                $solidaryAsk->setStatus(SolidaryAsk::STATUS_ACCEPTED);
+            } elseif ($ad->getAskStatus()==Ask::STATUS_DECLINED_AS_DRIVER || $ad->getAskStatus()==Ask::STATUS_DECLINED_AS_PASSENGER) {
+                $solidaryAsk->setStatus(SolidaryAsk::STATUS_REFUSED);
+            }
+
+            // We clone the updated Criteria of the Ask
+            $solidaryAsk->setCriteria(clone $ask->getCriteria());
+
+            $solidaryAskHistory = new SolidaryAskHistory();
+            $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+            $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+
+            $solidaryAsk->addSolidaryAskHistory($solidaryAskHistory);
+            $this->entityManager->persist($solidaryAsk);
+        }
+
         $this->entityManager->flush();
 
         // get the complete ad to have data for the email

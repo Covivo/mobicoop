@@ -41,10 +41,12 @@ class SolidaryException extends \LogicException
     const ALREADY_USER = "Already a User with this email";
     const ALREADY_SOLIDARY_USER = "Already a SolidaryUser";
     const MANDATORY_EMAIL = "Email is mandatory and cannot be empty";
+    const INVALID_PROGRESSION = "Invalid progression provided";
 
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
     const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
+    const SOLIDARY_MATCHING_ALREADY_USED = "The SolidaryMatching already have a SolidarySolution";
 
     // Solidary matching
     const INVALID_HOUR_SLOT = "Hour slot invalid";
@@ -68,6 +70,7 @@ class SolidaryException extends \LogicException
 
     // SolidaryUser
     const NO_SOLIDARY_USER = "This User is not a Solidary User";
+    const SOLIDARY_USER_ID_INVALID = "Invalid SolidaryUserId";
     const NO_SOLIDARY_BENEFICIARY = "This Solidary User is not a beneficiary";
     const NO_SOLIDARY_VOLUNTEER = "This Solidary User is not a volunteer";
     const ALREADY_ACCEPTED = "This SolidaryUser has already be accepted for the current structure";

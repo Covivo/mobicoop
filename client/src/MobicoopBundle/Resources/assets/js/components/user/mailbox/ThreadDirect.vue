@@ -106,6 +106,7 @@ export default {
           type:"Direct",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
+          avatar:this.avatar,
           name:this.name
         }
       );

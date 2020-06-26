@@ -75,6 +75,10 @@ class Ask
     const STATUS_DECLINED_AS_DRIVER = 6;
     const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
     
+    const ALL_ASKS = 0;
+    const ASKS_WITHOUT_SOLIDARY = 1;
+    const ASKS_WITH_SOLIDARY = 2;
+
     /**
      * @var int The id of this ask.
      *

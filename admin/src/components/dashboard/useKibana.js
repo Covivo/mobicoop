@@ -10,7 +10,6 @@ const useKibana = () => {
     const token = localStorage.getItem('token');
     const instanceName = process.env.REACT_APP_SCOPE_INSTANCE_NAME;
     const kibanaAuthenticationApi = `${process.env.REACT_APP_KIBANA_URL}/login/${instanceName}`;
-    console.log('Scope API:', kibanaAuthenticationApi);
 
     const getKibanaCookie = async () => {
       fetch(kibanaAuthenticationApi, {
@@ -19,7 +18,6 @@ const useKibana = () => {
         method: 'GET',
       })
         .then((reponse) => {
-          console.log(reponse);
           // Should check if cookie is there
           if (reponse.status === 200) {
             setStatus(true);
