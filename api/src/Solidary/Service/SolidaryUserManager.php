@@ -1007,15 +1007,15 @@ class SolidaryUserManager
             }
         }
 
+        // We check if this candidate has already been accepted or refused
+        if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
+            throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
+        }
+        if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
+            throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
+        }
 
         if ($acceptCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
-
-            // We check if this candidate has already been accepted or refused
-            if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
-                throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
-            }
-
-
             $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
             $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_ACCEPTED);
             // We add the role to the user
@@ -1035,10 +1035,6 @@ class SolidaryUserManager
             $event = new SolidaryUserStructureAcceptedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
             $this->eventDispatcher->dispatch(SolidaryUserStructureAcceptedEvent::NAME, $event);
         } elseif ($refuseCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
-            if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
-                throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
-            }
-    
             $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
             $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_REFUSED);
             // We dispatch the event
