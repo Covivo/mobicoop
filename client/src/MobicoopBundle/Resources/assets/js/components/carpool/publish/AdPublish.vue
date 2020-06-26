@@ -1015,6 +1015,16 @@ export default {
       this.$refs.mmapSummary.redrawMap();
       this.$refs.mmapRoute.redrawMap();
     },
+    outwardTime(newValue,oldValue){
+      if(newValue){
+        this.outwardTime = (moment(newValue).isValid()) ? moment(this.ad.outwardTime).format("HH:mm") : newValue;
+      }
+    },
+    returnTime(newValue,oldValue){
+      if(newValue){
+        this.returnTime = (moment(newValue).isValid()) ? moment(this.ad.returnTime).format("HH:mm") : newValue;
+      }
+    },
     ad: {
       immediate: true,
       handler () {
