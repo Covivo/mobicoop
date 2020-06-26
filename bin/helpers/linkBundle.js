@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-* This file is used to create a canvas for front app & link bundle
+* This file is used to link a bundle to a canvas
 */
 
 const fs = require('fs-extra');
@@ -9,16 +9,6 @@ const kuler = require('kuler');
 const program = require('commander');
 const path = require('path');
 const to = require('await-to-js').default;
-
-/*//path to bundle
-const bundle = path.resolve(__dirname, '../client/src/MobicoopBundle');
-//filter so that we don't need to copy Bundle
-  const filter = {
-    filter:path => {
-      if (path === bundle){return false;}
-      else{return true;}
-    }
-  }*/
 
 program
   .version('0.1.0')
@@ -30,7 +20,6 @@ if (!program.destination) {
   process.stderr.write(kuler('You did not specify a path to copy canvas to .. ', 'orange'));
   process.exit(0);
 }
-
 
 // This function check copy to path sent & link to bunlde
 async function linkBundle() {

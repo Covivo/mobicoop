@@ -7,7 +7,7 @@ $$NAME$$
 *FIND & REPLACE $$URL$$ & CHANGE IT TO THE URL OF THE DOMAINE WITHOUT dev/test/prod BUT LAB IF NEEDED*
 
 
-$$NAME$$ is based on [mobicoop-plateform](https://gitlab.com/mobicoop/mobicoop-platform)
+$$NAME$$ is based on [mobicoop-platform](https://gitlab.com/mobicoop/mobicoop-platform)
 
 _for developpement you have to use the same branch of mobicoop for eg (dev mobicoop with dev $$NAME$$, master mobicoop=> master $$NAME$$)_
 
@@ -22,7 +22,7 @@ Please check mobicoop [docker requirement](https://gitlab.com/mobicoop/mobicoop-
 
 Clone & install via [docker way](https://gitlab.com/mobicoop/mobicoop-platform/tree/dev/docs#-install) the mobicoop platform
 
-⚡️ Export env variable inside your .zshrc/.bashrc : `export MOBICOOP_CLIENT=/Full/Path/TO/mobicoopl-platform/client`  *(client folder not the bundle!)*
+⚡️ Export env variable inside your .zshrc/.bashrc : `export MOBICOOP_CLIENT=/Full/Path/To/mobicoop-platform/client`  *(client folder not the bundle!)*
 
 ## 🐳 Install 
 

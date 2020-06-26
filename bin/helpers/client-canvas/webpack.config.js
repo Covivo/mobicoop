@@ -36,27 +36,27 @@ const getSassyRule = type => {
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
-  /*
-   * ENTRY CONFIG
-   *
-   * Add 1 entry for each "page" of your app
-   * (including one that's included on every page - e.g. "app")
-   *
-   * Each entry will result in one JavaScript file (e.g. app.js)
-   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
-   */
-  // scss only entries
-  // add as much entry as you want css different file
   .addStyleEntry('bundle_main', './src/MobicoopBundle/Resources/assets/css/main.scss')
   .addEntry('app', './assets/js/app.js')
   .addStyleEntry('main', './assets/css/main.scss')
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
+  .enableSourceMaps(!Encore.isProduction())
   .enableVueLoader()
   .enableSingleRuntimeChunk()
   .addLoader(getSassyRule('scss'))
   .addLoader(getSassyRule('sass'))
   .setManifestKeyPrefix('build')
+  .configureBabel(function (babelConfig) {
+    babelConfig.plugins.push('transform-class-properties');
+      const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
+      if (preset !== undefined) {
+        preset[1].useBuiltIns = "usage";
+        preset[1].corejs = 3;
+      }
+  }, {
+      exclude: /node_modules[\\/](?!(vuetify)).*/
+  })
   .enablePostCssLoader();
 
 // for Dev we do not add some plugin & loader
@@ -78,18 +78,7 @@ if (!Encore.isProduction()) {
       emitErrors: false,
       syntax: 'scss'
     }))
-    .enableSourceMaps(!Encore.isProduction())
-    .enableBuildNotifications()
-    .configureBabel(function (babelConfig) {
-      // add additional presets
-      babelConfig.plugins.push('transform-class-properties');
-        const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
-        if (preset !== undefined) {
-            preset[1].useBuiltIns = "usage";
-        }
-    }, {
-        exclude: /node_modules[\\/](?!(vuetify)).*/
-    })
+    .enableBuildNotifications()   
 }
 
 let encoreConfig = Encore.getWebpackConfig();

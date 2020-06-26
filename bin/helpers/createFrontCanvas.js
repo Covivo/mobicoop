@@ -13,7 +13,7 @@ const replace = require('replace-in-file');
 
 program
   .version('0.1.0')
-  .option('-n, --project  <string>', 'Name of the client platform')
+  .option('-p, --project  <string>', 'Name of the client platform project')
   .parse(process.argv);
 
 if (!program.project) {
@@ -22,7 +22,6 @@ if (!program.project) {
 }
 
 const pathToClient = path.resolve(__dirname, '../../client');
-const pathToRoot = path.resolve(__dirname, '../../');
 const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
 const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
@@ -60,7 +59,7 @@ async function createCanvas() {
    * Copy all client files but filters to destination
    */
   const filter = {
-    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json'],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json', 'README.md'],
     // extToExclude: ['.lock'],
     filter: function (currentPath) {
       if (this.elementToExclude.includes(path.basename(currentPath))) { return false; }
@@ -121,7 +120,7 @@ async function createCanvas() {
   let postDeploy = path.resolve(__dirname, 'client-canvas/postDeploy.sh');
   let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
   let makefile = path.resolve(__dirname, 'client-canvas/makefile');
-  let readme = path.resolve(__dirname, 'client-canvas/Readme.md');
+  let readme = path.resolve(__dirname, 'client-canvas/README.md');
   let entryBuilder = path.resolve(__dirname, 'client-canvas/entrypoint-builder.sh');
   let entry = path.resolve(__dirname, 'client-canvas/entrypoint.sh');
   let bundles = path.resolve(__dirname, 'client-canvas/bundles');
@@ -136,7 +135,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci.yml`));
   [err, success] = await to(fs.copy(postDeploy, `${destinationProject}/postDeploy.sh`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
-  [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
+  [err, success] = await to(fs.copy(readme, `${destinationProject}/README.md`));
   [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
   [err, success] = await to(fs.copy(gitexclude, `${destinationProject}/.gitlab-exclude`));
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
