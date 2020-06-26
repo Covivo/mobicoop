@@ -88,3 +88,5 @@
 /admin/.env
 /admin/public/logo.png
 /admin/public/robots.txt
+/admin/node_modules
+/admin/src

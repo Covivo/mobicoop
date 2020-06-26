@@ -36,17 +36,6 @@ const getSassyRule = type => {
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
-  /*
-   * ENTRY CONFIG
-   *
-   * Add 1 entry for each "page" of your app
-   * (including one that's included on every page - e.g. "app")
-   *
-   * Each entry will result in one JavaScript file (e.g. app.js)
-   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
-   */
-  // scss only entries
-  // add as much entry as you want css different file
   .addStyleEntry('bundle_main', './src/MobicoopBundle/Resources/assets/css/main.scss')
   .addEntry('app', './assets/js/app.js')
   .addStyleEntry('main', './assets/css/main.scss')
@@ -59,7 +48,6 @@ Encore
   .addLoader(getSassyRule('sass'))
   .setManifestKeyPrefix('build')
   .configureBabel(function (babelConfig) {
-    // add additional presets
     babelConfig.plugins.push('transform-class-properties');
       const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
       if (preset !== undefined) {
