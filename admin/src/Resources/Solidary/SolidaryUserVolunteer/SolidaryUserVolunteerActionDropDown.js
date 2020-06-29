@@ -80,7 +80,7 @@ const AddSolidaryNotification = () => {
   const notify = useNotify();
 
   useEffect(() => {
-    notify('Trajet / Transporteur associé à la demande !', 'success');
+    notify('Bénévole ajouté comme conducteur potentiel', 'success');
   }, []);
 
   return null;

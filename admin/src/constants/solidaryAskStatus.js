@@ -43,3 +43,25 @@ export const solidaryAskStatusLabels = {
   [SOLIDARYASK_STATUS_CLOSED]: 'custom.solidaryask.status.closed',
   [SOLIDARYASK_STATUS_ACCEPTED]: 'custom.solidaryask.status.accepted',
 };
+
+export const getAskStatusColor = (askStatus) => {
+  if ([SOLIDARYASK_STATUS_REFUSED].includes(askStatus)) {
+    return 'red';
+  }
+
+  if (
+    [
+      SOLIDARYASK_STATUS_PENDING,
+      SOLIDARYASK_STATUS_LOOKFORSOLUTION,
+      SOLIDARYASK_STATUS_FOLLOWUP,
+    ].includes(askStatus)
+  ) {
+    return 'orange';
+  }
+
+  if (askStatus === SOLIDARYASK_STATUS_ACCEPTED) {
+    return 'green';
+  }
+
+  return 'grey';
+};

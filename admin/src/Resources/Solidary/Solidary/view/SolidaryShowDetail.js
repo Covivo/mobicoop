@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { Card, Grid } from '@material-ui/core';
+import { Card, Grid, makeStyles, List } from '@material-ui/core';
 
 import { Trip } from './Trip';
 import { NeedsAndStructure } from './NeedsAndStructure';
+import { SolidaryAskRow } from './SolidaryAskRow';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -20,7 +20,7 @@ const SolidaryShowDetail = ({ record }) => {
     return null;
   }
 
-  const { origin, destination, needs } = record;
+  const { origin, destination, needs, asksList } = record;
 
   return (
     <>
@@ -35,6 +35,13 @@ const SolidaryShowDetail = ({ record }) => {
             <NeedsAndStructure record={record} />
           </Grid>
         </Grid>
+        <div style={{ height: 500, marginTop: 30, overflowY: 'scroll' }}>
+          <List>
+            {asksList.map((ask) => (
+              <SolidaryAskRow solidary={record} ask={ask} />
+            ))}
+          </List>
+        </div>
       </Card>
     </>
   );
