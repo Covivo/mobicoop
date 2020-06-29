@@ -23,7 +23,7 @@ if (!program.project) {
 
 const pathToClient = path.resolve(__dirname, '../../client');
 const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
-const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
+const destinationProject = path.resolve(__dirname, `../../../${program.project}-platform`);
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
 const destinationAssets = path.resolve(destinationProject, 'assets');
 const translationsPath = path.resolve(destinationProject, 'translations');
@@ -153,7 +153,7 @@ async function replaceDataInCanvas() {
   const optionsName = {
     files: `${destinationProject}/**/*`,
     from: /\$\$NAME\$\$/gi,
-    to: `${program.project}_platform`,
+    to: `${program.project}-platform`,
   };
   const optionsInstance = {
     files: `${destinationProject}/.gitlab-ci.yml`,
@@ -163,7 +163,7 @@ async function replaceDataInCanvas() {
   const optionsPlatformNameEnv = {
     files: `${destinationProject}/.env`,
     from: /APP_NAME=mobicoop_platform/gi,
-    to: `APP_NAME=${program.project}_platform`,
+    to: `APP_NAME=${program.project}-platform`,
   };
   const optionsAssetsEnv = {
     files: `${destinationProject}/.env`,
