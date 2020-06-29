@@ -43,7 +43,6 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
     "@babel/preset-env": "^7.10.3",
-    "@mdi/font": "^3.9.97",
     "@percy/cypress": "^1.0.9",
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
