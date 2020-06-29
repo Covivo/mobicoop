@@ -10,7 +10,7 @@ let bundleVendor = path.resolve(bundleRealPath + '../../../vendor');
 let bundlePublic = path.resolve(bundleRealPath + '../../../public');
 
 const getSassyRule = type => {
-  let prependData = `@import "./src/MobicoopBundle/Resources/assets/css/_variables.scss"`;
+  let prependData = `@import "./assets/css/_variables.scss"`;
   if (type === 'scss') prependData += ';';
   return {
     test: type === 'scss'
@@ -36,7 +36,6 @@ const getSassyRule = type => {
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
-  .addStyleEntry('bundle_main', './src/MobicoopBundle/Resources/assets/css/main.scss')
   .addEntry('app', './assets/js/app.js')
   .addStyleEntry('main', './assets/css/main.scss')
   .splitEntryChunks()
