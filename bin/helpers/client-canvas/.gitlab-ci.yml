@@ -56,7 +56,7 @@ test_deploy:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && git checkout ${RELEASE_VERSION} && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && git checkout ${RELEASE_VERSION} && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
     - npm run install-ci
   script:
@@ -87,7 +87,7 @@ prod_deploy:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
     - npm run install-ci
   script:
