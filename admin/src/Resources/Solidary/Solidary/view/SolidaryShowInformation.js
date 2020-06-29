@@ -89,7 +89,7 @@ const SolidaryShowInformation = ({ record }) => {
     solutions,
   } = record;
 
-  const user = solidaryUser.user || {};
+  const { user } = solidaryUser || {};
 
   const handleDriverSearch = (choice, index) => {
     const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
