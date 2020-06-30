@@ -1073,11 +1073,6 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            // We use event to send notifications if Ad has asks
-            if (count($proposalAsks) > 0) {
-                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser(), $mailSearchLink);
-                $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
-            }
             $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true);
 
