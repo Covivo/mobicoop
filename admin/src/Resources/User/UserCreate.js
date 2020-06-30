@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import GestionRoles from './GestionRoles';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
@@ -15,6 +18,8 @@ import {
   regex,
   BooleanInput,
   useTranslate,
+  SaveButton,
+  Toolbar,
 } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -30,6 +35,8 @@ const useStyles = makeStyles({
 
 const UserCreate = (props) => {
   const classes = useStyles();
+  const [showSnack, setShowSnack] = useState(false);
+  const [errors, setErrors] = useState();
   const translate = useTranslate();
   const instance = process.env.REACT_APP_INSTANCE_NAME;
   const [verifPhoneDisplaycount, setVerifPhoneDisplaycount] = useState(0);
@@ -91,15 +98,31 @@ const UserCreate = (props) => {
   //Used for check if adresses is not empty AND at least 1 roles exist
   const validateUserCreation = (values) => {
     let errors = {};
-    console.info(values);
-    if (!values.address) {
-      errors = [translate('custom.label.user.adresseMandatory')];
+    if (!values.addresses) {
+      setErrors(translate('custom.label.user.adresseMandatory'));
+      errors = { error: 'error' };
+    } else if (!values.fields) {
+      setErrors(translate('custom.label.user.errors.rolesMandatory'));
+      errors = { error: 'error' };
+    } else {
+      setErrors();
     }
-    if (!values.roles) {
-      errors = [translate('custom.label.user.errors.rolesMandatory')];
-    }
+
     return errors;
   };
+
+  const displayError = () => {
+    if (errors) setShowSnack(true);
+  };
+  const handleClose = () => {
+    setShowSnack(false);
+  };
+
+  const PostCreateToolbar = (props) => (
+    <Toolbar {...props}>
+      <SaveButton onClick={displayError} />
+    </Toolbar>
+  );
 
   return (
     <Create {...props} title={translate('custom.label.user.title.create')}>
@@ -107,8 +130,26 @@ const UserCreate = (props) => {
         validate={validateUserCreation}
         initialValues={{ newsSubscription: true }}
         redirect="list"
+        toolbar={<PostCreateToolbar />}
       >
         <FormTab label={translate('custom.label.user.indentity')}>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+            open={showSnack}
+            onClose={handleClose}
+            message={errors}
+            autoHideDuration={2000}
+            action={
+              <div>
+                <IconButton aria-label="close" color="inherit" onClick={handleClose}>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+            }
+          />
           <TextInput
             fullWidth
             required
