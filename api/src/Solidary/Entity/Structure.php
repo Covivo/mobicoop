@@ -120,7 +120,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Morning min range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -128,7 +128,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Morning max range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -136,7 +136,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Afternoon min range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -144,7 +144,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Afternoon max range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -152,7 +152,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Evening min range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -160,7 +160,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Evening max range time.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -216,7 +216,7 @@ class Structure
     
     /**
      * @var bool Available on monday morning.
-     *
+     * @Assert\NotBlank
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
@@ -410,8 +410,8 @@ class Structure
     /**
      * @var ArrayCollection|null The subjects for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary"})
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -419,8 +419,9 @@ class Structure
     /**
      * @var ArrayCollection|null The special needs for this structure.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need")
-     * @Groups({"readSolidary"})
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", inversedBy="structures", cascade={"persist"})
+     * @Groups({"readSolidary", "writeSolidary"})
+     * @MaxDepth(1)
      */
     private $needs;
 
@@ -435,8 +436,8 @@ class Structure
     /**
      * @var ArrayCollection|null The solidary records for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readSolidary"})
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -452,7 +453,9 @@ class Structure
 
     /**
      * @var Address|null The address of the Structure
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure")
+     *
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure", cascade={"persist"})
+     * @Groups({"readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
     private $address;
@@ -466,6 +469,7 @@ class Structure
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->structureProofs = new ArrayCollection();
     }
     
     public function getId(): ?int

@@ -95,6 +95,15 @@ class Need
     private $solidary;
 
     /**
+    * @var ArrayCollection|null The structures associated to the need.
+    *
+    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="needs")
+    * @Groups({"readSolidary", "writeSolidary"})
+    * @MaxDepth(1)
+    */
+    private $structures;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -109,6 +118,11 @@ class Need
      * @Groups({"readNeeds"})
      */
     private $updatedDate;
+
+    public function __construct()
+    {
+        $this->structures = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
@@ -155,6 +169,34 @@ class Need
     {
         $this->solidary = $solidary;
 
+        return $this;
+    }
+
+    public function getStructures()
+    {
+        return $this->structures->getValues();
+    }
+
+    public function setStructures(?ArrayCollection $structures): self
+    {
+        $this->structures = $structures;
+
+        return $this;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures->add($structure);
+        }
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->contains($structure)) {
+            $this->structures->removeElement($structure);
+        }
         return $this;
     }
 
