@@ -485,14 +485,25 @@ class NotificationManager
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
-                        /** @var Waypoint $waypoint */
-                        foreach ($object->ask->getWaypoints() as $waypoint) {
+
+                        /** @var Ask $ask */
+                        $ask = $object->ask;
+                        if ($recipient->getId() == $ask->getMatching()->getProposalOffer()->getUser()->getId()) {
+                            // The recipient is the driver, we take the waypoints of the ProposalOffer
+                            $waypoints = $ask->getMatching()->getProposalOffer()->getWaypoints();
+                        } else {
+                            // The recipient is the passenger, we take the waypoints of ProposalRequest
+                            $waypoints = $ask->getMatching()->getProposalRequest()->getWaypoints();
+                        }
+
+                        foreach ($waypoints as $waypoint) {
                             if ($waypoint->getPosition() == 0) {
                                 $outwardOrigin = $waypoint;
                             } elseif ($waypoint->isDestination()) {
                                 $outwardDestination = $waypoint;
                             }
                         }
+
                         $bodyContext = [
                             'user' => $recipient,
                             'notification' => $notification,

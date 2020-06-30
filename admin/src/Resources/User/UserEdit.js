@@ -117,7 +117,7 @@ const UserEdit = (props) => {
           <BooleanInput
             fullWidth
             label={translate('custom.label.user.newsSubscription', { instanceName: instance })}
-            source="news_subscription"
+            source="newsSubscription"
             formClassName={classes.spacedHalfwidth}
           />
           <SelectInput
