@@ -1,6 +1,3 @@
-{% set new = context.object.new %}
-{% set old = context.object.old %}
-{% set ask = context.object.ask %}
 {% set sender = context.object.sender %}
 {% set recipient = context.user %}
 {% set outwardOrigin = context.origin %}
@@ -8,11 +5,6 @@
 
 {{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
-{{ "updatedCarpool"|trans }}
-
-{{ "yourCarpool"|trans }} {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
-{{ "with"|trans }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{ "hasBeenUpdated"|trans }}
-
-
+{{ "updatedCarpoolDetails"|trans({'%origin%' : outwardOrigin.address.displayLabel[0], '%destination%' : outwardDestination.address.displayLabel[0]}) }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} sur {{api_env('SMS_PLATFORM_NAME')}}.
 
 {{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')}}

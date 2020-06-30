@@ -1,6 +1,8 @@
 framework:
     default_locale: '%locale%'
     translator:
-        default_path: '%kernel.project_dir%/translations'
+        default_path: '%kernel.project_dir%/translations_client' # path to client override
+        paths:
+            - '%kernel.project_dir%/translations'  # default path to translation
         fallbacks:
             - '%locale%'

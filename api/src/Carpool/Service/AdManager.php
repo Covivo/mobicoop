@@ -857,10 +857,11 @@ class AdManager
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
-            $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-
+            $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
+            $ad->setReturnDate($returnDate);
+            
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
+                $ad->setReturnTime($returnDate->format('Y-m-d')." ".$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -1072,11 +1073,6 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            // We use event to send notifications if Ad has asks
-            if (count($proposalAsks) > 0) {
-                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser(), $mailSearchLink);
-                $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
-            }
             $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true);
 
@@ -1410,10 +1406,6 @@ class AdManager
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
                 $days = [strtolower($today->format('l'))=>1];
                 $outward = ["mindate"=>$time->format("Y-m-d")];
-                $outward[strtolower($today->format('l'))] = [
-                    "mintime" => $mintime,
-                    "maxtime" => $maxtime
-                ];
             } else {
                 // We don't have any date so i'm looking for the first date corresponding to the first day
                 $dateFound = "";
@@ -1428,15 +1420,9 @@ class AdManager
                     $cpt++;
                 }
                 $outward = ["mindate"=>$dateFound->format("Y-m-d")];
-                foreach ($days as $day => $value) {
-                    $outward[$day] = [
-                        "mintime" => $mintime,
-                        "maxtime" => $maxtime
-                    ];
-                }
             }
         }
-        // var_dump($outward);
+        // var_dump($outward);die;
 
         // if days is null, we make an array using outward
         $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
@@ -1450,12 +1436,6 @@ class AdManager
                     $dayMinDate = new \DateTime($times);
                     $textDayMinDate = strtolower($dayMinDate->format('l'));
                     $days = [$textDayMinDate=>1];
-
-                    // We also need to set mintime and maxtime in the current outward record
-                    if (!isset($outward[$textDayMinDate]['mintime'])) {
-                        $outward[$textDayMinDate]['mintime'] = $today->format("H:i:s");
-                        $outward[$textDayMinDate]['maxtime'] = $today->modify("+1 hour")->format("H:i:s");
-                    }
                 }
             }
         }
@@ -1473,7 +1453,9 @@ class AdManager
                 $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
                 (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
 
-                $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                if (isset($schedules[0]["outwardTime"])) {
+                    $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                }
             } elseif ($frequency=="regular") {
                 // Regular journey
                 $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
@@ -1488,13 +1470,17 @@ class AdManager
                     $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
                     (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
 
-                    $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                    if (isset($schedules[0]["outwardTime"])) {
+                        $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                    }
                 }
             }
         } else {
-            return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
+            // No schedule
+            $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
         }
-            
+        // var_dump($ad);die;
         return $this->createAd($ad);
     }
 
@@ -1530,7 +1516,7 @@ class AdManager
      */
     private function buildSchedule(?array $days, ?array $outward)
     {
-        $schedules = []; // We set a subschdeul because a real Ad can have multiple schedule. Only one in RDEX though.
+        $schedules = []; // We set a sub schedule because a real Ad can have multiple schedule. Only one in RDEX though.
         $refTimes = [];
         foreach ($days as $day => $value) {
             $shortDay = substr($day, 0, 3);
