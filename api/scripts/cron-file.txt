@@ -23,6 +23,10 @@
 # Parameters used in the python script : 
 # $1 => the php binary path
 # $2 => the symfony api console path
+# $3 => the environment (dev / test / prod)
 
 # each 5 minutes : link addresses and directions to territories
-*/5 * * * *    $1 $2 app:geography:territory-link-batch
+*/5 * * * *    $1 $2 app:geography:territory-link-batch --env=$3
+
+# each day at 1am : create and send the carpool proofs for the day before
+0 1 * * *   $1 $2 app:carpool:proof-batch --env=$3
