@@ -742,6 +742,7 @@ class SolidaryManager
     {
 
         // we set the home address
+        $homeAddress = null;
         if ($solidary->getHomeAddress()) {
             $homeAddress = new Address();
             $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
@@ -759,6 +760,16 @@ class SolidaryManager
             $homeAddress->setCountryCode($solidary->getHomeAddress()['countryCode']);
             $homeAddress->setLatitude($solidary->getHomeAddress()['latitude']);
             $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
+        } elseif (!is_null($solidary->getUser()) && !is_null($solidary->getUser()->getAddresses())) {
+            foreach ($solidary->getUser()->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $homeAddress = $address;
+                    break;
+                }
+            }
+        }
+        if (is_null($homeAddress)) {
+            throw new SolidaryException(SolidaryException::NO_HOME_ADDRESS);
         }
         // We check if the user exist
         $user = $solidary->getUser();
@@ -814,7 +825,15 @@ class SolidaryManager
         if ($solidary->getStructure()) {
             $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
         } else {
-            $structure = $this->security->getUser()->getSolidaryStructures()[0];
+            if (!is_null($this->security->getUser()->getSolidaryStructures()) && count($this->security->getUser()->getSolidaryStructures()) > 0) {
+                $structure = $this->security->getUser()->getSolidaryStructures()[0];
+            } elseif (!is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures())
+                        && count($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()) > 0
+                        && !is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure())) {
+                $structure = $this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+            } else {
+                throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+            }
         }
         $solidaryUserStructure->setStructure($structure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
