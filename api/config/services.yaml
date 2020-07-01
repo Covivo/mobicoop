@@ -131,6 +131,7 @@ services:
 
     App\Carpool\Service\ProofManager:
         arguments:
+            $prefix: '%env(string:CARPOOL_PROOF_PREFIX)%'
             $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'

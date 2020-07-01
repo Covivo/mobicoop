@@ -58,9 +58,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
      * Send a carpool proof
      *
      * @param CarpoolProof $carpoolProof    The carpool proof to send
-     * @return bool                         The result of the send
+     * @param string|null $prefix           A prefix for the journey id
+     * @return Response                     The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof)
+    public function postCollection(CarpoolProof $carpoolProof, ?string $prefix = null)
     {
         // creation of the dataProvider
         $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
@@ -75,7 +76,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
         // note : the casts are mandatory as the register checks for types
         // todo : add the required items depending on the class
         $journey = [
-            "journey_id" => (string)$carpoolProof->getId(),
+            "journey_id" => (string)((!is_null($prefix) ? $prefix : "") . (string)$carpoolProof->getId()),
             // TODO : implement other types, for now we use the A type
             // "operator_class" => $carpoolProof->getType(),
             "operator_class" => self::PROOF_TYPE,

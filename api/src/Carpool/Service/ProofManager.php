@@ -49,6 +49,7 @@ class ProofManager
 {
     private $entityManager;
     private $logger;
+    private $prefix;
     private $provider;
     private $carpoolProofRepository;
     private $askRepository;
@@ -79,6 +80,7 @@ class ProofManager
         WaypointRepository $waypointRepository,
         GeoSearcher $geoSearcher,
         GeoTools $geoTools,
+        string $prefix,
         string $provider,
         string $uri,
         string $token,
@@ -89,6 +91,7 @@ class ProofManager
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->askRepository = $askRepository;
         $this->waypointRepository = $waypointRepository;
+        $this->prefix = $prefix;
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->proofType = $proofType;
@@ -510,7 +513,7 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->postCollection($proof);
+            $result = $this->provider->postCollection($proof, $this->prefix);
             $this->logger->info("Result of the send for proof #" . $proof->getId() . " : code " . $result->getCode() . " | value : ".$result->getValue());
             if ($result->getCode() == 200) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
