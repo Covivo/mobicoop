@@ -60,7 +60,7 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
-      </v-tabs>s
+      </v-tabs>
     </v-card>
   </v-container>
 </template>
