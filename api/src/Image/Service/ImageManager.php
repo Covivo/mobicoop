@@ -84,7 +84,8 @@ class ImageManager
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EntityManagerInterface $entityManager,
+    public function __construct(
+        EntityManagerInterface $entityManager,
         RelayPointRepository $relayPointRepository,
         EventRepository $eventRepository,
         UserRepository $userRepository,
@@ -96,8 +97,7 @@ class ImageManager
         array $types,
         CampaignRepository $campaignRepository,
         string $dataUri
-     )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
