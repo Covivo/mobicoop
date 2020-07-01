@@ -10,6 +10,9 @@
         "headersCategories": {
             "titleCarpool":"Covoiturage",
             "titleLive":"Direct"
+        },
+        "tooltip": {
+            "message": "Messages non liés à une annonce"
         }
     },
     "en": {
