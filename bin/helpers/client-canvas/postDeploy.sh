@@ -47,7 +47,20 @@ then
     #Migrations
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
-    
+
+    #SymLink custom email translations
+    if [ -d "../../translations/email" ]; then
+        if [ ! -f "translations_client" ]; then
+            ln -s ../../translations/email/ translations_client;
+        fi
+    fi
+    #Symlink custom email templates
+    if [ -d "../../templates/bundles/MobicoopBundle/email" ]; then
+        if [ ! -f "templates/email_client" ]; then
+            ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client;
+        fi
+    fi
+
     #Admin build
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/admin;
     rm -Rf node_modules;
@@ -83,6 +96,19 @@ else
     #Migrations
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
+
+        #SymLink custom email translations
+    if [ -d "../../translations/email" ]; then
+        if [ ! -f "translations_client" ]; then
+            ln -s ../../translations/email/ translations_client;
+        fi
+    fi
+    #Symlink custom email templates
+    if [ -d "../../templates/bundles/MobicoopBundle/email" ]; then
+        if [ ! -f "templates/email_client" ]; then
+            ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client;
+        fi
+    fi
     
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable
