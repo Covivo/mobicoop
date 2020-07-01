@@ -58,7 +58,7 @@ class Icon
     private $name;
 
     /**
-     * @var string The name of the icon.
+     * @var string The filename of the icon.
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","readRelayPoint"})
@@ -66,7 +66,7 @@ class Icon
     private $fileName;
 
     /**
-     * @var string Url of the icon.
+     * @var string The url of the icon.
      *
      * @Groups({"read","readRelayPoint"})
      */
