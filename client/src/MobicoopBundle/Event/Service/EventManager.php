@@ -63,7 +63,7 @@ class EventManager
 
         // set event address
         $eventAddress=json_decode($data->get('address'), true);
-        $address->setLayer($eventAddress['addressLayer']);
+        $address->setLayer($eventAddress['layer']);
         $address->setAddressCountry($eventAddress['addressCountry']);
         $address->setAddressLocality($eventAddress['addressLocality']);
         $address->setCountryCode($eventAddress['countryCode']);
