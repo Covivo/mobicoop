@@ -67,6 +67,7 @@ class ProofManager
      * @param AskRepository $askRepository                      The ask repository
      * @param WaypointRepository $waypointRepository            The waypoint repository
      * @param GeoTools $geoTools                                The geotools
+     * @param string $prefix                                    The prefix for proofs
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
@@ -91,7 +92,6 @@ class ProofManager
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->askRepository = $askRepository;
         $this->waypointRepository = $waypointRepository;
-        $this->prefix = $prefix;
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->proofType = $proofType;
@@ -99,7 +99,7 @@ class ProofManager
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProvider($uri, $token);
+                $this->provider = new CarpoolProofGouvProvider($uri, $token, $prefix);
                 break;
         }
     }
@@ -513,7 +513,7 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->postCollection($proof, $this->prefix);
+            $result = $this->provider->postCollection($proof);
             $this->logger->info("Result of the send for proof #" . $proof->getId() . " : code " . $result->getCode() . " | value : ".$result->getValue());
             if ($result->getCode() == 200) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);

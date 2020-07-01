@@ -39,16 +39,15 @@ class CarpoolProofGouvProvider implements ProviderInterface
     const RESSOURCE_POST = "v2/journeys";
     const ISO6801 = 'Y-m-d\TH:i:s\Z';
 
-    // temporary : proof type fixed to 'A', need to be removed when C types will be implemented
-    const PROOF_TYPE = 'A';
-
     private $uri;
     private $token;
+    private $prefix;
 
-    public function __construct(string $uri, string $token)
+    public function __construct(string $uri, string $token, ?string $prefix = null)
     {
         $this->uri = $uri;
         $this->token = $token;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -58,10 +57,9 @@ class CarpoolProofGouvProvider implements ProviderInterface
      * Send a carpool proof
      *
      * @param CarpoolProof $carpoolProof    The carpool proof to send
-     * @param string|null $prefix           A prefix for the journey id
      * @return Response                     The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof, ?string $prefix = null)
+    public function postCollection(CarpoolProof $carpoolProof)
     {
         // creation of the dataProvider
         $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
@@ -74,12 +72,9 @@ class CarpoolProofGouvProvider implements ProviderInterface
         
         // creation of the journey
         // note : the casts are mandatory as the register checks for types
-        // todo : add the required items depending on the class
         $journey = [
-            "journey_id" => (string)((!is_null($prefix) ? $prefix : "") . (string)$carpoolProof->getId()),
-            // TODO : implement other types, for now we use the A type
-            // "operator_class" => $carpoolProof->getType(),
-            "operator_class" => self::PROOF_TYPE,
+            "journey_id" => (string)((!is_null($this->prefix) ? $this->prefix : "") . (string)$carpoolProof->getId()),
+            "operator_class" => $carpoolProof->getType(),
             "passenger" => [
                 "identity" => [
                     "email" => $carpoolProof->getPassenger()->getEmail(),
