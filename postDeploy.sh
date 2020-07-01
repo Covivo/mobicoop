@@ -18,7 +18,7 @@ case $i in
 esac
 done
 
-#Migrations
+# Migrations
 cd /var/www/$VERSION/$INSTANCE/api;
 php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
