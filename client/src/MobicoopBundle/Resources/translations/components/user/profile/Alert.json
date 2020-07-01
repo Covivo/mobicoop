@@ -20,7 +20,7 @@
             "media1":"Message",
             "media2":"Email",
             "media3":"SMS",
-            "media4":"Push"
+            "media4":"Notification application"
         },
         "popup": {
             "title": "Information",
@@ -42,7 +42,7 @@
             "media1":"Message",
             "media2":"Email",
             "media3":"SMS",
-            "media4":"Push"
+            "media4":"Notification application"
         },
         "popup": {
             "title": "Information",
