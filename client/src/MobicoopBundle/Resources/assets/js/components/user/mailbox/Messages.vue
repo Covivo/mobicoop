@@ -45,8 +45,6 @@
               </v-icon>
               <p>{{ $t("headersCategories.titleCarpool") }}</p>
             </v-tab>
-
-
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-tab
