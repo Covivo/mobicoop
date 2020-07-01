@@ -69,8 +69,6 @@
               <span>{{ $t('tooltip.message') }}</span>
             </v-tooltip>
           </v-tabs>
-
-
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">
               <v-tab-item value="tab-cm">
