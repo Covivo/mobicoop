@@ -34,7 +34,7 @@ use App\RelayPoint\Entity\RelayPointType;
  * An icon
  *
  * @ORM\Entity()
- *
+ * @ORM\EntityListeners({"App\Image\EntityListener\IconListener"})
  */
 class Icon
 {
@@ -44,7 +44,7 @@ class Icon
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","readRelayPoint"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -53,7 +53,7 @@ class Icon
      * @var string The name of the icon.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups({"read","readRelayPoint"})
      */
     private $name;
 
@@ -61,15 +61,22 @@ class Icon
      * @var string The name of the icon.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups({"read","readRelayPoint"})
      */
     private $fileName;
+
+    /**
+     * @var string Url of the icon.
+     *
+     * @Groups({"read","readRelayPoint"})
+     */
+    private $url;
 
     /**
      * @var ArrayCollection|null The relayPointTypes associate to the icon.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPointType", mappedBy="icon")
-     * @Groups("read")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $relayPointTypes;
@@ -79,7 +86,7 @@ class Icon
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups("read")
+     * @Groups({"read","readRelayPoint"})
      * @MaxDepth(1)
      */
     private $privateIconLinked;
@@ -117,6 +124,16 @@ class Icon
     public function setFileName(string $fileName)
     {
         $this->fileName = $fileName;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(string $url)
+    {
+        $this->url = $url;
     }
 
     public function getRelayPointTypes()

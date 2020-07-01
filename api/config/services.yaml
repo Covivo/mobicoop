@@ -91,8 +91,6 @@ services:
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
-        
-
     # CONTROLLERS AND SERVICES
 
     # Article
@@ -341,6 +339,13 @@ services:
 
     App\Image\EntityListener\ImageListener:
         arguments: ['@App\Image\Service\ImageManager']
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
+    App\Image\EntityListener\IconListener:
+        arguments:
+            $types: '%images%'
+            $dataUri: '%env(string:DATA_URI)%'
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
