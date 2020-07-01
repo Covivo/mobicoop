@@ -55,13 +55,13 @@
         </l-marker>
         <v-dialog
           v-model="dialog"
-          max-width="300"
+          max-width="400"
         >
           <v-card>
-            <v-card-title class="headline">
+            <v-card-title class="title justify-center">
               {{ $t('dialog.title') }}
             </v-card-title>
-            <v-card-actions>
+            <v-card-actions class="justify-center">
               <v-btn
                 class="ml-8"
                 color="primary"

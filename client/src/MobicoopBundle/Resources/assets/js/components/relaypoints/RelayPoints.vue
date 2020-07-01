@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row
-      justify="start"
+      justify="center"
     >
       <v-col
         cols="12"
@@ -10,7 +10,7 @@
         xl="6"
         class="mt-12"
       >
-        <h1 class="display-1 text-left font-weight-bold">
+        <h1 class="display-1 text-center font-weight-bold">
           {{ $t('title') }}
         </h1>
       </v-col>
@@ -40,7 +40,7 @@
         xl="6"
         class="mt-6"
       >
-        <h3 class="headline text-justify font-weight-bold">
+        <h3 class="headline text-center font-weight-bold">
           {{ $t('search') }}
         </h3>
       </v-col>
