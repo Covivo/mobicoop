@@ -38,6 +38,8 @@ use App\RelayPoint\Entity\RelayPointType;
  */
 class Icon
 {
+    const DEFAULT_ICON_ID = 1; // Default Icon
+    
     /**
      * @var int The id of this icon.
      *

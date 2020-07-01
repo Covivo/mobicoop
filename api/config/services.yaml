@@ -353,6 +353,13 @@ services:
         arguments:
             $types: '%images%'
 
+    # RelayPoint
+    App\RelayPoint\EntityListener\RelayPointTypeListener:
+        arguments:
+            $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
     # Import
     App\Import\Controller\:
         resource: '../src/Import/Controller'
