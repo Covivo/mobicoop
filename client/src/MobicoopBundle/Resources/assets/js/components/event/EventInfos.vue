@@ -1,24 +1,21 @@
 <template>
-  <v-row>
+  <v-row align="center">
     <v-col
       cols="4"
       md="4"
+      justify="center"
+      align="center"
     >
-      <v-avatar
-        color="grey lighten-3"
-        :size="isWidget?150:225"
-      >
-        <img
-          v-if="event.images[0]"
-          :src="event['images'][0]['versions'][avatarVersion]"
-          alt="avatar"
-        >
-        <img
-          v-else
-          :src="urlAltAvatar"
-          alt="avatar"
-        >
-      </v-avatar>
+      <v-img
+        v-if="event.images[0]"
+        :src="event['images'][0]['versions'][avatarVersion]"
+        alt="avatar"
+      />
+      <v-img
+        v-else
+        :src="urlAltAvatar"
+        alt="avatar"
+      />
     </v-col>
       
     <v-col
