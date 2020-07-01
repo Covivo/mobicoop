@@ -1,5 +1,7 @@
 <template>
-  <v-card>
+  <v-card
+    style="overflow:hidden"
+  >
     <v-toolbar
       color="primary"
     >
