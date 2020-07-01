@@ -100,10 +100,10 @@ export default {
           }
         },
         birthYear: {
-          label: "Année de naissance",
-          placeholder: "Année de naissance",
+          label: "Date de naissance",
+          placeholder: "Date de naissance",
           errors: {
-            required: "L'année de naissance est requise"
+            required: "La date de naissance est requise"
           }
         },
         birthDay: {
