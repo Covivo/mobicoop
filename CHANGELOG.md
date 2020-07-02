@@ -5,12 +5,14 @@
 * [Mobimatch] : Get and Compute the Public Transportation Potential of a Mass
 * New Public Transport DataProvider for Conduent
 * Fix RDEX : Too much parameters needed
+* Return only public relay points instead the user who make the request is entitle to get it (i.e community member)
 
 ## CLIENT
 
 * Public Transport solutions can be shown at the same time that carpools researchs.
 * New ad public link for external search (like RDEX)
 * A disconnected user can now login or register after a search, and get back to the search results
+* Different icons depending of the relay point type
 
 # Release 1.6.0
 
