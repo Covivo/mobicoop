@@ -47,10 +47,10 @@ final class SolidaryBeneficiaryDataPersister implements ContextAwareDataPersiste
     {
         // call your persistence layer to save $data
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            // only for validation or add a proof
+            // update a solidary beneficiary
             $data = $this->solidaryUserManager->updateSolidaryBeneficiary($data);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // create
+            // create a solidary beneficiary
             $data = $this->solidaryUserManager->createSolidaryBeneficiary($data);
         }
         return $data;
