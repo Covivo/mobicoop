@@ -453,12 +453,12 @@ class Structure
     private $structureProofs;
 
     /**
-     * @var ArrayCollection|null A Structure can have multiple users that work for it
+     * @var ArrayCollection|null A Structure can have multiple entry in Operate
      *
-     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="solidaryStructures")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure")
      * @MaxDepth(1)
      */
-    private $users;
+    private $operates;
 
     /**
      * @var Address|null The address of the Structure
@@ -474,6 +474,7 @@ class Structure
         $this->solidaries = new ArrayCollection();
         $this->structures = new ArrayCollection();
         $this->solidaryUserStructures = new ArrayCollection();
+        $this->operates = new ArrayCollection();
         $this->subjects = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->relayPoints = new ArrayCollection();
@@ -1111,28 +1112,6 @@ class Structure
         return $this;
     }
 
-    public function getUsers()
-    {
-        return $this->users->getValues();
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-        }
-
-        return $this;
-    }
 
     public function getAddress(): ?Address
     {
@@ -1145,6 +1124,38 @@ class Structure
 
         return $this;
     }
+
+    /**
+    * @return Collection|Operate[]
+    */
+    public function getOperates(): Collection
+    {
+        return $this->operates;
+    }
+
+    public function addOperate(Operate $operate): self
+    {
+        if (!$this->operates->contains($operate)) {
+            $this->operates[] = $operate;
+            $operate->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOperate(Operate $operate): self
+    {
+        if ($this->operates->contains($operate)) {
+            $this->operates->removeElement($operate);
+            // set the owning side to null (unless already changed)
+            if ($operate->getStructure() === $this) {
+                $operate->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
 
     // DOCTRINE EVENTS
     

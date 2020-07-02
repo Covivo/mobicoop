@@ -358,6 +358,13 @@ const fr = {
         lastActivityDate: 'Dernière connexion',
         communitiesExclude: 'Exclure les usagers de la communauté',
         proposalValidUntil: "Pas d'annonces valides depuis le",
+        trajet: 'Par trajet',
+        filter: {
+          range: 'Rayon de recherche (km) autour des lieux filtrés : ',
+          origin: 'Lieu de départ',
+          destination: "Lieu d'arrivée",
+          rangeFilter: "Sélectionner un lieu de départ, d'arrivée ou les 2.",
+        },
       },
       territory: {
         territory: 'Territoire',
