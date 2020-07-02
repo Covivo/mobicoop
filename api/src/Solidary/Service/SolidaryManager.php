@@ -380,7 +380,13 @@ class SolidaryManager
         // - otherwise the email is mandatory
         $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
         $structure = $this->structureRepository->find($solidaryStructureId);
-
+        
+        if (is_null($solidary->getEmail()) && is_null($solidary->getUser()) && is_null($solidary->getTelephone())) {
+            throw new SolidaryException(SolidaryException::MANDATORY_EMAIL_OR_PHONE);
+        }
+        if (is_null($solidary->getEmail()) && is_null($structure->getEmail())) {
+            throw new SolidaryException(SolidaryException::MANDATORY_EMAIL);
+        }
         if ($solidary->getEmail() || ($structure->getEmail() && is_null($solidary->getEmail())) || $solidary->getUser()) {
             $user = $this->solidaryCreateUser($solidary, $structure);
             $userId = $user->getId();

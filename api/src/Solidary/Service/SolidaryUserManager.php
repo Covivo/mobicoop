@@ -503,7 +503,9 @@ class SolidaryUserManager
             } elseif (!is_null($solidaryBeneficiary->getEmail())) {
                 // an email is provided
                 $user = $this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]);
-            } elseif (empty($solidaryBeneficiary->getEmail())) {
+            }
+            
+            if (empty($solidaryBeneficiary->getEmail())) {
                 // no email has been provided, we generate a sub email
                 $solidaryBeneficiary->setEmail($this->userManager->generateSubEmail($solidaryBeneficiaryStructure->getEmail()));
             }
