@@ -36,4 +36,5 @@ class MassException extends \LogicException
 
     // Public transport potential
     const MASS_NOT_ANALYZED = "The mass hasn't been previously analyzed";
+    const UNKNOWN_TRANSPORT_MODE = "Unknown transport mode :";
 }
