@@ -106,7 +106,7 @@ class MassPublicTransportPotentialManager
                 $this->params['ptAlgorithm'],
                 "PT"
             );
-            
+            // var_dump($results);die;
             foreach ($results as $ptjourney) {
                 $massPTJourney = $this->buildMassPTJourney($ptjourney);
                 if ($this->checkValidMassPTJourney($massPTJourney)) {

@@ -57,6 +57,7 @@ class TravelMode
     const TRAVEL_MODE_SUBWAY = "SUBWAY";
     const TRAVEL_MODE_WAITING = "WAITING";
     const TRAVEL_UNKNOWN = "UNKNOWN";
+    const TRAVEL_MODE_ON_DEMAND = "TOD";
     
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
@@ -69,7 +70,8 @@ class TravelMode
         self::TRAVEL_MODE_BIKE => 8,
         self::TRAVEL_MODE_WALK => 9,
         self::TRAVEL_MODE_SUBWAY => 10,
-        self::TRAVEL_MODE_WAITING => 11
+        self::TRAVEL_MODE_WAITING => 11,
+        self::TRAVEL_MODE_ON_DEMAND => 12
     ];
     
     private const TRAVEL_MODES_MDI_ICONS = [
@@ -84,6 +86,7 @@ class TravelMode
         self::TRAVEL_MODE_WALK => "mdi-walk",
         self::TRAVEL_MODE_SUBWAY => "mdi-subway-variant",
         self::TRAVEL_MODE_WAITING => "mdi-account-clock",
+        self::TRAVEL_MODE_ON_DEMAND => "mdi-bus-clock",
         self::TRAVEL_UNKNOWN => "mdi-help-circle"
     ];
 
