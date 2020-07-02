@@ -99,6 +99,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
@@ -2588,9 +2589,9 @@ class User implements UserInterface, EquatableInterface
     }
 
     /**
-     * @return Collection|Operate[]
+     * @return ArrayCollection|Operate[]
      */
-    public function getOperates(): Collection
+    public function getOperates(): ArrayCollection
     {
         return $this->operates;
     }
