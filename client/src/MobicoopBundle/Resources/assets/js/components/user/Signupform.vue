@@ -84,24 +84,20 @@
               <!--STEP 1 User identification-->
               <v-stepper-step
                 :step="1"
-                editable
-                edit-icon
+                :complete="step1Valid()"
               />
               <v-divider />
 
               <!--STEP 2 Name - Gender - Birthyear-->
               <v-stepper-step
                 :step="2"
-                editable
-                edit-icon
+                :complete="step2Valid()"
               />
               <v-divider />
 
               <!--STEP 3 hometown - Community - checkbox-->
               <v-stepper-step
                 :step="3"
-                editable
-                edit-icon
               />
             </v-stepper-header>
 
@@ -160,6 +156,7 @@
                   class="my-13"
                   color="secondary"
                   type="submit"
+                  :disabled="!step1"
                   @click="nextStep(1)"
                 >
                   {{ $t('ui.button.next') }}
@@ -252,6 +249,7 @@
                     class="my-13"
                     color="secondary"
                     type="submit"
+                    :disabled="!step2"
                     @click="nextStep(2)"
                   >
                     {{ $t('ui.button.next') }}
@@ -707,6 +705,12 @@ export default {
     },
     previousStep (n) {
       this.step -= 1
+    },
+    step1Valid() {
+      return this.form.email && this.form.password && this.form.telephone != null 
+    },
+    step2Valid() {
+      return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
     },
     emitEvent: function() {
       this.$emit("change", {
