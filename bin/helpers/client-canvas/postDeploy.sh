@@ -41,6 +41,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/publicTransport/providers.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/publicTransport/providers.json
     fi
 
+    # check Domains files
+    DOMAINS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
+    if [ ! -f "$DOMAINS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
+    fi
+
     # check env files
     python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
 
@@ -92,6 +98,12 @@ else
     PT_PROVIDERS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json
     if [ ! -f "$RDEX_CLIENTS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json
+    fi
+
+    # check Domains files
+    DOMAINS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
+    if [ ! -f "$DOMAINS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
     fi
 
     # check env files
