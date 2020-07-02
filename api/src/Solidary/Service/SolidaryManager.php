@@ -374,8 +374,15 @@ class SolidaryManager
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
         $user = null;
-        if ($solidary->getEmail() || $solidary->getUser()) {
-            $user = $this->solidaryCreateUser($solidary);
+
+        // first we need to check if the associated structure as an email :
+        // - if so the user needs an email OR phone number
+        // - otherwise the email is mandatory
+        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        $structure = $this->structureRepository->find($solidaryStructureId);
+
+        if ($solidary->getEmail() || ($structure->getEmail() && is_null($solidary->getEmail())) || $solidary->getUser()) {
+            $user = $this->solidaryCreateUser($solidary, $structure);
             $userId = $user->getId();
         }
         
@@ -384,7 +391,6 @@ class SolidaryManager
         $proposal = $this->proposalRepository->find($ad->getId());
 
         // we get solidaryUserStructure
-        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
         $solidaryUserId = $solidary->getSolidaryUser() ? $solidary->getSolidaryUser()->getId() : $user->getSolidaryUser()->getId();
         $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
 
@@ -735,12 +741,12 @@ class SolidaryManager
      * We create the user associate to the solidary demand if the user is not already created
      * We also create the solidaryUser associated if necessary
      *
-     * @param Solidary $solidary
+     * @param Solidary $solidary    The solidary
+     * @param Structure $structure  The structure (used for email generation if needed)
      * @return User
      */
-    private function solidaryCreateUser(Solidary $solidary): User
+    private function solidaryCreateUser(Solidary $solidary, Structure $structure): User
     {
-
         // we set the home address
         $homeAddress = null;
         if ($solidary->getHomeAddress()) {
@@ -774,7 +780,14 @@ class SolidaryManager
         // We check if the user exist
         $user = $solidary->getUser();
         if (is_null($solidary->getUser())) {
-            $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+            // no user provided
+            if (!is_null($solidary->getEmail())) {
+                // email provided
+                $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+            } elseif (!is_null($structure->getEmail())) {
+                // no email provided => we try the structure email
+                $solidary->setEmail($this->userManager->generateSubEmail($structure->getEmail()));
+            }
         }
         if ($user == null) {
             // We create a new user

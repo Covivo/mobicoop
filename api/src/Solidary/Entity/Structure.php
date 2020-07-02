@@ -103,6 +103,15 @@ class Structure
     private $name;
 
     /**
+     * @var string The email of the structure.
+     *
+     * @Assert\Email()
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     */
+    private $email;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -495,6 +504,19 @@ class Structure
 
         return $this;
     }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
 
     public function getCreatedDate(): ?\DateTimeInterface
     {

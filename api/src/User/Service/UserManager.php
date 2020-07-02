@@ -1195,4 +1195,36 @@ class UserManager
         }
         return false;
     }
+
+    /**
+     * Generate a random string
+     *
+     * @param integer $length   The length of the string to generate
+     * @return String   The generated string
+     */
+    public function randomString(int $length = 10)
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $string = []; //remember to declare $string as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < $length; $i++) {
+            $n = rand(0, $alphaLength);
+            $string[] = $alphabet[$n];
+        }
+        return implode($string); //turn the array into a string
+    }
+
+    /**
+     * Generate a sub email address
+     *
+     * @param string $email     The base email
+     * @param integer $length   The length of the generated random string
+     * @param string $glue      The string to add before the random string
+     * @return string   The generated sub email address
+     */
+    public function generateSubEmail(string $email, int $length=10, string $glue='+')
+    {
+        $exploded = explode('@', $email);
+        return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
+    }
 }

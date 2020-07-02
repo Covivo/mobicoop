@@ -465,6 +465,10 @@ class SolidaryUserManager
      */
     public function createSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary): ?SolidaryBeneficiary
     {
+        /**
+         * @var User requester
+         */
+        $requester = $this->security->getUser();
 
         // If there is no User, we need to create it first
         $user = $solidaryBeneficiary->getUser();
@@ -472,12 +476,37 @@ class SolidaryUserManager
 
             // If there is basic information given, we recheck if there is an existing user.
             // If it exists, we use it, else, we create a new one
-            
-            if (empty($solidaryBeneficiary->getEmail())) {
-                throw new SolidaryException(SolidaryException::MANDATORY_EMAIL);
+
+            // first we need to check if the associated structure as an email :
+            // - if so the user needs an email OR phone number
+            // - otherwise the email is mandatory
+
+            // If there a Structure given, we use it. Otherwise we use the first admin structure
+            $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
+            if (is_null($solidaryBeneficiaryStructure)) {
+                // We get the Structures of the requester to set the SolidaryUserStructure
+                $structures = $requester->getSolidaryStructures();
+                if (!is_null($structures) || count($structures)>0) {
+                    $solidaryBeneficiaryStructure = $structures[0];
+                }
+            }
+
+            if (is_null($solidaryBeneficiaryStructure)) {
+                throw new SolidaryException(SolidaryException::NO_STRUCTURE);
             }
             
-            $user = $this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]);
+            if (!is_null($solidaryBeneficiaryStructure->getEmail())) {
+                // the structure has an email, the user needs to have an email OR a phone number
+                if (empty($solidaryBeneficiary->getEmail()) && empty($solidaryBeneficiary->getTelephone())) {
+                    throw new SolidaryException(SolidaryException::MANDATORY_EMAIL_OR_PHONE);
+                }
+            } elseif (!is_null($solidaryBeneficiary->getEmail())) {
+                // an email is provided
+                $user = $this->userRepository->findOneBy(['email'=>$solidaryBeneficiary->getEmail()]);
+            } elseif (empty($solidaryBeneficiary->getEmail())) {
+                // no email has been provided, we generate a sub email
+                $solidaryBeneficiary->setEmail($this->userManager->generateSubEmail($solidaryBeneficiaryStructure->getEmail()));
+            }
 
             if (is_null($user)) {
                 $user = new User();
@@ -497,7 +526,7 @@ class SolidaryUserManager
                 $user->setLanguage('fr_FR');
 
                 // Set an encrypted password
-                $password = $this->randomPassword();
+                $password = $this->userManager->randomString();
                 $user->setPassword($this->encoder->encodePassword($user, $password));
                 $user->setClearPassword($password); // Used to be send by email (not persisted)
 
@@ -505,7 +534,7 @@ class SolidaryUserManager
                 $user->setValidatedDate(new \DateTime());
             }
         } else {
-            // We check if this User does'nt already have a Solidary User
+            // We check if this User doesn't already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
                 throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
             }
@@ -543,17 +572,6 @@ class SolidaryUserManager
         // We set the link between User and SolidaryUser
         $user->setSolidaryUser($solidaryUser);
 
-        
-        // If there a Structure given, we use it. Otherwise we use the first admin structure
-        $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
-        if (is_null($solidaryBeneficiaryStructure)) {
-            // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->security->getUser()->getSolidaryStructures();
-            $structureAdmin = null;
-            if (!is_null($structures) || count($structures)>0) {
-                $solidaryBeneficiaryStructure = $structures[0];
-            }
-        }
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryBeneficiaryStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
@@ -676,7 +694,7 @@ class SolidaryUserManager
                 $user->setLanguage('fr_FR');
 
                 // Set an encrypted password
-                $password = $this->randomPassword();
+                $password = $this->userManager->randomString();
                 $user->setPassword($this->encoder->encodePassword($user, $password));
                 $user->setClearPassword($password); // Used to be send by email (not persisted)
 
@@ -1108,23 +1126,5 @@ class SolidaryUserManager
                 }
             }
         }
-    }
-
-
-    /**
-     * Genereate a random password
-     *
-     * @return String
-     */
-    private function randomPassword()
-    {
-        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $pass = array(); //remember to declare $pass as an array
-        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-        for ($i = 0; $i < 10; $i++) {
-            $n = rand(0, $alphaLength);
-            $pass[] = $alphabet[$n];
-        }
-        return implode($pass); //turn the array into a string
     }
 }
