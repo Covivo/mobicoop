@@ -89,7 +89,7 @@
               />
               <v-divider />
 
-              <!--STEP 2 Name - Gender - Birthyear-->
+              <!--STEP 2 Name - Gender - BirthDate-->
               <v-stepper-step
                 :step="2"
                 editable
@@ -167,7 +167,7 @@
               </v-form>
             </v-stepper-content>
           
-            <!--STEP 2 Name - Gender - Birthyear-->
+            <!--STEP 2 Name - Gender - BirthDate-->
             <v-stepper-content
               step="2"
             >
@@ -215,7 +215,7 @@
                     <v-text-field
                       id="birthday"
                       v-model="form.date"
-                      :label="$t('models.user.birthYear.placeholder')+` *`"
+                      :label="$t('models.user.birthDate.placeholder')+` *`"
                       readonly
                       :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
                       required

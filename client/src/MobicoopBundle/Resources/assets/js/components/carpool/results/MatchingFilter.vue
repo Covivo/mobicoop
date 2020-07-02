@@ -50,7 +50,7 @@
                   />
                 </v-col>
                 <v-col cols="3"> -->
-                <v-col cols="4">
+                <v-col cols="3">
                   <v-select
                     v-model="filters.filters.time"
                     :items="itemsTime"
@@ -61,6 +61,22 @@
                     :disabled="!filterEnabled.time || disabledFilters"
                     @change="updateFilterTime"
                   />
+                </v-col>
+                <v-col
+                  cols="1"
+                  align="left"
+                >
+                  <v-tooltip
+                    color="info"
+                    right
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('select.hour.help') }}</span>
+                  </v-tooltip>
                 </v-col>
                 <v-col cols="4">
                   <v-select

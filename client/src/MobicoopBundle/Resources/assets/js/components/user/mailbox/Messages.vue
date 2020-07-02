@@ -38,7 +38,6 @@
               :key="0"
               href="#tab-cm"
               class="ma-0"
-
               ripple
               @click="reloadOnIcon()"
             >
@@ -52,23 +51,29 @@
                 </div>
               </div>
             </v-tab>
-            <v-tab
-              :key="1"
-              href="#tab-dm"
-              class="ma-0"
-              ripple
-              @click="reloadOnIcon()"
-            >
-              <div>
-                <v-icon class="text-h5">
-                  mdi-chat
-                </v-icon>
-                <br>
-                <div class="mb-2">
-                  {{ $t("headersCategories.titleLive") }}
-                </div>
-              </div>
-            </v-tab>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-tab
+                  :key="1"
+                  v-bind="attrs"
+                  href="#tab-dm"
+                  class="ma-0"
+                  ripple
+                  v-on="on"
+                  @click="reloadOnIcon()"
+                >
+                  <div>
+                    <v-icon class="text-h5">
+                      mdi-chat
+                    </v-icon>
+                    <br>
+                    <div class="mb-2">
+                      {{ $t("headersCategories.titleLive") }}
+                    </div>
+                  </div>
+                </v-tab>
+              </template><span>{{ $t('tooltip.message') }}</span>
+            </v-tooltip>
             <v-tab
               v-if="solidaryDisplay"
               :key="2"
