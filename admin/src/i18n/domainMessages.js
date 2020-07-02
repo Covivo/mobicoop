@@ -140,6 +140,8 @@ const fr = {
     solidary: {
       internalMessages: 'Messages internes',
       internalMessagesWith: 'Messages interne avec %{username}',
+      askFormalResponse: 'Solliciter une réponse formelle',
+      askFormalResponseWith: 'Solliciter une réponse formelle avec %{username}',
       sendSMSTo: 'Envoyer un SMS à %{username}',
       sendSMS: 'Envoyer un SMS',
       associatedAsk: 'Demande associée',

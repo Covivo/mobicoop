@@ -1,8 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useReference, useTranslate } from 'react-admin';
-import { LinearProgress } from '@material-ui/core';
+import { useTranslate } from 'react-admin';
 
 import {
   Table,
@@ -13,27 +12,8 @@ import {
   TableRow,
 } from '@material-ui/core';
 
-import { journeyRenderer } from '../../../../utils/renderers';
 import { usernameRenderer } from '../../../../utils/renderers';
-
-const SolidaryJourney = ({ solidary }) => {
-  const { loading, referenceRecord } = useReference({ id: solidary, reference: 'solidaries' });
-
-  if (loading) {
-    return <LinearProgress />;
-  }
-
-  return referenceRecord &&
-    referenceRecord.origin &&
-    referenceRecord.destination &&
-    referenceRecord.origin.addressLocality &&
-    referenceRecord.destination.addressLocality
-    ? journeyRenderer({
-        origin: referenceRecord.origin.addressLocality,
-        destination: referenceRecord.destination.addressLocality,
-      })
-    : '-';
-};
+import { SolidaryJourney } from './SolidaryJourney';
 
 export const DiariesTable = ({ diaries, version = 'solidary' }) => {
   const translate = useTranslate();
