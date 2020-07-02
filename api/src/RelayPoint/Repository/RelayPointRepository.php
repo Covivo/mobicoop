@@ -99,13 +99,23 @@ class RelayPointRepository
     /**
      * Find the public relaypoints and some private if the current user is entitled to (i.e community...)
      *
-     * @param User $user The User who make the request
+     * @param User|null $user The User who make the request
      * @return array|null     The relay points found
      */
-    public function findRelayPoints(User $user)
+    public function findRelayPoints(User $user=null)
     {
-        $query = $this->repository->createQueryBuilder('rp')
-        ->orderBy('rp.id', 'ASC');
+        $query = $this->repository->createQueryBuilder('rp');
+        $query->where("rp.private is null or rp.private = 0");
+        
+        if (!is_null($user)) {
+            $query->leftJoin('rp.community', 'c')
+            ->leftJoin('c.communityUsers', 'cu')
+            ->orWhere("cu.user = :user")
+            ->orderBy('rp.id', 'ASC')
+            ->setParameter('user', $user);
+        }
+
+
 
         return $query->getQuery()->getResult();
     }

@@ -27,6 +27,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Service\RelayPointManager;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -50,6 +51,12 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return $this->relayPointManager->getRelayPoints($this->security->getUser());
+        $user = null;
+        
+        if ($this->security->getUser() instanceof User) {
+            $user = $this->security->getUser();
+        }
+        
+        return $this->relayPointManager->getRelayPoints($user);
     }
 }
