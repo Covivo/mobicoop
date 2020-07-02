@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Repository\RelayPointTypeRepository;
+use App\User\Entity\User;
 
 /**
  * Relay point manager.
@@ -73,22 +74,6 @@ class RelayPointManager
     }
 
     /**
-     * Update a relay point
-     *
-     * @param RelayPoint $relayPoint
-     * @return RelayPoint
-     */
-    public function updateRelayPoint(RelayPoint $relayPoint): RelayPoint
-    {
-        if (!is_null($relayPoint->getNewAddress())) {
-            $relayPoint->setAddress($relayPoint->getNewAddress());
-        }
-        $this->entityManager->persist($relayPoint);
-        $this->entityManager->flush();
-        return $relayPoint;
-    }
-
-    /**
      * Get a relayPointType by its id.
      *
      * @param integer $id
@@ -97,5 +82,16 @@ class RelayPointManager
     public function getRelayPointType(int $id)
     {
         return $this->relayPointTypeRepository->find($id);
+    }
+
+    /**
+     * Get the public relaypoints and some private if the current user is entitled to (i.e community...)
+     *
+     * @param User $user The User who make the request
+     * @return RelayPoint[]
+     */
+    public function getRelayPoints(User $user=null)
+    {
+        return $this->relayPointRepository->findRelayPoints($user);
     }
 }
