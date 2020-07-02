@@ -49,3 +49,5 @@ widget:
     title: "Widget"
 toolbox:
     title: "Boîte à outils"
+relaypoints:
+    title: "Points relais"

@@ -69,6 +69,7 @@ class ImageManager
     private $dataManager;
     private $logger;
     private $entityManager;
+    private $dataUri;
 
 
     /**
@@ -83,8 +84,20 @@ class ImageManager
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EntityManagerInterface $entityManager, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types, CampaignRepository $campaignRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        RelayPointRepository $relayPointRepository,
+        EventRepository $eventRepository,
+        UserRepository $userRepository,
+        CommunityRepository $communityRepository,
+        ImageRepository $imageRepository,
+        FileManager $fileManager,
+        ContainerInterface $container,
+        LoggerInterface $logger,
+        array $types,
+        CampaignRepository $campaignRepository,
+        string $dataUri
+    ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->communityRepository = $communityRepository;
@@ -98,6 +111,7 @@ class ImageManager
         $this->filterManager = $container->get('liip_imagine.filter.manager');
         $this->dataManager = $container->get('liip_imagine.data.manager');
         $this->logger = $logger;
+        $this->dataUri = $dataUri;
     }
     
     /**
@@ -233,7 +247,7 @@ class ImageManager
                 $extension ? $extension : 'nc',
                 $version['prefix']
             );
-            $versions[$version['filterSet']] = getenv('DATA_URI') . $generatedVersion;
+            $versions[$version['filterSet']] = $this->dataUri . $generatedVersion;
         }
         return $versions;
     }
@@ -250,6 +264,7 @@ class ImageManager
         $versions = [];
         $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
+        
         foreach ($types['versions'] as $version) {
             $fileName = $image->getFileName();
             $extension = null;
@@ -258,9 +273,13 @@ class ImageManager
             }
             $versionName = $types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
             if (file_exists($types['folder']['base'].$versionName)) {
-                $versions[$version['filterSet']] = getenv('DATA_URI') . $versionName;
+                $versions[$version['filterSet']] = $this->dataUri . $versionName;
             }
         }
+
+        // Add the original version
+        $versions['original'] = $this->dataUri."".$types['folder']['plain']."".$image->getFileName();
+
         return $versions;
     }
     

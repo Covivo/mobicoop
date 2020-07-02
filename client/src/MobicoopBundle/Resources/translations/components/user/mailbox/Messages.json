@@ -11,6 +11,9 @@
             "titleCarpool":"Covoiturage",
             "titleLive":"Direct",
             "titleSolidary":"Solidaire"
+        },
+        "tooltip": {
+            "message": "Messages non liés à une annonce"
         }
     },
     "en": {

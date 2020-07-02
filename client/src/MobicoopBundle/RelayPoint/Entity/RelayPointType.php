@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity;
 
-use App\Image\Entity\Icon;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Icon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;

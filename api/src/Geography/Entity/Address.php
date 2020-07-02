@@ -133,7 +133,7 @@ class Address implements \JsonSerializable
      * @var int|null The layer identified for the address.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute"})
+     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readCommunity"})
      */
     private $layer;
 

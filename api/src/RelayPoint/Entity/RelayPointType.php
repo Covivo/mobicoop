@@ -42,6 +42,7 @@ use App\Image\Entity\Icon;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"App\RelayPoint\EntityListener\RelayPointTypeListener"})
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,

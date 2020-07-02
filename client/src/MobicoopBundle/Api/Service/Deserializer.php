@@ -68,6 +68,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Icon;
 use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
@@ -773,7 +774,18 @@ class Deserializer
                 $relayPointType->addImage($this->deserializeImage($image));
             }
         }
+        if (isset($data["icon"])) {
+            $relayPointType->setIcon($this->deserializeIcon($data['icon']));
+        }
         return $relayPointType;
+    }
+
+    private function deserializeIcon(array $data) : ?Icon
+    {
+        $icon = new Icon();
+        $icon = $this->autoSet($icon, $data);
+
+        return $icon;
     }
 
     private function autoSet($object, $data)

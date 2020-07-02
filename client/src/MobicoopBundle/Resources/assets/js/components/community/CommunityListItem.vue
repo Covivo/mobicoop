@@ -15,14 +15,17 @@
       </v-btn>
     </v-snackbar>
 
-    <v-row>
+    <v-row align="center">
       <!-- image -->
-      <v-col cols="3">
+      <v-col
+        cols="3"
+        align="center"
+      >
         <v-img
           v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_800']"
-          aspect-ratio="1"
+          :src="item['images'][0]['versions']['original']"
           class="grey lighten-2"
+          contain
           max-width="200"
           max-height="150"
         />
