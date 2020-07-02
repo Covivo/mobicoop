@@ -77,11 +77,12 @@
             color="info"
             right
           >
-            <template>
+            <template v-slot:activator="{ on }">
               <v-btn
                 text
                 icon
                 @click="swap"
+                v-on="on"
               >
                 <v-icon v-if="!imageSwap">
                   mdi-swap-horizontal
