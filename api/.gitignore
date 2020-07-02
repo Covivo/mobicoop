@@ -368,3 +368,6 @@ $RECYCLE.BIN/
 
 # Public Transport
 /config/publicTransport/providers.json
+
+# Domains authorized
+/config/user/domains.json
