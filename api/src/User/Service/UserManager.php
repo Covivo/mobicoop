@@ -107,6 +107,7 @@ class UserManager
 
     private $fakeFirstMail;
     private $fakeFirstToken;
+    private $domains;
 
     /**
         * Constructor.
@@ -138,7 +139,8 @@ class UserManager
         SolidaryRepository $solidaryRepository,
         StructureRepository $structureRepository,
         string $fakeFirstMail,
-        string $fakeFirstToken
+        string $fakeFirstToken,
+        array $domains
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -164,6 +166,7 @@ class UserManager
         $this->smoke = $smoke;
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
+        $this->domains = $domains;
     }
 
     /**
@@ -185,8 +188,20 @@ class UserManager
      */
     public function getUserByEmail(string $email)
     {
-        return $this->userRepository->findOneBy(["email"=>$email]);
+        //Email already exist in db
+        if ($this->userRepository->findOneBy(["email"=>$email])) {
+            return 'email-exist';
+        }
+
+        foreach ($this->domains as $name => $domain) {
+            if (explode("@", $email)[1] == $domain) {
+                return 'authorized';
+            }
+        }
+        
+        return implode(", ", $this->domains);
     }
+
 
     /**
      * Get a user by security token.
@@ -208,7 +223,7 @@ class UserManager
     public function registerUser(User $user, bool $encodePassword=true)
     {
         $user = $this->prepareUser($user, $encodePassword);
-
+ 
         // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
         if (!is_null($user->getSolidaryUser())) {
             if ($user->getSolidaryUser()->isVolunteer()) {
