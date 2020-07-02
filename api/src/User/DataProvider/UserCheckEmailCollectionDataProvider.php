@@ -29,6 +29,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Item data provider for User me.
@@ -40,11 +41,13 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
 {
     private $userManager;
     private $request;
+    private $translator;
     
-    public function __construct(UserManager $userManager, RequestStack $request)
+    public function __construct(UserManager $userManager, RequestStack $request, TranslatorInterface $translator)
     {
         $this->userManager = $userManager;
         $this->request = $request->getCurrentRequest();
+        $this->translator = $translator;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,8 +57,14 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
     
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?\InvalidArgumentException
     {
-        if ($this->userManager->getUserByEmail($this->request->get('email'))) {
-            throw new \InvalidArgumentException("Email already used");
+        $locale = $this->request->getLocale();
+        $this->translator->setlocale($locale);
+        if ($state = $this->userManager->getUserByEmail($this->request->get('email'))) {
+            if ($state == "email-exist") {
+                throw new \InvalidArgumentException($this->translator->trans('errors.alreadyUsed'));
+            } elseif ($state != "authorized") {
+                throw new \InvalidArgumentException($this->translator->trans('errors.wrongDomains', ['domains' => $state ]));
+            }
         }
         return null;
     }

@@ -24,7 +24,13 @@
     <v-snackbar
       v-if="selectedCommunity"
       v-model="snackbar"
-      :color="(errorUpdate)?'error': (communities && communities.validationType == 1 ? 'warning' : 'success')"
+      :color="
+        errorUpdate
+          ? 'error'
+          : communities && communities.validationType == 1
+            ? 'warning'
+            : 'success'
+      "
       top
     >
       {{ textSnackbar }}
@@ -40,16 +46,14 @@
       id="scroll-target"
       fluid
     >
-      <v-row
-        justify="center"
-      >
+      <v-row justify="center">
         <v-col
           cols="12"
           md="8"
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ $t("title") }}</h1>
         </v-col>
       </v-row>
       <v-row
@@ -74,13 +78,11 @@
           cols="8"
           align="center"
         >
-          <v-stepper 
+          <v-stepper
             v-model="step"
             non-linear
           >
-            <v-stepper-header
-              class="elevation-0"
-            >
+            <v-stepper-header class="elevation-0">
               <!--STEP 1 User identification-->
               <v-stepper-step
                 :step="1"
@@ -102,9 +104,7 @@
             </v-stepper-header>
 
             <!--STEP 1 User identification-->
-            <v-stepper-content
-              step="1"
-            >
+            <v-stepper-content step="1">
               <v-form
                 ref="step 1"
                 v-model="step1"
@@ -115,7 +115,7 @@
                   id="email"
                   v-model="form.email"
                   :rules="form.emailRules"
-                  :label="$t('models.user.email.placeholder')+` *`"
+                  :label="$t('models.user.email.placeholder') + ` *`"
                   name="email"
                   required
                   :loading="loadingCheckEmailAldreadyTaken"
@@ -126,13 +126,13 @@
                   v-if="emailAlreadyTaken"
                   type="error"
                 >
-                  {{ $t('checkEmail.error') }}
+                  {{ textEmailError }}
                 </v-alert>
 
                 <v-text-field
                   id="telephone"
                   v-model="form.telephone"
-                  :label="$t('models.user.phone.placeholder')+` *`"
+                  :label="$t('models.user.phone.placeholder') + ` *`"
                   required
                   :rules="form.telephoneRules"
                   name="telephone"
@@ -142,10 +142,16 @@
                   id="password"
                   v-model="form.password"
                   :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
+                  :rules="[
+                    form.passWordRules.required,
+                    form.passWordRules.min,
+                    form.passWordRules.checkUpper,
+                    form.passWordRules.checkLower,
+                    form.passWordRules.checkNumber,
+                  ]"
                   :type="form.showPassword ? 'text' : 'password'"
                   name="password"
-                  :label="$t('models.user.password.placeholder')+` *`"
+                  :label="$t('models.user.password.placeholder') + ` *`"
                   required
                   @click:append="form.showPassword = !form.showPassword"
                 />
@@ -159,11 +165,11 @@
                   :disabled="!step1"
                   @click="nextStep(1)"
                 >
-                  {{ $t('ui.button.next') }}
+                  {{ $t("ui.button.next") }}
                 </v-btn>
               </v-form>
             </v-stepper-content>
-          
+
             <!--STEP 2 Name - Gender - BirthDate-->
             <v-stepper-content
               step="2"
@@ -179,7 +185,7 @@
                   id="givenName"
                   v-model="form.givenName"
                   :rules="form.givenNameRules"
-                  :label="$t('models.user.givenName.placeholder')+` *`"
+                  :label="$t('models.user.givenName.placeholder') + ` *`"
                   class="givenName"
                   required
                 />
@@ -187,7 +193,7 @@
                   id="familyName"
                   v-model="form.familyName"
                   :rules="form.familyNameRules"
-                  :label="$t('models.user.familyName.placeholder')+` *`"
+                  :label="$t('models.user.familyName.placeholder') + ` *`"
                   class="familyName"
                   required
                 />
@@ -197,7 +203,7 @@
                   item-text="genderItem"
                   item-value="genderValue"
                   :rules="form.genderRules"
-                  :label="$t('models.user.gender.placeholder')+` *`"
+                  :label="$t('models.user.gender.placeholder') + ` *`"
                   required
                 />
                 <v-menu
@@ -240,7 +246,7 @@
                     color="secondary"
                     @click="previousStep(2)"
                   >
-                    {{ $t('ui.button.previous') }}
+                    {{ $t("ui.button.previous") }}
                   </v-btn>
                   <v-btn
                     id="buttonNext2"
@@ -252,16 +258,14 @@
                     :disabled="!step2"
                     @click="nextStep(2)"
                   >
-                    {{ $t('ui.button.next') }}
+                    {{ $t("ui.button.next") }}
                   </v-btn>
                 </v-row>
               </v-form>
             </v-stepper-content>
 
             <!--STEP 3 hometown - community - ckeckbox-->
-            <v-stepper-content
-              :step="3"
-            >
+            <v-stepper-content :step="3">
               <v-form
                 id="step3"
                 ref="form"
@@ -289,7 +293,7 @@
                 </v-row>
 
                 <v-autocomplete
-                  v-if="communityShow"                 
+                  v-if="communityShow"
                   v-model="selectedCommunity"
                   :items="communities.communities"
                   outlined
@@ -300,7 +304,7 @@
                   @change="emitEvent"
                 >
                   <template v-slot:selection="data">
-                    <v-chip                      
+                    <v-chip
                       v-bind="data.attrs"
                       :input-value="data.selected"
                       close
@@ -331,17 +335,15 @@
                   :rules="form.checkboxRules"
                   required
                 >
-                  <template
-                    v-slot:label
-                  >
+                  <template v-slot:label>
                     <div>
-                      {{ $t('chart.text') }}
+                      {{ $t("chart.text") }}
                       <a
                         class="primary--text"
                         target="_blank"
                         :href="$t('chart.route')"
                         @click.stop
-                      >{{ $t('chart.link') }}
+                      >{{ $t("chart.link") }}
                       </a>
                     </div>
                   </template>
@@ -358,17 +360,19 @@
                     color="secondary"
                     @click="--step"
                   >
-                    {{ $t('ui.button.previous') }}
+                    {{ $t("ui.button.previous") }}
                   </v-btn>
                   <v-btn
                     color="secondary"
                     rounded
                     class="mr-4 mb-100 mt-12"
                     :loading="loading"
-                    :disabled="!step3 || !step2 || !step1 || loading || isDisable"
+                    :disabled="
+                      !step3 || !step2 || !step1 || loading || isDisable
+                    "
                     @click="validate"
                   >
-                    {{ $t('ui.button.register') }}
+                    {{ $t("ui.button.register") }}
                   </v-btn>
                 </v-row>
               </v-form>
@@ -388,7 +392,7 @@ import CommunityHelp from "@components/community/CommunityHelp";
 import { merge } from "lodash";
 import Translations from "@translations/components/user/SignUp.json";
 import TranslationsClient from "@clientTranslations/components/user/SignUp.json";
-import MFacebookAuth from '@components/user/MFacebookAuth';
+import MFacebookAuth from "@components/user/MFacebookAuth";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -398,45 +402,45 @@ export default {
   components: {
     GeoComplete,
     MFacebookAuth,
-    CommunityHelp
+    CommunityHelp,
   },
   props: {
     geoSearchUrl: {
       type: String,
-      default: null
+      default: null,
     },
     sentToken: {
       type: String,
-      default: null
+      default: null,
     },
     ageMin: {
       type: String,
-      default: null
+      default: null,
     },
     ageMax: {
       type: String,
-      default: null
+      default: null,
     },
     showFacebookSignUp: {
       type: Boolean,
-      default: false
+      default: false,
     },
     facebookLoginAppId: {
       type: String,
-      default: null
+      default: null,
     },
-    requiredHomeAddress:  {
+    requiredHomeAddress: {
       type: Boolean,
-      default: false
+      default: false,
     },
     communityShow: {
       type: Boolean,
-      default: false
+      default: false,
     },
     proposalId: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
@@ -447,254 +451,300 @@ export default {
       snackbar: false,
       errorUpdate: false,
       textSnackbar: null,
-      textSnackOk:null,
+      textSnackOk: null,
+      textEmailError: null,
 
       //step validators
       step1: true,
       step2: true,
       step3: true,
-      menu : false,
+      menu: false,
 
       //scrolling data
-      type: 'selector',
+      type: "selector",
       selected: null,
       duration: 1000,
       offset: 180,
       easing: "easeOutQuad",
       container: "scroll-target",
 
-      emailAlreadyTaken : false,
+      emailAlreadyTaken: false,
       loadingCheckEmailAldreadyTaken: false,
-      action: this.proposalId ? this.$t("urlSignUpResult",{"id":this.proposalId}) : this.$t("urlSignUp"),
+      action: this.proposalId
+        ? this.$t("urlSignUpResult", { id: this.proposalId })
+        : this.$t("urlSignUp"),
       form: {
         createToken: this.sentToken,
         email: null,
         emailRules: [
-          v => !!v || this.$t("models.user.email.errors.required"),
-          v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
+          (v) => !!v || this.$t("models.user.email.errors.required"),
+          (v) => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid"),
         ],
         givenName: null,
         givenNameRules: [
-          v => !!v || this.$t("models.user.givenName.errors.required"),
+          (v) => !!v || this.$t("models.user.givenName.errors.required"),
         ],
         familyName: null,
         familyNameRules: [
-          v => !!v || this.$t("models.user.familyName.errors.required"),
+          (v) => !!v || this.$t("models.user.familyName.errors.required"),
         ],
         gender: null,
         genderRules: [
-          v => !!v || this.$t("models.user.gender.errors.required"),
+          (v) => !!v || this.$t("models.user.gender.errors.required"),
         ],
         genderItems: [
-          {genderItem: this.$t('models.user.gender.values.female'), genderValue: '1'},
-          {genderItem: this.$t('models.user.gender.values.male'), genderValue: '2'},
-          {genderItem: this.$t('models.user.gender.values.other'), genderValue: '3'},
+          {
+            genderItem: this.$t("models.user.gender.values.female"),
+            genderValue: "1",
+          },
+          {
+            genderItem: this.$t("models.user.gender.values.male"),
+            genderValue: "2",
+          },
+          {
+            genderItem: this.$t("models.user.gender.values.other"),
+            genderValue: "3",
+          },
         ],
-        date : null,
+        date: null,
         telephone: null,
         telephoneRules: [
-          v => !!v || this.$t("models.user.phone.errors.required"),
-          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
+          (v) => !!v || this.$t("models.user.phone.errors.required"),
+          (v) =>
+            /^((\+)33|0)[1-9](\d{2}){4}$/.test(v) ||
+            this.$t("models.user.phone.errors.valid"),
         ],
         password: null,
         showPassword: false,
         passWordRules: {
-          required:  v => !!v || this.$t("models.user.password.errors.required"),
-          min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
-          checkUpper : value => {
-            const pattern = /^(?=.*[A-Z]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.upper")
-
+          required: (v) =>
+            !!v || this.$t("models.user.password.errors.required"),
+          min: (v) =>
+            (v && v.length >= 8) || this.$t("models.user.password.errors.min"),
+          checkUpper: (value) => {
+            const pattern = /^(?=.*[A-Z]).*$/;
+            return (
+              pattern.test(value) ||
+              this.$t("models.user.password.errors.upper")
+            );
           },
-          checkLower : value => {
-            const pattern = /^(?=.*[a-z]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.lower")
-
+          checkLower: (value) => {
+            const pattern = /^(?=.*[a-z]).*$/;
+            return (
+              pattern.test(value) ||
+              this.$t("models.user.password.errors.lower")
+            );
           },
-          checkNumber : value => {
-            const pattern = /^(?=.*[0-9]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.number")
-
+          checkNumber: (value) => {
+            const pattern = /^(?=.*[0-9]).*$/;
+            return (
+              pattern.test(value) ||
+              this.$t("models.user.password.errors.number")
+            );
           },
         },
-        birthdayRules : {
-          required:  v => !!v || this.$t("models.user.birthDay.errors.required"),
-          checkIfAdult : value =>{
+        birthdayRules: {
+          required: (v) =>
+            !!v || this.$t("models.user.birthDay.errors.required"),
+          checkIfAdult: (value) => {
             var d1 = new Date();
             var d2 = new Date(value);
 
-            var diff =(d1.getTime() - d2.getTime()) / 1000;
-            diff /= (60 * 60 * 24);
+            var diff = (d1.getTime() - d2.getTime()) / 1000;
+            diff /= 60 * 60 * 24;
 
-            var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
-            return diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
-          }
+            var diffYears = Math.abs(Math.floor(diff / 365.24));
+            return (
+              diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
+            );
+          },
         },
-        homeAddress:null,
+        homeAddress: null,
         checkboxRules: [
-          v => !!v || this.$t("ui.pages.signup.chart.errors.required")
+          (v) => !!v || this.$t("ui.pages.signup.chart.errors.required"),
         ],
-        idFacebook:null
+        idFacebook: null,
       },
-      communities:[],
+      communities: [],
       selectedCommunity: null,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
     };
   },
-  computed : {
-    years () {
+  computed: {
+    years() {
       const currentYear = new Date().getFullYear();
       const ageMin = Number(this.ageMin);
       const ageMax = Number(this.ageMax);
-      return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
+      return Array.from(
+        { length: ageMax - ageMin },
+        (value, index) => currentYear - ageMin - index
+      );
     },
     //options of v-scroll
-    options () {
+    options() {
       return {
         duration: this.duration,
         offset: this.offset,
         easing: this.easing,
         container: this.container,
-      }
+      };
     },
     // disable validation if homeAddress is empty and required or email already taken
     isDisable() {
       if (this.requiredHomeAddress && !this.form.homeAddress) {
         return true;
       }
-      if(this.emailAlreadyTaken){
+      if (this.emailAlreadyTaken) {
         return true;
       }
       return false;
-    }
+    },
   },
   watch: {
-    menu (val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
-    selectedCommunity(){
+    selectedCommunity() {
       this.communities.communities.forEach((community, index) => {
-        if(community.id==this.selectedCommunity){
-          this.textSnackOk = (community.validationType == 1) ? this.$t("snackbar.joinCommunity.textOkManualValidation") : this.$t("snackbar.joinCommunity.textOkAutoValidation");
+        if (community.id == this.selectedCommunity) {
+          this.textSnackOk =
+            community.validationType == 1
+              ? this.$t("snackbar.joinCommunity.textOkManualValidation")
+              : this.$t("snackbar.joinCommunity.textOkAutoValidation");
         }
-      });      
-    }
+      });
+    },
   },
-  mounted: function () {
+  mounted: function() {
     //get scroll target
-    this.container = document.getElementById ( "scroll-target" ),
-    this.getCommunities()
+    (this.container = document.getElementById("scroll-target")),
+    this.getCommunities();
   },
   methods: {
     maxDate() {
       let maxDate = new Date();
-      maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
+      maxDate.setFullYear(maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
     },
     selectedGeo(address) {
       this.form.homeAddress = address;
     },
-    save (date) {
-      this.$refs.menu.save(date)
+    save(date) {
+      this.$refs.menu.save(date);
     },
-    validate: function (e) {
+    validate: function(e) {
       this.loading = true;
-      axios.post(this.action,
-        {
-          email:this.form.email,
-          telephone:this.form.telephone,
-          password:this.form.password,
-          givenName:this.form.givenName,
-          familyName:this.form.familyName,
-          gender:this.form.gender,
-          birthDay:this.form.date,
-          address:this.form.homeAddress,
-          idFacebook:this.form.idFacebook,
-          community:(this.selectedCommunity) ? this.selectedCommunity : null
-        },{
-          headers:{
-            'content-type': 'application/json'
+      axios
+        .post(
+          this.action,
+          {
+            email: this.form.email,
+            telephone: this.form.telephone,
+            password: this.form.password,
+            givenName: this.form.givenName,
+            familyName: this.form.familyName,
+            gender: this.form.gender,
+            birthDay: this.form.date,
+            address: this.form.homeAddress,
+            idFacebook: this.form.idFacebook,
+            community: this.selectedCommunity ? this.selectedCommunity : null,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
           }
-        })
-        .then(res=>{
+        )
+        .then((res) => {
           console.log(this.proposalId);
           this.errorUpdate = res.data.state;
-          this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
+          this.textSnackbar = this.errorUpdate
+            ? this.$t("snackbar.joinCommunity.textError")
+            : this.textSnackOk;
           this.snackbar = true;
           if (this.proposalId) {
             // proposal id provided, we need to login automatically (it will redirect to the results of the proposal)
-            const loginForm = document.createElement('form');
-            loginForm.method = 'post';
-            loginForm.action = this.$t('urlRedirectAfterSignUpResult',{"id":this.proposalId});
-            const hiddenFieldEmail = document.createElement('input');
-            hiddenFieldEmail.name = 'email';
+            const loginForm = document.createElement("form");
+            loginForm.method = "post";
+            loginForm.action = this.$t("urlRedirectAfterSignUpResult", {
+              id: this.proposalId,
+            });
+            const hiddenFieldEmail = document.createElement("input");
+            hiddenFieldEmail.name = "email";
             hiddenFieldEmail.value = this.form.email;
             loginForm.appendChild(hiddenFieldEmail);
-            const hiddenFieldPassword = document.createElement('input');
-            hiddenFieldPassword.name = 'password';
+            const hiddenFieldPassword = document.createElement("input");
+            hiddenFieldPassword.name = "password";
             hiddenFieldPassword.value = this.form.password;
             loginForm.appendChild(hiddenFieldPassword);
             document.body.appendChild(loginForm);
             loginForm.submit();
           } else {
-            // usual redirect 
-            var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});           
-            setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+            // usual redirect
+            var urlRedirect = this.$t("urlRedirectAfterSignUp", {
+              email: this.form.email,
+            });
+            setTimeout(function() {
+              window.location.href = urlRedirect;
+            }, 2000);
           }
           //console.error(res);
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error);
         });
     },
     isNumber: function(evt) {
-      evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      evt = evt ? evt : window.event;
+      var charCode = evt.which ? evt.which : evt.keyCode;
       if (-(charCode < 48 || charCode > 57) && charCode !== 43) {
-        evt.preventDefault();;
+        evt.preventDefault();
       } else {
         return true;
       }
     },
-    fillForm(data){
+    fillForm(data) {
       this.form.email = data.email;
       this.form.givenName = data.first_name;
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
-
     },
-    checkEmail(){
+    checkEmail() {
       this.loadingCheckEmailAldreadyTaken = true;
-      axios.post(this.$t('checkEmail.url'),
-        {
-          email:this.form.email
-        },{
-          headers:{
-            'content-type': 'application/json'
+      axios
+        .post(
+          this.$t("checkEmail.url"),
+          {
+            email: this.form.email,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
           }
-        })
-        .then(response=>{
-          if(!response.data.error){
-            if(response.data.message!==""){
+        )
+        .then((response) => {
+          if (!response.data.error) {
+            if (response.data.message !== "") {
+              this.textEmailError = response.data.message;
               this.emailAlreadyTaken = true;
-            }
-            else{
+            } else {
               this.emailAlreadyTaken = false;
             }
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
         })
-        .finally(()=>{
+        .finally(() => {
           this.loadingCheckEmailAldreadyTaken = false;
-        });    
+        });
     },
-    nextStep (n) {
-      this.step += 1
+    nextStep(n) {
+      this.step += 1;
     },
-    previousStep (n) {
-      this.step -= 1
+    previousStep(n) {
+      this.step -= 1;
     },
     step1Valid() {
       return this.form.email && this.form.password && this.form.telephone != null 
@@ -704,35 +754,33 @@ export default {
     },
     emitEvent: function() {
       this.$emit("change", {
-        communities: this.selectedCommunity
+        communities: this.selectedCommunity,
       });
     },
 
     // remove selected community
-    toggleSelected(){
+    toggleSelected() {
       this.selectedCommunity = null;
     },
-    
+
     // should be get all communities
     getCommunities() {
-      axios.post(this.$t("communities.route"))
-        .then(res => {
-          this.communities = res.data; 
-        });
-    }
-  }
-
+      axios.post(this.$t("communities.route")).then((res) => {
+        this.communities = res.data;
+      });
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
-.v-stepper{
-  box-shadow:none;
-  .v-stepper__step{
-      padding-top:5px;
-      padding-bottom:5px;
-    .v-stepper__label{
-      span{
-        text-shadow:none !important;
+.v-stepper {
+  box-shadow: none;
+  .v-stepper__step {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    .v-stepper__label {
+      span {
+        text-shadow: none !important;
       }
     }
   }

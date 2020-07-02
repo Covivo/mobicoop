@@ -4,11 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'fr'
+  locale: "fr"
 
 imports:
-    - { resource: images.yaml }
-    - { resource: mass.yaml }
+  - { resource: images.yaml }
+  - { resource: mass.yaml }
 
 services:
     # default configuration for services in *this* file
@@ -457,6 +457,7 @@ services:
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
             $fakeFirstMail: '%env(string:FAKE_FIRST_MAIL)%'
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
+            $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
     
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

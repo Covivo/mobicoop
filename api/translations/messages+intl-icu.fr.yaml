@@ -8,7 +8,6 @@ Download: "Téléchargez l'application <b>Android</b> ou <b>IOS</b>"
 FollowUs: "Suivez-nous"
 signature: "A bientôt sur "
 
-
 # CARPOOL_AD_RENEWAL
 
 beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs"
@@ -47,15 +46,13 @@ deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoi
 deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du "
 urlPublish: "/covoiturage/annonce/poster"
 
-
 # CARPOOL_MATCHING_NEW
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
-seeYouIn: "Rendez-vous dans" 
+newCarpoolAdMatchingYourCommute: "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
+seeYouIn: "Rendez-vous dans"
 myAds: "Mes annonces"
 linkMyAds: "/utilisateur/profil/modifier/mes-annonces"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
-justPublished : "vient d'être publiée"
-
+justPublished: "vient d'être publiée"
 
 # CARPOOL UPDATED
 carpoolProposalUpdated: "L'annonce liée à votre demande a été modifiée"
@@ -83,7 +80,7 @@ updatedCarpoolDetails: "Des détails de votre covoiturage de {origin} à {destin
 
 youHaveAMessage: "Vous avez reçu un nouveau message"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
-clickHere: "en cliquant ici" 
+clickHere: "en cliquant ici"
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
 mailBox: "votre messagerie"
 
@@ -115,7 +112,7 @@ thanksForUse: "Merci d’utiliser"
 # USER_REGISTERED
 inscriptionAt: "VOTRE INSCRIPTION EST VALIDÉE!"
 yourInscriptionAt: "Votre inscription au service"
-yourInscriptionAtByTiers : "Votre inscription au service {instanceName} par un tiers"
+yourInscriptionAtByTiers: "Votre inscription au service {instanceName} par un tiers"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
@@ -143,7 +140,6 @@ isCanceledBecause: "a été annulé, car"
 hasDeletedTheAssociateAd: "a supprimé son annonce associée."
 clickOnLinkToSearchAgain: "Cliquez sur ce lien pour relancer votre recherche"
 noPenaltyApplied: "Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent."
-
 
 # EVEN CREATED
 
@@ -189,7 +185,7 @@ clickHereToValidate: "Cliquez ici pour répondre à cette demande de covoiturage
 
 refusedAsk: "n a pas validé le covoiturage de "
 refusedAskReguar: "n a pas validé le covoiturage régulier de "
-goTotheSite: "Trouvez de nouveaux covoiturages ou déposez une annonce sur " 
+goTotheSite: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
 
 # CARPOOL_MATCHING_NEW
 
@@ -201,7 +197,6 @@ newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
 
 newMessage: "Vous avez reçu un nouveau message de"
 lookYourMessaging: "RDV dans 'Mes Messages' sur "
-
 
 ######      TITLE      ######
 
@@ -256,12 +251,14 @@ passwordChanged: "Confirmation de re-initialisation de mot de passe"
 # USER_REGISTERED
 
 yourInscription: "Votre inscription"
-
+errors:
+  wrongDomains: "Votre adresse email doit être dans un de ces domaines : {domains}"
+  alreadyUsed: "Cette adresse e-mail est déjà utilisée"
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
 
-# USER_GENERATE_PHONE_TOKEN_ASKED 
+# USER_GENERATE_PHONE_TOKEN_ASKED
 
 yourValidationToken: "Votre code de validation"
 
@@ -275,8 +272,8 @@ header3Data: "senderName"
 
 # EMAIL Masscommunication : send from admin
 urlUnsubscribeEmail: "/utilisateur/unsubscribe"
-unsubscribeEmail : 'Cliquez ici pour vous désabonner des Actualités du service {instanceName}'
-unsubscribeEmailAlertFront : 'Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte.'
+unsubscribeEmail: "Cliquez ici pour vous désabonner des Actualités du service {instanceName}"
+unsubscribeEmailAlertFront: "Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte."
 
 # External Contact
 externalContact: "Contact pour un covoiturage"
@@ -298,12 +295,10 @@ temporaryPassword: "{password}"
 changePassword: "Nous vous encourageons fortement à le modifier lors de votre prochaine connexion"
 
 # Solidary
-solidaryContact : "Un administrateur solidaire vous contacte"
+solidaryContact: "Un administrateur solidaire vous contacte"
 
 # COMMUNITY_NEW_MEMBERSHIP_REQUEST
 newMembershipSubscriber: " a demandé à rejoindre la communauté "
 seeYouInAdmin: "Rendez-vous dans le module d'administration pour valider son adhésion : "
 communityNewMembershipRequest: "NOUVEAU - Un nouvel utilisateur veut rejoindre votre communauté"
 thankYouTeam: "Merci, l'équipe {instanceName}."
-
-
