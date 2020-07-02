@@ -99,11 +99,11 @@ export default {
             required: "La civilité est requise"
           }
         },
-        birthYear: {
-          label: "Année de naissance",
-          placeholder: "Année de naissance",
+        birthDate: {
+          label: "Date de naissance",
+          placeholder: "Date de naissance",
           errors: {
-            required: "L'année de naissance est requise"
+            required: "La date de naissance est requise"
           }
         },
         birthDay: {
@@ -256,7 +256,7 @@ export default {
             required: ""
           }
         },
-        birthYear: {
+        birthDate: {
           label: "",
           placeholder: "",
           errors: {
