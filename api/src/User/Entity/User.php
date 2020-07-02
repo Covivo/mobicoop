@@ -72,6 +72,9 @@ use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\ProposalValidFilter;
+use App\User\Filter\ODRangeDestinationFilter;
+use App\User\Filter\ODRangeOriginFilter;
+use App\User\Filter\ODRangeRadiusFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
@@ -358,11 +361,16 @@ use App\User\Controller\UserCanUseEmail;
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "partial"})
+
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
+
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)
  * @ApiFilter(ProposalValidFilter::class)
+ * @ApiFilter(ODRangeDestinationFilter::class)
+ * @ApiFilter(ODRangeOriginFilter::class)
+ * @ApiFilter(ODRangeRadiusFilter::class)
  * @ApiFilter(HomeAddressDirectionTerritoryFilter::class, properties={"homeAddressDirectionTerritory"})
  * @ApiFilter(HomeAddressODTerritoryFilter::class, properties={"homeAddressODTerritory"})
  * @ApiFilter(HomeAddressWaypointTerritoryFilter::class, properties={"homeAddressWaypointTerritory"})

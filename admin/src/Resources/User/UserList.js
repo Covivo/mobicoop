@@ -24,7 +24,7 @@ import {
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
-import TerritoryInput from '../../components/geolocation/TerritoryInputFilter';
+import FiltersTraject from './FiltersTraject';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
@@ -33,7 +33,6 @@ const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
   const [communities, setCommunities] = useState();
-
   const dataProvider = useDataProvider();
 
   const genderChoices = [
@@ -165,6 +164,7 @@ const UserList = (props) => {
       >
         <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
+      <FiltersTraject source="trajectCustom" label={translate('custom.label.user.trajet')} />
     </Filter>
   );
 
