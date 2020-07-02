@@ -1097,12 +1097,12 @@ class User implements UserInterface, EquatableInterface
     private $massPerson;
 
     /**
-     * @var ArrayCollection|null A user may work in multiple solidary Structures.
+     * @var ArrayCollection|null A User can have multiple entry in Operate
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="users")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user")
      * @MaxDepth(1)
      */
-    private $solidaryStructures;
+    private $operates;
 
     public function __construct($status = null)
     {
@@ -1130,7 +1130,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
-        $this->solidaryStructures = new ArrayCollection();
+        $this->operates = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2579,24 +2579,32 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSolidaryStructures()
+    /**
+     * @return Collection|Operate[]
+     */
+    public function getOperates(): Collection
     {
-        return $this->solidaryStructures->getValues();
+        return $this->operates;
     }
 
-    public function addSolidaryStructure(Structure $structure): self
+    public function addOperate(Operate $operate): self
     {
-        if (!$this->solidaryStructures->contains($structure)) {
-            $this->solidaryStructures->add($structure);
+        if (!$this->operates->contains($operate)) {
+            $this->operates[] = $operate;
+            $operate->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSolidaryStructure(Structure $structure): self
+    public function removeOperate(Operate $operate): self
     {
-        if ($this->solidaryStructures->contains($structure)) {
-            $this->solidaryStructures->removeElement($structure);
+        if ($this->operates->contains($operate)) {
+            $this->operates->removeElement($operate);
+            // set the owning side to null (unless already changed)
+            if ($operate->getUser() === $this) {
+                $operate->setUser(null);
+            }
         }
 
         return $this;
