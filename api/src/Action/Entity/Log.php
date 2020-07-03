@@ -113,12 +113,12 @@ class Log
     private $action;
 
     /**
-     * @var User|null Admin if the action is made by an administrator for a user.
+     * @var User|null The user that makes the action for another user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAdmin")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAsDelegate")
      * @Groups({"readLog","writeLog"})
      */
-    private $admin;
+    private $userDelegate;
 
     /**
      * @var Proposal|null The proposal if the action concerns a proposal.
@@ -264,14 +264,14 @@ class Log
         return $this;
     }
 
-    public function getAdmin(): User
+    public function getUserDelegate(): User
     {
-        return $this->admin;
+        return $this->userDelegate;
     }
 
-    public function setAdmin(?User $admin): self
+    public function setUserDelegate(?User $userDelegate): self
     {
-        $this->admin = $admin;
+        $this->userDelegate = $userDelegate;
 
         return $this;
     }
