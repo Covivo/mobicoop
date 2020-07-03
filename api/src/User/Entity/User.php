@@ -102,6 +102,7 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
+use App\Solidary\Entity\Operate;
 
 /**
  * A user.
@@ -2590,7 +2591,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @return Collection|Operate[]
      */
-    public function getOperates(): Collection
+    public function getOperates()
     {
         return $this->operates;
     }
