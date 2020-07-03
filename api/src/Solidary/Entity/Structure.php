@@ -1126,9 +1126,9 @@ class Structure
     }
 
     /**
-    * @return Collection|Operate[]
+    * @return ArrayCollection|Operate[]
     */
-    public function getOperates(): Collection
+    public function getOperates(): ArrayCollection
     {
         return $this->operates;
     }

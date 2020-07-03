@@ -1,5 +1,4 @@
 {
-"ndd1": "name-ndd1.extension",
-"ndd2": "name-ndd2.extension"
+    "domain1": "domain1.tld",
+    "domain2": "domain2.tld"
 }
-
