@@ -101,7 +101,6 @@ use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -352,12 +351,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          },
- *          "structures"={
- *              "method"="GET",
- *              "path"="/users/{id}/structures",
- *              "normalization_context"={"groups"={"userStructure"}},
- *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
@@ -1085,10 +1078,10 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null used to get the structures of a user
-     * @Groups({"userStructure"})
+     * @Groups({"readUser"})
      * @MaxDepth(1)
      */
-    private $structures;
+    private $solidaryStructures;
 
     /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
@@ -1140,6 +1133,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->solidaryStructures = [];
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2554,14 +2548,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getStructures()
+    public function getSolidaryStructures()
     {
-        return $this->structures;
+        return $this->solidaryStructures;
     }
 
-    public function setStructures(?array $structures): self
+    public function setSolidaryStructures(?array $solidaryStructures): self
     {
-        $this->structures = $structures;
+        $this->solidaryStructures = $solidaryStructures;
 
         return $this;
     }
@@ -2588,12 +2582,10 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    /**
-     * @return ArrayCollection|Operate[]
-     */
-    public function getOperates(): ArrayCollection
+    
+    public function getOperates()
     {
-        return $this->operates;
+        return $this->operates->getValues();
     }
 
     public function addOperate(Operate $operate): self
