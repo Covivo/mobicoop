@@ -57,6 +57,8 @@ import RelayPoints from "@components/relaypoints/RelayPoints";
 // ToolsBox
 import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
+import DayListChips from "@components/utilities/DayListChips";
+
 export default {
   MHeader,
   MFooter,

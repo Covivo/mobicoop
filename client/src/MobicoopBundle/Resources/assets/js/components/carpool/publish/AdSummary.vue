@@ -32,41 +32,15 @@
               {{ computedOutwardDateFormat }}
             </h2>
             <h2 v-else>
-              <v-chip
-                :color="activeDays.mon ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.mon') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.tue ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.tue') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.wed ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.wed') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.thu ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.thu') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.fri ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.fri') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.sat ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.sat') }}
-              </v-chip>
-              <v-chip
-                :color="activeDays.sun ? 'success' : 'default'"
-              >
-                {{ $t('ui.abbr.day.sun') }}
-              </v-chip>
+              <DayListChips
+                :mon-active="activeDays.mon"
+                :tue-active="activeDays.tue"
+                :wed-active="activeDays.wed"
+                :thu-active="activeDays.thu"
+                :fri-active="activeDays.fri"
+                :sat-active="activeDays.sat"
+                :sun-active="activeDays.sun"
+              />
             </h2>
           </v-col>
         </v-row>
@@ -337,48 +311,15 @@
                   <v-col
                     cols="12"
                   >
-                    <v-chip
-                      small
-                      :color="schedule.mon ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.mon') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.tue ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.tue') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.wed ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.wed') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.thu ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.thu') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.fri ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.fri') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.sat ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.sat') }}
-                    </v-chip>
-                    <v-chip
-                      small
-                      :color="schedule.sun ? 'success' : 'default'"
-                    >
-                      {{ $t('ui.abbr.day.sun') }}
-                    </v-chip>
+                    <DayListChips
+                      :mon-active="schedule.mon"
+                      :tue-active="schedule.tue"
+                      :wed-active="schedule.wed"
+                      :thu-active="schedule.thu"
+                      :fri-active="schedule.fri"
+                      :sat-active="schedule.sat"
+                      :sun-active="schedule.sun"
+                    />
                   </v-col>
 
                   <!-- Outward -->
@@ -593,6 +534,7 @@ import moment from "moment";
 import { merge } from "lodash";
 import Translations from "@translations/components/carpool/publish/AdSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdSummary.json";
+import DayListChips from "@components/utilities/DayListChips"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -601,6 +543,7 @@ export default {
     messages: TranslationsMerged,
   },
   components: {
+    DayListChips
   },
   props: {
     user: {

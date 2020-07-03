@@ -1,0 +1,46 @@
+{
+  "fr": {
+      "days":{
+        "list":
+            [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+            ],
+        "mon":{
+            "shortName":"L",
+            "longName":"Lundi"
+        },
+        "tue":{
+            "shortName":"M",
+            "longName":"Mardi"
+        },
+        "wed":{
+            "shortName":"Me",
+            "longName":"Mercredi"
+        },
+        "thu":{
+            "shortName":"J",
+            "longName":"Jeudi"
+        },
+        "fri":{
+            "shortName":"V",
+            "longName":"Vendredi"
+        },
+        "sat":{
+            "shortName":"S",
+            "longName":"Samedi"
+        },
+        "sun":{
+            "shortName":"D",
+            "longName":"Dimanche"
+        }
+      }
+  },
+  "en": {
+  }
+}
