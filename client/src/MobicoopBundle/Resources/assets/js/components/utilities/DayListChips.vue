@@ -2,43 +2,57 @@
   <div>
     <v-chip
       :color="monColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="monDisabled"
+      @click="clickDay(daysList[0])"
     >
       {{ dayName(daysList[0]) }}
     </v-chip>
     <v-chip
       :color="tueColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="tueDisabled"
+      @click="clickDay(daysList[1])"
     >
       {{ dayName(daysList[1]) }}
     </v-chip>
     <v-chip
       :color="wedColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="wedDisabled"
+      @click="clickDay(daysList[2])"
     >
       {{ dayName(daysList[2]) }}
     </v-chip>
     <v-chip
       :color="thuColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="thuDisabled"
+      @click="clickDay(daysList[3])"
     >
       {{ dayName(daysList[3]) }}
     </v-chip>
     <v-chip
       :color="friColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="friDisabled"
+      @click="clickDay(daysList[4])"
     >
       {{ dayName(daysList[4]) }}
     </v-chip>
     <v-chip
       :color="satColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="satDisabled"
+      @click="clickDay(daysList[5])"
     >
       {{ dayName(daysList[5]) }}
     </v-chip>
     <v-chip
       :color="sunColor"
-      class="mr-2"
+      class="mr-1 justify-center"
+      :disabled="sunDisabled"
+      @click="clickDay(daysList[6])"
     >
       {{ dayName(daysList[6]) }}
     </v-chip>
@@ -80,6 +94,34 @@ export default {
       type: Boolean,
       default: false
     },
+    monDisabled:{
+      type: Boolean,
+      default: false
+    },
+    tueDisabled:{
+      type: Boolean,
+      default: false
+    },
+    wedDisabled:{
+      type: Boolean,
+      default: false
+    },
+    thuDisabled:{
+      type: Boolean,
+      default: false
+    },
+    friDisabled:{
+      type: Boolean,
+      default: false
+    },
+    satDisabled:{
+      type: Boolean,
+      default: false
+    },
+    sunDisabled:{
+      type: Boolean,
+      default: false
+    },
     longDaysName:{
       type: Boolean,
       default: false
@@ -91,6 +133,10 @@ export default {
     colorInactive:{
       type: String,
       default: "default"
+    },
+    clickable:{
+      type:Boolean,
+      default:true
     }
   },
   data() {
@@ -125,33 +171,42 @@ export default {
   },
   methods:{
     dayName(day){
-      return (this.longDaysName) ? this.$t('days.'+day+'longName') : this.$t('days.'+day+'.shortName');
+      return (this.longDaysName) ? this.$t('days.'+day+'.longName') : this.$t('days.'+day+'.shortName');
     },
     clickDay(day){
-      switch(day){
-      case this.daysList[0]:
-        this.mon != this.mon;
-        break;
-      case this.daysList[1]:
-        this.tue != this.tue;
-        break;
-      case this.daysList[2]:
-        this.wed != this.wed;
-        break;
-      case this.daysList[3]:
-        this.thu != this.thu;
-        break;
-      case this.daysList[4]:
-        this.fri != this.fri;
-        break;
-      case this.daysList[5]:
-        this.sat != this.sat;
-        break;
-      case this.daysList[6]:
-        this.sun != this.sun;
-        break;
+      if(this.clickable){
+        switch(day){
+        case this.daysList[0]:
+          this.mon = !this.mon;
+          break;
+        case this.daysList[1]:
+          this.tue = !this.tue;
+          break;
+        case this.daysList[2]:
+          this.wed = !this.wed;
+          break;
+        case this.daysList[3]:
+          this.thu = !this.thu;
+          break;
+        case this.daysList[4]:
+          this.fri = !this.fri;
+          break;
+        case this.daysList[5]:
+          this.sat = !this.sat;
+          break;
+        case this.daysList[6]:
+          this.sun = !this.sun;
+          break;
+        }
       }
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+  .v-chip{
+    width:40px;
+    height:40px;
+    border-radius:40px;
+  }
+</style>
