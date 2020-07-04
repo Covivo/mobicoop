@@ -51,6 +51,15 @@ const fr = {
     },
   },
   custom: {
+    structure_proofs: {
+      type: {
+        checkbox: 'Case a cocher',
+        input: 'Champs Texte',
+        selectbox: 'Select',
+        radio: 'Radio bouton',
+        file: 'Fichier',
+      },
+    },
     actions: {
       solidary_update_progress_manually: 'Mise à jour de la progression',
       solidary_more_infos_sms: "Demande d'informations supplémentaires par SMS",

@@ -90,7 +90,19 @@ const pickManagedBeneficiaryData = (params) => ({
 const fixManagedStructureData = (params) => ({
   ...params,
   data: {
-    ...pick(params.data, ['name']),
+    ...pick(params.data, [
+      'name',
+      'mMinTime',
+      'mMaxTime',
+      'aMinTime',
+      'aMaxTime',
+      'eMinTime',
+      'eMaxTime',
+      'needs',
+      'subjects',
+      'structureProofs',
+    ]),
+    // subjects: [{ label: 'foo' }],
   },
 });
 
