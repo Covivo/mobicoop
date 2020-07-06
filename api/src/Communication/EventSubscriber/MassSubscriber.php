@@ -26,6 +26,7 @@ namespace App\Communication\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Match\Event\MassAnalyzeErrorsEvent;
+use App\Match\Event\MassMatchedEvent;
 use App\User\Service\UserManager;
 use App\Match\Event\MassMigrateUserMigratedEvent;
 
@@ -44,7 +45,8 @@ class MassSubscriber implements EventSubscriberInterface
     {
         return [
             MassMigrateUserMigratedEvent::NAME => 'onMassMigrateUserMigrated',
-            MassAnalyzeErrorsEvent::NAME => 'onMassAnalyzeErrors'
+            MassAnalyzeErrorsEvent::NAME => 'onMassAnalyzeErrors',
+            MassMatchedEvent::NAME => 'onMassMatched'
         ];
     }
 
@@ -56,5 +58,10 @@ class MassSubscriber implements EventSubscriberInterface
     public function onMassAnalyzeErrors(MassAnalyzeErrorsEvent $event)
     {
         $this->notificationManager->notifies(MassAnalyzeErrorsEvent::NAME, $event->getMass()->getUser(), $event->getMass());
+    }
+
+    public function onMassMatched(MassMatchedEvent $event)
+    {
+        $this->notificationManager->notifies(MassMatchedEvent::NAME, $event->getMass()->getUser(), $event->getMass());
     }
 }

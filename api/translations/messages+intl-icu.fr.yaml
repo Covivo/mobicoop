@@ -294,6 +294,9 @@ temporaryPasswordAttributed: "Un mot de passe temporaire vous a été attribué"
 temporaryPassword: "{password}"
 changePassword: "Nous vous encourageons fortement à le modifier lors de votre prochaine connexion"
 massAnalyzeErrors: "L'analyse de l'import n°{massId} comporte des erreurs"
+massMatched: "Calcul du potentiel de covoiturage n°{massId}"
+massMatchedOverTitle: "Calcul du potentiel de covoiturage"
+massMatchedOver: "Le calcul du potentiel de covoiturage  de l'import n°{massId} est terminé"
 
 # Solidary
 solidaryContact: "Un administrateur solidaire vous contacte"

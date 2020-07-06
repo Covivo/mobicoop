@@ -43,6 +43,7 @@ use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassMatching;
 use App\Match\Event\MassAnalyzeErrorsEvent;
+use App\Match\Event\MassMatchedEvent;
 use App\Match\Exception\OwnerNotFoundException;
 use App\Match\Repository\MassRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -537,6 +538,11 @@ class MassImportManager
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+
+        // Send an email to notify the operator that the matching is over
+        $event = new MassMatchedEvent($mass);
+        $this->eventDispatcher->dispatch(MassMatchedEvent::NAME, $event);
+
         $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
