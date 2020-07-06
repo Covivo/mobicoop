@@ -51,6 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Event\SolidaryCreatedEvent;
@@ -177,7 +178,16 @@ class UserManager
      */
     public function getUser(int $id)
     {
-        return $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
+        $structures = [];
+      
+        if (!is_null($user->getOperates())) {
+            foreach ($user->getOperates() as $operate) {
+                $structures[] = $operate->getStructure();
+            }
+        }
+        $user->setSolidaryStructures($structures);
+        return $user;
     }
 
     /**
@@ -455,7 +465,6 @@ class UserManager
      */
     public function updateUser(User $user)
     {
-
         // activate sms notification if phone validated
         if ($user->getPhoneValidatedDate()) {
             $user = $this->activateSmsNotification($user);
@@ -496,7 +505,54 @@ class UserManager
             // If there is no availability time information, we get the one from the structure
             $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
         }
-        
+
+        //we add/remove structures associated to user
+        if (!is_null($user->getSolidaryStructures())) {
+            // We initialize an arry with the ids of the user's structures
+            $structuresIds = [];
+            // we initialise the bool that indicate that we update structures at false
+            $updateStructures = false;
+            foreach ($user->getOperates() as $operate) {
+                // we put in array the ids of the user's structures
+                $structuresIds[] = $operate->getStructure()->getId();
+            }
+            // We initialize an arry with the ids of the user's new structures
+            $newStructuresIds = [];
+            foreach ($user->getSolidaryStructures() as $solidaryStructure) {
+                if (!is_array($solidaryStructure)) {
+                    continue;
+                }
+                // we set the boolean at true
+                $updateStructures = true;
+                // we put in array the ids of the user's new structures
+                $newStructuresIds[] = $solidaryStructure['id'];
+                // we add the new structures not present in the array of structures to the user
+                if (!in_array($solidaryStructure['id'], $structuresIds)) {
+                    $structure = $this->structureRepository->find($solidaryStructure['id']);
+                    $operate = new Operate;
+                    $operate->setStructure($structure);
+                    $operate->setCreatedDate(new DateTime());
+                    $operate->setUpdatedDate(new DateTime());
+                    $user->addOperate($operate);
+                }
+            }
+            // if we delete all structures we pass an empty array with the user so we set the boolean at true
+            if (empty($user->getSolidaryStructures())) {
+                $updateStructures = true;
+            }
+            // we execute only if we have updated the structures
+            if ($updateStructures) {
+              
+                // we remove the structures not present in  the new array of structures
+                foreach ($user->getOperates() as $operate) {
+                    if (!in_array($operate->getStructure()->getId(), $newStructuresIds)) {
+                        $user->removeOperate($operate);
+                        $this->entityManager->remove($operate);
+                    }
+                }
+            }
+        }
+       
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();

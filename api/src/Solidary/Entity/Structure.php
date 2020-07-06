@@ -46,7 +46,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readSolidary","userStructure"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readSolidary","readUser"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -89,7 +89,7 @@ class Structure
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $id;
 
@@ -98,7 +98,7 @@ class Structure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $name;
 
@@ -107,7 +107,7 @@ class Structure
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary","readUser"})
      */
     private $email;
 
@@ -115,7 +115,7 @@ class Structure
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"readStructure","userStructure"})
+     * @Groups({"readStructure"})
      */
     private $createdDate;
 
@@ -123,7 +123,7 @@ class Structure
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readStructure","userStructure"})
+     * @Groups({"readStructure"})
      */
     private $updatedDate;
 
@@ -131,7 +131,7 @@ class Structure
      * @var \DateTimeInterface Morning min range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinRangeTime;
 
@@ -139,7 +139,7 @@ class Structure
      * @var \DateTimeInterface Morning max range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxRangeTime;
 
@@ -147,7 +147,7 @@ class Structure
      * @var \DateTimeInterface Afternoon min range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinRangeTime;
 
@@ -155,7 +155,7 @@ class Structure
      * @var \DateTimeInterface Afternoon max range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxRangeTime;
 
@@ -163,7 +163,7 @@ class Structure
      * @var \DateTimeInterface Evening min range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinRangeTime;
 
@@ -171,7 +171,7 @@ class Structure
      * @var \DateTimeInterface Evening max range time.
      * @Assert\NotBlank
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxRangeTime;
 
@@ -179,7 +179,7 @@ class Structure
      * @var \DateTimeInterface Morning min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
@@ -187,7 +187,7 @@ class Structure
      * @var \DateTimeInterface Morning max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
@@ -195,7 +195,7 @@ class Structure
      * @var \DateTimeInterface Afternoon min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
@@ -203,7 +203,7 @@ class Structure
      * @var \DateTimeInterface Afternoon max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
@@ -211,7 +211,7 @@ class Structure
      * @var \DateTimeInterface Evening min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
@@ -219,7 +219,7 @@ class Structure
      * @var \DateTimeInterface Evening max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
@@ -227,7 +227,7 @@ class Structure
      * @var bool Available on monday morning.
      * @Assert\NotBlank
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMon;
     
@@ -235,7 +235,7 @@ class Structure
      * @var bool Available on monday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMon;
     
@@ -243,7 +243,7 @@ class Structure
      * @var bool Available on monday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMon;
     
@@ -251,7 +251,7 @@ class Structure
      * @var bool Available on tuesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mTue;
     
@@ -259,7 +259,7 @@ class Structure
      * @var bool Available on tuesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aTue;
     
@@ -267,7 +267,7 @@ class Structure
      * @var bool Available on tuesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eTue;
     
@@ -275,7 +275,7 @@ class Structure
      * @var bool Available on wednesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mWed;
     
@@ -283,7 +283,7 @@ class Structure
      * @var bool Available on wednesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aWed;
     
@@ -291,7 +291,7 @@ class Structure
      * @var bool Available on wednesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eWed;
     
@@ -299,7 +299,7 @@ class Structure
      * @var bool Available on thursday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mThu;
     
@@ -307,7 +307,7 @@ class Structure
      * @var bool Available on thursday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aThu;
     
@@ -315,7 +315,7 @@ class Structure
      * @var bool Available on thursday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eThu;
     
@@ -323,7 +323,7 @@ class Structure
      * @var bool Available on friday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mFri;
     
@@ -331,7 +331,7 @@ class Structure
      * @var bool Available on friday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aFri;
     
@@ -339,7 +339,7 @@ class Structure
      * @var bool Available on friday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eFri;
     
@@ -347,7 +347,7 @@ class Structure
      * @var bool Available on saturday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSat;
     
@@ -355,7 +355,7 @@ class Structure
      * @var bool Available on saturday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSat;
     
@@ -363,7 +363,7 @@ class Structure
      * @var bool Available on saturday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSat;
     
@@ -371,7 +371,7 @@ class Structure
      * @var bool Available on sunday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSun;
     
@@ -379,7 +379,7 @@ class Structure
      * @var bool Available on sunday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSun;
     
@@ -387,7 +387,7 @@ class Structure
      * @var bool Available on sunday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSun;
 
@@ -395,7 +395,7 @@ class Structure
      * @var Structure Parent structure.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structures")
-     * @Groups({"readSolidary","writeSolidary","userStructure"})
+     * @Groups({"readSolidary","writeSolidary"})
      */
     private $structure;
 
