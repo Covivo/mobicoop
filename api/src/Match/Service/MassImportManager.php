@@ -768,9 +768,8 @@ class MassImportManager
                 $workAddress = new Address();
                 for ($i = 0; $i < count($tab); $i++) {
                     $setter = 'set' . ucwords($fields[$i]);
-                    if (method_exists($massPerson, $setter)) {
-                        $massPerson->$setter($tab[$i]);
-                    } elseif (substr($fields[$i], 0, 16) == "personalAddress.") {
+
+                    if (substr($fields[$i], 0, 16) == "personalAddress.") {
                         $setter = 'set' . ucwords(substr($fields[$i], 16));
                         if (method_exists($personalAddress, $setter)) {
                             $personalAddress->$setter($tab[$i]);
@@ -780,6 +779,32 @@ class MassImportManager
                         if (method_exists($workAddress, $setter)) {
                             $workAddress->$setter($tab[$i]);
                         }
+                    } elseif ($fields[$i] == "outwardTime") {
+                        $outwardtime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$outwardtime) {
+                            $error = true;
+                            $errors[] = [
+                                'code' => '',
+                                'file' => basename($csv),
+                                'line' => $line,
+                                'message' => "Date d'aller incorrecte"
+                            ];
+                        }
+                        $massPerson->setOutwardTime($outwardtime);
+                    } elseif ($fields[$i] == "returnTime") {
+                        $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$returntime) {
+                            $error = true;
+                            $errors[] = [
+                                'code' => '',
+                                'file' => basename($csv),
+                                'line' => $line,
+                                'message' => "Date de retour incorrecte"
+                            ];
+                        }
+                        $massPerson->setReturnTime($returntime);
+                    } elseif (method_exists($massPerson, $setter)) {
+                        $massPerson->$setter($tab[$i]);
                     }
                 }
                 $massPerson->setPersonalAddress($personalAddress);
