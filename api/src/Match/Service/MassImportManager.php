@@ -780,7 +780,8 @@ class MassImportManager
                             $workAddress->$setter($tab[$i]);
                         }
                     } elseif ($fields[$i] == "outwardTime") {
-                        if (!\DateTime::createFromFormat('H:i', $tab[$i])) {
+                        $outwardtime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$outwardtime) {
                             $error = true;
                             $errors[] = [
                                 'code' => '',
@@ -789,9 +790,10 @@ class MassImportManager
                                 'message' => "Date d'aller incorrecte"
                             ];
                         }
-                        $massPerson->setOutwardTime(\DateTime::createFromFormat('H:i', $tab[$i])->format('H:i:s'));
+                        $massPerson->setOutwardTime($outwardtime);
                     } elseif ($fields[$i] == "returnTime") {
-                        if (!\DateTime::createFromFormat('H:i', $tab[$i])) {
+                        $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$returntime) {
                             $error = true;
                             $errors[] = [
                                 'code' => '',
@@ -800,7 +802,7 @@ class MassImportManager
                                 'message' => "Date de retour incorrecte"
                             ];
                         }
-                        $massPerson->setReturnTime(\DateTime::createFromFormat('H:i', $tab[$i])->format('H:i:s'));
+                        $massPerson->setReturnTime($returntime);
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->$setter($tab[$i]);
                     }
