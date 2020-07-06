@@ -392,7 +392,6 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
-            $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
         tags:
             - { name: monolog.logger, channel: mass }
 
