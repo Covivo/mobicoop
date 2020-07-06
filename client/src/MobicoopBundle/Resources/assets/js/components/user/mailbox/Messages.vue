@@ -30,6 +30,8 @@
             v-model="modelTabs"
             slider-color="secondary"
             color="secondary"
+            center-active
+            centered
             next-icon="mdi-arrow-right-thick"
             prev-icon="mdi-arrow-left-thick"      
             show-arrows
@@ -37,7 +39,7 @@
             <v-tab
               :key="0"
               href="#tab-cm"
-              class="ma-0"
+              class="ma-0 mx-lg-6"
               ripple
               @click="reloadOnIcon()"
             >
@@ -46,7 +48,10 @@
                   mdi-car
                 </v-icon>
                 <br>
-                <div class="mb-2">
+                <div 
+                  class="mb-2"
+                  style="letter-spacing: -0.15px;"
+                >
                   {{ $t("headersCategories.titleCarpool") }}
                 </div>
               </div>
@@ -87,7 +92,10 @@
                   mdi-hand-heart
                 </v-icon>
                 <br>
-                <div class="mb-2">
+                <div 
+                  class="mb-2"
+                  style="letter-spacing: -0.15px;"
+                >
                   {{ $t("headersCategories.titleSolidary") }}
                 </div>
               </div>
