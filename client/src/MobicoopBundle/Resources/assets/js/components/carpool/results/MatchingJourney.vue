@@ -37,7 +37,7 @@
               <v-col
                 v-if="!regular"
                 cols="5"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 {{ computedDate }}
               </v-col>
@@ -45,7 +45,7 @@
               <v-col
                 v-else
                 cols="5"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 <regular-days-summary 
                   :mon-active="lResult.monCheck"
@@ -61,7 +61,7 @@
               <!-- Seats -->
               <v-col
                 cols="3"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
               </v-col>
@@ -69,7 +69,7 @@
               <!-- Price -->
               <v-col
                 cols="4"
-                class="title text-center"
+                class="text-h6 text-center"
               >
                 {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
                 <v-tooltip
