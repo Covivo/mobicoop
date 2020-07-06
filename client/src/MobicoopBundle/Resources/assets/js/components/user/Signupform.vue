@@ -351,12 +351,12 @@
                 <v-row
                   justify="center"
                   align="center"
-                  class="mb-40"
+                  class="mb-25"
                 >
                   <v-btn
                     ref="button"
                     rounded
-                    class="my-13 mr-12 mt-12 "
+                    class="my-13 mr-12"
                     color="secondary"
                     @click="--step"
                   >
@@ -365,7 +365,7 @@
                   <v-btn
                     color="secondary"
                     rounded
-                    class="mr-4 mb-100 mt-12"
+                    class="my-13"
                     :loading="loading"
                     :disabled="
                       !step3 || !step2 || !step1 || loading || isDisable
