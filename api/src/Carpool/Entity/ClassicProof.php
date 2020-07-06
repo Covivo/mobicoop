@@ -31,6 +31,7 @@ use App\User\Entity\User;
 
 /**
  * Carpooling : a proof for a classic ad.
+ * Used to create a carpool proof for a classic ad (not a dynamic one, but "proofed" by a mobile app).
  *
  * @ApiResource(
  *      attributes={

@@ -54,11 +54,6 @@ use App\Communication\Interfaces\MessagerInterface;
  */
 class AskHistory implements MessagerInterface
 {
-    const STATUS_INITIATED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_DECLINED = 4;
-    
     /**
      * @var int The id of this ask history item.
      *
@@ -70,7 +65,7 @@ class AskHistory implements MessagerInterface
     private $id;
 
     /**
-     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

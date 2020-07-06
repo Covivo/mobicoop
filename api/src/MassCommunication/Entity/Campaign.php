@@ -210,9 +210,9 @@ class Campaign
 
     /**
      * @var int Status to send all campaign
-     * null -> send to delevieries choosen
+     * null -> send to chosen deleveries
      * 0 -> send to all user
-     * id community -> send to all user, in community ID
+     * id community -> send to all user in the given community ID
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"read_campaign","write_campaign"})

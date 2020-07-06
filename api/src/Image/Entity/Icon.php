@@ -84,7 +84,7 @@ class Icon
     private $relayPointTypes;
 
     /**
-     * @var Icon|null Linked icon for a private.
+     * @var Icon|null Linked icon for the private related item.
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")

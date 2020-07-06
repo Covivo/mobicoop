@@ -1020,7 +1020,7 @@ class User implements UserInterface, EquatableInterface
     private $carpoolProofsAsPassenger;
 
     /**
-     * @var string|null Token for unsubscribee the user from receiving email
+     * @var string|null Token for news unsubscription
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
