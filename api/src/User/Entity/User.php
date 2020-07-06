@@ -1078,7 +1078,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null used to get the structures of a user
-     * @Groups({"readUser"})
+     * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
     private $solidaryStructures;
@@ -1101,7 +1101,8 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A User can have multiple entry in Operate
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist","remove"})
+     * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
     private $operates;
@@ -2602,10 +2603,6 @@ class User implements UserInterface, EquatableInterface
     {
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
-            // set the owning side to null (unless already changed)
-            if ($operate->getUser() === $this) {
-                $operate->setUser(null);
-            }
         }
 
         return $this;
