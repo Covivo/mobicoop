@@ -54,9 +54,10 @@ import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetW
 // RELAY POINT
 import RelayPoints from "@components/relaypoints/RelayPoints";
 
-// ToolsBox
+// TOOLBOX
 import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
+// UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
 
 export default {
