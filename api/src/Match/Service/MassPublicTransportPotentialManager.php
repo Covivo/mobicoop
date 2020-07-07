@@ -109,13 +109,11 @@ class MassPublicTransportPotentialManager
             // var_dump($results);die;
             foreach ($results as $ptjourney) {
                 $massPTJourney = $this->buildMassPTJourney($ptjourney);
-                //if ($this->checkValidMassPTJourney($massPTJourney)) {
                 $massPTJourney->setMassPerson($person);
                 $TPPotential[] = $massPTJourney;
 
                 // We persist the MassPTJourney
                 $this->entityManager->persist($massPTJourney);
-                //}
             }
         }
 
@@ -219,6 +217,7 @@ class MassPublicTransportPotentialManager
 
         $computedData = [
             "totalPerson" => count($persons),
+            "totalPTSolutions" => 0,
             "totalPersonWithValidPTSolution" => 0,
             "PTPotential" => 0,
             "totalTravelDistance" => 0,
@@ -249,6 +248,7 @@ class MassPublicTransportPotentialManager
             // Original travel
             if (count($person->getMassPTJourneys())>0) {
                 $ptjourneys = $person->getMassPTJourneys();
+                $computedData['totalPTSolutions'] += count($person->getMassPTJourneys());
 
                 foreach ($ptjourneys as $ptjourney) {
                     if ($this->checkValidMassPTJourney($ptjourney)) {
@@ -261,6 +261,7 @@ class MassPublicTransportPotentialManager
 
                         $computedData['totalPTDistance'] += $ptjourney->getDistance();
                         $computedData['totalPTDuration'] += $ptjourney->getDuration();
+                        break;
                     }
                 }
             }
