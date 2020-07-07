@@ -801,7 +801,7 @@ class MassImportManager
                                 'message' => "Date d'aller incorrecte"
                             ];
                         }
-                        $massPerson->setOutwardTime($outwardtime);
+                        $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                     } elseif ($fields[$i] == "returnTime") {
                         $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$returntime) {
@@ -813,7 +813,7 @@ class MassImportManager
                                 'message' => "Date de retour incorrecte"
                             ];
                         }
-                        $massPerson->setReturnTime($returntime);
+                        $massPerson->setReturnTime($returntime->format('H:i:s'));
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->$setter($tab[$i]);
                     }
