@@ -52,6 +52,8 @@ class MassPublicTransportPotentialManager
     private $geoTools;
     private $params;
 
+    private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
+
     public function __construct(
         MassRepository $massRepository,
         PTDataProvider $pTDataProvider,
@@ -292,6 +294,23 @@ class MassPublicTransportPotentialManager
         $computedData["savedDistanceByCarPerYear"] = $computedData["savedDistanceByCar"] * Mass::NB_WORKING_DAY;
 
         $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+
+        if ($this->params['roundTripCompute']) {
+            $computedData["totalTravelDistanceCO2"] *= 2;
+            $computedData['savedCO2'] *= 2;
+            $computedData['savedDurationByCar'] *= 2;
+            $computedData['savedDistanceByCar'] *= 2;
+            $computedData["totalTravelDistancePerYear"] *= 2;
+            $computedData["totalTravelDurationPerYear"] *= 2;
+            $computedData['savedCO2PerYear'] *= 2;
+            $computedData["savedDurationByCarPerYear"] *= 2;
+            $computedData["savedDistanceByCarPerYear"] *= 2;
+        
+            $computedData['roundtripComputed'] = true;
+        } else {
+            $computedData['roundtripComputed'] = false;
+        }
+        
 
         $mass->setPublicTransportPotential($computedData);
 

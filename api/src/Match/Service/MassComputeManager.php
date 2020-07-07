@@ -45,14 +45,14 @@ class MassComputeManager
     private $formatDataManager;
     private $geoTools;
     private $massPersonRepository;
+    private $roundTripCompute;
 
-    private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
-
-    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository)
+    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository, bool $roundTripCompute)
     {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
         $this->massPersonRepository = $massPersonRepository;
+        $this->roundTripCompute = $roundTripCompute;
     }
 
     /**
@@ -172,7 +172,7 @@ class MassComputeManager
 
         
         // If we compute for round trip, we multiply everything by two
-        if (self::ROUND_TRIP_COMPUTE) {
+        if ($this->roundTripCompute) {
             foreach ($computedData as $key => $data) {
                 if (is_numeric($data)) {
                     $computedData[$key] = $data * 2;
