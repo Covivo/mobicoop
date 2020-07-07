@@ -44,7 +44,7 @@ then
     # check Domains files
     DOMAINS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
     if [ ! -f "$DOMAINS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
+        echo "{}" >> /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
     fi
 
     # check env files
@@ -103,7 +103,7 @@ else
     # check Domains files
     DOMAINS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
     if [ ! -f "$DOMAINS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
+        echo "{}" >> /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
     fi
 
     # check env files

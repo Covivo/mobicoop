@@ -199,7 +199,7 @@ export default {
             } else if (address.relayPoint) {
               addresses[addressKey].selectedDisplayedLabel = `${address.relayPoint.name}`;
             } else if (address.event) {
-              addresses[addressKey].selectedDisplayedLabel = `${address.event.name}`;
+              addresses[addressKey].selectedDisplayedLabel = `${address.displayedLabel}`;
             } else {
               addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             }
