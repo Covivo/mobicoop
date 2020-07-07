@@ -7,13 +7,9 @@ import { UserInformationField } from './Fields/UserInformationField';
 import { SolidaryVolunteerPlanningField } from './Fields/SolidaryVolunteerPlanningField';
 import { SolidaryMessagesModal } from '../Solidary/SolidaryMessagesModal';
 
-// Because of <AvailabilityRangeDialogButton /> blur
-// The pristine is set to true on modal close, so we force it here
-// @TODO: Understand why the pristine status disappear
-const EnabledSaveButton = (props) => <SaveButton {...props} pristine={false} />;
 const SolidaryUserVolunteerEditToolbar = (props) => (
   <Toolbar {...props}>
-    <EnabledSaveButton />
+    <SaveButton />
   </Toolbar>
 );
 

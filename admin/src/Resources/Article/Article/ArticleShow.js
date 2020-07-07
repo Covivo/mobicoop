@@ -11,9 +11,10 @@ import {
   EditButton,
   DeleteButton,
   TextField,
-  ArrayField,
+  ReferenceArrayField,
   SelectField,
 } from 'react-admin';
+import { ReferenceRecordIdMapper } from '../../../components/utils/ReferenceRecordIdMapper';
 
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },
@@ -40,17 +41,19 @@ export const ArticleShow = (props) => (
         <EditButton />
       </Tab>
       <Tab label="Sections" path="sections">
-        <ArrayField source="sections" reference="sections" addLabel={false}>
-          <Datagrid>
-            <TextField source="title" label="Titre" />
-            <TextField source="subtitle" label="Sous-titre" />
-            <TextField source="position" label="Position" />
-            <SelectField source="status" label="Status" choices={statusChoices} />
-            <ShowButton />
-            <EditButton />
-            <DeleteButton />
-          </Datagrid>
-        </ArrayField>
+        <ReferenceRecordIdMapper attribute="sections">
+          <ReferenceArrayField source="sections" reference="sections" addLabel={false}>
+            <Datagrid>
+              <TextField source="title" label="Titre" />
+              <TextField source="subtitle" label="Sous-titre" />
+              <TextField source="position" label="Position" />
+              <SelectField source="status" label="Status" choices={statusChoices} />
+              <ShowButton />
+              <EditButton />
+              <DeleteButton />
+            </Datagrid>
+          </ReferenceArrayField>
+        </ReferenceRecordIdMapper>
         <AddSectionButton />
       </Tab>
     </TabbedShowLayout>
