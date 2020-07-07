@@ -1849,13 +1849,8 @@ class ResultManager
            
             // the ask is punctual; for now the time are the same
             // if the proposal is private we use matching proposal date and time
-            $matching = $ask->getMatching();
-            $date = !$matching->getProposalOffer()->isPrivate()
-                ? $matching->getProposalOffer()->getCriteria()->getFromDate()
-                : $matching->getProposalRequest()->getCriteria()->getFromDate();
-            $time = !$matching->getProposalOffer()->isPrivate()
-                ? $matching->getProposalOffer()->getCriteria()->getFromTime()
-                : $matching->getProposalRequest()->getCriteria()->getFromTime();
+            $date = $ask->getCriteria()->getFromDate();
+            $time = $ask->getCriteria()->getFromTime();
             $time = ($time == null) ? null : $time;
             $item->setDate($date);
             $item->setTime($time);
