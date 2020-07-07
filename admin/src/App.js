@@ -98,6 +98,7 @@ export default () => (
         <Resource name="solidary_users" />,
         <Resource name="solidary_contacts" />,
         <Resource name="actions" />,
+        <Resource name="solidary_formal_requests" />,
       ].filter((x) => x);
     }}
   </Admin>

@@ -6,13 +6,13 @@ import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import BlockIcon from '@material-ui/icons/Block';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
-const SOLIDARYASK_STATUS_ASKED = 0;
-const SOLIDARYASK_STATUS_REFUSED = 1;
-const SOLIDARYASK_STATUS_PENDING = 2;
-const SOLIDARYASK_STATUS_LOOKFORSOLUTION = 3;
-const SOLIDARYASK_STATUS_FOLLOWUP = 4;
-const SOLIDARYASK_STATUS_CLOSED = 5;
-const SOLIDARYASK_STATUS_ACCEPTED = 6;
+export const SOLIDARYASK_STATUS_ASKED = 0;
+export const SOLIDARYASK_STATUS_REFUSED = 1;
+export const SOLIDARYASK_STATUS_PENDING = 2;
+export const SOLIDARYASK_STATUS_LOOKFORSOLUTION = 3;
+export const SOLIDARYASK_STATUS_FOLLOWUP = 4;
+export const SOLIDARYASK_STATUS_CLOSED = 5;
+export const SOLIDARYASK_STATUS_ACCEPTED = 6;
 
 export const solidaryAskStatusColors = {
   [SOLIDARYASK_STATUS_ASKED]: 'blue',
