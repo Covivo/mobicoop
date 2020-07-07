@@ -296,7 +296,9 @@ changePassword: "Nous vous encourageons fortement à le modifier lors de votre p
 massAnalyzeErrors: "L'analyse de l'import n°{massId} comporte des erreurs"
 massMatched: "Calcul du potentiel de covoiturage n°{massId}"
 massMatchedOverTitle: "Calcul du potentiel de covoiturage"
-massMatchedOver: "Le calcul du potentiel de covoiturage  de l'import n°{massId} est terminé"
+massMatchedOver: "Le calcul du potentiel de covoiturage de l'import n°{massId} est terminé"
+massPublicTransportPotentialTitle: "Calcul du potentiel de transport en commun"
+massPublicTransportPotentialOver: "Le calcul du potentiel de transport en commun de l'import n°{massId} est terminé"
 
 # Solidary
 solidaryContact: "Un administrateur solidaire vous contacte"

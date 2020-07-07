@@ -36,7 +36,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassPTJourney;
+use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 use App\Match\Repository\MassPTJourneyRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Mass public transport potential manager.
@@ -51,6 +53,7 @@ class MassPublicTransportPotentialManager
     private $massPTJourneyRepository;
     private $geoTools;
     private $params;
+    private $eventDispatcher;
 
     private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
 
@@ -60,6 +63,7 @@ class MassPublicTransportPotentialManager
         EntityManagerInterface $entityManager,
         MassPTJourneyRepository $massPTJourneyRepository,
         GeoTools $geoTools,
+        EventDispatcherInterface $eventDispatcher,
         array $params
     ) {
         $this->massRepository = $massRepository;
@@ -67,6 +71,7 @@ class MassPublicTransportPotentialManager
         $this->entityManager = $entityManager;
         $this->massPTJourneyRepository = $massPTJourneyRepository;
         $this->geoTools = $geoTools;
+        $this->eventDispatcher = $eventDispatcher;
         $this->params = $params;
     }
 
@@ -125,6 +130,10 @@ class MassPublicTransportPotentialManager
         $this->entityManager->flush();
 
         $mass->setPublicTransportPotential($TPPotential);
+
+        // Send an email to the operator
+        $event = new MassPublicTransportSolutionsGatheredEvent($mass);
+        $this->eventDispatcher->dispatch(MassPublicTransportSolutionsGatheredEvent::NAME, $event);
 
         return $mass;
     }
