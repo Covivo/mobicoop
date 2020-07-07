@@ -125,7 +125,7 @@ const TransportDatagrid = (
 );
 
 export const SolidarySearchListGuesser = (props) => {
-  const solidary = useSolidary(props.filterValues.solidary);
+  const { solidary } = useSolidary(props.filterValues.solidary);
 
   // Resolve datagrid fields from return data
   // if loading => display null because fields should not match previous data

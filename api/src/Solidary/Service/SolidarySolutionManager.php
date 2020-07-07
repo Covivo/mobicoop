@@ -278,43 +278,43 @@ class SolidarySolutionManager
         if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
             $criteria->setMonCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setMonTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setMonTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["tue"]) && $outwardSchedule["tue"]==1) {
             $criteria->setTueCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setTueTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setTueTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["wed"]) && $outwardSchedule["wed"]==1) {
             $criteria->setWedCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setWedTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setWedTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["thu"]) && $outwardSchedule["thu"]==1) {
             $criteria->setThuCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setThuTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setThuTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["fri"]) && $outwardSchedule["fri"]==1) {
             $criteria->setFriCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setFriTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setFriTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["sat"]) && $outwardSchedule["sat"]==1) {
             $criteria->setSatCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setSatTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setSatTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
         if (isset($outwardSchedule["sun"]) && $outwardSchedule["sun"]==1) {
             $criteria->setSunCheck(true);
             if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setSunTime(new \DateTimeInterface($outwardSchedule['outwardTime']));
+                $criteria->setSunTime(new \DateTime($outwardSchedule['outwardTime']));
             }
         }
 
