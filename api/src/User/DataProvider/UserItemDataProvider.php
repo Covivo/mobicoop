@@ -42,7 +42,7 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass;
+        return User::class === $resourceClass && $operationName == "get";
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
