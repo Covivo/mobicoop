@@ -109,13 +109,13 @@ class MassPublicTransportPotentialManager
             // var_dump($results);die;
             foreach ($results as $ptjourney) {
                 $massPTJourney = $this->buildMassPTJourney($ptjourney);
-                if ($this->checkValidMassPTJourney($massPTJourney)) {
-                    $massPTJourney->setMassPerson($person);
-                    $TPPotential[] = $massPTJourney;
+                //if ($this->checkValidMassPTJourney($massPTJourney)) {
+                $massPTJourney->setMassPerson($person);
+                $TPPotential[] = $massPTJourney;
 
-                    // We persist the MassPTJourney
-                    $this->entityManager->persist($massPTJourney);
-                }
+                // We persist the MassPTJourney
+                $this->entityManager->persist($massPTJourney);
+                //}
             }
         }
 
@@ -192,6 +192,11 @@ class MassPublicTransportPotentialManager
             return false;
         }
 
+        // The maximum duration of PT journey must be < xN the duration in car
+        if ($massPTJourney->getDuration() > ($massPTJourney->getMassPerson()->getDuration()*$this->params['ptMaxNbCarDuration'])) {
+            return false;
+        }
+
         return true;
     }
 
@@ -234,7 +239,8 @@ class MassPublicTransportPotentialManager
             "criteria" => [
                 "ptMaxConnections" => $this->params['ptMaxConnections'],
                 "ptMaxDistanceWalkFromHome" => $this->params['ptMaxDistanceWalkFromHome'],
-                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork']
+                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork'],
+                "ptMaxNbCarDuration" => $this->params['ptMaxNbCarDuration']
             ]
         ];
 
@@ -242,15 +248,21 @@ class MassPublicTransportPotentialManager
             
             // Original travel
             if (count($person->getMassPTJourneys())>0) {
-                $computedData['totalPersonWithValidPTSolution']++;
+                $ptjourneys = $person->getMassPTJourneys();
 
-                $computedData["totalTravelDistance"] += $person->getDistance();
-                $computedData["totalTravelDuration"] += $person->getDuration();
+                foreach ($ptjourneys as $ptjourney) {
+                    if ($this->checkValidMassPTJourney($ptjourney)) {
+                        $computedData['totalPersonWithValidPTSolution']++;
 
-                $ptjourney = $person->getMassPTJourneys()[0];
+                        $computedData["totalTravelDistance"] += $person->getDistance();
+                        $computedData["totalTravelDuration"] += $person->getDuration();
 
-                $computedData['totalPTDistance'] += $ptjourney->getDistance();
-                $computedData['totalPTDuration'] += $ptjourney->getDuration();
+                        
+
+                        $computedData['totalPTDistance'] += $ptjourney->getDistance();
+                        $computedData['totalPTDuration'] += $ptjourney->getDuration();
+                    }
+                }
             }
         }
 
