@@ -62,23 +62,24 @@ class EventManager
         $event->setUser($user);
 
         // set event address
-        $communityAddress=json_decode($data->get('address'), true);
-        $address->setAddressCountry($communityAddress['addressCountry']);
-        $address->setAddressLocality($communityAddress['addressLocality']);
-        $address->setCountryCode($communityAddress['countryCode']);
-        $address->setCounty($communityAddress['county']);
-        $address->setLatitude($communityAddress['latitude']);
-        $address->setLocalAdmin($communityAddress['localAdmin']);
-        $address->setLongitude($communityAddress['longitude']);
-        $address->setMacroCounty($communityAddress['macroCounty']);
-        $address->setMacroRegion($communityAddress['macroRegion']);
-        $address->setPostalCode($communityAddress['postalCode']);
-        $address->setRegion($communityAddress['region']);
-        $address->setStreet($communityAddress['street']);
-        $address->setHouseNumber($communityAddress['houseNumber']);
-        $address->setStreetAddress($communityAddress['streetAddress']);
-        $address->setSubLocality($communityAddress['subLocality']);
-        $address->setDisplayLabel($communityAddress['displayLabel']);
+        $eventAddress=json_decode($data->get('address'), true);
+        $address->setLayer($eventAddress['layer']);
+        $address->setAddressCountry($eventAddress['addressCountry']);
+        $address->setAddressLocality($eventAddress['addressLocality']);
+        $address->setCountryCode($eventAddress['countryCode']);
+        $address->setCounty($eventAddress['county']);
+        $address->setLatitude($eventAddress['latitude']);
+        $address->setLocalAdmin($eventAddress['localAdmin']);
+        $address->setLongitude($eventAddress['longitude']);
+        $address->setMacroCounty($eventAddress['macroCounty']);
+        $address->setMacroRegion($eventAddress['macroRegion']);
+        $address->setPostalCode($eventAddress['postalCode']);
+        $address->setRegion($eventAddress['region']);
+        $address->setStreet($eventAddress['street']);
+        $address->setHouseNumber($eventAddress['houseNumber']);
+        $address->setStreetAddress($eventAddress['streetAddress']);
+        $address->setSubLocality($eventAddress['subLocality']);
+        $address->setDisplayLabel($eventAddress['displayLabel']);
 
         // Set Datetime from data
         $from = $data->get('startTime') != null ? new \DateTime($data->get('startDate').'.'.$data->get('startTime'))  : new \DateTime($data->get('startDate'));

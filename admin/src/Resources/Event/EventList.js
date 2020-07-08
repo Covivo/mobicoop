@@ -8,7 +8,6 @@ import {
   TextField,
   DateField,
   ImageField,
-  ReferenceField,
   EditButton,
   useTranslate,
 } from 'react-admin';
@@ -29,13 +28,10 @@ export const EventList = (props) => {
   return (
     <List {...props} title="Evénement > liste" perPage={25}>
       <Datagrid expand={<EventPanel />} rowClick="show">
-        <ReferenceField
-          reference="images"
-          source="images[0]"
+        <ImageField
           label={translate('custom.label.event.image')}
-        >
-          <ImageField source="versions.square_100" />
-        </ReferenceField>
+          source="images[0].versions.square_100"
+        />
         <TextField source="name" label={translate('custom.label.event.name')} />
         <DateField source="fromDate" label={translate('custom.label.event.dateStart')} />
         <DateField source="toDate" label={translate('custom.label.event.dateFin')} />

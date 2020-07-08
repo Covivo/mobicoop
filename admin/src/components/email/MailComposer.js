@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
-import { useDataProvider, fetchUtils, useUnselectAll } from 'react-admin';
+import { useDataProvider, fetchUtils, useUnselectAll, useTranslate } from 'react-admin';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,6 +11,7 @@ import ImageUpload from './ImageUpload';
 import CreateCampaignButton from './CreateCampaignButton';
 import SenderSelector from './SenderSelector';
 import { reducer, initialState } from './emailStore';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
   main_container: {
@@ -67,6 +68,7 @@ const MailComposer = ({
   shouldFetch,
   limit = 1000,
   campagneReprise,
+  sendAll,
 }) => {
   const etats = {
     INITIALISE: 0,
@@ -90,6 +92,7 @@ const MailComposer = ({
   const token = localStorage.getItem('token');
   const unselectAll = useUnselectAll();
   const [removeUnsuscribe, setRemoveUnsuscribe] = useState(0);
+  const translate = useTranslate();
 
   // Impose de sauvegarder la campagne AVANT d'envoyer un mail
   const dispatchAndReset = (values) => {
@@ -132,17 +135,25 @@ const MailComposer = ({
     if (loading) {
       setCompteRendu('Chargement...');
     } else {
-      removeUnsuscribe === 0
-        ? setCompteRendu(
-            `Votre mail va concerner ${ids.length} utilisateur${ids.length > 1 ? 's' : ''}.`
-          )
-        : setCompteRendu(
-            `Votre mail va concerner ${ids.length} utilisateur${
-              ids.length > 1 ? 's' : ''
-            }, ${removeUnsuscribe} utilisateur${removeUnsuscribe > 1 ? 's' : ''} ignoré${
-              removeUnsuscribe > 1 ? 'es' : ''
-            } `
-          );
+      if (sendAll !== null) {
+        setCompteRendu(
+          `Votre mail va concerner tous les utilisateurs ${
+            sendAll > 0 ? 'de cette communauté' : ''
+          } qui acceptent les emails`
+        );
+      } else {
+        removeUnsuscribe === 0
+          ? setCompteRendu(
+              `Votre mail va concerner ${ids.length} utilisateur${ids.length > 1 ? 's' : ''}.`
+            )
+          : setCompteRendu(
+              `Votre mail va concerner ${ids.length} utilisateur${
+                ids.length > 1 ? 's' : ''
+              }, ${removeUnsuscribe} utilisateur${removeUnsuscribe > 1 ? 's' : ''} ignoré${
+                removeUnsuscribe > 1 ? 'es' : ''
+              } `
+            );
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ids, loading]);
@@ -175,6 +186,8 @@ const MailComposer = ({
         name: objetMail,
         subject: objetMail,
 
+        sendAll: sendAll !== null ? sendAll : null,
+
         fromName: expediteur.fromName,
         email: expediteur.replyTo,
         replyTo: expediteur.replyTo,
@@ -182,10 +195,9 @@ const MailComposer = ({
         body: JSON.stringify(corpsMail),
         status: 0,
         medium: '/media/2', // media#2 is email
-        deliveries: ids.map((id) => ({ user: id })),
+        deliveries: sendAll == null ? ids.map((id) => ({ user: id })) : [],
       }
     : {};
-
   // Envoi du mail de test (si la campagne est sauvegardée)
   const handleClickEnvoiTest = () => {
     setLoading(true);
@@ -262,22 +274,38 @@ const MailComposer = ({
                 Annuler
               </Button>{' '}
               &nbsp;
-              <Button
-                variant="contained"
-                disabled={etat < etats.CAMPAGNE_ENREGISTREE}
-                onClick={handleClickEnvoiTest}
-              >
-                Envoyer Mail de test
-              </Button>{' '}
+              {etat < etats.CAMPAGNE_ENREGISTREE ? (
+                <Tooltip title={translate('custom.email.texte.saveBeforeTest')} placement="bottom">
+                  <span>
+                    <Button variant="contained" disabled onClick={handleClickEnvoiTest}>
+                      Envoyer Mail de test
+                    </Button>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Button variant="contained" onClick={handleClickEnvoiTest}>
+                  Envoyer Mail de test
+                </Button>
+              )}{' '}
               &nbsp;
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={etat < etats.MAIL_TEST_ENVOYE}
-                onClick={handleClickEnvoiMasse}
-              >
-                Envoyer aux {ids.length || 0} destinataires
-              </Button>
+              {etat < etats.MAIL_TEST_ENVOYE ? (
+                <Tooltip title={translate('custom.email.texte.testBeforeSend')} placement="bottom">
+                  <span>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled
+                      onClick={handleClickEnvoiMasse}
+                    >
+                      Envoyer aux {sendAll == null ? ids.length || 0 : ''} destinataires
+                    </Button>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Button variant="contained" color="primary" onClick={handleClickEnvoiMasse}>
+                  Envoyer aux {sendAll == null ? ids.length || 0 : ''} destinataires
+                </Button>
+              )}{' '}
               &nbsp;
             </Grid>
           </Grid>

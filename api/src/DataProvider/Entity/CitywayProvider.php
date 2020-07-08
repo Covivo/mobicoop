@@ -95,7 +95,6 @@ class CitywayProvider implements ProviderInterface
     private const CW_COUNTRY = "France";
     private const CW_NC = "NC";
 
-    private const URI = "https://api.grandest2.cityway.fr/";
     private const COLLECTION_RESSOURCE_JOURNEYS = "journeyplanner/api/opt/PlanTrips/json";
     private const COLLECTION_RESSOURCE_TRIPPOINTS = "api/transport/v3/trippoint/GetTripPoints/json";
     private const COLLECTION_RESSOURCE_LINESTOPS = "api/transport/v3/stop/GetLineStops/json";
@@ -115,10 +114,12 @@ class CitywayProvider implements ProviderInterface
     ];
 
     private $collection;
+    private $uri;
 
-    public function __construct()
+    public function __construct(string $uri)
     {
         $this->collection = [];
+        $this->uri = $uri;
     }
 
     /**
@@ -178,7 +179,7 @@ class CitywayProvider implements ProviderInterface
 
     private function getCollectionJourneys($class, array $params)
     {
-        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_JOURNEYS);
+        $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESSOURCE_JOURNEYS);
         $getParams = [
             "DepartureType" => "COORDINATES",
             "ArrivalType" => "COORDINATES",
@@ -210,14 +211,14 @@ class CitywayProvider implements ProviderInterface
                 return $this->collection;
             }
             foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
-                $this->collection[] = self::deserialize($class, $trip);
+                $this->collection[] = $this->deserialize($class, $trip);
             }
         }
     }
 
     private function getCollectionTripPoints($class, array $params)
     {
-        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_TRIPPOINTS);
+        $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESSOURCE_TRIPPOINTS);
         $getParams = [
             "TransportModes" => $params["transportModes"],
             "Perimeter" => $params["perimeter"]
@@ -247,7 +248,7 @@ class CitywayProvider implements ProviderInterface
                 return $this->collection;
             }
             foreach ($data["Data"] as $tripPoint) {
-                $this->collection[] = self::deserialize($class, $tripPoint);
+                $this->collection[] = $this->deserialize($class, $tripPoint);
             }
         }
     }
@@ -255,7 +256,7 @@ class CitywayProvider implements ProviderInterface
     private function getCollectionLineStops($class, array $params)
     {
         //print_r($params);die;
-        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_LINESTOPS);
+        $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESSOURCE_LINESTOPS);
         $getParams = [
             "LogicalIds" => $params["logicalId"]
         ];
@@ -277,7 +278,7 @@ class CitywayProvider implements ProviderInterface
                 return $this->collection;
             }
             foreach ($data["Data"] as $lineStop) {
-                $this->collection[] = self::deserialize($class, $lineStop);
+                $this->collection[] = $this->deserialize($class, $lineStop);
             }
         }
     }
@@ -289,13 +290,13 @@ class CitywayProvider implements ProviderInterface
     {
         switch ($class) {
             case PTJourney::class:
-                return self::deserializeJourney($data);
+                return $this->deserializeJourney($data);
                 break;
             case PTTripPoint::class:
-                return self::deserializeTripPoint($data);
+                return $this->deserializeTripPoint($data);
                 break;
             case PTLineStop::class:
-                return self::deserializeLineStop($data);
+                return $this->deserializeLineStop($data);
                 break;
             default:
                 break;
@@ -451,7 +452,9 @@ class CitywayProvider implements ProviderInterface
             $journey->setDistance($data["Distance"]);
         }
         if (isset($data["Duration"])) {
-            $journey->setDuration($data["Duration"]);
+            $interval = new \DateInterval($data["Duration"]);
+            $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+            $journey->setDuration($duration);
         }
         if (isset($data["InterchangeNumber"])) {
             $journey->setChangeNumber($data["InterchangeNumber"]);
@@ -512,7 +515,7 @@ class CitywayProvider implements ProviderInterface
             foreach ($data["sections"]["Section"] as $section) {
                 $nblegs++;
                 //$legs[] = self::deserializeSection($section, count($legs)+1);
-                $journey->addPTLeg(self::deserializeSection($section, $nblegs));
+                $journey->addPTLeg($this->deserializeSection($section, $nblegs));
             }
             //$journey->setPTLegs($legs);
         }
@@ -540,7 +543,9 @@ class CitywayProvider implements ProviderInterface
                 $leg->setTravelMode($travelMode);
             }
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
-                $leg->setDuration($data["Leg"]["Duration"]);
+                $interval = new \DateInterval($data["Leg"]["Duration"]);
+                $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+                $leg->setDuration($duration);
             }
             if (isset($data["Leg"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -602,7 +607,7 @@ class CitywayProvider implements ProviderInterface
                 foreach ($data["Leg"]["pathLinks"]["PathLink"] as $pathLink) {
                     $nbsteps++;
                     //$ptsteps[] = self::deserializePTStep($pathLink, count($ptsteps)+1);
-                    $leg->addPTStep(self::deserializePTStep($pathLink, $nbsteps));
+                    $leg->addPTStep($this->deserializePTStep($pathLink, $nbsteps));
                 }
                 //$leg->setPTSteps($ptsteps);
             }
@@ -687,7 +692,9 @@ class CitywayProvider implements ProviderInterface
                 $leg->setDistance($data["PTRide"]["Distance"]);
             }
             if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) {
-                $leg->setDuration($data["PTRide"]["Duration"]);
+                $interval = new \DateInterval($data["PTRide"]["Duration"]);
+                $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+                $leg->setDuration($duration);
             }
             if (isset($data["PTRide"]["Line"])) {
                 $ptline = new PTLine(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -719,7 +726,7 @@ class CitywayProvider implements ProviderInterface
                 foreach ($data["PTRide"]["steps"]["Step"] as $step) {
                     //$ptsteps[] = self::deserializePTStep($step, count($ptsteps)+1);
                     $nbsteps++;
-                    $leg->addPTStep(self::deserializePTStep($step, $nbsteps));
+                    $leg->addPTStep($this->deserializePTStep($step, $nbsteps));
                 }
                 //$leg->setPTSteps($ptsteps);
             }
@@ -826,7 +833,9 @@ class CitywayProvider implements ProviderInterface
             $ptstep->setDistance($data["Distance"]);
         }
         if (isset($data["Duration"]) && !is_null($data["Duration"])) {
-            $ptstep->setDuration($data["Duration"]);
+            $interval = new \DateInterval($data["Duration"]);
+            $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
+            $ptstep->setDuration($duration);
         }
         if (isset($data["MagneticDirection"]) && !is_null($data["MagneticDirection"])) {
             $ptstep->setMagneticDirection($data["MagneticDirection"]);

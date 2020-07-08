@@ -24,7 +24,7 @@ const CreateCampaignButton = ({
     if (loaded && data.id) {
       enregistrementSuccess(data);
     }
-  }, [data, loaded, enregistrementSuccess]);
+  }, [data, loaded]);
 
   return (
     <Button
@@ -37,14 +37,6 @@ const CreateCampaignButton = ({
       {children}
     </Button>
   );
-};
-
-CreateCampaignButton.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  enregistrementSuccess: PropTypes.func.isRequired,
-  children: PropTypes.string.isRequired,
-  campagne: PropTypes.object.isRequired,
-  oldCampaign: PropTypes.object.isRequired,
 };
 
 export default CreateCampaignButton;

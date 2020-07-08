@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
@@ -13,14 +13,15 @@ import {
   TextField,
   DateField,
   RichTextField,
+  DatagridBody,
   SelectField,
   ReferenceArrayField,
-  ReferenceField,
   FunctionField,
   useTranslate,
-  BulkDeleteButton,
+  BooleanField,
   List,
 } from 'react-admin';
+import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
   Typography,
@@ -32,20 +33,13 @@ import {
   CardHeader,
 } from '@material-ui/core';
 
-import UserReferenceField from '../User/UserReferenceField';
 import { addressRenderer } from '../../utils/renderers';
 import { validationChoices, statusChoices } from './communityChoices';
 import isAuthorized from '../../auth/permissions';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
-
-const UserBulkActionButtons = (props) => (
-  <>
-    {isAuthorized('mass_create') && <EmailComposeButton label="Email" {...props} />}
-    {/* default bulk delete action */}
-    <ResetButton label="Reset email" {...props} />
-  </>
-);
+import FullNameField from '../User/FullNameField';
+import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
@@ -135,24 +129,72 @@ const CommunityTitle = ({ record }) => {
 export const CommunityShow = (props) => {
   const translate = useTranslate();
   const communityId = props.id;
+  const [count, setCount] = useState(0);
+
+  const checkValue = ({ selected, record }) => {
+    if (record.user.newsSubscription === false)
+      setCount(selected === false ? count + 1 : count - 1);
+  };
+
+  const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
+    if (selected && record.newsSubscription === false) setCount(1);
+    return (
+      <TableRow key={id} hover={true}>
+        {/* first column: selection checkbox */}
+        <TableCell padding="none">
+          <Checkbox
+            checked={selected}
+            onClick={() => {
+              onToggleItem(id);
+              checkValue({ selected, record });
+            }}
+          />
+        </TableCell>
+        {/* data columns based on children */}
+        {React.Children.map(children, (field) => (
+          <TableCell key={`${id}-${field.props.source}`}>
+            {React.cloneElement(field, {
+              record,
+              basePath,
+              resource,
+            })}
+          </TableCell>
+        ))}
+      </TableRow>
+    );
+  };
+
+  const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
+  const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
+
+  const UserBulkActionButtons = (props) => {
+    return (
+      <>
+        <EmailComposeButton
+          canSend={isAuthorized('mass_create') && count === 0}
+          comeFrom={1}
+          label="Email"
+          {...props}
+        />
+
+        <ResetButton label="Reset email" {...props} />
+        {/* default bulk delete action */}
+        {/* <BulkDeleteButton {...props} /> */}
+      </>
+    );
+  };
+
   return (
     <Show {...props} title={<CommunityTitle />} aside={<Aside />}>
       <TabbedShowLayout>
         <Tab label={translate('custom.label.community.detail')}>
           <TextField source="name" label={translate('custom.label.community.name')} />
-          <UserReferenceField
-            label={translate('custom.label.community.createdBy')}
-            source="user"
-            reference="users"
-          />
-          <ReferenceField
+          <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
+          <FunctionField
             source="address"
             label={translate('custom.label.community.adress')}
-            reference="addresses"
-            link=""
-          >
-            <FunctionField render={addressRenderer} />
-          </ReferenceField>
+            render={(r) => addressRenderer(r.address)}
+          />
           <TextField source="domain" label={translate('custom.label.community.domainName')} />
           <TextField source="description" label={translate('custom.label.community.description')} />
           <RichTextField
@@ -165,48 +207,53 @@ export const CommunityShow = (props) => {
           />
         </Tab>
         <Tab label={translate('custom.label.community.membersModerator')}>
-          <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
-            <List
-              {...props}
-              perPage={25}
-              bulkActionButtons={<UserBulkActionButtons />}
-              actions={null}
-              sort={{ field: 'id', order: 'ASC' }}
-              filter={{ is_published: true, community: communityId }}
+          <ReferenceRecordIdMapper attribute="communityUsers">
+            <ReferenceArrayField
+              source="communityUsers"
+              reference="community_users"
+              addLabel={false}
             >
-              <Datagrid>
-                <UserReferenceField
-                  label={translate('custom.label.community.member')}
-                  source="user"
-                  reference="users"
-                  sortBy="user.givenName"
-                />
-                <SelectField
-                  source="status"
-                  label={translate('custom.label.community.status')}
-                  choices={statusChoices}
-                />
-                <DateField
-                  source="createdDate"
-                  label={translate('custom.label.community.joinAt')}
-                />
-                <DateField
-                  source="acceptedDate"
-                  label={translate('custom.label.community.acceptedAt')}
-                />
-                <DateField
-                  source="refusedDate"
-                  label={translate('custom.label.community.refusedAt')}
-                />
+              <List
+                {...props}
+                perPage={2}
+                bulkActionButtons={<UserBulkActionButtons />}
+                actions={null}
+                sort={{ field: 'id', order: 'ASC' }}
+                filter={{ is_published: true, community: communityId }}
+              >
+                <MyDatagridUser>
+                  <FullNameField source="user" label={translate('custom.label.community.member')} />
+                  <SelectField
+                    source="status"
+                    label={translate('custom.label.community.status')}
+                    choices={statusChoices}
+                  />
+                  <BooleanField
+                    source="user.newsSubscription"
+                    label={translate('custom.label.user.accepteEmail')}
+                  />
+                  <DateField
+                    source="createdDate"
+                    label={translate('custom.label.community.joinAt')}
+                  />
+                  <DateField
+                    source="acceptedDate"
+                    label={translate('custom.label.community.acceptedAt')}
+                  />
+                  <DateField
+                    source="refusedDate"
+                    label={translate('custom.label.community.refusedAt')}
+                  />
 
-                {/*
+                  {/*
                             Edit and Delete button should be in an Community Edit view
                             <EditButton />
                             <DeleteButton />
                             */}
-              </Datagrid>
-            </List>
-          </ReferenceArrayField>
+                </MyDatagridUser>
+              </List>
+            </ReferenceArrayField>
+          </ReferenceRecordIdMapper>
           {/*  <AddNewMemberButton /> should be in an Community Edit view */}
         </Tab>
       </TabbedShowLayout>

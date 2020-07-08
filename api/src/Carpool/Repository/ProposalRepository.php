@@ -1188,6 +1188,11 @@ class ProposalRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
+    public function findOneBy(array $criteria): ?Proposal
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
     /**
      * Find proposals linked to imported users
      * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)

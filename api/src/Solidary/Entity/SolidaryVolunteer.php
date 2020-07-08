@@ -47,7 +47,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *             "security"="is_granted('solidary_volunteer_list',object)"
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_volunteer_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_volunteer_register',object)"
  *          }
  *      },
  *      itemOperations={
@@ -341,6 +341,26 @@ class SolidaryVolunteer
     private $structure;
 
     /**
+     * @var int|null The maximum distance in metres allowed from the center address.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $maxDistance;
+
+    /**
+     * @var bool The solidaryUser has a vehicle.
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $vehicle;
+
+    /**
+     * @var array|null The special needs for this solidary record.
+     *
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $needs;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @Groups({"readSolidary","writeSolidary"})
@@ -359,6 +379,7 @@ class SolidaryVolunteer
         $this->id = self::DEFAULT_ID;
         $this->diaries = [];
         $this->solidaries = [];
+        $this->needs = [];
     }
     
     public function getId(): ?int
@@ -897,6 +918,42 @@ class SolidaryVolunteer
     public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getMaxDistance(): ?int
+    {
+        return $this->maxDistance;
+    }
+
+    public function setMaxDistance(int $maxDistance): self
+    {
+        $this->maxDistance = $maxDistance;
+
+        return $this;
+    }
+
+    public function hasVehicle(): ?bool
+    {
+        return $this->vehicle;
+    }
+
+    public function setVehicle(?bool $vehicle): self
+    {
+        $this->vehicle = $vehicle;
+
+        return $this;
+    }
+
+    public function getNeeds(): ?array
+    {
+        return $this->needs;
+    }
+
+    public function setNeeds(?array $needs): self
+    {
+        $this->needs = $needs;
 
         return $this;
     }

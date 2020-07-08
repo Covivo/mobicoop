@@ -60,34 +60,22 @@
         />
       </v-col>
 
-      <!-- Button -->
+      <!-- Carpool button -->
       <v-col
         v-if="!externalRdexJourneys"
         cols="3"
         class="text-right"
       >
-        <v-tooltip
-          :disabled="!disabled"
-          bottom
-          color="info"
+        <v-btn
+          rounded
+          color="secondary"
+          large
+          @click="emitCarpoolEvent"
         >
-          <template v-slot:activator="{ on }">
-            <div v-on="on">
-              <v-btn
-                rounded
-                color="secondary"
-                large
-                :disabled="disabled"
-                @click="emitEvent"
-              >
-                <span>
-                  {{ $t('carpool') }}
-                </span>
-              </v-btn>
-            </div>
-          </template>
-          <span> {{ $t('needTobeConnected') }} </span>
-        </v-tooltip>
+          <span>
+            {{ $t('carpool') }}
+          </span>
+        </v-btn>
       </v-col>
       <v-col
         v-else
@@ -165,15 +153,19 @@ export default {
   },
   data() {
     return {
-      disabled: !this.user,
+      connected: this.user !== null,
     };
   },
   methods: {
     buttonAlert(msg, e) {
       alert(msg);
     },
-    emitEvent: function() {
-      this.$emit("carpool");
+    emitCarpoolEvent: function() {
+      if (this.connected) {
+        this.$emit("carpool");
+      } else {
+        this.$emit("loginOrRegister");
+      }
     }
   }
 };

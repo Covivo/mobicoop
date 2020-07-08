@@ -59,7 +59,7 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
         $repository = $manager->getRepository($resourceClass);
         $queryBuilder = $repository->createQueryBuilder('u');
         $queryNameGenerator = new QueryNameGenerator();
-        
+
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {

@@ -25,6 +25,7 @@
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -32,10 +33,12 @@ use App\Solidary\Service\SolidaryManager;
 final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
 {
     private $solidaryManager;
+    private $security;
     
-    public function __construct(SolidaryManager $solidaryManager)
+    public function __construct(SolidaryManager $solidaryManager, Security $security)
     {
         $this->solidaryManager = $solidaryManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
@@ -49,6 +52,9 @@ final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
             $data = $this->solidaryManager->updateSolidary($data);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            $data = $this->solidaryManager->createSolidary($data);
+        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'postUl') {
+            $data->setUser($this->security->getUser());
             $data = $this->solidaryManager->createSolidary($data);
         }
         return $data;

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row
-      justify="start"
+      justify="center"
     >
       <v-col
         cols="12"
@@ -10,7 +10,7 @@
         xl="6"
         class="mt-12"
       >
-        <h1 class="display-1 text-left font-weight-bold">
+        <h1 class="display-1 text-center font-weight-bold">
           {{ $t('title') }}
         </h1>
       </v-col>
@@ -40,7 +40,7 @@
         xl="6"
         class="mt-6"
       >
-        <h3 class="headline text-justify font-weight-bold">
+        <h3 class="headline text-center font-weight-bold">
           {{ $t('search') }}
         </h3>
       </v-col>
@@ -123,6 +123,7 @@ export default {
       axios
         .post(this.$t("relayPointList"))
         .then(res => {
+          //console.error(res.data);
           this.relayPointsToMap = res.data;
           this.showRelayPoints();
         });
@@ -133,18 +134,32 @@ export default {
       // add relay point address to display on the map
       if (this.relayPointsToMap.length > 0) {
         this.relayPointsToMap.forEach(relayPoint => {
-          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address));
+          let icon = null;
+          if(relayPoint.relayPointTypes.length>0){
+            if(relayPoint.relayPointTypes[0].icon && relayPoint.relayPointTypes[0].icon.url !== ""){
+              icon = relayPoint.relayPointTypes[0].icon.url;
+            }
+          }
+          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));
         });
       }
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",address=""){
+    buildPoint: function(lat,lng,title="",address="", icon=null){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {},
         address:address
       };
+
+      if(icon){
+        point.icon = {
+          size:[36,42],
+          url:icon
+        }
+      }
+
       return point;
     },
     selectedAsDestination(destination) {

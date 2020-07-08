@@ -10,11 +10,15 @@ import {
   ReferenceInput,
   SelectInput,
   NullableBooleanInput,
+  useListController,
 } from 'react-admin';
 
 import { DayField } from './Fields/DayField';
 import { AddressField } from './Fields/AddressField';
 import { RoleField } from './Fields/RoleField';
+import { solidaryLabelRenderer } from '../../../utils/renderers';
+import { SolidaryUserVolunteerActionDropDown } from './SolidaryUserVolunteerActionDropDown';
+import { useSolidary } from '../Solidary/hooks/useSolidary';
 
 const SolidaryUserVolunteerFilter = (props) => (
   <Filter {...props}>
@@ -26,7 +30,7 @@ const SolidaryUserVolunteerFilter = (props) => (
       source="solidary"
       reference="solidaries"
     >
-      <SelectInput optionText="id" />
+      <SelectInput optionText={(record) => solidaryLabelRenderer({ record })} />
     </ReferenceInput>
     <NullableBooleanInput
       alwaysOn
@@ -38,31 +42,40 @@ const SolidaryUserVolunteerFilter = (props) => (
   </Filter>
 );
 
+export const SolidaryUserVolunteerListGuesser = (props) => {
+  const solidary = useSolidary(props.filterValues.solidary);
+
+  return (
+    <List
+      {...props}
+      bulkActionButtons={false}
+      title="Transporteurs bénévoles > liste"
+      perPage={25}
+      filters={<SolidaryUserVolunteerFilter />}
+      filterDefaultValues={{ validatedCandidate: false }}
+    >
+      <Datagrid>
+        <TextField source="givenName" />
+        <TextField source="familyName" />
+        <RoleField
+          source="validatedCandidate"
+          fillRoleLabel="Bénévole"
+          unfulfillRoleLabel="Candidat Bénévole"
+        />
+        <AddressField source="homeAddress" />
+        <DayField source="Mon" />
+        <DayField source="Tue" />
+        <DayField source="Wed" />
+        <DayField source="Thu" />
+        <DayField source="Fri" />
+        <DayField source="Sat" />
+        <DayField source="Sun" />
+        {solidary ? <SolidaryUserVolunteerActionDropDown solidary={solidary} /> : <EditButton />}
+      </Datagrid>
+    </List>
+  );
+};
+
 export const SolidaryUserVolunteerList = (props) => (
-  <List
-    {...props}
-    title="Transporteurs Bénévoles > liste"
-    perPage={25}
-    filters={<SolidaryUserVolunteerFilter />}
-    filterDefaultValues={{ validatedCandidate: false }}
-  >
-    <Datagrid>
-      <TextField source="givenName" />
-      <TextField source="familyName" />
-      <RoleField
-        source="validatedCandidate"
-        fillRoleLabel="Bénévole"
-        unfulfillRoleLabel="Candidat Bénévole"
-      />
-      <AddressField source="homeAddress" />
-      <DayField source="Mon" />
-      <DayField source="Tue" />
-      <DayField source="Wed" />
-      <DayField source="Thu" />
-      <DayField source="Fri" />
-      <DayField source="Sat" />
-      <DayField source="Sun" />
-      <EditButton />
-    </Datagrid>
-  </List>
+  <SolidaryUserVolunteerListGuesser {...props} {...useListController(props)} />
 );

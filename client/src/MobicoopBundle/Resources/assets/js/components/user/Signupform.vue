@@ -84,24 +84,20 @@
               <!--STEP 1 User identification-->
               <v-stepper-step
                 :step="1"
-                editable
-                edit-icon
+                :complete="step1Valid()"
               />
               <v-divider />
 
-              <!--STEP 2 Name - Gender - Birthyear-->
+              <!--STEP 2 Name - Gender - BirthDate-->
               <v-stepper-step
                 :step="2"
-                editable
-                edit-icon
+                :complete="step2Valid()"
               />
               <v-divider />
 
               <!--STEP 3 hometown - Community - checkbox-->
               <v-stepper-step
                 :step="3"
-                editable
-                edit-icon
               />
             </v-stepper-header>
 
@@ -160,6 +156,7 @@
                   class="my-13"
                   color="secondary"
                   type="submit"
+                  :disabled="!step1"
                   @click="nextStep(1)"
                 >
                   {{ $t('ui.button.next') }}
@@ -167,7 +164,7 @@
               </v-form>
             </v-stepper-content>
           
-            <!--STEP 2 Name - Gender - Birthyear-->
+            <!--STEP 2 Name - Gender - BirthDate-->
             <v-stepper-content
               step="2"
             >
@@ -215,7 +212,7 @@
                     <v-text-field
                       id="birthday"
                       v-model="form.date"
-                      :label="$t('models.user.birthYear.placeholder')+` *`"
+                      :label="$t('models.user.birthDate.placeholder')+` *`"
                       readonly
                       :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
                       required
@@ -252,6 +249,7 @@
                     class="my-13"
                     color="secondary"
                     type="submit"
+                    :disabled="!step2"
                     @click="nextStep(2)"
                   >
                     {{ $t('ui.button.next') }}
@@ -435,6 +433,10 @@ export default {
     communityShow: {
       type: Boolean,
       default: false
+    },
+    proposalId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -464,6 +466,7 @@ export default {
 
       emailAlreadyTaken : false,
       loadingCheckEmailAldreadyTaken: false,
+      action: this.proposalId ? this.$t("urlSignUpResult",{"id":this.proposalId}) : this.$t("urlSignUp"),
       form: {
         createToken: this.sentToken,
         email: null,
@@ -597,7 +600,7 @@ export default {
     },
     validate: function (e) {
       this.loading = true;
-      axios.post(this.$t('urlSignUp'),
+      axios.post(this.action,
         {
           email:this.form.email,
           telephone:this.form.telephone,
@@ -615,11 +618,30 @@ export default {
           }
         })
         .then(res=>{
+          console.log(this.proposalId);
           this.errorUpdate = res.data.state;
           this.textSnackbar = (this.errorUpdate) ? this.$t("snackbar.joinCommunity.textError") : this.textSnackOk;
           this.snackbar = true;
-          var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});
-          setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+          if (this.proposalId) {
+            // proposal id provided, we need to login automatically (it will redirect to the results of the proposal)
+            const loginForm = document.createElement('form');
+            loginForm.method = 'post';
+            loginForm.action = this.$t('urlRedirectAfterSignUpResult',{"id":this.proposalId});
+            const hiddenFieldEmail = document.createElement('input');
+            hiddenFieldEmail.name = 'email';
+            hiddenFieldEmail.value = this.form.email;
+            loginForm.appendChild(hiddenFieldEmail);
+            const hiddenFieldPassword = document.createElement('input');
+            hiddenFieldPassword.name = 'password';
+            hiddenFieldPassword.value = this.form.password;
+            loginForm.appendChild(hiddenFieldPassword);
+            document.body.appendChild(loginForm);
+            loginForm.submit();
+          } else {
+            // usual redirect 
+            var urlRedirect = this.$t('urlRedirectAfterSignUp',{"email":this.form.email});           
+            setTimeout(function(){ window.location.href = urlRedirect; }, 2000);
+          }
           //console.error(res);
         })
         .catch(function (error) {
@@ -683,6 +705,12 @@ export default {
     },
     previousStep (n) {
       this.step -= 1
+    },
+    step1Valid() {
+      return this.form.email && this.form.password && this.form.telephone != null 
+    },
+    step2Valid() {
+      return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
     },
     emitEvent: function() {
       this.$emit("change", {

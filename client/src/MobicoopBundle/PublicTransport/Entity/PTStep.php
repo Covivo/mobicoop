@@ -41,7 +41,7 @@ class PTStep
     private $distance;
     
     /**
-     * @var string The duration of this step.
+     * @var int The duration of this step.
      */
     private $duration;
     
@@ -115,12 +115,12 @@ class PTStep
         return $this;
     }
     
-    public function getDuration(): ?string
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(?string $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
@@ -139,7 +139,7 @@ class PTStep
         return $this;
     }
     
-    public function isLast(): bool
+    public function isLast(): ?bool
     {
         return $this->isLast;
     }

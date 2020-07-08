@@ -14,7 +14,7 @@
 
           <!-- Matching header -->
           <matching-header
-            v-if="!lProposalId"
+            v-if="!lProposalId && !lExternalId"
             :origin="origin"
             :destination="destination"
             :date="date"
@@ -26,7 +26,7 @@
             :communities="communities"
             :disabled-filters="loading"
             :disable-role="!includePassenger"
-            :default-community-id="communityIdSearch"
+            :default-community-id="lCommunityId"
             :init-filters-chips="initFiltersChips"
             @updateFilters="updateFilters"
           />
@@ -61,7 +61,7 @@
               align="end"
             >
               <v-btn
-                v-if="!fromMyProposals"
+                v-if="displayNewSearch"
                 rounded
                 color="secondary"
                 @click="startNewSearch()"
@@ -70,7 +70,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-row v-if="!fromMyProposals">
+          <v-row v-if="displayNewSearch">
             <v-col
               cols="12"
               class="text-left"
@@ -92,7 +92,6 @@
             </v-col>
           </v-row>
 
-
           <v-row v-if="newSearch">
             <v-col cols="12">
               <search
@@ -110,7 +109,7 @@
           </v-row>
 
           <v-tabs
-            v-if="externalRdexJourneys"
+            v-if="displayTab"
             v-model="modelTabs"
           >
             <v-tab href="#carpools">
@@ -134,6 +133,18 @@
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
             </v-tab>
+            <v-tab
+              v-if="ptSearch"
+              href="#ptSearch"
+            >
+              <v-badge
+                color="primary"
+                :content="nbPtResults"
+                icon="mdi-timer-sand"
+              >              
+                {{ $t('tabs.ptresults') }}
+              </v-badge>
+            </v-tab>            
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="carpools">
@@ -144,6 +155,7 @@
                 :user="user"
                 :loading-prop="loading"
                 @carpool="carpool"
+                @loginOrRegister="loginOrRegister"
               />
             </v-tab-item>
             <v-tab-item
@@ -160,6 +172,15 @@
                 @carpool="carpool"
               />
             </v-tab-item>
+            <v-tab-item
+              v-if="ptSearch"
+              value="ptSearch"
+            >
+              <MatchingPTResults
+                :pt-results="ptResults"
+                :loading-pt-results="loadingPtResults"
+              />
+            </v-tab-item>            
           </v-tabs-items>
         </v-col>
       </v-row>
@@ -180,6 +201,61 @@
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
       />
     </v-dialog>
+    
+    <!-- login or register dialog -->
+    <v-dialog
+      v-model="loginOrRegisterDialog"
+      max-width="800"
+    >
+      <v-card>
+        <v-toolbar
+          color="primary"
+        >
+          <v-toolbar-title class="toolbar">
+            {{ $t('loginOrRegisterTitle') }}
+          </v-toolbar-title>
+        
+          <v-spacer />
+
+          <v-btn 
+            icon
+            @click="loginOrRegisterDialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text>
+          <p class="text--primary ma-1">
+            {{ $t('loginOrRegister') }}
+          </p>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            rounded
+            color="secondary"
+            large
+            :href="$t('loginUrl',{'id':lProposalId})"
+          >
+            <span>
+              {{ $t('login') }}
+            </span>
+          </v-btn>
+          <v-btn
+            rounded
+            color="secondary"
+            large
+            :href="$t('registerUrl',{'id':lProposalId})"
+          >
+            <span>
+              {{ $t('register') }}
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -192,6 +268,7 @@ import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
+import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -201,7 +278,8 @@ export default {
     MatchingFilter,
     MatchingResults,
     MatchingJourney,
-    Search
+    Search,
+    MatchingPTResults
   },
   i18n: {
     messages: TranslationsMerged,
@@ -210,6 +288,17 @@ export default {
     // proposal Id if Matching results after an ad post
     proposalId: {
       type: Number,
+      default: null
+    },
+    // external Id after external search
+    externalId: {
+      type: String,
+      default: null
+    },
+    // limit the result to the given matching proposal Id
+    // NOT USED YET
+    targetProposalId: {
+      type: String,
       default: null
     },
     origin: {
@@ -263,32 +352,40 @@ export default {
     defaultRole:{
       type: Number,
       default: 3
+    },
+    ptSearch: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
     return {
       locale: this.$i18n.locale,
       carpoolDialog: false,
-      proposal: null,
+      loginOrRegisterDialog: false,
       results: null,
       externalRDEXResults:null,
       result: null,
+      ptResults:null,
       loading : true,
       loadingExternal : false,
+      lProposalId: this.proposalId ? this.proposalId : null,
+      lExternalId: this.externalId ? this.externalId : null,
+      loadingPtResults : false,
       lOrigin: null,
       lDestination: null,
-      lProposalId: this.proposalId,
       filters: null,
       newSearch: false,
       modelTabs:"carpools",
       nbCarpoolPlatform:0,
       nbCarpoolOther:0,
+      nbPtResults:0,
       role:this.defaultRole,
       includePassenger:false,
-      fromMyProposals:false,
+      displayNewSearch:true,
       initFiltersChips:false,
-      communityIdSearch: this.communityId,
-      communityIdSearchBak: this.communityId,
+      lCommunityId: this.communityId,
+      lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false
     };
   },
@@ -312,6 +409,9 @@ export default {
         }
       });
       return communities;
+    },
+    displayTab(){
+      return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     }
   },
   watch:{
@@ -328,14 +428,15 @@ export default {
     communities(){
       this.initFiltersChips = true;
     },
-    communityIdSearch(){
-      this.communityIdSearchBak = this.communityIdSearch;
+    lCommunityId(){
+      this.lCommunityIdBak = this.lCommunityId;
     }
   },
   created() {
-    if(this.proposalId) this.fromMyProposals = true;
+    if(this.proposalId) this.displayNewSearch = false;
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
+    if(this.ptSearch) this.searchPTJourneys();
   },
   methods :{
     carpool(carpool) {
@@ -344,8 +445,19 @@ export default {
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
     },
+    loginOrRegister(carpool) {
+      this.result = carpool;
+      // open the dialog
+      this.loginOrRegisterDialog = true;
+    },
+    login() {
+      
+    },
+    register() {
+      
+    },
     search(){
-    // if a proposalId is provided, we load the proposal results
+      // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
         let postParams = {
@@ -365,6 +477,29 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+      } else if (this.lExternalId) {
+        // if an externalId is provided, we load the corresponding proposal results
+        this.loading = true;
+        let postParams = {
+          "filters": this.filters
+        };
+        axios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then((response) => {
+            this.loading = false;
+            this.results = response.data;
+            if (this.results.length>0 && this.results[0].id) {
+              this.lProposalId = this.results[0].id;
+            }
+            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       } else {
       // otherwise we send a proposal search
         this.loading = true;
@@ -375,7 +510,7 @@ export default {
           "time": this.time,
           "regular": this.regular,
           "userId": this.user ? this.user.id : null,
-          "communityId": this.communityIdSearch,
+          "communityId": this.lCommunityId,
           "filters": this.filters,
           "role": this.role
         };
@@ -429,6 +564,31 @@ export default {
         });
 
     },
+    searchPTJourneys(){
+      this.loadingPtResults = true;
+      let postParams = {
+        "from_latitude": this.origin.latitude,
+        "from_longitude": this.origin.longitude,
+        "to_latitude": this.destination.latitude,
+        "to_longitude": this.destination.longitude,
+        "date": this.date
+      };
+      axios.post(this.$t("ptSearchUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          //console.error(response.data);
+          this.loadingPtResults = false;
+          (response.data.member) ? this.ptResults = response.data.member : this.ptResults = [];
+          (response.data.member && response.data.member.length>0) ? this.nbPtResults = response.data.member.length : this.nbPtResults = '-';
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     contact(params) {
       axios.post(this.$t("contactUrl"), params,
         {
@@ -452,7 +612,6 @@ export default {
         })
     },
     launchCarpool(params) {
-      console.log(params);
       axios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
@@ -477,11 +636,11 @@ export default {
     updateFilters(data){
       this.filters = data;
       // Update the default filters also
-      this.communityIdSearch = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
+      this.lCommunityId = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;
 
       // If the communityid for a research has been modified, we need to post a new proposal for the search
       // We don't use the watch because it's excuted after updateFilters() is done (after the this.search...)
-      if(this.communityIdSearch !== this.communityIdSearchBak){
+      if(this.lCommunityId !== this.lCommunityIdBak){
         this.lProposalId = null;
       }
       this.search();

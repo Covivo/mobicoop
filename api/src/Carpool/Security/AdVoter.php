@@ -40,7 +40,7 @@ class AdVoter extends Voter
 {
     const AD_CREATE = 'ad_create';
     const AD_READ = 'ad_read';
-    const AD_READ_SELF = 'ad_read_self';
+    const AD_READ_EXTERNAL = 'ad_read_external';
     const AD_UPDATE = 'ad_update';
     const AD_DELETE = 'ad_delete';
     const AD_LIST = 'ad_list';
@@ -48,6 +48,7 @@ class AdVoter extends Voter
     const AD_ASK_READ = 'ad_ask_read';
     const AD_ASK_UPDATE = 'ad_ask_update';
     const AD_SEARCH_CREATE = 'ad_search_create';
+    const AD_CLAIM = 'ad_claim';
     
     private $request;
     private $authManager;
@@ -70,14 +71,15 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::AD_CREATE,
             self::AD_READ,
-            self::AD_READ_SELF,
+            self::AD_READ_EXTERNAL,
             self::AD_UPDATE,
             self::AD_DELETE,
             self::AD_LIST,
             self::AD_ASK_CREATE,
             self::AD_ASK_READ,
             self::AD_ASK_UPDATE,
-            self::AD_SEARCH_CREATE
+            self::AD_SEARCH_CREATE,
+            self::AD_CLAIM
             ])) {
             return false;
         }
@@ -86,13 +88,15 @@ class AdVoter extends Voter
         if (!in_array($attribute, [
             self::AD_CREATE,
             self::AD_READ,
+            self::AD_READ_EXTERNAL,
             self::AD_UPDATE,
             self::AD_DELETE,
             self::AD_LIST,
             self::AD_ASK_CREATE,
             self::AD_ASK_READ,
             self::AD_ASK_UPDATE,
-            self::AD_SEARCH_CREATE
+            self::AD_SEARCH_CREATE,
+            self::AD_CLAIM
             ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
             return false;
         }
@@ -110,10 +114,11 @@ class AdVoter extends Voter
             case self::AD_CREATE:
                 return $this->canCreateAd();
             case self::AD_READ:
-                return $this->canReadAd();
-            case self::AD_READ_SELF:
                 $ad = $this->adManager->getAd($this->request->get('id'));
-                return $this->canReadSelfAd($ad);
+                return $this->canReadAd($ad);
+            case self::AD_READ_EXTERNAL:
+                $ad = $this->adManager->getAdFromExternalId($this->request->get('id'));
+                return $this->canReadAd($ad);
             case self::AD_UPDATE:
                 $ad = $this->adManager->getAd($this->request->get('id'));
                 return $this->canUpdateAd($ad);
@@ -133,6 +138,9 @@ class AdVoter extends Voter
                 return $this->canUpdateAskFromAd($ask);
             case self::AD_SEARCH_CREATE:
                 return $this->canCreateSearchAd();
+            case self::AD_CLAIM:
+                $ad = $this->adManager->getAd($this->request->get('id'));
+                return $this->canClaimAd($ad);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -144,14 +152,9 @@ class AdVoter extends Voter
         return $this->authManager->isAuthorized(self::AD_CREATE);
     }
 
-    private function canReadAd()
+    private function canReadAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_READ);
-    }
-
-    private function canReadSelfAd(Ad $ad)
-    {
-        return $this->authManager->isAuthorized(self::AD_READ_SELF, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_READ, ['ad'=>$ad]);
     }
 
     private function canUpdateAd(Ad $ad)
@@ -187,5 +190,10 @@ class AdVoter extends Voter
     private function canCreateSearchAd()
     {
         return $this->authManager->isAuthorized(self::AD_SEARCH_CREATE);
+    }
+
+    private function canClaimAd(Ad $ad)
+    {
+        return $this->authManager->isAuthorized(self::AD_CLAIM, ['ad'=>$ad]);
     }
 }

@@ -49,6 +49,7 @@ class ProofManager
 {
     private $entityManager;
     private $logger;
+    private $prefix;
     private $provider;
     private $carpoolProofRepository;
     private $askRepository;
@@ -66,6 +67,7 @@ class ProofManager
      * @param AskRepository $askRepository                      The ask repository
      * @param WaypointRepository $waypointRepository            The waypoint repository
      * @param GeoTools $geoTools                                The geotools
+     * @param string $prefix                                    The prefix for proofs
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
@@ -79,6 +81,7 @@ class ProofManager
         WaypointRepository $waypointRepository,
         GeoSearcher $geoSearcher,
         GeoTools $geoTools,
+        string $prefix,
         string $provider,
         string $uri,
         string $token,
@@ -96,7 +99,7 @@ class ProofManager
         switch ($provider) {
             case 'BetaGouv':
             default:
-                $this->provider = new CarpoolProofGouvProvider($uri, $token);
+                $this->provider = new CarpoolProofGouvProvider($uri, $token, $prefix);
                 break;
         }
     }

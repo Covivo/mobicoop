@@ -118,12 +118,23 @@ class ProposalManager
     /**
      * Get a proposal by its id.
      *
-     * @param integer $id
-     * @return Proposal|null
+     * @param integer $id       The id
+     * @return Proposal|null    The proposal found or null
      */
     public function get(int $id)
     {
         return $this->proposalRepository->find($id);
+    }
+
+    /**
+     * Get a proposal by its external id.
+     *
+     * @param string $id        The external id
+     * @return Proposal|null    The proposal found or null
+     */
+    public function getFromExternalId(string $id)
+    {
+        return $this->proposalRepository->findOneBy(['externalId'=>$id]);
     }
 
     /**

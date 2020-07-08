@@ -62,6 +62,8 @@ class Action
     const TYPE_ACTION_FOLLOW_UP_CARPOOL = 3;
     const TYPE_ACTION_CLOSING_ASK = 4;
 
+    const  SOLIDARY_CREATE = 37;
+
     const ACTION_TYPE_FILTER = [
         'solidary' => [1,2,3,4]
     ];

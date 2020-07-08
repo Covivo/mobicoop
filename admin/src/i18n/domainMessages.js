@@ -16,8 +16,73 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    solidary_beneficiaries: {
+      fields: {
+        id: 'ID',
+        givenName: 'Prénom',
+        familyName: 'Nom',
+        email: 'Email',
+        birthDate: 'Date de naissance',
+        telephone: 'Téléphone',
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
+    solidaries: {
+      fields: {
+        'subject.label': 'Objet',
+        'solidaryUser.user.givenName': 'Prénom',
+        'solidaryUser.user.familyName': 'Nom',
+        createdDate: 'Date',
+        displayLabel: 'Trajet demandé',
+        lastAction: 'Dernière action',
+      },
+    },
+    solidary_searches: {
+      fields: {
+        author: 'Auteur',
+        journey: 'Trajet',
+        schedule: 'Date',
+        type: 'Type',
+        role: 'Rôle',
+        exclusive: 'Solidaire Exclusif',
+        origin: 'Origine',
+        volunteer: 'Transporteur',
+      },
+    },
   },
   custom: {
+    days: {
+      mon: 'Lun',
+      tue: 'Mar',
+      wed: 'Mer',
+      thu: 'Jeu',
+      fri: 'Ven',
+      sat: 'Sam',
+      sun: 'Dim',
+    },
+    week: 'Semaine',
+    solidary_search: {
+      frequency: {
+        regular: 'Régulier',
+        punctual: 'Ponctuel',
+      },
+      role: {
+        driver: 'Conducteur',
+        passenger: 'Passager',
+        both: 'Conducteur et passager',
+      },
+    },
+    solidaryask: {
+      status: {
+        asked: 'Demande ',
+        refused: 'Refusé',
+        pending: 'En attente',
+        lookforresolution: 'En recherche de solution',
+        followup: 'A suivre',
+        closed: 'Fermé',
+        accepted: 'Accepté',
+      },
+    },
     solidary_volunteers: {
       edit: {
         availability: 'Disponibilité',
@@ -35,17 +100,34 @@ const fr = {
         solidary: 'Demande solidaire',
       },
     },
+    solidary: {
+      internalMessages: 'Messages internes',
+      internalMessagesWith: 'Messages interne avec %{username}',
+      sendSMSTo: 'Envoyer un SMS à %{username}',
+      sendSMS: 'Envoyer un SMS',
+      associatedAsk: 'Demande associée',
+      onBehalfOf: 'Pour le compte de',
+    },
+    solidary_beneficiaries: {
+      input: {
+        validatedCandidate: 'Candidature acceptée',
+      },
+    },
     dashboard: {
-      pendingConnectionToKibana: "Connection en cours à l'outil de reporting Scope....",
+      pendingConnectionToKibana: "Connexion en cours à l'outil de reporting Scope....",
       accessDenied: "Vous ne disposez pas des droits d'accès au tableau de bord Kibana.",
       kibanaAuthenticationApiFetchError: 'Erreur de connexion à Scope.',
       kibanaAuthenticationApiReturnSomethingWrong: 'Erreur de connexion à Scope.',
     },
     email: {
       texte: {
-        emailTous: 'Email à tous les filtrés',
+        emailFiltre: 'Email à tous les filtrés',
         emailSelect: 'Email aux sélectionnés',
+        emailAll: 'Email à tous',
         blockUnsubscribe: "Vous ne pouvez pas envoyer de mailing à des personnes qui l'ont refusé.",
+        saveBeforeTest:
+          'Veuillez enregistrer votre envoi en masse avant de pouvoir faire un envoi de test',
+        testBeforeSend: 'Veuillez faire un envoi de test avant de pouvoir faire un envoi réel',
       },
     },
     rgpd: {
@@ -194,6 +276,8 @@ const fr = {
           lowerPassword: 'Au minimum 1 minuscule',
           numberPassword: 'Au minimum 1 chiffre',
           minPassword: 'Au minimum 8 caractères',
+          phoneDisplayMandatory: 'Préférence du numéro de téléphone obligatoire',
+          rolesMandatory: 'Vous devez sélectionner au moins 1 rôles',
         },
         phoneDisplay: {
           visibility: 'Visibilité de mon numéro de téléphone',
@@ -229,6 +313,10 @@ const fr = {
           solidary_candidate_volunteer: 'Candidat bénévole',
           solidary_candidate_beneficiary: 'Candidat demandeur',
         },
+        createdDate: 'Inscrit depuis le',
+        lastActivityDate: 'Dernière connexion',
+        communitiesExclude: 'Exclure les usagers de la communauté',
+        proposalValidUntil: "Pas d'annonces valides depuis le",
       },
       territory: {
         territory: 'Territoire',

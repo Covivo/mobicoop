@@ -89,12 +89,16 @@ const GestionRoles = ({ record }) => {
             .then(({ data }) => {
               setFields((t) => [
                 ...t,
-                { roles: element.authItem, territory: element.territory, territoryName: data.name },
+                {
+                  roles: element.authItem.id,
+                  territory: element.territory,
+                  territoryName: data.name,
+                },
               ]);
             })
             .catch((error) => {});
         } else {
-          setFields((t) => [...t, { roles: element.authItem }]);
+          setFields((t) => [...t, { roles: element.authItem.id }]);
         }
       });
     }
@@ -135,7 +139,7 @@ const GestionRoles = ({ record }) => {
         return (
           <Grid key={`grid-${i}`} container spacing={3}>
             <Grid item xs={5}>
-              <Select onChange={handleAddPair(i, 'roles')} value={field['roles']}>
+              <Select onChange={handleAddPair(i, 'roles')} required value={field['roles']}>
                 <MenuItem value="none" disabled>
                   {translate('custom.label.user.selectRoles')}
                 </MenuItem>
@@ -155,7 +159,6 @@ const GestionRoles = ({ record }) => {
               <TerritoryInput
                 key={`territory-${i}`}
                 setTerritory={handleAddPair(i, 'territory')}
-                validate={required(translate('custom.label.user.territoryMandatory'))}
                 initValue={field.territory}
               />
             </Grid>

@@ -33,7 +33,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          action="/utilisateur/connexion"
+          :action="action"
           method="POST"
         >
           <v-text-field
@@ -129,6 +129,10 @@ export default {
       type: String,
       default: null
     },
+    proposalId: {
+      type: Number,
+      default: null
+    },
     signUpLinkInConnection: {
       type: Boolean,
       default: false
@@ -149,6 +153,7 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
     };
   },
   mounted() {

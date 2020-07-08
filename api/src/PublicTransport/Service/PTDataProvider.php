@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ namespace App\PublicTransport\Service;
 
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
+use App\DataProvider\Entity\ConduentPTProvider;
+use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
 
@@ -35,12 +37,14 @@ use App\PublicTransport\Entity\PTTripPoint;
  * - write the custom Provider class in src/DataProvider/Entity/
  * - complete the PROVIDERS array with the new provider
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PTDataProvider
 {
     const PROVIDERS = [
-        "cityway" => CitywayProvider::class
+        "cityway" => CitywayProvider::class,
+        "conduentPT" => ConduentPTProvider::class
     ];
     
     const DATETIME_FORMAT = \DateTime::RFC3339;
@@ -52,10 +56,19 @@ class PTDataProvider
     const ALGORITHM_SHORTEST = "shortest";
     const ALGORITHM_MINCHANGES = "minchanges";
     
+    private $geoTools;
+    private $PTProviders;
+
+    public function __construct(GeoTools $geoTools, array $params)
+    {
+        $this->geoTools = $geoTools;
+        $this->PTProviders = $params['ptProviders'];
+    }
+    
     /**
      * Get journeys from an external Public Transport data provider.
      *
-     * @param string $provider                  The name of the provider
+     * @param string $provider                  The name of the provider (obsolete : not used anymore)
      * @param string $apikey                    The API Key for the provider
      * @param string $origin_latitude           The latitude of the origin point
      * @param string $origin_longitude          The longitude of the origin point
@@ -65,10 +78,11 @@ class PTDataProvider
      * @param string $dateType                  The date type of the trip (departure or arrival)
      * @param string $algorithm                 The algorithm used for the trip calculation (fastest, shortest or minchanges)
      * @param string $modes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param string $username                  The username for the provider
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
-        string $provider,
+        ?string $provider,
         string $apikey,
         string $origin_latitude,
         string $origin_longitude,
@@ -77,14 +91,27 @@ class PTDataProvider
         \Datetime $date,
         string $dateType,
         string $algorithm,
-        string $modes
+        string $modes,
+        ?string $username=null,
+        ?int $territoryId=null
     ): ?array {
+        $providerUri = null;
+        // If there is a territory, we look for the right provider. If there is no, we take the default.
+        $provider = $this->PTProviders['default']['dataprovider'];
+        $providerUri = $this->PTProviders['default']['url'];
+        if (!is_null($territoryId) && isset($this->PTProviders[$territoryId])) {
+            $provider = $this->PTProviders[$territoryId]['dataprovider'];
+            $providerUri = $this->PTProviders[$territoryId]['url'];
+        }
+
+        // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }
+
         $providerClass = self::PROVIDERS[$provider];
-        $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
+        $providerInstance = new $providerClass($providerUri);
+        $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
                 "origin_latitude" => $origin_latitude,
                 "origin_longitude" => $origin_longitude,
                 "destination_latitude" => $destination_latitude,
@@ -92,8 +119,29 @@ class PTDataProvider
                 "date" => $date,
                 "dateType" => $dateType,
                 "algorithm" => $algorithm,
-                "modes" => $modes
+                "modes" => $modes,
+                "username" => $username
         ]]);
+
+        // Set the display label of the departure and arrival
+        foreach ($journeys as $journey) {
+            /**
+             * @var PTJourney $journey
+             */
+            $departureAddress = $journey->getPTDeparture()->getAddress();
+            $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+            $arrivalAddress = $journey->getPTArrival()->getAddress();
+            $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+
+            foreach ($journey->getPTLegs() as $leg) {
+                $departureAddress = $leg->getPTDeparture()->getAddress();
+                $departureAddress->setDisplayLabel($this->geoTools->getDisplayLabel($departureAddress));
+                $arrivalAddress = $leg->getPTArrival()->getAddress();
+                $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
+            }
+        }
+
+        return $journeys;
     }
 
     /**

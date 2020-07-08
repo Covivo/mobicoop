@@ -25,10 +25,15 @@ namespace App\Match\Exception;
 
 class MassException extends \LogicException
 {
-    # Migrate
+    const NO_MASSPERSON = "This Mass has no MassPerson";
+
+    // Migrate
     const NO_WORK_PLACES = "No work places found";
     const INVALIDE_COMMUNITY_COORDINATES = "Invalides coordinates for this community's address";
     const COMMUNITY_MISSING_DESCRIPTION = "Missing the community description";
     const COMMUNITY_MISSING_FULL_DESCRIPTION = "Missing community full description";
     const COMMUNITY_MISSING_ADDRESS = "Missing community address";
+
+    // Public transport potential
+    const MASS_NOT_ANALYZED = "The mass hasn't been previously analyzed";
 }

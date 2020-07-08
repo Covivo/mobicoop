@@ -14,6 +14,26 @@ const clearAuthStorage = () => {
   global.localStorage.removeItem('permission');
 };
 
+const getAuthenticatedHeaders = () =>
+  new global.Headers({
+    Authorization: `Bearer ${global.localStorage.token}`,
+    Accept: 'application/json',
+  });
+
+export const getUser = (userId) =>
+  fetchUtils
+    .fetchJson(`${process.env.REACT_APP_API}/users/${userId}`, {
+      method: 'GET',
+      headers: getAuthenticatedHeaders(),
+    })
+    .then((result) => {
+      if (result.status !== 200) {
+        return null;
+      }
+
+      return result.json;
+    });
+
 export default {
   login: ({ username, password }) => {
     const request = new global.Request(authenticationTokenUri, {
@@ -36,13 +56,10 @@ export default {
         global.localStorage.setItem('roles', JSON.stringify(Object.values(decodedToken.roles)));
         global.localStorage.setItem('id', decodedToken.id);
 
-        const options = { headers: new global.Headers({ Accept: 'application/json' }) };
-        options.headers.set('Authorization', `Bearer ${global.localStorage.token}`);
-
         return fetchUtils
           .fetchJson(`${process.env.REACT_APP_API}/permissions`, {
             method: 'GET',
-            headers: options.headers,
+            headers: getAuthenticatedHeaders(),
           })
           .then((result) => {
             if (result.status === 200) {
@@ -65,6 +82,7 @@ export default {
       return Promise.resolve();
     }
 
+    // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject({ redirectTo: '/login' });
   },
   getPermissions: () => {

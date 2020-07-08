@@ -81,7 +81,8 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
             \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
             $this->request->get("dateType"),
             $this->request->get('algorithm'),
-            $this->request->get('modes')
+            $this->request->get('modes'),
+            $this->request->get('username')
         );
     }
 }

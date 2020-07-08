@@ -30,10 +30,9 @@ export default {
   },
   methods:{
     openRequestedPopup(){
-      let windowObjectReference;
       let source = this.source;
-      windowObjectReference = window.open(
-        source ,
+      window.open(
+        source,
         "DescriptiveWindowName",
         "resizable,scrollbars,status"
       );

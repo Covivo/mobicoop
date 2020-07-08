@@ -44,6 +44,16 @@ class PeliasAddress extends Address
     private $venue;
 
     /**
+     * @var float|null
+     */
+    private $distance;
+
+    /**
+     * @var string|null
+     */
+    private $layer;
+
+    /**
      * {@inheritdoc}
      */
     public function getId()
@@ -89,5 +99,21 @@ class PeliasAddress extends Address
     public function setDistance(?float $distance)
     {
         $this->distance = $distance;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLayer()
+    {
+        return $this->layer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLayer(?string $layer)
+    {
+        $this->layer = $layer;
     }
 }

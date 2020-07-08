@@ -100,7 +100,7 @@ class AuthManager
 
         // we get the requester
         $requester = $this->tokenStorage->getToken()->getUser();
-
+        
         if (is_string($requester)) {
             // the requester could contain only the id under certain circumstances (eg. refresh token), we check if the user was set by another way
             if ($this->user instanceof User) {
@@ -129,7 +129,6 @@ class AuthManager
         if ($this->checkRule($requester, $authItem, $params)) {
             // we check if the item is directly assigned to the user
             if ($requester instanceof User) {
-//                echo $requester->getId();die;
                 if ($this->userAuthAssignmentRepository->findByAuthItemAndUser($authItem, $requester)) {
                     // the item is found
                     return true;
@@ -181,6 +180,7 @@ class AuthManager
          */
         $authRule = new $authRuleName;
         return $authRule->execute($requester, $authItem, $params);
+        exit;
     }
 
     /**

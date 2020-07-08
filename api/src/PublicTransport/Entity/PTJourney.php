@@ -26,6 +26,7 @@ namespace App\PublicTransport\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Match\Entity\MassPerson;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -142,10 +143,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={"get"={"path"="/journeys/{id}"}}
  * )
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PTJourney
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this journey.
      *
@@ -165,9 +169,9 @@ class PTJourney
     private $distance;
     
     /**
-     * @var string The total duration of this journey (in iso8601 format).
+     * @var string The total duration of this journey (in seconds).
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -217,13 +221,17 @@ class PTJourney
      * @var ArrayCollection The legs of this journey.
      *
      * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $ptlegs;
-    
-    public function __construct($id)
+
+    public function __construct($id = null)
     {
-        $this->id = $id;
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
         $this->ptlegs = new ArrayCollection();
     }
     
@@ -251,18 +259,18 @@ class PTJourney
         return $this;
     }
 
-    public function getDuration(): ?string
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(?string $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
         return $this;
     }
-    
+
     public function getChangeNumber(): ?int
     {
         return $this->changeNumber;
@@ -299,24 +307,24 @@ class PTJourney
         return $this;
     }
 
-    public function getPTDeparture(): PTDeparture
+    public function getPTDeparture(): ?PTDeparture
     {
         return $this->ptdeparture;
     }
     
-    public function setPTDeparture(PTDeparture $ptdeparture): self
+    public function setPTDeparture(?PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
         
         return $this;
     }
     
-    public function getPTArrival(): PTArrival
+    public function getPTArrival(): ?PTArrival
     {
         return $this->ptarrival;
     }
     
-    public function setPTArrival(PTArrival $ptarrival): self
+    public function setPTArrival(?PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
         
@@ -328,7 +336,7 @@ class PTJourney
         return $this->ptlegs->getValues();
     }
 
-    public function setPTLegs(ArrayCollection $ptlegs): self
+    public function setPTLegs(?ArrayCollection $ptlegs): self
     {
         $this->ptlegs = $ptlegs;
         

@@ -162,6 +162,12 @@ class AdManager
         // If the proposal is external (i.e Rdex request...) we set it
         $outwardProposal->setExternal($ad->getExternal());
 
+        // if the proposal is exposed, we also generate an external id
+        if ($ad->isExposed()) {
+            $outwardProposal->setExposed(true);
+            $outwardProposal->setExternalId();
+        }
+
         // we check if it's a round trip
         if ($ad->isOneWay()) {
             // the ad has explicitly been set to one way
@@ -441,6 +447,7 @@ class AdManager
 
         // we set the ad id to the outward proposal id
         $ad->setId($outwardProposal->getId());
+        $ad->setExternalId($outwardProposal->getExternalId());
         return $ad;
     }
 
@@ -454,6 +461,9 @@ class AdManager
     {
         $address = new Address();
 
+        if (isset($point['layer'])) {
+            $address->setLayer($point['layer']);
+        }
         if (isset($point['houseNumber'])) {
             $address->setHouseNumber($point['houseNumber']);
         }
@@ -585,6 +595,7 @@ class AdManager
         }
 
         $ad->setId($id);
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -593,6 +604,57 @@ class AdManager
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
         }
+        $ad->setCreatedDate($proposal->getCreatedDate());
+        $aFilters = [];
+        if (!is_null($filters)) {
+            $aFilters['filters']=$filters;
+        }
+        if (!is_null($order)) {
+            $aFilters['order']=$order;
+        }
+        $ad->setFilters($aFilters);
+        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $ad->setResults(
+            $this->resultManager->orderResults(
+                $this->resultManager->filterResults(
+                    $this->resultManager->createAdResults($proposal),
+                    $ad->getFilters()
+                ),
+                $ad->getFilters()
+            )
+        );
+        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        return $ad;
+    }
+
+    /**
+     * Get an ad from an external Id.
+     * Returns the ad, with its outward and return results.
+     *
+     * @param int $id       The external ad id to get
+     * @param array|null    The filters to apply to the results
+     * @param array|null    The order to apply to the results
+     * @return Ad
+     */
+    public function getAdFromExternalId(string $id, ?array $filters = null, ?array $order = null)
+    {
+        $ad = new Ad();
+        $proposal = $this->proposalManager->getFromExternalId($id);
+        if (is_null($proposal)) {
+            return null;
+        }
+
+        $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
+        $ad->setFrequency($proposal->getCriteria()->getFrequency());
+        $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
+        $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
+        $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
+        $ad->setPaused($proposal->isPaused());
+        if (!is_null($proposal->getUser())) {
+            $ad->setUserId($proposal->getUser()->getId());
+        }
+        $ad->setCreatedDate($proposal->getCreatedDate());
         $aFilters = [];
         if (!is_null($filters)) {
             $aFilters['filters']=$filters;
@@ -629,6 +691,36 @@ class AdManager
     }
 
     /**
+     * Claim a anonymous private ad
+     *
+     * @param int $id       The ad id to claim
+     * @return void
+     */
+    public function claimAd(int $id)
+    {
+        if (!$proposal = $this->proposalManager->get($id)) {
+            throw new AdException('Unknown source ad #' . $id);
+        }
+        if (!$proposal->isPrivate() || (!is_null($proposal->getUser()) && $proposal->getUser()->getId() != $this->security->getUser()->getId())) {
+            throw new AdException('Acces denied');
+        }
+
+        $ad = new Ad();
+        $ad->setId($id);
+
+        // we claim the proposal
+        $proposal->setUser($this->security->getUser());
+        // check if there's a linked proposal
+        if ($proposal->getProposalLinked()) {
+            $proposal->getProposalLinked()->setUser($this->security->getUser());
+        }
+        $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
+
+        return $ad;
+    }
+
+    /**
      * Get an ad for permission check.
      * Returns the ad based on the proposal without results.
      *
@@ -640,6 +732,7 @@ class AdManager
         $ad = new Ad();
         if ($proposal = $this->proposalManager->get($id)) {
             $ad->setId($id);
+            $ad->setExternalId($proposal->getExternalId());
             $ad->setFrequency($proposal->getCriteria()->getFrequency());
             $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
             $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
@@ -721,6 +814,7 @@ class AdManager
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setProposalId($proposal->getId());
         $ad->setProposalLinkedId(!is_null($proposal->getProposalLinked()) ? $proposal->getProposalLinked()->getId() : null);
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
@@ -763,10 +857,11 @@ class AdManager
         // set return if twoWays ad
         if ($proposal->getProposalLinked()) {
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
-            $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
-
+            $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
+            $ad->setReturnDate($returnDate);
+            
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i'));
+                $ad->setReturnTime($returnDate->format('Y-m-d')." ".$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -912,6 +1007,7 @@ class AdManager
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
+        $ad->setExternalId($proposal->getExternalId());
         $ad->setUser($proposal->getUser());
         $ad->setFrequency($proposal->getCriteria()->getFrequency());
         $ad->setRole($proposal->getCriteria()->isDriver() ?  ($proposal->getCriteria()->isPassenger() ? Ad::ROLE_DRIVER_OR_PASSENGER : Ad::ROLE_DRIVER) : Ad::ROLE_PASSENGER);
@@ -977,11 +1073,6 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            // We use event to send notifications if Ad has asks
-            if (count($proposalAsks) > 0) {
-                $event = new AdMajorUpdatedEvent($oldAd, $ad, $proposalAsks, $this->security->getUser(), $mailSearchLink);
-                $this->eventDispatcher->dispatch(AdMajorUpdatedEvent::NAME, $event);
-            }
             $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true);
 
@@ -1258,6 +1349,7 @@ class AdManager
      * @param string $frequency
      * @param array $days
      * @param array $outward
+     * @return Ad|RdexError
      */
     public function getAdForRdex(
         ?string $external,
@@ -1274,6 +1366,7 @@ class AdManager
         $ad = new Ad();
         $ad->setExternal($external);
         $ad->setSearch(true); // Only a search. This Ad won't be publish.
+        $ad->setExposed(true); // But we need to access it publicly
 
         // Role
         if ($offer && $request) {
@@ -1313,10 +1406,6 @@ class AdManager
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
                 $days = [strtolower($today->format('l'))=>1];
                 $outward = ["mindate"=>$time->format("Y-m-d")];
-                $outward[strtolower($today->format('l'))] = [
-                    "mintime" => $mintime,
-                    "maxtime" => $maxtime
-                ];
             } else {
                 // We don't have any date so i'm looking for the first date corresponding to the first day
                 $dateFound = "";
@@ -1331,15 +1420,9 @@ class AdManager
                     $cpt++;
                 }
                 $outward = ["mindate"=>$dateFound->format("Y-m-d")];
-                foreach ($days as $day => $value) {
-                    $outward[$day] = [
-                        "mintime" => $mintime,
-                        "maxtime" => $maxtime
-                    ];
-                }
             }
         }
-        // var_dump($outward);
+        // var_dump($outward);die;
 
         // if days is null, we make an array using outward
         $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
@@ -1353,12 +1436,6 @@ class AdManager
                     $dayMinDate = new \DateTime($times);
                     $textDayMinDate = strtolower($dayMinDate->format('l'));
                     $days = [$textDayMinDate=>1];
-
-                    // We also need to set mintime and maxtime in the current outward record
-                    if (!isset($outward[$textDayMinDate]['mintime'])) {
-                        $outward[$textDayMinDate]['mintime'] = $today->format("H:i:s");
-                        $outward[$textDayMinDate]['maxtime'] = $today->modify("+1 hour")->format("H:i:s");
-                    }
                 }
             }
         }
@@ -1376,7 +1453,9 @@ class AdManager
                 $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
                 (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
 
-                $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                if (isset($schedules[0]["outwardTime"])) {
+                    $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                }
             } elseif ($frequency=="regular") {
                 // Regular journey
                 $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
@@ -1391,13 +1470,17 @@ class AdManager
                     $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
                     (isset($outward["maxdate"])) ? $ad->setOutwardLimitDate(\DateTime::createFromFormat("Y-m-d", $outward["maxdate"])) : '';
 
-                    $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                    if (isset($schedules[0]["outwardTime"])) {
+                        $ad->setOutwardTime($schedules[0]["outwardTime"]);
+                    }
                 }
             }
         } else {
-            return new RdexError("apikey", RdexError::ERROR_MISSING_MANDATORY_FIELD, "Invalid outward");
+            // No schedule
+            $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
         }
-
+        // var_dump($ad);die;
         return $this->createAd($ad);
     }
 
@@ -1433,7 +1516,7 @@ class AdManager
      */
     private function buildSchedule(?array $days, ?array $outward)
     {
-        $schedules = []; // We set a subschdeul because a real Ad can have multiple schedule. Only one in RDEX though.
+        $schedules = []; // We set a sub schedule because a real Ad can have multiple schedule. Only one in RDEX though.
         $refTimes = [];
         foreach ($days as $day => $value) {
             $shortDay = substr($day, 0, 3);

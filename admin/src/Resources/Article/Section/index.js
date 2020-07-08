@@ -5,6 +5,9 @@ import { SectionCreate } from './SectionCreate';
 import { SectionEdit } from './SectionEdit';
 
 export default {
+  options: {
+    label: 'Sections',
+  },
   show: SectionShow,
   create: SectionCreate,
   edit: SectionEdit,

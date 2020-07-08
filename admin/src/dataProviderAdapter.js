@@ -1,4 +1,5 @@
 import pick from 'lodash.pick';
+import omit from 'lodash.omit';
 import { fetchJson } from './fetchJson';
 
 /**
@@ -57,6 +58,15 @@ const pickManagedSolidaryVolunteerData = (params) => ({
   ]),
 });
 
+/**
+ * The backend is not able to handle deep fields like diaries (and we don't need it)
+ * So we omit somes unhandled fields
+ */
+const pickManagedUserData = (params) => ({
+  ...params,
+  data: omit(params.data, ['diaries']),
+});
+
 const userRoles = [
   '/auth_items/1',
   '/auth_items/2',
@@ -94,8 +104,7 @@ const getOneUser = async (provider, params) => {
     )
   );
 
-  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem));
-
+  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
   return { data: user };
 };
 
@@ -132,7 +141,6 @@ const updateUser = async (provider, params) => {
       : newParams.data.rolesTerritory.map(({ territory, authItem }) =>
           territory != null ? { authItem, territory } : { authItem }
         );
-
   return provider.update('users', {
     id: newParams.id,
     data: newParams.data,
@@ -202,7 +210,9 @@ export const dataProviderAdapter = (originalProvider) => ({
   },
   update: (resource, params) => {
     let newParams = transformId({ ...params });
+
     if (resource === 'users') {
+      newParams = pickManagedUserData(newParams);
       return updateUser(originalProvider, newParams);
     }
 

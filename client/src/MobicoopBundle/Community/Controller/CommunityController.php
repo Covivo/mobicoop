@@ -87,6 +87,7 @@ class CommunityController extends AbstractController
 
                 // set community address
                 $communityAddress = json_decode($data->get('address'), true);
+                $address->setLayer($communityAddress['layer']);
                 $address->setAddressCountry($communityAddress['addressCountry']);
                 $address->setAddressLocality($communityAddress['addressLocality']);
                 $address->setCountryCode($communityAddress['countryCode']);

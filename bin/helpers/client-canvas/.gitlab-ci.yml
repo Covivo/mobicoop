@@ -25,7 +25,7 @@ dev_deploy:
   stage: deploy
   environment:
     name: dev
-    url: https://dev.$$URL$$
+    url: https://dev.$$INSTANCE$$.mobicoop.io
   only:
     - dev
   variables:
@@ -40,8 +40,8 @@ dev_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/ouestgo/dev
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/ouestgo/dev/mobicoop-platform/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/ouestgo/dev/mobicoop-platform/admin;npm run build"    # database migration
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/$$INSTANCE$$
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=$$INSTANCE$$"    # database migration and other after deploy works
   except:
     refs:
       - tags    # job not executed on tags
@@ -55,7 +55,7 @@ test_deploy:
   stage: deploy
   environment:
     name: test
-    url: https://test.$$URL$$
+    url: https://test.$$INSTANCE$$.mobicoop.io
   only:
     - test
   # variables:
@@ -70,8 +70,8 @@ test_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/ouestgo/test
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/ouestgo/test/mobicoop-platform/api; php bin/console doctrine:migrations:migrate --env=test -n;cd /var/www/ouestgo/test/mobicoop-platform/admin;npm run build"    # database migration
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/$$INSTANCE$$
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  
   except:
     refs:
@@ -86,7 +86,7 @@ prod_deploy:
   stage: prod_deploy
   environment:
     name: prod
-    url: http://$$URL$$
+    url: http://$$INSTANCE$$.mobicoop.io
   only:     # job executed only on master branch
     - master
   # variables:
@@ -101,6 +101,6 @@ prod_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/ouestgo/prod
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/ouestgo/prod/mobicoop-platform/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/ouestgo/prod/mobicoop-platform/admin;npm run build"    # database migration
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/$$INSTANCE$$/prod
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  

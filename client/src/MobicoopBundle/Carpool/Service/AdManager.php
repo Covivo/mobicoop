@@ -67,6 +67,21 @@ class AdManager
     }
 
     /**
+     * Get an ad and its results from its external id
+     *
+     * @param string $id    The ad external id
+     * @param array|null    The filters to apply to the results
+     * @return Ad|null
+     */
+    public function getAdFromExternalId(string $id, ?array $filters = null)
+    {
+        if ($data = $this->dataProvider->getSpecialItem($id, 'external', $filters)) {
+            return $data->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Get full ad data
      *
      * @param int $id
@@ -78,6 +93,21 @@ class AdManager
             return $data->getValue();
         }
         return null;
+    }
+
+    /**
+     * Claim an Ad (useful for login or register after an anonymous search)
+     *
+     * @param int $id   The Ad id to claim
+     * @return bool     Result of the claim
+     */
+    public function claimAd(int $id)
+    {
+        $ad = new Ad($id);
+        if ($response = $this->dataProvider->putSpecial($ad, null, 'claim')) {
+            return $response->getCode() == 200;
+        }
+        return false;
     }
 
     /**
@@ -113,7 +143,7 @@ class AdManager
      * @param integer|null $userId          User id of the requester (to exclude its own results)
      * @param integer $communityId          Community id of the requester (to get only results from that community)
      * @param array|null $filters           Filters and order choices
-     * @return array|null The matchings found or null if not found.
+     * @return Ad|null The matchings found or null if not found.
      */
     public function getResultsForSearch(
         array $origin,

@@ -1,15 +1,15 @@
 import Solidary from '@material-ui/icons/LocalTaxi';
 
-import SolidaryView from './SolidaryView';
-import SolidaryCreate from './SolidaryCreate';
-import { SolidaryList } from './SolidaryList';
+import SolidaryShow from './view/SolidaryShow';
+import SolidaryCreate from './create/SolidaryCreate';
+import { SolidaryList } from './list/SolidaryList';
 
 export default {
   options: {
     label: 'Demandes solidaires',
   },
   list: SolidaryList,
-  show: SolidaryView,
+  show: SolidaryShow,
   create: SolidaryCreate,
   icon: Solidary,
 };

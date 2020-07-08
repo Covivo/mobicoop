@@ -5,17 +5,24 @@
         "Unable to get an API token.": "Erreur lors de la connexion.",
         "errorCredentialsFacebook": "Erreur dans la connexion via Facebook",
         "userFBNotFound": "Cet utilisateur facebook n'est pas inscrit sur la plateforme",
+        "urlLogin":"/utilisateur/connexion",
+        "urlLoginResult":"/utilisateur/connexion/{id}",
         "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
         "textRecovery": "Mot de passe oublié ?",
         "signUp": "Vous n'êtes pas encore inscrit ?",
         "urlSignUp": "/utilisateur/inscription"
+        
     },
     "en": {
         "title": "Connexion",
         "errorCredentials": "Bad username or password.",
         "errorCredentialsFacebook": "Error in connection by Facebook",
+        "urlLogin":"/user/login",
+        "urlLoginResult":"/user/login/{id}",
         "userFBNotFound": "This facebook user is not registered on the platform",
-        "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
-        "textRecovery": "Forgot password ?"
+        "urlRecovery": "/user/password/recovery",
+        "textRecovery": "Forgot password ?",
+        "signUp": "Not registered ?",
+        "urlSignUp": "/user/signup"
     }
 }
