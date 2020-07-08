@@ -62,13 +62,17 @@ class ImportManager
     private $eventImportRepository;
     private $relayPointImportRepository;
     private $relayPointRepository;
+    private $timeLimit;
+    private $memoryLimit;
+    private $sqlLog;
+    private $directionsBatch;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, RelayPointImportRepository $relayPointImportRepository, EventImportRepository $eventImportRepository, CommunityImportRepository $communityImportRepository, ImageManager $imageManager, UserImportRepository $userImportRepository, ProposalManager $proposalManager, EventRepository $eventRepository, UserRepository $userRepository, CommunityRepository $communityRepository, RelayPointRepository $relayPointRepository, int $timeLimit, string $memoryLimit, bool $sqlLog, int $directionsBatch)
     {
         $this->entityManager = $entityManager;
         $this->userImportRepository = $userImportRepository;
@@ -82,6 +86,10 @@ class ImportManager
         $this->communityImportRepository = $communityImportRepository;
         $this->eventImportRepository = $eventImportRepository;
         $this->relayPointImportRepository = $relayPointImportRepository;
+        $this->timeLimit = $timeLimit;
+        $this->memoryLimit = $memoryLimit;
+        $this->sqlLog = $sqlLog;
+        $this->directionsBatch = $directionsBatch;
     }
 
     /**
@@ -107,9 +115,11 @@ class ImportManager
      */
     private function prepareUserImport(string $origin, ?int $massId=null)
     {
-        set_time_limit(7200);
+        set_time_limit($this->timeLimit);
         
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        if (!$this->sqlLog) {
+            $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        }
 
         // create user_import rows
         $conn = $this->entityManager->getConnection();
@@ -185,8 +195,7 @@ class ImportManager
         $q->execute();
 
         // batch for criterias / direction
-        $batch = 50;
-        $this->proposalManager->setDirectionsAndDefaultsForImport($batch);
+        $this->proposalManager->setDirectionsAndDefaultsForImport($this->directionsBatch);
 
         // update addresses with geojson point data
         $conn = $this->entityManager->getConnection();
@@ -211,9 +220,14 @@ class ImportManager
      */
     private function matchUserImport()
     {
-        set_time_limit(50000);
+        set_time_limit($this->timeLimit);
+
+        // user import is a huge memory consumer !
+        ini_set('memory_limit', $this->memoryLimit . 'MB');
         
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        if (!$this->sqlLog) {
+            $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        }
                 
         // creation of the matchings
         // we create an array of all proposals to treat
