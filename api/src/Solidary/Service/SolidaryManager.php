@@ -378,7 +378,7 @@ class SolidaryManager
         // first we need to check if the associated structure as an email :
         // - if so the user needs an email OR phone number
         // - otherwise the email is mandatory
-        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getOperates()[0]->getStructure()->getId();
         $structure = $this->structureRepository->find($solidaryStructureId);
         
         if (is_null($solidary->getEmail()) && is_null($solidary->getUser()) && is_null($solidary->getTelephone())) {
@@ -844,8 +844,8 @@ class SolidaryManager
         if ($solidary->getStructure()) {
             $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
         } else {
-            if (!is_null($this->security->getUser()->getSolidaryStructures()) && count($this->security->getUser()->getSolidaryStructures()) > 0) {
-                $structure = $this->security->getUser()->getSolidaryStructures()[0];
+            if (!is_null($this->security->getUser()->getOperates()) && count($this->security->getUser()->getOperates()) > 0) {
+                $structure = $this->security->getUser()->getOperates()[0]->getStructure();
             } elseif (!is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures())
                         && count($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()) > 0
                         && !is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure())) {
