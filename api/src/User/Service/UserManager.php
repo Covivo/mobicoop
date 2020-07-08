@@ -178,16 +178,7 @@ class UserManager
      */
     public function getUser(int $id)
     {
-        $user = $this->userRepository->find($id);
-        $structures = [];
-      
-        if (!is_null($user->getOperates())) {
-            foreach ($user->getOperates() as $operate) {
-                $structures[] = $operate->getStructure();
-            }
-        }
-        $user->setSolidaryStructures($structures);
-        return $user;
+        return $this->userRepository->find($id);
     }
 
     /**
