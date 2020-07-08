@@ -234,22 +234,6 @@ class UserManager
     {
         $user = $this->prepareUser($user, $encodePassword);
  
-        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
-        if (!is_null($user->getSolidaryUser())) {
-            if ($user->getSolidaryUser()->isVolunteer()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-            }
-            if ($user->getSolidaryUser()->isBeneficiary()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            }
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-
-            // If there is no availability time information, we get the one from the structure
-            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
-        }
-
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -281,12 +265,6 @@ class UserManager
             $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
             $this->entityManager->persist($communityUser);
             $this->entityManager->flush();
-        }
-
-        // dispatch SolidaryUser event
-        if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
         }
 
         // return the user
@@ -480,32 +458,6 @@ class UserManager
         // update of the geotoken
         $user->setGeoToken($this->createToken($user));
 
-
-        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
-        if (!is_null($user->getSolidaryUser())) {
-            // Get the authAssignments
-            $userAuthAssignments = $user->getUserAuthAssignments();
-            $authItems = [];
-            foreach ($userAuthAssignments as $userAuthAssignment) {
-                $authItems[] = $userAuthAssignment->getAuthItem()->getId();
-            }
-
-            if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-            }
-            if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            }
-            if (!empty($authItem)) {
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
-            }
-
-            // If there is no availability time information, we get the one from the structure
-            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
-        }
-
         //we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
             // We initialize an arry with the ids of the user's structures
@@ -556,15 +508,11 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
-        // dispatch SolidaryUser event
-        if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserUpdatedEvent($user->getSolidaryUser(), $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserUpdatedEvent::NAME, $event);
-        }
-
+       
         // return the user
         return $user;
     }
