@@ -172,6 +172,8 @@ services:
         arguments:
             $params:
                 dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
+                importChunkSize: '%env(int:IMPORT_PROPOSALS_CHUNK_SIZE)%'
+                importBatchMatchSize: '%env(int:IMPORT_PROPOSALS_BATCH_MATCH_SIZE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -352,6 +354,13 @@ services:
     App\Import\Controller\:
         resource: '../src/Import/Controller'
         tags: ['controller.service_arguments']
+
+    App\Import\Service\ImportManager:
+        arguments:
+            $timeLimit: '%env(int:IMPORT_TIME_LIMIT)%'
+            $memoryLimit: '%env(int:IMPORT_MEMORY_LIMIT)%'
+            $sqlLog: '%env(bool:IMPORT_SQL_LOG)%'
+            $directionsBatch: '%env(int:IMPORT_USERS_DIRECTIONS_BATCH_SIZE)%'
     
     # Mass Communication
     App\MassCommunication\Controller\:
