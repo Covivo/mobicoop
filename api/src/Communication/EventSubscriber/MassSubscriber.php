@@ -29,6 +29,7 @@ use App\Match\Event\MassAnalyzeErrorsEvent;
 use App\Match\Event\MassMatchedEvent;
 use App\User\Service\UserManager;
 use App\Match\Event\MassMigrateUserMigratedEvent;
+use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 
 class MassSubscriber implements EventSubscriberInterface
 {
@@ -46,7 +47,8 @@ class MassSubscriber implements EventSubscriberInterface
         return [
             MassMigrateUserMigratedEvent::NAME => 'onMassMigrateUserMigrated',
             MassAnalyzeErrorsEvent::NAME => 'onMassAnalyzeErrors',
-            MassMatchedEvent::NAME => 'onMassMatched'
+            MassMatchedEvent::NAME => 'onMassMatched',
+            MassPublicTransportSolutionsGatheredEvent::NAME => 'onMassPublicTransportSolutionsGathered'
         ];
     }
 
@@ -63,5 +65,10 @@ class MassSubscriber implements EventSubscriberInterface
     public function onMassMatched(MassMatchedEvent $event)
     {
         $this->notificationManager->notifies(MassMatchedEvent::NAME, $event->getMass()->getUser(), $event->getMass());
+    }
+
+    public function onMassPublicTransportSolutionsGathered(MassPublicTransportSolutionsGatheredEvent $event)
+    {
+        $this->notificationManager->notifies(MassPublicTransportSolutionsGatheredEvent::NAME, $event->getMass()->getUser(), $event->getMass());
     }
 }
