@@ -34,6 +34,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryVolunteerVoter extends Voter
 {
+    const SOLIDARY_VOLUNTEER_REGISTER = 'solidary_volunteer_register';
     const SOLIDARY_VOLUNTEER_CREATE = 'solidary_volunteer_create';
     const SOLIDARY_VOLUNTEER_READ = 'solidary_volunteer_read';
     const SOLIDARY_VOLUNTEER_UPDATE = 'solidary_volunteer_update';
@@ -51,6 +52,7 @@ class SolidaryVolunteerVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
+            self::SOLIDARY_VOLUNTEER_REGISTER,
             self::SOLIDARY_VOLUNTEER_CREATE,
             self::SOLIDARY_VOLUNTEER_READ,
             self::SOLIDARY_VOLUNTEER_UPDATE,
@@ -62,6 +64,7 @@ class SolidaryVolunteerVoter extends Voter
       
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
+            self::SOLIDARY_VOLUNTEER_REGISTER,
             self::SOLIDARY_VOLUNTEER_CREATE,
             self::SOLIDARY_VOLUNTEER_READ,
             self::SOLIDARY_VOLUNTEER_UPDATE,
@@ -78,6 +81,8 @@ class SolidaryVolunteerVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
+            case self::SOLIDARY_VOLUNTEER_REGISTER:
+                return $this->canRegisterSolidaryVolunteer();
             case self::SOLIDARY_VOLUNTEER_CREATE:
                 return $this->canCreateSolidaryVolunteer();
             case self::SOLIDARY_VOLUNTEER_READ:
@@ -91,6 +96,10 @@ class SolidaryVolunteerVoter extends Voter
         }
 
         throw new \LogicException('This code should not be reached!');
+    }
+    private function canRegisterSolidaryVolunteer()
+    {
+        return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_REGISTER);
     }
 
     private function canCreateSolidaryVolunteer()

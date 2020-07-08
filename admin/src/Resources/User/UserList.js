@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BlockIcon from '@material-ui/icons/Block';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -8,7 +8,6 @@ import {
   TextInput,
   SelectInput,
   ReferenceInput,
-  BooleanInput,
   TextField,
   EmailField,
   DateField,
@@ -18,18 +17,46 @@ import {
   Filter,
   Button,
   useTranslate,
+  useDataProvider,
+  AutocompleteInput,
 } from 'react-admin';
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
-import TerritoryInput from '../../components/geolocation/TerritoryInput';
-import { useHistory } from 'react-router-dom';
+import TerritoryInput from '../../components/geolocation/TerritoryInputFilter';
+
+import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
+import frLocale from 'date-fns/locale/fr';
 
 const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
-  const router = useHistory();
+  const [communities, setCommunities] = useState();
+
+  const dataProvider = useDataProvider();
+
+  const genderChoices = [
+    { id: 1, name: translate('custom.label.user.choices.women') },
+    { id: 2, name: translate('custom.label.user.choices.men') },
+    { id: 3, name: translate('custom.label.user.choices.other') },
+  ];
+
+  useEffect(() => {
+    if (localStorage.getItem('id')) {
+      dataProvider
+        .getList('communities', {
+          pagination: { page: 1, perPage: 50 },
+          sort: { field: 'id', order: 'ASC' },
+        })
+        .then((response) => {
+          if (response) {
+            setCommunities(response.data);
+          }
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const BooleanStatusField = ({ record = {}, source }) => {
     const theRecord = { ...record };
@@ -47,6 +74,7 @@ const UserList = (props) => {
   const checkValue = ({ selected, record }) => {
     if (record.newsSubscription === false) setCount(selected === false ? count + 1 : count - 1);
   };
+
   const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
     if (selected && record.newsSubscription === false) setCount(1);
     return (
@@ -74,9 +102,6 @@ const UserList = (props) => {
       </TableRow>
     );
   };
-  const handleAddTerritoryHistory = (e) => {
-    return null;
-  };
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
@@ -84,37 +109,66 @@ const UserList = (props) => {
   const UserBulkActionButtons = (props) => {
     return (
       <>
-        {isAuthorized('mass_create') && count === 0 ? (
-          <EmailComposeButton label="Email" {...props} />
-        ) : (
-          <Button
-            label={translate('custom.email.texte.blockUnsubscribe')}
-            startIcon={<BlockIcon />}
-          />
-        )}
+        <EmailComposeButton
+          canSend={isAuthorized('mass_create') && count === 0}
+          comeFrom={0}
+          label="Email"
+          {...props}
+        />
+
         <ResetButton label="Reset email" {...props} />
         {/* default bulk delete action */}
         {/* <BulkDeleteButton {...props} /> */}
       </>
     );
   };
+
   const UserFilter = (props) => (
     <Filter {...props}>
+      <TextInput source="givenName" label={translate('custom.label.user.givenName')} />
       <TextInput source="familyName" label={translate('custom.label.user.familyName')} alwaysOn />
       <TextInput source="email" label={translate('custom.label.user.email')} alwaysOn />
+      <DateInput
+        source="createdDate[after]"
+        label={translate('custom.label.user.createdDate')}
+        options={{ format: 'dd/MM/yyyy', clearable: true }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <DateInput
+        source="lastActivityDate[after]"
+        label={translate('custom.label.user.lastActivityDate')}
+        options={{ format: 'dd/MM/yyyy' }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <DateInput
+        source="proposalValidUntil"
+        label={translate('custom.label.user.proposalValidUntil')}
+        options={{ format: 'dd/MM/yyyy' }}
+        providerOptions={{ locale: frLocale }}
+      />
+      <SelectInput
+        source="gender"
+        label={translate('custom.label.user.gender')}
+        choices={genderChoices}
+      />
+      <SelectInput
+        source="communitiesExclude"
+        label={translate('custom.label.user.communitiesExclude')}
+        choices={communities}
+      />
+      <TextInput source="telephone" label={translate('custom.label.user.telephone')} />
+
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
 
       <ReferenceInput
         source="homeAddressODTerritory"
-        alwaysOn
         label={translate('custom.label.user.territory')}
         reference="territories"
         allowEmpty={false}
         resettable
       >
-        <SelectInput optionText="name" optionValue="id" />
+        <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
-      {/* <TerritoryInput alwaysOn setTerritory={handleAddTerritoryHistory} /> */}
     </Filter>
   );
 
@@ -126,7 +180,7 @@ const UserList = (props) => {
       filters={<UserFilter />}
       sort={{ field: 'id', order: 'ASC' }}
       bulkActionButtons={<UserBulkActionButtons />}
-      //exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
+      // exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
       exporter={false}
       hasCreate={isAuthorized('user_create')}
     >
@@ -141,6 +195,10 @@ const UserList = (props) => {
         />
         <BooleanStatusField source="status" label={translate('custom.label.user.accountStatus')} />
         <DateField source="createdDate" label={translate('custom.label.user.createdDate')} />
+        <DateField
+          source="lastActivityDate"
+          label={translate('custom.label.user.lastActivityDate')}
+        />
         {isAuthorized('user_update') && <EditButton />}
       </MyDatagridUser>
     </List>

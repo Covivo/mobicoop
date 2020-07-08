@@ -25,6 +25,8 @@ import SectionResource from './Resources/Article/Section';
 import ParagraphResource from './Resources/Article/Paragraph';
 import RelayPointResource from './Resources/RelayPoint/RelayPoint';
 import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
+import SolidaryAnimationResource from './Resources/Solidary/SolidaryAnimation';
+import SolidarySearchResource from './Resources/Solidary/SolidarySearch';
 
 // Temporary disabled resources (Don't known why ?)
 // import StructureResource from './Resources/Solidary/Structure';
@@ -75,14 +77,26 @@ export default () => (
           name="structure_proofs"
           {...(can('user_manage') ? StructureProofResource : {})}
         />,
+        <Resource
+          name="solidary_animations"
+          {...(can('solidary_manage') ? SolidaryAnimationResource : {})}
+        />,
+        <Resource
+          name="solidary_searches"
+          {...(can('solidary_manage') ? SolidarySearchResource : {})}
+        />,
         // API Fail during "/structures" GET
         // @TODO: Fix API and remove the comment bellow
         // <Resource name="structures" {...(can('user_manage') ? StructureResource : {})} />,
         // These resources were commented on during my refacto, why ?
         // @TODO: Talk between us about that
         <Resource name="addresses" />,
-        // <Resource name="images" />,
+        <Resource name="images" />,
+        <Resource name="needs" />,
+        <Resource name="subjects" />,
         <Resource name="territories" />,
+        <Resource name="solidary_users" />,
+        <Resource name="solidary_contacts" />,
       ].filter((x) => x);
     }}
   </Admin>

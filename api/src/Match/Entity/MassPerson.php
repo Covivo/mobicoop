@@ -245,10 +245,20 @@ class MassPerson
      */
     private $user;
 
+    /**
+     * @var ArrayCollection|null The MassPTJourneys linked to this mass person
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Groups({"pt"})
+     */
+    private $massPTJourneys;
+
     public function __construct()
     {
         $this->matchingsAsDriver = new ArrayCollection();
         $this->matchingsAsPassenger = new ArrayCollection();
+        $this->massPTJourneys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -523,6 +533,29 @@ class MassPerson
     {
         $this->user = $user;
         
+        return $this;
+    }
+
+    public function getMassPTJourneys()
+    {
+        return $this->massPTJourneys->getValues();
+    }
+
+    public function addMassPTJourney(MassPTJourney $massPTJourney): self
+    {
+        if (!$this->massPTJourneys->contains($massPTJourney)) {
+            $this->massPTJourneys->add($massPTJourney);
+        }
+
+        return $this;
+    }
+
+    public function removeMassPTJourneys(MassPTJourney $massPTJourney): self
+    {
+        if ($this->massPTJourneys->contains($massPTJourney)) {
+            $this->massPTJourneys->removeElement($massPTJourney);
+        }
+
         return $this;
     }
 

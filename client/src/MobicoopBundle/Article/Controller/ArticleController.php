@@ -159,9 +159,10 @@ class ArticleController extends AbstractController
      * Display of the TOOLBOX page
      *
      */
-    public function showToolbox(ArticleManager $articleManager)
+    public function showToolbox()
     {
-        return $this->showArticle($articleManager->getArticle(self::TOOLBOX));
+        // Not an 'article' page.
+        return $this->render('@Mobicoop/article/toolbox.html.twig', []);
     }
 
     /**

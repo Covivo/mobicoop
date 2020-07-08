@@ -174,6 +174,25 @@ class Mass implements ResourceInterface
      */
     private $checkLegit;
 
+    /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API
+     */
+    private $gettingPublicTransportationPotentialDate;
+
+    /**
+     * @var \DateTimeInterface Date of getting the public transportation information from external API end
+     */
+    private $gotPublicTransportationPotentialDate;
+
+    /**
+     * @var array Potential of Public Transport of this Mass
+     */
+    private $publicTransportPotential;
+
+    /**
+     * @var int Number of person in this mass
+     */
+    private $numberOfPersons;
 
     public function __construct($id = null)
     {
@@ -471,5 +490,53 @@ class Mass implements ResourceInterface
     public function setCheckLegit(bool $checkLegit)
     {
         $this->checkLegit = $checkLegit;
+    }
+
+    public function getGettingPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gettingPublicTransportationPotentialDate;
+    }
+
+    public function setGettingPublicTransportationPotentialDate(?\DateTimeInterface $gettingPublicTransportationPotentialDate): self
+    {
+        $this->gettingPublicTransportationPotentialDate = $gettingPublicTransportationPotentialDate;
+
+        return $this;
+    }
+    
+    public function getGotPublicTransportationPotentialDate(): ?\DateTimeInterface
+    {
+        return $this->gotPublicTransportationPotentialDate;
+    }
+
+    public function setGotPublicTransportationPotentialDate(?\DateTimeInterface $gotPublicTransportationPotentialDate): self
+    {
+        $this->gotPublicTransportationPotentialDate = $gotPublicTransportationPotentialDate;
+
+        return $this;
+    }
+
+    public function getPublicTransportPotential(): ?array
+    {
+        return $this->publicTransportPotential;
+    }
+
+    public function setPublicTransportPotential(?array $publicTransportPotential): self
+    {
+        $this->publicTransportPotential = $publicTransportPotential;
+
+        return $this;
+    }
+
+    public function getNumberOfPersons(): ?int
+    {
+        return $this->numberOfPersons;
+    }
+
+    public function setNumberOfPersons(?int $numberOfPersons): self
+    {
+        $this->numberOfPersons = $numberOfPersons;
+
+        return $this;
     }
 }

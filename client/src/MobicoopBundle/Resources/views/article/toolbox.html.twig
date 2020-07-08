@@ -1,0 +1,14 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+{% trans from 'ui' %}toolbox.title{% endtrans %}
+{% endblock %}
+
+{% block stylesheets %}
+  {# {{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }} #}
+{% endblock %}
+
+{% block main %}
+<tool-box />  
+{% endblock %}
+

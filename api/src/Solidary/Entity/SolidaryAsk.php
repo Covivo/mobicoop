@@ -67,6 +67,7 @@ class SolidaryAsk
     const STATUS_LOOKING_FOR_SOLUTION = 3;
     const STATUS_FOLLOW_UP = 4;
     const STATUS_CLOSED = 5;
+    const STATUS_ACCEPTED = 6;
     
     const DEFAULT_ID = 999999999999;
 

@@ -182,6 +182,14 @@ export default {
     isLogged: {
       type: Boolean,
       default: false
+    },
+    orderCriteria: {
+      type: String,
+      default: "name"
+    },
+    orderWay: {
+      type: String,
+      default: "asc"
     }
   },
   data () {
@@ -228,7 +236,9 @@ export default {
         'page':this.page,
         'search':{
           'name':this.search
-        }
+        },
+        'order':this.orderCriteria,
+        'orderWay':this.orderWay
       }
 
       axios

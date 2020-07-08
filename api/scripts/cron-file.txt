@@ -26,3 +26,6 @@
 
 # each 5 minutes : link addresses and directions to territories
 */5 * * * *    $1 $2 app:geography:territory-link-batch
+
+# each day at 1am : create and send the carpool proofs for the day before
+0 1 * * *   $1 $2 app:carpool:proof-batch

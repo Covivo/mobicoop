@@ -1,6 +1,5 @@
 import React from 'react';
 import { BooleanInput, useTranslate, FormDataConsumer } from 'react-admin';
-import PropTypes from 'prop-types';
 import EditIcon from '@material-ui/icons/Edit';
 
 import {
@@ -85,18 +84,18 @@ export const AvailabilityGridInput = (props) => {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow key={row.day}>
               <TableCell component="th" scope="row">
                 {translate(`resources.solidary_volunteers.fields.${row.day}`)}
               </TableCell>
               <TableCell align="center">
-                <BooleanInput label={null} source={row.morning} />
+                <BooleanInput label="" source={row.morning} />
               </TableCell>
               <TableCell align="center">
-                <BooleanInput label={null} source={row.afternoon} />
+                <BooleanInput label="" source={row.afternoon} />
               </TableCell>
               <TableCell align="center">
-                <BooleanInput label={null} source={row.evening} />
+                <BooleanInput label="" source={row.evening} />
               </TableCell>
             </TableRow>
           ))}
@@ -104,8 +103,4 @@ export const AvailabilityGridInput = (props) => {
       </Table>
     </TableContainer>
   );
-};
-
-AvailabilityGridInput.propTypes = {
-  record: PropTypes.object.isRequired,
 };

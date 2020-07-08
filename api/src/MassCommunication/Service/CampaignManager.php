@@ -24,11 +24,14 @@
 namespace App\MassCommunication\Service;
 
 use App\Communication\Entity\Medium;
+use App\User\Entity\User;
+use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\MassEmailProvider\MandrillProvider;
 use App\MassCommunication\Repository\CampaignRepository;
-use App\User\Entity\User;
+use App\Community\Repository\CommunityRepository;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -39,6 +42,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CampaignManager
 {
     private $templating;
+    private $userRepository;
+    private $communityRepository;
     private $entityManager;
     private $massEmailProvider;
     private $massEmailApi;
@@ -52,9 +57,11 @@ class CampaignManager
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository, TranslatorInterface $translator)
+    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository, TranslatorInterface $translator, UserRepository $userRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
+        $this->communityRepository = $communityRepository;
+        $this->userRepository = $userRepository;
         $this->mailTemplate = $mailTemplate;
         $this->templating = $templating;
         $this->campaignRepository = $campaignRepository;
@@ -120,6 +127,11 @@ class CampaignManager
      */
     private function sendMassEmail(Campaign $campaign)
     {
+        if ($sendAll = $campaign->getSendAll() != null) {
+            //We try to send an email to all user, no matter the community
+            if ($campaign->getSendAll() == 0) {
+            }
+        }
         // call the service
         $this->massEmailProvider->send(
             $campaign->getSubject(),
@@ -281,5 +293,39 @@ class CampaignManager
     {
         $ownedCampaigns = $this->campaignRepository->getOwnedCampaigns($userId);
         return $ownedCampaigns;
+    }
+
+    /**
+     * Set all user who accepted email to delieveries
+     * Maybye TODO : set a value in db to check if we already set the deliveries like isSetAll
+     *
+     * @param Campaign $campaign
+     * @return void
+     */
+    public function setDeliveriesCampaingToAll(Campaign $campaign)
+    {
+        if ($campaign->getSendAll() == 0) {
+            //Get all user who accepted email
+            $allUsers = $this->userRepository->findBy(['newsSubscription'=> 1 ]);
+        } else {
+            $community = $this->communityRepository->find($campaign->getSendAll());
+            $allUsers = $this->userRepository->getUserInCommunity($community, true);
+        }
+
+        //Clear previous selected
+        foreach ($campaign->getDeliveries() as $delivery) {
+            $this->entityManager->remove($delivery);
+        };
+        $this->entityManager->flush();
+        
+        foreach ($allUsers as $user) {
+            $delivery = new Delivery();
+            $delivery->setUser($user);
+            $delivery->setCampaign($campaign);
+            $delivery->setStatus(0);
+            $this->entityManager->persist($delivery);
+        };
+
+        $this->entityManager->flush();
     }
 }

@@ -54,6 +54,9 @@ import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetW
 // RELAY POINT
 import RelayPoints from "@components/relaypoints/RelayPoints";
 
+// ToolsBox
+import ToolBox from "@components/utilities/ToolBox/ToolBox";
+
 export default {
   MHeader,
   MFooter,
@@ -86,5 +89,6 @@ export default {
   MArticle,
   PlatformWidget,
   PlatformGetWidget,
-  RelayPoints
+  RelayPoints,
+  ToolBox
 }

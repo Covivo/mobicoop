@@ -78,6 +78,16 @@ class SolidaryAnimationManager
             $solidaryAnimation->setSolidarySolution($diary->getSolidarySolution());
             $solidaryAnimation->setCreatedDate($diary->getCreatedDate());
             $solidaryAnimation->setUpdatedDate($diary->getUpdatedDate());
+            // we set transporter or carpooler if present
+            if ($diary->getSolidarySolution()) {
+                // case of a transporter
+                if ($diary->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()) {
+                    $solidaryAnimation->setTransporter($diary->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser());
+                // case of a carpooler
+                } else {
+                    $solidaryAnimation->setCarpooler($diary->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser());
+                }
+            }
             $return[] = $solidaryAnimation;
         }
 

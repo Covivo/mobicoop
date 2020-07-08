@@ -94,13 +94,14 @@ class DataProvider
      * Get collection operation
      *
      * @param mixed|null    $params         An array or string of parameters
+     * @param array|null    $headers        An array of headers
      *
      * @return Response The response of the operation.
      */
-    public function getCollection($params=null): Response
+    public function getCollection($params=null, $headers=null): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
+            $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers'=>$headers]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
@@ -164,6 +165,7 @@ class DataProvider
                     return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
+            //var_dump($e->getMessage());die;
             return new Response($e->getCode());
         }
         return new Response();

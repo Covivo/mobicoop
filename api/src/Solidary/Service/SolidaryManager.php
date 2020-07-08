@@ -22,6 +22,7 @@
 
 namespace App\Solidary\Service;
 
+use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
@@ -46,6 +47,7 @@ use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\Security\Core\Security;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
@@ -58,6 +60,7 @@ use App\User\Repository\UserRepository;
 use DateTime;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use Negotiation\Accept;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -105,6 +108,9 @@ class SolidaryManager
     public function getSolidary($id): ?Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
+        if (empty($solidary)) {
+            throw new SolidaryException(SolidaryException::UNKNOWN_SOLIDARY);
+        }
 
         // we get the origin and destination associated to the demand
         $solidary->setOrigin(json_decode(json_encode($solidary->getProposal()->getWaypoints()[0]->getAddress()), true));
@@ -155,7 +161,8 @@ class SolidaryManager
         
         date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
         $solidary->setOutwardDatetime($outwardDatetime);
-
+        // we set the margin duration
+        $solidary->setMarginDuration($solidary->getProposal()->getCriteria()->getMarginDuration());
         // we do the same if we have a return
         if ($solidary->getProposal()->getProposalLinked() !== null) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
@@ -223,12 +230,51 @@ class SolidaryManager
             }
             $solidary->setDays($days);
         }
-
+        $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
+        // the display label of the solidary 'subject : origin -> destination'
+        if ($solidary->getOrigin() && $solidary->getDestination()) {
+            $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
+        }
+        $solidary->setDisplayLabel($solidary->getSubject()->getLabel());
+        // We find the last entry of diary for this solidary to get the progression and the author of the last update
+        $solidary->setProgression(0);
+        $solidary->setOperator(null);
+        // we get all diaries order by DESC so the first one is the most recent
+        $diariesEntries = $this->solidaryRepository->getDiaries($solidary);
+        if (count($diariesEntries)>0) {
+            $solidary->setProgression($diariesEntries[0]->getProgression());
+            $solidary->setLastAction($diariesEntries[0]->getAction()->getName());
+            foreach ($diariesEntries as $diary) {
+                if ($diary->getAction()->getId() === Action::SOLIDARY_CREATE && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                    $solidary->setOperator($diary->getAuthor());
+                }
+            }
+        }
 
-        // We find the last entry of diary for this solidary to get the progression
-        // $diariesEntires = $this->solidaryRepository->getDiaries($solidary);
-        // (count($diariesEntires)>0) ? $solidary->setProgression($diariesEntires[0]->getProgression()) : $solidary->setProgression(0);
+        // we display solutions associated to the solidary.
+        $solutions = [];
+        $solidarySolutions = $solidary->getSolidarySolutions();
+        foreach ($solidarySolutions as $solidarySolution) {
+            $solution = [];
+            if ($solidarySolution->getSolidaryMatching()->getSolidaryUser()) {
+                $solution['id'] = $solidarySolution->getId();
+                $solution['Type'] = SolidarySolution::TRANSPORTER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId();
+            } elseif ($solidarySolution->getSolidaryMatching()->getMatching()) {
+                $solution['id'] = $solidarySolution->getId();
+                $solution['Type'] = SolidarySolution::CARPOOLER;
+                $solution['FamilyName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName();
+                $solution['GivenName'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName();
+                $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone();
+                $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId();
+            }
+            $solutions[]=$solution;
+        }
+        $solidary->setSolutions($solutions);
 
         return $solidary;
     }
@@ -284,10 +330,15 @@ class SolidaryManager
      */
     public function createSolidary(Solidary $solidary)
     {
+        // set default role
+        if (is_null($solidary->isPassenger()) && is_null($solidary->isDriver())) {
+            $solidary->setPassenger(true);
+        }
         
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
-        if ($solidary->getEmail()) {
+        $user = null;
+        if ($solidary->getEmail() || $solidary->getUser()) {
             $user = $this->solidaryCreateUser($solidary);
             $userId = $user->getId();
         }
@@ -314,7 +365,7 @@ class SolidaryManager
         $this->entityManager->flush();
 
         // We trigger the event
-        $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $user, $this->security->getUser());
+        $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         return $solidary;
@@ -568,8 +619,14 @@ class SolidaryManager
             $destination->setLongitude($solidary->getDestination()['longitude']);
         }
         
-        // Role is always passenger since it's a solidary demand
-        $ad->setRole(Ad::ROLE_PASSENGER);
+        // Set role of the ad
+        if ($solidary->isPassenger() && $solidary->isDriver()) {
+            $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($solidary->isDriver()) {
+            $ad->setRole(Ad::ROLE_DRIVER);
+        } else {
+            $ad->setRole(Ad::ROLE_PASSENGER);
+        }
 
         // round-trip
         $ad->setOneWay(true);
@@ -663,7 +720,10 @@ class SolidaryManager
             $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
         }
         // We check if the user exist
-        $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        $user = $solidary->getUser();
+        if (is_null($solidary->getUser())) {
+            $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+        }
         if ($user == null) {
             // We create a new user
             $user = new User();
@@ -684,14 +744,24 @@ class SolidaryManager
         // We also create the solidaryUser associated to the demand
         if (is_null($user->getSolidaryUser())) {
             $solidaryUser = new SolidaryUser();
-            $solidaryUser->setBeneficiary(true);
+            if ($solidary->isDriver()) {
+                $solidaryUser->setVolunteer(true);
+                // we add the userAuthItemAssignment associated
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
+            if ($solidary->isPassenger()) {
+                $solidaryUser->setBeneficiary(true);
+                // we add the userAuthItemAssignment associated
+                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
+                $userAuthAssignment = new UserAuthAssignment();
+                $userAuthAssignment->setAuthItem($authItem);
+                $user->addUserAuthAssignment($userAuthAssignment);
+            }
             $solidaryUser->setAddress($homeAddress);
             $user->setSolidaryUser($solidaryUser);
-            // we add the userAuthItemAssignment associated
-            $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
         } else {
             $solidaryUser = $user->getSolidaryUser();
         }

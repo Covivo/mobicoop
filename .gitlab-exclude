@@ -5,9 +5,12 @@
 /api/.env.test.local
 /api/.env.prod.local
 /api/config/rdex/*.json
+/api/config/publicTransport/*.json
 /api/config/jwt/
-/api/var/log/
 /api/public/robots.txt
+/api/templates/email_client/
+/api/translations_client/
+/api/var/log/
 + /api/public/upload/icons/address-any.svg
 + /api/public/upload/icons/address-personal.svg
 + /api/public/upload/icons/community.svg
@@ -85,4 +88,5 @@
 /client/public/robots.txt
 /client/public/mobile_app_repository.json
 /admin/.env
+/admin/public/logo.png
 /admin/public/robots.txt

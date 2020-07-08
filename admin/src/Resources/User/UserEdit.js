@@ -11,7 +11,6 @@ import {
   SelectInput,
   email,
   BooleanInput,
-  ReferenceField,
   FunctionField,
   useTranslate,
 } from 'react-admin';
@@ -99,7 +98,6 @@ const UserEdit = (props) => {
             validate={validateRequired}
             formClassName={classes.spacedHalfwidth}
           />
-
           <DateInput
             required
             source="birthDate"
@@ -116,14 +114,12 @@ const UserEdit = (props) => {
             validate={validateRequired}
             formClassName={classes.spacedHalfwidth}
           />
-
           <BooleanInput
             fullWidth
             label={translate('custom.label.user.newsSubscription', { instanceName: instance })}
-            source="news_subscription"
+            source="newsSubscription"
             formClassName={classes.spacedHalfwidth}
           />
-
           <SelectInput
             fullWidth
             source="phoneDisplay"
@@ -131,28 +127,16 @@ const UserEdit = (props) => {
             choices={phoneDisplay}
             formClassName={classes.spacedHalfwidth}
           />
-
-          <ReferenceField
-            source="addresses"
+          <FunctionField
             label={translate('custom.label.user.currentAdresse')}
-            reference="addresses"
-            link=""
-            formClassName={classes.fullwidthDense}
-          >
-            <FunctionField render={addressRenderer} />
-          </ReferenceField>
-
-          <GeocompleteInput
             source="addresses"
+            render={({ addresses }) => addresses.map(addressRenderer)}
+          />
+          <GeocompleteInput
+            source="addresses[0]"
             label={translate('custom.label.user.newsAdresse')}
             validate={required()}
             formClassName={classes.fullwidth}
-          />
-
-          <BooleanInput
-            initialValue={true}
-            label={translate('custom.label.user.accepteReceiveEmail')}
-            source="newsSubscription"
           />
         </FormTab>
         <FormTab label={translate('custom.label.user.preference')}>
@@ -190,7 +174,6 @@ const UserEdit = (props) => {
             formClassName={classes.spacedHalfwidth}
           />
         </FormTab>
-
         <FormTab label={translate('custom.label.user.manageRoles')}>
           <GestionRoles />
         </FormTab>

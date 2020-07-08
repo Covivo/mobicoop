@@ -13,7 +13,7 @@ import {
   useTranslate,
 } from 'react-admin';
 
-import UserReferenceField from '../User/UserReferenceField';
+import FullNameField from '../User/FullNameField';
 
 const CommunityFilter = (props) => (
   <Filter {...props}>
@@ -42,11 +42,7 @@ export const CommunityList = (props) => {
           label={translate('custom.label.community.numberMember')}
           render={(record) => `${record.communityUsers ? record.communityUsers.length : 0}`}
         />
-        <UserReferenceField
-          label={translate('custom.label.community.createdBy')}
-          source="user"
-          reference="users"
-        />
+        <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
         <ShowButton />
         <EditButton />
       </Datagrid>

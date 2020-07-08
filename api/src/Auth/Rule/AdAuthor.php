@@ -36,14 +36,13 @@ class AdAuthor implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        if (!isset($params['Ad'])) {
+        if (!isset($params['ad'])) {
             return false;
         }
         /**
          * @var Ad $ad
          */
-        $ad = $params['Ad'];
-        return $ad->getUser()->getId() == $requester->getId();
+        $ad = $params['ad'];
+        return is_null($ad->getUser()) || $ad->getUser()->getId() == $requester->getId();
     }
 }

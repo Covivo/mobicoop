@@ -1,14 +1,21 @@
 import React from 'react';
 
-const addressRenderer = (address) =>
+export const addressRenderer = (address) =>
   address && address.displayLabel && address.displayLabel.length
     ? `${address.displayLabel[0]} - ${address.displayLabel[1]}`
     : '';
 
-const UserRenderer = ({ record }) => (
-  <span>
-    {record.givenName} {record.familyName}{' '}
-  </span>
-);
+export const usernameRenderer = ({ record }) => `${record.givenName} ${record.familyName}`;
 
-export { addressRenderer, UserRenderer };
+export const UserRenderer = ({ record }) => <span>{usernameRenderer({ record })} </span>;
+
+export const solidaryLabelRenderer = ({ record }) =>
+  record.originId
+    ? `#${record.originId} - ${record.displayLabel} ${
+        record.solidaryUser
+          ? `/ ${usernameRenderer({
+              record: record.solidaryUser.user,
+            })}`
+          : ''
+      }`
+    : '';

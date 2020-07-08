@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     const USER_LOGIN_ROUTE = "user_login";
+    const USER_LOGIN_RESULT_ROUTE = "user_login_result";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
     const USER_SIGN_UP_VALIDATION = "user_sign_up_validation";
 
@@ -43,7 +44,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     /**
      * Called on every request to decide if this authenticator should be
-     * used for tuse App\Entity\User;he request. Returning `false` will cause this authenticator
+     * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
      *
      * Here, we check if we want to log with login route or login token or password reset AND if POST is not empty
@@ -52,7 +53,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return ((in_array($request->get('_route'), [self::USER_LOGIN_ROUTE,self::USER_LOGIN_TOKEN_ROUTE]) && $request->isMethod('POST'))
+        return ((in_array($request->get('_route'), [self::USER_LOGIN_ROUTE,self::USER_LOGIN_RESULT_ROUTE,self::USER_LOGIN_TOKEN_ROUTE]) && $request->isMethod('POST'))
         || ($request->get('_route') == self::USER_SIGN_UP_VALIDATION  && ($request->attributes->get('email') != '' &&  $request->attributes->get('token') != ''))) ? true : false;
     }
 
@@ -70,10 +71,10 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getUser($request, UserProviderInterface $userProvider)
     {
 
-
-
         // We want to login, we set the credentials for the dataProvider
-        if ($request->get('_route') == self::USER_LOGIN_ROUTE && $request->get('email') && $request->get('password')) {
+        if (
+            ($request->get('_route') == self::USER_LOGIN_ROUTE || $request->get('_route') == self::USER_LOGIN_RESULT_ROUTE) &&
+            $request->get('email') && $request->get('password')) {
             $this->dataProvider->setUsername($request->get('email'));
             $this->dataProvider->setPassword($request->get('password'));
 
@@ -119,9 +120,14 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        $redirectTo = $request->get('_route') == self::USER_LOGIN_ROUTE ? 'home'  : 'carpool_first_ad_post';
-       
-        return new RedirectResponse($this->router->generate($redirectTo));
+        switch ($request->get('_route')) {
+            case self::USER_LOGIN_ROUTE:
+                return new RedirectResponse($this->router->generate('home'));
+            case self::USER_LOGIN_RESULT_ROUTE:
+                return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));
+            default:
+                return new RedirectResponse($this->router->generate('carpool_first_ad_post'));
+        }
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

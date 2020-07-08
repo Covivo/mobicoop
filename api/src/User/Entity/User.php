@@ -35,6 +35,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Action\Entity\Diary;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -68,6 +69,8 @@ use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserMe;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
+use App\User\Filter\IsInCommunityFilter;
+use App\User\Filter\ProposalValidFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
@@ -350,9 +353,11 @@ use App\User\Controller\UserCanUseEmail;
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
+ * @ApiFilter(IsInCommunityFilter::class)
+ * @ApiFilter(ProposalValidFilter::class)
  * @ApiFilter(HomeAddressDirectionTerritoryFilter::class, properties={"homeAddressDirectionTerritory"})
  * @ApiFilter(HomeAddressODTerritoryFilter::class, properties={"homeAddressODTerritory"})
  * @ApiFilter(HomeAddressWaypointTerritoryFilter::class, properties={"homeAddressWaypointTerritory"})
@@ -365,6 +370,9 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
+ * @ApiFilter(NumericFilter::class, properties={"gender"})
+ * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
+ * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -413,7 +421,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -431,7 +439,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation"})
      */
     private $givenName;
 
@@ -439,7 +447,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities"})
+     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation"})
      */
     private $familyName;
 
@@ -464,7 +472,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate"})
+     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
 
@@ -540,7 +548,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","results"})
+     * @Groups({"readUser","write","checkPhoneToken","results", "readSolidary"})
      */
     private $telephone;
 
@@ -642,7 +650,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","readCommunity","readCommunityUser"})
      */
     private $newsSubscription;
 
@@ -944,7 +952,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The avatars of the user
-     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney"})
+     * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
 
@@ -2305,7 +2313,8 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        return array_unique($this->roles);
+        //Security : if an user has no roles but it shouldn't be possible
+        return $this->roles ? array_unique($this->roles) : array(AuthItem::ROLE_USER_REGISTERED_FULL);
     }
 
     public function getSalt()

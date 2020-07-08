@@ -11,7 +11,6 @@
       >
         <MSocialFeedsItem
           style="overflow:hidden;"
-
           :i-frame-string="sanitizedIFrame(item.iFrame)"
         />
       </v-col>

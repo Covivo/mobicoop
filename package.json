@@ -1,11 +1,12 @@
 {
   "name": "mobicoop-platform",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
     "install-all": "npm-run-all --parallel install-api install-client download-tools install-admin",
     "install-all-ci": "npm-run-all --parallel install-api-ci install-client-ci install-admin-ci",
+    "install-all-instance-ci": "npm-run-all --parallel install-api-ci install-client install-admin-ci",
     "install-api": "cd api && composer install",
     "install-api-ci": "cd api && composer install",
     "install-admin": "cd admin && npm install",

@@ -54,6 +54,9 @@ class TravelMode
     const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
     const TRAVEL_MODE_BIKE = "BIKE";
     const TRAVEL_MODE_WALK = "WALK";
+    const TRAVEL_MODE_SUBWAY = "SUBWAY";
+    const TRAVEL_MODE_WAITING = "WAITING";
+    const TRAVEL_UNKNOWN = "UNKNOWN";
     
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
@@ -64,9 +67,26 @@ class TravelMode
         self::TRAVEL_MODE_TRAIN_LOCAL => 6,
         self::TRAVEL_MODE_TRAIN_HIGH_SPEED => 7,
         self::TRAVEL_MODE_BIKE => 8,
-        self::TRAVEL_MODE_WALK => 9
+        self::TRAVEL_MODE_WALK => 9,
+        self::TRAVEL_MODE_SUBWAY => 10,
+        self::TRAVEL_MODE_WAITING => 11
     ];
     
+    private const TRAVEL_MODES_MDI_ICONS = [
+        self::TRAVEL_MODE_CAR => "mdi-car",
+        self::TRAVEL_MODE_BUS => "mdi-bus",
+        self::TRAVEL_MODE_TRAMWAY => "mdi-tram",
+        self::TRAVEL_MODE_COACH => "mdi-bus-side",
+        self::TRAVEL_MODE_TRAIN => "mdi-train",
+        self::TRAVEL_MODE_TRAIN_LOCAL => "mdi-train",
+        self::TRAVEL_MODE_TRAIN_HIGH_SPEED => "mdi-train-variant",
+        self::TRAVEL_MODE_BIKE => "mdi-bike",
+        self::TRAVEL_MODE_WALK => "mdi-walk",
+        self::TRAVEL_MODE_SUBWAY => "mdi-subway-variant",
+        self::TRAVEL_MODE_WAITING => "mdi-account-clock",
+        self::TRAVEL_UNKNOWN => "mdi-help-circle"
+    ];
+
     /**
      * @var int The id of this travel mode.
      *
@@ -87,6 +107,12 @@ class TravelMode
      */
     private $name;
 
+    /**
+     * @var string The Material design icon code of this travel mode
+     * @Groups({"read","pt"})
+     */
+    private $mdiIcon;
+    
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -133,6 +159,18 @@ class TravelMode
         return $this;
     }
 
+    public function getMdiIcon(): ?string
+    {
+        return (isset(self::TRAVEL_MODES_MDI_ICONS[$this->getName()])) ? self::TRAVEL_MODES_MDI_ICONS[$this->getName()] : self::TRAVEL_MODES_MDI_ICONS['UNKNOWN'];
+    }
+
+    public function setMdiIcon(string $mdiIcon): self
+    {
+        $this->mdiIcon = $mdiIcon;
+
+        return $this;
+    }
+    
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;

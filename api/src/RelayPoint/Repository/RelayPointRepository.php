@@ -24,6 +24,7 @@
 namespace App\RelayPoint\Repository;
 
 use App\RelayPoint\Entity\RelayPoint;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -93,5 +94,29 @@ class RelayPointRepository
         
         return $query->getResult()
         ;
+    }
+
+    /**
+     * Find the public relaypoints and some private if the current user is entitled to (i.e community...)
+     *
+     * @param User|null $user The User who make the request
+     * @return array|null     The relay points found
+     */
+    public function findRelayPoints(User $user=null)
+    {
+        $query = $this->repository->createQueryBuilder('rp');
+        $query->where("rp.private is null or rp.private = 0");
+        
+        if (!is_null($user)) {
+            $query->leftJoin('rp.community', 'c')
+            ->leftJoin('c.communityUsers', 'cu')
+            ->orWhere("cu.user = :user")
+            ->orderBy('rp.id', 'ASC')
+            ->setParameter('user', $user);
+        }
+
+
+
+        return $query->getQuery()->getResult();
     }
 }

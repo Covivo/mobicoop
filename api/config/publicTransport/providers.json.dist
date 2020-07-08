@@ -1,0 +1,10 @@
+{
+    "default":{
+        "dataprovider":"name used in PTDataProvider",
+        "url":"url of the api with end /"
+    },
+    "idterritory":{
+        "dataprovider":"name used in PTDataProvider",
+        "url":"url of the api with end /"
+    }
+}

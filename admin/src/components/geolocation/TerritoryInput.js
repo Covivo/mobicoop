@@ -18,23 +18,24 @@ const fetchSuggestions = (input) => {
     return new Promise((resolve, reject) => resolve([]));
   }
 
-  const options = {};
-  if (!options.headers) {
-    options.headers = new global.Headers({ Accept: 'application/json' });
-  }
+  const options = {
+    headers: new global.Headers({ Accept: 'application/ld+json' }),
+  };
+
   options.headers.set('Authorization', `Bearer ${token}`);
 
   const apiUrl = process.env.REACT_APP_API + process.env.REACT_APP_TERRITORY_SEARCH_RESOURCE;
   const parameters = {
     name: `${input}`,
   };
+
   const urlWithParameters = `${apiUrl}?${queryString.stringify(parameters)}`;
 
   return httpClient(`${urlWithParameters}`, {
     method: 'GET',
     headers: options.headers,
   })
-    .then((response) => response.json)
+    .then((response) => response.json['hydra:member'])
     .catch((error) => {
       console.error(error);
       return [];
@@ -62,7 +63,7 @@ const TerritoryInput = (props) => {
     if (debouncedInput) {
       fetchSuggestions(debouncedInput).then((results) => {
         setSuggestions(
-          results
+          (results || [])
             .filter((element) => element && element.name && element.name.length > 0)
             .slice(0, 20)
         );
@@ -86,9 +87,8 @@ const TerritoryInput = (props) => {
               const territory = suggestions.find((element) => element.name === selectedItem);
               if (territory) {
                 territory.link = '/territories/' + territory.id;
-                form.change('territory', null);
-                form.change('territory.id', territory.id);
-                props.setTerritory(territory);
+                form.change(props.source, null);
+                form.change(`${props.source}.id`, territory.id);
               }
             }}
           >

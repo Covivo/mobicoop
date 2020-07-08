@@ -96,7 +96,7 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(Request $request)
+    public function login(Request $request, ?int $proposalId = null)
     {
         $errorMessage =   '';
         if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
@@ -105,6 +105,7 @@ class UserController extends AbstractController
         }
         
         return $this->render('@Mobicoop/user/login.html.twig', [
+            "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
             "facebook_show"=>($this->facebook_show==="true") ? true : false,
             "facebook_appid"=>$this->facebook_appid,
@@ -115,7 +116,7 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
+    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $proposalId = null)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -180,6 +181,7 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/signup.html.twig', [
+                "proposalId" => $proposalId,
                 'error' => $error,
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,

@@ -2,11 +2,13 @@
   "fr":{
     "title": "Résultats de covoiturage",
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
+    "externalUrl": "/covoiturage/annonce/{id}/externe",
     "matchingUrl": "/covoiturage/recherche/matching",
     "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
     "mailboxUrl": "/utilisateur/messages",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
+    "ptSearchUrl": "/transport-public/recherche",
     "search": "Recherche en cours...",
     "newSearch": "Nouvelle recherche",
     "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
@@ -19,17 +21,26 @@
     },
     "tabs":{
       "carpools":"Covoiturages {platform}",
-      "otherCarpools":"Autres covoiturages"
-    }
+      "otherCarpools":"Autres covoiturages",
+      "ptresults":"Transport en commun"
+    },
+    "loginOrRegisterTitle": "Connexion ou inscription requise",
+    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
+    "login": "Connexion",
+    "register": "Inscription",
+    "loginUrl": "/utilisateur/connexion/{id}",
+    "registerUrl": "/utilisateur/inscription/{id}"
   },
   "en":{
     "title": "Carpool results",
     "proposalUrl": "/carpool/ad/{id}/detail",
+    "externalUrl": "/carpool/ad/{id}/external",
     "matchingUrl": "/carpool/search/matching",
     "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
     "mailboxUrl": "/user/messages",
     "externalJourneyUrl": "/carpool/rdexJourney",
+    "ptSearchUrl": "/public-transport/search",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
     "includePassengers":"Show also passengers carpools",
@@ -40,7 +51,14 @@
     },
     "tabs":{
       "carpools":"{platform} carpools",
-      "otherCarpools":"Other carpools"
-    }
+      "otherCarpools":"Other carpools",
+      "ptresults":"Public transports"
+    },
+    "loginOrRegisterTitle": "Connection or registering required",
+    "loginOrRegister": "You need to login or register to continue",
+    "login": "Login",
+    "register": "Register",
+    "loginUrl": "/user/login/{id}",
+    "registerUrl": "/user/register/{id}"
   }
 }

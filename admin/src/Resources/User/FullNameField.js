@@ -26,13 +26,14 @@ const useStyles = makeStyles((theme) => ({
   }
 */
 
-const FullNameField = ({ record, size }) => {
+const FullNameField = ({ record, source, size }) => {
   const classes = useStyles();
+  const user = source && record[source] ? record[source] : record;
 
-  return record ? (
+  return user ? (
     <div className={classes.root}>
-      <AvatarField className={classes.avatar} record={record} size={size} />
-      {record.givenName} {record.familyName || record.shortFamilyName}
+      <AvatarField className={classes.avatar} record={user} size={size} />
+      {user.givenName} {user.familyName || user.shortFamilyName}
     </div>
   ) : null;
 };

@@ -42,4 +42,6 @@ events:
     create:
         title: "Create an event"
 widget:
-    title: "Widget"        
+    title: "Widget"
+toolsbox:
+    title: "Tool Box"

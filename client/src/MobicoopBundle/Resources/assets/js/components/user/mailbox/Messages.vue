@@ -37,7 +37,6 @@
               :key="0"
               href="#tab-cm"
               class="ma-0"
-
               ripple
               @click="reloadOnIcon()"
             >
@@ -46,20 +45,27 @@
               </v-icon>
               <p>{{ $t("headersCategories.titleCarpool") }}</p>
             </v-tab>
-            <v-tab
-              :key="1"
-              href="#tab-dm"
-              class="ma-0"
-              ripple
-              @click="reloadOnIcon()"
-            >
-              <v-icon class="display-1">
-                mdi-chat
-              </v-icon>
-              <p>
-                {{ $t("headersCategories.titleLive") }}
-              </p>
-            </v-tab>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-tab
+                  :key="1"
+                  href="#tab-dm"
+                  class="ma-0"
+                  ripple
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="reloadOnIcon()"
+                >
+                  <v-icon class="display-1">
+                    mdi-chat
+                  </v-icon>
+                  <p>
+                    {{ $t("headersCategories.titleLive") }}
+                  </p>
+                </v-tab>
+              </template>
+              <span>{{ $t('tooltip.message') }}</span>
+            </v-tooltip>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">

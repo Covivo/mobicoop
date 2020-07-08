@@ -1,34 +1,43 @@
-import dataProvider from '@api-platform/admin/lib/hydra/dataProvider';
+import { GET_LIST } from 'react-admin';
+
 import { dataProviderAdapter } from './dataProviderAdapter';
 import { fetchJson } from './fetchJson';
+import hydraDataProvider from './hydraDataProvider';
 
-const getEmptyHydraSchema = () => Promise.resolve({ api: { resources: [] } });
+/**
+ * This transformer allows to transform API response before hydra to react transform
+ * This is usefull for "non-standard" (no jsonld) endpoints such as solidary_searches
+ */
+const customResponseTransformer = (type, resource) => (response) => {
+  if (type === GET_LIST && resource === 'solidary_searches') {
+    response.json['hydra:member'] = response.json.results.map((item, index) => ({
+      ...item,
+      id: index, // The id is always 999999999 from the api, so we transform it for react-admin
+    }));
+  }
 
-const hydraDataProvider = dataProvider(
-  process.env.REACT_APP_API,
-  fetchJson,
-  getEmptyHydraSchema,
-  false
+  return response;
+};
+
+const customErrorHandler = (type, resource) => (error) => {
+  if (type === GET_LIST && resource === 'solidary_searches') {
+    // We have an error if there's no results for the moment...
+    // So return an empty array in this case
+    // @TODO: Fix the api for "Call to a member function setOrigin() on null"
+    if (error.status === 500) {
+      return { json: { ['hydra:member']: [] } };
+    }
+  }
+
+  throw error;
+};
+
+export default dataProviderAdapter(
+  hydraDataProvider(
+    process.env.REACT_APP_API,
+    fetchJson,
+    customResponseTransformer,
+    customErrorHandler,
+    true
+  )
 );
-
-// "transformReactAdminDataToRequestBody" from original data provider returns a Promise.resolve
-// It doesn't stringify data before sending it, so we take care by ourself to stringify it
-// Original data provider => https://github.com/api-platform/admin/blob/master/src/hydra/dataProvider.js
-const applyActionStringify = (originalFunc) => (resource, params) =>
-  originalFunc(resource, { ...params, data: JSON.stringify(params.data) });
-
-hydraDataProvider.update = applyActionStringify(hydraDataProvider.update);
-hydraDataProvider.create = applyActionStringify(hydraDataProvider.create);
-
-// Override getMany because of "hasIdSearchFilter" that need to have a schema entry for each resource
-// https://github.com/api-platform/admin/blob/master/src/hydra/dataProvider.js#L418
-hydraDataProvider.getMany = (resource, params) =>
-  Promise.all(
-    params.ids.map((id) => hydraDataProvider.getOne(resource, { id }))
-  ).then((responses) => ({ data: responses.map(({ data }) => data) }));
-
-// Mimic HydraAdmin initialisation
-// So that, the internal schema is initialised with "getEmptyHydraSchema" data
-hydraDataProvider.introspect();
-
-export default dataProviderAdapter(hydraDataProvider);

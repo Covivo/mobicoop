@@ -91,8 +91,6 @@ services:
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
-        
-
     # CONTROLLERS AND SERVICES
 
     # Article
@@ -131,6 +129,7 @@ services:
 
     App\Carpool\Service\ProofManager:
         arguments:
+            $prefix: '%env(string:CARPOOL_PROOF_PREFIX)%'
             $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
@@ -346,9 +345,24 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
+    App\Image\EntityListener\IconListener:
+        arguments:
+            $types: '%images%'
+            $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
     App\Image\Service\ImageManager:
         arguments:
             $types: '%images%'
+            $dataUri: '%env(string:DATA_URI)%'
+
+    # RelayPoint
+    App\RelayPoint\EntityListener\RelayPointTypeListener:
+        arguments:
+            $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
     # Import
     App\Import\Controller\:
@@ -400,15 +414,37 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    App\Match\Service\MassPublicTransportPotentialManager:
+        arguments:
+            $params:
+                ptProvider: '%env(string:MOBIMATCH_PT_PROVIDER)%'
+                ptAlgorithm: '%env(string:MOBIMATCH_PT_ALGORITHM)%'
+                ptMaxConnections: '%env(int:MOBIMATCH_PT_MAXIMAL_CONNECTIONS)%'
+                ptMaxDistanceWalkFromHome: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_HOME)%'
+                ptMaxDistanceWalkFromWork: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%'
+        tags:
+            - { name: monolog.logger, channel: mass }
+
     # Price
     App\Price\Controller\:
         resource: '../src/Price/Controller'
         tags: ['controller.service_arguments']
 
+    # Public transport
+    App\PublicTransport\Service\PTDataProvider:
+        arguments:
+            $params:
+                ptProviders: '%env(json:file:resolve:PT_PROVIDERS)%'
+
     # Rdex
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
         tags: ['controller.service_arguments']
+
+    App\Rdex\Service\RdexManager:
+        arguments:
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
     
     # User
     App\User\Controller\:
