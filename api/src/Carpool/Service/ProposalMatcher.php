@@ -1491,14 +1491,13 @@ class ProposalMatcher
      */
     public function findPotentialMatchingsForProposals(array $proposalIds)
     {
-        self::print_mem(1);
+        $this->print_mem(1);
 
         gc_enable();
         // we create chunks of proposals to avoid freezing
-        $chunk = 10;
-        $proposalsChunked = array_chunk($proposalIds, $chunk, true);
+        $proposalsChunked = array_chunk($proposalIds, $this->params['importChunkSize'], true);
 
-        self::print_mem(2);
+        $this->print_mem(2);
 
         foreach ($proposalsChunked as $proposalChunk) {
             $ids=[];
@@ -1515,7 +1514,7 @@ class ProposalMatcher
             ]);
             $q->execute();
 
-            self::print_mem(3);
+            $this->print_mem(3);
 
             $proposals = $this->proposalRepository->findBy(['id'=>$ids]);
             $potentialProposals = [];
@@ -1606,7 +1605,7 @@ class ProposalMatcher
             gc_collect_cycles();
             $this->logger->info('End searching potentials | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             
-            self::print_mem(4);
+            $this->print_mem(4);
 
             // we create the candidates array
             $candidates = $this->createCandidates($potentialProposals);
@@ -1620,7 +1619,7 @@ class ProposalMatcher
             unset($potentialProposals);
             gc_collect_cycles();
  
-            self::print_mem(5);
+            $this->print_mem(5);
 
             // create the array for multimatch
             $this->logger->info('Start creating multimatch array | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -1633,11 +1632,10 @@ class ProposalMatcher
             }
             $this->logger->info('End creating multimatch array, size : ' . count($multimatch) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-            self::print_mem(6);
+            $this->print_mem(6);
     
-            // create a batch
-            $batchSize = 50;
-            $batches = array_chunk($multimatch, $batchSize);
+            // create a batch for directions calculation
+            $batches = array_chunk($multimatch, $this->params['importBatchMatchSize']);
     
             $potentialMatchings = []; // indexed by driver proposal id
             foreach ($batches as $key=>$batch) {
@@ -1707,7 +1705,7 @@ class ProposalMatcher
                 gc_collect_cycles();
             }
 
-            self::print_mem(7);
+            $this->print_mem(7);
 
             // clean
             foreach ($candidates as $item) {
@@ -1728,7 +1726,7 @@ class ProposalMatcher
             unset($batches);
             gc_collect_cycles();
 
-            self::print_mem(8);
+            $this->print_mem(8);
     
             $matchings = [];
             foreach ($potentialMatchings as $proposalOfferId => $potentials) {
@@ -1761,7 +1759,7 @@ class ProposalMatcher
             unset($potentialMatchings);
             gc_collect_cycles();
 
-            self::print_mem(9);
+            $this->print_mem(9);
     
             // we complete the matchings with the waypoints and criteria
             $nb = 1;
@@ -1940,7 +1938,7 @@ class ProposalMatcher
             $this->entityManager->clear();
             $this->logger->info('End flushing multimatch | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-            self::print_mem(10);
+            $this->print_mem(10);
 
             // clean
             foreach ($matchings as $matching) {
@@ -1962,7 +1960,7 @@ class ProposalMatcher
 
             $ids = null;
             unset($ids);
-            self::print_mem(11);
+            $this->print_mem(11);
         }
     }
 
