@@ -180,7 +180,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         }
         fullWidth
         disabled
-        label="Adresse actuelle"
         className={classes.spacedHalfwidth}
       />
 
