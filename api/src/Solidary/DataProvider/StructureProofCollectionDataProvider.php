@@ -25,7 +25,7 @@ namespace App\Solidary\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Entity\Proof;
+use App\Solidary\Entity\StructureProof;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\StructureManager;
 use Symfony\Component\Security\Core\Security;
@@ -34,7 +34,7 @@ use App\User\Entity\User;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ProofCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class StructureProofCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $filters;
     private $structureManager;
@@ -52,7 +52,7 @@ final class ProofCollectionDataProvider implements CollectionDataProviderInterfa
             $this->filters = $context['filters'];
         }
 
-        return Proof::class === $resourceClass;
+        return StructureProof::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
