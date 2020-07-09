@@ -1,10 +1,6 @@
 import React from 'react';
 
 export const ReferenceRecordIdMapper = ({ children, attribute, record, ...props }) => {
-  console.info(children);
-  console.info(attribute);
-  console.info(record);
-  console.info(props);
   if (!record[attribute]) {
     return null;
   }

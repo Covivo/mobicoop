@@ -82,6 +82,33 @@ const pickManagedBeneficiaryData = (params) => ({
 });
 
 /**
+ * The backend is not able to handle all the fields on PUT
+ * For exemple, if mMon is null it fail... However, this field is set to null when received by react-admin
+ * Failed to denormalize attribute "mMon" value for class "App\Solidary\Entity\Structure": Expected argument of type "boolean", "null" given at property path "mMon"
+ * It fail if the mMon field is not sent too... so we transform null to false...
+ */
+const fixManagedStructureData = (params) => ({
+  ...params,
+  data: {
+    ...pick(params.data, [
+      'name',
+      'mMinTime',
+      'mMaxTime',
+      'aMinTime',
+      'aMaxTime',
+      'eMinTime',
+      'eMaxTime',
+      'needs',
+      'subjects',
+    ]),
+    structureProofs: params.data.structureProofs.map((structureProof) => ({
+      ...structureProof,
+      structure_id: params.data.structure_id,
+    })),
+  },
+});
+
+/**
  * The backend is not able to handle deep fields like diaries (and we don't need it)
  * So we omit somes unhandled fields
  */
@@ -250,6 +277,10 @@ export const dataProviderAdapter = (originalProvider) => ({
 
     if (resource === 'solidary_volunteers') {
       newParams = pickManagedSolidaryVolunteerData(newParams);
+    }
+
+    if (resource === 'structures') {
+      newParams = fixManagedStructureData(newParams);
     }
 
     return originalProvider.update(resource, newParams);
