@@ -295,7 +295,6 @@ class CommunityManager
 
     /**
      * Give the roles : community_manager to the creator of a public community and save the data
-     * Also give the special role to user : community_restrict for display only communities he created
      *
      * @param Community       $community           The community created
      * @return void
@@ -305,17 +304,12 @@ class CommunityManager
         $user = $community->getUser();
 
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
-        $authItemRestrict = $this->authItemRepository->findByName('community_restrict');
 
         //Check if the user dont have the ROLE_COMMUNITY_MANAGER right yet
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
-
-            $userAuthAssignmentRestrist = new UserAuthAssignment();
-            $userAuthAssignmentRestrist->setAuthItem($authItemRestrict);
-            $user->addUserAuthAssignment($userAuthAssignmentRestrist);
 
             $this->entityManager->persist($user);
         }
