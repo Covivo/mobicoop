@@ -53,6 +53,7 @@ use App\User\Entity\PushToken;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
+use App\Match\Entity\Mass;
 
 /**
  * Notification manager
@@ -351,6 +352,10 @@ class NotificationManager
                 case SolidaryContact::class:
                     $titleContext = ['user'=>$object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
                     $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                break;
+                case Mass::class:
+                    $titleContext = ['massId'=>$object->getId()];
+                    $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
                 break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {

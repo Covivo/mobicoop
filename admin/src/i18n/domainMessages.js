@@ -51,6 +51,15 @@ const fr = {
     },
   },
   custom: {
+    structure_proofs: {
+      type: {
+        checkbox: 'Case a cocher',
+        input: 'Champs Texte',
+        selectbox: 'Select',
+        radio: 'Radio bouton',
+        file: 'Fichier',
+      },
+    },
     actions: {
       solidary_update_progress_manually: 'Mise à jour de la progression',
       solidary_more_infos_sms: "Demande d'informations supplémentaires par SMS",
@@ -140,6 +149,8 @@ const fr = {
     solidary: {
       internalMessages: 'Messages internes',
       internalMessagesWith: 'Messages interne avec %{username}',
+      askFormalResponse: 'Solliciter une réponse formelle',
+      askFormalResponseWith: 'Solliciter une réponse formelle avec %{username}',
       sendSMSTo: 'Envoyer un SMS à %{username}',
       sendSMS: 'Envoyer un SMS',
       associatedAsk: 'Demande associée',

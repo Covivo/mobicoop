@@ -2,6 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { DateInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
+import { subYears } from 'date-fns';
+import { useField } from 'react-final-form';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, CircularProgress, TextField } from '@material-ui/core';
+
 import {
   TextInput,
   SelectInput,
@@ -11,9 +16,7 @@ import {
   useDataProvider,
   useNotify,
 } from 'react-admin';
-import { useField } from 'react-final-form';
-import { makeStyles } from '@material-ui/core/styles';
-import { Box, CircularProgress, TextField } from '@material-ui/core';
+
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
 const useStyles = makeStyles({
@@ -158,7 +161,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         source="birthDate"
         label={translate('custom.label.user.birthDate')}
         validate={[required()]}
-        options={{ format: 'dd/MM/yyyy' }}
+        options={{ format: 'dd/MM/yyyy', initialFocusedDate: subYears(new Date(), 18) }}
         providerOptions={{ locale: frLocale }}
         className={classes.spacedHalfwidth}
       />
@@ -180,7 +183,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         }
         fullWidth
         disabled
-        label="Adresse actuelle"
         className={classes.spacedHalfwidth}
       />
 

@@ -22,19 +22,20 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
   const handleSubmit = async (content) => {
     const { data: action } = await dataProvider.getOne('actions', { id: content.action });
 
+    const data = {
+      actionName: action.name,
+      solidary: solidary.id,
+    };
+
+    if (content.user) {
+      data.user = `/users/${content.user}`;
+    }
+
     mutate(
       {
         type: 'create',
         resource: 'solidary_animations',
-        payload: {
-          data: {
-            actionName: action.name,
-            // @TODO: Use id directly when dataprovider maps to id
-            // I don't known why but actually deep object are not transformed
-            user: `/users/${solidary.solidaryUser.user.id}`,
-            solidary: solidary.id,
-          },
-        },
+        payload: { data },
       },
       {
         onSuccess: () => {

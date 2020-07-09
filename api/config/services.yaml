@@ -392,7 +392,6 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
-            $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
         tags:
             - { name: monolog.logger, channel: mass }
 
@@ -405,6 +404,12 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    App\Match\Service\MassComputeManager:
+        arguments:
+            $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
+
+        tags:
+            - { name: monolog.logger, channel: mass }
     App\Match\Service\MassPublicTransportPotentialManager:
         arguments:
             $params:
@@ -413,6 +418,8 @@ services:
                 ptMaxConnections: '%env(int:MOBIMATCH_PT_MAXIMAL_CONNECTIONS)%'
                 ptMaxDistanceWalkFromHome: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_HOME)%'
                 ptMaxDistanceWalkFromWork: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%'
+                ptMaxNbCarDuration: '%env(int:MOBIMATCH_PT_MAXIMUM_NB_CAR_DURATION)%'
+                roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
         tags:
             - { name: monolog.logger, channel: mass }
 

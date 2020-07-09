@@ -1,3 +1,9 @@
+# Release 1.8.0
+
+## CLIENT
+
+* Solidary carpool ask are shown in the mailbox and can be accepted
+
 # Release 1.7.0
 
 ## API

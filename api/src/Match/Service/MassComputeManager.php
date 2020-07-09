@@ -45,12 +45,14 @@ class MassComputeManager
     private $formatDataManager;
     private $geoTools;
     private $massPersonRepository;
+    private $roundTripCompute;
 
-    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository)
+    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository, bool $roundTripCompute)
     {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
         $this->massPersonRepository = $massPersonRepository;
+        $this->roundTripCompute = $roundTripCompute;
     }
 
     /**
@@ -78,6 +80,7 @@ class MassComputeManager
             "nbCarpoolersAsBoth" => 0,
             "nbCarpoolersTotal" => 0,
             "humanTotalTravelDuration" => "",
+            "humanTotalTravelDurationPerYear" => "",
             "humanAverageTravelDuration" => "",
             "humanAverageTravelDurationPerYear" => ""
         ];
@@ -166,6 +169,26 @@ class MassComputeManager
         $computedData["averageTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["averageTravelDistancePerYear"]);
         $computedData["totalTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistance"]);
         $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+
+        
+        // If we compute for round trip, we multiply everything by two
+        if ($this->roundTripCompute) {
+            foreach ($computedData as $key => $data) {
+                if (is_numeric($data)) {
+                    $computedData[$key] = $data * 2;
+                }
+            }
+
+            // We have to redefined the human version of several computed data
+            $computedData["humanTotalTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"]);
+            $computedData["humanTotalTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDurationPerYear"]);
+            $computedData["humanAverageTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDuration"]);
+            $computedData["humanAverageTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDurationPerYear"]);
+
+            $computedData['roundtripComputed'] = true;
+        } else {
+            $computedData['roundtripComputed'] = false;
+        }
 
         $mass->setComputedData($computedData);
 

@@ -124,7 +124,7 @@ class SolidaryUserManager
         // Get the structure of the Admin
         $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
-        if (!is_null($structures) || count($structures)>0) {
+        if (is_array($structures) && isset($structures[0])) {
             $structureAdmin = $structures[0];
         }
 

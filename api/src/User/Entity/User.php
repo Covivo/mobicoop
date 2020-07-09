@@ -101,7 +101,6 @@ use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -352,12 +351,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          },
- *          "structures"={
- *              "method"="GET",
- *              "path"="/users/{id}/structures",
- *              "normalization_context"={"groups"={"userStructure"}},
- *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
@@ -1084,13 +1077,6 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
-     * @var array|null used to get the structures of a user
-     * @Groups({"userStructure"})
-     * @MaxDepth(1)
-     */
-    private $structures;
-
-    /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
      * @Groups({"readUserAdmin" })
      */
@@ -1108,7 +1094,8 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A User can have multiple entry in Operate
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist","remove"})
+     * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
     private $operates;
@@ -2554,14 +2541,26 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getStructures()
+    /**
+     * Get User Solidary Structures
+     * @Groups({"readUser", "write"})
+     * @MaxDepth(1)
+     */
+    public function getSolidaryStructures()
     {
-        return $this->structures;
+        $structures = [];
+        if (!is_null($this->getOperates())) {
+            foreach ($this->getOperates() as $operate) {
+                $structures[] = $operate->getStructure();
+            }
+        }
+
+        return $structures;
     }
 
-    public function setStructures(?array $structures): self
+    public function setSolidaryStructures(?array $solidaryStructures): self
     {
-        $this->structures = $structures;
+        $this->solidaryStructures = $solidaryStructures;
 
         return $this;
     }
@@ -2588,12 +2587,10 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    /**
-     * @return ArrayCollection|Operate[]
-     */
-    public function getOperates(): ArrayCollection
+    
+    public function getOperates()
     {
-        return $this->operates;
+        return $this->operates->getValues();
     }
 
     public function addOperate(Operate $operate): self
@@ -2610,10 +2607,6 @@ class User implements UserInterface, EquatableInterface
     {
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
-            // set the owning side to null (unless already changed)
-            if ($operate->getUser() === $this) {
-                $operate->setUser(null);
-            }
         }
 
         return $this;
