@@ -900,3 +900,10 @@ platform_widget:
         fr: /widget
         en: /widget
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
+
+# Default page when no longer exists
+page_no_longer_exists:
+    path:
+        fr: /page-no-longer-exists
+        en: /page-no-longer-exists
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPageNoLongerExists

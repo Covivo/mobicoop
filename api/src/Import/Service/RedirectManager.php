@@ -81,7 +81,10 @@ class RedirectManager
                     break;
             }
             return [$redirect];
+        } elseif ($redirects = $this->redirectRepository->findByUriWithWildCard($originUri)) {
+            return [$redirects[0]];
         }
+
         return [];
     }
 }
