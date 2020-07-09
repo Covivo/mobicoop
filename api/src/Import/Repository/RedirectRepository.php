@@ -60,4 +60,11 @@ class RedirectRepository
     {
         return $this->repository->findOneBy($criteria);
     }
+
+    public function findByUriWithWildCard(string $uri)
+    {
+        $query = "SELECT r FROM App\Import\Entity\Redirect r WHERE LOCATE(r.originUri,'".$uri."') = 1";
+        $query = $this->entityManager->createQuery($query);
+        return $query->getResult();
+    }
 }

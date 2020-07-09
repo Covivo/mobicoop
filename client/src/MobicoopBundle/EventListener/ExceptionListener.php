@@ -69,9 +69,12 @@ class ExceptionListener
                     case Redirect::TYPE_ARTICLE:
                         $url = $this->router->generate('article_get.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
                         break;
+                    case Redirect::TYPE_NO_LONGER_EXISTS:
+                        $url = $this->router->generate('page_no_longer_exists');
+                        break;
                 }
                 if (!is_null($url)) {
-                    $response = new RedirectResponse($url);
+                    $response = new RedirectResponse($url, 301);
                     $event->setResponse($response);
                 }
             }
