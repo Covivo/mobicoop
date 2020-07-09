@@ -20,6 +20,8 @@ import {
   useTranslate,
   BooleanField,
   List,
+  ReferenceField,
+  ImageField,
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -189,6 +191,13 @@ export const CommunityShow = (props) => {
       <TabbedShowLayout>
         <Tab label={translate('custom.label.community.detail')}>
           <TextField source="name" label={translate('custom.label.community.name')} />
+          <ReferenceField
+            reference="images"
+            source="images[0]"
+            label={translate('custom.label.event.currentImage')}
+          >
+            <ImageField source="versions.square_250" />
+          </ReferenceField>
           <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
           <FunctionField
             source="address"
