@@ -34,8 +34,8 @@ const KibanaWidget = ({
     useEffect(() => {
       const loadCommunitiesList = () =>
         dataProvider
-          .getList('communities', {
-            pagination: { page: 1, perPage: 2 },
+          .getList('communities/owned', {
+            pagination: { page: 1, perPage: 5 },
             sort: { field: 'id', order: 'ASC' },
           })
           .then(
@@ -71,10 +71,10 @@ const KibanaWidget = ({
               title="Kibana iframe"
             />
           ) : (
-            <p>
-              {kibanaError ? kibanaError : translate('custom.dashboard.pendingConnectionToKibana')}
-            </p>
-          )}
+              <p>
+                {kibanaError ? kibanaError : translate('custom.dashboard.pendingConnectionToKibana')}
+              </p>
+            )}
         </CardContent>
       </Card>
     );
