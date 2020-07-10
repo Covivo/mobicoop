@@ -366,7 +366,7 @@ class SolidaryUser
     private $needs;
 
     /**
-     * @var ArrayCollection The solidary user structure
+     * @var ArrayCollection The solidary user structures
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","readSolidary","writeSolidary"})

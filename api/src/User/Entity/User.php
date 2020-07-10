@@ -904,12 +904,12 @@ class User implements UserInterface, EquatableInterface
     private $logs;
 
     /**
-     * @var ArrayCollection|null A user may have many diary action logs as an admin.
+     * @var ArrayCollection|null A user may have many action logs as an delegate.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","write"})
      */
-    private $logsAdmin;
+    private $logsAsDelegate;
 
     /**
      * @var ArrayCollection|null A user may have many action logs.
@@ -1013,7 +1013,7 @@ class User implements UserInterface, EquatableInterface
     private $carpoolProofsAsPassenger;
 
     /**
-     * @var string|null Token for unsubscribee the user from receiving email
+     * @var string|null Token for news unsubscription
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1117,7 +1117,7 @@ class User implements UserInterface, EquatableInterface
         $this->recipients = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
         $this->logs = new ArrayCollection();
-        $this->logsAdmin = new ArrayCollection();
+        $this->logsAsDelegate = new ArrayCollection();
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
@@ -2023,28 +2023,28 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getLogsAdmin()
+    public function getLogsAsDelegate()
     {
-        return $this->logsAdmin->getValues();
+        return $this->logsAsDelegate->getValues();
     }
 
-    public function addLogAdmin(Log $logAdmin): self
+    public function addLogAsDelegate(Log $logAsDelegate): self
     {
-        if (!$this->logsAdmin->contains($logAdmin)) {
-            $this->logsAdmin->add($logAdmin);
-            $logAdmin->setAdmin($this);
+        if (!$this->logsAsDelegate->contains($logAsDelegate)) {
+            $this->logsAsDelegate->add($logAsDelegate);
+            $logAsDelegate->setUserDelegate($this);
         }
 
         return $this;
     }
 
-    public function removeLogAdmin(Log $logAdmin): self
+    public function removeLogAsDelegate(Log $logAsDelegate): self
     {
-        if ($this->logsAdmin->contains($logAdmin)) {
-            $this->logsAdmin->removeElement($logAdmin);
+        if ($this->logsAsDelegate->contains($logAsDelegate)) {
+            $this->logsAsDelegate->removeElement($logAsDelegate);
             // set the owning side to null (unless already changed)
-            if ($logAdmin->getAdmin() === $this) {
-                $logAdmin->setAdmin(null);
+            if ($logAsDelegate->getUserDelegate() === $this) {
+                $logAsDelegate->setUserDelegate(null);
             }
         }
 

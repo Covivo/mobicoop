@@ -557,7 +557,7 @@ class Criteria
     private $driverMasterPrice;
 
     /**
-    * @var float|null The total price selected by the user as a driver.
+    * @var float|null The total price selected by the user as a passenger.
     *
     * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
     * @Groups({"read","results","write","thread"})
