@@ -1,4 +1,5 @@
 import React from 'react';
+import get from 'lodash.get';
 
 import {
   List,
@@ -10,9 +11,15 @@ import {
   ReferenceInput,
   AutocompleteInput,
   Filter,
+  useTranslate,
 } from 'react-admin';
 
 import { usernameRenderer } from '../../../../utils/renderers';
+
+const ActionField = ({ source, record = {} }) => {
+  const translate = useTranslate();
+  return <span>{translate(`custom.actions.${get(record, source)}`)}</span>;
+};
 
 const SolidaryFilter = (props) => (
   <Filter {...props}>
@@ -46,7 +53,7 @@ export const SolidaryList = (props) => (
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />
-      <TextField source="lastAction" />
+      <ActionField source="lastAction" />
       <DateField source="createdDate" />
       <ShowButton />
     </Datagrid>
