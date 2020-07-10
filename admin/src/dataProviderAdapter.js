@@ -8,6 +8,16 @@ import { fetchJson } from './fetchJson';
  */
 
 /**
+ * Transform an hydra id (eg: /structures/42) in a raw id (eg: 42)
+ */
+const rawIdExtractor = (resource) => (hydraId) => hydraId.replace(`/${resource}/`, '');
+
+/**
+ * Transform raw id (eg: 42) in an hydra id (eg: /structures/42)
+ */
+const hydraIdBuilder = (resource) => (rawId) => `${resource}/${rawId}`;
+
+/**
  * The "id" field contains a string of this type "/api/voluntary/1" because of hydra mapper
  * The backend isn't able to handle string as id, so we transform it back to an "int" using originId
  */
@@ -134,6 +144,8 @@ const userRoles = [
   '/auth_items/172',
 ];
 
+const authAssignementCache = new Map();
+
 /**
  * Custom getOne Provider for "users"
  * Because we need to map roles territies
@@ -145,14 +157,22 @@ const getOneUser = async (provider, params) => {
 
   const rolesTerritory = await Promise.all(
     user.userAuthAssignments.map((element) =>
-      provider
-        .getOne('userAuthAssignments', { id: element })
-        .then(({ data }) => data)
-        .catch((error) => {
-          console.log('An error occured during user rights retrieving:', error);
-        })
+      authAssignementCache[element]
+        ? Promise.resolve(authAssignementCache[element])
+        : provider
+            .getOne('userAuthAssignments', { id: element })
+            .then(({ data }) => {
+              authAssignementCache[element] = data;
+              return data;
+            })
+            .catch((error) => {
+              console.log('An error occured during user rights retrieving:', error);
+            })
     )
   );
+
+  // We need to fix bad api handling for structures because of reference system
+  user.solidaryStructures = user.solidaryStructures.map((s) => s.id);
 
   user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
   return { data: user };
@@ -195,6 +215,12 @@ const updateUser = async (provider, params) => {
           )
         : [];
   }
+
+  newParams.data.solidaryStructures = newParams.data.solidaryStructures.map(
+    (solidaryStructure) => ({
+      id: parseInt(rawIdExtractor('structures')(solidaryStructure), 10),
+    })
+  );
 
   return provider.update('users', {
     id: newParams.id,
