@@ -103,6 +103,10 @@ services:
         resource: '../src/Auth/Controller'
         tags: ['controller.service_arguments']
 
+    App\Auth\Service\AuthManager:
+        arguments:
+            $modules: '%env(json:file:resolve:MODULES_AUTHORIZED)%'
+
     # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
