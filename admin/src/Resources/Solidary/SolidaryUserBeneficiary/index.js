@@ -5,7 +5,7 @@ import { SolidaryUserBeneficiaryEdit } from './SolidaryUserBeneficiaryEdit';
 
 export default {
   options: {
-    label: 'Demandeurs solidaires',
+    label: 'Bénéficiaires',
   },
   list: SolidaryUserBeneficiaryList,
   edit: SolidaryUserBeneficiaryEdit,
