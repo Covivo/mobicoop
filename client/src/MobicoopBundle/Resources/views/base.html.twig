@@ -8,6 +8,7 @@
         </title>
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
+        {% block desc %}{% endblock %}
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
         {% block favicon %}
          {% endblock %}
