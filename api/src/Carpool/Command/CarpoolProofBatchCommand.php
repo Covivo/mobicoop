@@ -73,6 +73,6 @@ class CarpoolProofBatchCommand extends Command
             }
             $toDate->setTime(23, 59, 59, 999);
         }
-        $this->proofManager->sendProofs($fromDate, $toDate);
+        return $this->proofManager->sendProofs($fromDate, $toDate);
     }
 }

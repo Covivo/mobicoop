@@ -491,7 +491,7 @@ class ProofManager
      *
      * @param DateTime|null $fromDate   The start of the period for which we want to send the proofs
      * @param DateTime|null $toDate     The end of the period  for which we want to send the proofs
-     * @return void
+     * @return int  The number of proofs sent
      */
     public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null)
     {
@@ -509,6 +509,7 @@ class ProofManager
 
         // we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
+        $nbSent = 0;
 
         // send these proofs
         foreach ($proofs as $proof) {
@@ -519,12 +520,14 @@ class ProofManager
             $this->logger->info("Result of the send for proof #" . $proof->getId() . " : code " . $result->getCode() . " | value : ".$result->getValue());
             if ($result->getCode() == 200) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
+                $nbSent++;
             } else {
                 $proof->setStatus(CarpoolProof::STATUS_ERROR);
             }
             $this->entityManager->persist($proof);
         }
         $this->entityManager->flush();
+        return $nbSent;
     }
 
     /**
