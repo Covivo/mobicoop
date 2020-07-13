@@ -161,6 +161,8 @@ const UserList = (props) => {
         reference="territories"
         allowEmpty={false}
         resettable
+        perPage={20}
+        filterToQuery={searchText => ({ name: searchText })}
       >
         <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
