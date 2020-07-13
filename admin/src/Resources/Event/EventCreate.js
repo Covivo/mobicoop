@@ -35,6 +35,7 @@ export const EventCreate = (props) => {
       <SimpleForm>
         <TextInput
           fullWidth
+          required
           source="name"
           label={translate('custom.label.event.name')}
           validate={[required()]}
@@ -49,6 +50,7 @@ export const EventCreate = (props) => {
           source="description"
           label={translate('custom.label.event.resume')}
           validate={required()}
+          required
           formClassName={classes.fullwidth}
         />
         <RichTextInput
@@ -56,6 +58,7 @@ export const EventCreate = (props) => {
           source="fullDescription"
           label={translate('custom.label.event.resumefull')}
           validate={required()}
+          required
           formClassName={classes.richtext}
         />
 
@@ -70,6 +73,7 @@ export const EventCreate = (props) => {
           source="address"
           label={translate('custom.label.event.adresse')}
           validate={required()}
+          required
           formClassName={classes.fullwidth}
         />
 
