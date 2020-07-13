@@ -143,7 +143,7 @@ export const CommunityEdit = (props) => {
           />
           <ReferenceField
             reference="images"
-            source="images[0]"
+            source="images[0].id"
             label={translate('custom.label.event.currentImage')}
           >
             <ImageField source="versions.square_250" />

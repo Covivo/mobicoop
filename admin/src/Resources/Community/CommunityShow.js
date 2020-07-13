@@ -112,7 +112,7 @@ const Aside = ({ record }) => {
                 <Typography variant="body2">
                   {record.updatedDate
                     ? translate('custom.label.community.updatedAt') +
-                      new Date(record.updatedDate).toLocaleDateString()
+                    new Date(record.updatedDate).toLocaleDateString()
                     : translate('custom.label.community.neverUpdate')}
                 </Typography>
               }
@@ -193,7 +193,7 @@ export const CommunityShow = (props) => {
           <TextField source="name" label={translate('custom.label.community.name')} />
           <ReferenceField
             reference="images"
-            source="images[0]"
+            source="images[0].id"
             label={translate('custom.label.event.currentImage')}
           >
             <ImageField source="versions.square_250" />
