@@ -47,7 +47,6 @@
                 cols="5"
                 class="text-h6 text-center"
               >
-                class="text-h6
                 <regular-days-summary 
                   :mon-active="lResult.monCheck"
                   :tue-active="lResult.tueCheck"
@@ -64,7 +63,7 @@
                 cols="3"
                 class="text-h6 text-center"
               >
-                class="text-h6'places', lResult.seats, { seats: lResult.seats }) }}
+                {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
               </v-col>
 
               <!-- Price -->
@@ -73,21 +72,22 @@
                 class="text-h6 text-center"
               >
                 {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
-                class="text-h6tip
-                slot="append"
-                right
-                color="info"
-                :max-width="'35%'"
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
                 >
-                <template v-slot:activator="{ on }">
-                  <v-icon
-                    justify="left"
-                    v-on="on"
-                  >
-                    mdi-help-circle-outline
-                  </v-icon>
-                </template>
-                <span>{{ $t('priceTooltip') }}</span>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('priceTooltip') }}</span>
+                </v-tooltip>
               </v-col>
             </v-row>
 
