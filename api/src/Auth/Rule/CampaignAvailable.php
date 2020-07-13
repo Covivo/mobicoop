@@ -35,8 +35,8 @@ class CampaignAvailable implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if (isset($params['modules']['campaign'])) {
-            return $params['modules']['campaign'];
+        if (isset($params['campaign'])) {
+            return $params['campaign'];
         }
         return true;
     }

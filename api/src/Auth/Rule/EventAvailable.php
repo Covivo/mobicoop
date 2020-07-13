@@ -35,8 +35,8 @@ class EventAvailable implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if (isset($params['modules']['event'])) {
-            return $params['modules']['event'];
+        if (isset($params['event'])) {
+            return $params['event'];
         }
         return true;
     }

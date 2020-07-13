@@ -35,8 +35,8 @@ class SolidaryAvailable implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if (isset($params['modules']['solidary'])) {
-            return $params['modules']['solidary'];
+        if (isset($params['solidary'])) {
+            return $params['solidary'];
         }
         return true;
     }
