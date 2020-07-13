@@ -23,6 +23,7 @@ import {
   List,
   ReferenceField,
   ImageField,
+
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -143,7 +144,7 @@ export const CommunityEdit = (props) => {
           />
           <ReferenceField
             reference="images"
-            source="images[0]"
+            source="images[0].id"
             label={translate('custom.label.event.currentImage')}
           >
             <ImageField source="versions.square_250" />
@@ -152,6 +153,7 @@ export const CommunityEdit = (props) => {
             label={translate('custom.label.event.uploadImage')}
             formClassName={classes.fullwidth}
           />
+
           <TextInput disabled source="originId" formClassName={classes.hiddenField} />
           <FunctionField
             label={translate('custom.label.community.oldAdress')}
@@ -238,7 +240,6 @@ export const CommunityEdit = (props) => {
             >
               <List
                 {...props}
-                perPage={2}
                 actions={null}
                 bulkActionButtons={<UserBulkActionButtons />}
                 sort={{ field: 'id', order: 'ASC' }}
