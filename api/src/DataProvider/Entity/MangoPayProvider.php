@@ -27,6 +27,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\Wallet;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\User\Entity\User;
 use LogicException;
@@ -102,6 +103,9 @@ class MangoPayProvider implements PaymentProviderInterface
     public function addBankAccount(BankAccount $bankAccount)
     {
 
+        // We need to check if there is a Wallet. If not, we create it
+        
+        
         // Build the body
         $user = $bankAccount->getPaymentProfile()->getUser();
         
@@ -142,6 +146,21 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
+     * Returns a collection of Wallet.
+     *
+     * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
+     * @return Wallet[]
+     */
+    public function getWallets(PaymentProfile $paymentProfile)
+    {
+        $wallets = [new Wallet()];
+
+
+
+        return $wallets;
+    }
+
+    /**
      * Deserialize a BankAccount
      * @param array $account                    The account to deserialize
      * @return BankAccount
@@ -149,6 +168,7 @@ class MangoPayProvider implements PaymentProviderInterface
     public function deserializeBankAccount(array $account)
     {
         $bankAccount = new BankAccount();
+        $bankAccount->setId($account['Id']);
         $bankAccount->setUserLitteral($account['OwnerName']);
         $bankAccount->setIban($account['IBAN']);
         $bankAccount->setBic($account['BIC']);

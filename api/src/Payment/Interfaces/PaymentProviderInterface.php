@@ -60,4 +60,12 @@ interface PaymentProviderInterface
      * @return BankAccount|null
      */
     public function addBankAccount(BankAccount $bankAccount);
+
+    /**
+     * Returns a collection of Wallet.
+     *
+     * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
+     * @return BankAccount[]
+     */
+    public function getWallets(PaymentProfile $paymentProfile);
 }

@@ -88,6 +88,7 @@ class PaymentProvider
              */
             
             $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
+            $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
         }
         return $user;
     }

@@ -121,6 +121,12 @@ class PaymentProfile
      */
     private $bankAccounts;
 
+    /**
+     * @var array|null A user wallets
+     * @Groups({"readPayment"})
+     */
+    private $wallets;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -206,6 +212,18 @@ class PaymentProfile
     public function setBankAccounts(array $bankAccounts): self
     {
         $this->bankAccounts = $bankAccounts;
+
+        return $this;
+    }
+
+    public function getWallets(): ?array
+    {
+        return $this->wallets;
+    }
+
+    public function setWallets(array $wallets): self
+    {
+        $this->wallets = $wallets;
 
         return $this;
     }
