@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,42 +20,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Interfaces;
+namespace App\Payment\DataPersister;
 
-use App\User\Entity\User;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Payment\Entity\BankAccount;
+use App\Payment\Service\PaymentProvider;
 
 /**
- * Payment Provider interface.
- *
- * A payment provider entity class must implement all these methods in order to perform all possible payment related actions
+ * Bank Account Data Persister
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
-interface PaymentProviderInterface
+final class BankAccountDataPersister implements ContextAwareDataPersisterInterface
 {
-    /**
-     * Returns a collection of Bank accounts.
-     *
-     * @param User $user     The User owning the Bank accounts
-     * @return BankAccount[]
-     */
-    public function getBankAccounts(User $user);
-    
-    /**
-     * Returns a single Bank account
-     *
-     * @param User $user     The User owning the Bank account
-     * @return BankAccount|null
-     */
-    public function getBankAccount(User $user);
-    
-    /**
-     * Add a BankAccount
-     *
-     * @param BankAccount $user     The BankAccount to create
-     * @return BankAccount|null
-     */
-    public function addBankAccount(BankAccount $bankAccount);
+    private $paymentProvider;
+
+    public function __construct(PaymentProvider $paymentProvider)
+    {
+        $this->paymentProvider = $paymentProvider;
+    }
+
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof BankAccount;
+    }
+
+    public function persist($data, array $context = [])
+    {
+        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            $data = $this->paymentProvider->addBankAccount($data);
+        }
+
+        return $data;
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
+    }
 }

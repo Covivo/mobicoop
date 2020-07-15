@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,42 +20,13 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Interfaces;
-
-use App\User\Entity\User;
-use App\Payment\Entity\BankAccount;
+namespace App\Payment\Exception;
 
 /**
- * Payment Provider interface.
- *
- * A payment provider entity class must implement all these methods in order to perform all possible payment related actions
- *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
-interface PaymentProviderInterface
+class PaymentException extends \LogicException
 {
-    /**
-     * Returns a collection of Bank accounts.
-     *
-     * @param User $user     The User owning the Bank accounts
-     * @return BankAccount[]
-     */
-    public function getBankAccounts(User $user);
-    
-    /**
-     * Returns a single Bank account
-     *
-     * @param User $user     The User owning the Bank account
-     * @return BankAccount|null
-     */
-    public function getBankAccount(User $user);
-    
-    /**
-     * Add a BankAccount
-     *
-     * @param BankAccount $user     The BankAccount to create
-     * @return BankAccount|null
-     */
-    public function addBankAccount(BankAccount $bankAccount);
+    const PAYMENT_INACTIVE = "Payment is not active on this platform";
+    const PAYMENT_NO_PROVIDER = "No provider given";
 }

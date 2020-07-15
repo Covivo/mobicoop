@@ -424,6 +424,11 @@ services:
             - { name: monolog.logger, channel: mass }
 
     #Payment
+    App\Payment\Service\PaymentProvider:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
+
     App\DataProvider\Entity\MangoPayProvider:
         arguments:
             $clientId: '%env(string:PAYMENT_CLIENTID)%'

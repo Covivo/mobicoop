@@ -21,51 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\DataProvider\Entity;
+namespace App\Payment\Service;
 
 use App\Payment\Entity\BankAccount;
-use App\Payment\Interfaces\PaymentProviderInterface;
+use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 
 /**
- * Payment Provider for MangoPay
+ * Payment provider.
+ *
+ * This service contains methods related to payment.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MangoPayProvider implements PaymentProviderInterface
+class PaymentProvider
 {
-    const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
-    const SERVER_URL = "https://api.mangopay.com/";
+    private $paymentActive;
+    private $paymentProvider;
+    
+    public function __construct(bool $paymentActive, string $paymentProvider)
+    {
+        if (!$paymentActive) {
+            throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
+        }
+        $this->paymentActive = $paymentActive;
 
-    private $clientId;
-    private $sandBoxMode;
-    private $serverUrl;
-    
-    public function __construct(string $clientId, bool $sandBoxMode)
-    {
-        $this->clientId = $clientId;
-        $this->sandBoxMode = $sandBoxMode;
-        ($this->sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
-    }
-    
-    /**
-     * Returns a collection of Bank accounts.
-     *
-     * @param User $user     The User owning the Bank accounts
-     * @return BankAccount[]
-     */
-    public function getBankAccounts(User $user)
-    {
-    }
-    
-    /**
-     * Returns a single Bank account
-     *
-     * @param User $user     The User owning the Bank account
-     * @return BankAccount|null
-     */
-    public function getBankAccount(User $user)
-    {
+        if (empty($paymentProvider)) {
+            throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
+        }
+        $this->paymentProvider = $paymentProvider;
     }
     
     /**
@@ -76,5 +60,7 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
+        echo $bankAccount->getUser()->getId();
+        die;
     }
 }
