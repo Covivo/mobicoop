@@ -77,6 +77,24 @@ class PaymentProvider
         return $this->providerInstance->addBankAccount($bankAccount);
     }
 
+    
+    /**
+     * Create a PaymentProfile
+     *
+     * @param PaymentProfile $paymentProfile
+     * @return PaymentProfile
+     */
+    public function createPaymentProfile(PaymentProfile $paymentProfile)
+    {
+        return $paymentProfile;
+    }
+    
+    /**
+     * Get the PaymentProfile of a User
+     *
+     * @param User $user    The User
+     * @return PaymentProfile|null
+     */
     public function getPaymentProfile(User $user)
     {
         //return $this->providerInstance->getBankAccounts($user);
