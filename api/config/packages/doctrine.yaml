@@ -125,6 +125,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Match/Entity'
                 prefix: 'App\Match\Entity'
                 alias: Match
+            Payment:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Payment/Entity'
+                prefix: 'App\Payment\Entity'
+                alias: Payment
             PublicTransport:
                 is_bundle: false
                 type: annotation
