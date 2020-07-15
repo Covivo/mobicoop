@@ -158,7 +158,7 @@ class Address implements \JsonSerializable
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary"})
+     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment"})
      */
     private $streetAddress;
 
@@ -166,7 +166,7 @@ class Address implements \JsonSerializable
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary"})
+     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $postalCode;
@@ -183,7 +183,7 @@ class Address implements \JsonSerializable
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary"})
+     * @Groups({"read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -216,7 +216,7 @@ class Address implements \JsonSerializable
      * @var string|null The region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary"})
+     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment"})
      */
     private $region;
 
@@ -240,7 +240,7 @@ class Address implements \JsonSerializable
      * @var string|null The country code of the address.
      *
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary"})
+     * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment"})
      */
     private $countryCode;
 

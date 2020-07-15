@@ -25,6 +25,7 @@ namespace App\Payment\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -67,9 +68,24 @@ class BankAccount
     private $userLitteral;
 
     /**
+     * @var Address|null The litteral name of the user owning this bank account
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $address;
+    
+    /**
+     * @var PaymentProfile The payment profile related to this bank account
+     * @MaxDepth(1)
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $paymentProfile;
+
+    /**
      * @var string The iban number of this bank account
      *
      * @Assert\NotBlank
+     * @Assert\Iban
      * @Groups({"readPayment","writePayment"})
      */
     private $iban;
@@ -78,6 +94,7 @@ class BankAccount
      * @var string The bic number of this bank account
      *
      * @Assert\NotBlank
+     * @Assert\Bic
      * @Groups({"readPayment","writePayment"})
      */
     private $bic;
@@ -92,7 +109,6 @@ class BankAccount
     /**
      * @var int The status of this payment profil (0 : Inactive, 1 : Active)
      *
-     * @Assert\NotBlank
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
@@ -122,6 +138,30 @@ class BankAccount
     public function setUserLitteral(?String $userLitteral): self
     {
         $this->userLitteral = $userLitteral;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getPaymentProfile(): ?PaymentProfile
+    {
+        return $this->paymentProfile;
+    }
+
+    public function setPaymentProfile(?PaymentProfile $paymentProfile): self
+    {
+        $this->paymentProfile = $paymentProfile;
 
         return $this;
     }

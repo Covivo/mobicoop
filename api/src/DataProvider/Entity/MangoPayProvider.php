@@ -24,10 +24,12 @@
 namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
+use App\Geography\Entity\Address;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\User\Entity\User;
+use LogicException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 
 /**
@@ -94,12 +96,49 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Add a BankAccount
      *
-     * @param PaymentProfile $paymentProfile     The PaymentProfile you want to add an BankAccount
      * @param BankAccount $user                  The BankAccount to create
      * @return BankAccount|null
      */
-    public function addBankAccount(PaymentProfile $paymentProfile, BankAccount $bankAccount)
+    public function addBankAccount(BankAccount $bankAccount)
     {
+
+        // Build the body
+        $user = $bankAccount->getPaymentProfile()->getUser();
+        
+        $body['OwnerName'] = $user->getGivenName()." ".$user->getFamilyName();
+        $body['IBAN'] = $bankAccount->getIban();
+        $body['BIC'] = $bankAccount->getBic();
+
+        // Addresse of the owner
+        $homeAddress = null;
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = $address;
+                break;
+            }
+        }
+        
+        if (!is_null($homeAddress)) {
+            $body['OwnerAddress'] = [
+                "AddressLine1" => $homeAddress->getStreetAddress(),
+                "City" => $homeAddress->getAddressLocality(),
+                "Region" => $homeAddress->getRegion(),
+                "PostalCode" => $homeAddress->getPostalCode(),
+                "Country" => substr($homeAddress->getCountryCode(), 0, 2)
+            ];
+        }
+
+        $dataProvider = new DataProvider($this->serverUrl."users/".$bankAccount->getPaymentProfile()->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS."iban");
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            $bankAccount = $this->deserializeBankAccount($data);
+        }
+        return $bankAccount;
     }
 
     /**
@@ -116,6 +155,23 @@ class MangoPayProvider implements PaymentProviderInterface
         $bankAccount->setCreatedDate(\DateTime::createFromFormat('U', $account['CreationDate']));
         $bankAccount->setComment($account['Tag']);
         $bankAccount->setStatus($account['Active']);
+
+        if (!empty($account['OwnerAddress'])) {
+            $address = new Address();
+            $streetAddress = $account['OwnerAddress']['AddressLine1'];
+            if (trim($account['OwnerAddress']['AddressLine2'])!=="") {
+                $streetAddress .= " ".$account['OwnerAddress']['AddressLine2'];
+            }
+            
+            $address->setStreetAddress($streetAddress);
+            $address->setAddressLocality($account['OwnerAddress']['City']);
+            $address->setRegion($account['OwnerAddress']['Region']);
+            $address->setPostalCode($account['OwnerAddress']['PostalCode']);
+            $address->setCountryCode($account['OwnerAddress']['Country']);
+
+            $bankAccount->setAddress($address);
+        }
+
         return $bankAccount;
     }
 }

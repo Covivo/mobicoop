@@ -56,9 +56,8 @@ interface PaymentProviderInterface
     /**
      * Add a BankAccount
      *
-     * @param PaymentProfile $paymentProfile     The PaymentProfile you want to add an BankAccount
      * @param BankAccount $user                  The BankAccount to create
      * @return BankAccount|null
      */
-    public function addBankAccount(PaymentProfile $paymentProfile, BankAccount $bankAccount);
+    public function addBankAccount(BankAccount $bankAccount);
 }

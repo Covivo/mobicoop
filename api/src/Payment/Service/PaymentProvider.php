@@ -73,8 +73,7 @@ class PaymentProvider
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
-        echo $bankAccount->getUser()->getId();
-        die;
+        return $this->providerInstance->addBankAccount($bankAccount);
     }
 
     public function getPaymentProfile(User $user)
