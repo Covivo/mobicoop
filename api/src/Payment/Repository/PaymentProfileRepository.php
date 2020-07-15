@@ -21,53 +21,46 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Entity;
+namespace App\Payment\Repository;
 
-use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Payment\Entity\PaymentProfile;
+use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 
-/**
- * A Wallet Balance
- *
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class WalletBalance
+class PaymentProfileRepository
 {
     /**
-     * @var string Currency of this wallet ballance
-     *
-     * @Groups({"readPayment"})
+     * @var EntityRepository
      */
-    private $currency;
+    private $repository;
+
+    private $logger;
+
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    {
+        $this->repository = $entityManager->getRepository(PaymentProfile::class);
+        $this->logger = $logger;
+    }
+
+    public function find(int $id): ?PaymentProfile
+    {
+        return $this->repository->find($id);
+    }
 
     /**
-     * @var int Current amount of money on this wallet ballance (in cents)
+     * Find All the PaymentProfile by criteria
      *
-     * @Groups({"readPayment","writePayment"})
+     * @return User|null
      */
-    private $amount;
-
-
-    public function getCurrency(): ?String
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
-        return $this->currency;
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function setCurrency(?String $currency): self
+    public function findOneBy(array $criteria): ?PaymentProfile
     {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    public function getAmount(): ?int
-    {
-        return $this->amount;
-    }
-
-    public function setAmount(?int $amount): self
-    {
-        $this->amount = $amount;
-
-        return $this;
+        $user = $this->repository->findOneBy($criteria);
+        return $user;
     }
 }

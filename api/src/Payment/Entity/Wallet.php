@@ -65,11 +65,11 @@ class Wallet
     private $description;
 
     /**
-     * @var array Owners for this wallet
+     * @var array PaymentProfiles for this wallet
      *
      * @Groups({"readPayment"})
      */
-    private $owners;
+    private $paymentProfiles;
 
     /**
      * @var WalletBalance The ballance of this wallet
@@ -128,14 +128,14 @@ class Wallet
         return $this;
     }
 
-    public function getOwners(): ?array
+    public function getPaymentProfiles(): ?array
     {
-        return $this->owners;
+        return $this->paymentProfiles;
     }
 
-    public function setOwners(?array $owners): self
+    public function setPaymentProfiles(?array $paymentProfiles): self
     {
-        $this->owners = $owners;
+        $this->paymentProfiles = $paymentProfiles;
 
         return $this;
     }

@@ -28,6 +28,7 @@ use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Repository\PaymentProfileRepository;
 
 /**
  * Payment provider.
@@ -46,7 +47,7 @@ class PaymentProvider
         "MangoPay" => MangoPayProvider::class
     ];
     
-    public function __construct(bool $paymentActive, string $paymentProvider, string $clientId, string $apikey, bool $sandBoxMode)
+    public function __construct(PaymentProfileRepository $paymentProfileRepository, bool $paymentActive, string $paymentProvider, string $clientId, string $apikey, bool $sandBoxMode)
     {
         if (!$paymentActive) {
             throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
@@ -62,7 +63,7 @@ class PaymentProvider
         }
         $this->paymentProvider = $paymentProvider;
         $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
-        $this->providerInstance = new $providerClass($clientId, $apikey, $sandBoxMode);
+        $this->providerInstance = new $providerClass($clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
     }
     
     /**

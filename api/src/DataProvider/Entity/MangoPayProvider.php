@@ -28,7 +28,9 @@ use App\Geography\Entity\Address;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\Wallet;
+use App\Payment\Entity\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
+use App\Payment\Repository\PaymentProfileRepository;
 use App\User\Entity\User;
 use LogicException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
@@ -44,16 +46,19 @@ class MangoPayProvider implements PaymentProviderInterface
     const SERVER_URL = "https://api.mangopay.com/";
     const VERSION = "V2.01";
 
-    const COLLECTION_BANK_ACCOUNTS = "bankaccounts/";
+    const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
+    const COLLECTION_WALLETS = "wallets";
 
     private $serverUrl;
     private $authChain;
+    private $paymentProfileRepository;
     
-    public function __construct(string $clientId, string $apikey, bool $sandBoxMode)
+    public function __construct(string $clientId, string $apikey, bool $sandBoxMode, PaymentProfileRepository $paymentProfileRepository)
     {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
         $this->authChain = "Basic ".base64_encode($clientId.":".$apikey);
         $this->serverUrl .= self::VERSION."/".$clientId."/";
+        $this->paymentProfileRepository = $paymentProfileRepository;
     }
     
     /**
@@ -132,7 +137,7 @@ class MangoPayProvider implements PaymentProviderInterface
             ];
         }
 
-        $dataProvider = new DataProvider($this->serverUrl."users/".$bankAccount->getPaymentProfile()->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS."iban");
+        $dataProvider = new DataProvider($this->serverUrl."users/".$bankAccount->getPaymentProfile()->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS."/iban");
         $headers = [
             "Authorization" => $this->authChain
         ];
@@ -155,7 +160,20 @@ class MangoPayProvider implements PaymentProviderInterface
     {
         $wallets = [new Wallet()];
 
-
+        $dataProvider = new DataProvider($this->serverUrl."users/".$paymentProfile->getIdentifier()."/", self::COLLECTION_WALLETS);
+        $getParams = null;
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->getCollection($getParams, $headers);
+        
+        $wallets = [];
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            foreach ($data as $wallet) {
+                $wallets[] = $this->deserializeWallet($wallet);
+            }
+        }
 
         return $wallets;
     }
@@ -193,5 +211,37 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $bankAccount;
+    }
+
+    /**
+     * Deserialize a Wallet
+     * @param array $data  The wallet to deserialize
+     * @return Wallet
+     */
+    public function deserializeWallet(array $data)
+    {
+        $wallet = new Wallet();
+        $wallet->setId($data['Id']);
+        $wallet->setDescription($data['Description']);
+        $wallet->setComment($data['Tag']);
+        $wallet->setCreatedDate(\DateTime::createFromFormat('U', $data['CreationDate']));
+        $wallet->setCurrency($data['Currency']);
+
+        $balance = new WalletBalance();
+        $balance->setCurrency($data['Balance']['Currency']);
+        $balance->setAmount($data['Balance']['Amount']);
+        $wallet->setBalance($balance);
+
+        // Get the Users matching the Owners of this wallet
+        $paymentProfiles = [];
+        foreach ($data['Owners'] as $owner) {
+            $paymentProfile = $this->paymentProfileRepository->findOneBy(['identifier'=>$owner]);
+            if (!is_null($paymentProfile)) {
+                $paymentProfiles[] = $paymentProfile;
+            }
+        }
+        $wallet->setPaymentProfiles($paymentProfiles);
+
+        return $wallet;
     }
 }
