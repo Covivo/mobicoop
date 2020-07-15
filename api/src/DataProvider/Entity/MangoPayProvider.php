@@ -28,6 +28,7 @@ use App\Payment\Entity\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 
 /**
  * Payment Provider for MangoPay
@@ -70,12 +71,14 @@ class MangoPayProvider implements PaymentProviderInterface
         ];
         $response = $dataProvider->getCollection($getParams, $headers);
         
-        echo $response->getCode();
-        die;
+        $bankAccounts = [];
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
+            foreach ($data as $account) {
+                $bankAccounts[] = $this->deserializeBankAccount($account);
+            }
         }
-        return [];
+        return $bankAccounts;
     }
     
     /**
@@ -97,5 +100,22 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function addBankAccount(PaymentProfile $paymentProfile, BankAccount $bankAccount)
     {
+    }
+
+    /**
+     * Deserialize a BankAccount
+     * @param array $account                    The account to deserialize
+     * @return BankAccount
+     */
+    public function deserializeBankAccount(array $account)
+    {
+        $bankAccount = new BankAccount();
+        $bankAccount->setUserLitteral($account['OwnerName']);
+        $bankAccount->setIban($account['IBAN']);
+        $bankAccount->setBic($account['BIC']);
+        $bankAccount->setCreatedDate(\DateTime::createFromFormat('U', $account['CreationDate']));
+        $bankAccount->setComment($account['Tag']);
+        $bankAccount->setStatus($account['Active']);
+        return $bankAccount;
     }
 }

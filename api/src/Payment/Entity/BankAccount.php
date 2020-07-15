@@ -49,39 +49,27 @@ class BankAccount
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this bank account
      *
+     * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
      */
     private $id;
 
     /**
-     * @var User The user owning this bank account
-     *
-     * @Groups({"readPayment","writePayment"})
-     * @MaxDepth(1)
-     * @Assert\NotBlank
-     */
-    private $user;
-
-    /**
-     * @var string The litteral name of the user owning this bank account
+     * @var string|null The litteral name of the user owning this bank account
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $userLitteral;
 
     /**
-     * @var string The provider managing this bank account
-     *
-     * @Groups({"readPayment","writePayment"})
-     */
-    private $provider;
-
-    /**
      * @var string The iban number of this bank account
      *
+     * @Assert\NotBlank
      * @Groups({"readPayment","writePayment"})
      */
     private $iban;
@@ -89,12 +77,13 @@ class BankAccount
     /**
      * @var string The bic number of this bank account
      *
+     * @Assert\NotBlank
      * @Groups({"readPayment","writePayment"})
      */
     private $bic;
 
     /**
-     * @var string A comment for this bank account
+     * @var string|null A comment for this bank account
      *
      * @Groups({"readPayment","writePayment"})
      */
@@ -103,6 +92,7 @@ class BankAccount
     /**
      * @var int The status of this payment profil (0 : Inactive, 1 : Active)
      *
+     * @Assert\NotBlank
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
@@ -114,89 +104,70 @@ class BankAccount
      */
     private $createdDate;
 
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getProvider(): String
-    {
-        return $this->provider;
-    }
-
-    public function setProvider(String $provider): self
-    {
-        $this->provider = $provider;
-
-        return $this;
-    }
-
-    public function getUserLitteral(): String
+    public function getUserLitteral(): ?String
     {
         return $this->userLitteral;
     }
 
-    public function setUserLitteral(String $userLitteral): self
+    public function setUserLitteral(?String $userLitteral): self
     {
         $this->userLitteral = $userLitteral;
 
         return $this;
     }
 
-    public function getIban(): String
+    public function getIban(): ?String
     {
         return $this->iban;
     }
 
-    public function setIban(String $iban): self
+    public function setIban(?String $iban): self
     {
         $this->iban = $iban;
 
         return $this;
     }
 
-    public function getBic(): String
+    public function getBic(): ?String
     {
         return $this->bic;
     }
 
-    public function setBic(String $bic): self
+    public function setBic(?String $bic): self
     {
         $this->bic = $bic;
 
         return $this;
     }
 
-    public function getComment(): String
+    public function getComment(): ?String
     {
         return $this->comment;
     }
 
-    public function setComment(String $comment): self
+    public function setComment(?String $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): self
+    public function setStatus(?int $status): self
     {
         $this->status = $status;
 
