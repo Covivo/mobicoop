@@ -74,7 +74,9 @@ final class CommunityOwnedForReferentExtension implements QueryCollectionExtensi
         $user = $this->security->getUser();
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere(sprintf('%s.user = :current_user', $rootAlias));
+        $queryBuilder->orWhere(sprintf('%s.user = :current_user', $rootAlias))
+                    ->leftJoin(sprintf("%s.communityUsers", $rootAlias), 'c')
+                    ->orWhere(' c.user = :current_user AND c.status = 2');
         $queryBuilder->setParameter('current_user', $user->getId());
     }
 }
