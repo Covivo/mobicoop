@@ -27,6 +27,7 @@ use App\Payment\Entity\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
+use App\Payment\Entity\PaymentProfile;
 
 /**
  * Payment provider.
@@ -76,8 +77,19 @@ class PaymentProvider
         die;
     }
 
-    public function getBankAccounts(User $user)
+    public function getPaymentProfile(User $user)
     {
-        return $this->providerInstance->getBankAccounts($user);
+        //return $this->providerInstance->getBankAccounts($user);
+        
+        // Get more information for each profiles
+        $paymentProfiles = $user->getPaymentProfiles();
+        foreach ($paymentProfiles as $paymentProfile) {
+            /**
+             * @var PaymentProfile $paymentProfile
+             */
+            
+            $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
+        }
+        return $user;
     }
 }

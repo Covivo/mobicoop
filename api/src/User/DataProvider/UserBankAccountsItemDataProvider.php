@@ -45,11 +45,11 @@ final class UserBankAccountsItemDataProvider implements ItemDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName=="bankAccounts";
+        return User::class === $resourceClass && $operationName=="paymentProfile";
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        return $this->userManager->getBankAccounts($id);
+        return $this->userManager->getPaymentProfile($id);
     }
 }

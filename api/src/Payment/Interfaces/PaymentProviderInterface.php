@@ -25,6 +25,7 @@ namespace App\Payment\Interfaces;
 
 use App\User\Entity\User;
 use App\Payment\Entity\BankAccount;
+use App\Payment\Entity\PaymentProfile;
 
 /**
  * Payment Provider interface.
@@ -39,24 +40,25 @@ interface PaymentProviderInterface
     /**
      * Returns a collection of Bank accounts.
      *
-     * @param User $user     The User owning the Bank accounts
+     * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
      * @return BankAccount[]
      */
-    public function getBankAccounts(User $user);
+    public function getBankAccounts(PaymentProfile $paymentProfile);
     
     /**
      * Returns a single Bank account
      *
-     * @param User $user     The User owning the Bank account
+     * @param int $bankAccountId     The id of the Bank Account
      * @return BankAccount|null
      */
-    public function getBankAccount(User $user);
+    public function getBankAccount(int $bankAccountId);
     
     /**
      * Add a BankAccount
      *
-     * @param BankAccount $user     The BankAccount to create
+     * @param PaymentProfile $paymentProfile     The PaymentProfile you want to add an BankAccount
+     * @param BankAccount $user                  The BankAccount to create
      * @return BankAccount|null
      */
-    public function addBankAccount(BankAccount $bankAccount);
+    public function addBankAccount(PaymentProfile $paymentProfile, BankAccount $bankAccount);
 }

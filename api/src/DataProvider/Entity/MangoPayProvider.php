@@ -25,6 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
 use App\Payment\Entity\BankAccount;
+use App\Payment\Entity\PaymentProfile;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\User\Entity\User;
 
@@ -54,12 +55,12 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Returns a collection of Bank accounts.
      *
-     * @param User $user     The User owning the Bank accounts
+     * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
      * @return BankAccount[]
      */
-    public function getBankAccounts(User $user)
+    public function getBankAccounts(PaymentProfile $paymentProfile)
     {
-        $dataProvider = new DataProvider($this->serverUrl."users/83580766/", self::COLLECTION_BANK_ACCOUNTS);
+        $dataProvider = new DataProvider($this->serverUrl."users/".$paymentProfile->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS);
         $getParams = [
             "per_page" => 100,
             "sort" => "creationdate:desc",
@@ -69,30 +70,32 @@ class MangoPayProvider implements PaymentProviderInterface
         ];
         $response = $dataProvider->getCollection($getParams, $headers);
         
+        echo $response->getCode();
+        die;
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
-            var_dump($data);
         }
-        return $user;
+        return [];
     }
     
     /**
      * Returns a single Bank account
      *
-     * @param User $user     The User owning the Bank account
+     * @param int $bankAccountId     The id of the Bank Account
      * @return BankAccount|null
      */
-    public function getBankAccount(User $user)
+    public function getBankAccount(int $bankAccountId)
     {
     }
     
     /**
      * Add a BankAccount
      *
-     * @param BankAccount $user     The BankAccount to create
+     * @param PaymentProfile $paymentProfile     The PaymentProfile you want to add an BankAccount
+     * @param BankAccount $user                  The BankAccount to create
      * @return BankAccount|null
      */
-    public function addBankAccount(BankAccount $bankAccount)
+    public function addBankAccount(PaymentProfile $paymentProfile, BankAccount $bankAccount)
     {
     }
 }

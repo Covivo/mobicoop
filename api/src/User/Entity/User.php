@@ -100,6 +100,7 @@ use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\BankAccount;
+use App\Payment\Entity\PaymentProfile;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
@@ -353,9 +354,9 @@ use App\User\Controller\UserCanUseEmail;
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
  *          },
- *          "bankAccounts"={
+ *          "paymentProfile"={
  *              "method"="GET",
- *              "path"="/users/{id}/bankAccounts",
+ *              "path"="/users/{id}/paymentProfile",
  *              "normalization_context"={"groups"={"readPayment"}},
  *              "security"="is_granted('user_read',object)"
  *          }
@@ -1108,10 +1109,13 @@ class User implements UserInterface, EquatableInterface
     private $operates;
 
     /**
-     * @var array|null A user Bank accounts
-     * @Groups({"readPayment"})
+     * @var ArrayCollection|null A User can have multiple entry in Operate
+     *
+     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\PaymentProfile", mappedBy="user", cascade={"persist","remove"})
+     * @Groups({"readPayment", "write"})
+     * @MaxDepth(1)
      */
-    private $bankAccounts;
+    private $paymentProfiles;
 
     public function __construct($status = null)
     {
@@ -1140,6 +1144,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->paymentProfiles = new ArrayCollection();
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2625,18 +2630,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getBankAccounts(): ?array
+    public function getPaymentProfiles()
     {
-        return $this->bankAccounts;
+        return $this->paymentProfiles->getValues();
     }
 
-    public function setBankAccounts(array $bankAccounts): self
+    public function addPaymentProfile(PaymentProfile $paymentProfile): self
     {
-        $this->bankAccounts = $bankAccounts;
+        if (!$this->paymentProfiles->contains($paymentProfile)) {
+            $this->paymentProfiles[] = $paymentProfile;
+            $paymentProfile->setUser($this);
+        }
 
         return $this;
     }
-    
+
+    public function removePaymentProfile(PaymentProfile $paymentProfile): self
+    {
+        if ($this->paymentProfiles->contains($paymentProfile)) {
+            $this->paymentProfiles->removeElement($paymentProfile);
+        }
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**

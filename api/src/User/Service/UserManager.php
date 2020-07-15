@@ -1243,15 +1243,15 @@ class UserManager
     }
 
     /**
-     * Get the bank accounts of a User
+     * Get the payment profile of a User
      * @param int $userId   Id of the User
      * @return User|null
      */
-    public function getBankAccounts(int $userId)
+    public function getPaymentProfile(int $userId)
     {
         $user = $this->userRepository->find($userId);
         if (!is_null($user)) {
-            $user = $this->paymentProvider->getBankAccounts($user);
+            $user = $this->paymentProvider->getPaymentProfile($user);
         }
         return $user;
     }

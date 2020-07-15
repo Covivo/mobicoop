@@ -115,6 +115,12 @@ class PaymentProfile
      */
     private $updatedDate;
 
+    /**
+     * @var array|null A user Bank accounts
+     * @Groups({"readPayment"})
+     */
+    private $bankAccounts;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -188,6 +194,18 @@ class PaymentProfile
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getBankAccounts(): ?array
+    {
+        return $this->bankAccounts;
+    }
+
+    public function setBankAccounts(array $bankAccounts): self
+    {
+        $this->bankAccounts = $bankAccounts;
 
         return $this;
     }
