@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\DataProvider\Service\DataProvider;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\User\Entity\User;
@@ -36,16 +37,18 @@ class MangoPayProvider implements PaymentProviderInterface
 {
     const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
     const SERVER_URL = "https://api.mangopay.com/";
+    const VERSION = "V2.01";
 
-    private $clientId;
-    private $sandBoxMode;
+    const COLLECTION_BANK_ACCOUNTS = "bankaccounts/";
+
     private $serverUrl;
+    private $authChain;
     
-    public function __construct(string $clientId, bool $sandBoxMode)
+    public function __construct(string $clientId, string $apikey, bool $sandBoxMode)
     {
-        $this->clientId = $clientId;
-        $this->sandBoxMode = $sandBoxMode;
-        ($this->sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
+        ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
+        $this->authChain = "Basic ".base64_encode($clientId.":".$apikey);
+        $this->serverUrl .= self::VERSION."/".$clientId."/";
     }
     
     /**
@@ -56,6 +59,21 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function getBankAccounts(User $user)
     {
+        $dataProvider = new DataProvider($this->serverUrl."users/83580766/", self::COLLECTION_BANK_ACCOUNTS);
+        $getParams = [
+            "per_page" => 100,
+            "sort" => "creationdate:desc",
+        ];
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->getCollection($getParams, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            var_dump($data);
+        }
+        return $user;
     }
     
     /**

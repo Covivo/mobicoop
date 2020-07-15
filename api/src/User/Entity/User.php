@@ -99,6 +99,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
+use App\Payment\Entity\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
@@ -351,6 +352,12 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
+ *          },
+ *          "bankAccounts"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/bankAccounts",
+ *              "normalization_context"={"groups"={"readPayment"}},
+ *              "security"="is_granted('user_read',object)"
  *          }
  *      }
  * )
@@ -1099,6 +1106,12 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $operates;
+
+    /**
+     * @var array|null A user Bank accounts
+     * @Groups({"readPayment"})
+     */
+    private $bankAccounts;
 
     public function __construct($status = null)
     {
@@ -2612,6 +2625,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getBankAccounts(): ?array
+    {
+        return $this->bankAccounts;
+    }
+
+    public function setBankAccounts(array $bankAccounts): self
+    {
+        $this->bankAccounts = $bankAccounts;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**

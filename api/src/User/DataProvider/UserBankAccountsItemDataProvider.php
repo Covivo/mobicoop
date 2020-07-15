@@ -20,14 +20,36 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Exception;
+namespace App\User\DataProvider;
+
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
 
 /**
+ * Item data provider for getting User's bank accounts
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
  */
-class PaymentException extends \LogicException
+final class UserBankAccountsItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    const PAYMENT_INACTIVE = "Payment is not active on this platform";
-    const PAYMENT_NO_PROVIDER = "No provider given";
-    const UNSUPPORTED_PROVIDER = "This payment provider is not yet supported";
+    private $userManager;
+    
+    public function __construct(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
+    }
+
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return User::class === $resourceClass && $operationName=="bankAccounts";
+    }
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
+    {
+        return $this->userManager->getBankAccounts($id);
+    }
 }

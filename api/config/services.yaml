@@ -428,10 +428,8 @@ services:
         arguments:
             $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
             $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
-
-    App\DataProvider\Entity\MangoPayProvider:
-        arguments:
             $clientId: '%env(string:PAYMENT_CLIENTID)%'
+            $apikey: '%env(string:PAYMENT_APIKEY)%'
             $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
 
     # Price

@@ -51,6 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Payment\Service\PaymentProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
@@ -100,6 +101,7 @@ class UserManager
     private $encoder;
     private $translator;
     private $security;
+    private $paymentProvider;
 
     // Default carpool settings
     private $chat;
@@ -141,6 +143,7 @@ class UserManager
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
+        PaymentProvider $paymentProvider,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -168,6 +171,7 @@ class UserManager
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
+        $this->paymentProvider = $paymentProvider;
     }
 
     /**
@@ -1236,5 +1240,19 @@ class UserManager
     {
         $exploded = explode('@', $email);
         return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
+    }
+
+    /**
+     * Get the bank accounts of a User
+     * @param int $userId   Id of the User
+     * @return User|null
+     */
+    public function getBankAccounts(int $userId)
+    {
+        $user = $this->userRepository->find($userId);
+        if (!is_null($user)) {
+            $user = $this->paymentProvider->getBankAccounts($user);
+        }
+        return $user;
     }
 }

@@ -26,6 +26,7 @@ namespace App\Payment\Service;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
+use App\DataProvider\Entity\MangoPayProvider;
 
 /**
  * Payment provider.
@@ -38,8 +39,13 @@ class PaymentProvider
 {
     private $paymentActive;
     private $paymentProvider;
+    private $providerInstance;
+
+    private const SUPPORTED_PROVIDERS = [
+        "MangoPay" => MangoPayProvider::class
+    ];
     
-    public function __construct(bool $paymentActive, string $paymentProvider)
+    public function __construct(bool $paymentActive, string $paymentProvider, string $clientId, string $apikey, bool $sandBoxMode)
     {
         if (!$paymentActive) {
             throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
@@ -49,7 +55,13 @@ class PaymentProvider
         if (empty($paymentProvider)) {
             throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
         }
+
+        if (!isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
+            throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
+        }
         $this->paymentProvider = $paymentProvider;
+        $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
+        $this->providerInstance = new $providerClass($clientId, $apikey, $sandBoxMode);
     }
     
     /**
@@ -62,5 +74,10 @@ class PaymentProvider
     {
         echo $bankAccount->getUser()->getId();
         die;
+    }
+
+    public function getBankAccounts(User $user)
+    {
+        return $this->providerInstance->getBankAccounts($user);
     }
 }
