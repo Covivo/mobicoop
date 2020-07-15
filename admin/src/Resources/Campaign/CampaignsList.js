@@ -81,8 +81,7 @@ const CampaignsList = (props) => {
             choices={statusChoices}
           />
           <DateField source="createdDate" label={translate('custom.label.campaign.createdDate')} />
-          <DateField source="createdDate" label={translate('custom.label.campaign.updateDate')} />
-          <DateField source="createdDate" label={translate('custom.label.campaign.sendDate')} />
+          <DateField source="updatedDate" label={translate('custom.label.campaign.updateDate')} />
 
           <ButtonCampaign label={translate('custom.label.campaign.resumeCampaign')} />
         </Datagrid>

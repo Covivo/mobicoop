@@ -21,6 +21,9 @@ import {
   useTranslate,
   useRedirect,
   List,
+  ReferenceField,
+  ImageField,
+
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -37,6 +40,7 @@ import isAuthorized from '../../auth/permissions';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import FullNameField from '../User/FullNameField';
+import CommunityImageUpload from './CommunityImageUpload';
 
 const useStyles = makeStyles({
   hiddenField: { display: 'none' },
@@ -138,6 +142,18 @@ export const CommunityEdit = (props) => {
             validate={required()}
             formClassName={classes.title}
           />
+          <ReferenceField
+            reference="images"
+            source="images[0].id"
+            label={translate('custom.label.event.currentImage')}
+          >
+            <ImageField source="versions.square_250" />
+          </ReferenceField>
+          <CommunityImageUpload
+            label={translate('custom.label.event.uploadImage')}
+            formClassName={classes.fullwidth}
+          />
+
           <TextInput disabled source="originId" formClassName={classes.hiddenField} />
           <FunctionField
             label={translate('custom.label.community.oldAdress')}
@@ -224,7 +240,6 @@ export const CommunityEdit = (props) => {
             >
               <List
                 {...props}
-                perPage={2}
                 actions={null}
                 bulkActionButtons={<UserBulkActionButtons />}
                 sort={{ field: 'id', order: 'ASC' }}
