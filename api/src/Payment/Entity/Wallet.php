@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A Wallet
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},

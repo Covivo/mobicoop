@@ -26,6 +26,7 @@ namespace App\Payment\Interfaces;
 use App\User\Entity\User;
 use App\Payment\Entity\BankAccount;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\Wallet;
 
 /**
  * Payment Provider interface.
@@ -68,4 +69,12 @@ interface PaymentProviderInterface
      * @return BankAccount[]
      */
     public function getWallets(PaymentProfile $paymentProfile);
+
+    /**
+     * Add a Wallet
+     *
+     * @param Wallet $user  The Wallet to create
+     * @return Wallet|null
+     */
+    public function addWallet(Wallet $wallet);
 }

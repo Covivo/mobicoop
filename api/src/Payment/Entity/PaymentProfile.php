@@ -117,7 +117,7 @@ class PaymentProfile
 
     /**
      * @var array|null A user Bank accounts
-     * @Groups({"readPayment"})
+     * @Groups({"readPayment","writePayment"})
      */
     private $bankAccounts;
 

@@ -107,10 +107,6 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
-
-        // We need to check if there is a Wallet. If not, we create it
-        
-        
         // Build the body
         $user = $bankAccount->getPaymentProfile()->getUser();
         
@@ -176,6 +172,16 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $wallets;
+    }
+
+    /**
+     * Add a Wallet
+     *
+     * @param Wallet $user  The Wallet to create
+     * @return Wallet|null
+     */
+    public function addWallet(Wallet $wallet)
+    {
     }
 
     /**
