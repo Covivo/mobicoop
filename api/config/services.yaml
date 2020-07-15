@@ -423,6 +423,12 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    #Payment
+    App\DataProvider\Entity\MangoPayProvider:
+        arguments:
+            $clientId: '%env(string:PAYMENT_CLIENTID)%'
+            $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
+
     # Price
     App\Price\Controller\:
         resource: '../src/Price/Controller'
