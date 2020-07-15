@@ -17,6 +17,7 @@ import {
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { UserRenderer } from '../../utils/renderers';
 import { validationChoices } from './communityChoices';
+import CommunityImageUpload from './CommunityImageUpload';
 
 const useStyles = makeStyles({
   hiddenField: { display: 'none' },
@@ -39,6 +40,10 @@ export const CommunityCreate = (props) => {
           label={translate('custom.label.community.name')}
           validate={required()}
           formClassName={classes.title}
+        />
+        <CommunityImageUpload
+          label={translate('custom.label.event.uploadImage')}
+          formClassName={classes.fullwidth}
         />
         <GeocompleteInput
           source="address"

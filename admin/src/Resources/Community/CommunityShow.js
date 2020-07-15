@@ -20,6 +20,8 @@ import {
   useTranslate,
   BooleanField,
   List,
+  ReferenceField,
+  ImageField,
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -110,7 +112,7 @@ const Aside = ({ record }) => {
                 <Typography variant="body2">
                   {record.updatedDate
                     ? translate('custom.label.community.updatedAt') +
-                      new Date(record.updatedDate).toLocaleDateString()
+                    new Date(record.updatedDate).toLocaleDateString()
                     : translate('custom.label.community.neverUpdate')}
                 </Typography>
               }
@@ -189,6 +191,13 @@ export const CommunityShow = (props) => {
       <TabbedShowLayout>
         <Tab label={translate('custom.label.community.detail')}>
           <TextField source="name" label={translate('custom.label.community.name')} />
+          <ReferenceField
+            reference="images"
+            source="images[0].id"
+            label={translate('custom.label.event.currentImage')}
+          >
+            <ImageField source="versions.square_250" />
+          </ReferenceField>
           <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
           <FunctionField
             source="address"
@@ -215,7 +224,6 @@ export const CommunityShow = (props) => {
             >
               <List
                 {...props}
-                perPage={2}
                 bulkActionButtons={<UserBulkActionButtons />}
                 actions={null}
                 sort={{ field: 'id', order: 'ASC' }}

@@ -23,6 +23,7 @@ const EmailComposeButton = ({
   const [sender, setSender] = useState([]);
   const [campagneInit, setCampagneInit] = useState([]);
   const translate = useTranslate();
+  const [selectedIdsFormat, setSelectedIdsFormat] = useState([])
 
   useEffect(() => {
     let mounted = true;
@@ -45,20 +46,41 @@ const EmailComposeButton = ({
     return () => (mounted = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (comeFrom == 1) {
+      setSelectedIdsFormat([]);
+      Promise.all(
+        selectedIds.map((element) =>
+          dataProvider
+            .getOne('communityUser', { id: element })
+            .then(({ data }) => {
+              console.info(data)
+              setSelectedIdsFormat((t) => [...t, data.user.id]);
+            })
+            .catch((error) => {
+              console.log('An error occured during user in community retrieving:', error);
+            })
+        )
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds]);
   const campaignCreateParameters = sender[0]
     ? {
-        user: sender[0].id,
-        name: process.env.REACT_APP_INIT_EMAIL_NAME,
-        subject: process.env.REACT_APP_INIT_EMAIL_SUBJECT,
+      user: sender[0].id,
+      name: process.env.REACT_APP_INIT_EMAIL_NAME,
+      subject: process.env.REACT_APP_INIT_EMAIL_SUBJECT,
 
-        fromName: sender[0].fromName,
-        email: sender[0].replyTo,
-        replyTo: sender[0].replyTo,
+      fromName: sender[0].fromName,
+      email: sender[0].replyTo,
+      replyTo: sender[0].replyTo,
 
-        body: JSON.stringify([]),
-        status: 0,
-        medium: '/media/2', // media#2 is email
-      }
+      body: JSON.stringify([]),
+      status: 0,
+      medium: '/media/2', // media#2 is email
+    }
     : {};
   const handleClick = () => {
     if (rgpdAgree) {
@@ -103,8 +125,6 @@ const EmailComposeButton = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rgpdAgree]);
 
-  const selectedIdsFormat = selectedIds.map((x) => x.replace('community_users', 'users'));
-
   return (
     <>
       {canSend ? (
@@ -120,11 +140,11 @@ const EmailComposeButton = ({
           />
         </>
       ) : (
-        <Button
-          label={translate('custom.email.texte.blockUnsubscribe')}
-          startIcon={<BlockIcon />}
-        />
-      )}
+          <Button
+            label={translate('custom.email.texte.blockUnsubscribe')}
+            startIcon={<BlockIcon />}
+          />
+        )}
       <Button
         label={translate('custom.email.texte.emailAll')}
         onClick={handleClickAll}
@@ -135,7 +155,7 @@ const EmailComposeButton = ({
         <MailComposer
           isOpen={open}
           sendAll={sendAll}
-          selectedIds={selectedIdsFormat}
+          selectedIds={comeFrom == 1 ? selectedIdsFormat : selectedIds}
           onClose={() => setOpen(false)}
           shouldFetch={shouldFetch}
           resource={resource}

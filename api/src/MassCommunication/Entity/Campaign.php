@@ -35,6 +35,9 @@ use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\MassCommunication\Controller\CampaignSend;
 use App\MassCommunication\Controller\CampaignSendTest;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
 /**
  * A mass communication campaign.
@@ -50,7 +53,7 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *          "owned"={
  *              "method"="GET",
  *              "path"="/campaigns/owned",
- *              "normalization_context"={"groups"={"read_campaign"}},
+ *              "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *      },
@@ -70,6 +73,9 @@ use App\MassCommunication\Controller\CampaignSendTest;
  *          },
  *      }
  * )
+ * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
+ * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
+ * @ApiFilter(OrderFilter::class, properties={"subject", "user", "status"}, arguments={"orderParameterName"="order"})
  */
 class Campaign
 {

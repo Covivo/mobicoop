@@ -202,7 +202,7 @@ const fr = {
       event: {
         name: 'Nom',
         resume: 'Résumé',
-        resumefull: 'Résumé long',
+        resumefull: 'Résumé long *',
         site: 'Site internet',
         adresse: 'Adresse',
         setTime: "Préciser l'heure",
