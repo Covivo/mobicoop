@@ -1,34 +1,56 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SelectInput, TextInput, BooleanInput, FileInput, FileField } from 'react-admin';
+import { SelectInput, TextInput, BooleanInput, FileInput, FileField, required } from 'react-admin';
 
-const SolidaryProofInput = ({ proof, ...rest }) => {
-  if (proof.checkbox) {
-    return <BooleanInput label={proof.label} source={`proofs.${proof.id}`} {...rest} />;
-  }
-  if (proof.input) {
-    return <TextInput label={proof.label} source={`proofs.${proof.id}`} {...rest} />;
-  }
-  if (proof.selectbox) {
-    const selectboxLabels = proof.options.split(';');
-    const selectboxIds = proof.acceptedValues
-      .split(';')
-      .map((v, i) => ({ id: v, name: selectboxLabels[i] }));
+const SolidaryProofInput = ({ record, ...rest }) => {
+  const validate = !!record.mandatory
+    ? [(value) => (!value ? 'Cette preuve est obligatoire' : undefined), required()]
+    : undefined;
 
+  if (record.checkbox) {
     return (
-      <SelectInput
-        label={proof.label}
-        source={`proofs.${proof.id}`}
-        choices={selectboxIds}
+      <BooleanInput
+        validate={validate}
+        label={record.label}
+        source={`proofs.${record.id}`}
         {...rest}
       />
     );
   }
-  if (proof.file) {
+
+  if (record.input) {
+    return (
+      <TextInput
+        validate={validate}
+        label={record.label}
+        source={`proofs.${record.id}`}
+        {...rest}
+      />
+    );
+  }
+
+  if (record.selectbox) {
+    const selectboxLabels = record.options.split(';');
+
+    return (
+      <SelectInput
+        label={record.label}
+        source={`proofs.${record.id}`}
+        validate={validate}
+        choices={record.acceptedValues
+          .split(';')
+          .map((v, i) => ({ id: v, name: selectboxLabels[i] }))}
+        {...rest}
+      />
+    );
+  }
+
+  if (record.file) {
     return (
       <FileInput
-        source={`proofs.${proof.id}`}
-        label={proof.label}
+        source={`proofs.${record.id}`}
+        label={record.label}
+        validate={validate}
         accept="application/pdf"
         {...rest}
       >
@@ -41,7 +63,7 @@ const SolidaryProofInput = ({ proof, ...rest }) => {
 };
 
 SolidaryProofInput.propTypes = {
-  proof: PropTypes.object.isRequired,
+  record: PropTypes.object.isRequired,
 };
 
 export default SolidaryProofInput;
