@@ -163,10 +163,10 @@ const updateUser = async (provider, params) => {
       newParams.data.fields != null
         ? extractRoles(newParams.data.fields)
         : Array.isArray(newParams.data.rolesTerritory)
-        ? newParams.data.rolesTerritory.map(({ territory, authItem }) =>
+          ? newParams.data.rolesTerritory.map(({ territory, authItem }) =>
             territory != null ? { authItem, territory } : { authItem }
           )
-        : [];
+          : [];
   }
 
   return provider.update('users', {
@@ -238,7 +238,6 @@ export const dataProviderAdapter = (originalProvider) => ({
   },
   update: (resource, params) => {
     let newParams = transformId({ ...params });
-
     if (resource === 'users') {
       newParams = pickManagedUserData(newParams);
       return updateUser(originalProvider, newParams);
