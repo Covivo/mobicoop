@@ -21,7 +21,7 @@
         </v-btn>
       </v-col>
     </v-row>
-
+    <!-- select period if regular -->
     <v-row
       v-if="regular"
       justify="center"
@@ -38,13 +38,15 @@
         />
       </v-col>
     </v-row>
-
+    
     <v-row justify="center"> 
+      <!-- journey to pay or to validate -->
       <v-col
         cols="8"
         align="center"
       >
         <v-row>
+          <!-- previous journey -->
           <v-col cols="3">
             <v-card
               raised
@@ -71,6 +73,7 @@
               </v-row>
             </v-card>
           </v-col>
+          <!-- selected journey -->
           <v-col
             cols="6"
             align="center"
@@ -92,14 +95,20 @@
               </v-row>
               <v-row justify="center">
                 <v-card-title>
-                  Lara C.
+                  <p>
+                    Lara C.
+                  </p>
                 </v-card-title>
               </v-row>
               <v-row justify="center">
                 <v-card-text>
+                  <!-- dates -->
                   <v-row justify="center">
-                    <p>Sam. 25/09</p>
+                    <p class="font-weight-bold">
+                      Sam. 25/09
+                    </p>
                   </v-row>
+                  <!-- journey -->
                   <v-row
                     justify="center"
                   >
@@ -107,7 +116,9 @@
                       <p class="font-weight-bold">
                         Nancy
                       </p>
-                      <p>Rue de la Monnaie</p>
+                      <p>
+                        Rue de la Monnaie
+                      </p>
                     </v-col>
                     <v-col>
                       <v-icon
@@ -121,10 +132,12 @@
                       <p class="font-weight-bold">
                         Metz
                       </p>
-                      <p>rue de Nancy</p>
+                      <p>
+                        rue de Nancy
+                      </p>
                     </v-col>
                   </v-row>
-                  <!-- if regular journey -->
+                  <!-- if regular-->
                   <v-row v-if="regular">
                     <v-row
                       justify="center"
@@ -157,33 +170,81 @@
                       </v-col>
                     </v-row>
                   </v-row>
-                  <v-row
-                    justify="center"
-                    class="mt-4"
-                  >
+
+
+                  <!-- if payement -->
+                  <v-row v-if="isPayment">
                     <v-col>
-                      <p>
-                        {{ $t('price', {price: this.price}) }}
-                      </p>
+                      <v-row
+                        justify="center"
+                        class="mt-4"
+                      >
+                        <v-col>
+                          <p>
+                            {{ $t('price', {price: this.price}) }}
+                          </p>
+                        </v-col>
+                      </v-row>
+                      <v-row justify="center">
+                        <v-radio-group
+                          v-model="radios"
+                          column
+                        >
+                          <v-radio
+                            :label="$t('payOnLine')"
+                            value="radio-1"
+                          />
+                          <v-radio
+                            :label="$t('payedByHand')"
+                            value="radio-2"
+                          />
+                        </v-radio-group>
+                      </v-row>
                     </v-col>
                   </v-row>
-                  <v-row justify="center">
-                    <v-radio-group
-                      v-model="radios"
-                      column
-                    >
-                      <v-radio
-                        :label="$t('payOnLine')"
-                        value="radio-1"
-                      />
-                      <v-radio
-                        :label="$t('payedByHand')"
-                        value="radio-2"
-                      />
-                    </v-radio-group>
+
+                  <!-- if validation -->
+                  <v-row v-else>
+                    <v-col>
+                      <v-row
+                        justify="center"
+                        class="mt-4"
+                      >
+                        <v-col>
+                          <p>
+                            {{ $t('price', {price: this.price}) }}
+                          </p>
+                        </v-col>
+                      </v-row>
+                      <v-row
+                        justify="center"
+                        class="mt-n10"
+                      >
+                        <v-col>
+                          <a class="error--text text-decoration-underline">
+                            {{ $t('report') }}
+                          </a>
+                        </v-col>
+                      </v-row>
+                      <v-row
+                        justify="center"
+                        class="mt-4"
+                      >
+                        <v-col>
+                          <v-btn
+                            color="secondary"
+                            rounded
+                          >
+                            {{ $t('buttons.confirmByHandPayment') }}
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-col>
                   </v-row>
                 </v-card-text>
               </v-row>
+
+              <!-- actions buttons -->
               <v-card-actions>
                 <v-row
                   justify="center"
@@ -216,6 +277,8 @@
               </v-card-actions>
             </v-card>
           </v-col>
+
+          <!-- next journey -->
           <v-col
             cols="3"
             align="center"
@@ -247,7 +310,12 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="4">
+
+      <!-- payments sum and informations -->
+      <v-col
+        v-if="isPayment"
+        cols="4"
+      >
         <v-row
           justify="center"
           align="center"
@@ -284,13 +352,16 @@
                   :key="i"
                 >
                   <v-list-item-content>
-                    <v-row>
-                      <v-col>
+                    <v-row justify="center">
+                      <v-col align="center">
                         <p>
-                          {{ item }} €
+                          {{ item.name }} 
+                        </p>
+                        <p class="font-weight-bold">
+                          {{ item.price }} €
                         </p>
                       </v-col>
-                      <v-col class="mt-n2">
+                      <v-col class="mt-3">
                         <v-btn
                           color="secondary"
                           fab
@@ -318,7 +389,7 @@
           <v-col
             align="left"
           >
-            <v-list>
+            <v-list shaped>
               <v-list-item-group
                 v-model="pricesByHand"
                 color="primary"
@@ -328,13 +399,16 @@
                   :key="i"
                 >
                   <v-list-item-content class="grey--text">
-                    <v-row>
-                      <v-col>
+                    <v-row justify="center">
+                      <v-col align="center">
                         <p>
-                          {{ item }} €
+                          {{ item.name }} 
+                        </p>
+                        <p class="font-weight-bold">
+                          {{ item.price }} €
                         </p>
                       </v-col>
-                      <v-col class="mt-n2">
+                      <v-col class="mt-3">
                         <v-btn
                           color="secondary"
                           fab
@@ -383,6 +457,67 @@
           </v-btn>
         </v-row>
       </v-col>
+
+      <!-- validate that by hand payment was done -->
+      <v-col v-else>
+        <v-row justify="center">
+          <v-col
+            align="center"
+            class="font-weight-bold"
+          >
+            {{ $t('paymentReceivedByHand') }} :
+          </v-col>
+          <v-col
+            align="left"
+          >
+            <v-list shaped>
+              <v-list-item-group
+                v-model="payedByHand"
+                color="primary"
+              >
+                <v-list-item
+                  v-for="(item, i) in payedByHand"
+                  :key="i"
+                >
+                  <v-list-item-content class="grey--text">
+                    <v-row justify="center">
+                      <v-col align="center">
+                        <p>
+                          {{ item.name }} 
+                        </p>
+                        <p class="font-weight-bold">
+                          {{ item.price }} €
+                        </p>
+                      </v-col>
+                      <v-col class="mt-3">
+                        <v-btn
+                          color="secondary"
+                          fab
+                          x-small
+                        >
+                          <v-icon>
+                            mdi-trash-can
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col align="center">
+            <v-btn
+              rounded
+              color="secondary"
+            >
+              {{ $t('buttons.confirm') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -407,7 +542,7 @@ export default {
     },
     mode: {
       type: Number,
-      default: 1
+      default: 2
     },
     selectedId: {
       type: Number,
@@ -421,10 +556,22 @@ export default {
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
       selectedJourney: this.selectedId,
-      price: 55,
+      price: 10,
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
-      pricesOnLine: ['30', '25'],
-      pricesByHand: ['30', '25', "45", "10"],
+      pricesOnLine: [
+        { name: 'Lara C.', price: '30' },
+        { name: 'Bruce W.', price: '25' }
+      ],
+      pricesByHand: [
+        { name: 'Tony S.', price: '40' },
+        { name: 'Nathan D.', price: '30' },
+        { name: 'Bruce W.', price: '25' },
+        { name: 'Peter P.', price: '10' }
+      ],
+      payedByHand: [
+        { name: 'Lara C.', price: '30' },
+        { name: 'Bruce W.', price: '25' }
+      ]
     };
   },
   created() {
