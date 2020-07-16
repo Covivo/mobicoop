@@ -444,7 +444,7 @@
         <v-row justify="center">
           <v-col align="center">
             <p>
-              {{ $t('sumToPay', {price: this.price}) }}
+              {{ $t('sumToPay', {price: this.sumTopay}) }}
             </p>
           </v-col>
         </v-row>
@@ -557,6 +557,7 @@ export default {
       isPayment: this.mode == 1 ? true : false,
       selectedJourney: this.selectedId,
       price: 10,
+      sumTopay: 55,
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesOnLine: [
         { name: 'Lara C.', price: '30' },
