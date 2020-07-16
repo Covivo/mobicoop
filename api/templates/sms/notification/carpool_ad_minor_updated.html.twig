@@ -5,6 +5,6 @@
 
 {{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
-{{ "updatedCarpoolDetails"|trans({'%origin%' : outwardOrigin.address.displayLabel[0], '%destination%' : outwardDestination.address.displayLabel[0]}) }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} sur {{api_env('SMS_PLATFORM_NAME')}}.
+{{ "updatedCarpoolDetails"|trans({'%origin%' : outwardOrigin.address.displayLabel[0], '%destination%' : outwardDestination.address.displayLabel[0]}) }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} sur {{api_env('SMS_PLATFORM_NAME')|raw}}.
 
-{{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')}}
+{{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')|raw}}

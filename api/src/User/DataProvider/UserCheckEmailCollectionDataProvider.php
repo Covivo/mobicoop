@@ -58,8 +58,8 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?\InvalidArgumentException
     {
         $locale = $this->request->getLocale();
-        $this->translator->setlocale($locale);
-        if ($state = $this->userManager->getUserByEmail($this->request->get('email'))) {
+        $this->translator->setLocale($locale);
+        if ($state = $this->userManager->checkEmail($this->request->get('email'))) {
             if ($state == "email-exist") {
                 throw new \InvalidArgumentException($this->translator->trans('errors.alreadyUsed'));
             } elseif ($state != "authorized") {

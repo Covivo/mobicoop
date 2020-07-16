@@ -1,0 +1,24 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block head %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="googlebot" content="noindex">
+    <title>
+        {% block title %}{{ app_name }} Cette page n'existe plus{% endblock %}
+    </title>
+    
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
+    {% block favicon %}
+     {% endblock %}
+     {% block stylesheets %}
+     {% endblock %}
+
+</head>
+{% endblock %}
+
+{% block main %}
+Cette page n'existe plus
+{% endblock %}
