@@ -60,7 +60,7 @@
               >
                 <v-avatar size="125">
                   <img
-                    src="http://localhost:8081/images/avatarsDefault/square_250.svg"
+                    src="/images/avatarsDefault/square_250.svg"
                   >
                 </v-avatar>
               </v-row>
@@ -89,7 +89,7 @@
               >
                 <v-avatar size="125">
                   <img
-                    src="http://localhost:8081/images/avatarsDefault/square_250.svg"
+                    src="/images/avatarsDefault/square_250.svg"
                   >
                 </v-avatar>
               </v-row>
@@ -295,7 +295,7 @@
               >
                 <v-avatar size="125">
                   <img
-                    src="http://localhost:8081/images/avatarsDefault/square_250.svg"
+                    src="/images/avatarsDefault/square_250.svg"
                   >
                 </v-avatar>
               </v-row>
@@ -523,7 +523,6 @@
 </template>
 <script>
 import moment from "moment";
-import { merge } from "lodash";
 import DayListChips from "@components/utilities/DayListChips";
 import Translations from "@translations/components/payment/payment.json";
 
