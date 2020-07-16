@@ -881,6 +881,16 @@ relay_point_list:
         en: /relay-points
     controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::relayPointList    
 
+###############
+# payment routes #
+###############    
+
+# payment 
+payment_list:
+    path:
+        fr: /paiements
+        en: /payments
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 ###############
 # misc routes #
@@ -907,13 +917,9 @@ platform_widget:
         en: /widget
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
 
-###############
-# payment routes #
-###############    
-
-# payment 
-payment_list:
+# Default page when no longer exists
+page_no_longer_exists:
     path:
-        fr: /paiements
-        en: /payments
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
+        fr: /page-no-longer-exists
+        en: /page-no-longer-exists
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPageNoLongerExists

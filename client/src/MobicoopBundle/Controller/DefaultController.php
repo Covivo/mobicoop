@@ -98,4 +98,12 @@ class DefaultController extends AbstractController
         //$this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/platform-get-widget.html.twig');
     }
+
+    /**
+     * Show a default page when the request page no longer exists
+     */
+    public function getPageNoLongerExists()
+    {
+        return $this->render('@Mobicoop/page-no-longer-exists.html.twig');
+    }
 }

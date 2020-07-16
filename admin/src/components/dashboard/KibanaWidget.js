@@ -27,8 +27,8 @@ const KibanaWidget = ({
     useEffect(() => {
       const loadCommunitiesList = () =>
         dataProvider
-          .getList('communities', {
-            pagination: { page: 1, perPage: 2 },
+          .getList('communities/owned', {
+            pagination: { page: 1, perPage: 5 },
             sort: { field: 'id', order: 'ASC' },
           })
           .then(

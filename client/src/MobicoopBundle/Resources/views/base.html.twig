@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+    {% block head %}
     <head>
         <meta charset="UTF-8">
         <title>
@@ -7,6 +8,7 @@
         </title>
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
+        {% block desc %}{% endblock %}
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
         {% block favicon %}
          {% endblock %}
@@ -18,6 +20,7 @@
         {% endif %}
 
     </head>
+    {% endblock %}
     <body>
         <div id="app">
             <v-app>
