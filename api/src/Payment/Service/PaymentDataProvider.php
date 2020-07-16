@@ -29,6 +29,8 @@ use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\Wallet;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Payment provider.
@@ -37,19 +39,30 @@ use App\Payment\Repository\PaymentProfileRepository;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PaymentProvider
+class PaymentDataProvider
 {
     private $paymentActive;
     private $paymentProvider;
     private $providerInstance;
     private $paymentProfileRepository;
+    private $defaultCurrency;
+    private $platformName;
 
     private const SUPPORTED_PROVIDERS = [
         "MangoPay" => MangoPayProvider::class
     ];
     
-    public function __construct(PaymentProfileRepository $paymentProfileRepository, bool $paymentActive, string $paymentProvider, string $clientId, string $apikey, bool $sandBoxMode)
-    {
+    public function __construct(
+        PaymentProfileRepository $paymentProfileRepository,
+        Security $security,
+        bool $paymentActive,
+        string $paymentProvider,
+        string $clientId,
+        string $apikey,
+        bool $sandBoxMode,
+        string $platformName,
+        string $defaultCurrency
+    ) {
         if (!$paymentActive) {
             throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
         }
@@ -64,8 +77,10 @@ class PaymentProvider
         }
         $this->paymentProvider = $paymentProvider;
         $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
-        $this->providerInstance = new $providerClass($clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
+        $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
         $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->defaultCurrency = $defaultCurrency;
+        $this->platformName = $platformName;
     }
     
     /**
@@ -79,18 +94,6 @@ class PaymentProvider
         return $this->providerInstance->addBankAccount($bankAccount);
     }
 
-    
-    /**
-     * Create a PaymentProfile
-     *
-     * @param PaymentProfile $paymentProfile
-     * @return PaymentProfile
-     */
-    public function createPaymentProfile(PaymentProfile $paymentProfile)
-    {
-        return $paymentProfile;
-    }
-    
     /**
      * Get the PaymentProfiles of a User
      *
@@ -112,5 +115,34 @@ class PaymentProvider
             $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
         }
         return $paymentProfiles;
+    }
+
+    
+    /**
+     * Register a User on the payment provider platform
+     *
+     * @param User $user
+     * @return string The identifier
+     */
+    public function registerUser(User $user)
+    {
+        return $this->providerInstance->registerUser($user);
+        ;
+    }
+
+    /**
+     * Create a wallet for a user
+     *
+     * @param $identifier Identifier of the User (the one used on the provider's platform)
+     * @return Wallet The created wallet
+     */
+    public function createWallet(string $identifier)
+    {
+        $wallet = new Wallet();
+        $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
+        $wallet->setComment("");
+        $wallet->setCurrency($this->defaultCurrency);
+        $wallet->setOwnerIdentifier($identifier);
+        return $this->providerInstance->addWallet($wallet);
     }
 }

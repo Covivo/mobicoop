@@ -38,6 +38,15 @@ use App\Payment\Ressource\Wallet;
  */
 interface PaymentProviderInterface
 {
+
+    /**
+     * Register a User on the platform
+     *
+     * @param User $user     The User to register
+     * @return string The identifier
+     */
+    public function registerUser(User $user);
+
     /**
      * Returns a collection of Bank accounts.
      *

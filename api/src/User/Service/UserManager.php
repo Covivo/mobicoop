@@ -51,7 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
-use App\Payment\Service\PaymentProvider;
+use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
@@ -143,7 +143,7 @@ class UserManager
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
-        PaymentProvider $paymentProvider,
+        PaymentDataProvider $paymentProvider,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -218,11 +218,11 @@ class UserManager
         $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
-        foreach($paymentProfiles as $paymentProfile){
-            foreach($paymentProfile->getBankAccounts() as $bankaccount){
+        foreach ($paymentProfiles as $paymentProfile) {
+            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
                 $bankAccounts[] = $bankaccount;
             }
-            foreach($paymentProfile->getWallets() as $wallet){
+            foreach ($paymentProfile->getWallets() as $wallet) {
                 $wallets[] = $wallet;
             }
         }
@@ -1254,5 +1254,4 @@ class UserManager
         $exploded = explode('@', $email);
         return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
     }
-
 }

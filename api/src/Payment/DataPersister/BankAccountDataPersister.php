@@ -24,7 +24,8 @@ namespace App\Payment\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Payment\Ressource\BankAccount;
-use App\Payment\Service\PaymentProvider;
+use App\Payment\Service\PaymentManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Bank Account Data Persister
@@ -33,11 +34,13 @@ use App\Payment\Service\PaymentProvider;
  */
 final class BankAccountDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $paymentProvider;
+    private $paymentManager;
+    private $security;
 
-    public function __construct(PaymentProvider $paymentProvider)
+    public function __construct(PaymentManager $paymentManager, Security $security)
     {
-        $this->paymentProvider = $paymentProvider;
+        $this->paymentManager = $paymentManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
@@ -48,7 +51,7 @@ final class BankAccountDataPersister implements ContextAwareDataPersisterInterfa
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->paymentProvider->addBankAccount($data);
+            $data = $this->paymentManager->createBankAccount($this->security->getUser(), $data);
         }
 
         return $data;

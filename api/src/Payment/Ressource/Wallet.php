@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A Wallet
  *
- * @ApiResource(
+ * ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
@@ -84,6 +84,13 @@ class Wallet
      * @Groups({"readPayment","writePayment"})
      */
     private $comment;
+
+    /**
+     * @var string|null Identifier (on the payment provider's platform) of the owner of this wallet
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $ownerIdentifier;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -153,6 +160,18 @@ class Wallet
     public function setComment(?String $comment): self
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getOwnerIdentifier(): ?String
+    {
+        return $this->ownerIdentifier;
+    }
+
+    public function setOwnerIdentifier(?String $ownerIdentifier): self
+    {
+        $this->ownerIdentifier = $ownerIdentifier;
 
         return $this;
     }

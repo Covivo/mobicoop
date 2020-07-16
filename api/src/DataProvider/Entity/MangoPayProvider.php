@@ -27,6 +27,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Exception\PaymentException;
 use App\Payment\Ressource\Wallet;
 use App\Payment\Ressource\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
@@ -49,13 +50,23 @@ class MangoPayProvider implements PaymentProviderInterface
     const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
     const COLLECTION_WALLETS = "wallets";
 
+    const ITEM_USER_NATURAL = "natural";
+    const ITEM_WALLET = "wallets";
+
+    private $user;
     private $serverUrl;
     private $authChain;
     private $paymentProfileRepository;
     
-    public function __construct(string $clientId, string $apikey, bool $sandBoxMode, PaymentProfileRepository $paymentProfileRepository)
-    {
+    public function __construct(
+        ?User $user,
+        string $clientId,
+        string $apikey,
+        bool $sandBoxMode,
+        PaymentProfileRepository $paymentProfileRepository
+    ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
+        $this->user = $user;
         $this->authChain = "Basic ".base64_encode($clientId.":".$apikey);
         $this->serverUrl .= self::VERSION."/".$clientId."/";
         $this->paymentProfileRepository = $paymentProfileRepository;
@@ -102,21 +113,19 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Add a BankAccount
      *
-     * @param BankAccount $user                  The BankAccount to create
+     * @param BankAccount $bankAccount                  The BankAccount to create
      * @return BankAccount|null
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
         // Build the body
-        $user = $bankAccount->getPaymentProfile()->getUser();
-        
-        $body['OwnerName'] = $user->getGivenName()." ".$user->getFamilyName();
+        $body['OwnerName'] = $this->user->getGivenName()." ".$this->user->getFamilyName();
         $body['IBAN'] = $bankAccount->getIban();
         $body['BIC'] = $bankAccount->getBic();
 
         // Addresse of the owner
         $homeAddress = null;
-        foreach ($user->getAddresses() as $address) {
+        foreach ($this->user->getAddresses() as $address) {
             if ($address->isHome()) {
                 $homeAddress = $address;
                 break;
@@ -133,7 +142,15 @@ class MangoPayProvider implements PaymentProviderInterface
             ];
         }
 
-        $dataProvider = new DataProvider($this->serverUrl."users/".$bankAccount->getPaymentProfile()->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS."/iban");
+        // Get the identifier
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $identifier = $paymentProfiles[0]->getIdentifier();
+        
+        if (is_null($identifier)) {
+            throw new PaymentException(PaymentException::NO_IDENTIFIER);
+        }
+
+        $dataProvider = new DataProvider($this->serverUrl."users/".$identifier."/", self::COLLECTION_BANK_ACCOUNTS."/iban");
         $headers = [
             "Authorization" => $this->authChain
         ];
@@ -182,7 +199,102 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function addWallet(Wallet $wallet)
     {
+        // Build the body
+        $body['Description'] = $wallet->getDescription();
+        $body['Currency'] = $wallet->getCurrency();
+        $body['Tag'] = $wallet->getComment();
+        $body['Owners'] = [$wallet->getOwnerIdentifier()];
+
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_WALLET);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+        } else {
+            throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+        }
+
+        return $data['Id'];
     }
+
+
+    /**
+     * Register a User to the provider and create a PaymentProfile
+     *
+     * @param User $user
+     * @return string The identifier
+     */
+    public function registerUser(User $user)
+    {
+
+        // Build the body
+        $body['FirstName'] = $user->getGivenName();
+        $body['LastName'] = $user->getFamilyName();
+        $body['Email'] = $user->getEmail();
+
+        if (is_null($user->getBirthDate())) {
+            throw new PaymentException(PaymentException::NO_BIRTHDATE);
+        }
+        $body['Birthday'] = (int)$user->getBirthDate()->format('U');
+
+        
+
+        // Addresse of the user
+        $homeAddress = null;
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = $address;
+                break;
+            }
+        }
+        
+        if (!is_null($homeAddress)) {
+            $body['Address'] = [
+                "AddressLine1" => $homeAddress->getStreetAddress(),
+                "City" => $homeAddress->getAddressLocality(),
+                "Region" => $homeAddress->getRegion(),
+                "PostalCode" => $homeAddress->getPostalCode(),
+                "Country" => substr($homeAddress->getCountryCode(), 0, 2)
+            ];
+
+            if (
+                $homeAddress->getStreetAddress()=="" ||
+                $homeAddress->getAddressLocality()=="" ||
+                $homeAddress->getRegion()=="" ||
+                $homeAddress->getPostalCode()=="" ||
+                $homeAddress->getCountryCode()==""
+            ) {
+                throw new PaymentException(PaymentException::ADDRESS_INVALID);
+            }
+
+                
+            $body['Nationality'] = substr($homeAddress->getCountryCode(), 0, 2);
+            $body['CountryOfResidence'] = substr($homeAddress->getCountryCode(), 0, 2);
+        } else {
+            if (is_null($homeAddress)) {
+                throw new PaymentException(PaymentException::NO_ADDRESS);
+            }
+        }
+
+        $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+        } else {
+            throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+        }
+
+        return $data['Id'];
+    }
+
 
     /**
      * Deserialize a BankAccount

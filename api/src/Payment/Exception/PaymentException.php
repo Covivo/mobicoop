@@ -30,4 +30,12 @@ class PaymentException extends \LogicException
     const PAYMENT_INACTIVE = "Payment is not active on this platform";
     const PAYMENT_NO_PROVIDER = "No provider given";
     const UNSUPPORTED_PROVIDER = "This payment provider is not yet supported";
+    
+    // User
+    const NO_IDENTIFIER = "No identifier found";
+    const NO_BIRTHDATE = "No birthdate";
+    const NO_COUNTRY = "No country";
+    const NO_ADDRESS = "No home address";
+    const ADDRESS_INVALID = "Some field in the address are missing";
+    const REGISTER_USER_FAILED = "Registration of this User to the provider has failed";
 }
