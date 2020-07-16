@@ -109,13 +109,14 @@ class AskRepository
     }
 
     /**
-     * Find accepted asks between the given dates
+     * Find accepted asks between the given dates, for an optional given user
      *
      * @param DateTime $fromDate    The start date
      * @param DateTime $toDate      The end date
+     * @param USer $user            The user
      * @return Ask[]|null          The asks if found
      */
-    public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate)
+    public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
     {
         // we will need the different week number days between fromDate and toDate
         $days = [];
@@ -179,6 +180,11 @@ class AskRepository
         ->setParameter('fromDate', $fromDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
         ;
+
+        if (!is_null($user)) {
+            $query->andWhere('(a.user = :user or a.userRelated = :user)')
+            ->setParameter('user', $user);
+        }
                 
         return $query->getQuery()->getResult();
     }

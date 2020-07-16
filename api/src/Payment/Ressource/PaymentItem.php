@@ -57,6 +57,10 @@ class PaymentItem
     const TYPE_PAY = 1;
     const TYPE_COLLECT = 2;
 
+    const DAY_UNAVAILABLE = 0;
+    const DAY_CARPOOLED = 1;
+    const DAY_NOT_CARPOOLED = 2;
+
     /**
      * @var int The id of this payment item.
      * @Groups({"readPayment"})

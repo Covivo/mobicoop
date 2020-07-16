@@ -36,12 +36,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CarpoolItem
 {
-    const TYPE_ONE_WAY = 1;
-    const TYPE_OUTWARD = 2;
-    const TYPE_RETURN = 3;
-
+    const STATUS_INITIALIZED = 0;
     const STATUS_REALIZED = 1;
     const STATUS_NOT_REALIZED = 2;
+
+    const DEBTOR_STATUS_PENDING = 0;
+    const DEBTOR_STATUS_ONLINE = 1;
+    const DEBTOR_STATUS_DIRECT = 2;
+
+    const CREDITOR_STATUS_PENDING = 0;
+    const CREDITOR_STATUS_ONLINE = 1;
+    const CREDITOR_STATUS_DIRECT = 2;
+    const CREDITOR_STATUS_UNPAID = 3;
 
     /**
      * @var int The id of this item.
@@ -300,6 +306,36 @@ class CarpoolItem
     }
 
     // DOCTRINE EVENTS
+
+    /**
+     * Item status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoItemStatus()
+    {
+        $this->setItemStatus(self::STATUS_INITIALIZED);
+    }
+
+    /**
+     * Debtor status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoDebtorStatus()
+    {
+        $this->setDebtorStatus(self::DEBTOR_STATUS_PENDING);
+    }
+
+    /**
+     * Creditor status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreditorStatus()
+    {
+        $this->setCreditorStatus(self::CREDITOR_STATUS_PENDING);
+    }
 
     /**
      * Creation date.
