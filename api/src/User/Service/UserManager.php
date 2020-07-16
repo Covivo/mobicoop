@@ -287,7 +287,7 @@ class UserManager
         } else {
             // No structure given. We take the admin's one
             $structures = $this->security->getUser()->getSolidaryStructures();
-            if (!is_null($structures) || count($structures)>0) {
+            if (is_array($structures) && isset($structures[0])) {
                 $solidaryUserstructure = $structures[0];
             }
         }
