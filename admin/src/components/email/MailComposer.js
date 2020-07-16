@@ -113,7 +113,6 @@ const MailComposer = ({
         })
         .then(({ data }) => {
           // eslint-disable-next-line array-callback-return
-          console.info(data)
           data.map((d) => {
             if (d.newsSubscription !== false) {
               goodArray.push(d);

@@ -30,7 +30,7 @@ const CampaignsList = (props) => {
         Promise.all(
           data.deliveries.map((element) =>
             dataProvider
-              .getOne('deliveries', { id: element })
+              .getOne('deliveries', { id: element.id })
               .then(({ data }) => data)
               .catch((error) => {
                 console.log("Erreur lors de la campagne d'emailing:", error);
@@ -96,6 +96,7 @@ const CampaignsList = (props) => {
           resource={'users'}
           basePath={'/users'}
           filterValues={{}}
+          sendAll={null}
           campagneReprise={campaign}
         />
       )}
