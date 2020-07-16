@@ -2,5 +2,10 @@
 {% block body %}
     <p>{{ "theUser"|trans }} <b>{{ context.email }}</b> {{ "reportThatEvent"|trans }} <b>{{ context.eventName }}</b></p>
     <p>{{ "explanationOfTheReport"|trans }} : {{ context.description }}</p>
-    <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
-{% endblock %}
+    <td>
+        {% if context.user.mobileRegistration is not null %}
+        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_MOBILE_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a></p>
+        {% else %}
+        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a></p>
+        {% endif %}
+    </td>{% endblock %}

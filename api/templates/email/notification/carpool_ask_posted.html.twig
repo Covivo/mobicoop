@@ -159,7 +159,11 @@
                     <td style="width:100%">
                         <p>{{"seatsSelected"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].seats}}</b></p>
                         <p>{{"indicativePrice"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].roundedPrice}}</b></p>
+                        {% if context.user.mobileRegistration is not null %}
+                        <p><a href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{"clickHereToValidate" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}</a>.</p>
+                        {% else %}
                         <p><a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}">{{"clickHereToValidate" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }}</a>.</p>
+                        {% endif %}
                     </td>
                 </tr>
             </table>

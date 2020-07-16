@@ -52,23 +52,14 @@
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b>{{"noPanic"|trans}}</b></p>
                     </td>
                 </tr>
-                 {# <tr style="text-align:left">
-                    <td>
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}" >
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SEARCH_LOGO')}}" alt="search"/>
-                        </a>
-                    </td>  
-                </tr>
                 <tr style="text-align:left">
                     <td>
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}{{'urlPublish'|trans}}">
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_PUBLISH_LOGO')}}" alt="publish"/>
-                        </a>
-                    </td>   
-                </tr> #}
-                <tr style="text-align:left">
-                    <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        {% if context.user.mobileRegistration is not null %}
+                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_MOBILE_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a></p>
+                        {% else %}
+                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a></p>
+                        {% endif %}
+
                     </td>
                 </tr>
                 <hr>
