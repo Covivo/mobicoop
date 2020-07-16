@@ -37,6 +37,11 @@ const fr = {
         lastAction: 'Dernière action',
       },
     },
+    users: {
+      fields: {
+        solidaryStructures: 'Structures Solidaires',
+      },
+    },
     solidary_searches: {
       fields: {
         author: 'Auteur',
@@ -202,7 +207,7 @@ const fr = {
       event: {
         name: 'Nom',
         resume: 'Résumé',
-        resumefull: 'Résumé long',
+        resumefull: 'Résumé long *',
         site: 'Site internet',
         adresse: 'Adresse',
         setTime: "Préciser l'heure",
@@ -370,6 +375,7 @@ const fr = {
         communitiesExclude: 'Exclure les usagers de la communauté',
         proposalValidUntil: "Pas d'annonces valides depuis le",
         trajet: 'Par trajet',
+        structures: 'Structures solidaires',
         filter: {
           range: 'Rayon de recherche (km) autour des lieux filtrés : ',
           origin: 'Lieu de départ',

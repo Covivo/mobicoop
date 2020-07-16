@@ -283,17 +283,6 @@ class CampaignManager
         return new CampaignNotFoundException('Campaign not found');
     }
 
-    /**
-     * Find Campaign crate by User
-     *
-     * @param Int $userId
-     * @return void
-     */
-    public function getOwnedCampaign(Int $userId)
-    {
-        $ownedCampaigns = $this->campaignRepository->getOwnedCampaigns($userId);
-        return $ownedCampaigns;
-    }
 
     /**
      * Set all user who accepted email to delieveries

@@ -3,6 +3,7 @@ import { Login, Resource, Admin } from 'react-admin';
 
 import authProvider from './auth/authProvider';
 import { createPermissionChecker } from './auth/permissions';
+import { isAdmin } from './auth/permissions';
 import Layout from './components/layout/Layout';
 import i18nProvider from './i18n/translations';
 import KibanaWidget from './components/dashboard/KibanaWidget';
@@ -52,7 +53,7 @@ export default () => (
         <Resource name="users" {...(can('user_manage') ? UserResource : {})} />,
         <Resource name="communities" {...(can('community_manage') ? CommunityResource : {})} />,
         <Resource name="community_users" {...(can('user_manage') ? CommunityUserResource : {})} />,
-        <Resource name="campaigns/owned" {...(can('campaign_manage') ? CampaignResource : {})} />,
+        <Resource name={isAdmin() ? "campaigns" : "campaigns/owned"}  {...(can('campaign_manage') ? CampaignResource : {})} />,
         <Resource name="events" {...(can('event_manage') ? EventResource : {})} />,
         <Resource name="articles" {...(can('article_manage') ? ArticleResource : {})} />,
         <Resource name="sections" {...(can('article_manage') ? SectionResource : {})} />,
