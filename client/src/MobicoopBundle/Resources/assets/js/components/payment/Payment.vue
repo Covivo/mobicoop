@@ -50,7 +50,7 @@
           <v-col cols="3">
             <v-card
               raised
-              height="770"
+              height="800"
               class="mx-auto"
               disabled
             >
@@ -81,7 +81,7 @@
             <v-card
               raised
               class="mx-auto"
-              height="770"
+              height="800"
             >
               <v-row
                 justify="center"
@@ -285,7 +285,7 @@
           >
             <v-card
               raised
-              height="770"
+              height="800"
               class="mx-auto"
               disabled
             >
