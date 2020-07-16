@@ -193,10 +193,22 @@ class UserManager
     /**
      * Get a user by its email.
      *
-     * @param string $email
-     * @return User|null
+     * @param string $email The email to find
+     * @return User|null    The user found
      */
     public function getUserByEmail(string $email)
+    {
+        return $this->userRepository->findOneBy(["email"=>$email]);
+    }
+
+
+    /**
+     * Check if an email is already used by someone; returns a code
+     *
+     * @param string $email The email to check
+     * @return string       The code
+     */
+    public function checkEmail(string $email)
     {
         //Email already exist in db
         if ($this->userRepository->findOneBy(["email"=>$email])) {
