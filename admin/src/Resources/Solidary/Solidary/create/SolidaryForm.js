@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 
 import {
   FormWithRedirect,
@@ -6,8 +9,10 @@ import {
   ReferenceInput,
   AutocompleteInput,
   useGetList,
+  showNotification,
   useTranslate,
 } from 'react-admin';
+
 import {
   LinearProgress,
   Box,
@@ -21,12 +26,11 @@ import {
   StepLabel,
   Button,
 } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles';
+
 import SolidaryUserBeneficiaryCreateFields from '../../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
 import GeocompleteInput from '../../../../components/geolocation/geocomplete';
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryProofField from './SolidaryProofField';
+import SolidaryProofInput from './SolidaryProofInput';
 import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
@@ -71,6 +75,18 @@ const SolidaryForm = (props) => {
       render={(formProps) => {
         const formState = formProps.form.getState();
         const frequencyRegular = formState.values && formState.values.frequency === 2;
+        const hasErrors = formState.errors && Object.keys(formState.errors).length;
+
+        const handleGoNext = (step) => () => {
+          const state = formProps.form.getState();
+          if (step === 1 && state.errors.proofs) {
+            props.showNotification("Vous devez valider l'ensemble des preuves");
+            return;
+          }
+
+          setActiveStep((s) => s + 1);
+        };
+
         return (
           // here starts the custom form layout
           <form>
@@ -121,7 +137,7 @@ const SolidaryForm = (props) => {
               >
                 <SolidaryQuestion question="Le demandeur est-il éligible ?">
                   {proofs && proofs.length && proofsLoaded ? (
-                    proofs.map((p) => <SolidaryProofField key={p.id} proof={p} />)
+                    proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
                   ) : (
                     <LinearProgress />
                   )}
@@ -191,13 +207,11 @@ const SolidaryForm = (props) => {
                   <SolidaryPunctualAsk form={formProps.form} />
                 )}
               </Box>
-
-              {activeStep === 4 && formState.errors && Object.keys(formState.errors).length ? (
+              {activeStep === 4 && hasErrors ? (
                 <Alert severity="error">
                   Le formulaire comporte des erreurs. Corrigez-les avant d&paos;enregistrer.
                 </Alert>
               ) : null}
-
               <Toolbar>
                 <Box display="flex" justifyContent="flex-start" width="100%">
                   {activeStep > 0 && (
@@ -211,17 +225,14 @@ const SolidaryForm = (props) => {
                   )}
                   &nbsp;
                   {activeStep < 4 && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => setActiveStep((s) => s + 1)}
-                    >
+                    <Button variant="contained" color="primary" onClick={handleGoNext(activeStep)}>
                       Suivant
                     </Button>
                   )}
                   {activeStep === 4 && (
                     <SaveSolidaryAsk
                       saving={formProps.saving}
+                      disabled={hasErrors}
                       handleSubmitWithRedirect={formProps.handleSubmitWithRedirect}
                     />
                   )}
@@ -236,4 +247,4 @@ const SolidaryForm = (props) => {
   );
 };
 
-export default SolidaryForm;
+export default connect(undefined, { showNotification })(SolidaryForm);
