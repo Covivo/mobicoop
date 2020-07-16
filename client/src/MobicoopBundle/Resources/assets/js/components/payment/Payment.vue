@@ -538,11 +538,11 @@ export default {
   props: {
     frequency: {
       type: Number,
-      default: 1
+      default: 2
     },
     mode: {
       type: Number,
-      default: 2
+      default: 1
     },
     selectedId: {
       type: Number,
