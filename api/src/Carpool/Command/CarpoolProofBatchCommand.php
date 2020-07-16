@@ -55,7 +55,7 @@ class CarpoolProofBatchCommand extends Command
         ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
         ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
         ->setDescription('Send the carpool proofs for the given period.')
-        ->setHelp('Send the carpool proofs to the carpool register; the proofs concerns the given period (default : previous day).')
+        ->setHelp('Send the carpool proofs to the carpool register; the proofs concerns the given period (default : last [xx] days, with [xx] as env parameter).')
         ;
     }
 
@@ -73,6 +73,6 @@ class CarpoolProofBatchCommand extends Command
             }
             $toDate->setTime(23, 59, 59, 999);
         }
-        $this->proofManager->sendProofs($fromDate, $toDate);
+        return $this->proofManager->sendProofs($fromDate, $toDate);
     }
 }

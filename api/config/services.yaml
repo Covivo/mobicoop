@@ -134,6 +134,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+            $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 
