@@ -25,10 +25,10 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
-use App\Payment\Entity\BankAccount;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Entity\Wallet;
-use App\Payment\Entity\WalletBalance;
+use App\Payment\Ressource\Wallet;
+use App\Payment\Ressource\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\User\Entity\User;
@@ -246,7 +246,6 @@ class MangoPayProvider implements PaymentProviderInterface
                 $paymentProfiles[] = $paymentProfile;
             }
         }
-        $wallet->setPaymentProfiles($paymentProfiles);
 
         return $wallet;
     }

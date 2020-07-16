@@ -23,7 +23,7 @@
 namespace App\Payment\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Payment\Entity\BankAccount;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Service\PaymentProvider;
 
 /**

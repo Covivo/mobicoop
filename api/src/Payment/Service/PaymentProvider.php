@@ -23,7 +23,7 @@
 
 namespace App\Payment\Service;
 
-use App\Payment\Entity\BankAccount;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
@@ -42,6 +42,7 @@ class PaymentProvider
     private $paymentActive;
     private $paymentProvider;
     private $providerInstance;
+    private $paymentProfileRepository;
 
     private const SUPPORTED_PROVIDERS = [
         "MangoPay" => MangoPayProvider::class
@@ -64,6 +65,7 @@ class PaymentProvider
         $this->paymentProvider = $paymentProvider;
         $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
         $this->providerInstance = new $providerClass($clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
+        $this->paymentProfileRepository = $paymentProfileRepository;
     }
     
     /**
@@ -90,17 +92,17 @@ class PaymentProvider
     }
     
     /**
-     * Get the PaymentProfile of a User
+     * Get the PaymentProfiles of a User
      *
      * @param User $user    The User
-     * @return PaymentProfile|null
+     * @return PaymentProfile[]|null
      */
-    public function getPaymentProfile(User $user)
+    public function getPaymentProfiles(User $user)
     {
         //return $this->providerInstance->getBankAccounts($user);
         
         // Get more information for each profiles
-        $paymentProfiles = $user->getPaymentProfiles();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
         foreach ($paymentProfiles as $paymentProfile) {
             /**
              * @var PaymentProfile $paymentProfile
@@ -109,6 +111,6 @@ class PaymentProvider
             $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
             $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
         }
-        return $user;
+        return $paymentProfiles;
     }
 }

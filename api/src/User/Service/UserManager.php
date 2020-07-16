@@ -215,7 +215,20 @@ class UserManager
      */
     public function getMe()
     {
-        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        $bankAccounts = $wallets = [];
+        foreach($paymentProfiles as $paymentProfile){
+            foreach($paymentProfile->getBankAccounts() as $bankaccount){
+                $bankAccounts[] = $bankaccount;
+            }
+            foreach($paymentProfile->getWallets() as $wallet){
+                $wallets[] = $wallet;
+            }
+        }
+        $user->setBankAccounts($bankAccounts);
+        $user->setWallets($wallets);
+        return $user;
     }
 
     /**
@@ -1242,17 +1255,4 @@ class UserManager
         return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
     }
 
-    /**
-     * Get the payment profile of a User
-     * @param int $userId   Id of the User
-     * @return User|null
-     */
-    public function getPaymentProfile(int $userId)
-    {
-        $user = $this->userRepository->find($userId);
-        if (!is_null($user)) {
-            $user = $this->paymentProvider->getPaymentProfile($user);
-        }
-        return $user;
-    }
 }

@@ -99,8 +99,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
-use App\Payment\Entity\BankAccount;
-use App\Payment\Entity\PaymentProfile;
+use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
@@ -248,7 +247,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "controller"=UserCheckPhoneToken::class
  *          },
  *          "me"={
- *              "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser","readPayment"}},
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
@@ -353,12 +352,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          },
- *          "paymentProfile"={
- *              "method"="GET",
- *              "path"="/users/{id}/paymentProfile",
- *              "normalization_context"={"groups"={"readPayment"}},
- *              "security"="is_granted('user_read',object)"
  *          }
  *      }
  * )
@@ -1109,13 +1102,20 @@ class User implements UserInterface, EquatableInterface
     private $operates;
 
     /**
-     * @var ArrayCollection|null A User can have multiple entry in Operate
+     * @var array|null BankAccounts of a User
      *
-     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\PaymentProfile", mappedBy="user", cascade={"persist","remove"})
-     * @Groups({"readPayment", "write"})
+     * @Groups({"readPayment"})
      * @MaxDepth(1)
      */
-    private $paymentProfiles;
+    private $bankAccounts;
+
+    /**
+     * @var array|null Wallets of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $wallets;
 
     public function __construct($status = null)
     {
@@ -1144,8 +1144,9 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
-        $this->paymentProfiles = new ArrayCollection();
         $this->roles = [];
+        $this->bankAccounts = [];
+        $this->wallets = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -2630,26 +2631,26 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getPaymentProfiles()
+    public function getBankAccounts(): ?array
     {
-        return $this->paymentProfiles->getValues();
+        return $this->bankAccounts;
     }
 
-    public function addPaymentProfile(PaymentProfile $paymentProfile): self
+    public function setBankAccounts(?array $bankAccounts): self
     {
-        if (!$this->paymentProfiles->contains($paymentProfile)) {
-            $this->paymentProfiles[] = $paymentProfile;
-            $paymentProfile->setUser($this);
-        }
+        $this->bankAccounts = $bankAccounts;
 
         return $this;
     }
 
-    public function removePaymentProfile(PaymentProfile $paymentProfile): self
+    public function getWallets(): ?array
     {
-        if ($this->paymentProfiles->contains($paymentProfile)) {
-            $this->paymentProfiles->removeElement($paymentProfile);
-        }
+        return $this->wallets;
+    }
+
+    public function setWallets(?array $wallets): self
+    {
+        $this->wallets = $wallets;
 
         return $this;
     }

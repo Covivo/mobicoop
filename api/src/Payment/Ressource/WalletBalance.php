@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Entity;
+namespace App\Payment\Ressource;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 

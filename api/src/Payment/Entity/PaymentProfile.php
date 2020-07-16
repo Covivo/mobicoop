@@ -37,15 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writePayment"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put"}
- * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PaymentProfile

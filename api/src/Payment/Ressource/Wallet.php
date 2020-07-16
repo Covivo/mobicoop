@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Entity;
+namespace App\Payment\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -32,9 +32,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Bank Account
+ * A Wallet
  *
- * ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
@@ -45,15 +45,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankAccount
+class Wallet
 {
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
-
     const DEFAULT_ID = "999999999999";
-
+    
     /**
-     * @var int The id of this bank account
+     * @var string The id of this wallet
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
@@ -61,57 +58,32 @@ class BankAccount
     private $id;
 
     /**
-     * @var string|null The litteral name of the user owning this bank account
+     * @var string|null The description of this wallet
      *
      * @Groups({"readPayment","writePayment"})
      */
-    private $userLitteral;
+    private $description;
 
     /**
-     * @var Address|null The litteral name of the user owning this bank account
+     * @var WalletBalance The ballance of this wallet
      *
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"readPayment"})
      */
-    private $address;
-    
-    /**
-     * @var PaymentProfile The payment profile related to this bank account
-     * @MaxDepth(1)
-     * @Groups({"readPayment","writePayment"})
-     */
-    private $paymentProfile;
+    private $balance;
 
     /**
-     * @var string The iban number of this bank account
+     * @var string General Currency of this wallet
      *
-     * @Assert\NotBlank
-     * @Assert\Iban
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"readPayment"})
      */
-    private $iban;
+    private $currency;
 
     /**
-     * @var string The bic number of this bank account
-     *
-     * @Assert\NotBlank
-     * @Assert\Bic
-     * @Groups({"readPayment","writePayment"})
-     */
-    private $bic;
-
-    /**
-     * @var string|null A comment for this bank account
+     * @var string|null A comment for this wallet
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $comment;
-
-    /**
-     * @var int The status of this payment profil (0 : Inactive, 1 : Active)
-     *
-     * @Groups({"readPayment","writePayment"})
-     */
-    private $status;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -124,8 +96,8 @@ class BankAccount
     {
         $this->id = self::DEFAULT_ID;
     }
-
-    public function getId(): ?int
+    
+    public function getId(): ?String
     {
         return $this->id;
     }
@@ -137,62 +109,38 @@ class BankAccount
         return $this;
     }
 
-    public function getUserLitteral(): ?String
+    public function getDescription(): ?String
     {
-        return $this->userLitteral;
+        return $this->description;
     }
 
-    public function setUserLitteral(?String $userLitteral): self
+    public function setDescription(?String $description): self
     {
-        $this->userLitteral = $userLitteral;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function getAddress(): ?Address
+    public function getBalance(): ?WalletBalance
     {
-        return $this->address;
+        return $this->balance;
     }
 
-    public function setAddress(?Address $address): self
+    public function setBalance(?WalletBalance $walletBalance): self
     {
-        $this->address = $address;
+        $this->balance = $walletBalance;
 
         return $this;
     }
 
-    public function getPaymentProfile(): ?PaymentProfile
+    public function getCurrency(): ?String
     {
-        return $this->paymentProfile;
+        return $this->currency;
     }
 
-    public function setPaymentProfile(?PaymentProfile $paymentProfile): self
+    public function setCurrency(?String $currency): self
     {
-        $this->paymentProfile = $paymentProfile;
-
-        return $this;
-    }
-
-    public function getIban(): ?String
-    {
-        return $this->iban;
-    }
-
-    public function setIban(?String $iban): self
-    {
-        $this->iban = $iban;
-
-        return $this;
-    }
-
-    public function getBic(): ?String
-    {
-        return $this->bic;
-    }
-
-    public function setBic(?String $bic): self
-    {
-        $this->bic = $bic;
+        $this->currency = $currency;
 
         return $this;
     }
@@ -205,18 +153,6 @@ class BankAccount
     public function setComment(?String $comment): self
     {
         $this->comment = $comment;
-
-        return $this;
-    }
-
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?int $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
