@@ -103,6 +103,10 @@ services:
         resource: '../src/Auth/Controller'
         tags: ['controller.service_arguments']
 
+    App\Auth\Service\AuthManager:
+        arguments:
+            $modules: '%env(json:file:resolve:MODULES_AUTHORIZED)%'
+
     # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
@@ -134,6 +138,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+            $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 

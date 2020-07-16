@@ -49,6 +49,7 @@ class AuthManager
 
     private $user;
     private $userManager;
+    private $modules;
   
      
 
@@ -59,13 +60,15 @@ class AuthManager
         AuthItemRepository $authItemRepository,
         UserAuthAssignmentRepository $userAuthAssignmentRepository,
         TokenStorageInterface $tokenStorage,
-        UserManager $userManager
+        UserManager $userManager,
+        array $modules
     ) {
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
         $this->tokenStorage = $tokenStorage;
         $this->user = null;
         $this->userManager = $userManager;
+        $this->modules = $modules;
     }
 
     /**
@@ -180,7 +183,6 @@ class AuthManager
          */
         $authRule = new $authRuleName;
         return $authRule->execute($requester, $authItem, $params);
-        exit;
     }
 
     /**
@@ -293,13 +295,22 @@ class AuthManager
         if ($userAssignments = $this->userAuthAssignmentRepository->findByUser($requester)) {
             foreach ($userAssignments as $userAssignment) {
                 if ($userAssignment->getAuthItem()->getType() == $type) {
-                    if ($withId) {
-                        $authItems[] = [
-                         "id" => $userAssignment->getAuthItem(),
-                         "name" => $userAssignment->getAuthItem()->getName()
-                     ];
-                    } else {
-                        $authItems[] = $userAssignment->getAuthItem()->getName();
+                    // maybe we will need some rule checking, we initialize the control value
+                    $rulesChecked = true;
+                    // for some special items, we also need to check the rule (eg. "manage" action which need the corresponding module to be enabled)
+                    if ($type == AuthItem::TYPE_ITEM && $this->checkSpecialItem($userAssignment->getAuthItem())) {
+                        // check the associated rule
+                        $rulesChecked = $this->checkRule($requester, $userAssignment->getAuthItem(), $this->modules);
+                    }
+                    if ($rulesChecked) {
+                        if ($withId) {
+                            $authItems[] = [
+                            "id" => $userAssignment->getAuthItem(),
+                            "name" => $userAssignment->getAuthItem()->getName()
+                        ];
+                        } else {
+                            $authItems[] = $userAssignment->getAuthItem()->getName();
+                        }
                     }
                 }
                 $this->getChildrenNames($userAssignment->getAuthItem(), $type, $authItems, $withId);
@@ -307,6 +318,23 @@ class AuthManager
         }
 
         return $withId ? array_map("unserialize", array_unique(array_map("serialize", $authItems))) : array_unique($authItems);
+    }
+
+    /**
+     * Check if a given authItem is a special one ! Special auth items need special rule to be applied
+     *
+     * @param AuthItem $authItem    The authItem
+     * @return bool Special or not
+     */
+    private function checkSpecialItem(AuthItem $authItem)
+    {
+        // we check if it's special by checking the name
+        foreach (AuthItem::SPECIAL_ITEMS as $item) {
+            if (strpos($authItem->getName(), $item) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -321,15 +349,30 @@ class AuthManager
      */
     private function getChildrenNames(AuthItem $authItem, int $type, array &$childrenNames, bool $withId=false)
     {
+        // we get the requester
+        if (!is_null($this->user)) {
+            $requester = $this->user;
+        } else {
+            $requester = $this->tokenStorage->getToken()->getUser();
+        }
         foreach ($authItem->getItems() as $child) {
             if ($child->getType() == $type) {
-                if ($withId) {
-                    $childrenNames[] = [
-                      "id" =>  $child,
-                      "name" =>  $child->getName()
-                  ];
-                } else {
-                    $childrenNames[] =  $child->getName();
+                // maybe we will need some rule checking, we initialize the control value
+                $rulesChecked = true;
+                // for some special items, we also need to check the rule (eg. "manage" action which need the corresponding module to be enabled)
+                if ($type == AuthItem::TYPE_ITEM && $this->checkSpecialItem($child)) {
+                    // check the associated rule
+                    $rulesChecked = $this->checkRule($requester, $child, $this->modules);
+                }
+                if ($rulesChecked) {
+                    if ($withId) {
+                        $childrenNames[] = [
+                        "id" =>  $child,
+                        "name" =>  $child->getName()
+                    ];
+                    } else {
+                        $childrenNames[] =  $child->getName();
+                    }
                 }
             }
             $this->getChildrenNames($child, $type, $childrenNames, $withId);
@@ -345,7 +388,7 @@ class AuthManager
     public function getAuthItemsGrantedForCreation(User $user)
     {
         //All the roles of the current user, set true for get the AuthItem, not just the name
-        $rolesUser = $this->getAuthItems(2, true);
+        $rolesUser = $this->getAuthItems(AuthItem::TYPE_ROLE, true);
         //Array we return, contain the roles current user can create
         $rolesGranted = array();
 

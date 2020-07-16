@@ -46,4 +46,6 @@ widget:
 toolsbox:
     title: "Tool Box"
 relaypoints:
-    title: "Relay points"    
+    title: "Relay points"
+payment:
+    title: "Payments"        

@@ -906,3 +906,14 @@ platform_widget:
         fr: /widget
         en: /widget
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
+
+###############
+# payment routes #
+###############    
+
+# payment 
+payment_list:
+    path:
+        fr: /paiements
+        en: /payments
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  

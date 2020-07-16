@@ -60,6 +60,9 @@ import ToolBox from "@components/utilities/ToolBox/ToolBox";
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
 
+// PAYMENT
+import Payment from "@components/payment/Payment"
+
 export default {
   MHeader,
   MFooter,
@@ -93,5 +96,6 @@ export default {
   PlatformWidget,
   PlatformGetWidget,
   RelayPoints,
-  ToolBox
+  ToolBox,
+  Payment
 }
