@@ -216,18 +216,19 @@ class UserManager
     public function getMe()
     {
         $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
-        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
-        $bankAccounts = $wallets = [];
-        foreach ($paymentProfiles as $paymentProfile) {
-            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                $bankAccounts[] = $bankaccount;
-            }
-            foreach ($paymentProfile->getWallets() as $wallet) {
-                $wallets[] = $wallet;
-            }
-        }
-        $user->setBankAccounts($bankAccounts);
-        $user->setWallets($wallets);
+        // TO : Do this on a special route or a parameter
+        // $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        // $bankAccounts = $wallets = [];
+        // foreach ($paymentProfiles as $paymentProfile) {
+        //     foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+        //         $bankAccounts[] = $bankaccount;
+        //     }
+        //     foreach ($paymentProfile->getWallets() as $wallet) {
+        //         $wallets[] = $wallet;
+        //     }
+        // }
+        // $user->setBankAccounts($bankAccounts);
+        // $user->setWallets($wallets);
         return $user;
     }
 
