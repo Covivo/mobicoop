@@ -56,6 +56,8 @@ class AuthItem
     const TYPE_ROLE = 2;
     const TYPE_ITEM = 1;
 
+    const SPECIAL_ITEMS = ["manage"];
+
     const ROLE_SUPER_ADMIN = 1;
     const ROLE_ADMIN = 2;
     const ROLE_USER_REGISTERED_FULL = 3;
