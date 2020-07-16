@@ -1,3 +1,9 @@
+# Release 1.9.0
+
+## API
+
+* [Payment] : Register a bank account to a payment provider service. For now, only MangoPay is supported
+
 # Release 1.8.0
 
 ## CLIENT
