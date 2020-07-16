@@ -63,24 +63,27 @@ class PaymentDataProvider
         string $platformName,
         string $defaultCurrency
     ) {
-        if (!$paymentActive) {
-            throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
-        }
-        $this->paymentActive = $paymentActive;
+        // TO DO : Handle these exceptions elsewhere
+        // if (!$paymentActive) {
+        //     throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
+        // }
+        // $this->paymentActive = $paymentActive;
 
-        if (empty($paymentProvider)) {
-            throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
-        }
+        // if (empty($paymentProvider)) {
+        //     throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
+        // }
 
-        if (!isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-            throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
+        // if (!isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
+        //     throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
+        // }
+        if (isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
+            $this->paymentProvider = $paymentProvider;
+            $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
+            $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
+            $this->paymentProfileRepository = $paymentProfileRepository;
+            $this->defaultCurrency = $defaultCurrency;
+            $this->platformName = $platformName;
         }
-        $this->paymentProvider = $paymentProvider;
-        $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
-        $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
-        $this->paymentProfileRepository = $paymentProfileRepository;
-        $this->defaultCurrency = $defaultCurrency;
-        $this->platformName = $platformName;
     }
     
     /**
