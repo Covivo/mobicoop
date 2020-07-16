@@ -51,6 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
@@ -100,6 +101,7 @@ class UserManager
     private $encoder;
     private $translator;
     private $security;
+    private $paymentProvider;
 
     // Default carpool settings
     private $chat;
@@ -141,6 +143,7 @@ class UserManager
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
+        PaymentDataProvider $paymentProvider,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -168,6 +171,7 @@ class UserManager
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
+        $this->paymentProvider = $paymentProvider;
     }
 
     /**
@@ -211,7 +215,21 @@ class UserManager
      */
     public function getMe()
     {
-        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        // TO : Do this on a special route or a parameter
+        // $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        // $bankAccounts = $wallets = [];
+        // foreach ($paymentProfiles as $paymentProfile) {
+        //     foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+        //         $bankAccounts[] = $bankaccount;
+        //     }
+        //     foreach ($paymentProfile->getWallets() as $wallet) {
+        //         $wallets[] = $wallet;
+        //     }
+        // }
+        // $user->setBankAccounts($bankAccounts);
+        // $user->setWallets($wallets);
+        return $user;
     }
 
     /**

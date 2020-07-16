@@ -437,6 +437,21 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    #Payment
+    App\Payment\Service\PaymentDataProvider:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
+            $clientId: '%env(string:PAYMENT_CLIENTID)%'
+            $apikey: '%env(string:PAYMENT_APIKEY)%'
+            $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
+            $defaultCurrency: '%env(string:PAYMENT_DEFAULT_CURRENCY)%'
+            $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
+
+    App\Payment\Service\PaymentManager:
+        arguments:
+            $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
+
     # Price
     App\Price\Controller\:
         resource: '../src/Price/Controller'

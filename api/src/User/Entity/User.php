@@ -99,6 +99,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
+use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
@@ -246,7 +247,7 @@ use App\User\Controller\UserCanUseEmail;
  *              "controller"=UserCheckPhoneToken::class
  *          },
  *          "me"={
- *              "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser","readPayment"}},
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false"
@@ -1100,6 +1101,22 @@ class User implements UserInterface, EquatableInterface
      */
     private $operates;
 
+    /**
+     * @var array|null BankAccounts of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $bankAccounts;
+
+    /**
+     * @var array|null Wallets of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $wallets;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1128,6 +1145,8 @@ class User implements UserInterface, EquatableInterface
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
         $this->roles = [];
+        $this->bankAccounts = [];
+        $this->wallets = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -2608,6 +2627,30 @@ class User implements UserInterface, EquatableInterface
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
         }
+
+        return $this;
+    }
+
+    public function getBankAccounts(): ?array
+    {
+        return $this->bankAccounts;
+    }
+
+    public function setBankAccounts(?array $bankAccounts): self
+    {
+        $this->bankAccounts = $bankAccounts;
+
+        return $this;
+    }
+
+    public function getWallets(): ?array
+    {
+        return $this->wallets;
+    }
+
+    public function setWallets(?array $wallets): self
+    {
+        $this->wallets = $wallets;
 
         return $this;
     }
