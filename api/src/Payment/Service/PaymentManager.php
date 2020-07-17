@@ -135,10 +135,19 @@ class PaymentManager
             }
 
 
-            $this->createPaymentProfile($user, $identifier, true);
+            $paymentProfile = $this->createPaymentProfile($user, $identifier);
+        } else {
+            $paymentProfile = $paymentProfiles[0];
         }
 
-        return $this->paymentProvider->addBankAccount($bankAccount);
+        $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
+
+        // Update the payment profile
+        $paymentProfile->setElectronicallyPayable(true);
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+
+        return $bankAccount;
     }
 
     /**
@@ -157,7 +166,17 @@ class PaymentManager
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
         }
 
-        return $this->paymentProvider->disableBankAccount($bankAccount);
+        $bankAccount = $this->paymentProvider->disableBankAccount($bankAccount);
+
+        // If there is no more active account, we need to update de PaymentProfile
+        $profileBankAccounts = $this->paymentProvider->getPaymentProfileBankAccounts($paymentProfiles[0]);
+        if (count($profileBankAccounts)==0) {
+            $paymentProfiles[0]->setElectronicallyPayable(false);
+            $this->entityManager->persist($paymentProfiles[0]);
+            $this->entityManager->flush();
+        }
+
+        return $bankAccount;
     }
     
     /**

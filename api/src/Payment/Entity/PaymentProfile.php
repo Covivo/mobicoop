@@ -83,7 +83,7 @@ class PaymentProfile
     private $identifier;
 
     /**
-     * @var int The status of this payment profil (0 : Inactive, 1 : Active)
+     * @var int The status of this payment profile (0 : Inactive, 1 : Active)
      *
      * @ORM\Column(type="integer")
      * @Groups({"readPayment","writePayment"})
@@ -91,7 +91,7 @@ class PaymentProfile
     private $status;
 
     /**
-     * @var bool If the current profil is linked to one or several bank accounts
+     * @var bool If the current payment profile is linked to one or several bank accounts
      *
      * @ORM\Column(type="boolean")
      * @Groups({"readPayment","writePayment"})

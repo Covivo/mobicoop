@@ -94,6 +94,19 @@ class PaymentDataProvider
         }
     }
     
+
+    /**
+     * Get the BankAccounts of a PaymentProfile
+     *
+     * @param PaymentProfile $paymentProfile
+     * @return BankAccount|null
+     */
+    public function getPaymentProfileBankAccounts(PaymentProfile $paymentProfile)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->getBankAccounts($paymentProfile);
+    }
+
     /**
      * Add a BankAccount
      *
