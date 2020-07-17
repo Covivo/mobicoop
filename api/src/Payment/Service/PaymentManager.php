@@ -135,7 +135,7 @@ class PaymentManager
             }
 
 
-            $this->createPaymentProfile($user, $identifier);
+            $this->createPaymentProfile($user, $identifier, true);
         }
 
         return $this->paymentProvider->addBankAccount($bankAccount);
@@ -163,17 +163,19 @@ class PaymentManager
     /**
      * Create a paymentProfile
      *
-     * @param User $user            The User we want to create a profile
-     * @param string $identifier    The User identifier on the payment provider service
+     * @param User $user                     The User we want to create a profile
+     * @param string $identifier             The User identifier on the payment provider service
+     * @param bool $electronicallyPayable    If the User can be payed electronically
      * @return PaymentProfile
      */
-    public function createPaymentProfile(User $user, string $identifier)
+    public function createPaymentProfile(User $user, string $identifier, bool $electronicallyPayable = false)
     {
         $paymentProfile = new PaymentProfile();
         $paymentProfile->setUser($user);
         $paymentProfile->setProvider($this->provider);
         $paymentProfile->setIdentifier($identifier);
         $paymentProfile->setStatus(1);
+        $paymentProfile->setElectronicallyPayable($electronicallyPayable);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 

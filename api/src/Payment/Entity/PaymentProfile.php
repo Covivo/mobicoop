@@ -91,6 +91,14 @@ class PaymentProfile
     private $status;
 
     /**
+     * @var bool If the current profil is linked to one or several bank accounts
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $electronicallyPayable;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -215,6 +223,18 @@ class PaymentProfile
     public function setWallets(array $wallets): self
     {
         $this->wallets = $wallets;
+
+        return $this;
+    }
+
+    public function isElectronicallyPayable(): ?bool
+    {
+        return $this->electronicallyPayable;
+    }
+
+    public function setElectronicallyPayable(bool $electronicallyPayable): self
+    {
+        $this->electronicallyPayable = $electronicallyPayable;
 
         return $this;
     }
