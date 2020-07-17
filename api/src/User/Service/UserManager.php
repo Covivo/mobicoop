@@ -1267,4 +1267,27 @@ class UserManager
         $exploded = explode('@', $email);
         return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
     }
+
+    /**
+     * Get the payment profile (bankaccounts, wallets...) of the User
+     *
+     * @return User|null
+     */
+    public function getPaymentProfile()
+    {
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        $bankAccounts = $wallets = [];
+        foreach ($paymentProfiles as $paymentProfile) {
+            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                $bankAccounts[] = $bankaccount;
+            }
+            foreach ($paymentProfile->getWallets() as $wallet) {
+                $wallets[] = $wallet;
+            }
+        }
+        $user->setBankAccounts($bankAccounts);
+        $user->setWallets($wallets);
+        return $user;
+    }
 }

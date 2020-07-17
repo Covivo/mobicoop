@@ -76,15 +76,21 @@ class MangoPayProvider implements PaymentProviderInterface
      * Returns a collection of Bank accounts.
      *
      * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
+     * @param bool $onlyActive     By default, only the active bank accounts are returned
      * @return BankAccount[]
      */
-    public function getBankAccounts(PaymentProfile $paymentProfile)
+    public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true)
     {
         $dataProvider = new DataProvider($this->serverUrl."users/".$paymentProfile->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS);
         $getParams = [
             "per_page" => 100,
-            "sort" => "creationdate:desc",
+            "sort" => "creationdate:desc"
         ];
+
+        if ($onlyActive) {
+            $getParams['Active'] = "true";
+        }
+
         $headers = [
             "Authorization" => $this->authChain
         ];
@@ -99,17 +105,7 @@ class MangoPayProvider implements PaymentProviderInterface
         }
         return $bankAccounts;
     }
-    
-    /**
-     * Returns a single Bank account
-     *
-     * @param int $bankAccountId     The id of the Bank Account
-     * @return BankAccount|null
-     */
-    public function getBankAccount(int $bankAccountId)
-    {
-    }
-    
+       
     /**
      * Add a BankAccount
      *
@@ -164,6 +160,38 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
+     * Disable a BankAccount (Only IBAN/BIC and active/inactive)
+     *
+     * @param BankAccount $bankAccount                  The BankAccount to create
+     * @return BankAccount|null
+     */
+    public function disableBankAccount(BankAccount $bankAccount)
+    {
+        // Build the body
+        $body['Active'] = "false";
+
+        // Get the identifier
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $identifier = $paymentProfiles[0]->getIdentifier();
+        
+        if (is_null($identifier)) {
+            throw new PaymentException(PaymentException::NO_IDENTIFIER);
+        }
+
+        $dataProvider = new DataProvider($this->serverUrl."users/".$identifier."/", self::COLLECTION_BANK_ACCOUNTS."/".$bankAccount->getId());
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->putItem($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            $bankAccount = $this->deserializeBankAccount($data);
+        }
+        return $bankAccount;
+    }
+
+    /**
      * Returns a collection of Wallet.
      *
      * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
@@ -184,7 +212,9 @@ class MangoPayProvider implements PaymentProviderInterface
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
             foreach ($data as $wallet) {
-                $wallets[] = $this->deserializeWallet($wallet);
+                $wallet = $this->deserializeWallet($wallet);
+                $wallet->setOwnerIdentifier($paymentProfile->getIdentifier());
+                $wallets[] = $wallet;
             }
         }
 

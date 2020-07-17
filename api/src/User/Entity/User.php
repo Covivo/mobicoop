@@ -247,9 +247,15 @@ use App\User\Controller\UserCanUseEmail;
  *              "controller"=UserCheckPhoneToken::class
  *          },
  *          "me"={
- *              "normalization_context"={"groups"={"readUser","readPayment"}},
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "method"="GET",
  *              "path"="/users/me",
+ *              "read"="false"
+ *          },
+ *          "paymentProfile"={
+ *              "normalization_context"={"groups"={"readPayment"}},
+ *              "method"="GET",
+ *              "path"="/users/paymentProfile",
  *              "read"="false"
  *          },
  *          "accessAdmin"={

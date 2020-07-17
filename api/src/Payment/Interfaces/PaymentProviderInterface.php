@@ -53,23 +53,23 @@ interface PaymentProviderInterface
      * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
      * @return BankAccount[]
      */
-    public function getBankAccounts(PaymentProfile $paymentProfile);
-    
-    /**
-     * Returns a single Bank account
-     *
-     * @param int $bankAccountId     The id of the Bank Account
-     * @return BankAccount|null
-     */
-    public function getBankAccount(int $bankAccountId);
+    public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true);
     
     /**
      * Add a BankAccount
      *
-     * @param BankAccount $user                  The BankAccount to create
+     * @param BankAccount $bankAccount                  The BankAccount to create
      * @return BankAccount|null
      */
     public function addBankAccount(BankAccount $bankAccount);
+
+    /**
+     * Disable a BankAccount
+     *
+     * @param BankAccount $bankAccount                  The BankAccount to create
+     * @return BankAccount|null
+     */
+    public function disableBankAccount(BankAccount $bankAccount);
 
     /**
      * Returns a collection of Wallet.

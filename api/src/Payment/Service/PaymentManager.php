@@ -105,6 +105,13 @@ class PaymentManager
     }
 
     
+    /**
+     * Create a bank account for a User
+     *
+     * @param User $user
+     * @param BankAccount $bankAccount
+     * @return BankAccount
+     */
     public function createBankAccount(User $user, BankAccount $bankAccount)
     {
         // Check if there is a paymentProfile
@@ -132,6 +139,25 @@ class PaymentManager
         }
 
         return $this->paymentProvider->addBankAccount($bankAccount);
+    }
+
+    /**
+     * Disable a bank account
+     *
+     * @param User $user
+     * @param BankAccount $bankAccount
+     * @return BankAccount
+     */
+    public function disableBankAccount(User $user, BankAccount $bankAccount)
+    {
+        // Check if there is a paymentProfile
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+
+        return $this->paymentProvider->disableBankAccount($bankAccount);
     }
     
     /**

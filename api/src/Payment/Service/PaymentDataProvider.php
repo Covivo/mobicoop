@@ -98,6 +98,18 @@ class PaymentDataProvider
     }
 
     /**
+     * Disable a BankAccount
+     *
+     * @param BankAccount $user     The BankAccount to create
+     * @return BankAccount|null
+     */
+    public function disableBankAccount(BankAccount $bankAccount)
+    {
+        return $this->providerInstance->disableBankAccount($bankAccount);
+    }
+
+
+    /**
      * Get the PaymentProfiles of a User
      *
      * @param User $user    The User

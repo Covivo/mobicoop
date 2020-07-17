@@ -40,7 +40,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writePayment"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={"get","post",
+ *          "disable"={
+ *              "normalization_context"={"groups"={"readPayment"}},
+ *              "method"="GET",
+ *              "path"="/bank_accounts/disable",
+ *              "read"="false",
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "idBankAccount",
+ *                          "type" = "int",
+ *                          "required" = true,
+ *                          "description" = "Id of the bank account"
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *      },
  *      itemOperations={"get","put"}
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
