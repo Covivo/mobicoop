@@ -26,12 +26,14 @@
         <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
+    </br>
+    </br>
     <v-row 
       v-if="items.length>0"
       align="center"
       justify="center"
     >
-      <v-col :cols="nbCols">
+      <!-- <v-col :cols="nbCols">
         <v-row>
           <v-col
             v-for="(item, i) in items"
@@ -43,9 +45,14 @@
               :link="item.link"
               :text-link="item.textLink"
             />
-          </v-col>
-        </v-row>
-      </v-col>
+          </v-col> -->
+      <h3 class="text-h5 primary--text font-weight-bold">
+        {{ $t('text') }}
+      </h3>
+    </v-row>
+    </br>
+    </br>
+    </v-col>
     </v-row>
     <v-row
       align="center"
