@@ -63,14 +63,15 @@ class PaymentDataProvider
         string $platformName,
         string $defaultCurrency
     ) {
+        $this->paymentProvider = $paymentProvider;
+        $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->defaultCurrency = $defaultCurrency;
+        $this->platformName = $platformName;
+        $this->paymentActive = $paymentActive;
+
         if (isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-            $this->paymentProvider = $paymentProvider;
             $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
             $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
-            $this->paymentProfileRepository = $paymentProfileRepository;
-            $this->defaultCurrency = $defaultCurrency;
-            $this->platformName = $platformName;
-            $this->paymentActive = $paymentActive;
         }
     }
     
