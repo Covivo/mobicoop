@@ -63,19 +63,6 @@ class PaymentDataProvider
         string $platformName,
         string $defaultCurrency
     ) {
-        // TO DO : Handle these exceptions elsewhere
-        // if (!$paymentActive) {
-        //     throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
-        // }
-        // $this->paymentActive = $paymentActive;
-
-        // if (empty($paymentProvider)) {
-        //     throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
-        // }
-
-        // if (!isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-        //     throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
-        // }
         if (isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
             $this->paymentProvider = $paymentProvider;
             $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
@@ -83,6 +70,26 @@ class PaymentDataProvider
             $this->paymentProfileRepository = $paymentProfileRepository;
             $this->defaultCurrency = $defaultCurrency;
             $this->platformName = $platformName;
+            $this->paymentActive = $paymentActive;
+        }
+    }
+    
+    /**
+     * Check if the payment is correcty configured
+     */
+    public function checkPaymentConfiguration()
+    {
+        if (!$this->paymentActive) {
+            throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
+        }
+        $this->paymentActive = $this->paymentActive;
+
+        if (empty($this->paymentProvider)) {
+            throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
+        }
+
+        if (!isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
+            throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
         }
     }
     
@@ -94,6 +101,7 @@ class PaymentDataProvider
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
+        $this->checkPaymentConfiguration();
         return $this->providerInstance->addBankAccount($bankAccount);
     }
 
@@ -105,6 +113,7 @@ class PaymentDataProvider
      */
     public function disableBankAccount(BankAccount $bankAccount)
     {
+        $this->checkPaymentConfiguration();
         return $this->providerInstance->disableBankAccount($bankAccount);
     }
 
@@ -117,8 +126,8 @@ class PaymentDataProvider
      */
     public function getPaymentProfiles(User $user)
     {
-        //return $this->providerInstance->getBankAccounts($user);
-        
+        $this->checkPaymentConfiguration();
+
         // Get more information for each profiles
         $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
         foreach ($paymentProfiles as $paymentProfile) {
@@ -141,8 +150,8 @@ class PaymentDataProvider
      */
     public function registerUser(User $user)
     {
+        $this->checkPaymentConfiguration();
         return $this->providerInstance->registerUser($user);
-        ;
     }
 
     /**
@@ -153,6 +162,7 @@ class PaymentDataProvider
      */
     public function createWallet(string $identifier)
     {
+        $this->checkPaymentConfiguration();
         $wallet = new Wallet();
         $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
         $wallet->setComment("");
