@@ -8,8 +8,11 @@
     >
       <v-img
         v-if="event.images[0]"
-        :src="event['images'][0]['versions'][avatarVersion]"
+        :src="event['images'][0]['versions']['square_250']"
         alt="avatar"
+        aspect-ratio="1"
+        max-width="225"
+        max-height="225"
       />
       <v-img
         v-else
