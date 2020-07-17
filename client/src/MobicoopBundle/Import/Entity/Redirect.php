@@ -33,6 +33,7 @@ class Redirect implements ResourceInterface
     const TYPE_COMMUNITY = 0;
     const TYPE_EVENT = 1;
     const TYPE_ARTICLE = 2;
+    const TYPE_NO_LONGER_EXISTS = 99;
 
     /**
      * @var int The id of this redirection.

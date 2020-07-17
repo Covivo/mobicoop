@@ -103,6 +103,10 @@ services:
         resource: '../src/Auth/Controller'
         tags: ['controller.service_arguments']
 
+    App\Auth\Service\AuthManager:
+        arguments:
+            $modules: '%env(json:file:resolve:MODULES_AUTHORIZED)%'
+
     # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
@@ -134,6 +138,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+            $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 
@@ -171,6 +176,8 @@ services:
         arguments:
             $params:
                 dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
+                importChunkSize: '%env(int:IMPORT_PROPOSALS_CHUNK_SIZE)%'
+                importBatchMatchSize: '%env(int:IMPORT_PROPOSALS_BATCH_MATCH_SIZE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -366,6 +373,13 @@ services:
     App\Import\Controller\:
         resource: '../src/Import/Controller'
         tags: ['controller.service_arguments']
+
+    App\Import\Service\ImportManager:
+        arguments:
+            $timeLimit: '%env(int:IMPORT_TIME_LIMIT)%'
+            $memoryLimit: '%env(int:IMPORT_MEMORY_LIMIT)%'
+            $sqlLog: '%env(bool:IMPORT_SQL_LOG)%'
+            $directionsBatch: '%env(int:IMPORT_USERS_DIRECTIONS_BATCH_SIZE)%'
     
     # Mass Communication
     App\MassCommunication\Controller\:
@@ -422,6 +436,21 @@ services:
                 roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
         tags:
             - { name: monolog.logger, channel: mass }
+
+    #Payment
+    App\Payment\Service\PaymentDataProvider:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
+            $clientId: '%env(string:PAYMENT_CLIENTID)%'
+            $apikey: '%env(string:PAYMENT_APIKEY)%'
+            $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
+            $defaultCurrency: '%env(string:PAYMENT_DEFAULT_CURRENCY)%'
+            $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
+
+    App\Payment\Service\PaymentManager:
+        arguments:
+            $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
 
     # Price
     App\Price\Controller\:

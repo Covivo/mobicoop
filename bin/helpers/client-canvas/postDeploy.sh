@@ -47,6 +47,12 @@ then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
     fi
 
+    # check Modules files
+    MODULES_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
+    if [ ! -f "$DOMAINS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
+    fi
+
     # check env files
     python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
 
@@ -104,6 +110,12 @@ else
     DOMAINS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
     if [ ! -f "$DOMAINS_FILE" ]; then
         echo "{}" >> /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/user/domains.json
+    fi
+
+    # check Modules files
+    MODULES_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+    if [ ! -f "$DOMAINS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
     fi
 
     # check env files

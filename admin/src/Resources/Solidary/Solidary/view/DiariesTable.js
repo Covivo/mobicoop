@@ -27,7 +27,7 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
             <TableCell align="center">Auteur</TableCell>
             <TableCell align="center">Annonce</TableCell>
             <TableCell align="center">Action</TableCell>
-            <TableCell align="center">Usager associé</TableCell>
+            <TableCell align="center">Bénéficiaire</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

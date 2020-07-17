@@ -47,7 +47,6 @@
                 cols="5"
                 class="text-h6 text-center"
               >
-                class="text-h6
                 <regular-days-summary 
                   :mon-active="lResult.monCheck"
                   :tue-active="lResult.tueCheck"
@@ -64,7 +63,7 @@
                 cols="3"
                 class="text-h6 text-center"
               >
-                class="text-h6'places', lResult.seats, { seats: lResult.seats }) }}
+                {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
               </v-col>
 
               <!-- Price -->
@@ -73,21 +72,22 @@
                 class="text-h6 text-center"
               >
                 {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
-                class="text-h6tip
-                slot="append"
-                right
-                color="info"
-                :max-width="'35%'"
+                <v-tooltip
+                  slot="append"
+                  right
+                  color="info"
+                  :max-width="'35%'"
                 >
-                <template v-slot:activator="{ on }">
-                  <v-icon
-                    justify="left"
-                    v-on="on"
-                  >
-                    mdi-help-circle-outline
-                  </v-icon>
-                </template>
-                <span>{{ $t('priceTooltip') }}</span>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      justify="left"
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('priceTooltip') }}</span>
+                </v-tooltip>
               </v-col>
             </v-row>
 
@@ -366,51 +366,61 @@
       >
         {{ $t('carpoolAsPassenger') }}
       </v-btn>
-      <!-- if an ask is pending or accepted -->
-      <p
-        v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
-        class="warning--text font-weight-bold"
-      >
-        <v-icon color="warning">
-          mdi-alert
-        </v-icon>
-        {{ $t('alreadyAskCarpool') }}
-      </p>
 
-      <!-- if an ask is initiated -->
-      <v-row
-        v-if="lResult.initiatedAsk == true"
-      >
-        <v-col
-          cols="8"
-          align-self="end"
-          class="text-right"
+      <v-row>
+        <!-- if an ask is pending or accepted -->
+        <v-row
+          v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
         >
-          <p
-            class="warning--text font-weight-bold mb-n1"
+          <v-col
+            cols="8"
+            align-self="end"
+            class="text-right"
           >
-            <v-icon color="warning">
-              mdi-alert
-            </v-icon>
-            {{ $t('alreadyInitiatedCarpool') }}
-          </p>
-        </v-col>
-        <v-col
-          cols="3"
-          align-self="end"
-          class="text-right"
+            <p class="warning--text font-weight-bold mb-n1">
+              <v-icon color="warning">
+                mdi-alert
+              </v-icon>
+              {{ $t('alreadyAskCarpool') }}
+            </p>
+          </v-col>
+        </v-row>
+
+        <!-- if an ask is initiated -->
+        <v-row
+          v-if="lResult.initiatedAsk == true"
         >
-          <a
-            :href="this.$t('seeMessages.route')"
-            style="text-decoration:none;"
+          <v-col
+            cols="8"
+            align-self="end"
+            class="text-right"
           >
-            <v-btn
-              color="secondary"
+            <p
+              class="warning--text font-weight-bold mb-n1"
             >
-              {{ $t('seeMessages.label') }}
-            </v-btn>
-          </a>
-        </v-col>
+              <v-icon color="warning">
+                mdi-alert
+              </v-icon>
+              {{ $t('alreadyInitiatedCarpool') }}
+            </p>
+          </v-col>
+          <v-col
+            cols="3"
+            align-self="end"
+            class="text-right"
+          >
+            <a
+              :href="this.$t('seeMessages.route')"
+              style="text-decoration:none;"
+            >
+              <v-btn
+                color="secondary"
+              >
+                {{ $t('seeMessages.label') }}
+              </v-btn>
+            </a>
+          </v-col>
+        </v-row>
       </v-row>
 
       <!-- Step 2 or 3 (previous) --> 

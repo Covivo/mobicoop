@@ -43,11 +43,12 @@ export const EventEdit = (props) => {
           source="name"
           label={translate('custom.label.event.image')}
           validate={[required()]}
+          required
           formClassName={classes.title}
         />
         <ReferenceField
           reference="images"
-          source="images[0]"
+          source="images[0].id"
           label={translate('custom.label.event.currentImage')}
         >
           <ImageField source="versions.square_250" />
@@ -61,6 +62,7 @@ export const EventEdit = (props) => {
           source="description"
           label={translate('custom.label.event.resume')}
           validate={required()}
+          required
           formClassName={classes.fullwidth}
         />
         <RichTextInput

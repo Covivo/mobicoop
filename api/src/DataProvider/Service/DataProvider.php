@@ -158,6 +158,9 @@ class DataProvider
             if ($body) {
                 $options[RequestOptions::JSON]=$body;
             }
+            
+            // echo json_encode($body);die;
+            
             $clientResponse = $this->client->post($this->resource, $options);
             switch ($clientResponse->getStatusCode()) {
                 case 200:
@@ -165,7 +168,6 @@ class DataProvider
                     return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
-            //var_dump($e->getMessage());die;
             return new Response($e->getCode());
         }
         return new Response();

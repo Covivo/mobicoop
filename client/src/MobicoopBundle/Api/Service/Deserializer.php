@@ -746,11 +746,11 @@ class Deserializer
         if (isset($data["address"])) {
             $relayPoint->setAddress($this->deserializeAddress($data['address']));
         }
-        if (isset($data["images"])) {
-            foreach ($data["images"] as $image) {
-                $relayPoint->addImage($this->deserializeImage($image));
-            }
-        }
+        // if (isset($data["images"])) {
+        //     foreach ($data["images"] as $image) {
+        //         $relayPoint->addImage($this->deserializeImage($image));
+        //     }
+        // }
         // if (isset($data["community"])) {
         //     $relayPoint->setCommunity($this->deserializeCommunity($data["community"]));
         // }

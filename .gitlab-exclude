@@ -5,6 +5,7 @@
 /api/.env.test.local
 /api/.env.prod.local
 /api/config/jwt/
+/api/config/params/*.json
 /api/config/publicTransport/*.json
 /api/config/rdex/*.json
 /api/config/user/*.json

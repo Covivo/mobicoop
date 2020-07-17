@@ -26,14 +26,18 @@ use App\Carpool\Entity\Criteria;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
 use App\Payment\Ressource\PaymentPayment;
-use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
-use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
+use App\Geography\Entity\Address;
+use App\Payment\Entity\PaymentProfile;
+use App\Payment\Exception\PaymentException;
+use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\BankAccount;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -51,22 +55,36 @@ class PaymentManager
     private $entityManager;
     private $carpoolItemRepository;
     private $askRepository;
+    private $provider;
+    private $paymentProvider;
+    private $paymentProfileRepository;
 
     /**
      * Constructor.
      *
-     * @param EntityManagerInterface $entityManager         The entity manager
-     * @param CarpoolItemRepository $carpoolItemRepository  The carpool items repository
-     * @param AskRepository $askRepository                  The ask repository
+     * @param EntityManagerInterface $entityManager                 The entity manager
+     * @param CarpoolItemRepository $carpoolItemRepository          The carpool items repository
+     * @param AskRepository $askRepository                          The ask repository
+     * @param CarpoolItemRepository $carpoolItemRepository          The carpool items repository
+     * @param PaymentDataProvider $paymentProvider                  The payment data provider
+     * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
+     * @param string $paymentProviderService                        The payment provider service
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         CarpoolItemRepository $carpoolItemRepository,
-        AskRepository $askRepository
+        AskRepository $askRepository,
+        PaymentDataProvider $paymentProvider,
+        PaymentProfileRepository $paymentProfileRepository,
+        string $paymentProviderService
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->askRepository = $askRepository;
+        $this->provider = $paymentProviderService;
+        $this->entityManager = $entityManager;
+        $this->paymentProvider = $paymentProvider;
+        $this->paymentProfileRepository = $paymentProfileRepository;
     }
 
     /**
@@ -340,5 +358,61 @@ class PaymentManager
         }
 
         return $this->carpoolItemRepository->findForPayments($frequency, $type, $user, $fromDate, $toDate);
+    }
+    
+    /**
+     * Create a bank account
+     *
+     * @param User $user                The user for whom we create a bank account
+     * @param BankAccount $bankAccount  The bank account
+     * @return BankAccount|null         The bank account created
+     */
+    public function createBankAccount(User $user, BankAccount $bankAccount)
+    {
+        // Check if there is a paymentProfile
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            // No Payment Profile, we create one
+            $identifier = null;
+
+            // First we register the User on the payment provider to get an identifier
+            $identifier = $this->paymentProvider->registerUser($user);
+
+            if ($identifier==null || $identifier=="") {
+                throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+            }
+
+            // Now, we create a Wallet for this User
+            $wallet = null;
+            $wallet = $this->paymentProvider->createWallet($identifier);
+            if ($wallet==null || $wallet=="") {
+                throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+            }
+
+
+            $this->createPaymentProfile($user, $identifier);
+        }
+
+        return $this->paymentProvider->addBankAccount($bankAccount);
+    }
+    
+    /**
+     * Create a paymentProfile
+     *
+     * @param User $user            The User we want to create a profile
+     * @param string $identifier    The User identifier on the payment provider service
+     * @return PaymentProfile
+     */
+    public function createPaymentProfile(User $user, string $identifier)
+    {
+        $paymentProfile = new PaymentProfile();
+        $paymentProfile->setUser($user);
+        $paymentProfile->setProvider($this->provider);
+        $paymentProfile->setIdentifier($identifier);
+        $paymentProfile->setStatus(1);
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+
+        return $paymentProfile;
     }
 }

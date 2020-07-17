@@ -41,6 +41,7 @@ api_platform:
             '%kernel.project_dir%/src/Import/Entity',
             '%kernel.project_dir%/src/MassCommunication/Entity',
             '%kernel.project_dir%/src/Match/Entity',
+            '%kernel.project_dir%/src/Payment/Entity',
             '%kernel.project_dir%/src/Price/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
@@ -66,6 +67,7 @@ api_platform:
         - '%kernel.project_dir%/src/Import/Entity'
         - '%kernel.project_dir%/src/MassCommunication/Entity'
         - '%kernel.project_dir%/src/Match/Entity'
+        - '%kernel.project_dir%/src/Payment/Entity'
         - '%kernel.project_dir%/src/Payment/Ressource'
         - '%kernel.project_dir%/src/Price/Entity'
         - '%kernel.project_dir%/src/PublicTransport/Entity'

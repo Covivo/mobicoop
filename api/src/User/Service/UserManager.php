@@ -51,6 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
@@ -100,6 +101,7 @@ class UserManager
     private $encoder;
     private $translator;
     private $security;
+    private $paymentProvider;
 
     // Default carpool settings
     private $chat;
@@ -141,6 +143,7 @@ class UserManager
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
+        PaymentDataProvider $paymentProvider,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -168,6 +171,7 @@ class UserManager
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
+        $this->paymentProvider = $paymentProvider;
     }
 
     /**
@@ -184,10 +188,22 @@ class UserManager
     /**
      * Get a user by its email.
      *
-     * @param string $email
-     * @return User|null
+     * @param string $email The email to find
+     * @return User|null    The user found
      */
     public function getUserByEmail(string $email)
+    {
+        return $this->userRepository->findOneBy(["email"=>$email]);
+    }
+
+
+    /**
+     * Check if an email is already used by someone; returns a code
+     *
+     * @param string $email The email to check
+     * @return string       The code
+     */
+    public function checkEmail(string $email)
     {
         //Email already exist in db
         if ($this->userRepository->findOneBy(["email"=>$email])) {
@@ -211,7 +227,21 @@ class UserManager
      */
     public function getMe()
     {
-        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        // TO : Do this on a special route or a parameter
+        // $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        // $bankAccounts = $wallets = [];
+        // foreach ($paymentProfiles as $paymentProfile) {
+        //     foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+        //         $bankAccounts[] = $bankaccount;
+        //     }
+        //     foreach ($paymentProfile->getWallets() as $wallet) {
+        //         $wallets[] = $wallet;
+        //     }
+        // }
+        // $user->setBankAccounts($bankAccounts);
+        // $user->setWallets($wallets);
+        return $user;
     }
 
     /**
@@ -287,7 +317,7 @@ class UserManager
         } else {
             // No structure given. We take the admin's one
             $structures = $this->security->getUser()->getSolidaryStructures();
-            if (!is_null($structures) || count($structures)>0) {
+            if (is_array($structures) && isset($structures[0])) {
                 $solidaryUserstructure = $structures[0];
             }
         }

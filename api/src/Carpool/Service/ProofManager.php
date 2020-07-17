@@ -49,7 +49,6 @@ class ProofManager
 {
     private $entityManager;
     private $logger;
-    private $prefix;
     private $provider;
     private $carpoolProofRepository;
     private $askRepository;
@@ -57,6 +56,7 @@ class ProofManager
     private $geoSearcher;
     private $proofType;
     private $geoTools;
+    private $duration;
     
     /**
      * Constructor.
@@ -85,7 +85,8 @@ class ProofManager
         string $provider,
         string $uri,
         string $token,
-        string $proofType
+        string $proofType,
+        int $duration
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -95,6 +96,7 @@ class ProofManager
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->proofType = $proofType;
+        $this->duration = $duration;
 
         switch ($provider) {
             case 'BetaGouv':
@@ -489,14 +491,14 @@ class ProofManager
      *
      * @param DateTime|null $fromDate   The start of the period for which we want to send the proofs
      * @param DateTime|null $toDate     The end of the period  for which we want to send the proofs
-     * @return void
+     * @return int  The number of proofs sent
      */
     public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null)
     {
-        // if no dates are sent, we use the previous day
+        // if no dates are sent, we use the last {duration} days
         if (is_null($fromDate)) {
             $fromDate = new DateTime();
-            $fromDate->modify('-1 day');
+            $fromDate->modify('-' . $this->duration . ' day');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
@@ -507,6 +509,7 @@ class ProofManager
 
         // we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
+        $nbSent = 0;
 
         // send these proofs
         foreach ($proofs as $proof) {
@@ -517,12 +520,14 @@ class ProofManager
             $this->logger->info("Result of the send for proof #" . $proof->getId() . " : code " . $result->getCode() . " | value : ".$result->getValue());
             if ($result->getCode() == 200) {
                 $proof->setStatus(CarpoolProof::STATUS_SENT);
+                $nbSent++;
             } else {
                 $proof->setStatus(CarpoolProof::STATUS_ERROR);
             }
             $this->entityManager->persist($proof);
         }
         $this->entityManager->flush();
+        return $nbSent;
     }
 
     /**
@@ -540,7 +545,6 @@ class ProofManager
 
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
-            // TODO : search if carpool proofs already exist : could be the case if the driver and passenger used the mobile app
             if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 // punctual, only one carpool proof
                 // we search if a carpool proof already exists for the date
