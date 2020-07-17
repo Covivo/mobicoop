@@ -10,8 +10,6 @@ import {
   BooleanInput,
   ReferenceInput,
   SelectInput,
-  ReferenceArrayInput,
-  SelectArrayInput,
   NumberInput,
   FormDataConsumer,
 } from 'react-admin';
@@ -36,9 +34,9 @@ export const RelayPointCreate = (props) => (
         <TextInput source="name" label="Nom" validate={required()} />
         <GeocompleteInput source="address" label="Adresse" validate={required()} />
         <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
-        <ReferenceArrayInput source="relayPointTypes" label="Types" reference="relay_point_types">
-          <SelectArrayInput optionText="name" />
-        </ReferenceArrayInput>
+        <ReferenceInput source="relayPointTypes" label="Types" reference="relay_point_types">
+          <SelectInput optionText="name" />
+        </ReferenceInput>
         <TextInput source="description" label="Description" validate={required()} />
         <RichTextInput
           source="fullDescription"
