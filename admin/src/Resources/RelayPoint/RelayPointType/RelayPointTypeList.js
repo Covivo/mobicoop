@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Datagrid, TextInput, TextField, Filter, ShowButton, EditButton } from 'react-admin';
+import { List, Datagrid, TextInput, TextField, Filter, ShowButton, EditButton, ImageField } from 'react-admin';
 
 const RelayPointTypeFilter = (props) => (
   <Filter {...props}>
@@ -17,6 +17,10 @@ export const RelayPointTypeList = (props) => (
     <Datagrid>
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="name" label="Nom" />
+      <ImageField
+        label="Icon"
+        source="icon.url"
+      />
       <ShowButton />
       <EditButton />
     </Datagrid>

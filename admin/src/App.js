@@ -96,6 +96,7 @@ export default () => (
         <Resource name="solidary_contacts" />,
         <Resource name="actions" />,
         <Resource name="solidary_formal_requests" />,
+        <Resource name="icons" />,
       ].filter((x) => x);
     }}
   </Admin>
