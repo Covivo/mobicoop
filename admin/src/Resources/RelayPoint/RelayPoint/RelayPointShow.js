@@ -35,18 +35,14 @@ const RelayPointShow = (props) => {
             <FunctionField render={addressRenderer} />
           </ReferenceField>
           <SelectField source="status" label="Status" choices={statusChoices} />
-          <ReferenceRecordIdMapper attribute="relayPointTypes">
-            <ReferenceArrayField
-              source="relayPointTypes"
-              label="Types"
-              reference="relay_point_types"
-              allowEmpty
-            >
-              <SingleFieldList>
-                <ChipField source="name" />
-              </SingleFieldList>
-            </ReferenceArrayField>
-          </ReferenceRecordIdMapper>
+
+          <ReferenceField
+            source="relayPointType.id"
+            label="Types de point relais"
+            reference="relay_point_types"
+          >
+            <TextField source="name" />
+          </ReferenceField>
           <TextField source="description" label="Description" />
           <RichTextField source="fullDescription" label="Description complète" />
         </Tab>

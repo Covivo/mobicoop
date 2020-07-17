@@ -10,8 +10,6 @@ import {
   BooleanInput,
   ReferenceInput,
   SelectInput,
-  ReferenceArrayInput,
-  SelectArrayInput,
   NumberInput,
   FunctionField,
   ReferenceField,
@@ -46,9 +44,9 @@ export const RelayPointEdit = (props) => (
         </ReferenceField>
         <GeocompleteInput source="address" label="Nouvelle addresse" validate={required()} />
         <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
-        <ReferenceArrayInput source="relayPointTypes" label="Types" reference="relay_point_types">
-          <SelectArrayInput optionText="name" />
-        </ReferenceArrayInput>
+        <ReferenceInput source="relayPointType.id" label="Types" reference="relay_point_types">
+          <SelectInput optionText="name" />
+        </ReferenceInput>
         <TextInput source="description" label="Description" validate={required()} />
         <RichTextInput
           source="fullDescription"
