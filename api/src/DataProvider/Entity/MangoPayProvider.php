@@ -109,7 +109,7 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Add a BankAccount
      *
-     * @param BankAccount $bankAccount                  The BankAccount to create
+     * @param BankAccount $bankAccount    The BankAccount to create
      * @return BankAccount|null
      */
     public function addBankAccount(BankAccount $bankAccount)
@@ -162,7 +162,7 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Disable a BankAccount (Only IBAN/BIC and active/inactive)
      *
-     * @param BankAccount $bankAccount                  The BankAccount to create
+     * @param BankAccount $bankAccount  The BankAccount to disable
      * @return BankAccount|null
      */
     public function disableBankAccount(BankAccount $bankAccount)
