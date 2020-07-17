@@ -32,6 +32,8 @@ doctrine:
         dql:
             datetime_functions:
                 dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
+                addtime: DoctrineExtensions\Query\Mysql\AddTime
+                sectotime: DoctrineExtensions\Query\Mysql\SecToTime
             numeric_functions:
                 contains:           CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
                 st_contains:        CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains

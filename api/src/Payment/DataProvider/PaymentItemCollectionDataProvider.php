@@ -57,11 +57,6 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        // TODO : add the filters :
-        // - frequency
-        // - week and year
-        // - type
-
         // we initialize the frequency
         $frequency = Criteria::FREQUENCY_PUNCTUAL;
         if (!empty($this->filters['frequency'])) {

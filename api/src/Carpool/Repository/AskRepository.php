@@ -113,8 +113,8 @@ class AskRepository
      *
      * @param DateTime $fromDate    The start date
      * @param DateTime $toDate      The end date
-     * @param USer $user            The user
-     * @return Ask[]|null          The asks if found
+     * @param User|null $user       The user
+     * @return Ask[]|null           The asks if found
      */
     public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
     {
@@ -179,6 +179,92 @@ class AskRepository
         ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
         ->setParameter('fromDate', $fromDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
+        ;
+
+        if (!is_null($user)) {
+            $query->andWhere('(a.user = :user or a.userRelated = :user)')
+            ->setParameter('user', $user);
+        }
+                
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find accepted asks between the given dates (including times for punctual trips), for an optional given user
+     * We can add a margin duration to the end time in case we want to be sure that the carpool is finished
+     *
+     * @param DateTime $fromDate    The start date and time
+     * @param DateTime $toDate      The end date and time
+     * @param User|null $user       The user
+     * @return Ask[]|null           The asks if found
+     */
+    public function findAcceptedAsksForPeriodAndTime(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    {
+        // we will need the different week number days between fromDate and toDate
+        $days = [];
+        $curDate = clone $fromDate;
+        $continue = true;
+        while ($continue) {
+            if (!in_array($curDate->format('w'), $days)) {
+                $days[] = $curDate->format('w');
+            }
+            if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || count($days) == 7) {
+                $continue = false;
+            } else {
+                $curDate->modify('+1 day');
+            }
+        }
+        // we create the regular where clause
+        $regularWhereArray = [];
+        foreach ($days as $day) {
+            switch ($day) {
+                case 0:
+                    $regularWhereArray[$day] = "(c.sunCheck = 1)";
+                    break;
+                case 1:
+                    $regularWhereArray[$day] = "(c.monCheck = 1)";
+                    break;
+                case 2:
+                    $regularWhereArray[$day] = "(c.tueCheck = 1)";
+                    break;
+                case 3:
+                    $regularWhereArray[$day] = "(c.wedCheck = 1)";
+                    break;
+                case 4:
+                    $regularWhereArray[$day] = "(c.thuCheck = 1)";
+                    break;
+                case 5:
+                    $regularWhereArray[$day] = "(c.friCheck = 1)";
+                    break;
+                case 6:
+                    $regularWhereArray[$day] = "(c.satCheck = 1)";
+                    break;
+            }
+        }
+        $regularWhere = implode(' or ', $regularWhereArray);
+        $query = $this->repository->createQueryBuilder('a')
+        ->join('a.criteria', 'c')
+        ->join('a.waypoints', 'w')
+        ->where('(a.status = :accepted_driver or a.status = :accepted_passenger)')
+        ->andWhere('(
+            (
+                c.frequency = :punctual and c.fromDate between :fromDate and :toDate and
+                ADDTIME(c.fromTime,(SECTOTIME(w.duration))) < :endTime and 
+                w.destination = 1 
+            ) 
+            or 
+            (
+                c.frequency = :regular and c.fromDate <= :fromDate and c.toDate >= :toDate and
+                (' . $regularWhere . ')
+            )
+        )')
+        ->setParameter('accepted_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+        ->setParameter('accepted_passenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+        ->setParameter('fromDate', $fromDate->format('Y-m-d'))
+        ->setParameter('toDate', $toDate->format('Y-m-d'))
+        ->setParameter('endTime', $toDate->format('H:i:s'))
         ;
 
         if (!is_null($user)) {

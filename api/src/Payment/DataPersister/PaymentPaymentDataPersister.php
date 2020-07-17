@@ -50,7 +50,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
     {
         // call your persistence layer to save $data
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            $data = $this->paymentManager->createPaymentPayment($data);
+            $data = $this->paymentManager->createPaymentPayment($data, $this->security->getUser());
         }
         return $data;
     }

@@ -71,6 +71,7 @@ class CarpoolItem
 
     /**
      * @var int The status of the carpool :
+     * 0 : the carpool was planned, we don't know yet if it has been realized
      * 1 : the carpool has been realized (planned or dynamic)
      * 2 : the carpool was planned but was not realized
      *
