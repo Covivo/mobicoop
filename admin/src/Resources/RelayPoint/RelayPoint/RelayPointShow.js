@@ -24,14 +24,16 @@ const statusChoices = [
   { id: 1, name: 'Actif' },
   { id: 2, name: 'Inactif' },
 ];
+const userOptionRenderer = (choice) => `${choice.givenName} ${choice.familyName}`;
 
 const RelayPointShow = (props) => {
   return (
     <Show {...props} title="Points relais > afficher">
       <TabbedShowLayout>
         <Tab label="Identité">
+
           <TextField source="name" label="Nom" />
-          <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
+          <ReferenceField source="address.id" label="Adresse" reference="addresses" link={false}>
             <FunctionField render={addressRenderer} />
           </ReferenceField>
           <SelectField source="status" label="Status" choices={statusChoices} />

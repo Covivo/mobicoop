@@ -18,6 +18,7 @@ import {
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 import { addressRenderer, UserRenderer } from '../../../utils/renderers';
+import RelayPointImageUpload from './RelayPointImageUpload';
 
 const userId = `/users/${localStorage.getItem('id')}`;
 const statusChoices = [
@@ -38,7 +39,7 @@ export const RelayPointEdit = (props) => (
           source="address.id"
           label="Adresse actuelle"
           reference="addresses"
-          linkType=""
+          link={false}
         >
           <FunctionField render={addressRenderer} />
         </ReferenceField>
@@ -74,11 +75,11 @@ export const RelayPointEdit = (props) => (
         <BooleanInput source="official" label="Officiel" />
         <BooleanInput source="suggested" label="Suggestion autocomplétion" />
       </FormTab>
-      {/* <FormTab label="Images">
-                <ImageInput source="images" label="Images" accept="image/*">
-                    <ImageField source="src" title="title" />
-                </ImageInput>
-            </FormTab> */}
+      <FormTab label="Images">
+        <RelayPointImageUpload
+          label="Images"
+        />
+      </FormTab>
     </TabbedForm>
   </Edit>
 );
