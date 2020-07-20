@@ -8,7 +8,7 @@
         "price":"Montant: {price} €",
         "sumToPay":"Total à payer: {price} €",
         "payedByHand":"J’ai payé à la main",
-        "payOnLine":"Je paie en ligne",
+        "payElectronic":"Je paie en ligne",
         "paymentReceivedByHand":"Total paiement(s) reçu(s) à la main",
         "report":"Signaler un impayé",
         "buttons": {

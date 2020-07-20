@@ -128,11 +128,11 @@ export default {
     },
     colorActive:{
       type: String,
-      default: "success"
+      default: "primary"
     },
     colorInactive:{
       type: String,
-      default: "default"
+      default: "primary lighten-3"
     },
     clickable:{
       type:Boolean,

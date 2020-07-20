@@ -152,7 +152,22 @@
                         </v-icon>
                       </v-col>
                       <v-col justify="center">
-                        <day-list-chips />
+                        <day-list-chips 
+                          :mon-active="true"
+                          :tue-active="true"
+                          :wed-active="true"
+                          :thu-active="true"
+                          :fri-active="true"
+                          :sat-active="null"
+                          :sun-active="null"
+                          :mon-disabled="false"
+                          :tue-disabled="false"
+                          :wed-disabled="false"
+                          :thu-disabled="false"
+                          :fri-disabled="false"
+                          :sat-disabled="true"
+                          :sun-disabled="true"
+                        />
                       </v-col>
                     </v-row>
                     <v-row justify="center">
@@ -166,7 +181,22 @@
                         </v-icon>
                       </v-col>
                       <v-col justify="center">
-                        <day-list-chips />
+                        <day-list-chips
+                          :mon-active="true"
+                          :tue-active="true"
+                          :wed-active="true"
+                          :thu-active="true"
+                          :fri-active="true"
+                          :sat-active="null"
+                          :sun-active="null"
+                          :mon-disabled="false"
+                          :tue-disabled="false"
+                          :wed-disabled="false"
+                          :thu-disabled="false"
+                          :fri-disabled="false"
+                          :sat-disabled="true"
+                          :sun-disabled="true"
+                        />
                       </v-col>
                     </v-row>
                   </v-row>
@@ -190,16 +220,18 @@
                         justify="center"
                       >
                         <v-radio-group
-                          v-model="radios"
+                          v-model="typeOfPayment"
                           column
                         >
                           <v-radio
-                            :label="$t('payOnLine')"
-                            value="radio-1"
+                            :label="$t('payElectronic')"
+                            value="electronic"
+                            :disabled="disabledTypeOfPayment"
                           />
                           <v-radio
                             :label="$t('payedByHand')"
-                            value="radio-2"
+                            value="byHand"
+                            :disabled="disabledTypeOfPayment"
                           />
                         </v-radio-group>
                       </v-row>
@@ -354,16 +386,16 @@
             align="center"
             class="font-weight-bold"
           >
-            {{ $t('payOnLine') }} :
+            {{ $t('payElectronic') }} :
           </v-col>
           <v-col align="left">
             <v-list shaped>
               <v-list-item-group
-                v-model="pricesOnLine"
+                v-model="pricesElectronic"
                 color="primary"
               >
                 <v-list-item
-                  v-for="(item, i) in pricesOnLine"
+                  v-for="(item, i) in pricesElectronic"
                   :key="i"
                 >
                   <v-list-item-content>
@@ -381,6 +413,7 @@
                           color="secondary"
                           fab
                           x-small
+                          @click="removeElectronicPayment"
                         >
                           <v-icon>
                             mdi-trash-can
@@ -428,6 +461,7 @@
                           color="secondary"
                           fab
                           x-small
+                          @click="removeByHand"
                         >
                           <v-icon>
                             mdi-trash-can
@@ -583,27 +617,47 @@ export default {
       selectedJourney: this.selectedId,
       price: 10,
       switch1: false,
-      sumTopay: 55,
+      disabledTypeOfPayment: false,
+      sumTopay: null,
+      typeOfPayment: null,
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
-      pricesOnLine: [
-        { name: 'Lara C.', price: '30' },
-        { name: 'Bruce W.', price: '25' }
-      ],
-      pricesByHand: [
-        { name: 'Tony S.', price: '40' },
-        { name: 'Nathan D.', price: '30' },
-        { name: 'Bruce W.', price: '25' },
-        { name: 'Peter P.', price: '10' }
-      ],
+      pricesElectronic: [],
+      pricesByHand: [],
       payedByHand: [
         { name: 'Lara C.', price: '30' },
         { name: 'Bruce W.', price: '25' }
       ]
     };
   },
+  watch: {
+    typeOfPayment() {
+      if (this.typeOfPayment == "electronic") {
+        this.sumTopay = this.sumTopay + this.price;
+        this.pricesElectronic.push({ name: 'Lara C.', price: this.price })
+      } 
+      if (this.typeOfPayment == "byHand") {
+        this.pricesByHand.push({ name: 'Lara C.', price: this.price })
+      }
+      this.disabledTypeOfPayment = true;
+    },
+  },
   created() {
     moment.locale(this.locale); 
+  },
+  methods: {
+    removeByHandPayment() {
+      this.disabledTypeOfPayment = false;
+      this.pricesByHand.splice(this.i, 1);
+      this.typeOfPayment = null;
+    },
+    removeElectronicPayment() {
+      this.disabledTypeOfPayment = false;
+      this.pricesElectronic.splice(this.i, 1);
+      this.typeOfPayment = null;
+      this.sumTopay = this.sumTopay - this.price;
+    }
   }
+ 
  
 };
 </script>
