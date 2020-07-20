@@ -185,7 +185,10 @@
                           </p>
                         </v-col>
                       </v-row>
-                      <v-row justify="center">
+                      <v-row
+                        v-if="displayOnlinePayment"
+                        justify="center"
+                      >
                         <v-radio-group
                           v-model="radios"
                           column
@@ -199,6 +202,15 @@
                             value="radio-2"
                           />
                         </v-radio-group>
+                      </v-row>
+                      <v-row
+                        v-else
+                        justify="center"
+                      >
+                        <v-switch
+                          v-model="switch1"
+                          :label="$t('payedByHand')"
+                        />
                       </v-row>
                     </v-col>
                   </v-row>
@@ -334,7 +346,10 @@
             </v-col>
           </v-card>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          v-if="displayOnlinePayment"
+          justify="center"
+        >
           <v-col
             align="center"
             class="font-weight-bold"
@@ -426,7 +441,10 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          justify="center"
+          class="mb-4"
+        >
           <v-card
             outlined
             color="primary lighten-3"
@@ -441,7 +459,10 @@
             </v-col>
           </v-card>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          v-if="displayOnlinePayment"
+          justify="center"
+        >
           <v-col align="center">
             <p>
               {{ $t('sumToPay', {price: this.sumTopay}) }}
@@ -535,6 +556,10 @@ export default {
     DayListChips
   },
   props: {
+    onlinePayment: {
+      type: Boolean,
+      default: true
+    },
     frequency: {
       type: Number,
       default: 2
@@ -552,10 +577,12 @@ export default {
     return {
       locale: this.$i18n.locale,
       message:null,
+      displayOnlinePayment: this.onlinePayment,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
       selectedJourney: this.selectedId,
       price: 10,
+      switch1: false,
       sumTopay: 55,
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesOnLine: [
