@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Ressource;
+namespace App\Payment\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -34,15 +34,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A Wallet
  *
- * ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writePayment"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put"}
- * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Wallet
