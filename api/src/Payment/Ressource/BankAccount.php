@@ -42,7 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('bank_account_list',object)"
+ *             "security"="is_granted('reject',object)"
  *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('bank_account_create',object)"

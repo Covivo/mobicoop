@@ -15,17 +15,11 @@ final class Version20200720111000 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('
-        INSERT INTO `auth_rule` (`id`, `name`) VALUES
-        (29, \'BankAccountOwner\');
-        ');
-        
-        
         $this->addSql("
         INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES 
         ('229', NULL, '1', 'bank_account_create', 'Create a bank account'),
         ('230', NULL, '1', 'bank_account_list', 'List bank accounts'),
-        ('231', '29', '1', 'bank_account_disable', 'Disable a bank account');");
+        ('231', NULL, '1', 'bank_account_disable', 'Disable a bank account');");
 
         $this->addSql("
         INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES 

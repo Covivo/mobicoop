@@ -94,6 +94,7 @@ class BankAccountVoter extends Voter
 
     private function canDisableBankAccount(BankAccount $bankAccount)
     {
-        return $this->authManager->isAuthorized(self::BANK_ACCOUNT_DISABLE, ['bankAccount'=>$bankAccount]);
+        // Control of the ownership directly in service code (there is no rule)
+        return $this->authManager->isAuthorized(self::BANK_ACCOUNT_DISABLE);
     }
 }
