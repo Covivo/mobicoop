@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use App\Payment\Ressource\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Import\Entity\Redirect;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
@@ -73,6 +72,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Icon;
 use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 
 /**
  * Custom deserializer service.
@@ -208,6 +208,13 @@ class Deserializer
             foreach ($data["images"] as $image) {
                 $user->addImage($this->deserializeImage($image));
             }
+        }
+        if (isset($data["bankAccounts"])) {
+            $bankAccounts = [];
+            foreach ($data["bankAccounts"] as $bankAccount) {
+                $bankAccounts[] = $this->deserializeBankAccount($bankAccount);
+            }
+            $user->setBankAccounts($bankAccounts);
         }
         return $user;
     }
@@ -792,7 +799,7 @@ class Deserializer
         return $icon;
     }
 
-    private function deserializeBankAccount(array $data) : ?Icon
+    private function deserializeBankAccount(array $data) : ?BankAccount
     {
         $bankAccount = new BankAccount();
         $bankAccount = $this->autoSet($bankAccount, $data);

@@ -121,7 +121,7 @@ class BankAccount
     private $comment;
 
     /**
-     * @var int The status of this payment profil (0 : Inactive, 1 : Active)
+     * @var int The status of this bank account (0 : Inactive, 1 : Active)
      *
      * @Groups({"readPayment","writePayment"})
      */

@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Event\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -44,6 +44,12 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @var int The id of this bank account
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this bank account.
+     *
+     */
+    private $iri;
 
     /**
      * @var string|null The litteral name of the user owning this bank account
@@ -83,7 +89,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $comment;
 
     /**
-     * @var int The status of this payment profil (0 : Inactive, 1 : Active)
+     * @var int The status of this bank account (0 : Inactive, 1 : Active)
      *
      * @Groups({"post"})
      */

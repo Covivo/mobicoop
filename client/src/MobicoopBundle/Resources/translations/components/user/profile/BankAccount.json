@@ -1,6 +1,18 @@
 {
     "fr": {
+        "title":"Renseignez vos coordonnées bancaires",
+        "titleAlreadyRegistered":"Vos coordonnées bancaires",
+        "iban":"IBAN",
+        "bic":"BIC",
+        "register":"Enregistrer",
+        "coordinatesUri":"/utilisateur/coordonnees-bancaires"
     },    
     "en": {
+        "title":"Register your bank coordinates",
+        "titleAlreadyRegistered":"Your bank coordinates",
+        "iban":"IBAN",
+        "bic":"BIC",
+        "register":"Register",
+        "coordinatesUri":"/user/bank-coordinates"
     }    
 }

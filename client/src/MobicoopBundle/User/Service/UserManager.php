@@ -665,4 +665,21 @@ class UserManager
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
     }
+
+    /**
+     * Get the bank coordinates of a User
+     *
+     * @return BankAccount[]
+     */
+    public function getBankCoordinates()
+    {
+        $response = $this->dataProvider->getSpecialCollection('paymentProfile');
+        if ($response->getCode() == 200) {
+            $users = $response->getValue()->getMember();
+            if (count($users)==1) {
+                return $users[0]->getBankAccounts();
+            }
+        }
+        return null;
+    }
 }

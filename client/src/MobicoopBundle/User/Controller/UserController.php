@@ -74,6 +74,7 @@ class UserController extends AbstractController
     private $signUpLinkInConnection;
     private $solidaryDisplay;
     private $paymentElectronicActive;
+    private $userManager;
 
     /**
      * Constructor
@@ -89,7 +90,8 @@ class UserController extends AbstractController
         UserProvider $userProvider,
         $signUpLinkInConnection,
         $solidaryDisplay,
-        bool $paymentElectronicActive
+        bool $paymentElectronicActive,
+        UserManager $userManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -101,6 +103,7 @@ class UserController extends AbstractController
         $this->signUpLinkInConnection = $signUpLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
         $this->paymentElectronicActive = $paymentElectronicActive;
+        $this->userManager = $userManager;
     }
 
     /***********
@@ -1012,5 +1015,20 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse($userCreatedEvents);
+    }
+
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function getBankCoordinates(Request $request)
+    {
+        $userCreatedEvents = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            //var_dump($this->userManager->getBankCoordinates($data['userId']));die;
+            return new JsonResponse($this->userManager->getBankCoordinates());
+        }
+        return new JsonResponse();
     }
 }

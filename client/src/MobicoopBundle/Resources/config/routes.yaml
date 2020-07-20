@@ -27,6 +27,14 @@ home_logout:
 # user routes #
 ###############
 
+# bank coordinates
+user_bank_coordinates:
+    methods: [POST]
+    path:
+        fr: /utilisateur/coordonnees-bancaires
+        en: /user/bank-coordinates
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getBankCoordinates
+
 # login
 user_login:
     path:
