@@ -73,13 +73,24 @@ class UserController extends AbstractController
     private $userProvider;
     private $signUpLinkInConnection;
     private $solidaryDisplay;
+    private $paymentElectronicActive;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider, $signUpLinkInConnection, $solidaryDisplay)
-    {
+    public function __construct(
+        UserPasswordEncoderInterface $encoder,
+        $facebook_show,
+        $facebook_appid,
+        $required_home_address,
+        $news_subscription,
+        $community_show,
+        UserProvider $userProvider,
+        $signUpLinkInConnection,
+        $solidaryDisplay,
+        bool $paymentElectronicActive
+    ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
@@ -89,6 +100,7 @@ class UserController extends AbstractController
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
+        $this->paymentElectronicActive = $paymentElectronicActive;
     }
 
     /***********
@@ -354,7 +366,8 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds(),
-            'acceptedCarpools' => $userManager->getAds(true)
+            'acceptedCarpools' => $userManager->getAds(true),
+            'bankCoordinates' => $this->paymentElectronicActive
         ]);
     }
 
