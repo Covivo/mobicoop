@@ -26,7 +26,7 @@ namespace App\Payment\Interfaces;
 use App\User\Entity\User;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Ressource\Wallet;
+use App\Payment\Entity\Wallet;
 
 /**
  * Payment Provider interface.
