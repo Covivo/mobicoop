@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
+use App\Payment\Ressource\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Import\Entity\Redirect;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
@@ -176,6 +177,9 @@ class Deserializer
                 break;
             case RelayPoint::class:
                 return $this->deserializeRelayPoint($data) ;
+                break;
+            case BankAccount::class:
+                return $this->deserializeBankAccount($data) ;
                 break;
             default:
                 break;
@@ -786,6 +790,14 @@ class Deserializer
         $icon = $this->autoSet($icon, $data);
 
         return $icon;
+    }
+
+    private function deserializeBankAccount(array $data) : ?Icon
+    {
+        $bankAccount = new BankAccount();
+        $bankAccount = $this->autoSet($bankAccount, $data);
+
+        return $bankAccount;
     }
 
     private function autoSet($object, $data)
