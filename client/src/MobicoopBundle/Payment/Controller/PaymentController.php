@@ -31,6 +31,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class PaymentController extends AbstractController
 {
+    private $payment_electronic_active;
+
+    /**
+    * Constructor
+    */
+    public function __construct($payment_electronic_active)
+    {
+        $this->payment_electronic_active = $payment_electronic_active;
+    }
 
     /**
      * Display of the payment page
@@ -38,6 +47,8 @@ class PaymentController extends AbstractController
      */
     public function payment()
     {
-        return $this->render('@Mobicoop/payment/payment.html.twig');
+        return $this->render('@Mobicoop/payment/payment.html.twig', [
+            "payment_electronic_active"=>($this->payment_electronic_active==="true") ? true : false,
+        ]);
     }
 }

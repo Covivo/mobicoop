@@ -5,5 +5,7 @@
  
 {% endblock %}
 {% block main %}
-   <payment/>
+   <payment
+       :payment_electronic_active = "{{ payment_electronic_active ? "true" : "false" }}"
+   />
 {% endblock %}
