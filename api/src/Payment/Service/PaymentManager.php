@@ -30,6 +30,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\PaymentItem;
 use App\Payment\Ressource\PaymentPayment;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -43,17 +44,20 @@ class PaymentManager
     private $provider;
     private $paymentProvider;
     private $paymentProfileRepository;
+    private $userManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
+        UserManager $userManager,
         String $paymentProviderService
     ) {
         $this->provider = $paymentProviderService;
         $this->entityManager = $entityManager;
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -164,6 +168,21 @@ class PaymentManager
 
         if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+
+        // We check the ownership of this bankaccount
+        $userWithPaymentProfile = $this->userManager->getPaymentProfile();
+        if (is_null($userWithPaymentProfile)) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+        $owner = false;
+        foreach ($userWithPaymentProfile->getBankAccounts() as $currentBankAccount) {
+            if ($currentBankAccount->getId() == $bankAccount->getId()) {
+                $owner = true;
+            }
+        }
+        if (!$owner) {
+            throw new PaymentException(PaymentException::NOT_THE_OWNER);
         }
 
         $bankAccount = $this->paymentProvider->disableBankAccount($bankAccount);

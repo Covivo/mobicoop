@@ -40,12 +40,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writePayment"}}
  *      },
- *      collectionOperations={"get","post",
+ *      collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          },
+ *          "post"={
+ *             "security_post_denormalize"="is_granted('bank_account_create',object)"
+ *          },
  *          "disable"={
  *              "normalization_context"={"groups"={"readPayment"}},
  *              "method"="GET",
  *              "path"="/bank_accounts/disable",
  *              "read"="false",
+ *              "security"="is_granted('bank_account_disable',object)",
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {

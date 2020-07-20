@@ -29,7 +29,7 @@ use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
-use App\Payment\Ressource\Wallet;
+use App\Payment\Entity\Wallet;
 use Symfony\Component\Security\Core\Security;
 
 /**
