@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Add BankAccount related rights
  */
 final class Version20200720111000 extends AbstractMigration
 {
