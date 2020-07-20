@@ -5,7 +5,19 @@
         "iban":"IBAN",
         "bic":"BIC",
         "register":"Enregistrer",
-        "coordinatesUri":"/utilisateur/coordonnees-bancaires"
+        "modalSuppr":{
+            "title":"Suppression des coordonnées bancaires ?",
+            "line1":"Vos coordonnées bancaires vont-être supprimée.",
+            "line2":"Vous ne serez plus en mesure de recevoir de paiement électronique.",
+            "line3":"Confirmez-vous cette action ?",
+            "yes":"oui",
+            "no":"non"
+        },
+        "uri":{
+            "getCoordinates":"/utilisateur/coordonnees-bancaires",
+            "deleteCoordinates":"/utilisateur/coordonnees-bancaires/supprimer",
+            "addCoordinates":"/utilisateur/coordonnees-bancaires/ajouter"
+        }
     },    
     "en": {
         "title":"Register your bank coordinates",
@@ -13,6 +25,18 @@
         "iban":"IBAN",
         "bic":"BIC",
         "register":"Register",
-        "coordinatesUri":"/user/bank-coordinates"
+        "modalSuppr":{
+            "title":"Delete your bank coordinates",
+            "line1":"Your bank coordinates will be deleted.",
+            "line2":"You won't be able to receive any electronic payment",
+            "line3":"Do you confirm this action ?",
+            "yes":"yes",
+            "no":"no"
+        },
+        "uri":{
+            "getCoordinates":"/user/bank-coordinates",
+            "deleteCoordinates":"/user/bank-coordinates/delete",
+            "addCoordinates":"/user/bank-coordinates/add"
+        }
     }    
 }

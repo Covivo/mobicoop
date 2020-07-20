@@ -34,6 +34,7 @@ use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 
 /**
  * User management service.

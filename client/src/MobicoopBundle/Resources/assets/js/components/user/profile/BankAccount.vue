@@ -103,6 +103,7 @@
                       <v-btn
                         class="secondary my-1"
                         icon
+                        @click.stop="dialog = true"
                       >
                         <v-icon
                           class="white--text"
@@ -119,6 +120,43 @@
         </v-row>
       </div>
     </div>
+
+    <v-dialog
+      v-model="dialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          {{ $t('modalSuppr.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          <p>{{ $t('modalSuppr.line1') }}</p>
+          <p>{{ $t('modalSuppr.line2') }}</p>
+          <p>{{ $t('modalSuppr.line3') }}</p>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn
+            color="red darken-1"
+            text
+            @click="dialog = false"
+          >
+            {{ $t('modalSuppr.no') }}
+          </v-btn>
+
+          <v-btn
+            color="green darken-1"
+            text
+            @click="deleteBankCoordinates()"
+          >
+            {{ $t('modalSuppr.yes') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -144,7 +182,8 @@ export default {
       },
       bankCoordinates:null,
       loading:false,
-      title:this.$t('title')
+      title:this.$t('title'),
+      dialog:false
     }
   },
   mounted(){
@@ -157,7 +196,7 @@ export default {
         "userId":this.user.id
       }
       this.loading = true;
-      axios.post(this.$t("coordinatesUri"),params)
+      axios.post(this.$t("uri.getCoordinates"),params)
         .then(response => {
           //console.error(response.data);
           if(response.data){
@@ -169,6 +208,22 @@ export default {
         .catch(function (error) {
           console.error(error);
         });
+    },
+    deleteBankCoordinates(){
+      this.dialog = false;
+      this.loading = true;
+      let params = {
+        "bankAccountId":this.bankCoordinates.id
+      }
+      this.bankCoordinates = null;
+      axios.post(this.$t("uri.deleteCoordinates"),params)
+        .then(response => {
+          console.error(response.data);
+          this.loading = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
     }
   }
 }

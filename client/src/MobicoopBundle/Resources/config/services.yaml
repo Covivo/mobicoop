@@ -149,6 +149,10 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Match\Service\:
         resource: '@MobicoopBundle/Match/Service/*'
 
+    # Payment
+    Mobicoop\Bundle\MobicoopBundle\Payment\Service\:
+        resource: '@MobicoopBundle/Payment/Service/*'
+
     # Permission
     Mobicoop\Bundle\MobicoopBundle\Permission\Service\:
         resource: '@MobicoopBundle/Permission/Service/*'

@@ -23,12 +23,52 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 
-use App\DataProvider\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Event\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 
 /**
  * Payment management service.
  */
 class PaymentManager
 {
+    private $dataProvider;
+
+
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
+    public function __construct(DataProvider $dataProvider)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(BankAccount::class);
+    }
+
+    /**
+     * Get the bank coordinates of a User
+     */
+    public function addBankCoordinates()
+    {
+        // $response = $this->dataProvider->post();
+        // if ($response->getCode() == 200) {
+        //     $users = $response->getValue()->getMember();
+        //     if (count($users)==1) {
+        //         return $users[0]->getBankAccounts();
+        //     }
+        // }
+        return null;
+    }
+    
+    /**
+     * Get the bank coordinates of a User
+     */
+    public function deleteBankCoordinates(int $bankAccountid)
+    {
+        $response = $this->dataProvider->getSpecialCollection('disable', ['idBankAccount'=>$bankAccountid]);
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
+        }
+        return null;
+    }
 }

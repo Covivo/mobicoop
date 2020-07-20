@@ -47,6 +47,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -75,6 +76,7 @@ class UserController extends AbstractController
     private $solidaryDisplay;
     private $paymentElectronicActive;
     private $userManager;
+    private $paymentManager;
 
     /**
      * Constructor
@@ -91,7 +93,8 @@ class UserController extends AbstractController
         $signUpLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
-        UserManager $userManager
+        UserManager $userManager,
+        PaymentManager $paymentManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -104,6 +107,7 @@ class UserController extends AbstractController
         $this->solidaryDisplay = $solidaryDisplay;
         $this->paymentElectronicActive = $paymentElectronicActive;
         $this->userManager = $userManager;
+        $this->paymentManager = $paymentManager;
     }
 
     /***********
@@ -1023,11 +1027,34 @@ class UserController extends AbstractController
      */
     public function getBankCoordinates(Request $request)
     {
-        $userCreatedEvents = null;
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getBankCoordinates());
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function addBankCoordinates(Request $request)
+    {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            //var_dump($this->userManager->getBankCoordinates($data['userId']));die;
-            return new JsonResponse($this->userManager->getBankCoordinates());
+            return new JsonResponse($this->paymentManager->addBankCoordinates());
+        }
+        return new JsonResponse();
+    }
+    
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function deleteBankCoordinates(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->paymentManager->deleteBankCoordinates($data['bankAccountId']));
         }
         return new JsonResponse();
     }
