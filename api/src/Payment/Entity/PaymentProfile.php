@@ -83,12 +83,20 @@ class PaymentProfile
     private $identifier;
 
     /**
-     * @var int The status of this payment profil (0 : Inactive, 1 : Active)
+     * @var int The status of this payment profile (0 : Inactive, 1 : Active)
      *
      * @ORM\Column(type="integer")
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
+
+    /**
+     * @var bool If the current payment profile is linked to one or several bank accounts
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $electronicallyPayable;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -215,6 +223,18 @@ class PaymentProfile
     public function setWallets(array $wallets): self
     {
         $this->wallets = $wallets;
+
+        return $this;
+    }
+
+    public function isElectronicallyPayable(): ?bool
+    {
+        return $this->electronicallyPayable;
+    }
+
+    public function setElectronicallyPayable(bool $electronicallyPayable): self
+    {
+        $this->electronicallyPayable = $electronicallyPayable;
 
         return $this;
     }

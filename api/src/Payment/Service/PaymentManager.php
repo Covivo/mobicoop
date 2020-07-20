@@ -105,6 +105,13 @@ class PaymentManager
     }
 
     
+    /**
+     * Create a bank account for a User
+     *
+     * @param User $user
+     * @param BankAccount $bankAccount
+     * @return BankAccount
+     */
     public function createBankAccount(User $user, BankAccount $bankAccount)
     {
         // Check if there is a paymentProfile
@@ -128,26 +135,66 @@ class PaymentManager
             }
 
 
-            $this->createPaymentProfile($user, $identifier);
+            $paymentProfile = $this->createPaymentProfile($user, $identifier);
+        } else {
+            $paymentProfile = $paymentProfiles[0];
         }
 
-        return $this->paymentProvider->addBankAccount($bankAccount);
+        $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
+
+        // Update the payment profile
+        $paymentProfile->setElectronicallyPayable(true);
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+
+        return $bankAccount;
+    }
+
+    /**
+     * Disable a bank account
+     *
+     * @param User $user
+     * @param BankAccount $bankAccount
+     * @return BankAccount
+     */
+    public function disableBankAccount(User $user, BankAccount $bankAccount)
+    {
+        // Check if there is a paymentProfile
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+
+        $bankAccount = $this->paymentProvider->disableBankAccount($bankAccount);
+
+        // If there is no more active account, we need to update de PaymentProfile
+        $profileBankAccounts = $this->paymentProvider->getPaymentProfileBankAccounts($paymentProfiles[0]);
+        if (count($profileBankAccounts)==0) {
+            $paymentProfiles[0]->setElectronicallyPayable(false);
+            $this->entityManager->persist($paymentProfiles[0]);
+            $this->entityManager->flush();
+        }
+
+        return $bankAccount;
     }
     
     /**
      * Create a paymentProfile
      *
-     * @param User $user            The User we want to create a profile
-     * @param string $identifier    The User identifier on the payment provider service
+     * @param User $user                     The User we want to create a profile
+     * @param string $identifier             The User identifier on the payment provider service
+     * @param bool $electronicallyPayable    If the User can be payed electronically
      * @return PaymentProfile
      */
-    public function createPaymentProfile(User $user, string $identifier)
+    public function createPaymentProfile(User $user, string $identifier, bool $electronicallyPayable = false)
     {
         $paymentProfile = new PaymentProfile();
         $paymentProfile->setUser($user);
         $paymentProfile->setProvider($this->provider);
         $paymentProfile->setIdentifier($identifier);
         $paymentProfile->setStatus(1);
+        $paymentProfile->setElectronicallyPayable($electronicallyPayable);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 

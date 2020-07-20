@@ -172,4 +172,40 @@ class DataProvider
         }
         return new Response();
     }
+
+    /**
+     * Put item operation
+     *
+     * @param mixed|null $body      The body
+     * @param array|null $headers   An array of headers
+     * @param mixed|null $params    An array or string of parameters
+     * @return Response The response of the operation.
+     */
+    public function putItem($body=null, $headers=null, $params=null): Response
+    {
+        try {
+            $options=[];
+            if ($params) {
+                $options['query']=$params;
+            }
+            if ($headers) {
+                $options['headers']=$headers;
+            }
+            if ($body) {
+                $options[RequestOptions::JSON]=$body;
+            }
+            
+            // echo json_encode($body);die;
+            
+            $clientResponse = $this->client->put($this->resource, $options);
+            switch ($clientResponse->getStatusCode()) {
+                case 200:
+                case 201:
+                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
 }

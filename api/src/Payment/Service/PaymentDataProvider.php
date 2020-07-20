@@ -63,29 +63,50 @@ class PaymentDataProvider
         string $platformName,
         string $defaultCurrency
     ) {
-        // TO DO : Handle these exceptions elsewhere
-        // if (!$paymentActive) {
-        //     throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
-        // }
-        // $this->paymentActive = $paymentActive;
+        $this->paymentProvider = $paymentProvider;
+        $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->defaultCurrency = $defaultCurrency;
+        $this->platformName = $platformName;
+        $this->paymentActive = $paymentActive;
 
-        // if (empty($paymentProvider)) {
-        //     throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
-        // }
-
-        // if (!isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-        //     throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
-        // }
         if (isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-            $this->paymentProvider = $paymentProvider;
             $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
             $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
-            $this->paymentProfileRepository = $paymentProfileRepository;
-            $this->defaultCurrency = $defaultCurrency;
-            $this->platformName = $platformName;
         }
     }
     
+    /**
+     * Check if the payment is correcty configured
+     */
+    public function checkPaymentConfiguration()
+    {
+        if (!$this->paymentActive) {
+            throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
+        }
+        $this->paymentActive = $this->paymentActive;
+
+        if (empty($this->paymentProvider)) {
+            throw new PaymentException(PaymentException::PAYMENT_NO_PROVIDER);
+        }
+
+        if (!isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
+            throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
+        }
+    }
+    
+
+    /**
+     * Get the BankAccounts of a PaymentProfile
+     *
+     * @param PaymentProfile $paymentProfile
+     * @return BankAccount|null
+     */
+    public function getPaymentProfileBankAccounts(PaymentProfile $paymentProfile)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->getBankAccounts($paymentProfile);
+    }
+
     /**
      * Add a BankAccount
      *
@@ -94,8 +115,22 @@ class PaymentDataProvider
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
+        $this->checkPaymentConfiguration();
         return $this->providerInstance->addBankAccount($bankAccount);
     }
+
+    /**
+     * Disable a BankAccount
+     *
+     * @param BankAccount $user     The BankAccount to create
+     * @return BankAccount|null
+     */
+    public function disableBankAccount(BankAccount $bankAccount)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->disableBankAccount($bankAccount);
+    }
+
 
     /**
      * Get the PaymentProfiles of a User
@@ -105,8 +140,8 @@ class PaymentDataProvider
      */
     public function getPaymentProfiles(User $user)
     {
-        //return $this->providerInstance->getBankAccounts($user);
-        
+        $this->checkPaymentConfiguration();
+
         // Get more information for each profiles
         $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
         foreach ($paymentProfiles as $paymentProfile) {
@@ -129,8 +164,8 @@ class PaymentDataProvider
      */
     public function registerUser(User $user)
     {
+        $this->checkPaymentConfiguration();
         return $this->providerInstance->registerUser($user);
-        ;
     }
 
     /**
@@ -141,6 +176,7 @@ class PaymentDataProvider
      */
     public function createWallet(string $identifier)
     {
+        $this->checkPaymentConfiguration();
         $wallet = new Wallet();
         $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
         $wallet->setComment("");
