@@ -201,4 +201,4 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Payment\Controller\:    
         resource: '@MobicoopBundle/Payment/Controller/*'
         arguments:
-            $online_payment: '%env(resolve:ONLINE_PAYMENT)%'
+            $payment_electronic_active: '%env(resolve:PAYMENT_ELECTRONIC_ACTIVE)%'

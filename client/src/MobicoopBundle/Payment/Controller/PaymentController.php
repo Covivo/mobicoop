@@ -31,14 +31,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class PaymentController extends AbstractController
 {
-    private $online_payment;
+    private $payment_electronic_active;
 
     /**
     * Constructor
     */
-    public function __construct($online_payment)
+    public function __construct($payment_electronic_active)
     {
-        $this->online_payment = $online_payment;
+        $this->payment_electronic_active = $payment_electronic_active;
     }
 
     /**
@@ -48,7 +48,7 @@ class PaymentController extends AbstractController
     public function payment()
     {
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "online_payment"=>($this->online_payment==="true") ? true : false,
+            "payment_electronic_active"=>($this->payment_electronic_active==="true") ? true : false,
         ]);
     }
 }

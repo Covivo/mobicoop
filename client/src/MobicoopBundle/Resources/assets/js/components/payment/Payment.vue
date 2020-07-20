@@ -186,7 +186,7 @@
                         </v-col>
                       </v-row>
                       <v-row
-                        v-if="displayOnlinePayment"
+                        v-if="displayElectronicPayment"
                         justify="center"
                       >
                         <v-radio-group
@@ -347,7 +347,7 @@
           </v-card>
         </v-row>
         <v-row
-          v-if="displayOnlinePayment"
+          v-if="displayElectronicPayment"
           justify="center"
         >
           <v-col
@@ -460,7 +460,7 @@
           </v-card>
         </v-row>
         <v-row
-          v-if="displayOnlinePayment"
+          v-if="displayElectronicPayment"
           justify="center"
         >
           <v-col align="center">
@@ -556,7 +556,7 @@ export default {
     DayListChips
   },
   props: {
-    onlinePayment: {
+    paymentElectronicActive: {
       type: Boolean,
       default: true
     },
@@ -577,7 +577,7 @@ export default {
     return {
       locale: this.$i18n.locale,
       message:null,
-      displayOnlinePayment: this.onlinePayment,
+      displayElectronicPayment: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
       selectedJourney: this.selectedId,
