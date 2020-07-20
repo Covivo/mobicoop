@@ -1,7 +1,7 @@
 {
     "fr": {
         "title":"Renseignez vos coordonnées bancaires",
-        "titleAlreadyRegistered":"Vos coordonnées bancaires",
+        "titleAlreadyRegistered":"Mes coordonnées bancaires",
         "iban":"IBAN",
         "bic":"BIC",
         "register":"Enregistrer",
@@ -9,7 +9,7 @@
     },    
     "en": {
         "title":"Register your bank coordinates",
-        "titleAlreadyRegistered":"Your bank coordinates",
+        "titleAlreadyRegistered":"My bank coordinates",
         "iban":"IBAN",
         "bic":"BIC",
         "register":"Register",
