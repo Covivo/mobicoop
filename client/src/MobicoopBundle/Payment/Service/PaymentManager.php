@@ -68,6 +68,8 @@ class PaymentManager
         $response = $this->dataProvider->getSpecialCollection('disable', ['idBankAccount'=>$bankAccountid]);
         if ($response->getCode() == 200) {
             return $response->getValue()->getMember();
+        } else {
+            return ['error'=>1];
         }
         return null;
     }

@@ -8,6 +8,12 @@
       />        
     </div>
     <div v-else>
+      <v-alert
+        v-if="error"
+        type="error"
+      >
+        {{ $t('error') }}
+      </v-alert>        
       <v-form
         v-if="!bankCoordinates"
         v-model="valid"
@@ -183,7 +189,8 @@ export default {
       bankCoordinates:null,
       loading:false,
       title:this.$t('title'),
-      dialog:false
+      dialog:false,
+      error:false
     }
   },
   mounted(){
@@ -191,12 +198,8 @@ export default {
   },
   methods:{
     getBankCoordinates(){
-       
-      let params = {
-        "userId":this.user.id
-      }
       this.loading = true;
-      axios.post(this.$t("uri.getCoordinates"),params)
+      axios.post(this.$t("uri.getCoordinates"))
         .then(response => {
           //console.error(response.data);
           if(response.data){
@@ -212,13 +215,18 @@ export default {
     deleteBankCoordinates(){
       this.dialog = false;
       this.loading = true;
+      this.error = false;
       let params = {
         "bankAccountId":this.bankCoordinates.id
       }
-      this.bankCoordinates = null;
       axios.post(this.$t("uri.deleteCoordinates"),params)
         .then(response => {
-          console.error(response.data);
+          if(response.data.error){
+            this.error = true;
+          }
+          else{
+            this.bankCoordinates = null;
+          }
           this.loading = false;
         })
         .catch(function (error) {

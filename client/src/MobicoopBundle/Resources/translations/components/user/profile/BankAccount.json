@@ -17,7 +17,8 @@
             "getCoordinates":"/utilisateur/coordonnees-bancaires",
             "deleteCoordinates":"/utilisateur/coordonnees-bancaires/supprimer",
             "addCoordinates":"/utilisateur/coordonnees-bancaires/ajouter"
-        }
+        },
+        "error":"Une erreur est survenue"
     },    
     "en": {
         "title":"Register your bank coordinates",
@@ -37,6 +38,7 @@
             "getCoordinates":"/user/bank-coordinates",
             "deleteCoordinates":"/user/bank-coordinates/delete",
             "addCoordinates":"/user/bank-coordinates/add"
-        }
+        },
+        "error":"An erreur has occured"
     }    
 }
