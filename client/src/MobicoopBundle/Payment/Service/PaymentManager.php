@@ -48,15 +48,17 @@ class PaymentManager
     /**
      * Get the bank coordinates of a User
      */
-    public function addBankCoordinates()
+    public function addBankCoordinates(string $iban, string $bic)
     {
-        // $response = $this->dataProvider->post();
-        // if ($response->getCode() == 200) {
-        //     $users = $response->getValue()->getMember();
-        //     if (count($users)==1) {
-        //         return $users[0]->getBankAccounts();
-        //     }
-        // }
+        $bankAccount = new BankAccount();
+        $bankAccount->setIban($iban);
+        $bankAccount->setBic($bic);
+        $response = $this->dataProvider->post($bankAccount);
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        } else {
+            return ['error'=>1];
+        }
         return null;
     }
     

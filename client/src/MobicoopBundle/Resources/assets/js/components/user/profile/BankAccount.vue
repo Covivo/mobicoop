@@ -36,7 +36,8 @@
               <v-text-field
                 v-model="form.iban"
                 :counter="34"
-                :label="$t('iban')"
+                :label="$t('form.label.iban')"
+                :rules="form.rules.ibanRules"
                 required
               />        
             </v-col>
@@ -49,7 +50,8 @@
               <v-text-field
                 v-model="form.bic"
                 :counter="11"
-                :label="$t('bic')"
+                :label="$t('form.label.bic')"
+                :rules="form.rules.bicRules"
                 required
               />        
             </v-col>
@@ -64,6 +66,8 @@
                 rounded
                 color="secondary" 
                 class="mt-4 justify-self-center"
+                :disabled="!valid"
+                @click="addBankCoordinates"
               >
                 {{ $t('register') }}
               </v-btn>
@@ -92,12 +96,12 @@
                 <v-col cols="10">
                   <v-row>
                     <v-col cols="12">
-                      <label class="caption">{{ $t('iban') }}</label> {{ bankCoordinates.iban }}
+                      <label class="caption">{{ $t('form.label.iban') }}</label> {{ bankCoordinates.iban }}
                     </v-col>
                   </v-row>
                   <v-row>
                     <v-col cols="12">
-                      <label class="caption">{{ $t('bic') }}</label> {{ bankCoordinates.bic }}
+                      <label class="caption">{{ $t('form.label.bic') }}</label> {{ bankCoordinates.bic }}
                     </v-col>
                   </v-row>
                 </v-col>
@@ -184,7 +188,17 @@ export default {
       valid: false,
       form: {
         iban:"",
-        bic:""
+        bic:"",
+        rules:{
+          ibanRules: [
+            v => !!v || this.$t('form.errors.ibanRequired'),
+            v => (/[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}/).test(v) || this.$t('form.errors.iban'),
+          ],      
+          bicRules: [
+            v => !!v || this.$t('form.errors.bicRequired'),
+            v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?/).test(v) || this.$t('form.errors.bic'),
+          ]    
+        }
       },
       bankCoordinates:null,
       loading:false,
@@ -228,6 +242,27 @@ export default {
             this.bankCoordinates = null;
           }
           this.loading = false;
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
+    },
+    addBankCoordinates(){
+      this.loading = true;
+      this.error = false;
+      let params = {
+        "iban":this.form.iban,
+        "bic":this.form.bic,
+      }
+      axios.post(this.$t("uri.addCoordinates"),params)
+        .then(response => {
+          if(response.data.error){
+            this.error = true;
+            this.loading = false;
+          }
+          else{
+            this.getBankCoordinates();
+          }
         })
         .catch(function (error) {
           console.error(error);
