@@ -47,6 +47,8 @@ class PaymentManager
 
     /**
      * Get the bank coordinates of a User
+     * @param string $iban  IBAN of the bank account
+     * @param string $bic   BIC of the bank account
      */
     public function addBankCoordinates(string $iban, string $bic)
     {
@@ -63,7 +65,8 @@ class PaymentManager
     }
     
     /**
-     * Get the bank coordinates of a User
+     * Delete a bank account
+     * @param int $bankAccountid  Id (provider's one) of the Bank account to delete
      */
     public function deleteBankCoordinates(int $bankAccountid)
     {
