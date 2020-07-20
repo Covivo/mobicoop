@@ -134,6 +134,10 @@ export default {
       type: String,
       default: "primary lighten-3"
     },
+    colorDisabled:{
+      type: String,
+      default: "grey"
+    },
     clickable:{
       type:Boolean,
       default:true
@@ -152,13 +156,13 @@ export default {
     }
   },
   computed:{
-    monColor() { if(this.mon) { return this.colorActive }else {return this.colorInactive}},
-    tueColor() { if(this.tue) { return this.colorActive }else {return this.colorInactive}},
-    wedColor() { if(this.wed) { return this.colorActive }else {return this.colorInactive}},
-    thuColor() { if(this.thu) { return this.colorActive }else {return this.colorInactive}},
-    friColor() { if(this.fri) { return this.colorActive }else {return this.colorInactive}},
-    satColor() { if(this.sat) { return this.colorActive }else {return this.colorInactive}},
-    sunColor() { if(this.sun) { return this.colorActive }else {return this.colorInactive}}
+    monColor() { if(this.mon) { return this.colorActive }else if(!this.monActive) {return this.colorDisabled}else {return this.colorInactive}},
+    tueColor() { if(this.tue) { return this.colorActive }else if(!this.tueActive) {return this.colorDisabled}else {return this.colorInactive}},
+    wedColor() { if(this.wed) { return this.colorActive }else if(!this.wedActive) {return this.colorDisabled}else {return this.colorInactive}},
+    thuColor() { if(this.thu) { return this.colorActive }else if(!this.thuActive) {return this.colorDisabled}else {return this.colorInactive}},
+    friColor() { if(this.fri) { return this.colorActive }else if(!this.friActive) {return this.colorDisabled}else {return this.colorInactive}},
+    satColor() { if(this.sat) { return this.colorActive }else if(!this.satActive) {return this.colorDisabled}else {return this.colorInactive}},
+    sunColor() { if(this.sun) { return this.colorActive }else if(!this.sunActive) {return this.colorDisabled} else {return this.colorInactive}}
   },
   watch:{
     monActive(newValue){(newValue) ? this.mon = true : this.mon = false;},
