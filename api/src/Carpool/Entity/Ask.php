@@ -79,6 +79,10 @@ class Ask
     const ASKS_WITHOUT_SOLIDARY = 1;
     const ASKS_WITH_SOLIDARY = 2;
 
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD_ROUNDTRIP = 2;
+    const TYPE_RETURN_ROUNDTRIP = 3;
+
     /**
      * @var int The id of this ask.
      *

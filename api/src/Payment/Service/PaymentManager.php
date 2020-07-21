@@ -144,21 +144,23 @@ class PaymentManager
                 // we initialize each week day
                 if (!isset($regularDays[$carpoolItem->getAsk()->getId()])) {
                     $regularDays[$carpoolItem->getAsk()->getId()]['outward'] = [
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE]
                     ];
                     $regularDays[$carpoolItem->getAsk()->getId()]['return'] = $regularDays[$carpoolItem->getAsk()->getId()]['outward'];
                 }
                 // we set the corresponding day
                 if ($carpoolItem->getType() == Proposal::TYPE_RETURN) {
-                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')] = PaymentItem::DAY_CARPOOLED;
+                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')]['id'] = $carpoolItem->getId();
+                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')]['status'] = PaymentItem::DAY_CARPOOLED;
                 } else {
-                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')] = PaymentItem::DAY_CARPOOLED;
+                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['id'] = $carpoolItem->getId();
+                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['status'] = PaymentItem::DAY_CARPOOLED;
                 }
             }
         }
@@ -192,8 +194,11 @@ class PaymentManager
                 $paymentItem->setToDate($toDate);
                 $paymentItem->setOutwardAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['outward']);
                 $paymentItem->setOutwardDays($regularDays[$carpoolItem->getAsk()->getId()]['outward']);
-                $paymentItem->setReturnAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['return']);
-                $paymentItem->setReturnDays($regularDays[$carpoolItem->getAsk()->getId()]['return']);
+                
+                if ($carpoolItem->getAsk()->getType() !== Ask::TYPE_ONE_WAY) {
+                    $paymentItem->setReturnAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['return']);
+                    $paymentItem->setReturnDays($regularDays[$carpoolItem->getAsk()->getId()]['return']);
+                }
             }
             // we iterate through the waypoints to get the passenger origin and destination
             $minPos = 9999;
