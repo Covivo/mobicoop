@@ -444,12 +444,6 @@
                 >
                   {{ $t('stepper.content.participation.passengers') }}
                 </v-col>
-
-                <v-col 
-                  v-if="participationText"
-                >
-                  <p>participation_text</p>
-                </v-col>
               </v-row>
               <v-row
                 v-if="pricePerKm >= pricesRanges.mid"
@@ -478,6 +472,18 @@
                       </p>
                     </v-card-text>
                   </v-card>
+                </v-col>
+              </v-row>
+              <v-row justify="center">
+                <v-col 
+                  v-if="participationText"
+                  cols="10"
+                  align="center"
+                >
+                  <p
+                    class="text-caption"
+                    v-html="$t('participation.text')"
+                  />
                 </v-col>
               </v-row>
             </v-stepper-content>

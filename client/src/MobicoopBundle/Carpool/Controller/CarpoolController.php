@@ -219,9 +219,9 @@ class CarpoolController extends AbstractController
                 "pricesRange" => [
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
-                    "forbidden" => $this->forbiddenPrice
+                    "forbidden" => $this->forbiddenPrice,
                 ],
-                "participationText"=>$this->participationText
+                "participationText"=>$this->participationText,
             ]
         );
     }
