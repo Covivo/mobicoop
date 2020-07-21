@@ -23,11 +23,15 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 
 /**
  * Payment management service.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class PaymentManager
 {
@@ -42,7 +46,7 @@ class PaymentManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(BankAccount::class);
+        $this->dataProvider->setClass(PaymentItem::class);
     }
 
     /**
@@ -52,6 +56,8 @@ class PaymentManager
      */
     public function addBankCoordinates(string $iban, string $bic)
     {
+        $this->dataProvider->setClass(BankAccount::class);
+
         $bankAccount = new BankAccount();
         $bankAccount->setIban($iban);
         $bankAccount->setBic($bic);
@@ -70,6 +76,8 @@ class PaymentManager
      */
     public function deleteBankCoordinates(int $bankAccountid)
     {
+        $this->dataProvider->setClass(BankAccount::class);
+
         $response = $this->dataProvider->getSpecialCollection('disable', ['idBankAccount'=>$bankAccountid]);
         if ($response->getCode() == 200) {
             return $response->getValue()->getMember();
@@ -77,5 +85,20 @@ class PaymentManager
             return ['error'=>1];
         }
         return null;
+    }
+
+     
+    public function getPaymentItems(int $frequency, int $type, int $week=null)
+    {
+        $params = [
+            "frequency" => $frequency,
+            "type" => $type
+        ];
+        if ($week) {
+            $params['week'] = $week;
+        }
+
+        $response = $this->dataProvider->getCollection($params);
+        return $response->getValue()->getMember();
     }
 }

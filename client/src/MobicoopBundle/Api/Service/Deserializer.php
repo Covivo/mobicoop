@@ -73,6 +73,7 @@ use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 
 /**
  * Custom deserializer service.
@@ -180,6 +181,9 @@ class Deserializer
                 break;
             case BankAccount::class:
                 return $this->deserializeBankAccount($data) ;
+                break;
+            case PaymentItem::class:
+                return $this->deserializePaymentItem($data) ;
                 break;
             default:
                 break;
@@ -805,6 +809,20 @@ class Deserializer
         $bankAccount = $this->autoSet($bankAccount, $data);
 
         return $bankAccount;
+    }
+
+    private function deserializePaymentItem(array $data) : ?PaymentItem
+    {
+        $paymentItem = new PaymentItem();
+        if (isset($data["origin"])) {
+            $paymentItem->setOrigin($this->deserializeAddress($data['origin']));
+        }
+        if (isset($data["destination"])) {
+            $paymentItem->setDestination($this->deserializeAddress($data['destination']));
+        }
+        $paymentItem = $this->autoSet($paymentItem, $data);
+
+        return $paymentItem;
     }
 
     private function autoSet($object, $data)

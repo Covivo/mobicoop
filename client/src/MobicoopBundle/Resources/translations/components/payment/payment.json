@@ -21,6 +21,9 @@
         },
         "select": {
             "label": "Période"
+        },
+        "payments": {
+            "route":"/payments/get"
         }
 
     }

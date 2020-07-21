@@ -577,6 +577,7 @@
   </v-container>
 </template>
 <script>
+import axios from 'axios';
 import moment from "moment";
 import DayListChips from "@components/utilities/DayListChips";
 import Translations from "@translations/components/payment/payment.json";
@@ -596,7 +597,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 2
+      default: 1
     },
     mode: {
       type: Number,
@@ -612,14 +613,18 @@ export default {
       locale: this.$i18n.locale,
       message:null,
       displayElectronicPayment: this.paymentElectronicActive,
+
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
+
       selectedJourney: this.selectedId,
       price: 10,
       switch1: false,
       disabledTypeOfPayment: false,
       sumTopay: null,
       typeOfPayment: null,
+      weekSelected: null,
+      paymentItems: null,
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesElectronic: [],
       pricesByHand: [],
@@ -629,6 +634,7 @@ export default {
       ]
     };
   },
+    
   watch: {
     typeOfPayment() {
       if (this.typeOfPayment == "electronic") {
@@ -640,6 +646,17 @@ export default {
       }
       this.disabledTypeOfPayment = true;
     },
+  },
+  mounted () {
+    let params = {
+      'frequency':this.frequency,
+      'type':this.mode,
+      'week':this.weekSelected
+    }
+    axios.post(this.$t("payments.route"), params)
+      .then(res => {
+        this.paymentItems = res.data;
+      });
   },
   created() {
     moment.locale(this.locale); 
