@@ -96,7 +96,7 @@ const GestionRoles = ({ record }) => {
                 },
               ]);
             })
-            .catch((error) => {});
+            .catch((error) => { });
         } else {
           setFields((t) => [...t, { roles: element.authItem.id }]);
         }
@@ -109,14 +109,18 @@ const GestionRoles = ({ record }) => {
     const values = [...fields];
     values.push({ roles: ['none'], territory: null });
     setFields(values);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   function handleRemove(i) {
     const values = [...fields];
     values.splice(i, 1);
     setFields(values);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   const handleAddPair = (indice, nature) => (e) => {
@@ -130,7 +134,9 @@ const GestionRoles = ({ record }) => {
       values[indice]['roles'].splice(0, 1);
     }
     setFields(values);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   };
 
   return (

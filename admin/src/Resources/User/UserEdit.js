@@ -26,6 +26,10 @@ const useStyles = makeStyles({
     display: 'inline-flex',
     marginRight: '1rem',
   },
+  hiddenInput: {
+    width: '0px',
+    display: 'inline-flex',
+  },
   footer: { marginTop: '2rem' },
 });
 
@@ -173,6 +177,14 @@ const UserEdit = (props) => {
             choices={smoke}
             formClassName={classes.spacedHalfwidth}
           />
+          <TextInput
+            fullWidth
+            label=''
+            type='hidden'
+            source="hidden"
+            formClassName={classes.hiddenInput}
+          />
+
         </FormTab>
         <FormTab label={translate('custom.label.user.manageRoles')}>
           <GestionRoles />
