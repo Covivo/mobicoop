@@ -212,6 +212,16 @@ class PaymentManager
                     }
                 }
             }
+
+            // Set if the paymentItem is payable electonically (if the Creditor User has a paymentProfile electronicallyPayable)
+            
+            $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
+            if (is_null($paymentProfile) || count($paymentProfile)==0) {
+                $paymentItem->setElectronicallyPayable(false);
+            } else {
+                $paymentItem->setElectronicallyPayable($paymentProfile[0]->isElectronicallyPayable());
+            }
+
             $items[] = $paymentItem;
             $treatedAsks[] = $carpoolItem->getAsk()->getId();
         }

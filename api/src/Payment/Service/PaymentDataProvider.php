@@ -135,22 +135,25 @@ class PaymentDataProvider
     /**
      * Get the PaymentProfiles of a User
      *
-     * @param User $user    The User
+     * @param User $user                    The User
+     * @param bool $callExternalProvider    true : make the call to the external provider to get bank accounts and wallets
      * @return PaymentProfile[]|null
      */
-    public function getPaymentProfiles(User $user)
+    public function getPaymentProfiles(User $user, $callExternalProvider=true)
     {
         $this->checkPaymentConfiguration();
 
         // Get more information for each profiles
         $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
-        foreach ($paymentProfiles as $paymentProfile) {
-            /**
-             * @var PaymentProfile $paymentProfile
-             */
-            
-            $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
-            $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+        if (!is_null($paymentProfiles) && $callExternalProvider) {
+            foreach ($paymentProfiles as $paymentProfile) {
+                /**
+                 * @var PaymentProfile $paymentProfile
+                 */
+                
+                $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
+                $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+            }
         }
         return $paymentProfiles;
     }
