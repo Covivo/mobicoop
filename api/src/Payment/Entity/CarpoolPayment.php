@@ -184,6 +184,16 @@ class CarpoolPayment
     // DOCTRINE EVENTS
 
     /**
+     * Status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoStatus()
+    {
+        $this->setStatus(self::STATUS_INITIATED);
+    }
+
+    /**
      * Creation date.
      *
      * @ORM\PrePersist

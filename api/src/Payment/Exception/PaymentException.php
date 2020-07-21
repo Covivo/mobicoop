@@ -23,10 +23,14 @@
 namespace App\Payment\Exception;
 
 /**
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PaymentException extends \LogicException
 {
+    const WEEK_NOT_PROVIDED = "Week number must be provided for regular carpools";
+    const WEEK_WRONG_FORMAT = "Wrong week number format";
+    
     const PAYMENT_INACTIVE = "Payment is not active on this platform";
     const PAYMENT_NO_PROVIDER = "No provider given";
     const UNSUPPORTED_PROVIDER = "This payment provider is not yet supported";
