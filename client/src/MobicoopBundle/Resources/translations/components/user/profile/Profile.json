@@ -9,6 +9,7 @@
             "myAds": "Mes annonces",
             "carpoolSettings": "Mes préférences",
             "alerts": "Mes alertes",
+            "bankCoordinates": "Mes coordonnées bancaires",
             "carpoolsAccepted": "Covoiturages acceptés",
             "myAccount":"Mon compte"
         },
@@ -35,6 +36,7 @@
             "myAds": "My proposals",
             "carpoolSettings": "My settings",
             "alerts": "My alerts",
+            "bankCoordinates": "My bank coordinates",
             "carpoolsAccepted": "Accepted carpools",
             "myAccount":"My account"
         },

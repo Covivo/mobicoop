@@ -75,6 +75,15 @@
               <v-tab-item>
                 <CarpoolSettings :user="user" />
               </v-tab-item>
+              <v-tab
+                v-if="bankCoordinates"
+                class="text-subtitle-1"
+              >
+                {{ $t("tabs.bankCoordinates") }}
+              </v-tab>
+              <v-tab-item v-if="bankCoordinates">
+                <BankAccount :user="user" />
+              </v-tab-item>              
             </v-tabs>
           </v-tab-item>
         </v-tabs>
@@ -88,6 +97,7 @@ import Ads from "@components/user/profile/ad/Ads";
 import Carpools from "@components/user/profile/carpool/Carpools";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
+import BankAccount from "@components/user/profile/BankAccount";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
@@ -104,7 +114,8 @@ export default {
     Ads,
     Alerts,
     CarpoolSettings,
-    Carpools
+    Carpools,
+    BankAccount
   },
   props: {
     user: {
@@ -154,6 +165,10 @@ export default {
     tabDefault: {
       type: String,
       default: null
+    },
+    bankCoordinates: {
+      type: Boolean,
+      default: false
     }
   },
   data(){

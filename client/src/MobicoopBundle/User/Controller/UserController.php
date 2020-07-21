@@ -47,6 +47,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -73,13 +74,28 @@ class UserController extends AbstractController
     private $userProvider;
     private $signUpLinkInConnection;
     private $solidaryDisplay;
+    private $paymentElectronicActive;
+    private $userManager;
+    private $paymentManager;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address, $news_subscription, $community_show, UserProvider $userProvider, $signUpLinkInConnection, $solidaryDisplay)
-    {
+    public function __construct(
+        UserPasswordEncoderInterface $encoder,
+        $facebook_show,
+        $facebook_appid,
+        $required_home_address,
+        $news_subscription,
+        $community_show,
+        UserProvider $userProvider,
+        $signUpLinkInConnection,
+        $solidaryDisplay,
+        bool $paymentElectronicActive,
+        UserManager $userManager,
+        PaymentManager $paymentManager
+    ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
@@ -89,6 +105,9 @@ class UserController extends AbstractController
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
+        $this->paymentElectronicActive = $paymentElectronicActive;
+        $this->userManager = $userManager;
+        $this->paymentManager = $paymentManager;
     }
 
     /***********
@@ -354,7 +373,8 @@ class UserController extends AbstractController
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds(),
-            'acceptedCarpools' => $userManager->getAds(true)
+            'acceptedCarpools' => $userManager->getAds(true),
+            'bankCoordinates' => $this->paymentElectronicActive
         ]);
     }
 
@@ -999,5 +1019,43 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse($userCreatedEvents);
+    }
+
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function getBankCoordinates(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getBankCoordinates());
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function addBankCoordinates(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->paymentManager->addBankCoordinates($data['iban'], $data['bic']));
+        }
+        return new JsonResponse();
+    }
+    
+    /**
+     * Get the bank coordinates of a user
+     * AJAX
+     */
+    public function deleteBankCoordinates(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->paymentManager->deleteBankCoordinates($data['bankAccountId']));
+        }
+        return new JsonResponse();
     }
 }

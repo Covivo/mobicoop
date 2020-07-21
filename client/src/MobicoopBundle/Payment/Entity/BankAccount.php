@@ -21,84 +21,45 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Geography\Entity\Address;
-use App\User\Entity\User;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * A Bank Account
- *
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writePayment"}}
- *      },
- *      collectionOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          },
- *          "post"={
- *             "security_post_denormalize"="is_granted('bank_account_create',object)"
- *          },
- *          "disable"={
- *              "normalization_context"={"groups"={"readPayment"}},
- *              "method"="GET",
- *              "path"="/bank_accounts/disable",
- *              "read"="false",
- *              "security"="is_granted('bank_account_disable',object)",
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "idBankAccount",
- *                          "type" = "int",
- *                          "required" = true,
- *                          "description" = "Id of the bank account"
- *                      }
- *                  }
- *              }
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
+ * A Bank account
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankAccount
+class BankAccount implements ResourceInterface, \JsonSerializable
 {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
-    const DEFAULT_ID = "999999999999";
-
     /**
      * @var int The id of this bank account
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups({"readPayment"})
      */
     private $id;
 
     /**
-     * @var string|null The litteral name of the user owning this bank account
+     * @var string|null The iri of this bank account.
      *
-     * @Groups({"readPayment","writePayment"})
+     */
+    private $iri;
+
+    /**
+     * @var string|null The litteral name of the user owning this bank account
      */
     private $userLitteral;
 
     /**
      * @var Address|null The litteral name of the user owning this bank account
      *
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"post"})
      */
     private $address;
     
@@ -107,7 +68,7 @@ class BankAccount
      *
      * @Assert\NotBlank
      * @Assert\Iban
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"post"})
      */
     private $iban;
 
@@ -116,46 +77,57 @@ class BankAccount
      *
      * @Assert\NotBlank
      * @Assert\Bic
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"post"})
      */
     private $bic;
 
     /**
      * @var string|null A comment for this bank account
      *
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"post"})
      */
     private $comment;
 
     /**
      * @var int The status of this bank account (0 : Inactive, 1 : Active)
      *
-     * @Groups({"readPayment","writePayment"})
+     * @Groups({"post"})
      */
     private $status;
 
     /**
      * @var \DateTimeInterface Creation date.
-     *
-     * @Groups({"readPayment"})
      */
     private $createdDate;
 
-    public function __construct()
+    
+    public function __construct($id=null)
     {
-        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/bank_accounts/".$id);
+        }
+        $this->images = new ArrayCollection();
     }
-
+    
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(int $id)
     {
         $this->id = $id;
-        
-        return $this;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getUserLitteral(): ?String
@@ -163,11 +135,9 @@ class BankAccount
         return $this->userLitteral;
     }
 
-    public function setUserLitteral(?String $userLitteral): self
+    public function setUserLitteral(?String $userLitteral)
     {
         $this->userLitteral = $userLitteral;
-
-        return $this;
     }
 
     public function getAddress(): ?Address
@@ -175,11 +145,9 @@ class BankAccount
         return $this->address;
     }
 
-    public function setAddress(?Address $address): self
+    public function setAddress(?Address $address)
     {
         $this->address = $address;
-
-        return $this;
     }
 
     public function getIban(): ?String
@@ -187,11 +155,9 @@ class BankAccount
         return $this->iban;
     }
 
-    public function setIban(?String $iban): self
+    public function setIban(?String $iban)
     {
         $this->iban = $iban;
-
-        return $this;
     }
 
     public function getBic(): ?String
@@ -199,11 +165,9 @@ class BankAccount
         return $this->bic;
     }
 
-    public function setBic(?String $bic): self
+    public function setBic(?String $bic)
     {
         $this->bic = $bic;
-
-        return $this;
     }
 
     public function getComment(): ?String
@@ -211,11 +175,9 @@ class BankAccount
         return $this->comment;
     }
 
-    public function setComment(?String $comment): self
+    public function setComment(?String $comment)
     {
         $this->comment = $comment;
-
-        return $this;
     }
 
     public function getStatus(): ?int
@@ -223,11 +185,9 @@ class BankAccount
         return $this->status;
     }
 
-    public function setStatus(?int $status): self
+    public function setStatus(?int $status)
     {
         $this->status = $status;
-
-        return $this;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface
@@ -235,10 +195,23 @@ class BankAccount
         return $this->createdDate;
     }
 
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    public function setCreatedDate(\DateTimeInterface $createdDate)
     {
         $this->createdDate = $createdDate;
+    }
 
-        return $this;
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id'                => $this->getId(),
+                'iri'               => $this->getIri(),
+                'userLitteral'      => $this->getUserLitteral(),
+                'iban'              => $this->getIban(),
+                'bic'               => $this->getBic(),
+                'comment'           => $this->getComment(),
+                'status'            => $this->getStatus(),
+                'createdDate'       => $this->getCreatedDate()
+            ];
     }
 }

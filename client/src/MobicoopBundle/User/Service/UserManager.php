@@ -34,6 +34,7 @@ use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 
 /**
  * User management service.
@@ -664,5 +665,22 @@ class UserManager
     {
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
+    }
+
+    /**
+     * Get the bank coordinates of a User
+     *
+     * @return BankAccount[]
+     */
+    public function getBankCoordinates()
+    {
+        $response = $this->dataProvider->getSpecialCollection('paymentProfile');
+        if ($response->getCode() == 200) {
+            $users = $response->getValue()->getMember();
+            if (count($users)==1) {
+                return $users[0]->getBankAccounts();
+            }
+        }
+        return null;
     }
 }
