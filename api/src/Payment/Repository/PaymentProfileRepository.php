@@ -48,11 +48,6 @@ class PaymentProfileRepository
         return $this->repository->find($id);
     }
 
-    /**
-     * Find All the PaymentProfile by criteria
-     *
-     * @return User|null
-     */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
