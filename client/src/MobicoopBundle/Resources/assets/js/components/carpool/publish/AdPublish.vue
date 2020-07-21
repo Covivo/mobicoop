@@ -444,6 +444,12 @@
                 >
                   {{ $t('stepper.content.participation.passengers') }}
                 </v-col>
+
+                <v-col 
+                  v-if="participationText"
+                >
+                  <p>participation_text</p>
+                </v-col>
               </v-row>
               <v-row
                 v-if="pricePerKm >= pricesRanges.mid"
@@ -793,6 +799,10 @@ export default {
     defaultTimePrecision: {
       type: Number,
       default: null
+    },
+    participationText: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
