@@ -368,6 +368,16 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $isCommunityReferrer;
 
+    /**
+     * @var array|null BankAccounts of a User
+     */
+    private $bankAccounts;
+
+    /**
+     * @var array|null Wallets of a User
+     */
+    private $wallets;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1081,6 +1091,26 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getBankAccounts(): ?array
+    {
+        return $this->bankAccounts;
+    }
+
+    public function setBankAccounts(?array $bankAccounts)
+    {
+        $this->bankAccounts = $bankAccounts;
+    }
+
+    public function getWallets(): ?array
+    {
+        return $this->wallets;
+    }
+
+    public function setWallets(?array $wallets)
+    {
+        $this->wallets = $wallets;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1109,7 +1139,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
-            'communityId'         => $this->getCommunityId()
+            'communityId'         => $this->getCommunityId(),
+            'bankAccounts'         => $this->getBankAccounts()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
