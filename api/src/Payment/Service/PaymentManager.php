@@ -284,6 +284,9 @@ class PaymentManager
                 $item['carpoolItem'] = $carpoolItem;
                 $carpoolPayment->addCarpoolItem($carpoolItem);
             }
+
+            $carpoolPayment->setAmount($amountDirect + $amountOnline);
+
             // we persist the payment
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
@@ -292,23 +295,30 @@ class PaymentManager
             if ($amountOnline>0) {
                 // TODO : online payment, set the status to success if successful !
                 $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
+            } else {
+                // if it's a manual payment, we set it to a success automatically
+                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
             }
+
+
             if ($payment->getStatus() == PaymentPayment::STATUS_SUCCESS) {
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
                 foreach ($payment->getItems() as $item) {
+                    $carpoolItem = $this->carpoolItemRepository->find($item['id']);
                     if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                         if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
-                            $item['carpoolItem']->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
                         } else {
-                            $item['carpoolItem']->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
                         }
                     }
-                    $this->entityManager->persist($item['carpoolItem']);
+                    $this->entityManager->persist($carpoolItem);
                 }
             } else {
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
             }
             $this->entityManager->persist($carpoolPayment);
+            $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
         } else {
             // COLLECT // FINISH HERE !!!!
