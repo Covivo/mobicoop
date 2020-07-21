@@ -57,6 +57,10 @@ class PaymentItem
     const TYPE_PAY = 1;
     const TYPE_COLLECT = 2;
 
+    const DAY_UNAVAILABLE = 0;
+    const DAY_CARPOOLED = 1;
+    const DAY_NOT_CARPOOLED = 2;
+
     /**
      * @var int The id of this payment item.
      * @Groups({"readPayment"})
@@ -183,6 +187,18 @@ class PaymentItem
      */
     private $returnDays;
 
+    /**
+     * @var bool If the current payment profile is linked to one or several bank accounts
+     *
+     * @ApiProperty(
+     *     attributes={
+     *         "swagger_context"={"type"="boolean"}
+     *     }
+     * )
+
+     * @Groups({"readPayment"})
+     */
+    private $electronicallyPayable;
 
     public function __construct($id = null)
     {
@@ -374,6 +390,18 @@ class PaymentItem
     public function setReturnDays(array $returnDays): self
     {
         $this->returnDays = $returnDays;
+
+        return $this;
+    }
+
+    public function isElectronicallyPayable(): ?bool
+    {
+        return $this->electronicallyPayable;
+    }
+
+    public function setElectronicallyPayable(bool $electronicallyPayable): self
+    {
+        $this->electronicallyPayable = $electronicallyPayable;
 
         return $this;
     }

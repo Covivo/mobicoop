@@ -25,6 +25,8 @@ namespace App\Payment\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Carpool\Entity\Criteria;
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
@@ -34,6 +36,7 @@ use Symfony\Component\Security\Core\Security;
  */
 final class PaymentItemCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private $filters;
     private $paymentManager;
     private $security;
 
@@ -45,15 +48,31 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        if (isset($context['filters'])) {
+            $this->filters = $context['filters'];
+        }
+
         return PaymentItem::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        // TODO : add the filters :
-        // - frequency
-        // - week and year
-        // - type
-        return $this->paymentManager->getPaymentItems($this->security->getUser());
+        // we initialize the frequency
+        $frequency = Criteria::FREQUENCY_PUNCTUAL;
+        if (!empty($this->filters['frequency'])) {
+            $frequency = $this->filters['frequency'];
+        }
+
+        // we initialize the type
+        $type = PaymentItem::TYPE_PAY;
+        if (!empty($this->filters['type'])) {
+            $type = $this->filters['type'];
+        }
+
+        if (!empty($this->filters['week'])) {
+            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, $this->filters['week']);
+        }
+
+        return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type);
     }
 }
