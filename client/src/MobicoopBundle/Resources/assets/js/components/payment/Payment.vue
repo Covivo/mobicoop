@@ -47,7 +47,10 @@
       >
         <v-row>
           <!-- previous journey -->
-          <v-col cols="3">
+          <v-col
+            v-if="previousPaymentItem"
+            cols="3"
+          >
             <v-card
               raised
               height="800"
@@ -60,6 +63,11 @@
               >
                 <v-avatar size="125">
                   <img
+                    v-if="previousPaymentItem.avatar"
+                    :src="previousPaymentItem.avatar"
+                  >
+                  <img
+                    v-else
                     src="/images/avatarsDefault/square_250.svg"
                   >
                 </v-avatar>
@@ -67,7 +75,7 @@
               <v-row justify="center">
                 <v-card-title>
                   <p>
-                    Tony S.
+                    {{ previousPaymentItem.givenName }} {{ previousPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
               </v-row>
@@ -96,7 +104,7 @@
               <v-row justify="center">
                 <v-card-title>
                   <p>
-                    Lara C.
+                    {{ selectedPaymentItem.givenName }} {{ selectedPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
               </v-row>
@@ -105,7 +113,7 @@
                   <!-- dates -->
                   <v-row justify="center">
                     <p class="font-weight-bold">
-                      Sam. 25/09
+                      {{ date }}
                     </p>
                   </v-row>
                   <!-- journey -->
@@ -114,10 +122,10 @@
                   >
                     <v-col>
                       <p class="font-weight-bold">
-                        Nancy
+                        {{ selectedPaymentItem.origin.addressLocality }}
                       </p>
                       <p>
-                        Rue de la Monnaie
+                        {{ selectedPaymentItem.origin.street }}
                       </p>
                     </v-col>
                     <v-col>
@@ -130,10 +138,10 @@
                     </v-col>
                     <v-col>
                       <p class="font-weight-bold">
-                        Metz
+                        {{ selectedPaymentItem.destination.addressLocality }}
                       </p>
                       <p>
-                        rue de Nancy
+                        {{ selectedPaymentItem.destination.street }}
                       </p>
                     </v-col>
                   </v-row>
@@ -201,7 +209,6 @@
                     </v-row>
                   </v-row>
 
-
                   <!-- if payement -->
                   <v-row v-if="isPayment">
                     <v-col>
@@ -211,7 +218,7 @@
                       >
                         <v-col>
                           <p>
-                            {{ $t('price', {price: this.price}) }}
+                            {{ $t('price', {price: selectedPaymentItem.amount}) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -256,7 +263,7 @@
                       >
                         <v-col>
                           <p>
-                            {{ $t('price', {price: this.price}) }}
+                            {{ $t('price', {price: price}) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -295,9 +302,11 @@
                 >
                   <v-col>
                     <v-btn
+                      v-if="previousPaymentItem"
                       rounded
                       outlined
                       color="secondary"
+                      @click="previousPayment"
                     >
                       <v-icon class="ml-n2">
                         mdi-menu-left
@@ -307,9 +316,11 @@
                   </v-col>
                   <v-col>
                     <v-btn
+                      v-if="nextPaymentItem"
                       rounded
                       outlined
                       color="secondary"
+                      @click="nextPayment"
                     >
                       {{ $t('buttons.next') }}
                       <v-icon class="mr-n2">
@@ -324,6 +335,7 @@
 
           <!-- next journey -->
           <v-col
+            v-if="nextPaymentItem"
             cols="3"
             align="center"
           >
@@ -339,6 +351,11 @@
               >
                 <v-avatar size="125">
                   <img
+                    v-if="nextPaymentItem.avatar"
+                    :src="nextPaymentItem.avatar"
+                  >
+                  <img
+                    v-else
                     src="/images/avatarsDefault/square_250.svg"
                   >
                 </v-avatar>
@@ -346,7 +363,7 @@
               <v-row justify="center">
                 <v-card-title>
                   <p>
-                    Nathan D.
+                    {{ nextPaymentItem.givenName }} {{ nextPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
               </v-row>
@@ -499,7 +516,7 @@
         >
           <v-col align="center">
             <p>
-              {{ $t('sumToPay', {price: this.sumTopay}) }}
+              {{ $t('sumToPay', {price: sumTopay}) }}
             </p>
           </v-col>
         </v-row>
@@ -605,27 +622,44 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: null
+      default: 1
     },
   },
   data() {
     return {
       locale: this.$i18n.locale,
       message:null,
-      displayElectronicPayment: this.paymentElectronicActive,
 
+      // props
+      displayElectronicPayment: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
+      selectedItemId: this.selectedId,
 
-      selectedJourney: this.selectedId,
+      // all paymentItems
+      paymentItems: null,
+      // selected, next and previous paymentItems 
+      selectedPaymentItem: null,
+      previousPaymentItem: null,
+      nextPaymentItem: null,
+      selectedKey: null,
+      previousKey: null,
+      nextKey: null,
+
+      date: null,
+     
       price: 10,
       switch1: false,
       disabledTypeOfPayment: false,
       sumTopay: null,
       typeOfPayment: null,
       weekSelected: null,
-      paymentItems: null,
+
+      
+
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
+
+
       pricesElectronic: [],
       pricesByHand: [],
       payedByHand: [
@@ -648,20 +682,75 @@ export default {
     },
   },
   mounted () {
+    // we set params
     let params = {
       'frequency':this.frequency,
       'type':this.mode,
       'week':this.weekSelected
     }
+    // we get all paymentItems
     axios.post(this.$t("payments.route"), params)
       .then(res => {
         this.paymentItems = res.data;
+
+        // we select the displayed paymentItems (selected, next and previous)
+        this.paymentItems.forEach((item, key) => {
+    
+          if (item.id == this.selectedItemId) {
+            // we set key and payment of the selected payment
+            this.selectedPaymentItem = item;
+            this.selectedKey = key;
+
+            // we set key and payment of the next payment
+            this.nextKey = (key + 1) < (this.paymentItems.length - 1) ? (key + 1) : null;
+            this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
+
+            // we set key and payment of the previous payment
+            this.previousKey = (key - 1) > 0 ? (key - 1) : null;
+            this.previousPaymentItem = this.paymentItems[this.previousKey] ? this.paymentItems[this.previousKey] : null;
+            
+            // we format the date for punctual
+            this.formatDate(this.selectedPaymentItem);
+          }
+        });
       });
+
+    
+    
+
+      
   },
   created() {
     moment.locale(this.locale); 
   },
   methods: {
+    // method to format punctual date
+    formatDate() {
+      if (this.selectedPaymentItem.date) {
+        this.date = moment(this.selectedPaymentItem.date.date).format(this.$t("ll"));
+      }
+    },
+    // method when we click on next
+    nextPayment() {
+      this.selectedPaymentItem = this.paymentItems[this.selectedKey + 1];
+      this.selectedKey = this.selectedKey + 1;
+      this.previousPaymentItem = this.paymentItems[this.previousKey +1];
+      this.previousKey = this.previousKey + 1;
+      this.nextPaymentItem = this.paymentItems[this.nextKey + 1];
+      this.nextKey = this.nextKey + 1;
+      this.formatDate(this.selectedPaymentItem);
+    },
+    // method when we click on previous
+    previousPayment() {
+      this.selectedPaymentItem = this.paymentItems[this.selectedKey - 1];
+      this.selectedKey = this.selectedKey - 1;
+      this.previousPaymentItem = this.paymentItems[this.previousKey -1];
+      this.previousKey = this.previousKey - 1;
+      this.nextPaymentItem = this.paymentItems[this.nextKey - 1];
+      this.nextKey = this.nextKey - 1;
+      this.formatDate(this.selectedPaymentItem);
+    },
+
     removeByHandPayment() {
       this.disabledTypeOfPayment = false;
       this.pricesByHand.splice(this.i, 1);
