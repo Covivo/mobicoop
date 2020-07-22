@@ -54,7 +54,7 @@ class PaymentController extends AbstractController
     public function payment()
     {
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "payment_electronic_active"=>($this->payment_electronic_active==="true") ? true : false,
+            "paymentElectronicActive" => ($this->payment_electronic_active === "true") ? true : false,
         ]);
     }
 

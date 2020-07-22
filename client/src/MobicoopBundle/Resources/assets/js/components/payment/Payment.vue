@@ -610,7 +610,7 @@ export default {
   props: {
     paymentElectronicActive: {
       type: Boolean,
-      default: true
+      default: null
     },
     frequency: {
       type: Number,
@@ -622,7 +622,7 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: 1
+      default: 49
     },
   },
   data() {
@@ -702,7 +702,7 @@ export default {
             this.selectedKey = key;
 
             // we set key and payment of the next payment
-            this.nextKey = (key + 1) < (this.paymentItems.length - 1) ? (key + 1) : null;
+            this.nextKey = (key + 1) <= (this.paymentItems.length - 1) ? (key + 1) : null;
             this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
 
             // we set key and payment of the previous payment
@@ -732,22 +732,50 @@ export default {
     },
     // method when we click on next
     nextPayment() {
+      // we set new selected payment
       this.selectedPaymentItem = this.paymentItems[this.selectedKey + 1];
       this.selectedKey = this.selectedKey + 1;
-      this.previousPaymentItem = this.paymentItems[this.previousKey +1];
-      this.previousKey = this.previousKey + 1;
-      this.nextPaymentItem = this.paymentItems[this.nextKey + 1];
+      // we set new previous payment
+      // previousKey == null only if the first selected payment is the first
+      if (this.previousKey == null) {
+        this.previousPaymentItem = this.paymentItems[0];
+        this.previousKey = 0;
+      } else {
+        this.previousPaymentItem = this.paymentItems[this.previousKey +1];
+        this.previousKey = this.previousKey + 1;
+      }
+     
+      if ((this.nextKey + 1) < (this.paymentItems.length - 1)) {
+        this.nextPaymentItem = this.paymentItems[this.nextKey + 1];
+      } else {
+        this.nextPaymentItem = null;
+      }
       this.nextKey = this.nextKey + 1;
+      // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
     },
     // method when we click on previous
     previousPayment() {
+      // we set new selected payment
       this.selectedPaymentItem = this.paymentItems[this.selectedKey - 1];
       this.selectedKey = this.selectedKey - 1;
-      this.previousPaymentItem = this.paymentItems[this.previousKey -1];
+      // we set new previous payment
+      if ((this.previousKey - 1) > 0) {
+        this.previousPaymentItem = this.paymentItems[this.previousKey -1];
+      } else {
+        this.previousPaymentItem = null;
+      }
       this.previousKey = this.previousKey - 1;
-      this.nextPaymentItem = this.paymentItems[this.nextKey - 1];
-      this.nextKey = this.nextKey - 1;
+      // we set new next payment
+      // nextKey == null only if the first selected payment is the first
+      if (this.nextKey == null) {
+        this.nextPaymentItem = this.paymentItems[this.paymentItems.length - 1];
+        this.nextKey = this.paymentItems.length - 1;
+      } else {
+        this.nextPaymentItem = this.paymentItems[this.nextKey - 1];
+        this.nextKey = this.nextKey - 1;
+      }
+      // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
     },
 
