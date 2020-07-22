@@ -61,10 +61,16 @@ class SolidaryResultTransport
     private $id;
 
     /**
-     * @var string FamilyName and GivenName of the volunteer
+     * @var int FamilyName and GivenName of the volunteer
      * @Groups({"readSolidarySearch"})
      */
     private $volunteer;
+
+    /**
+    * @var string Id of the volunteer
+    * @Groups({"readSolidarySearch"})
+    */
+    private $volunteerId;
 
     /**
      * @var string Home town of the volunteer
@@ -103,6 +109,18 @@ class SolidaryResultTransport
     public function setVolunteer(string $volunteer): self
     {
         $this->volunteer = $volunteer;
+        
+        return $this;
+    }
+
+    public function getVolunteerId(): ?int
+    {
+        return $this->volunteerId;
+    }
+    
+    public function setVolunteerId(int $volunteerId): self
+    {
+        $this->volunteerId = $volunteerId;
         
         return $this;
     }

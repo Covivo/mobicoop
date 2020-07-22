@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,21 +20,19 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\User\DataProvider;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Controller class for user threads (list of messages as sender or recipient).
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class UserThreadsDirectMessages
+final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
     private $userManager;
 
     public function __construct(UserManager $userManager)
@@ -43,19 +40,13 @@ class UserThreadsDirectMessages
         $this->userManager = $userManager;
     }
 
-    /**
-     * This method is invoked when the list of messages is asked.
-     *
-     * @param User $data
-     * @return Response
-     */
-    public function __invoke(User $data): ?User
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
-        }
-        // we search the direct messages
-        $data->setThreads($this->userManager->getThreadsDirectMessages($data));
-        return $data;
+        return User::class === $resourceClass && $operationName == "get";
+    }
+
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
+    {
+        return $this->userManager->getUser($id);
     }
 }

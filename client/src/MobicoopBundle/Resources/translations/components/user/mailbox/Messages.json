@@ -9,7 +9,8 @@
         "urlUpdateAsk":"/utilisateur/messages/updateAsk",
         "headersCategories": {
             "titleCarpool":"Covoiturage",
-            "titleLive":"Direct"
+            "titleLive":"Direct",
+            "titleSolidary":"Solidaire"
         },
         "tooltip": {
             "message": "Messages non liés à une annonce"
@@ -22,6 +23,11 @@
             "context":"Ad"
         },
         "urlSend":"/user/messages/send",
-        "urlUpdateAsk":"/user/messages/updateAsk"
+        "urlUpdateAsk":"/user/messages/updateAsk",
+        "headersCategories": {
+            "titleCarpool":"Carpool",
+            "titleLive":"Direct",
+            "titleSolidary":"Solidary"
+        }
     }
 }

@@ -231,6 +231,11 @@ class SolidaryManager
             $solidary->setDays($days);
         }
         $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
+       
+        // we check the solidary is a demand or a volunteer proposal
+        $solidary->setPassenger($solidary->getProposal()->getCriteria()->isPassenger() ? true : false);
+        $solidary->setDriver($solidary->getProposal()->getCriteria()->isDriver() ? true : false);
+       
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
         // the display label of the solidary 'subject : origin -> destination'
         if ($solidary->getOrigin() && $solidary->getDestination()) {
@@ -301,21 +306,52 @@ class SolidaryManager
     }
 
     /**
-     * Get solidaries of a structure
-     *
-     * @param Structure $structure
-     * @return void
-     */
-    public function getSolidaries(Structure $structure)
+    *  Get solidaries of a structure and can be filtered by solidaryUser and/or progression
+    *
+    * @param Structure $structure
+    * @param Int $solidaryUserId id of the solidaryUser
+    * @param Int $progression level of progression
+    * @return void
+    */
+    public function getSolidaries(Structure $structure, Int $solidaryUserId=null, Int $progression=null)
     {
         $solidaries = null;
         $fullSolidaries = [];
         $solidaryUserStructures = $structure->getSolidaryUserStructures();
         foreach ($solidaryUserStructures as $solidaryUserStructure) {
-            $solidaries = $solidaryUserStructure->getSolidaries();
-            if (!empty($solidaries)) {
-                foreach ($solidaries as $solidary) {
-                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+            // we check if we indicate a specific solidaryUser if yes we get only his solidaries
+            if (!is_null($solidaryUserId)) {
+                if ($solidaryUserStructure->getSolidaryUser()->getId() == $solidaryUserId) {
+                    $solidaries = $solidaryUserStructure->getSolidaries();
+                    if (!empty($solidaries)) {
+                        foreach ($solidaries as $solidary) {
+                            // we check if we indicate a progression if yes we get only solidaries with that progression
+                            if (!is_null($progression)) {
+                                if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
+                                    $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                                }
+                                // case without progression
+                            } else {
+                                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                            }
+                        }
+                    }
+                }
+                // case without solidaryUser
+            } else {
+                $solidaries = $solidaryUserStructure->getSolidaries();
+                if (!empty($solidaries)) {
+                    foreach ($solidaries as $solidary) {
+                        // we check if we indicate a progression if yes we get only solidaries with that progression
+                        if (!is_null($progression)) {
+                            if ($this->getSolidary($solidary->getId())->getProgression() == $progression) {
+                                $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                            }
+                            // case without progression
+                        } else {
+                            $fullSolidaries[] = $this->getSolidary($solidary->getId());
+                        }
+                    }
                 }
             }
         }
@@ -338,8 +374,21 @@ class SolidaryManager
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
         $user = null;
-        if ($solidary->getEmail() || $solidary->getUser()) {
-            $user = $this->solidaryCreateUser($solidary);
+
+        // first we need to check if the associated structure as an email :
+        // - if so the user needs an email OR phone number
+        // - otherwise the email is mandatory
+        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        $structure = $this->structureRepository->find($solidaryStructureId);
+        
+        if (is_null($solidary->getEmail()) && is_null($solidary->getUser()) && is_null($solidary->getTelephone())) {
+            throw new SolidaryException(SolidaryException::MANDATORY_EMAIL_OR_PHONE);
+        }
+        if (is_null($solidary->getEmail()) && is_null($structure->getEmail())) {
+            throw new SolidaryException(SolidaryException::MANDATORY_EMAIL);
+        }
+        if ($solidary->getEmail() || ($structure->getEmail() && is_null($solidary->getEmail())) || $solidary->getUser()) {
+            $user = $this->solidaryCreateUser($solidary, $structure);
             $userId = $user->getId();
         }
         
@@ -348,7 +397,6 @@ class SolidaryManager
         $proposal = $this->proposalRepository->find($ad->getId());
 
         // we get solidaryUserStructure
-        $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
         $solidaryUserId = $solidary->getSolidaryUser() ? $solidary->getSolidaryUser()->getId() : $user->getSolidaryUser()->getId();
         $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
 
@@ -498,7 +546,12 @@ class SolidaryManager
             $messages = [];
             foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
                 if ($solidaryAskHistory->getMessage() !== null) {
+                    $userDelegate = $solidaryAskHistory->getMessage()->getUserDelegate();
+
                     $messages[] = [
+                        "userDelegateId" => $userDelegate ? $userDelegate->getId() : null,
+                        "userDelegateFamilyName" => $userDelegate ? $userDelegate->getFamilyName() : null,
+                        "userDelegateGivenName" => $userDelegate ? $userDelegate->getGivenName() : null,
                         "userId" => $solidaryAskHistory->getMessage()->getUser()->getId(),
                         "userFamilyName" => $solidaryAskHistory->getMessage()->getUser()->getFamilyName(),
                         "userGivenName" => $solidaryAskHistory->getMessage()->getUser()->getGivenName(),
@@ -694,13 +747,14 @@ class SolidaryManager
      * We create the user associate to the solidary demand if the user is not already created
      * We also create the solidaryUser associated if necessary
      *
-     * @param Solidary $solidary
+     * @param Solidary $solidary    The solidary
+     * @param Structure $structure  The structure (used for email generation if needed)
      * @return User
      */
-    private function solidaryCreateUser(Solidary $solidary): User
+    private function solidaryCreateUser(Solidary $solidary, Structure $structure): User
     {
-
         // we set the home address
+        $homeAddress = null;
         if ($solidary->getHomeAddress()) {
             $homeAddress = new Address();
             $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
@@ -718,11 +772,28 @@ class SolidaryManager
             $homeAddress->setCountryCode($solidary->getHomeAddress()['countryCode']);
             $homeAddress->setLatitude($solidary->getHomeAddress()['latitude']);
             $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
+        } elseif (!is_null($solidary->getUser()) && !is_null($solidary->getUser()->getAddresses())) {
+            foreach ($solidary->getUser()->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $homeAddress = $address;
+                    break;
+                }
+            }
+        }
+        if (is_null($homeAddress)) {
+            throw new SolidaryException(SolidaryException::NO_HOME_ADDRESS);
         }
         // We check if the user exist
         $user = $solidary->getUser();
         if (is_null($solidary->getUser())) {
-            $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+            // no user provided
+            if (!is_null($solidary->getEmail())) {
+                // email provided
+                $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+            } elseif (!is_null($structure->getEmail())) {
+                // no email provided => we try the structure email
+                $solidary->setEmail($this->userManager->generateSubEmail($structure->getEmail()));
+            }
         }
         if ($user == null) {
             // We create a new user
@@ -773,7 +844,15 @@ class SolidaryManager
         if ($solidary->getStructure()) {
             $structure = $this->structureRepository->find(substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1));
         } else {
-            $structure = $this->security->getUser()->getSolidaryStructures()[0];
+            if (!is_null($this->security->getUser()->getSolidaryStructures()) && count($this->security->getUser()->getSolidaryStructures()) > 0) {
+                $structure = $this->security->getUser()->getSolidaryStructures()[0];
+            } elseif (!is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures())
+                        && count($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()) > 0
+                        && !is_null($this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure())) {
+                $structure = $this->security->getUser()->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+            } else {
+                throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+            }
         }
         $solidaryUserStructure->setStructure($structure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);

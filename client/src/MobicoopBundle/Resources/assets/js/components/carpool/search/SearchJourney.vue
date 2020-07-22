@@ -82,6 +82,7 @@
                 text
                 icon
                 @click="swap"
+                v-on="on"
               >
                 <v-icon v-if="!imageSwap">
                   mdi-swap-horizontal

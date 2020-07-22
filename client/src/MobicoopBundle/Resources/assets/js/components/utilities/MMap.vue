@@ -58,7 +58,7 @@
           max-width="400"
         >
           <v-card>
-            <v-card-title class="title justify-center">
+            <v-card-title class="text-h5 justify-center">
               {{ $t('dialog.title') }}
             </v-card-title>
             <v-card-actions class="justify-center">
@@ -164,7 +164,6 @@ export default {
       attribution:this.attributionCopyright,
       markers:this.points,
       dialog: false,
-      point: null,
       address: null
     };
   },

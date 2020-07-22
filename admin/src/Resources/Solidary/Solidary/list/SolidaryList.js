@@ -7,10 +7,29 @@ import {
   ShowButton,
   FunctionField,
   DateField,
+  ReferenceInput,
+  AutocompleteInput,
   Filter,
 } from 'react-admin';
 
-const SolidaryFilter = (props) => <Filter {...props}>{/* TODO: See questions */}</Filter>;
+import { usernameRenderer } from '../../../../utils/renderers';
+
+const SolidaryFilter = (props) => (
+  <Filter {...props}>
+    <ReferenceInput
+      alwaysOn
+      fullWidth
+      label="User solidaire"
+      source="solidaryUser"
+      reference="solidary_users"
+    >
+      <AutocompleteInput
+        allowEmpty
+        optionText={(record) => (record.user ? usernameRenderer({ record: record.user }) : '')}
+      />
+    </ReferenceInput>
+  </Filter>
+);
 
 export const SolidaryList = (props) => (
   <List

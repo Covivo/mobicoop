@@ -9,7 +9,7 @@
         v-if="article"
         cols="10"
       >
-        <h1 class="display-1 primary--text text-center font-weight-bold">
+        <h1 class="text-h4 primary--text text-center font-weight-bold">
           {{ article.title }}
         </h1>
         <v-row
@@ -18,11 +18,11 @@
         >
           <v-col>
             <h2
-              class="title font-weight-bold"
+              class="text-h6 font-weight-bold"
             >
               {{ section.title }}
             </h2>
-            <h3 class="headline">
+            <h3 class="text-h5">
               {{ section.subtitle }}
             </h3>
             <v-row

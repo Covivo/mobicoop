@@ -188,7 +188,7 @@ class SolidaryMatcher
         
         // The volunteer
         $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName()." ".$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
-
+        $solidaryResultTransport->setVolunteerId($solidaryMatching->getSolidaryUser()->getUser()->getId());
         // Home address of the volunteer
         $addresses = $solidaryMatching->getSolidaryUser()->getUser()->getAddresses();
         foreach ($addresses as $address) {
@@ -225,6 +225,7 @@ class SolidaryMatcher
         
         // The author
         $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName()." ".$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
+        $solidaryResultCarpool->setAuthorId($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getId());
 
         // O/D
         $waypoints = $solidaryMatching->getMatching()->getWaypoints();

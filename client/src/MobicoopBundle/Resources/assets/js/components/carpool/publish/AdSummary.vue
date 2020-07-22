@@ -553,7 +553,7 @@
 
                     <v-card-text
                       v-if="user != null"
-                      class="title"
+                      class="text-h6"
                     >
                       {{ user.givenName }} {{ user.shortFamilyName }}
                       <v-card-text>

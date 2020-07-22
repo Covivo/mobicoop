@@ -5,6 +5,7 @@ export const useSolidarySMSController = (solidaryId, solidarySolutionId) => {
   const dataProvider = useDataProvider();
   const [loading, setLoading] = useState(false);
   const [beneficiary, setBeneficiary] = useState(null);
+  const [solidary, setSolidary] = useState(null);
   const [send, { loading: submitting }] = useMutation({});
 
   useEffect(() => {
@@ -12,6 +13,7 @@ export const useSolidarySMSController = (solidaryId, solidarySolutionId) => {
     dataProvider
       .getOne('solidaries', { id: `/solidaries/${solidaryId}` })
       .then(async ({ data }) => {
+        setSolidary(data);
         if (data.solidaryUser && data.solidaryUser.user) {
           setBeneficiary(data.solidaryUser.user);
         }
@@ -36,8 +38,11 @@ export const useSolidarySMSController = (solidaryId, solidarySolutionId) => {
     });
   };
 
+  const ask =
+    solidary && solidary.asksList.find((i) => i.solidarySolutionId === solidarySolutionId);
+
   return {
-    data: { beneficiary },
+    data: { beneficiary, solidary, driver: ask ? ask.driver : null },
     submit: handleSubmit,
     submitting,
     loading,

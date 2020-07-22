@@ -8,7 +8,7 @@ export const useSolidary = (solidaryId) => {
   useEffect(() => {
     if (solidaryId) {
       dataProvider.getOne('solidary', { id: solidaryId }).then((response) => {
-        if (response.data) setSolidary(response.data);
+        if (response) setSolidary(response.data);
       });
     } else {
       setSolidary(null);

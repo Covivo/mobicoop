@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -49,11 +49,35 @@ class AskRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
     
-    public function findAskByUser(User $user)
+    /**
+     * Get the Asks of a user
+     *
+     * @param User $user        The User
+    * @param int $filter       0 : All the Asks, 1 : Only Ask without SolidaryAsk, 2 Only Ask with SolidaryAsk
+     * @return Ask[]|null
+     */
+    public function findAskByUser(User $user, $filter=Ask::ALL_ASKS)
     {
-        $query = $this->repository->createQueryBuilder('a')
-        ->where('(a.user = :user or a.userRelated = :user)')
-        ->setParameter('user', $user)
+        $query = $this->repository->createQueryBuilder('a');
+
+        // If it's a Solidary request and the user is a beneficiary, we return no messages. Beneficiaries can't see solidary exchanges
+        if ($filter==Ask::ASKS_WITH_SOLIDARY && !is_null($user->getSolidaryUser()) && $user->getSolidaryUser()->isBeneficiary()) {
+            return [];
+        }
+        
+        if ($filter==Ask::ASKS_WITHOUT_SOLIDARY) {
+            $query->leftJoin('a.solidaryAsk', 'sa');
+        } elseif ($filter==Ask::ASKS_WITH_SOLIDARY) {
+            $query->join('a.solidaryAsk', 'sa');
+        }
+        
+        $query->where('(a.user = :user or a.userRelated = :user)');
+        
+        if ($filter==Ask::ASKS_WITHOUT_SOLIDARY) {
+            $query->andWhere('sa is null');
+        }
+
+        $query->setParameter('user', $user)
         ->orderBy('a.updatedDate', 'DESC');
         
         return $query->getQuery()->getResult();

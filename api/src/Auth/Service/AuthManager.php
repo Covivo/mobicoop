@@ -154,7 +154,7 @@ class AuthManager
                 }
             }
         }
-
+        
         // not assigned !
         return false;
     }

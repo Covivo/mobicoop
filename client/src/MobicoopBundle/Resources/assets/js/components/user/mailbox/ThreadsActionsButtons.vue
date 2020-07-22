@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <!-- The Ask is just Initiated -->
     <!-- Only the Ask User can make a formal request of carpool -->
 
@@ -104,7 +104,7 @@
         {{ $t('askRefused') }}
       </v-card>
     </div>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import Translations from "@translations/components/user/mailbox/ThreadsActionsButtons.json";

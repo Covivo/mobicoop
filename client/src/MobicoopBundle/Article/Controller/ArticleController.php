@@ -55,6 +55,8 @@ class ArticleController extends AbstractController
     const MOREABOUT = 15;
     const COOKIES = 16;
     const COVID19 = 17;
+    const PRIVACYPOLICY = 18;
+
 
     /**
      * Display of the project page
@@ -209,6 +211,15 @@ class ArticleController extends AbstractController
     public function showCovid19(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::COVID19));
+    }
+
+    /**
+    * Display of the PRIVACY POLICY page
+    *
+    */
+    public function showPrivacyPolicy(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::PRIVACYPOLICY));
     }
 
     /**

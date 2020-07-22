@@ -45,3 +45,5 @@ widget:
     title: "Widget"
 toolsbox:
     title: "Tool Box"
+relaypoints:
+    title: "Relay points"    

@@ -18,18 +18,12 @@ case $i in
 esac
 done
 
-#Migrations
+# Migrations
 cd /var/www/$VERSION/$INSTANCE/api;
 php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
 # Crontab update
-python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/updateCrontab.py
-
-#Specific Edge and exotics browsers
-cd ../client;
-rm -Rf node_modules/;
-yarn install;
-yarn encore dev;
+python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
 #Admin build
 cd /var/www/$VERSION/$INSTANCE/admin;

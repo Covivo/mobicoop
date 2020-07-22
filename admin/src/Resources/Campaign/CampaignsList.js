@@ -30,7 +30,7 @@ const CampaignsList = (props) => {
         Promise.all(
           data.deliveries.map((element) =>
             dataProvider
-              .getOne('deliveries', { id: element })
+              .getOne('deliveries', { id: element.id })
               .then(({ data }) => data)
               .catch((error) => {
                 console.log("Erreur lors de la campagne d'emailing:", error);
@@ -81,8 +81,7 @@ const CampaignsList = (props) => {
             choices={statusChoices}
           />
           <DateField source="createdDate" label={translate('custom.label.campaign.createdDate')} />
-          <DateField source="createdDate" label={translate('custom.label.campaign.updateDate')} />
-          <DateField source="createdDate" label={translate('custom.label.campaign.sendDate')} />
+          <DateField source="updatedDate" label={translate('custom.label.campaign.updateDate')} />
 
           <ButtonCampaign label={translate('custom.label.campaign.resumeCampaign')} />
         </Datagrid>
@@ -97,6 +96,7 @@ const CampaignsList = (props) => {
           resource={'users'}
           basePath={'/users'}
           filterValues={{}}
+          sendAll={null}
           campagneReprise={campaign}
         />
       )}

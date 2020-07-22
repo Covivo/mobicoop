@@ -11,10 +11,10 @@
       >
         <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title class="title font-weight-bold">
+            <v-list-item-title class="text-h6 font-weight-bold">
               {{ computedTime }}
             </v-list-item-title>
-            <v-list-item-subtitle class="body-2">
+            <v-list-item-subtitle class="text-body-2">
               {{ computedDate }}
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -43,7 +43,7 @@
       <!-- Price -->
       <v-col
         cols="2"
-        class="title text-right"
+        class="text-h6 text-right"
         :class="solidaryExclusive ? 'warning--text' : ''"
       >
         {{ price ? price +'€' : '' }}

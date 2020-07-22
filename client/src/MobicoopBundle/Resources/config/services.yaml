@@ -66,6 +66,7 @@ services:
             $ptDateCriteria: '%env(string:PT_DATE_CRITERIA)%'
             $ptMode: '%env(string:PT_MODE)%'
             $ptUsername: '%env(string:PT_USERNAME)%'
+            $participationText: '%env(bool:PARTICIPATION_TEXT)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -190,6 +191,7 @@ services:
             $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
             $community_show: '%env(resolve:COMMUNITY_SHOW)%'
             $signUpLinkInConnection: '%env(bool:SIGNUP_LINK_IN_CONNECTION)%'
+            $solidaryDisplay: '%env(bool:SOLIDARY_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

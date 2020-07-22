@@ -35,6 +35,7 @@ use Symfony\Component\Security\Core\Security;
  */
 final class SolidaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private $filters;
     private $solidaryManager;
     private $security;
 
@@ -46,6 +47,9 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        if (isset($context['filters'])) {
+            $this->filters = $context['filters'];
+        }
         return Solidary::class === $resourceClass;
     }
 
@@ -57,6 +61,23 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         if (empty($this->security->getUser()->getSolidaryStructures())) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
         }
-        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0]);
+
+        $progression = null;
+        $solidaryUserId = null;
+        if (isset($this->filters['solidaryUser'])) {
+            if (strrpos($this->filters['solidaryUser'], '/')) {
+                $solidaryUserId = substr($this->filters['solidaryUser'], strrpos($this->filters['solidaryUser'], '/') + 1);
+            }
+            if (empty($solidaryUserId) || !is_numeric($solidaryUserId)) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_USER_ID_INVALID);
+            }
+        }
+        if (isset($this->filters['progression'])) {
+            $progression = $this->filters['progression'];
+            if (!is_numeric($progression)) {
+                throw new SolidaryException(SolidaryException::INVALID_PROGRESSION);
+            }
+        }
+        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId, $progression);
     }
 }

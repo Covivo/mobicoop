@@ -432,6 +432,20 @@ class UserManager
     }
 
     /**
+     * Get the threads of solidary related messages of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreadsSolidaryMessages(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsSolidaryMessages');
+        return $response->getValue();
+    }
+
+    /**
      * Update the user token.
      *
      * @param User $user

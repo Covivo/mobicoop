@@ -110,7 +110,7 @@
       <v-col
         v-if="isPassenger"
         cols="2"
-        class="font-weight-bold primary--text headline text-right"
+        class="font-weight-bold primary--text text-h5 text-right"
       >
         {{ result.roundedPrice }}€
       </v-col>

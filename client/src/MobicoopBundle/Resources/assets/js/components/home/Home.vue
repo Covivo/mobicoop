@@ -1,5 +1,5 @@
 <template>
-  <v-content color="secondary">
+  <v-main color="secondary">
     <v-container
       text-center
     >
@@ -137,7 +137,7 @@
       </v-row>
       <Cookies />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>

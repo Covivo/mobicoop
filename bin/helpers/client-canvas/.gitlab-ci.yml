@@ -6,17 +6,11 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:    # excluded : not cached
   - node_modules/
-  # - mobicoop-platform/api/node_modules/
-  # - mobicoop-platform/api/vendor/
-  # - mobicoop-platform/client/node_modules/
-  # - mobicoop-platform/client/vendor/
-  # - mobicoop-platform/admin/node_modules/
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
   - deploy
   - prod_deploy
-
       
 #
 # Deployment for dev branch
@@ -32,7 +26,7 @@ dev_deploy:
     APP_ENV: dev   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
     - npm run install-ci
   script:
@@ -62,9 +56,9 @@ test_deploy:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && git checkout ${RELEASE_VERSION} && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && git checkout ${RELEASE_VERSION} && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
-    - npm run install-ci
+    # - npm run install-ci
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
@@ -93,7 +87,7 @@ prod_deploy:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
     - npm run install-ci
   script:
@@ -101,6 +95,7 @@ prod_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/$$INSTANCE$$/prod
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=$$INSTANCE$$"    # database migration and other after deploy works
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  

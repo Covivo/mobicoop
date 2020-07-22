@@ -60,6 +60,7 @@ use App\User\Controller\UserAsks;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
 use App\User\Controller\UserThreadsCarpoolMessages;
+use App\User\Controller\UserThreadsSolidaryMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserUpdate;
@@ -71,6 +72,9 @@ use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\ProposalValidFilter;
+use App\User\Filter\ODRangeDestinationFilter;
+use App\User\Filter\ODRangeOriginFilter;
+use App\User\Filter\ODRangeRadiusFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
@@ -95,8 +99,8 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\Structure;
 use App\User\Controller\UserCanUseEmail;
 
 /**
@@ -309,15 +313,19 @@ use App\User\Controller\UserCanUseEmail;
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
- *              "controller"=UserThreadsDirectMessages::class,
  *              "path"="/users/{id}/threadsDirectMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
- *              "controller"=UserThreadsCarpoolMessages::class,
  *              "path"="/users/{id}/threadsCarpoolMessages",
+ *              "security"="is_granted('user_read',object)"
+ *          },
+ *          "threadsSolidaryMessages"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "path"="/users/{id}/threadsSolidaryMessages",
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "put"={
@@ -343,21 +351,20 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
- *          },
- *          "structures"={
- *              "method"="GET",
- *              "path"="/users/{id}/structures",
- *              "normalization_context"={"groups"={"userStructure"}},
- *              "security"="is_granted('solidary_list',object)"
  *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "partial"})
+
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
+
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)
  * @ApiFilter(ProposalValidFilter::class)
+ * @ApiFilter(ODRangeDestinationFilter::class)
+ * @ApiFilter(ODRangeOriginFilter::class)
+ * @ApiFilter(ODRangeRadiusFilter::class)
  * @ApiFilter(HomeAddressDirectionTerritoryFilter::class, properties={"homeAddressDirectionTerritory"})
  * @ApiFilter(HomeAddressODTerritoryFilter::class, properties={"homeAddressODTerritory"})
  * @ApiFilter(HomeAddressWaypointTerritoryFilter::class, properties={"homeAddressWaypointTerritory"})
@@ -373,7 +380,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(NumericFilter::class, properties={"gender"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -1071,10 +1078,10 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null used to get the structures of a user
-     * @Groups({"userStructure"})
+     * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
-    private $structures;
+    private $solidaryStructures;
 
     /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
@@ -1092,12 +1099,13 @@ class User implements UserInterface, EquatableInterface
     private $massPerson;
 
     /**
-     * @var ArrayCollection|null A user may work in multiple solidary Structures.
+     * @var ArrayCollection|null A User can have multiple entry in Operate
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="users")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist","remove"})
+     * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
-    private $solidaryStructures;
+    private $operates;
 
     public function __construct($status = null)
     {
@@ -1125,7 +1133,8 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsDriver = new ArrayCollection();
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
-        $this->solidaryStructures = new ArrayCollection();
+        $this->operates = new ArrayCollection();
+        $this->solidaryStructures = [];
         $this->roles = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -2540,14 +2549,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getStructures()
+    public function getSolidaryStructures()
     {
-        return $this->structures;
+        return $this->solidaryStructures;
     }
 
-    public function setStructures(?array $structures): self
+    public function setSolidaryStructures(?array $solidaryStructures): self
     {
-        $this->structures = $structures;
+        $this->solidaryStructures = $solidaryStructures;
 
         return $this;
     }
@@ -2574,24 +2583,26 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getSolidaryStructures()
+    
+    public function getOperates()
     {
-        return $this->solidaryStructures->getValues();
+        return $this->operates->getValues();
     }
 
-    public function addSolidaryStructure(Structure $structure): self
+    public function addOperate(Operate $operate): self
     {
-        if (!$this->solidaryStructures->contains($structure)) {
-            $this->solidaryStructures->add($structure);
+        if (!$this->operates->contains($operate)) {
+            $this->operates[] = $operate;
+            $operate->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSolidaryStructure(Structure $structure): self
+    public function removeOperate(Operate $operate): self
     {
-        if ($this->solidaryStructures->contains($structure)) {
-            $this->solidaryStructures->removeElement($structure);
+        if ($this->operates->contains($operate)) {
+            $this->operates->removeElement($operate);
         }
 
         return $this;

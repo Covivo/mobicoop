@@ -341,14 +341,14 @@ class Solidary
     /**
      * @var boolean|null The user can be a driver.
      *
-     * @Groups({"writeSolidary"})
+     * @Groups({"writeSolidary", "readSolidary"})
      */
     private $driver;
 
     /**
      * @var boolean|null The user can be a passenger.
      *
-     * @Groups({"writeSolidary"})
+     * @Groups({"writeSolidary", "readSolidary"})
      */
     private $passenger;
 

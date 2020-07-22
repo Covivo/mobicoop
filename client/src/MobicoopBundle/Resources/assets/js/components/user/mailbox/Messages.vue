@@ -6,18 +6,18 @@
       fluid
     >
       <v-row id="headGridMessages">
-        <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
+        <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
-          class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
+          class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5"
         >
           <mail-box-header>{{ recipientName }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
-          class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold headline"
+          class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold text-h5"
         >
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
         </v-col>
@@ -30,42 +30,76 @@
             v-model="modelTabs"
             slider-color="secondary"
             color="secondary"
-            class="pa-0"
-            grow
+            center-active
+            centered
+            next-icon="mdi-arrow-right-thick"
+            prev-icon="mdi-arrow-left-thick"      
+            show-arrows
           >
             <v-tab
               :key="0"
               href="#tab-cm"
-              class="ma-0"
+              class="ma-0 mx-lg-6"
               ripple
               @click="reloadOnIcon()"
             >
-              <v-icon class="display-1">
-                mdi-car
-              </v-icon>
-              <p>{{ $t("headersCategories.titleCarpool") }}</p>
+              <div>
+                <v-icon class="text-h5">
+                  mdi-car
+                </v-icon>
+                <br>
+                <div 
+                  class="mb-2"
+                  style="letter-spacing: -0.15px;"
+                >
+                  {{ $t("headersCategories.titleCarpool") }}
+                </div>
+              </div>
             </v-tab>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-tab
                   :key="1"
+                  v-bind="attrs"
                   href="#tab-dm"
                   class="ma-0"
                   ripple
-                  v-bind="attrs"
                   v-on="on"
                   @click="reloadOnIcon()"
                 >
-                  <v-icon class="display-1">
-                    mdi-chat
-                  </v-icon>
-                  <p>
-                    {{ $t("headersCategories.titleLive") }}
-                  </p>
+                  <div>
+                    <v-icon class="text-h5">
+                      mdi-chat
+                    </v-icon>
+                    <br>
+                    <div class="mb-2">
+                      {{ $t("headersCategories.titleLive") }}
+                    </div>
+                  </div>
                 </v-tab>
-              </template>
-              <span>{{ $t('tooltip.message') }}</span>
+              </template><span>{{ $t('tooltip.message') }}</span>
             </v-tooltip>
+            <v-tab
+              v-if="solidaryDisplay"
+              :key="2"
+              href="#tab-sm"
+              class="ma-0"
+              ripple
+              @click="reloadOnIcon()"
+            >
+              <div>
+                <v-icon class="text-h5">
+                  mdi-hand-heart
+                </v-icon>
+                <br>
+                <div 
+                  class="mb-2"
+                  style="letter-spacing: -0.15px;"
+                >
+                  {{ $t("headersCategories.titleSolidary") }}
+                </div>
+              </div>
+            </v-tab>            
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">
@@ -89,6 +123,19 @@
                   @idMessageForTimeLine="updateDetails"
                   @toggleSelected="refreshSelected"
                   @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
+                />
+              </v-tab-item>
+              <v-tab-item
+                v-if="solidaryDisplay"
+                value="tab-sm"
+              >
+                <threads-solidary
+                  :id-thread-default="idThreadDefault"
+                  :id-ask-to-select="currentIdAsk"
+                  :refresh-threads="refreshThreadsSolidary"
+                  @idMessageForTimeLine="updateDetails"
+                  @toggleSelected="refreshSelected"
+                  @refreshThreadsSolidaryCompleted="refreshThreadsSolidaryCompleted"
                 />
               </v-tab-item>
             </v-container>
@@ -134,6 +181,8 @@
             :loading-init="loadingDetails"
             :refresh="refreshActions"
             :loading-btn="loadingBtnAction"
+            :recipient-name="recipientName"
+            :recipient-avatar="recipientAvatar"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
           />
@@ -148,6 +197,7 @@ import Translations from "@translations/components/user/mailbox/Messages.json";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
+import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
 import TypeText from '@components/user/mailbox/TypeText'
@@ -160,6 +210,7 @@ export default {
     MailBoxHeader,
     ThreadsDirect,
     ThreadsCarpool,
+    ThreadsSolidary,
     ThreadDetails,
     ThreadActions,
     TypeText
@@ -188,6 +239,10 @@ export default {
     givenIdRecipient: {
       type: Number,
       default: null
+    },
+    solidaryDisplay: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -196,13 +251,15 @@ export default {
       idMessage: this.givenIdMessage ? this.givenIdMessage : null,
       idRecipient: this.givenIdRecipient ? this.givenIdRecipient : null,
       currentIdAsk: this.givenIdAsk ? this.givenIdAsk : null,
-      recipientName:"",
+      recipientName:null,
+      recipientAvatar:null,
       newThreadDirect:null,
       newThreadCarpool:null,
       loadingTypeText:false,
       refreshDetails:false,
       refreshThreadsDirect:false,
       refreshThreadsCarpool:false,
+      refreshThreadsSolidary:false,
       refreshActions:false,
       loadingDetails:false,
       loadingBtnAction:false,
@@ -227,12 +284,13 @@ export default {
   },
   methods: {
     updateDetails(data){
-      
+      //console.error(data);
       this.hideClickIcon = false;
-      (data.type=="Carpool") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
+      (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
+      this.recipientAvatar = data.avatar;
     },
     sendInternalMessage(data){
       this.loadingTypeText = true;
@@ -327,6 +385,9 @@ export default {
     refreshThreadsCarpoolCompleted(){
       this.refreshThreadsCarpool = false;
     },
+    refreshThreadsSolidaryCompleted(){
+      this.refreshThreadsSolidary = false;
+    },
     refreshActionsCompleted(){
       this.loadingDetails = false;
       this.refreshActions = false;
@@ -335,7 +396,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.v-content__wrap{
+.v-main__wrap{
   #headGridMessages{
     .col{
       border-left: 2px solid white !important;

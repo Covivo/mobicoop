@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Grid } from '@material-ui/core';
 
 import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
 import { SolidaryContactDropDown } from './SolidaryContactDropDown';
@@ -18,8 +18,6 @@ import { SolidaryContactDropDown } from './SolidaryContactDropDown';
 */
 
 const SolidarySolutions = ({ solidaryId, solutions }) => {
-  console.log('data :', solutions);
-
   if (solutions && solutions.length) {
     return (
       <List>
@@ -28,20 +26,28 @@ const SolidarySolutions = ({ solidaryId, solutions }) => {
             <ListItemAvatar>
               <Avatar alt={s.GivenName || 'Inconnu'} src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
-            <ListItemText
-              primary={s.GivenName ? `${s.GivenName} ${s.FamilyName}` : 'Inconnu'}
-              secondary={s.Type || ''}
-            />
-            <ListItemText
-              primary={s.Telephone ? formatPhone(s.Telephone) : 'Téléphone non renseigné'}
-            />
-            <ListItemText>
-              <SolidaryContactDropDown
-                solidarySolutionId={solutions.id}
-                solidaryId={solidaryId}
-                label="Contacter conducteur"
-              />
-            </ListItemText>
+            <Grid container>
+              <Grid item xs={4}>
+                <ListItemText
+                  primary={s.GivenName ? `${s.GivenName} ${s.FamilyName}` : 'Inconnu'}
+                  secondary={s.Type || ''}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <ListItemText
+                  primary={s.Telephone ? formatPhone(s.Telephone) : 'Téléphone non renseigné'}
+                />{' '}
+              </Grid>
+              <Grid item xs={4}>
+                <ListItemText>
+                  <SolidaryContactDropDown
+                    solidarySolutionId={s.id}
+                    solidaryId={solidaryId}
+                    label="Contacter conducteur"
+                  />
+                </ListItemText>
+              </Grid>
+            </Grid>
           </ListItem>
         ))}
       </List>

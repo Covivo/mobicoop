@@ -50,7 +50,6 @@ use App\Solidary\Entity\SolidaryAskHistory;
  *      },
  *      collectionOperations={
  *          "post"={
- *              "controller"=SendAction::class,
  *              "security_post_denormalize"="is_granted('user_message_create',object)"
  *          },
  *          "completeThread"={
@@ -71,6 +70,9 @@ use App\Solidary\Entity\SolidaryAskHistory;
  */
 class Message
 {
+    const TYPE_DIRECT = 'Direct';
+    const TYPE_CARPOOL = 'Carpool';
+    const TYPE_SOLIDARY = 'Solidary';
 
     /**
      * @var int The id of this message.
@@ -106,6 +108,14 @@ class Message
      * @Groups({"read","write","threads","thread"})
      */
     private $user;
+
+    /**
+    * @var User|null The user who send the message in the name of the creator.
+    *
+    * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+    * @Groups({"read","write","threads","thread"})
+    */
+    private $userDelegate;
 
     /**
      * @var AskHistory|null The ask history item if the message is related to an ask.
@@ -235,6 +245,18 @@ class Message
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+    
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
         
         return $this;
     }

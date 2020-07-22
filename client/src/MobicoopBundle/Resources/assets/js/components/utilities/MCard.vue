@@ -51,7 +51,7 @@
               <v-btn
                 v-if="cardTextButtonTwo!==''"
                 rounded
-                class="ma-0 body-2"
+                class="ma-0 text-body-2"
                 :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
                 :href="hrefButtonTwo"
                 :width="sizeButton"
@@ -87,7 +87,7 @@ export default {
     }, 
     classButton: {
       type: String,
-      default:"mb-4 body-2"
+      default:"mb-4 text-body-2"
     },
     sizeButton: {
       type: String,
@@ -143,7 +143,7 @@ export default {
     },
     classTitle: {
       type: String,
-      default:"body-1"
+      default:"text-body-1"
     },
     heightTitle:{
       type:String,

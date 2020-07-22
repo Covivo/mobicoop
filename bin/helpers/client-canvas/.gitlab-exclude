@@ -1,32 +1,92 @@
-.env.local
-.env.test.local
 .env.dev.local
+.env.test.local
 .env.prod.local
 mobicoop-platform/api/.env.dev.local
 mobicoop-platform/api/.env.test.local
 mobicoop-platform/api/.env.prod.local
-mobicoop-platform/api/config/rdex/*.json
 mobicoop-platform/api/config/jwt/
+mobicoop-platform/api/config/publicTransport/*.json
+mobicoop-platform/api/config/rdex/*.json
+mobicoop-platform/api/config/user/*.json
 mobicoop-platform/api/var/log/
+mobicoop-platform/api/public/robots.txt
++ mobicoop-platform/api/public/upload/icons/address-any.svg
++ mobicoop-platform/api/public/upload/icons/address-personal.svg
++ mobicoop-platform/api/public/upload/icons/community.svg
++ mobicoop-platform/api/public/upload/icons/event.svg
++ mobicoop-platform/api/public/upload/icons/icons.txt
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-bus.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-carpool-area.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-carpool-company.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-carpool-stop.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-drop-off-area.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-park-and-ride.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-parking.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-taxi.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-train.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-bus.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-carpool-area.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-carpool-stop.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-company.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-drop-off-area.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-park-and-ride.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-parking.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-taxi.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-train.svg
++ mobicoop-platform/api/public/upload/icons/venue.svg
+- mobicoop-platform/api/public/upload/icons/*.svg
+mobicoop-platform/api/public/exampleMassImport.csv
 mobicoop-platform/api/public/upload/events/images/*.jpg
 mobicoop-platform/api/public/upload/events/images/*.jpeg
 mobicoop-platform/api/public/upload/events/images/*.png
 mobicoop-platform/api/public/upload/events/images/versions/*.jpg
 mobicoop-platform/api/public/upload/events/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/events/images/versions/*.png
+mobicoop-platform/api/public/upload/relaypoints/images/*.jpg
+mobicoop-platform/api/public/upload/relaypoints/images/*.jpeg
+mobicoop-platform/api/public/upload/relaypoints/images/*.png
+mobicoop-platform/api/public/upload/relaypoints/images/versions/*.jpg
+mobicoop-platform/api/public/upload/relaypoints/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/relaypoints/images/versions/*.png
+mobicoop-platform/api/public/upload/relaypointtypes/images/*.jpg
+mobicoop-platform/api/public/upload/relaypointtypes/images/*.jpeg
+mobicoop-platform/api/public/upload/relaypointtypes/images/*.png
+mobicoop-platform/api/public/upload/relaypointtypes/images/versions/*.jpg
+mobicoop-platform/api/public/upload/relaypointtypes/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/relaypointtypes/images/versions/*.png
+mobicoop-platform/api/public/upload/users/images/*.jpg
+mobicoop-platform/api/public/upload/users/images/*.jpeg
+mobicoop-platform/api/public/upload/users/images/*.png
+mobicoop-platform/api/public/upload/users/images/versions/*.jpg
+mobicoop-platform/api/public/upload/users/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/users/images/versions/*.png
+mobicoop-platform/api/public/upload/communities/security/*
 mobicoop-platform/api/public/upload/communities/images/*.jpg
 mobicoop-platform/api/public/upload/communities/images/*.jpeg
 mobicoop-platform/api/public/upload/communities/images/*.png
 mobicoop-platform/api/public/upload/communities/images/versions/*.jpg
 mobicoop-platform/api/public/upload/communities/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/communities/images/versions/*.png
+mobicoop-platform/api/public/upload/communities/security/*
 mobicoop-platform/api/public/upload/mass/files/*.csv
 mobicoop-platform/api/public/upload/mass/files/*.xml
 mobicoop-platform/api/public/upload/mass/files/*.zip
 mobicoop-platform/api/public/upload/mass/files/*.json
+mobicoop-platform/api/public/import/
+mobicoop-platform/api/public/import/*.*
+mobicoop-platform/api/public/import/Avatar/*.*
+mobicoop-platform/api/public/import/Community/*.*
+mobicoop-platform/api/public/import/Event/*.*
+mobicoop-platform/api/public/import/RelaisPoint/*.*
+mobicoop-platform/api/public/upload/masscommunication/
+mobicoop-platform/api/public/upload/masscommunication/*.*
 mobicoop-platform/client/.env.dev.local
 mobicoop-platform/client/.env.test.local
 mobicoop-platform/client/.env.prod.local
 mobicoop-platform/client/var/log/
+mobicoop-platform/client/public/google*.html
+mobicoop-platform/client/public/robots.txt
+mobicoop-platform/client/public/mobile_app_repository.json
 mobicoop-platform/admin/.env
-mobicoop-platform/api/public/upload/communities/security/*
+mobicoop-platform/admin/public/logo.png
+mobicoop-platform/admin/public/robots.txt

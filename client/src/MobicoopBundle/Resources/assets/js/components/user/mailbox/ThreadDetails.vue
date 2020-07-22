@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container class="window-scroll">
       <v-timeline
         v-if="items.length>0"
@@ -36,6 +36,12 @@
           >
             <v-card-text v-html="item.text" />
           </v-card>
+          <p
+            v-if="item.divider===false && item.userDelegate"
+            class="text-caption"
+          >
+            {{ $t('sendBy', {"name":item.userDelegate.givenName+" "+item.userDelegate.shortFamilyName}) }}
+          </p>
           <span
             v-if="item.divider===true"
             class="secondary--text font-weight-bold"
@@ -44,7 +50,7 @@
       </v-timeline>
       <v-card v-else-if="(!loading && !hideNoThreadSelected) || clearClickIcon">
         <v-card-text
-          class="font-italic subtitle-1"
+          class="font-italic text-subtitle-1"
         >
           {{ $t('notThreadSelected') }}
         </v-card-text>
@@ -58,7 +64,7 @@
         :hidden="!loading"
       />
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import axios from "axios";

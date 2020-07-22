@@ -27,30 +27,30 @@
         justify="center"
       >
         <v-card-text>
-          <h3 class="headline  text-left font-weight-bold">
+          <h3 class="text-h5  text-left font-weight-bold">
             {{ event.name }}
           </h3>
-          <p class="headline text-left subtitle-1">
+          <p class="text-h5 text-left text-subtitle-1">
             {{ event.address.addressLocality }}
           </p>
           <p
             v-if="displayDescription && formatedDescription!==''"
-            class="body-1"
+            class="text-body-1"
             md="6"
             v-html="formatedDescription"
           />
           <p
             v-if="displayDescription && formatedFullDescription!==''"
-            class="body-2"
+            class="text-body-2"
             md="6"
             v-html="formatedFullDescription"
           />
           <v-row>
-            <p class="body-2 pa-3">
+            <p class="text-body-2 pa-3">
               <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
             </p>
             <v-spacer />
-            <p class="body-2 pa-3">
+            <p class="text-body-2 pa-3">
               <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
             </p>
           </v-row>

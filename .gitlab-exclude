@@ -4,9 +4,10 @@
 /api/.env.dev.local
 /api/.env.test.local
 /api/.env.prod.local
-/api/config/rdex/*.json
-/api/config/publicTransport/*.json
 /api/config/jwt/
+/api/config/publicTransport/*.json
+/api/config/rdex/*.json
+/api/config/user/*.json
 /api/public/robots.txt
 /api/templates/email_client/
 /api/translations_client/
@@ -68,6 +69,7 @@
 /api/public/upload/communities/images/versions/*.jpg
 /api/public/upload/communities/images/versions/*.jpeg
 /api/public/upload/communities/images/versions/*.png
+/api/public/upload/communities/security/*
 /api/public/upload/mass/files/*.csv
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip

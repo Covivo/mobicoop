@@ -7,11 +7,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import TerritoryInput from '../../components/geolocation/TerritoryInput';
 
 const GestionRoles = ({ record }) => {
+
   const translate = useTranslate();
   const dataProvider = useDataProvider();
   const [roles, setRoles] = useState([]);
   const [fields, setFields] = useState([{ roles: ['none'], territory: null }]);
   const form = useForm();
+
 
   const userRoles = {
     1: { id: '/auth_items/1', name: translate('custom.label.user.rolesForCreation.super_admin') },
@@ -96,7 +98,7 @@ const GestionRoles = ({ record }) => {
                 },
               ]);
             })
-            .catch((error) => {});
+            .catch((error) => { });
         } else {
           setFields((t) => [...t, { roles: element.authItem.id }]);
         }
@@ -109,14 +111,25 @@ const GestionRoles = ({ record }) => {
     const values = [...fields];
     values.push({ roles: ['none'], territory: null });
     setFields(values);
+
+    // TODO : Change this when you can : you need to link an existant fields in form with roles and territory (like rolesTerritory)
+    // and then change the value with form.change('rolesTerritory', fields)
+    // We use this trick to enabled the sumbit button with our custom component when we change something in roles/territory
+    // Try to adapt with the following : https://marmelab.com/react-admin/Inputs.html#useinput-hook
+    // We already use it in Resources/User/FiltersTraject 
+    // Do the same in handleRemove and handleAddPair
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   function handleRemove(i) {
     const values = [...fields];
     values.splice(i, 1);
     setFields(values);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   const handleAddPair = (indice, nature) => (e) => {
@@ -130,6 +143,7 @@ const GestionRoles = ({ record }) => {
       values[indice]['roles'].splice(0, 1);
     }
     setFields(values);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
   };
 

@@ -27,13 +27,13 @@
         justify="center"
       >
         <v-card-text>
-          <h3 class="headline text-justify font-weight-bold">
+          <h3 class="text-h5 text-justify font-weight-bold">
             {{ community.name }}
           </h3>
-          <p class="body-1 text-justify">
+          <p class="text-body-1 text-justify">
             {{ community.description }}
           </p>
-          <p class="body-2 text-justify">
+          <p class="text-body-2 text-justify">
             {{ community.fullDescription }}
           </p>
         </v-card-text>

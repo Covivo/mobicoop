@@ -4,6 +4,7 @@ import { useDataProvider, Title, useTranslate } from 'react-admin';
 import { useKibana } from './useKibana';
 import isAuthorized from '../../auth/permissions';
 import getKibanaFilter from './kibanaFilters';
+import { isAdmin } from '../../auth/permissions';
 
 const KibanaWidget = ({
   from = 'now-1y',
@@ -16,16 +17,8 @@ const KibanaWidget = ({
   const [kibanaStatus, kibanaError] = useKibana();
   const [communitiesList, setCommunitiesList] = useState();
 
-  // Admin or community ?
-  // Full rights granted to   territory_manage
-  // Restricted rights for    community_manage (Automatic filter to my list of communities, hidden with negative margin)
-  const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-
   const isCommunityManager =
     isAuthorized('community_dashboard_self') && !isAuthorized('user_manage');
-
-  const isAdmin =
-    !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true; // a "ROLE_ADMIN" auth_item would be more suitable, but not available yet in the results of /permission API
 
   // List of communities the user manage
   const dataProvider = useDataProvider();
@@ -50,13 +43,13 @@ const KibanaWidget = ({
     }, []);
   }
 
-  const dashboard = isAdmin
+  const dashboard = isAdmin()
     ? process.env.REACT_APP_KIBANA_DASHBOARD
     : process.env.REACT_APP_KIBANA_COMMUNITY_DASHBOARD;
-  const style = isAdmin ? { borderWidth: 0 } : { marginTop: '-70px', borderWidth: 0 };
+  const style = isAdmin() ? { borderWidth: 0 } : { marginTop: '-70px', borderWidth: 0 };
   const filters = isCommunityManager ? getKibanaFilter({ from, communitiesList }) : '';
 
-  if (isCommunityManager || isAdmin) {
+  if (isCommunityManager || isAdmin()) {
     return (
       <Card>
         <Title title="Dashboard" />

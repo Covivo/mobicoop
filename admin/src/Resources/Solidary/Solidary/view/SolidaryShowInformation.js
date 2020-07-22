@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 
-import { Card, Grid, Avatar, LinearProgress, Divider } from '@material-ui/core';
+import { Card, Grid, Avatar, Divider } from '@material-ui/core';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
@@ -13,7 +13,7 @@ import SolidarySolutions from './SolidarySolutions';
 import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
 import { Trip } from './Trip';
 import { NeedsAndStructure } from './NeedsAndStructure';
-import { SolidaryContactDropDown } from './SolidaryContactDropDown';
+import { SolidaryProgress } from './SolidaryProgress';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(2, 4, 3),
     marginBottom: '2rem',
-  },
-  progress: {
-    width: '200px',
   },
   path: {
     width: '50%',
@@ -52,12 +49,12 @@ const driverSearchOptions = [
   },
   {
     label: 'Rechercher bénévole aller',
-    target: 'solidary_beneficiaries',
+    target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
   {
     label: 'Rechercher bénévole retour',
-    target: 'solidary_beneficiaries',
+    target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
 ];
@@ -65,7 +62,6 @@ const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
   const history = useHistory();
 
-  console.log('record:', record);
   if (!record) {
     return null;
   }
@@ -93,8 +89,7 @@ const SolidaryShowInformation = ({ record }) => {
     solutions,
   } = record;
 
-  const user = solidaryUser.user || {};
-  console.log('User : ', user);
+  const { user } = solidaryUser || {};
 
   const handleDriverSearch = (choice, index) => {
     const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
@@ -122,30 +117,22 @@ const SolidaryShowInformation = ({ record }) => {
               <Grid item>
                 <small>{user.telephone ? formatPhone(user.telephone) : 'N/A'}</small>
               </Grid>
+              {/*
+              // @TODO: Should we enable this since we post message from the "demandeur"
+              // We can't talk to him
               <Grid item>
                 <SolidaryContactDropDown solidaryId={originId} label="Contacter demandeur" />
               </Grid>
+              */}
             </Grid>
           </Grid>
         </Grid>
-
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
             <h1>{`Demande solidaire # ${originId}`}</h1>
           </Grid>
           <Grid item>
-            <Grid
-              container
-              direction="column"
-              justify="space-between"
-              alignItems="stretch"
-              spacing={1}
-            >
-              <Grid item className={classes.progress}>
-                <LinearProgress variant="determinate" value={progression || 0} />
-              </Grid>
-              <Grid item>{`Avancement : ${progression || 0}% `}</Grid>
-            </Grid>
+            <SolidaryProgress progression={progression} />
           </Grid>
           <Grid item>
             <Grid
@@ -182,12 +169,10 @@ const SolidaryShowInformation = ({ record }) => {
           </Grid>
           <Grid item>{displayLabel}</Grid>
         </Grid>
-
         <Grid container spacing={2} className={classes.divider}>
           <Grid item md={4} xs={12}>
             {returnDatetime ? 'Aller <-> Retour' : 'Aller simple'}
           </Grid>
-
           <Grid item md={4} xs={12}>
             <SolidarySchedule
               frequency={frequency}
@@ -227,7 +212,6 @@ const SolidaryShowInformation = ({ record }) => {
             )}
           </Grid>
         </Grid>
-
         <Divider light className={classes.divider} />
         <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
           <Grid item lg={8} md={12} className={classes.path}>
@@ -235,10 +219,8 @@ const SolidaryShowInformation = ({ record }) => {
           </Grid>
         </Grid>
         <Divider light className={classes.divider} />
-
         <NeedsAndStructure record={record} />
       </Card>
-
       <Card raised className={classes.card}>
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
@@ -253,10 +235,8 @@ const SolidaryShowInformation = ({ record }) => {
             />
           </Grid>
         </Grid>
-
-        <SolidarySolutions solidaryId={id} solutions={solutions} />
+        <SolidarySolutions solidaryId={originId} solutions={solutions} />
       </Card>
-
       <SolidaryAnimation record={record} />
     </>
   );

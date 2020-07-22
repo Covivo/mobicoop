@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <slot />
-  </v-content>
+  </v-main>
 </template>

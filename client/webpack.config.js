@@ -60,11 +60,23 @@ Encore
   // .addStyleEntry('main', './assets/css/main.scss')
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
+  .enableSourceMaps(!Encore.isProduction())
   .enableVueLoader()
   .enableSingleRuntimeChunk()
   .addLoader(getSassyRule('scss'))
   .addLoader(getSassyRule('sass'))
   .setManifestKeyPrefix('build')
+  .configureBabel(function (babelConfig) {
+    // add additional presets
+    babelConfig.plugins.push('transform-class-properties');
+      const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
+      if (preset !== undefined) {
+        preset[1].useBuiltIns = "usage";
+        preset[1].corejs = 3;
+      }
+  }, {
+      exclude: /node_modules[\\/](?!(vuetify)).*/
+  })
   .enablePostCssLoader();
 
 // for Dev we do not add some plugin & loader
@@ -89,18 +101,7 @@ if (!Encore.isProduction()) {
       emitErrors: false,
       syntax: 'scss'
     }))
-    .enableSourceMaps(!Encore.isProduction())
     .enableBuildNotifications()
-    .configureBabel(function (babelConfig) {
-      // add additional presets
-      babelConfig.plugins.push('transform-class-properties');
-        const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
-        if (preset !== undefined) {
-            preset[1].useBuiltIns = "usage";
-        }
-    }, {
-        exclude: /node_modules[\\/](?!(vuetify)).*/
-    })
 }
 
 let encoreConfig = Encore.getWebpackConfig();

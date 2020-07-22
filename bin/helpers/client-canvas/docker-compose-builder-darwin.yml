@@ -6,8 +6,7 @@ services:
     image: mobicoop/php-node-chromium:2.0.0
     volumes:
       - ./:/var/www:delegated
-      - ouestgo-var:/var/www/var
-      # - mobicoop-bundle-sync:/var/www/src/MobicoopBundle:nocopy
+      - instance-var:/var/www/var
       - ${MOBICOOP_CLIENT:?you forgot to export MOBICOOP_CLIENT}:/var/client:delegated
     working_dir: /var/www
   simlink:
@@ -26,4 +25,4 @@ services:
     # command: npm run install-ci
 
 volumes:
-  ouestgo-var:
+  instance-var:

@@ -2,11 +2,13 @@
     "fr": {
         "notThreadSelected":"Aucun fil selectionné",
         "urlCompleteThread":"/utilisateur/messages/{idMessage}/fil",
-        "messageDelete" :"Message supprimé"
+        "messageDelete" :"Message supprimé",
+        "sendBy":"Envoyé par {name}"
      },
     "en": {
         "notThreadSelected":"No thread selected",
         "urlCompleteThread":"/user/messages/{idMessage}/thread",
-        "messageDelete" :"Message delete"
+        "messageDelete" :"Message deleted",
+        "sendBy":"Send by {name}"
     }
 }

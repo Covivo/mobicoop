@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-main>
     <v-container class="window-scroll px-0">
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
@@ -22,7 +22,7 @@
               <v-col class="col-7 ma-0 pa-0">
                 <v-card-text class="pa-0">
                   <span
-                    class="title font-weight-light secondary--text"
+                    class="text-h6 font-weight-light secondary--text"
                   >
                     {{ name }}
                   </span>
@@ -63,7 +63,7 @@
         </v-row>
       </v-card>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 <script>
 import moment from "moment";
@@ -117,6 +117,10 @@ export default {
     idAsk:{
       type: Number,
       default: null
+    },
+    solidary:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -169,10 +173,11 @@ export default {
       this.$emit("toggleSelected",{idAsk:this.idAsk});
       this.$emit("idMessageForTimeLine",
         {
-          type:"Carpool",
+          type:this.solidary ? "Solidary" : "Carpool",
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           name:this.name,
+          avatar:this.avatar,
           idAsk:this.idAsk
         }
       );

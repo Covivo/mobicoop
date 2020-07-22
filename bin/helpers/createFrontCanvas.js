@@ -11,10 +11,9 @@ const path = require('path');
 const to = require('await-to-js').default;
 const replace = require('replace-in-file');
 
-
 program
   .version('0.1.0')
-  .option('-n, --project  <string>', 'Name of the instance client')
+  .option('-p, --project  <string>', 'Name of the client platform project')
   .parse(process.argv);
 
 if (!program.project) {
@@ -23,13 +22,11 @@ if (!program.project) {
 }
 
 const pathToClient = path.resolve(__dirname, '../../client');
-const pathToRoot = path.resolve(__dirname, '../../');
 const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
-const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
+const destinationProject = path.resolve(__dirname, `../../../${program.project}-platform`);
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
 const destinationAssets = path.resolve(destinationProject, 'assets');
 const translationsPath = path.resolve(destinationProject, 'translations');
-
 
 /** -------------------------------------------------
                 Start the creation
@@ -62,7 +59,7 @@ async function createCanvas() {
    * Copy all client files but filters to destination
    */
   const filter = {
-    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json'],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json', 'README.md'],
     // extToExclude: ['.lock'],
     filter: function (currentPath) {
       if (this.elementToExclude.includes(path.basename(currentPath))) { return false; }
@@ -108,6 +105,8 @@ async function createCanvas() {
    */
   console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
+  let mainscss = path.resolve(__dirname, 'client-canvas/main.scss');
+  let webpackConfig = path.resolve(__dirname, 'client-canvas/webpack.config.js');
   let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
   let clientjs = path.resolve(pathToMobicoopBundle, './Resources/assets/js/client');
   let translationsComponents = path.resolve(translationsPath, './components');
@@ -118,21 +117,25 @@ async function createCanvas() {
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
   let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
   let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci.yml');
+  let postDeploy = path.resolve(__dirname, 'client-canvas/postDeploy.sh');
   let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
   let makefile = path.resolve(__dirname, 'client-canvas/makefile');
-  let readme = path.resolve(__dirname, 'client-canvas/Readme.md');
+  let readme = path.resolve(__dirname, 'client-canvas/README.md');
   let entryBuilder = path.resolve(__dirname, 'client-canvas/entrypoint-builder.sh');
   let entry = path.resolve(__dirname, 'client-canvas/entrypoint.sh');
   let bundles = path.resolve(__dirname, 'client-canvas/bundles');
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
+  [err, success] = await to(fs.copy(mainscss, `${destinationAssets}/css/main.scss`));
+  [err, success] = await to(fs.copy(webpackConfig, `${destinationProject}/webpack.config.js`));
   [err, success] = await to(fs.copy(dcbd, `${destinationProject}/docker-compose-builder-darwin.yml`));
   [err, success] = await to(fs.copy(dcbl, `${destinationProject}/docker-compose-builder-linux.yml`));
   [err, success] = await to(fs.copy(dcd, `${destinationProject}/docker-compose-darwin.yml`));
   [err, success] = await to(fs.copy(dcl, `${destinationProject}/docker-compose-linux.yml`));
   [err, success] = await to(fs.copy(packagejson, `${destinationProject}/package.json`));
   [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci.yml`));
+  [err, success] = await to(fs.copy(postDeploy, `${destinationProject}/postDeploy.sh`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
-  [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
+  [err, success] = await to(fs.copy(readme, `${destinationProject}/README.md`));
   [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
   [err, success] = await to(fs.copy(gitexclude, `${destinationProject}/.gitlab-exclude`));
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
@@ -141,25 +144,37 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(themes, `${destinationProject}/themes`));
   [err, success] = await to(fs.copy(clientjs, `${destinationProject}/assets/js`));
   [err, success] = await to(fs.copy(translationsComponents, `${destinationProject}/translations/components`));
-
 }
 
 /**
  * Replace some text to help the creation of the new client platform
  */
 async function replaceDataInCanvas() {
-  const options = {
+  const optionsName = {
     files: `${destinationProject}/**/*`,
     from: /\$\$NAME\$\$/gi,
-    to: `${program.project}_platform`,
+    to: `${program.project}-platform`,
   };
-  const optionsEnv = {
+  const optionsInstance = {
+    files: `${destinationProject}/.gitlab-ci.yml`,
+    from: /\$\$INSTANCE\$\$/gi,
+    to: `${program.project}`,
+  };
+  const optionsPlatformNameEnv = {
     files: `${destinationProject}/.env`,
     from: /APP_NAME=mobicoop_platform/gi,
-    to: `APP_NAME=${program.project}_platform`,
+    to: `APP_NAME=${program.project}-platform`,
   };
-  await replace(options);
-  await replace(optionsEnv);
+  const optionsAssetsEnv = {
+    files: `${destinationProject}/.env`,
+    from: /ASSETS_PREFIX=bundle_/gi,
+    to: `ASSETS_PREFIX=`,
+  };
+  await replace(optionsName);
+  await replace(optionsInstance);
+  await replace(optionsPlatformNameEnv);
+  await replace(optionsAssetsEnv);
+
 }
 
 

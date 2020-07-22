@@ -7,7 +7,7 @@
     >
       <v-row>
         <v-col cols="12">
-          <h3 class="headline text-justify font-weight-bold">
+          <h3 class="text-h5 text-justify font-weight-bold">
             {{ $t('title') }}
           </h3>
         </v-col>
@@ -48,7 +48,7 @@
       </template> 
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template>
             <v-icon
               color="secondary"
               @click="contactItem(item)"

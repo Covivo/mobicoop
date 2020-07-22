@@ -16,7 +16,7 @@
           vertical
         >
           <v-tab
-            class="text-left justify-start ml-2 mr-5 title"
+            class="text-left justify-start ml-2 mr-5 text-h6"
             href="#myAds"
           >
             {{ $t("tabs.myAds") }}
@@ -25,7 +25,7 @@
             <Ads :ads="ads" />
           </v-tab-item>
           <v-tab
-            class="text-left justify-start ml-2 mr-5 title"
+            class="text-left justify-start ml-2 mr-5 text-h6"
             href="#carpoolsAccepted"
           >
             {{ $t("tabs.carpoolsAccepted") }}
@@ -37,7 +37,7 @@
             />
           </v-tab-item>
           <v-tab
-            class="text-left justify-start ml-2 mr-5 title"
+            class="text-left justify-start ml-2 mr-5 text-h6"
             href="#myProfile"
           >
             {{ $t("tabs.myProfile") }}
@@ -48,7 +48,7 @@
             lighten-5
           >
             <v-tabs grow>
-              <v-tab class="subtitle-1">
+              <v-tab class="text-subtitle-1">
                 {{ $t("tabs.myAccount") }}
               </v-tab>
               <v-tab-item>
@@ -63,13 +63,13 @@
                   :platform="platform"
                 />
               </v-tab-item>
-              <v-tab class="subtitle-1">
+              <v-tab class="text-subtitle-1">
                 {{ $t("tabs.alerts") }}
               </v-tab>
               <v-tab-item>
                 <Alerts :alerts="alerts" />
               </v-tab-item>
-              <v-tab class="subtitle-1">
+              <v-tab class="text-subtitle-1">
                 {{ $t("tabs.carpoolSettings") }}
               </v-tab>
               <v-tab-item>

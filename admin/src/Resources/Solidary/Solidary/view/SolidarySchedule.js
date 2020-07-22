@@ -27,16 +27,20 @@ const SolidarySchedule = ({
     return (
       <Grid container direction="column" spacing={2}>
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
-          <Grid item>
-            <b>Début:</b>
-            <br />
-            {formatDate(outwardDatetime)}
-          </Grid>
-          <Grid item>
-            <b>Fin:</b>
-            <br />
-            {formatDate(returnDatetime)}
-          </Grid>
+          {outwardDatetime && (
+            <Grid item>
+              <b>Début:</b>
+              <br />
+              {formatDate(outwardDatetime)}
+            </Grid>
+          )}
+          {returnDatetime && (
+            <Grid item>
+              <b>Fin:</b>
+              <br />
+              {formatDate(returnDatetime)}
+            </Grid>
+          )}
         </Grid>
         <Grid item>
           {[

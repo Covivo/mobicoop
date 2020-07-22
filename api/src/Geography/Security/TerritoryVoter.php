@@ -73,7 +73,7 @@ class TerritoryVoter extends Voter
             self::TERRITORY_UPDATE,
             self::TERRITORY_DELETE,
             self::TERRITORY_LIST
-            ]) && !$subject instanceof Territory && !$subject instanceof Paginator) {
+            ]) && !$subject instanceof Territory && !$subject instanceof Paginator && !is_array($subject)) {
             return false;
         }
         return true;

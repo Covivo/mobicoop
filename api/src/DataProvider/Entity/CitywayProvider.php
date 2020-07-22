@@ -40,6 +40,7 @@ use App\PublicTransport\Entity\PTLine;
 use App\PublicTransport\Entity\PTLeg;
 use App\PublicTransport\Service\PTDataProvider;
 use App\Geography\Entity\Address;
+use App\Match\Exception\MassException;
 use App\PublicTransport\Entity\PTCompany;
 
 /**
@@ -91,6 +92,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_TRAIN_HIGH_SPEED = "HST";
     private const CW_PT_MODE_BIKE = "BICYCLE";
     private const CW_PT_MODE_WALK = "WALK";
+    private const CW_PT_MODE_ON_DEMAND = "TOD";
 
     private const CW_COUNTRY = "France";
     private const CW_NC = "NC";
@@ -529,6 +531,7 @@ class CitywayProvider implements ProviderInterface
     {
         $leg = new PTLeg($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
+            $travelMode = null;
             if ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_WALK) {
                 // walk mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_WALK);
@@ -542,6 +545,11 @@ class CitywayProvider implements ProviderInterface
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_CAR);
                 $leg->setTravelMode($travelMode);
             }
+
+            if (is_null($travelMode)) {
+                throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
+            }
+
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
                 $interval = new \DateInterval($data["Leg"]["Duration"]);
                 $duration = (new \DateTime())->setTimeStamp(0)->add($interval)->getTimeStamp();
@@ -613,6 +621,7 @@ class CitywayProvider implements ProviderInterface
             }
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
+            $travelMode=null;
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
                 // bus mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_BUS);
@@ -633,7 +642,16 @@ class CitywayProvider implements ProviderInterface
                 // train high speed mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN_HIGH_SPEED);
                 $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_ON_DEMAND) {
+                // transport on demand
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_ON_DEMAND);
+                $leg->setTravelMode($travelMode);
             }
+
+            if (is_null($travelMode)) {
+                throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
+            }
+
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                 if (isset($data["PTRide"]["Departure"]["Time"])) {

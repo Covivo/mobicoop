@@ -24,7 +24,7 @@ import {
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
-import TerritoryInput from '../../components/geolocation/TerritoryInputFilter';
+import FiltersTraject from './FiltersTraject';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
@@ -33,7 +33,6 @@ const UserList = (props) => {
   const translate = useTranslate();
   const [count, setCount] = useState(0);
   const [communities, setCommunities] = useState();
-
   const dataProvider = useDataProvider();
 
   const genderChoices = [
@@ -50,9 +49,7 @@ const UserList = (props) => {
           sort: { field: 'id', order: 'ASC' },
         })
         .then((response) => {
-          if (response) {
-            setCommunities(response.data);
-          }
+          response && setCommunities(response.data);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,18 +154,19 @@ const UserList = (props) => {
         choices={communities}
       />
       <TextInput source="telephone" label={translate('custom.label.user.telephone')} />
-
       {/* <BooleanInput source="solidary" label={translate('custom.label.user.solidary')} allowEmpty={false} defaultValue={true} /> */}
-
       <ReferenceInput
         source="homeAddressODTerritory"
         label={translate('custom.label.user.territory')}
         reference="territories"
         allowEmpty={false}
         resettable
+        perPage={20}
+        filterToQuery={searchText => ({ name: searchText })}
       >
         <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
+      <FiltersTraject source="trajectCustom" label={translate('custom.label.user.trajet')} />
     </Filter>
   );
 

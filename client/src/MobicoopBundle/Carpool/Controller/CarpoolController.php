@@ -63,6 +63,8 @@ class CarpoolController extends AbstractController
     private $ptMode;
     private $ptUsername;
     private $publicTransportManager;
+    private $participationText;
+
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -70,6 +72,7 @@ class CarpoolController extends AbstractController
         $highPrice,
         $forbiddenPrice,
         $defaultRole,
+        $participationText,
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
@@ -96,6 +99,7 @@ class CarpoolController extends AbstractController
         $this->ptMode = $ptMode;
         $this->ptUsername = $ptUsername;
         $this->publicTransportManager = $publicTransportManager;
+        $this->participationText = $participationText;
     }
     
     /**
@@ -117,7 +121,7 @@ class CarpoolController extends AbstractController
                 "high" => $this->highPrice,
                 "forbidden" => $this->forbiddenPrice
             ],
-            "regular" => $this->defaultRegular
+            "participationText"=>$this->participationText,
         ]);
     }
 
@@ -166,7 +170,8 @@ class CarpoolController extends AbstractController
                 "high" => $this->highPrice,
                 "forbidden" => $this->forbiddenPrice,
             ],
-            "regular" => $this->defaultRegular
+            "regular" => $this->defaultRegular,
+            "participationText"=>$this->participationText,
         ]);
     }
         
@@ -187,7 +192,8 @@ class CarpoolController extends AbstractController
                     "high" => $this->highPrice,
                     "forbidden" => $this->forbiddenPrice
                 ],
-                "regular" => $this->defaultRegular
+                "regular" => $this->defaultRegular,
+                "participationText"=>$this->participationText,
             ]
         );
     }
@@ -213,8 +219,9 @@ class CarpoolController extends AbstractController
                 "pricesRange" => [
                     "mid" => $this->midPrice,
                     "high" => $this->highPrice,
-                    "forbidden" => $this->forbiddenPrice
+                    "forbidden" => $this->forbiddenPrice,
                 ],
+                "participationText"=>$this->participationText,
             ]
         );
     }

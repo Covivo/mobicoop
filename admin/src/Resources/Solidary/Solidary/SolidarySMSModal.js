@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 
 import { useSolidarySMSController } from './hooks/useSolidarySMSController';
-import { usernameRenderer } from '../../../utils/renderers';
 
 const useStyles = makeStyles({
   textarea: {
@@ -59,7 +58,7 @@ export const SolidarySMSModal = ({ solidaryId, solidarySolutionId, onClose }) =>
           <DialogTitle>
             {data.beneficiary
               ? translate('custom.solidary.sendSMSTo', {
-                  username: usernameRenderer({ record: data.beneficiary }),
+                  username: data.driver,
                 })
               : translate('custom.solidary.sendSMS')}
           </DialogTitle>

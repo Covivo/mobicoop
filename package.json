@@ -1,6 +1,6 @@
 {
   "name": "mobicoop-platform",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
@@ -12,7 +12,7 @@
     "install-admin": "cd admin && npm install",
     "install-admin-ci": "cd admin && npm install",
     "install-client": "cd client && npm install && composer install",
-    "install-client-ci": "cd client && npm install && composer install",
+    "install-client-ci": "cd client && npm install && composer install && npm run compile",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
@@ -34,7 +34,7 @@
     "update-db": "cd api && npm run update-db",
     "transfer-copyright": "node bin/helpers/transferCopyright.js",
     "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
-    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -n",
+    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -p",
     "link-bundle": "node bin/helpers/linkBundle.js -d",
     "contributor-checker": "node bin/helpers/hooks/contributor-license-agreement-checker.js",
     "contribute": "node bin/helpers/hooks/contributor-license-agreement-adder.js"
@@ -70,6 +70,6 @@
   },
   "devDependencies": {
     "ghooks": "^2.0.4",
-    "speed-measure-webpack-plugin": "^1.3.1"
+    "speed-measure-webpack-plugin": "^1.3.3"
   }
 }

@@ -11,6 +11,7 @@ import {
   DateField,
   Filter,
   useTranslate,
+  ImageField,
 } from 'react-admin';
 
 import FullNameField from '../User/FullNameField';
@@ -36,6 +37,10 @@ export const CommunityList = (props) => {
     >
       <Datagrid expand={<CommunityPanel />}>
         <TextField source="originId" label="ID" sortBy="id" />
+        <ImageField
+          label={translate('custom.label.event.image')}
+          source="images[0].versions.square_100"
+        />
         <TextField source="name" label={translate('custom.label.community.name')} />
         <DateField source="createdDate" label={translate('custom.label.community.createdDate')} />
         <FunctionField

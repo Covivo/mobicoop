@@ -101,4 +101,18 @@ class TerritoryRepository
             ->andWhere('ST_INTERSECTS(t.geoJsonDetail,a.geoJson)=1');
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find territories of a point defined by its latitude and longitude
+     *
+     * @param float $latitude   Latitude of the point
+     * @param float $longitude  Longitude of the point
+     * @return Territory[]|null       The territories
+     */
+    public function findPointTerritories(float $latitude, float $longitude)
+    {
+        $query = $this->repository->createQueryBuilder('t')
+            ->Where('ST_INTERSECTS(t.geoJsonDetail,ST_GEOMFROMTEXT(\'POINT('.$longitude.' '.$latitude.')\'))=1');
+        return $query->getQuery()->getResult();
+    }
 }

@@ -21,13 +21,13 @@
             class="text-center"
           >
             <v-card-text
-              class="display-1 text-uppercase"
+              class="text-h4 text-uppercase"
               :class="(textThin) ? 'text--'+colorTitle+' font-weight-thin' : 'text--'+colorTitle"
             >
               {{ title }}
             </v-card-text>
             <v-card-text
-              class="headline"
+              class="text-h5"
               :class="(textThin) ? 'text--'+colorSubtitle+' font-weight-thin' : 'text--'+colorSubtitle"
             >
               {{ subtitle }}

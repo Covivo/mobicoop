@@ -43,7 +43,7 @@
       <v-col
         cols="5"
         align="left"
-        class="ml-4 mt-0 subtitle-1 font-weight-bold"
+        class="ml-4 mt-0 text-subtitle-1 font-weight-bold"
       >
         {{ computedDateFormat }}
       </v-col>
