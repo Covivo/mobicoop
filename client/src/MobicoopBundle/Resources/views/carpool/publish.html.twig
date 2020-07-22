@@ -25,6 +25,7 @@
     :solidary-exclusive-ad = "{{ solidaryExclusiveAd is defined ? (solidaryExclusiveAd ? 'true' : 'false') : 'false' }}"
     :default-prices-ranges = "{{ pricesRange|json_encode }}"  
     :default-time-precision="{{ timePrecision }}"
+    :participation-text = "{{ participationText ? "true" : "false" }}"
   />
 
 {% endblock %}

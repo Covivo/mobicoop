@@ -474,6 +474,18 @@
                   </v-card>
                 </v-col>
               </v-row>
+              <v-row justify="center">
+                <v-col 
+                  v-if="participationText"
+                  cols="10"
+                  align="center"
+                >
+                  <p
+                    class="text-caption"
+                    v-html="$t('participation.text')"
+                  />
+                </v-col>
+              </v-row>
             </v-stepper-content>
 
             <!-- Step 6 : message -->
@@ -793,6 +805,10 @@ export default {
     defaultTimePrecision: {
       type: Number,
       default: null
+    },
+    participationText: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
