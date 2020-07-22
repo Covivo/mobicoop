@@ -28,9 +28,17 @@
       align="center"
     >
       <v-col
+        align="center"
+        cols="2"
+        class="mt-4 mr-n6 text-h4 primary--text "
+      >
+        <p>
+          {{ $t('select.label') }}
+        </p>
+      </v-col>
+      <v-col
         class="d-flex"
-        cols="12"
-        sm="6"
+        cols="4"
       >
         <v-select
           :items="items"
@@ -49,11 +57,11 @@
           <!-- previous journey -->
           <v-col
             v-if="previousPaymentItem"
-            cols="3"
+            cols="2"
           >
             <v-card
               raised
-              height="800"
+              height="950"
               class="mx-auto"
               disabled
             >
@@ -61,7 +69,7 @@
                 justify="center"
                 class="pt-5"
               >
-                <v-avatar size="125">
+                <v-avatar size="75">
                   <img
                     v-if="previousPaymentItem.avatar"
                     :src="previousPaymentItem.avatar"
@@ -74,7 +82,7 @@
               </v-row>
               <v-row justify="center">
                 <v-card-title>
-                  <p>
+                  <p class="text-body-2">
                     {{ previousPaymentItem.givenName }} {{ previousPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
@@ -83,13 +91,13 @@
           </v-col>
           <!-- selected journey -->
           <v-col
-            cols="6"
+            cols="8"
             align="center"
           >
             <v-card
               raised
               class="mx-auto"
-              height="800"
+              height="950"
             >
               <v-row
                 justify="center"
@@ -206,6 +214,12 @@
                           :sun-disabled="true"
                         />
                       </v-col>
+                    </v-row>
+                    <v-row
+                      justify="center"
+                      class="mt-6"
+                    >
+                      <p>{{ $t('regularInfo', {driver: selectedPaymentItem.givenName +' '+ selectedPaymentItem.shortFamilyName}) }}</p>
                     </v-row>
                   </v-row>
 
@@ -336,12 +350,12 @@
           <!-- next journey -->
           <v-col
             v-if="nextPaymentItem"
-            cols="3"
+            cols="2"
             align="center"
           >
             <v-card
               raised
-              height="800"
+              height="950"
               class="mx-auto"
               disabled
             >
@@ -349,7 +363,7 @@
                 justify="center"
                 class="pt-5"
               >
-                <v-avatar size="125">
+                <v-avatar size="75">
                   <img
                     v-if="nextPaymentItem.avatar"
                     :src="nextPaymentItem.avatar"
@@ -362,7 +376,7 @@
               </v-row>
               <v-row justify="center">
                 <v-card-title>
-                  <p>
+                  <p class="text-body-2">
                     {{ nextPaymentItem.givenName }} {{ nextPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
@@ -395,6 +409,60 @@
             </v-col>
           </v-card>
         </v-row>
+        <v-row justify="center">
+          <v-col
+            align="center"
+            class="font-weight-bold grey--text"
+          >
+            {{ $t('payedByHand') }} :
+          </v-col>
+          <v-col
+            align="left"
+          >
+            <v-list shaped>
+              <v-list-item-group
+                v-model="pricesByHand"
+                color="primary"
+              >
+                <v-list-item
+                  v-for="(item, i) in pricesByHand"
+                  :key="i"
+                >
+                  <v-list-item-content class="grey--text">
+                    <v-row justify="center">
+                      <v-col
+                        align="center"
+                        class="my-n2"
+                      >
+                        <p>
+                          {{ item.name }} 
+                        </p>
+                      </v-col>
+                      <v-col class="my-n2">
+                        <p class="font-weight-bold">
+                          {{ item.price }} €
+                        </p>
+                      </v-col>
+                      <v-col class="my-n4">
+                        <v-btn
+                          color="secondary"
+                          fab
+                          x-small
+                          @click="removeByHand"
+                        >
+                          <v-icon>
+                            mdi-trash-can
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+        </v-row>
+        <v-divider />
         <v-row
           v-if="displayElectronicPayment"
           justify="center"
@@ -418,14 +486,16 @@
                   <v-list-item-content>
                     <v-row justify="center">
                       <v-col align="center">
-                        <p>
+                        <p class="my-n2">
                           {{ item.name }} 
                         </p>
-                        <p class="font-weight-bold">
+                      </v-col>
+                      <v-col>
+                        <p class="font-weight-bold my-n2">
                           {{ item.price }} €
                         </p>
                       </v-col>
-                      <v-col class="mt-3">
+                      <v-col class="my-n4">
                         <v-btn
                           color="secondary"
                           fab
@@ -444,54 +514,7 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-row justify="center">
-          <v-col
-            align="center"
-            class="font-weight-bold grey--text"
-          >
-            {{ $t('payedByHand') }} :
-          </v-col>
-          <v-col
-            align="left"
-          >
-            <v-list shaped>
-              <v-list-item-group
-                v-model="pricesByHand"
-                color="primary"
-              >
-                <v-list-item
-                  v-for="(item, i) in pricesByHand"
-                  :key="i"
-                >
-                  <v-list-item-content class="grey--text">
-                    <v-row justify="center">
-                      <v-col align="center">
-                        <p>
-                          {{ item.name }} 
-                        </p>
-                        <p class="font-weight-bold">
-                          {{ item.price }} €
-                        </p>
-                      </v-col>
-                      <v-col class="mt-3">
-                        <v-btn
-                          color="secondary"
-                          fab
-                          x-small
-                          @click="removeByHand"
-                        >
-                          <v-icon>
-                            mdi-trash-can
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
+        
         <v-row
           justify="center"
           class="mb-4"
@@ -515,7 +538,7 @@
           justify="center"
         >
           <v-col align="center">
-            <p>
+            <p class="text-h3">
               {{ $t('sumToPay', {price: sumTopay}) }}
             </p>
           </v-col>
@@ -614,7 +637,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 1
+      default: 2
     },
     mode: {
       type: Number,

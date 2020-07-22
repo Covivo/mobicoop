@@ -24,7 +24,9 @@
         },
         "payments": {
             "route":"/payments/get"
-        }
+        },
+        "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager."
+
 
     }
 }
