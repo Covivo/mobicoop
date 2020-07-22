@@ -48,6 +48,11 @@ class PaymentDataProvider
     private $defaultCurrency;
     private $platformName;
 
+    private $security;
+    private $clientId;
+    private $apikey;
+    private $sandBoxMode;
+
     private const SUPPORTED_PROVIDERS = [
         "MangoPay" => MangoPayProvider::class
     ];
@@ -69,10 +74,10 @@ class PaymentDataProvider
         $this->platformName = $platformName;
         $this->paymentActive = $paymentActive;
 
-        if (isset(self::SUPPORTED_PROVIDERS[$paymentProvider])) {
-            $providerClass = self::SUPPORTED_PROVIDERS[$paymentProvider];
-            $this->providerInstance = new $providerClass($security->getUser(), $clientId, $apikey, $sandBoxMode, $paymentProfileRepository);
-        }
+        $this->security = $security;
+        $this->clientId = $clientId;
+        $this->apikey = $apikey;
+        $this->sandBoxMode = $sandBoxMode;
     }
     
     /**
@@ -80,6 +85,11 @@ class PaymentDataProvider
      */
     public function checkPaymentConfiguration()
     {
+        if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
+            $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
+            $this->providerInstance = new $providerClass($this->security->getUser(), $this->clientId, $this->apikey, $this->sandBoxMode, $this->paymentProfileRepository);
+        }
+
         if (!$this->paymentActive) {
             throw new PaymentException(PaymentException::PAYMENT_INACTIVE);
         }
