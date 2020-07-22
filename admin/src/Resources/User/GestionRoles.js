@@ -120,6 +120,7 @@ const GestionRoles = ({ record }) => {
     // Do the same in handleRemove and handleAddPair
     form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   function handleRemove(i) {
@@ -128,6 +129,7 @@ const GestionRoles = ({ record }) => {
     setFields(values);
     form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   const handleAddPair = (indice, nature) => (e) => {
@@ -142,9 +144,8 @@ const GestionRoles = ({ record }) => {
       values[indice]['roles'].splice(0, 1);
     }
     setFields(values);
-
-    form.change('fields', fields);
     form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
+    form.change('fields', fields);
   };
 
   return (
