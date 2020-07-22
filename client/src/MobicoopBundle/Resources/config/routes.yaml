@@ -736,7 +736,13 @@ Covid19:
         fr: /covid-19
         en: /covid-19
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovid19
-    
+
+# display PrivacyPolicy page
+privacyPolicy:
+    path:
+        fr: /politique-de-confidentialite
+        en: /privacy-policy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
 
 # Get the last external articles (AJAX)
