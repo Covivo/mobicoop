@@ -230,9 +230,9 @@
                         justify="center"
                         class="mt-4"
                       >
-                        <v-col>
+                        <v-col v-if="price">
                           <p>
-                            {{ $t('price', {price: selectedPaymentItem.amount}) }}
+                            {{ $t('price', {price: price}) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -542,7 +542,7 @@
           </v-card>
         </v-row> -->
         <v-row
-          v-if="displayElectronicPayment && sumToPay > 0"
+          v-if="displayElectronicPayment && pricesElectronic.length > 0"
           justify="center"
         >
           <v-col align="center">
@@ -650,7 +650,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 1
+      default: 2
     },
     mode: {
       type: Number,
@@ -681,11 +681,11 @@ export default {
       nextKey: null,
       date: null,
 
-
+      sumTopay:0,
       validPayment: false,
       validTypeOfPayment: null,
+      price: null,
 
-      sumTopay: 0,
       weekSelected: null,
       
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
@@ -744,6 +744,13 @@ export default {
             
             // we format the date for punctual
             this.formatDate(this.selectedPaymentItem);
+            if (paymentItem.frequency == 1) {
+              this.price = paymentItem.amount;
+            } else if (paymentItem.frequency == 2) {
+
+              this.price = 23;
+            }
+            
           }
         });
       });
