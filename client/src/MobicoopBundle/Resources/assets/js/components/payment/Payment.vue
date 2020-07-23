@@ -41,7 +41,7 @@
         cols="4"
       >
         <v-select
-          :items="items"
+          :items="periods"
           :label="$t('select.label')"
         />
       </v-col>
@@ -183,6 +183,7 @@
                           :fri-disabled="selectedPaymentItem.outwardDays[4]['status'] == 0 ? true : false"
                           :sat-disabled="selectedPaymentItem.outwardDays[5]['status'] == 0 ? true : false"
                           :sun-disabled="selectedPaymentItem.outwardDays[6]['status'] == 0 ? true : false"
+                          @daysList="test()"
                         />
                       </v-col>
                     </v-row>
@@ -230,9 +231,9 @@
                         justify="center"
                         class="mt-4"
                       >
-                        <v-col v-if="price">
+                        <v-col v-if="priceTravel">
                           <p>
-                            {{ $t('price', {price: price}) }}
+                            {{ $t('price', {price: priceTravel}) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -278,7 +279,7 @@
                       >
                         <v-col>
                           <p>
-                            {{ $t('price', {price: price}) }}
+                            {{ $t('price', {price: priceTravel}) }}
                           </p>
                         </v-col>
                       </v-row>
@@ -589,7 +590,7 @@
                     <v-row justify="center">
                       <v-col align="center">
                         <p>
-                          {{ item.name }} 
+                          {{ Montanttem.name }} 
                         </p>
                         <p class="font-weight-bold">
                           {{ item.price }} €
@@ -681,14 +682,15 @@ export default {
       nextKey: null,
       date: null,
 
+
       sumTopay:0,
       validPayment: false,
       validTypeOfPayment: null,
-      price: null,
+      priceTravel: null,
 
       weekSelected: null,
       
-      items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
+      periods: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesElectronic: [],
       pricesByHand: [],
       payedByHand: [
@@ -755,6 +757,10 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
+    test() {
+      
+      console.error();
+    },
     // method to format punctual date
     formatDate(paymentItem) {
       if (paymentItem.date) {
@@ -763,8 +769,9 @@ export default {
     },
     // method to calculate amount to display
     amoutTodisplay(paymentItem) {
+      this.priceTravel = 0;
       if (paymentItem.frequency == 1) {
-        this.price = paymentItem.amount;
+        this.priceTravel = paymentItem.amount;
       } else if (paymentItem.frequency == 2) {
         let numberOutwardDays = 0;
         let numberReturnDays = 0;
@@ -778,8 +785,7 @@ export default {
             numberReturnDays = numberReturnDays + 1;
           }
         });
-        this.price = 0;
-        this.price = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
+        this.priceTravel = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
       }
     },
     // method when we click on next
@@ -805,6 +811,7 @@ export default {
       this.nextKey = this.nextKey + 1;
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      this.amoutTodisplay(this.selectedPaymentItem);
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
       this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
     },
@@ -814,7 +821,7 @@ export default {
       this.selectedPaymentItem = this.paymentItems[this.selectedKey - 1];
       this.selectedKey = this.selectedKey - 1;
       // we set new previous payment
-      if ((this.previousKey - 1) > 0) {
+      if ((this.previousKey - 1) >= 0) {
         this.previousPaymentItem = this.paymentItems[this.previousKey -1];
       } else {
         this.previousPaymentItem = null;
@@ -831,6 +838,7 @@ export default {
       }
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      this.amoutTodisplay(this.selectedPaymentItem);
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
       this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
 
@@ -840,15 +848,14 @@ export default {
       this.selectedPaymentItem.paymentIsvalidated = true;
       this.selectedPaymentItem.paymentDisabled = true;
       if (type == 'byHand') {
-        this.pricesByHand.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.selectedPaymentItem.amount });
+        this.pricesByHand.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.validTypeOfPayment = 'byHand';
       } else if (type == 'electronic') {
-        this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.selectedPaymentItem.amount });
+        this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.validTypeOfPayment = 'electronic';
-        this.sumTopay = this.sumTopay + parseInt(this.selectedPaymentItem.amount, 10);
+        this.sumTopay = this.sumTopay + this.priceTravel;
       }
     },
-
     removeByHandPayment(i, item) {
       // we reset payement parameters of the selected item
       this.paymentItems.forEach((paymentItem, key) => {
@@ -888,7 +895,7 @@ export default {
         this.selectedPaymentItem.validTypeOfPayment = null;
         this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
         this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
-        this.sumTopay = this.sumTopay - this.selectedPaymentItem.amount < 0 ? 0 : this.sumTopay - this.selectedPaymentItem.amount;   
+        this.sumTopay = this.sumTopay - this.priceTravel < 0 ? 0 : this.sumTopay - this.priceTravel;   
       } 
       this.pricesElectronic.splice(i, 1);
     }

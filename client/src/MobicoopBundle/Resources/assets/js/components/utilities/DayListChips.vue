@@ -203,7 +203,12 @@ export default {
           break;
         }
       }
-    }
+      this.emitEvent();
+    },
+    emitEvent: function() {
+      this.$emit("daysList",{daysList: this.daysList}
+      );
+    },
   }
 }
 </script>
