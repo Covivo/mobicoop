@@ -332,6 +332,12 @@ class PaymentManager
             $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
         } else {
+
+            // COLLECT
+            // Array of carpoolPayment we could generate if there are DIRECT payments not previously validated par debtors
+            $carpoolPayments = [];
+            
+
             foreach ($payment->getItems() as $item) {
                 if (!$carpoolItem = $this->carpoolItemRepository->find($item['id'])) {
                     throw new PaymentException('Wrong item id');
@@ -339,22 +345,42 @@ class PaymentManager
                 if ($carpoolItem->getCreditorUser()->getId() != $user->getId()) {
                     throw new PaymentException('This user is not the creditor of item #' . $item['id]']);
                 }
+                
                 if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
 
-                        // When the creditor says he has been paid, we also valid the payement for the debtor.
-                        // So, we need to create a carpoolpayment
-                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                        // Only for DIRECT payment
+
+                        // When the creditor says he has been paid, we also valid the payement for the debtor if he hasn't done it.
+                        if ($carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING) {
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                            
+                            // search for an already instanciated carpoolPayment for this User
+                            // If it doesn't exist, we create it and push it in the array
+                            if (!isset($carpoolPayments[$carpoolItem->getDebtorUser()->getId()])) {
+                                $carpoolPayment = new CarpoolPayment();
+                                $carpoolPayment->setUser($carpoolItem->getDebtorUser());
+                                $carpoolPayment->setAmount(0);
+                                $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $carpoolPayment;
+                            }
+
+                            $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setAmount($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->getAmount()+$carpoolItem->getAmount());
+                            $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->addCarpoolItem($carpoolItem);
+                        }
                     } else {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
-                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
                     }
                 } else {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_NOT_REALIZED);
                 }
                 $this->entityManager->persist($carpoolItem);
+
+                // We need to persist the carpool payements
+                foreach ($carpoolPayments as $carpoolPayment) {
+                    $this->entityManager->persist($carpoolPayment);
+                }
             }
             $this->entityManager->flush();
         }
