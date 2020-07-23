@@ -241,18 +241,18 @@
                         justify="center"
                       >
                         <v-radio-group
-                          v-model="typeOfPayment"
+                          v-model="validTypeOfPayment"
                           column
                         >
                           <v-radio
                             :label="$t('payElectronic')"
                             value="electronic"
-                            :disabled="disabledTypeOfPayment"
+                            :disabled="selectedPaymentItem.paymentDisabled"
                           />
                           <v-radio
                             :label="$t('payedByHand')"
                             value="byHand"
-                            :disabled="disabledTypeOfPayment"
+                            :disabled="selectedPaymentItem.paymentDisabled"
                           />
                         </v-radio-group>
                       </v-row>
@@ -261,7 +261,8 @@
                         justify="center"
                       >
                         <v-switch
-                          v-model="switch1"
+                          v-model="validPayment"
+                          :disabled="selectedPaymentItem.paymentDisabled"
                           :label="$t('payedByHand')"
                         />
                       </v-row>
@@ -421,7 +422,6 @@
           >
             <v-list shaped>
               <v-list-item-group
-                v-model="pricesByHand"
                 color="primary"
               >
                 <v-list-item
@@ -432,60 +432,9 @@
                     <v-row justify="center">
                       <v-col
                         align="center"
-                        class="my-n2"
+                       
+                        cols="6"
                       >
-                        <p>
-                          {{ item.name }} 
-                        </p>
-                      </v-col>
-                      <v-col class="my-n2">
-                        <p class="font-weight-bold">
-                          {{ item.price }} €
-                        </p>
-                      </v-col>
-                      <v-col class="my-n4">
-                        <v-btn
-                          color="secondary"
-                          fab
-                          x-small
-                          @click="removeByHand"
-                        >
-                          <v-icon>
-                            mdi-trash-can
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
-        <v-divider />
-        <v-row
-          v-if="displayElectronicPayment"
-          justify="center"
-        >
-          <v-col
-            align="center"
-            class="font-weight-bold"
-          >
-            {{ $t('payElectronic') }} :
-          </v-col>
-          <v-col align="left">
-            <v-list shaped>
-              <v-list-item-group
-                v-model="pricesElectronic"
-                color="primary"
-              >
-                <v-list-item
-                  v-for="(item, i) in pricesElectronic"
-                  :key="i"
-                >
-                  <v-list-item-content>
-                    <v-row justify="center">
-                      <v-col align="center">
                         <p class="my-n2">
                           {{ item.name }} 
                         </p>
@@ -500,7 +449,7 @@
                           color="secondary"
                           fab
                           x-small
-                          @click="removeElectronicPayment"
+                          @click="removeByHandPayment(i, item)"
                         >
                           <v-icon>
                             mdi-trash-can
@@ -514,8 +463,64 @@
             </v-list>
           </v-col>
         </v-row>
-        
+        <v-divider v-if="displayElectronicPayment" />
         <v-row
+          v-if="displayElectronicPayment && pricesElectronic.length > 0"
+          justify="center"
+        >
+          <v-col
+            align="center"
+            class="font-weight-bold"
+          >
+            {{ $t('payElectronic') }} :
+          </v-col>
+          <v-col align="left">
+            <v-list
+              shaped
+            >
+              <v-list-item-group
+                color="primary"
+              >
+                <v-list-item
+                  v-for="(item, i) in pricesElectronic"
+                  :key="i"
+                >
+                  <v-list-item-content>
+                    <v-row justify="center">
+                      <v-col
+                        align="center"
+                        cols="6"
+                      >
+                        <p class="my-n2">
+                          {{ item.name }} 
+                        </p>
+                      </v-col>
+                      <v-col>
+                        <p class="font-weight-bold my-n2">
+                          {{ item.price }} €
+                        </p>
+                      </v-col>
+                      <v-col class="my-n4">
+                        <v-btn
+                          color="secondary"
+                          fab
+                          x-small
+                          @click="removeElectronicPayment(i, item)"
+                        >
+                          <v-icon>
+                            mdi-trash-can
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+        </v-row>
+        <!-- donations -->
+        <!-- <v-row
           justify="center"
           class="mb-4"
         >
@@ -532,7 +537,7 @@
               {{ $t('donations') }}
             </v-col>
           </v-card>
-        </v-row>
+        </v-row> -->
         <v-row
           v-if="displayElectronicPayment"
           justify="center"
@@ -637,7 +642,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 2
+      default: 1
     },
     mode: {
       type: Number,
@@ -645,20 +650,18 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: 49
+      default: 1
     },
   },
   data() {
     return {
       locale: this.$i18n.locale,
       message:null,
-
       // props
       displayElectronicPayment: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.mode == 1 ? true : false,
       selectedItemId: this.selectedId,
-
       // all paymentItems
       paymentItems: null,
       // selected, next and previous paymentItems 
@@ -668,21 +671,16 @@ export default {
       selectedKey: null,
       previousKey: null,
       nextKey: null,
-
       date: null,
-     
-      price: 10,
-      switch1: false,
-      disabledTypeOfPayment: false,
-      sumTopay: null,
-      typeOfPayment: null,
+
+
+      validPayment: false,
+      validTypeOfPayment: null,
+
+      sumTopay: 0,
       weekSelected: null,
-
       
-
       items: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
-
-
       pricesElectronic: [],
       pricesByHand: [],
       payedByHand: [
@@ -693,16 +691,18 @@ export default {
   },
     
   watch: {
-    typeOfPayment() {
-      if (this.typeOfPayment == "electronic") {
-        this.sumTopay = this.sumTopay + this.price;
-        this.pricesElectronic.push({ name: 'Lara C.', price: this.price })
-      } 
-      if (this.typeOfPayment == "byHand") {
-        this.pricesByHand.push({ name: 'Lara C.', price: this.price })
+    validPayment () {
+      if (this.validPayment == true && this.selectedPaymentItem.paymentDisabled == false) {
+        this.validatePayment('byHand');
       }
-      this.disabledTypeOfPayment = true;
     },
+    validTypeOfPayment() {
+      if (this.validTypeOfPayment == 'byHand'&& this.selectedPaymentItem.paymentDisabled == false) {
+        this.validatePayment('byHand');
+      } else if (this.validTypeOfPayment == 'electronic' && this.selectedPaymentItem.paymentDisabled == false) {
+        this.validatePayment('electronic');
+      }
+    }
   },
   mounted () {
     // we set params
@@ -717,11 +717,13 @@ export default {
         this.paymentItems = res.data;
 
         // we select the displayed paymentItems (selected, next and previous)
-        this.paymentItems.forEach((item, key) => {
-    
-          if (item.id == this.selectedItemId) {
+        this.paymentItems.forEach((paymentItem, key) => {
+          paymentItem.paymentIsvalidated = false;
+          paymentItem.paymentDisabled = false;
+          paymentItem.validTypeOfPayment = false;
+          if (paymentItem.id == this.selectedItemId) {
             // we set key and payment of the selected payment
-            this.selectedPaymentItem = item;
+            this.selectedPaymentItem = paymentItem;
             this.selectedKey = key;
 
             // we set key and payment of the next payment
@@ -737,11 +739,6 @@ export default {
           }
         });
       });
-
-    
-    
-
-      
   },
   created() {
     moment.locale(this.locale); 
@@ -776,6 +773,8 @@ export default {
       this.nextKey = this.nextKey + 1;
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
+      this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
     },
     // method when we click on previous
     previousPayment() {
@@ -800,18 +799,66 @@ export default {
       }
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
+      this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+
     },
 
-    removeByHandPayment() {
-      this.disabledTypeOfPayment = false;
-      this.pricesByHand.splice(this.i, 1);
-      this.typeOfPayment = null;
+    validatePayment(type) {
+      this.selectedPaymentItem.paymentIsvalidated = true;
+      this.selectedPaymentItem.paymentDisabled = true;
+      if (type == 'byHand') {
+        this.pricesByHand.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.selectedPaymentItem.amount });
+        this.selectedPaymentItem.validTypeOfPayment = 'byHand';
+      } else if (type == 'electronic') {
+        this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.selectedPaymentItem.amount });
+        this.selectedPaymentItem.validTypeOfPayment = 'electronic';
+        this.sumTopay = this.sumTopay + parseInt(this.selectedPaymentItem.amount, 10);
+      }
     },
-    removeElectronicPayment() {
-      this.disabledTypeOfPayment = false;
-      this.pricesElectronic.splice(this.i, 1);
-      this.typeOfPayment = null;
-      this.sumTopay = this.sumTopay - this.price;
+
+    removeByHandPayment(i, item) {
+      // we reset payement parameters of the selected item
+      this.paymentItems.forEach((paymentItem, key) => {
+        if (paymentItem.id == item.id) {
+          paymentItem.paymentIsvalidated = false;
+          paymentItem.paymentDisabled = false;
+          paymentItem.validTypeOfPayment = null;
+          this.validPayment = paymentItem.paymentIsvalidated;
+        }
+      });
+      // we reset payment parameters of selectedPayment
+      if (this.selectedPaymentItem.id == item.id) {
+        this.selectedPaymentItem.paymentIsvalidated = false;
+        this.selectedPaymentItem.paymentDisabled = false;
+        this.selectedPaymentItem.validTypeOfPayment = null;
+        this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
+        this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+      } 
+      // we remove the item to the list of validated payments
+      this.pricesByHand.splice(i, 1);
+    },
+    removeElectronicPayment(i, item) {
+      // we reset payement parameters of the selected item
+      this.paymentItems.forEach((paymentItem, key) => {
+        if (paymentItem.id == item.id) {
+          paymentItem.paymentIsvalidated = false;
+          paymentItem.paymentDisabled = false;
+          paymentItem.validTypeOfPayment = null;
+          this.validPayment = paymentItem.paymentIsvalidated;
+          this.sumTopay = this.sumTopay - paymentItem.amount < 0 ? 0 : this.sumTopay - paymentItem.amount; 
+        }
+      });
+      // we reset payment parameters of selectedPayment
+      if (this.selectedPaymentItem.id == item.id) {
+        this.selectedPaymentItem.paymentIsvalidated = false;
+        this.selectedPaymentItem.paymentDisabled = false;
+        this.selectedPaymentItem.validTypeOfPayment = null;
+        this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
+        this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+        this.sumTopay = this.sumTopay - this.selectedPaymentItem.amount < 0 ? 0 : this.sumTopay - this.selectedPaymentItem.amount;   
+      } 
+      this.pricesElectronic.splice(i, 1);
     }
   }
  
