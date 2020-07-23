@@ -410,7 +410,10 @@
             </v-col>
           </v-card>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          v-if="pricesByHand.length > 0"
+          justify="center"
+        >
           <v-col
             align="center"
             class="font-weight-bold grey--text"
@@ -463,7 +466,7 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-divider v-if="displayElectronicPayment" />
+        <v-divider v-if="displayElectronicPayment && pricesElectronic.length > 0" />
         <v-row
           v-if="displayElectronicPayment && pricesElectronic.length > 0"
           justify="center"
@@ -539,7 +542,7 @@
           </v-card>
         </v-row> -->
         <v-row
-          v-if="displayElectronicPayment"
+          v-if="displayElectronicPayment && sumToPay > 0"
           justify="center"
         >
           <v-col align="center">
@@ -548,7 +551,10 @@
             </p>
           </v-col>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          v-if="pricesElectronic.length > 0 || pricesByHand.length > 0"
+          justify="center"
+        >
           <v-btn
             rounded
             color="success"
@@ -607,7 +613,9 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-row justify="center">
+        <v-row
+          justify="center"
+        >
           <v-col align="center">
             <v-btn
               rounded
