@@ -169,7 +169,7 @@ class AskRepository
             ) 
             or 
             (
-                c.frequency = :regular and c.fromDate >= :fromDate and
+                c.frequency = :regular and c.fromDate <= :fromDate and c.toDate >= :toDate and
                 (' . $regularWhere . ')
             )
         )')
@@ -180,9 +180,6 @@ class AskRepository
         ->setParameter('fromDate', $fromDate->format('Y-m-d'))
         ->setParameter('toDate', $toDate->format('Y-m-d'))
         ;
-
-        // Previous version of line 172
-        //c.frequency = :regular and c.fromDate <= :fromDate and c.toDate >= :toDate and
 
         if (!is_null($user)) {
             $query->andWhere('(a.user = :user or a.userRelated = :user)')

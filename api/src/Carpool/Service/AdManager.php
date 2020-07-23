@@ -50,6 +50,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\ClassicProof;
 use App\Carpool\Exception\ProofException;
+use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use DateTime;
 

@@ -40,6 +40,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
+use App\Payment\Exception\PaymentException;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
@@ -790,5 +791,27 @@ class AskManager
             }
         }
         return false;
+    }
+
+    /**
+     * Get the payment status of an Ask
+     *
+     * @param integer $id   Id of the Ask to check
+     * @return Ask
+     */
+    public function getPaymentStatus(int $id): Ask
+    {
+        // search the ask
+        if (!$ask = $this->getAsk($id)) {
+            throw new PaymentException(PaymentException::NO_ASK_FOUND);
+        }
+
+        if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+            // Puntual journey, we just check if it's paid
+        } else {
+            // Regular journey. To be paid, all the previous week must have been confirmed
+        }
+
+        return $ask;
     }
 }

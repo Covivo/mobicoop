@@ -122,7 +122,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "security"="is_granted('ad_delete',object)"
  *          }
- *      }
+ *       }
  * )
  *
  */

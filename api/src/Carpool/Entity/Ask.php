@@ -61,6 +61,10 @@ use App\Solidary\Entity\SolidaryAsk;
  *              "method"="PUT",
  *              "path"="/asks/{id}",
  *              "controller"=AskPut::class,
+ *          },
+ *          "payment_status"={
+ *              "method"="GET",
+ *              "path"="/asks/{id}/paymentStatus"
  *          }
  *      }
  * )
@@ -83,6 +87,11 @@ class Ask
     const TYPE_OUTWARD_ROUNDTRIP = 2;
     const TYPE_RETURN_ROUNDTRIP = 3;
 
+    const PAYMENT_STATUS_PENDING = 0;
+    const PAYMENT_STATUS_ONLINE = 1;
+    const PAYMENT_STATUS_DIRECT = 2;
+    const PAYMENT_STATUS_UNPAID = 3;
+    
     /**
      * @var int The id of this ask.
      *
@@ -269,6 +278,12 @@ class Ask
      */
     private $solidaryAsk;
     
+    /**
+     * @var int|null The payment status of the Ask
+     * @Groups({"read"})
+     */
+    private $paymentStatus;
+
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -571,6 +586,18 @@ class Ask
     public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }
