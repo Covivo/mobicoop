@@ -167,22 +167,32 @@ class PaymentItem
 
     /**
      * @var array|null The days concerned by the outward trip.
-     * Each item of the array contains the status for the day :
+     * Each item of the array contains the id of the CarpoolItem and the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * outwardDays => [
+     *  ["id"=>5, "status=>1],
+     *  ["id"=>null, "status=>0],
+     *  ...
+     * ]
      * @Groups({"readPayment"})
      */
     private $outwardDays;
 
     /**
      * @var array|null The days concerned by the return trip.
-     * Each item of the array contains the status for the day :
+     * Each item of the array contains the id of the CarpoolItem and the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * returnDays => [
+     *  ["id"=>5, "status=>1],
+     *  ["id"=>null, "status=>0],
+     *  ...
+     * ]
      * @Groups({"readPayment"})
      */
     private $returnDays;

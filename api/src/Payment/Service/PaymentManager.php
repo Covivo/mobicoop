@@ -144,21 +144,23 @@ class PaymentManager
                 // we initialize each week day
                 if (!isset($regularDays[$carpoolItem->getAsk()->getId()])) {
                     $regularDays[$carpoolItem->getAsk()->getId()]['outward'] = [
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE,
-                        PaymentItem::DAY_UNAVAILABLE
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE],
+                        ['id'=>null, 'status'=>PaymentItem::DAY_UNAVAILABLE]
                     ];
                     $regularDays[$carpoolItem->getAsk()->getId()]['return'] = $regularDays[$carpoolItem->getAsk()->getId()]['outward'];
                 }
                 // we set the corresponding day
                 if ($carpoolItem->getType() == Proposal::TYPE_RETURN) {
-                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')] = PaymentItem::DAY_CARPOOLED;
+                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')]['id'] = $carpoolItem->getId();
+                    $regularDays[$carpoolItem->getAsk()->getId()]['return'][$carpoolItem->getItemDate()->format('w')]['status'] = PaymentItem::DAY_CARPOOLED;
                 } else {
-                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')] = PaymentItem::DAY_CARPOOLED;
+                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['id'] = $carpoolItem->getId();
+                    $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['status'] = PaymentItem::DAY_CARPOOLED;
                 }
             }
         }
@@ -192,8 +194,11 @@ class PaymentManager
                 $paymentItem->setToDate($toDate);
                 $paymentItem->setOutwardAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['outward']);
                 $paymentItem->setOutwardDays($regularDays[$carpoolItem->getAsk()->getId()]['outward']);
-                $paymentItem->setReturnAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['return']);
-                $paymentItem->setReturnDays($regularDays[$carpoolItem->getAsk()->getId()]['return']);
+                
+                if ($carpoolItem->getAsk()->getType() !== Ask::TYPE_ONE_WAY) {
+                    $paymentItem->setReturnAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['return']);
+                    $paymentItem->setReturnDays($regularDays[$carpoolItem->getAsk()->getId()]['return']);
+                }
             }
             // we iterate through the waypoints to get the passenger origin and destination
             $minPos = 9999;
@@ -262,7 +267,7 @@ class PaymentManager
                     throw new PaymentException('Wrong item id');
                 }
                 if ($carpoolItem->getDebtorUser()->getId() != $user->getId()) {
-                    throw new PaymentException('This user is not the debtor of item #' . $item['id]']);
+                    throw new PaymentException('This user is not the debtor of item #' . $item['id']);
                 }
                 // if the day is carpooled, we need to pay !
                 if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
@@ -279,6 +284,9 @@ class PaymentManager
                 $item['carpoolItem'] = $carpoolItem;
                 $carpoolPayment->addCarpoolItem($carpoolItem);
             }
+
+            $carpoolPayment->setAmount($amountDirect + $amountOnline);
+
             // we persist the payment
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
@@ -287,27 +295,34 @@ class PaymentManager
             if ($amountOnline>0) {
                 // TODO : online payment, set the status to success if successful !
                 $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
+            } else {
+                // if it's a manual payment, we set it to a success automatically
+                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
             }
+
+
             if ($payment->getStatus() == PaymentPayment::STATUS_SUCCESS) {
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
                 foreach ($payment->getItems() as $item) {
+                    $carpoolItem = $this->carpoolItemRepository->find($item['id']);
                     if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                         if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
-                            $item['carpoolItem']->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
                         } else {
-                            $item['carpoolItem']->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
+                            // No confirmation by the Creditor if the payment is online
+                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
                         }
                     }
-                    $this->entityManager->persist($item['carpoolItem']);
+                    $this->entityManager->persist($carpoolItem);
                 }
             } else {
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
             }
             $this->entityManager->persist($carpoolPayment);
+            $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
         } else {
-            // COLLECT // FINISH HERE !!!!
-
             foreach ($payment->getItems() as $item) {
                 if (!$carpoolItem = $this->carpoolItemRepository->find($item['id'])) {
                     throw new PaymentException('Wrong item id');
@@ -317,6 +332,11 @@ class PaymentManager
                 }
                 if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
+                    if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
+                    } else {
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
+                    }
                 } else {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_NOT_REALIZED);
                 }
