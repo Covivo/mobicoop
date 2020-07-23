@@ -267,7 +267,7 @@ class PaymentManager
                     throw new PaymentException('Wrong item id');
                 }
                 if ($carpoolItem->getDebtorUser()->getId() != $user->getId()) {
-                    throw new PaymentException('This user is not the debtor of item #' . $item['id]']);
+                    throw new PaymentException('This user is not the debtor of item #' . $item['id']);
                 }
                 // if the day is carpooled, we need to pay !
                 if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
@@ -310,6 +310,8 @@ class PaymentManager
                             $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
                         } else {
                             $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
+                            // No confirmation by the Creditor if the payment is online
+                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
                         }
                     }
                     $this->entityManager->persist($carpoolItem);
@@ -321,8 +323,6 @@ class PaymentManager
             $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
         } else {
-            // COLLECT // FINISH HERE !!!!
-
             foreach ($payment->getItems() as $item) {
                 if (!$carpoolItem = $this->carpoolItemRepository->find($item['id'])) {
                     throw new PaymentException('Wrong item id');
@@ -332,6 +332,11 @@ class PaymentManager
                 }
                 if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
+                    if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
+                    } else {
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
+                    }
                 } else {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_NOT_REALIZED);
                 }
