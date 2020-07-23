@@ -64,7 +64,8 @@ use App\Solidary\Entity\SolidaryAsk;
  *          },
  *          "payment_status"={
  *              "method"="GET",
- *              "path"="/asks/{id}/paymentStatus"
+ *              "path"="/asks/{id}/paymentStatus",
+ *              "normalization_context"={"groups"={"readPaymentStatus"}},
  *          }
  *      }
  * )
@@ -98,7 +99,7 @@ class Ask
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread","readPaymentStatus"})
      */
     private $id;
 
@@ -280,7 +281,7 @@ class Ask
     
     /**
      * @var int|null The payment status of the Ask
-     * @Groups({"read"})
+     * @Groups({"readPaymentStatus"})
      */
     private $paymentStatus;
 

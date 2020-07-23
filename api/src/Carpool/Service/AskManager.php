@@ -40,10 +40,13 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
+use App\Payment\Entity\CarpoolItem;
 use App\Payment\Exception\PaymentException;
+use App\Payment\Repository\CarpoolItemRepository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Ask manager service.
@@ -58,20 +61,32 @@ class AskManager
     private $askRepository;
     private $resultManager;
     private $logger;
+    private $security;
+    private $carpoolItemRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, EntityManagerInterface $entityManager, MatchingRepository $matchingRepository, AskRepository $askRepository, ResultManager $resultManager, LoggerInterface $logger)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        EntityManagerInterface $entityManager,
+        MatchingRepository $matchingRepository,
+        AskRepository $askRepository,
+        ResultManager $resultManager,
+        LoggerInterface $logger,
+        Security $security,
+        CarpoolItemRepository $carpoolItemRepository
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
         $this->matchingRepository = $matchingRepository;
         $this->askRepository = $askRepository;
         $this->resultManager = $resultManager;
         $this->logger = $logger;
+        $this->security = $security;
+        $this->carpoolItemRepository = $carpoolItemRepository;
     }
 
     /**
@@ -796,18 +811,61 @@ class AskManager
     /**
      * Get the payment status of an Ask
      *
-     * @param integer $id   Id of the Ask to check
+     * @param integer $id       Id of the Ask to check
+     * @param User    $user     The User we ask for (if null, it's the security token User)
      * @return Ask
      */
-    public function getPaymentStatus(int $id): Ask
+    public function getPaymentStatus(int $id, User $user = null): Ask
     {
         // search the ask
         if (!$ask = $this->getAsk($id)) {
             throw new PaymentException(PaymentException::NO_ASK_FOUND);
         }
 
+        $driver = $ask->getMatching()->getProposalOffer()->getUser();
+        $passenger = $ask->getMatching()->getProposalRequest()->getUser();
+
+        if ($user==null) {
+            $user = $this->security->getUser();
+        }
+
+        if (!($user instanceof User) || ($driver->getId() !== $user->getId() && $passenger->getId() !== $user->getId())) {
+            throw new PaymentException(PaymentException::INVALID_USER);
+        }
+
         if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-            // Puntual journey, we just check if it's paid
+            // Punctual journey, we just check if it's paid on this particular day
+            $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
+            if (is_null($carpoolItem)) {
+                throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
+            }
+
+            
+            // Init the payment status at pending
+            $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
+
+            // If the status is Unpaid, it's the same for driver or passenger
+            if ($carpoolItem->getDebtorStatus()==CarpoolItem::CREDITOR_STATUS_UNPAID) {
+                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+            } else {
+                if ($driver->getId() == $user->getId()) {
+                    // Driver point of vue
+                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_DIRECT) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
+                    }
+                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_ONLINE) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
+                    }
+                } else {
+                    // Passenger point of vue
+                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
+                    }
+                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_ONLINE) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
+                    }
+                }
+            }
         } else {
             // Regular journey. To be paid, all the previous week must have been confirmed
         }
