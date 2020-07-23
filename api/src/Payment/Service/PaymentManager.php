@@ -60,6 +60,7 @@ class PaymentManager
     private $paymentProvider;
     private $paymentProfileRepository;
     private $userManager;
+    private $paymentActive;
 
     /**
      * Constructor.
@@ -70,6 +71,7 @@ class PaymentManager
      * @param CarpoolItemRepository $carpoolItemRepository          The carpool items repository
      * @param PaymentDataProvider $paymentProvider                  The payment data provider
      * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
+     * @param boolean $paymentActive                                If the online payment is active
      * @param string $paymentProviderService                        The payment provider service
      */
     public function __construct(
@@ -79,6 +81,7 @@ class PaymentManager
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
+        bool $paymentActive,
         String $paymentProviderService
     ) {
         $this->entityManager = $entityManager;
@@ -89,6 +92,7 @@ class PaymentManager
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->userManager = $userManager;
+        $this->paymentActive = $paymentActive;
     }
 
     /**
@@ -220,11 +224,16 @@ class PaymentManager
 
             // Set if the paymentItem is payable electonically (if the Creditor User has a paymentProfile electronicallyPayable)
             
-            $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
-            if (is_null($paymentProfile) || count($paymentProfile)==0) {
-                $paymentItem->setElectronicallyPayable(false);
-            } else {
-                $paymentItem->setElectronicallyPayable($paymentProfile[0]->isElectronicallyPayable());
+            // default value
+            $paymentItem->setElectronicallyPayable(false);
+
+            if ($this->paymentActive) {
+                $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
+                if (is_null($paymentProfile) || count($paymentProfile)==0) {
+                    $paymentItem->setElectronicallyPayable(false);
+                } else {
+                    $paymentItem->setElectronicallyPayable($paymentProfile[0]->isElectronicallyPayable());
+                }
             }
 
             $items[] = $paymentItem;
@@ -334,6 +343,9 @@ class PaymentManager
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
+
+                        // When the creditor says he has been paid, we also valid the payement for the debtor.
+                        // So, we need to create a carpoolpayment
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
                     } else {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);

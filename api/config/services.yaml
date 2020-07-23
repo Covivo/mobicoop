@@ -450,6 +450,7 @@ services:
 
     App\Payment\Service\PaymentManager:
         arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
 
     # Price
