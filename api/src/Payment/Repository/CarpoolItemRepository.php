@@ -97,10 +97,14 @@ class CarpoolItemRepository
 
         if ($type == PaymentItem::TYPE_PAY) {
             $query->andWhere('ci.debtorUser = :user')
-            ->setParameter('user', $user);
+            ->andWhere('ci.debtorStatus = :debtorStatusWaiting')
+            ->setParameter('user', $user)
+            ->setParameter('debtorStatusWaiting', 0);
         } else {
             $query->andWhere('ci.creditorUser = :user')
-            ->setParameter('user', $user);
+            ->andWhere('ci.creditorStatus = :creditorStatusWaiting')
+            ->setParameter('user', $user)
+            ->setParameter('creditorStatusWaiting', 0);
         }
 
         return $query->getQuery()->getResult();
