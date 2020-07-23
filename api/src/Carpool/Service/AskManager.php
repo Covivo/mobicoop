@@ -829,6 +829,7 @@ class AskManager
             $user = $this->security->getUser();
         }
 
+        // The User can't be an App and has to be one of the Ask actor
         if (!($user instanceof User) || ($driver->getId() !== $user->getId() && $passenger->getId() !== $user->getId())) {
             throw new PaymentException(PaymentException::INVALID_USER);
         }
