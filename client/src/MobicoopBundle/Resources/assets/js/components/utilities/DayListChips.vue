@@ -156,13 +156,13 @@ export default {
     }
   },
   computed:{
-    monColor() { if(this.mon) { return this.colorActive }else if(!this.monActive) {return this.colorDisabled}else {return this.colorInactive}},
-    tueColor() { if(this.tue) { return this.colorActive }else if(!this.tueActive) {return this.colorDisabled}else {return this.colorInactive}},
-    wedColor() { if(this.wed) { return this.colorActive }else if(!this.wedActive) {return this.colorDisabled}else {return this.colorInactive}},
-    thuColor() { if(this.thu) { return this.colorActive }else if(!this.thuActive) {return this.colorDisabled}else {return this.colorInactive}},
-    friColor() { if(this.fri) { return this.colorActive }else if(!this.friActive) {return this.colorDisabled}else {return this.colorInactive}},
-    satColor() { if(this.sat) { return this.colorActive }else if(!this.satActive) {return this.colorDisabled}else {return this.colorInactive}},
-    sunColor() { if(this.sun) { return this.colorActive }else if(!this.sunActive) {return this.colorDisabled} else {return this.colorInactive}}
+    monColor() { if(this.monDisabled) { return this.colorDisabled }else if(this.mon) {return this.colorActive}else {return this.colorInactive}},
+    tueColor() { if(this.tueDisabled) { return this.colorDisabled }else if(this.tue) {return this.colorActive}else {return this.colorInactive}},
+    wedColor() { if(this.wedDisabled) { return this.colorDisabled }else if(this.wed) {return this.colorActive}else {return this.colorInactive}},
+    thuColor() { if(this.thuDisabled) { return this.colorDisabled }else if(this.thu) {return this.colorActive}else {return this.colorInactive}},
+    friColor() { if(this.friDisabled) { return this.colorDisabled }else if(this.fri) {return this.colorActive}else {return this.colorInactive}},
+    satColor() { if(this.satDisabled) { return this.colorDisabled }else if(this.sat) {return this.colorActive}else {return this.colorInactive}},
+    sunColor() { if(this.sunDisabled) { return this.colorDisabled }else if(this.sun) {return this.colorActive}else {return this.colorInactive}}
   },
   watch:{
     monActive(newValue){(newValue) ? this.mon = true : this.mon = false;},

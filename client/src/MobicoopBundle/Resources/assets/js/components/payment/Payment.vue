@@ -169,20 +169,20 @@
                       </v-col>
                       <v-col justify="center">
                         <day-list-chips 
-                          :mon-active="true"
-                          :tue-active="true"
-                          :wed-active="true"
-                          :thu-active="true"
-                          :fri-active="true"
-                          :sat-active="null"
-                          :sun-active="null"
-                          :mon-disabled="false"
-                          :tue-disabled="false"
-                          :wed-disabled="false"
-                          :thu-disabled="false"
-                          :fri-disabled="false"
-                          :sat-disabled="true"
-                          :sun-disabled="true"
+                          :mon-active="selectedPaymentItem.outwardDays[0]['status'] == 1 ? true : false"
+                          :tue-active="selectedPaymentItem.outwardDays[1]['status'] == 1 ? true : false"
+                          :wed-active="selectedPaymentItem.outwardDays[2]['status'] == 1 ? true : false"
+                          :thu-active="selectedPaymentItem.outwardDays[3]['status'] == 1 ? true : false"
+                          :fri-active="selectedPaymentItem.outwardDays[4]['status'] == 1 ? true : false"
+                          :sat-active="selectedPaymentItem.outwardDays[5]['status'] == 1 ? true : false"
+                          :sun-active="selectedPaymentItem.outwardDays[6]['status'] == 1 ? true : false"
+                          :mon-disabled="selectedPaymentItem.outwardDays[0]['status'] == 0 ? true : false"
+                          :tue-disabled="selectedPaymentItem.outwardDays[1]['status'] == 0 ? true : false"
+                          :wed-disabled="selectedPaymentItem.outwardDays[2]['status'] == 0 ? true : false"
+                          :thu-disabled="selectedPaymentItem.outwardDays[3]['status'] == 0 ? true : false"
+                          :fri-disabled="selectedPaymentItem.outwardDays[4]['status'] == 0 ? true : false"
+                          :sat-disabled="selectedPaymentItem.outwardDays[5]['status'] == 0 ? true : false"
+                          :sun-disabled="selectedPaymentItem.outwardDays[6]['status'] == 0 ? true : false"
                         />
                       </v-col>
                     </v-row>
@@ -198,20 +198,20 @@
                       </v-col>
                       <v-col justify="center">
                         <day-list-chips
-                          :mon-active="true"
-                          :tue-active="true"
-                          :wed-active="true"
-                          :thu-active="true"
-                          :fri-active="true"
-                          :sat-active="null"
-                          :sun-active="null"
-                          :mon-disabled="false"
-                          :tue-disabled="false"
-                          :wed-disabled="false"
-                          :thu-disabled="false"
-                          :fri-disabled="false"
-                          :sat-disabled="true"
-                          :sun-disabled="true"
+                          :mon-active="selectedPaymentItem.returnDays[0]['status'] == 1 ? true : false"
+                          :tue-active="selectedPaymentItem.returnDays[1]['status'] == 1 ? true : false"
+                          :wed-active="selectedPaymentItem.returnDays[2]['status'] == 1 ? true : false"
+                          :thu-active="selectedPaymentItem.returnDays[3]['status'] == 1 ? true : false"
+                          :fri-active="selectedPaymentItem.returnDays[4]['status'] == 1 ? true : false"
+                          :sat-active="selectedPaymentItem.returnDays[5]['status'] == 1 ? true : false"
+                          :sun-active="selectedPaymentItem.returnDays[6]['status'] == 1 ? true : false"
+                          :mon-disabled="selectedPaymentItem.returnDays[0]['status'] == 0 ? true : false"
+                          :tue-disabled="selectedPaymentItem.returnDays[1]['status'] == 0 ? true : false"
+                          :wed-disabled="selectedPaymentItem.returnDays[2]['status'] == 0 ? true : false"
+                          :thu-disabled="selectedPaymentItem.returnDays[3]['status'] == 0 ? true : false"
+                          :fri-disabled="selectedPaymentItem.returnDays[4]['status'] == 0 ? true : false"
+                          :sat-disabled="selectedPaymentItem.returnDays[5]['status'] == 0 ? true : false"
+                          :sun-disabled="selectedPaymentItem.returnDays[6]['status'] == 0 ? true : false"
                         />
                       </v-col>
                     </v-row>
@@ -744,12 +744,8 @@ export default {
             
             // we format the date for punctual
             this.formatDate(this.selectedPaymentItem);
-            if (paymentItem.frequency == 1) {
-              this.price = paymentItem.amount;
-            } else if (paymentItem.frequency == 2) {
-
-              this.price = 23;
-            }
+            // we calculate the amout to display
+            this.amoutTodisplay(this.selectedPaymentItem);
             
           }
         });
@@ -760,9 +756,30 @@ export default {
   },
   methods: {
     // method to format punctual date
-    formatDate() {
-      if (this.selectedPaymentItem.date) {
-        this.date = moment(this.selectedPaymentItem.date.date).format(this.$t("ll"));
+    formatDate(paymentItem) {
+      if (paymentItem.date) {
+        this.date = moment(paymentItem.date.date).format(this.$t("ll"));
+      }
+    },
+    // method to calculate amount to display
+    amoutTodisplay(paymentItem) {
+      if (paymentItem.frequency == 1) {
+        this.price = paymentItem.amount;
+      } else if (paymentItem.frequency == 2) {
+        let numberOutwardDays = 0;
+        let numberReturnDays = 0;
+        paymentItem.outwardDays.forEach((day) => {
+          if (day.status == 1) {
+            numberOutwardDays = numberOutwardDays + 1;
+          }
+        });
+        paymentItem.returnDays.forEach((day) => {
+          if (day.status == 1) {
+            numberReturnDays = numberReturnDays + 1;
+          }
+        });
+        this.price = 0;
+        this.price = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
       }
     },
     // method when we click on next
