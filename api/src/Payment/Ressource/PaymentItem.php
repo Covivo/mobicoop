@@ -76,7 +76,10 @@ class PaymentItem
     private $frequency;
 
     /**
-     * @var int The payment type (1 = a payment to be made, 2 = a payment to collect).
+     * @var int The payment type (different that type PAY and COLLECT used only in request params)
+     * 1 : one way trip
+     * 2 : outward of a round trip
+     * 3 : return of a round trip).
      * @Groups({"readPayment"})
      */
     private $type;
