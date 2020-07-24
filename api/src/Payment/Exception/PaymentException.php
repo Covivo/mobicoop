@@ -51,5 +51,6 @@ class PaymentException extends \LogicException
     // Ad/Ask
     const NO_ASK_FOUND = "No Ask found";
     const NO_CARPOOL_ITEM = "No CarpoolItem found";
+    const NO_CARPOOL_ITEMS = "No CarpoolItem found";
     const INVALID_USER  = "The User must be driver or passenger of this Ask";
 }
