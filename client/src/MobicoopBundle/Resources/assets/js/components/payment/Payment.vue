@@ -56,10 +56,10 @@
         <v-row>
           <!-- previous journey -->
           <v-col
-            v-if="previousPaymentItem"
             cols="2"
           >
             <v-card
+              v-if="previousPaymentItem"
               raised
               height="950"
               class="mx-auto"
@@ -173,8 +173,11 @@
                           mdi-arrow-right-bold
                         </v-icon>
                       </v-col>
-                      <v-col justify="center">
+                      <v-col
+                        justify="center"
+                      >
                         <day-list-chips 
+                          :disabled="selectedPaymentItem.paymentDisabled"
                           :is-outward="true"
                           :mon-active="selectedPaymentItem.outwardDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.outwardDays[1]['status'] == 1 ? true : false"
@@ -213,6 +216,7 @@
                       >
                         <day-list-chips
                           :is-outward="false"
+                          :disabled="selectedPaymentItem.paymentDisabled"
                           :mon-active="selectedPaymentItem.returnDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.returnDays[1]['status'] == 1 ? true : false"
                           :wed-active="selectedPaymentItem.returnDays[2]['status'] == 1 ? true : false"
@@ -360,11 +364,11 @@
 
           <!-- next journey -->
           <v-col
-            v-if="nextPaymentItem"
             cols="2"
             align="center"
           >
             <v-card
+              v-if="nextPaymentItem"
               raised
               height="950"
               class="mx-auto"
