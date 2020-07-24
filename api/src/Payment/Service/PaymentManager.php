@@ -171,7 +171,6 @@ class PaymentManager
 
         // we keep a trace of already treated asks (we return one item for a single ask, even for regular items)
         $treatedAsks = [];
-
         // then we create each payment item from the carpool items
         foreach ($carpoolItems as $carpoolItem) {
             /**
@@ -196,10 +195,12 @@ class PaymentManager
             } else {
                 $paymentItem->setFromDate($fromDate);
                 $paymentItem->setToDate($toDate);
-                $paymentItem->setOutwardAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['outward']);
-                $paymentItem->setOutwardDays($regularDays[$carpoolItem->getAsk()->getId()]['outward']);
                 
-                if ($carpoolItem->getAsk()->getType() !== Ask::TYPE_ONE_WAY) {
+                if (isset($regularAmounts[$carpoolItem->getAsk()->getId()]['outward'])) {
+                    $paymentItem->setOutwardAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['outward']);
+                    $paymentItem->setOutwardDays($regularDays[$carpoolItem->getAsk()->getId()]['outward']);
+                }
+                if (isset($regularAmounts[$carpoolItem->getAsk()->getId()]['return'])) {
                     $paymentItem->setReturnAmount($regularAmounts[$carpoolItem->getAsk()->getId()]['return']);
                     $paymentItem->setReturnDays($regularDays[$carpoolItem->getAsk()->getId()]['return']);
                 }
