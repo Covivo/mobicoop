@@ -157,6 +157,12 @@
                   <v-row v-if="regular">
                     <v-row
                       justify="center"
+                      class="mt-6"
+                    >
+                      <p>{{ $t('regularInfo', {driver: selectedPaymentItem.givenName +' '+ selectedPaymentItem.shortFamilyName}) }}</p>
+                    </v-row>
+                    <v-row
+                      justify="center"
                     >
                       <v-col
                         cols="3"
@@ -169,6 +175,7 @@
                       </v-col>
                       <v-col justify="center">
                         <day-list-chips 
+                          :is-outward="true"
                           :mon-active="selectedPaymentItem.outwardDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.outwardDays[1]['status'] == 1 ? true : false"
                           :wed-active="selectedPaymentItem.outwardDays[2]['status'] == 1 ? true : false"
@@ -183,7 +190,7 @@
                           :fri-disabled="selectedPaymentItem.outwardDays[4]['status'] == 0 ? true : false"
                           :sat-disabled="selectedPaymentItem.outwardDays[5]['status'] == 0 ? true : false"
                           :sun-disabled="selectedPaymentItem.outwardDays[6]['status'] == 0 ? true : false"
-                          @change="test"
+                          @change="updateDaysList"
                         />
                       </v-col>
                     </v-row>
@@ -205,6 +212,7 @@
                         justify="center"
                       >
                         <day-list-chips
+                          :is-outward="false"
                           :mon-active="selectedPaymentItem.returnDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.returnDays[1]['status'] == 1 ? true : false"
                           :wed-active="selectedPaymentItem.returnDays[2]['status'] == 1 ? true : false"
@@ -219,14 +227,9 @@
                           :fri-disabled="selectedPaymentItem.returnDays[4]['status'] == 0 ? true : false"
                           :sat-disabled="selectedPaymentItem.returnDays[5]['status'] == 0 ? true : false"
                           :sun-disabled="selectedPaymentItem.returnDays[6]['status'] == 0 ? true : false"
+                          @change="updateDaysList"
                         />
                       </v-col>
-                    </v-row>
-                    <v-row
-                      justify="center"
-                      class="mt-6"
-                    >
-                      <p>{{ $t('regularInfo', {driver: selectedPaymentItem.givenName +' '+ selectedPaymentItem.shortFamilyName}) }}</p>
                     </v-row>
                   </v-row>
 
@@ -763,9 +766,25 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
-    test(daysList) {
-     
-      console.error(daysList);
+    updateDaysList(daysList) {
+      if (daysList.isOutward) {
+        this.selectedPaymentItem.outwardDays[0]['status'] = daysList.mon 
+        this.selectedPaymentItem.outwardDays[1]['status'] = daysList.tue
+        this.selectedPaymentItem.outwardDays[2]['status'] = daysList.wed
+        this.selectedPaymentItem.outwardDays[3]['status'] = daysList.thu
+        this.selectedPaymentItem.outwardDays[4]['status'] = daysList.fri
+        this.selectedPaymentItem.outwardDays[5]['status'] = daysList.sat
+        this.selectedPaymentItem.outwardDays[6]['status'] = daysList.sun
+      } else if (!daysList.isOutward) {
+        this.selectedPaymentItem.returnDays[0]['status'] = daysList.mon 
+        this.selectedPaymentItem.returnDays[1]['status'] = daysList.tue
+        this.selectedPaymentItem.returnDays[2]['status'] = daysList.wed
+        this.selectedPaymentItem.returnDays[3]['status'] = daysList.thu
+        this.selectedPaymentItem.returnDays[4]['status'] = daysList.fri
+        this.selectedPaymentItem.returnDays[5]['status'] = daysList.sat
+        this.selectedPaymentItem.returnDays[6]['status'] = daysList.sun
+      }
+      this.amoutTodisplay(this.selectedPaymentItem);
     },
     // method to format punctual date
     formatDate(paymentItem) {

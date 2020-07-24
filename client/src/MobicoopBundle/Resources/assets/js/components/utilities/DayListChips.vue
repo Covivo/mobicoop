@@ -141,6 +141,10 @@ export default {
     clickable:{
       type:Boolean,
       default:true
+    },
+    isOutward:{
+      type:Boolean,
+      default:true
     }
   },
   data() {
@@ -152,8 +156,10 @@ export default {
       thu:(this.thuActive) ? true : false,
       fri:(this.friActive) ? true : false,
       sat:(this.satActive) ? true : false,
-      sun:(this.sunActive) ? true :false
+      sun:(this.sunActive) ? true :false,
+      daysListUpdated: {"mon": null, "tue": null, "wed": null, "thu":null, "fri":null, "sat": null, "sun": null, "isOutward": null} 
     }
+    
   },
   computed:{
     monColor() { if(this.monDisabled) { return this.colorDisabled }else if(this.mon) {return this.colorActive}else {return this.colorInactive}},
@@ -206,8 +212,15 @@ export default {
       this.emitEvent();
     },
     emitEvent: function() {
-      this.$emit("change",{daysList: this.daysList}
-      );
+      this.daysListUpdated["mon"] = this.monDisabled ? 0 : this.mon ? 1 : 2;
+      this.daysListUpdated["tue"] = this.tueDisabled ? 0 : this.tue ? 1 : 2;
+      this.daysListUpdated["wed"] = this.wedDisabled ? 0 : this.wed ? 1 : 2;
+      this.daysListUpdated["thu"] = this.thuDisabled ? 0 : this.thu ? 1 : 2;
+      this.daysListUpdated["fri"] = this.friDisabled ? 0 : this.fri ? 1 : 2;
+      this.daysListUpdated["sat"] = this.satDisabled ? 0 : this.sat ? 1 : 2;
+      this.daysListUpdated["sun"] = this.sunDisabled ? 0 : this.sun ? 1 : 2;
+      this.daysListUpdated["isOutward"] = this.isOutward ? true : false;
+      this.$emit("change",this.daysListUpdated);
     },
   }
 }

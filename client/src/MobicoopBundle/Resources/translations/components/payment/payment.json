@@ -4,7 +4,7 @@
         "donations":"Dons",
         "title":"Paiements",
         "outward":"Aller",
-        "return":"Return",
+        "return":"Retour",
         "price":"Montant: {price} €",
         "sumToPay":"Total à payer: {price} €",
         "payedByHand":"J’ai payé à la main",
