@@ -187,7 +187,10 @@
                         />
                       </v-col>
                     </v-row>
-                    <v-row justify="center">
+                    <v-row
+                      v-if="selectedPaymentItem.returnDays"
+                      justify="center"
+                    >
                       <v-col
                         cols="3"
                         class="accent--text mt-3"
@@ -197,7 +200,10 @@
                           mdi-arrow-left-bold
                         </v-icon>
                       </v-col>
-                      <v-col justify="center">
+                      <v-col
+                       
+                        justify="center"
+                      >
                         <day-list-chips
                           :mon-active="selectedPaymentItem.returnDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.returnDays[1]['status'] == 1 ? true : false"
@@ -659,7 +665,7 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: 1
+      default: 4
     },
   },
   data() {
@@ -688,7 +694,7 @@ export default {
       validTypeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: null,
+      weekSelected: 292020,
       
       periods: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesElectronic: [],
@@ -780,11 +786,13 @@ export default {
             numberOutwardDays = numberOutwardDays + 1;
           }
         });
-        paymentItem.returnDays.forEach((day) => {
-          if (day.status == 1) {
-            numberReturnDays = numberReturnDays + 1;
-          }
-        });
+        if (paymentItem.returnDays) {
+          paymentItem.returnDays.forEach((day) => {
+            if (day.status == 1) {
+              numberReturnDays = numberReturnDays + 1;
+            }
+          });
+        }
         this.priceTravel = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
       }
     },
@@ -900,7 +908,5 @@ export default {
       this.pricesElectronic.splice(i, 1);
     }
   }
- 
- 
 };
 </script>
