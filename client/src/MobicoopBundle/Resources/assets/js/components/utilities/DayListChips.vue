@@ -206,7 +206,7 @@ export default {
       this.emitEvent();
     },
     emitEvent: function() {
-      this.$emit("daysList",{daysList: this.daysList}
+      this.$emit("change",{daysList: this.daysList}
       );
     },
   }

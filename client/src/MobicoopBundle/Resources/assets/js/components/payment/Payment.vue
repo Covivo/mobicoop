@@ -183,7 +183,7 @@
                           :fri-disabled="selectedPaymentItem.outwardDays[4]['status'] == 0 ? true : false"
                           :sat-disabled="selectedPaymentItem.outwardDays[5]['status'] == 0 ? true : false"
                           :sun-disabled="selectedPaymentItem.outwardDays[6]['status'] == 0 ? true : false"
-                          @daysList="test()"
+                          @change="test"
                         />
                       </v-col>
                     </v-row>
@@ -681,7 +681,7 @@ export default {
       previousKey: null,
       nextKey: null,
       date: null,
-
+      daysList: null,
 
       sumTopay:0,
       validPayment: false,
@@ -757,9 +757,9 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
-    test() {
-      
-      console.error();
+    test(daysList) {
+     
+      console.error(daysList);
     },
     // method to format punctual date
     formatDate(paymentItem) {
