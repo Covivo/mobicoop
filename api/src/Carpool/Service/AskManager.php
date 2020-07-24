@@ -43,6 +43,7 @@ use App\Communication\Entity\Recipient;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolItemRepository;
+use App\Payment\Service\PaymentManager;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
@@ -63,6 +64,8 @@ class AskManager
     private $logger;
     private $security;
     private $carpoolItemRepository;
+    private $paymentManager;
+
 
     /**
      * Constructor.
@@ -77,7 +80,8 @@ class AskManager
         ResultManager $resultManager,
         LoggerInterface $logger,
         Security $security,
-        CarpoolItemRepository $carpoolItemRepository
+        CarpoolItemRepository $carpoolItemRepository,
+        PaymentManager $paymentManager
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
@@ -87,6 +91,7 @@ class AskManager
         $this->logger = $logger;
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->paymentManager = $paymentManager;
     }
 
     /**
@@ -869,8 +874,47 @@ class AskManager
             }
         } else {
             // Regular journey. To be paid, all the previous week must have been confirmed
+
+            // First we determine the start week from the fromDate
+            $startWeek = $ask->getCriteria()->getFromDate()->format('W');
+            //$startYear = $ask->getCriteria()->getFromDate()->format('Y');
+            $startYear = "2019";
+            
+            // We will check until last week
+            $maxWeekDateTime = new \DateTime('now');
+            $maxWeek = $maxWeekDateTime->modify('-1 week')->format('W');
+            $maxYear = $maxWeekDateTime->modify('-1 week')->format('Y');
+
+            echo "From : ".$startWeek."\n";
+            echo "To : ".$maxWeek."\n";
+
+            // PAY or COLLECT
+            ($driver->getId() == $user->getId()) ? $type = 2 : $type = 1;
+
+
+            $currentWeek = $startWeek;
+            $currentYear = $startYear;
+            $cpt = 0; // to prevent infinite loop
+            while ((($currentWeek."".$currentYear) !== ($maxWeek."".$maxYear)) && $cpt<=1000) {
+                echo $currentWeek."".$currentYear."\n";
+                $weekChain = $currentWeek."".$currentYear;
+                if ($currentWeek < 10) {
+                    $weekChain += "0";
+                }
+
+                $paymentItems = $this->paymentManager->getPaymentItems($user, Criteria::FREQUENCY_REGULAR, $type, $currentWeek);
+
+                $currentWeek++;
+                if ($currentWeek>52) {
+                    $currentWeek = 1;
+                    $currentYear++;
+                }
+
+                $cpt++; //only to prevent infinit loop
+            }
         }
 
+        die;
         return $ask;
     }
 }
