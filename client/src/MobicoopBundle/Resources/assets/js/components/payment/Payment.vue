@@ -300,13 +300,74 @@
                         </v-col>
                       </v-row>
                       <v-row
+                        v-if="!selectedPaymentItem.reported"
                         justify="center"
                         class="mt-n10"
                       >
                         <v-col>
-                          <a class="error--text text-decoration-underline">
-                            {{ $t('report') }}
-                          </a>
+                          <v-dialog
+                            v-model="dialog"
+                            persistent
+                            max-width="330"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                text
+                                class="error--text text-decoration-underline text-lowercase"
+                                :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
+                                v-on="on"
+                              >
+                                {{ $t('report.label') }}
+                              </v-btn>
+                            </template>
+                            <v-card>
+                              <v-card-title class="text-h5 primary--text">
+                                {{ $t('report.label') }}
+                              </v-card-title>
+                              <v-card-text>
+                                <p> {{ $t('report.text1') }}</p><p class="font-italic">
+                                  {{ $t('report.text2') }}
+                                </p>
+                              </v-card-text>
+                              <v-card-actions>
+                                <v-spacer />
+                                <v-btn
+                                  color="secondary"
+                                  text
+                                  :loading="loading"
+                                  @click="dialog = false"
+                                >
+                                  {{ $t('report.cancel') }}
+                                </v-btn>
+                                <v-btn
+                                  color="secondary"
+                                  text
+                                  :loading="loading"
+                                  @click="sendReport"
+                                >
+                                  {{ $t('report.valid') }}
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
+                        </v-col>
+                      </v-row>
+                      <v-row
+                        v-else
+                        justify="center"
+                        class="mt-n10"
+                      >
+                        <v-col>
+                          <v-btn
+                            text
+                            class="error--text text-lowercase"
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
+                          >
+                            <v-icon class="mr-2 ml-n2">
+                              mdi-alert-outline
+                            </v-icon>  
+                            {{ $t('report.labelIsReported') }}
+                          </v-btn>
                         </v-col>
                       </v-row>
                       <v-row
@@ -315,8 +376,24 @@
                       >
                         <v-col>
                           <v-btn
+                            v-if="selectedPaymentItem.confirmed"
+                            color="secondary"
+                            outlined
+                            rounded
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
+                            @click="confirmPayment"
+                          >
+                            <v-icon class="mr-2 ml-n2">
+                              mdi-check
+                            </v-icon>                          
+                            {{ $t('buttons.isConfirmed') }}
+                          </v-btn>
+                          <v-btn
+                            v-else
                             color="secondary"
                             rounded
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
+                            @click="confirmPayment"
                           >
                             {{ $t('buttons.confirmByHandPayment') }}
                           </v-btn>
@@ -579,7 +656,6 @@
             rounded
             color="success"
             :loading="loading"
-            :disabled="disabledComponent"
             @click="sendValidatedPayments"
           >
             {{ $t('buttons.validate') }}
@@ -589,7 +665,10 @@
 
       <!-- validate that by hand payment was done -->
       <v-col v-else>
-        <v-row justify="center">
+        <v-row
+          v-if="paymentsByHandConfirmed.length > 0"
+          justify="center"
+        >
           <v-col
             align="center"
             class="font-weight-bold"
@@ -601,29 +680,34 @@
           >
             <v-list shaped>
               <v-list-item-group
-                v-model="payedByHand"
+                v-model="paymentsByHandConfirmed"
                 color="primary"
               >
                 <v-list-item
-                  v-for="(item, i) in payedByHand"
+                  v-for="(item, i) in paymentsByHandConfirmed"
                   :key="i"
                 >
                   <v-list-item-content class="grey--text">
                     <v-row justify="center">
-                      <v-col align="center">
-                        <p>
-                          {{ Montanttem.name }} 
+                      <v-col
+                        align="center"
+                        cols="5"
+                      >
+                        <p class="my-n2">
+                          {{ item.name }} 
                         </p>
-                        <p class="font-weight-bold">
+                      </v-col>
+                      <v-col cols="4">
+                        <p class="font-weight-bold my-n2">
                           {{ item.price }} €
                         </p>
                       </v-col>
-                      <v-col class="mt-3">
+                      <v-col class="my-n4">
                         <v-btn
                           color="secondary"
                           fab
                           x-small
-                          :disabled="disabledComponent"
+                          @click="removeConfirmedPayment(i, item)"
                         >
                           <v-icon>
                             mdi-trash-can
@@ -638,6 +722,7 @@
           </v-col>
         </v-row>
         <v-row
+          v-if="paymentsByHandConfirmed.length > 0"
           justify="center"
         >
           <v-col align="center">
@@ -646,6 +731,7 @@
               color="secondary"
               :loading="loading"
               :disbled="disabledComponent"
+              @click="sendValidatedPayments"
             >
               {{ $t('buttons.confirm') }}
             </v-btn>
@@ -680,7 +766,7 @@ export default {
     },
     type: {
       type: Number,
-      default: 1
+      default: 2
     },
     selectedId: {
       type: Number,
@@ -721,13 +807,11 @@ export default {
 
       loading: false,
       disabledComponent: false,
+      dialog: false,
       periods: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesElectronic: [],
       pricesByHand: [],
-      payedByHand: [
-        { name: 'Lara C.', price: '30' },
-        { name: 'Bruce W.', price: '25' }
-      ]
+      paymentsByHandConfirmed: []
     };
   },
     
@@ -764,6 +848,8 @@ export default {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
           paymentItem.modeOfPayment = false;
+          paymentItem.reported = false;
+          paymentItem.confirmed = true;
           if (paymentItem.id == this.selectedItemId) {
             // we set key and payment of the selected payment
             this.selectedPaymentItem = paymentItem;
@@ -906,7 +992,10 @@ export default {
         this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.modeOfPayment = 1;
         this.sumTopay = this.sumTopay + this.priceTravel;
-      }
+      } else if (type == 'confirmed') {
+        this.paymentsByHandConfirmed.push({id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
+        this.selectedPaymentItem.modeOfPayment = 2;
+      } 
     },
     // method to remove by hand payment 
     removeByHandPayment(i, item) {
@@ -953,7 +1042,32 @@ export default {
       } 
       this.pricesElectronic.splice(i, 1);
     },
-    // method to send validated payments to ddb
+    // method to remove confirmed payment
+    removeConfirmedPayment(i, item) {
+      // we reset payement parameters of the selected item
+      this.paymentItems.forEach((paymentItem, key) => {
+        if (paymentItem.id == item.id) {
+          paymentItem.paymentIsvalidated = false;
+          paymentItem.paymentDisabled = false;
+          paymentItem.modeOfPayment = null;
+          this.validPayment = paymentItem.paymentIsvalidated;
+        }
+      });
+      // we reset payment parameters of selectedPayment
+      if (this.selectedPaymentItem.id == item.id) {
+        this.selectedPaymentItem.paymentIsvalidated = false;
+        this.selectedPaymentItem.paymentDisabled = false;
+        this.selectedPaymentItem.modeOfPayment = null;
+        this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
+        this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
+      } 
+    },
+    confirmPayment() {
+      if (this.selectedPaymentItem.paymentDisabled == false) {
+        this.validatePayment('confirmed');
+      }
+    },
+    // method to send confirmed or reported payments to ddb
     sendValidatedPayments() {
       this.loading = true;
       this.disabledComponent = true;
@@ -991,8 +1105,54 @@ export default {
           this.loading = false;
           console.error(error);
         });
+    },
+    // method to send confirmed or reported payments to ddb
+    sendReport() {
+      this.loading = true;
+      this.disabledComponent = true;
+      this.selectedPaymentItem.paymentIsvalidated = false;
+      this.selectedPaymentItem.paymentDisabled = true;
+      this.selectedPaymentItem.modeOfPayment = 2;
+      let payments = [];
+      // if punctual 
+      if (this.frequency == 1) {
+        payments.push({"id":this.selectedPaymentItem.id, "mode":2, "status":3});
+      } else {
+        // if regular 
+        // we add all available days of the outward travel
+        this.selectedPaymentItem.outwardDays.forEach((day) => {
+          if (day.id) {
+            payments.push({"id":day.id, "mode":2, "status":3});
+          }
+        })
+        // we add all available days of the return travel if return travel exist
+        if (this.selectedPaymentItem.returnDays.length > 0) {
+          this.selectedPaymentItem.returnDays.forEach((day) => {
+            if (day.id) {
+              payments.push({"id":day.id, "mode":2, "status":3});
+            }
+          })
+        }
+      }
+      this.paymentPayment.items = payments;
      
-    }
+
+      // we post datas
+      axios.post(this.$t("payments.postPayments"), this.paymentPayment)
+        .then(res => {
+          this.paymentItems.splice(this.selectedKey, 1);
+          if (this.this.paymentItems.length > 0) {
+            this.nextPayment();
+          } else {
+            window.location.href = this.$t("redirectAfterPayment");
+          }
+          this.loading = false;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    
   }
 };
 </script>
