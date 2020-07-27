@@ -76,7 +76,7 @@
       align="center"
     >
       <v-col
-        cols="7"
+        :cols="ask.paymentStatus !== null ? 4 : 7"
       >
         <carpooler-identity
           :carpooler="result.carpooler"
@@ -114,6 +114,17 @@
       >
         {{ result.roundedPrice }}€
       </v-col>
+      <v-col
+        v-if="ask.paymentStatus!==null"
+        :cols="isPassenger ? 3 : 5"
+        class="text-right"
+      >
+        <AdPayment
+          :is-driver="isDriver"
+          :is-passenger="isPassenger"
+          :payment-status="ask.paymentStatus"
+        />        
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -126,6 +137,7 @@ import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
 import CarpoolerContact from "@components/carpool/utilities/CarpoolerContact";
 import Schedules from '@components/user/profile/ad/Schedules.vue';
+import AdPayment from '@components/user/profile/ad/AdPayment.vue';
 
 export default {
   i18n: {
@@ -136,7 +148,8 @@ export default {
     CarpoolerContact,
     RegularDaysSummary,
     RouteSummary,
-    Schedules
+    Schedules,
+    AdPayment
   },
   props: {
     ask: {
