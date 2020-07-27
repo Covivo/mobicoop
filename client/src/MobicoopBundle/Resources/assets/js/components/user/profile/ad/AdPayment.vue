@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <div>
+      <div v-if="showUnpaid && unpaid">
+        Impayé
+      </div>
       <v-btn
         color="primary"
         rounded
@@ -36,27 +39,36 @@ export default {
     outlined: {
       type: Boolean,
       default: false
-    }
+    },
+    showUnpaid: {
+      type: Boolean,
+      default: false
+    }    
   },
   data(){
     return {
-      disabled:false
+      disabled:false,
+      unpaid:false
     }
   },
   computed: {
     displayPaymentStatus(){
-      let status = "";
-      if(this.paymentStatus=="0" || this.paymentStatus=="3"){
-        // Pending or Unpaid
-        status = "pending";
-      }
-      else if(this.paymentStatus=="1" || this.paymentStatus=="2" || this.paymentStatus=="4"){
-        // Paid
-        status = "paid";
-        this.disabled = true;
-      }
-
+      let status = this.getStatus(this.paymentStatus);
       return (this.isDriver) ? this.$t('driver.'+status) : this.$t('passenger.'+status);
+    }
+  },
+  methods:{
+    getStatus(paymentStatus){
+      if(paymentStatus=="0" || paymentStatus=="3"){
+        // Pending or Unpaid
+        if(this.paymentStatus=="3"){this.unpaid = true}
+        return "pending";
+      }
+      else if(paymentStatus=="1" || paymentStatus=="2" || paymentStatus=="4"){
+        // Paid
+        this.disabled = true;
+        return "paid";
+      }
     }
   }
 }

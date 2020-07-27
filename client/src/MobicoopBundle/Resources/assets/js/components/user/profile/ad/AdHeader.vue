@@ -140,6 +140,7 @@
           :is-passenger="isPassenger"
           :payment-status="paymentStatus"
           outlined
+          show-unpaid
         />
       </v-col>
     </v-row>
