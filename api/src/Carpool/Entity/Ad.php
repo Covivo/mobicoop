@@ -525,6 +525,12 @@ class Ad
      */
     private $externalId;
 
+    /**
+     * @var int|null The payment status of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentStatus;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1193,6 +1199,18 @@ class Ad
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }

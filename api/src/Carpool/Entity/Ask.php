@@ -282,7 +282,7 @@ class Ask
     
     /**
      * @var int|null The payment status of the Ask
-     * @Groups({"readPaymentStatus"})
+     * @Groups({"read","readPaymentStatus"})
      */
     private $paymentStatus;
 

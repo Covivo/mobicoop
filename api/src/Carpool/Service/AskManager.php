@@ -44,7 +44,6 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\WeekItem;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolItemRepository;
-use App\Payment\Service\PaymentManager;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
@@ -65,8 +64,7 @@ class AskManager
     private $logger;
     private $security;
     private $carpoolItemRepository;
-    private $paymentManager;
-
+    private $paymentActive;
 
     /**
      * Constructor.
@@ -82,7 +80,7 @@ class AskManager
         LoggerInterface $logger,
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
-        PaymentManager $paymentManager
+        bool $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
@@ -92,7 +90,7 @@ class AskManager
         $this->logger = $logger;
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
-        $this->paymentManager = $paymentManager;
+        $this->paymentActive = $paymentActive;
     }
 
     /**
@@ -743,6 +741,12 @@ class AskManager
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
         $ad->setOutwardLimitDate($ask->getCriteria()->getToDate());
+        
+        // If payment active we retreive the payement status of this ask
+        if ($this->paymentActive) {
+            $askWithPaymentStatus = $this->getPaymentStatus($askId);
+            $ad->setPaymentStatus($askWithPaymentStatus->getPaymentStatus());
+        }
 
         // first pass for role
         switch ($ask->getStatus()) {
