@@ -840,9 +840,9 @@ class AskManager
             throw new PaymentException(PaymentException::INVALID_USER);
         }
 
+        // NB : We ignore the returns. For now, it's not possible to pay (or at least validate) only the outwards without the returns.
+        // So we only treating the outwards to evaluate the payment status.
         if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-
-            // TO DO : TREAT WITH RETURN
 
             // Punctual journey, we just check if it's paid on this particular day
             $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
@@ -877,10 +877,6 @@ class AskManager
                 }
             }
         } else {
-
-            // TO DO : TREAT WITH RETURN
-
-
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PAID);
 
             // Regular journey. To be paid, all the previous week must have been confirmed
