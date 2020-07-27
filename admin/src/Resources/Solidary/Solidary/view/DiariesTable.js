@@ -27,7 +27,7 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
             <TableCell align="center">Auteur</TableCell>
             <TableCell align="center">Annonce</TableCell>
             <TableCell align="center">Action</TableCell>
-            <TableCell align="center">Bénéficiaire</TableCell>
+            <TableCell align="center">Usager associé</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,7 +56,11 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
                   : diary.action}
               </TableCell>
               <TableCell align="center">
-                {diary.user ? usernameRenderer({ record: diary.user }) : '-'}
+                {diary.transporter
+                  ? usernameRenderer({ record: diary.transporter })
+                  : diary.user
+                  ? usernameRenderer({ record: diary.user })
+                  : '-'}
               </TableCell>
             </TableRow>
           ))}
