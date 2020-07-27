@@ -60,6 +60,7 @@ class PaymentItem
     const DAY_UNAVAILABLE = 0;
     const DAY_CARPOOLED = 1;
     const DAY_NOT_CARPOOLED = 2;
+    const DAY_UNPAID = 3;
 
     /**
      * @var int The id of this payment item.
@@ -174,6 +175,7 @@ class PaymentItem
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
+     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
      * outwardDays => [
      *  ["id"=>5, "status=>1],
@@ -190,6 +192,7 @@ class PaymentItem
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
+     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
      * returnDays => [
      *  ["id"=>5, "status=>1],

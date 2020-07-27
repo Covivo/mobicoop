@@ -352,7 +352,11 @@ class PaymentManager
                     throw new PaymentException('This user is not the creditor of item #' . $item['id]']);
                 }
                 
-                if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
+                if ($item["status"] == PaymentItem::DAY_UNPAID) {
+                    // Unpaid has been declared
+                    $carpoolItem->setUnpaidDate(new \DateTime('now'));
+                    $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                } elseif ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
