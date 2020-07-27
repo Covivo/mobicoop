@@ -2,8 +2,11 @@
   <v-container>
     <v-row justify="center">
       <v-col align="center">
-        <h1>
-          {{ $t('title') }}
+        <h1 v-if="regular">
+          {{ $t('titleRegular') }}
+        </h1>
+        <h1 v-else>
+          {{ $t('titleOccasional') }}
         </h1>
       </v-col>
     </v-row>
@@ -13,11 +16,12 @@
         <v-btn
           rounded
           color="secondary"
+          :href="$t('buttons.back.route')"
         >
           <v-icon class="ml-n2">
             mdi-menu-left
           </v-icon>
-          {{ $t('buttons.back') }}
+          {{ $t('buttons.back.label') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -63,7 +67,6 @@
               raised
               height="950"
               class="mx-auto"
-              disabled
             >
               <v-row
                 justify="center"
@@ -177,7 +180,7 @@
                         justify="center"
                       >
                         <day-list-chips 
-                          :disabled="selectedPaymentItem.paymentDisabled"
+                          :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
                           :is-outward="true"
                           :mon-active="selectedPaymentItem.outwardDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.outwardDays[1]['status'] == 1 ? true : false"
@@ -216,7 +219,7 @@
                       >
                         <day-list-chips
                           :is-outward="false"
-                          :disabled="selectedPaymentItem.paymentDisabled"
+                          :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
                           :mon-active="selectedPaymentItem.returnDays[0]['status'] == 1 ? true : false"
                           :tue-active="selectedPaymentItem.returnDays[1]['status'] == 1 ? true : false"
                           :wed-active="selectedPaymentItem.returnDays[2]['status'] == 1 ? true : false"
@@ -255,18 +258,18 @@
                         justify="center"
                       >
                         <v-radio-group
-                          v-model="validTypeOfPayment"
+                          v-model="modeOfPayment"
                           column
                         >
                           <v-radio
                             :label="$t('payElectronic')"
                             value="electronic"
-                            :disabled="selectedPaymentItem.paymentDisabled"
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
                           />
                           <v-radio
                             :label="$t('payedByHand')"
                             value="byHand"
-                            :disabled="selectedPaymentItem.paymentDisabled"
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
                           />
                         </v-radio-group>
                       </v-row>
@@ -276,7 +279,7 @@
                       >
                         <v-switch
                           v-model="validPayment"
-                          :disabled="selectedPaymentItem.paymentDisabled"
+                          :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
                           :label="$t('payedByHand')"
                         />
                       </v-row>
@@ -334,6 +337,7 @@
                       v-if="previousPaymentItem"
                       rounded
                       outlined
+                      :disabled="disabledComponent"
                       color="secondary"
                       @click="previousPayment"
                     >
@@ -349,6 +353,7 @@
                       rounded
                       outlined
                       color="secondary"
+                      :disabled="disabledComponent"
                       @click="nextPayment"
                     >
                       {{ $t('buttons.next') }}
@@ -372,7 +377,6 @@
               raised
               height="950"
               class="mx-auto"
-              disabled
             >
               <v-row
                 justify="center"
@@ -450,13 +454,13 @@
                       <v-col
                         align="center"
                        
-                        cols="6"
+                        cols="5"
                       >
                         <p class="my-n2">
                           {{ item.name }} 
                         </p>
                       </v-col>
-                      <v-col>
+                      <v-col cols="4">
                         <p class="font-weight-bold my-n2">
                           {{ item.price }} €
                         </p>
@@ -466,6 +470,7 @@
                           color="secondary"
                           fab
                           x-small
+                          :disabled="disabledComponent"
                           @click="removeByHandPayment(i, item)"
                         >
                           <v-icon>
@@ -506,13 +511,13 @@
                     <v-row justify="center">
                       <v-col
                         align="center"
-                        cols="6"
+                        cols="5"
                       >
                         <p class="my-n2">
                           {{ item.name }} 
                         </p>
                       </v-col>
-                      <v-col>
+                      <v-col cols="4">
                         <p class="font-weight-bold my-n2">
                           {{ item.price }} €
                         </p>
@@ -522,6 +527,7 @@
                           color="secondary"
                           fab
                           x-small
+                          :disabled="disabledComponent"
                           @click="removeElectronicPayment(i, item)"
                         >
                           <v-icon>
@@ -572,6 +578,9 @@
           <v-btn
             rounded
             color="success"
+            :loading="loading"
+            :disabled="disabledComponent"
+            @click="sendValidatedPayments"
           >
             {{ $t('buttons.validate') }}
           </v-btn>
@@ -614,6 +623,7 @@
                           color="secondary"
                           fab
                           x-small
+                          :disabled="disabledComponent"
                         >
                           <v-icon>
                             mdi-trash-can
@@ -634,6 +644,8 @@
             <v-btn
               rounded
               color="secondary"
+              :loading="loading"
+              :disbled="disabledComponent"
             >
               {{ $t('buttons.confirm') }}
             </v-btn>
@@ -666,7 +678,7 @@ export default {
       type: Number,
       default: 2
     },
-    mode: {
+    type: {
       type: Number,
       default: 1
     },
@@ -682,7 +694,7 @@ export default {
       // props
       displayElectronicPayment: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
-      isPayment: this.mode == 1 ? true : false,
+      isPayment: this.type == 1 ? true : false,
       selectedItemId: this.selectedId,
       // all paymentItems
       paymentItems: null,
@@ -698,11 +710,17 @@ export default {
 
       sumTopay:0,
       validPayment: false,
-      validTypeOfPayment: null,
+      modeOfPayment: null,
       priceTravel: null,
 
       weekSelected: 292020,
-      
+      paymentPayment: {
+        "type": this.type,  
+        "items": null
+      },
+
+      loading: false,
+      disabledComponent: false,
       periods: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
       pricesElectronic: [],
       pricesByHand: [],
@@ -714,15 +732,17 @@ export default {
   },
     
   watch: {
+    // method to validate a by hand payement we electronic payment is disabled
     validPayment () {
       if (this.validPayment == true && this.selectedPaymentItem.paymentDisabled == false) {
         this.validatePayment('byHand');
       }
     },
-    validTypeOfPayment() {
-      if (this.validTypeOfPayment == 'byHand'&& this.selectedPaymentItem.paymentDisabled == false) {
+    // method to indicate the mode of payment ('by hand' or 'electronic') and to validate the payment
+    modeOfPayment() {
+      if (this.modeOfPayment == 'byHand'&& this.selectedPaymentItem.paymentDisabled == false) {
         this.validatePayment('byHand');
-      } else if (this.validTypeOfPayment == 'electronic' && this.selectedPaymentItem.paymentDisabled == false) {
+      } else if (this.modeOfPayment == 'electronic' && this.selectedPaymentItem.paymentDisabled == false) {
         this.validatePayment('electronic');
       }
     }
@@ -731,11 +751,11 @@ export default {
     // we set params
     let params = {
       'frequency':this.frequency,
-      'type':this.mode,
+      'type':this.type,
       'week':this.weekSelected
     }
     // we get all paymentItems
-    axios.post(this.$t("payments.route"), params)
+    axios.post(this.$t("payments.getPayments"), params)
       .then(res => {
         this.paymentItems = res.data;
 
@@ -743,7 +763,7 @@ export default {
         this.paymentItems.forEach((paymentItem, key) => {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
-          paymentItem.validTypeOfPayment = false;
+          paymentItem.modeOfPayment = false;
           if (paymentItem.id == this.selectedItemId) {
             // we set key and payment of the selected payment
             this.selectedPaymentItem = paymentItem;
@@ -770,6 +790,7 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
+    // method to update the dayslist of regular payment
     updateDaysList(daysList) {
       if (daysList.isOutward) {
         this.selectedPaymentItem.outwardDays[0]['status'] = daysList.mon 
@@ -844,7 +865,7 @@ export default {
       this.formatDate(this.selectedPaymentItem);
       this.amoutTodisplay(this.selectedPaymentItem);
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
-      this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+      this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
     },
     // method when we click on previous
     previousPayment() {
@@ -871,29 +892,30 @@ export default {
       this.formatDate(this.selectedPaymentItem);
       this.amoutTodisplay(this.selectedPaymentItem);
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
-      this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+      this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
 
     },
-
+    // method who update payment and total to pay 
     validatePayment(type) {
       this.selectedPaymentItem.paymentIsvalidated = true;
       this.selectedPaymentItem.paymentDisabled = true;
       if (type == 'byHand') {
         this.pricesByHand.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
-        this.selectedPaymentItem.validTypeOfPayment = 'byHand';
+        this.selectedPaymentItem.modeOfPayment = 2;
       } else if (type == 'electronic') {
         this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
-        this.selectedPaymentItem.validTypeOfPayment = 'electronic';
+        this.selectedPaymentItem.modeOfPayment = 1;
         this.sumTopay = this.sumTopay + this.priceTravel;
       }
     },
+    // method to remove by hand payment 
     removeByHandPayment(i, item) {
       // we reset payement parameters of the selected item
       this.paymentItems.forEach((paymentItem, key) => {
         if (paymentItem.id == item.id) {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
-          paymentItem.validTypeOfPayment = null;
+          paymentItem.modeOfPayment = null;
           this.validPayment = paymentItem.paymentIsvalidated;
         }
       });
@@ -901,20 +923,21 @@ export default {
       if (this.selectedPaymentItem.id == item.id) {
         this.selectedPaymentItem.paymentIsvalidated = false;
         this.selectedPaymentItem.paymentDisabled = false;
-        this.selectedPaymentItem.validTypeOfPayment = null;
+        this.selectedPaymentItem.modeOfPayment = null;
         this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
-        this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+        this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
       } 
       // we remove the item to the list of validated payments
       this.pricesByHand.splice(i, 1);
     },
+    // method to remove electronic payment
     removeElectronicPayment(i, item) {
       // we reset payement parameters of the selected item
       this.paymentItems.forEach((paymentItem, key) => {
         if (paymentItem.id == item.id) {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
-          paymentItem.validTypeOfPayment = null;
+          paymentItem.modeOfPayment = null;
           this.validPayment = paymentItem.paymentIsvalidated;
           this.sumTopay = this.sumTopay - paymentItem.amount < 0 ? 0 : this.sumTopay - paymentItem.amount; 
         }
@@ -923,12 +946,52 @@ export default {
       if (this.selectedPaymentItem.id == item.id) {
         this.selectedPaymentItem.paymentIsvalidated = false;
         this.selectedPaymentItem.paymentDisabled = false;
-        this.selectedPaymentItem.validTypeOfPayment = null;
+        this.selectedPaymentItem.modeOfPayment = null;
         this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
-        this.validTypeOfPayment = this.selectedPaymentItem.validTypeOfPayment;
+        this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
         this.sumTopay = this.sumTopay - this.priceTravel < 0 ? 0 : this.sumTopay - this.priceTravel;   
       } 
       this.pricesElectronic.splice(i, 1);
+    },
+    // method to send validated payments to ddb
+    sendValidatedPayments() {
+      this.loading = true;
+      this.disabledComponent = true;
+      let payments = [];
+      this.paymentItems.forEach((paymentItem) => {
+        // if punctual 
+        if (this.frequency == 1) {
+          payments.push({"id":paymentItem.id, "mode":paymentItem.modeOfPayment, "status":1});
+        } else {
+          // if regular 
+          // we add all available days of the outward travel
+          paymentItem.outwardDays.forEach((day) => {
+            if (day.id) {
+              payments.push({"id":day.id, "mode":paymentItem.modeOfPayment, "status":day.status});
+            }
+          })
+          // we add all available days of the return travel if return travel exist
+          if (paymentItem.returnDays.length > 0) {
+            paymentItem.returnDays.forEach((day) => {
+              if (day.id) {
+                payments.push({"id":day.id, "mode":paymentItem.modeOfPayment, "status":day.status});
+              }
+            })
+          }
+        }
+      });
+      this.paymentPayment.items = payments;
+      // we post datas
+      axios.post(this.$t("payments.postPayments"), this.paymentPayment)
+        .then(res => {
+          window.location.href = this.$t("redirectAfterPayment");
+        })
+        .catch((error) => {
+          this.disabledComponent = false;
+          this.loading = false;
+          console.error(error);
+        });
+     
     }
   }
 };

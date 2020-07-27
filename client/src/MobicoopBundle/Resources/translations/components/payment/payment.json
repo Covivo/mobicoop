@@ -2,7 +2,8 @@
     "fr": {
         "wallet":"Emplacement porte monnaie",
         "donations":"Dons",
-        "title":"Paiements",
+        "titleRegular":"Paiements trajets réguliers",
+        "titleOccasional":"Paiements",
         "outward":"Aller",
         "return":"Retour",
         "price":"Montant: {price} €",
@@ -14,8 +15,11 @@
         "buttons": {
             "previous":"Précedent",
             "next":"Suivant",
-            "back":"Retour",
-            "validate":"Valider",
+            "back": {
+                "label": "Retour",
+                "route": "/utilisateur/profil/modifier/mes-annonces"   
+            }, 
+            "validate": "Valider",
             "confirm": "Confirmer",
             "confirmByHandPayment": "Confirmer paiement à la main"
         },
@@ -23,9 +27,11 @@
             "label": "Période"
         },
         "payments": {
-            "route":"/payments/get"
+            "getPayments":"/payments/get",
+            "postPayments":"/payments/post"
         },
-        "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager."
+        "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager.",
+        "redirectAfterPayment": "/utilisateur/profil/modifier/mes-annonces"
 
 
     }

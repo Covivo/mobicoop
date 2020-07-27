@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,14 +55,17 @@ class PaymentController extends AbstractController
     public function payment()
     {
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "paymentElectronicActive" => ($this->payment_electronic_active === "true") ? true : false,
+            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false
         ]);
     }
 
+  
     /**
-     * Get all payment itmes of a user
+    * Get all payment itmes of a user
      * AJAX
-     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
      */
     public function getPaymentItems(Request $request, PaymentManager $paymentManager)
     {
@@ -73,5 +77,18 @@ class PaymentController extends AbstractController
             }
         }
         return new JsonResponse($paymentItems);
+    }
+
+    public function postPayments(Request $request, PaymentManager $paymentManager)
+    {
+        $paymentPayment = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+           
+            if ($paymentPayment = $paymentManager->postPaymentPayment($data['type'], $data['items'])) {
+                return new JsonResponse($paymentPayment);
+            }
+        }
+        return new JsonResponse($paymentPayment);
     }
 }

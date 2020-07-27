@@ -24,15 +24,24 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * A PaymentItem
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class PaymentItem implements ResourceInterface, \JsonSerializable
 {
+    const FREQUENCY_PUNCTUAL = 1;
+    const FREQUENCY_REGULAR = 2;
+
+    const TYPE_PAY = 1;
+    const TYPE_COLLECT = 2;
+
+    const DAY_UNAVAILABLE = 0;
+    const DAY_CARPOOLED = 1;
+    const DAY_NOT_CARPOOLED = 2;
 
     /**
      * @var int The id of this payment item.

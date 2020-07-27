@@ -920,7 +920,15 @@ payment_items_list:
     path:
         fr: /payments/get
         en: /payments/get
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getPaymentItems    
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getPaymentItems
+
+# Get payment items of a user (POST)
+payment_payments_post:
+    methods: [POST]
+    path:
+        fr: /payments/post
+        en: /payments/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments       
 
 ###############
 # misc routes #

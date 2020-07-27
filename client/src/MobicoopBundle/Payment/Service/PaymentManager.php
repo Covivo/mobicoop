@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 
 /**
  * Payment management service.
@@ -87,7 +88,13 @@ class PaymentManager
         return null;
     }
 
-     
+    /**
+     * Get payments
+     *
+     * @param integer $frequency
+     * @param integer $type
+     * @param integer $week
+     */
     public function getPaymentItems(int $frequency, int $type, int $week=null)
     {
         $params = [
@@ -100,5 +107,32 @@ class PaymentManager
 
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue()->getMember();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $type The payment type (1 = a payment to be made, 2 = a payment validation).
+     * @param array $items The items concerned by the payment.
+     * Each item of the array contains the :
+     * - the id of the payment item
+     * - the status (1 = realized, 2 = not realized)
+     * - the mode for the payment if type = 1 (1 = online, 2 = direct)
+     */
+    public function postPaymentPayment(int $type, array $items)
+    {
+        $this->dataProvider->setClass(PaymentPayment::class);
+
+        $paymentPayment = new PaymentPayment;
+
+        $paymentPayment->setType($type);
+        $paymentPayment->setItems($items);
+        
+        $response = $this->dataProvider->post($paymentPayment);
+        if ($response->getCode() != 201) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
     }
 }
