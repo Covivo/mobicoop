@@ -210,10 +210,10 @@ const updateUser = async (provider, params) => {
       newParams.data.fields != null
         ? extractRoles(newParams.data.fields)
         : Array.isArray(newParams.data.rolesTerritory)
-          ? newParams.data.rolesTerritory.map(({ territory, authItem }) =>
+        ? newParams.data.rolesTerritory.map(({ territory, authItem }) =>
             territory != null ? { authItem, territory } : { authItem }
           )
-          : [];
+        : [];
   }
 
   newParams.data.solidaryStructures = newParams.data.solidaryStructures.map(
@@ -287,7 +287,22 @@ export const dataProviderAdapter = (originalProvider) => ({
       return createUser(originalProvider, params);
     }
 
-    return originalProvider.create(resource, params);
+    const newParams = { ...params };
+
+    /**
+     * Keep fix for proofs formatting before submit
+     * This change can be done in the form but I've not enought time to do this now
+     * Change an object { /structure_proofs/1: { id: "/structure_proofs/1", value: "x" }
+     * To an array [{ id: "/structure_proofs/1", value: "x" }]
+     */
+    if (resource === 'solidaries' && newParams.data.proofs) {
+      newParams.data.proofs = Object.keys(newParams.data.proofs).map((k) => ({
+        id: k,
+        value: newParams.data.proofs[k],
+      }));
+    }
+
+    return originalProvider.create(resource, newParams);
   },
   update: (resource, params) => {
     let newParams = transformId({ ...params });
