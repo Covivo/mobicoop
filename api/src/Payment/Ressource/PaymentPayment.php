@@ -82,7 +82,7 @@ class PaymentPayment
      * @var array|null The items concerned by the payment.
      * Each item of the array contains the :
      * - the id of the payment item
-     * - the status (1 = realized, 2 = not realized)
+     * - the status (1 = realized, 2 = not realized, 3 = unpaid)
      * - the mode for the payment if type = 1 (1 = online, 2 = direct)
      * @Groups({"writePayment"})
      */
