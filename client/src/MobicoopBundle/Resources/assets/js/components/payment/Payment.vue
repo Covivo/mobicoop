@@ -963,9 +963,12 @@ export default {
       }
     },
     getWeeksToPay () {
-      axios.post(this.$t("payments.getPayments"), params)
-        .then(res => {
-          this.paymentItems = res.data;});
+      let params = {
+        'askId':this.selectedPaymentItem.askId,
+      }
+      // axios.post(this.$t(""), params)
+      //   .then(res => {
+      //     this.periods.push(res.data);});
     },
     // method when we click on next
     nextPayment() {

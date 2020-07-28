@@ -37,7 +37,8 @@
         },
         "payments": {
             "getPayments":"/payments/get",
-            "postPayments":"/payments/post"
+            "postPayments":"/payments/post",
+            "getWeeksToPay":"/getWeeks"
         },
         "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager.",
         "redirectAfterPayment": "/utilisateur/profil/modifier/mes-annonces"

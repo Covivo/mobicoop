@@ -907,13 +907,6 @@ relay_point_list:
 # payment routes #
 ###############    
 
-# payment 
-payment_list:
-    path:
-        fr: /paiements
-        en: /payments
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
-
 # Get payment items of a user (POST)
 payment_items_list:
     methods: [POST]
@@ -928,7 +921,22 @@ payment_payments_post:
     path:
         fr: /payments/post
         en: /payments/post
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments       
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments
+
+# payment 
+payment_list:
+    path:
+        fr: /paiements/{id?}/{frequency?}/{type?}
+        en: /payments/{id?}/{frequency?}/{type?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
+
+# Get weeks to pay (POST)
+payment_weeks_list:
+    methods: [POST]
+    path:
+        fr: /getWeeks
+        en: /getWeeks
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
 
 ###############
 # misc routes #
