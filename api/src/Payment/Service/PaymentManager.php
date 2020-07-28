@@ -239,6 +239,9 @@ class PaymentManager
                 }
             }
 
+            // If there is an Unpaid Date, we set the unpaid date of the PaymentItem
+            $paymentItem->setUnpaidDate($carpoolItem->getUnpaidDate());
+
             $items[] = $paymentItem;
             $treatedAsks[] = $carpoolItem->getAsk()->getId();
             if (!is_null($carpoolItem->getAsk()->getAskLinked())) {
@@ -355,7 +358,9 @@ class PaymentManager
                 if ($item["status"] == PaymentItem::DAY_UNPAID) {
                     // Unpaid has been declared
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
-                    $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                    
+                // Unpaid doesn't change the status
+                    //$carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     if ($item['mode'] == PaymentPayment::MODE_DIRECT) {

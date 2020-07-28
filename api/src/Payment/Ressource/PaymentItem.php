@@ -216,6 +216,18 @@ class PaymentItem
      */
     private $electronicallyPayable;
 
+    /**
+     * @var \DateTimeInterface|null The unpaid date for this Item
+     * @Groups({"readPayment"})
+     *
+     * @ApiProperty(
+     *     attributes={
+     *         "swagger_context"={"type"="string", "format"="date"}
+     *     }
+     * )
+     */
+    private $unpaidDate;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -418,6 +430,18 @@ class PaymentItem
     public function setElectronicallyPayable(bool $electronicallyPayable): self
     {
         $this->electronicallyPayable = $electronicallyPayable;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }
