@@ -799,7 +799,7 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: 10
+      default: 4
     },
   },
   data() {
@@ -828,7 +828,7 @@ export default {
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: 302020,
+      weekSelected: 292020,
       paymentPayment: {
         "type": this.type,  
         "items": null
@@ -837,7 +837,7 @@ export default {
       loading: false,
       disabledComponent: false,
       dialog: false,
-      periods: ['du 08/05/20 au 15/05/20', 'du 16/05/20 au 23/05/20'],
+      periods: [],
       pricesElectronic: [],
       pricesByHand: [],
       paymentsByHandConfirmed: []
@@ -901,6 +901,8 @@ export default {
             this.formatDate(this.selectedPaymentItem);
             // we calculate the amout to display
             this.amoutTodisplay(this.selectedPaymentItem);
+            // we get all weeks to pay
+            this.getWeeksToPay(this.selectedPaymentItem.askId)
             
           }
         });
@@ -959,6 +961,11 @@ export default {
         }
         this.priceTravel = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
       }
+    },
+    getWeeksToPay () {
+      axios.post(this.$t("payments.getPayments"), params)
+        .then(res => {
+          this.paymentItems = res.data;});
     },
     // method when we click on next
     nextPayment() {

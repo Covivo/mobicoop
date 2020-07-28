@@ -49,6 +49,12 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     private $id;
 
     /**
+     * @var int The id of the ask associated to this payment item.
+     *
+     */
+    private $askId;
+
+    /**
      * @var int The frequency (1 = punctual; 2 = regular).
      */
     private $frequency;
@@ -153,6 +159,18 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
     public function setId(int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getAskId(): int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(int $askId): self
+    {
+        $this->askId = $askId;
 
         return $this;
     }
@@ -360,6 +378,7 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
         return
             [
                 'id'                        => $this->getId(),
+                'askId'                     => $this->getAskId(),
                 'frequency'                 => $this->getFrequency(),
                 'type'                      => $this->getType(),
                 'avatar'                    => $this->getAvatar(),
