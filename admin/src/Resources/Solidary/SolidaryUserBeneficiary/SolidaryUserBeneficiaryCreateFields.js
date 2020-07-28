@@ -19,6 +19,14 @@ import {
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
+const emailNoticeStyle = {
+  maxWidth: 400,
+  marginBottom: '0.5rem',
+  backgroundColor: '#eaeaea',
+  padding: 5,
+  borderRadius: 3,
+};
+
 const useStyles = makeStyles({
   spacedHalfwidth: { maxWidth: '400px', marginBottom: '0.5rem' },
   root: { width: '100%', maxWidth: '400px', marginBottom: '0.5rem' },
@@ -96,7 +104,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   ];
 
   const validateRequired = [required()];
-  const emailRules = [required(), email()];
+  const emailRules = [email()];
 
   if (loading) {
     return (
@@ -119,16 +127,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
           <p>Recherche de l&lsquo;utilisateur...</p>
         </Box>
       )}
-
-      <TextInput
-        fullWidth
-        required
-        source="email"
-        label={translate('custom.label.user.email')}
-        validate={emailRules}
-        className={classes.spacedHalfwidth}
-      />
-
       <TextInput
         fullWidth
         required
@@ -154,7 +152,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={validateRequired}
         className={classes.spacedHalfwidth}
       />
-
       <DateInput
         fullWidth
         required
@@ -173,7 +170,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={validateRequired}
         className={classes.spacedHalfwidth}
       />
-
       <TextField
         defaultValue={
           oldAddress &&
@@ -185,7 +181,6 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         disabled
         className={classes.spacedHalfwidth}
       />
-
       <GeocompleteInput
         fullWidth
         source="homeAddress"
@@ -193,11 +188,22 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         validate={(a) => (a ? '' : 'Champs obligatoire')}
         classes={classesForGeocompleteInput}
       />
-
       <BooleanInput
         fullWidth
         label={translate('custom.label.user.newsSubscription', { instanceName: instance })}
         source="newsSubscription"
+        className={classes.spacedHalfwidth}
+      />
+      <span style={emailNoticeStyle}>
+        L'adresse email est optionnelle : une adresse email générique sera attribuée à l'utilisateur
+        comme identifiant si aucune n'est renseignée, et il sera possible de lui attribuer sa vraie
+        adresse email par la suite.
+      </span>
+      <TextInput
+        fullWidth
+        source="email"
+        label={translate('custom.label.user.email')}
+        validate={emailRules}
         className={classes.spacedHalfwidth}
       />
     </Box>
