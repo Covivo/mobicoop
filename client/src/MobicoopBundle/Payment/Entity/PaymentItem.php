@@ -139,6 +139,11 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
 
     private $electronicallyPayable;
 
+    /**
+     * @var \DateTimeInterface|null The unpaid date for this Item
+     */
+    private $unpaidDate;
+
 
     public function getId(): int
     {
@@ -337,6 +342,19 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -356,7 +374,8 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
                 'toDate'                    => $this->getToDate(),
                 'outwardDays'               => $this->getOutwardDays(),
                 'returnDays'                => $this->getReturnDays(),
-                'electronicallyPayable'     => $this->isElectronicallyPayable()
+                'electronicallyPayable'     => $this->isElectronicallyPayable(),
+                'unpaidDate'                => $this->getUnpaidDate()
             ];
     }
 }

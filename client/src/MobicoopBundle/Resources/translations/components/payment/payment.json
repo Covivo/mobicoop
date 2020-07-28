@@ -4,6 +4,7 @@
         "donations":"Dons",
         "titleRegular":"Paiements trajets réguliers",
         "titleOccasional":"Paiements",
+        "titleConfirmation": "Confirmation paiement passagers",
         "outward":"Aller",
         "return":"Retour",
         "price":"Montant: {price} €",

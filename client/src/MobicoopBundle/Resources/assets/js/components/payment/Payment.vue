@@ -1,7 +1,18 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col align="center">
+      <v-col
+        v-if="!isPayment"
+        align="center"
+      >
+        <h1>
+          {{ $t('titleConfirmation') }}
+        </h1>
+      </v-col>  
+      <v-col
+        v-else
+        align="center"
+      >
         <h1 v-if="regular">
           {{ $t('titleRegular') }}
         </h1>
@@ -254,6 +265,24 @@
                         </v-col>
                       </v-row>
                       <v-row
+                        v-if="selectedPaymentItem.reported"
+                        justify="center"
+                        class="mt-n10"
+                      >
+                        <v-col>
+                          <v-btn
+                            text
+                            class="error--text text-lowercase"
+                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
+                          >
+                            <v-icon class="mr-2 ml-n2">
+                              mdi-alert-outline
+                            </v-icon>  
+                            {{ $t('report.labelIsReported') }}
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row
                         v-if="displayElectronicPayment"
                         justify="center"
                       >
@@ -487,7 +516,7 @@
         v-if="isPayment"
         cols="4"
       >
-        <v-row
+        <!-- <v-row
           justify="center"
           align="center"
         >
@@ -504,7 +533,7 @@
               {{ $t('wallet') }}
             </v-col>
           </v-card>
-        </v-row>
+        </v-row> -->
         <v-row
           v-if="pricesByHand.length > 0"
           justify="center"
@@ -766,11 +795,11 @@ export default {
     },
     type: {
       type: Number,
-      default: 2
+      default:1
     },
     selectedId: {
       type: Number,
-      default: 4
+      default: 10
     },
   },
   data() {
@@ -799,7 +828,7 @@ export default {
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: 292020,
+      weekSelected: 302020,
       paymentPayment: {
         "type": this.type,  
         "items": null
@@ -853,7 +882,7 @@ export default {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
           paymentItem.modeOfPayment = false;
-          paymentItem.reported = false;
+          paymentItem.reported = paymentItem.unpaidDate ? true : false;
           paymentItem.confirmed = false;
           if (paymentItem.id == this.selectedItemId) {
             // we set key and payment of the selected payment
