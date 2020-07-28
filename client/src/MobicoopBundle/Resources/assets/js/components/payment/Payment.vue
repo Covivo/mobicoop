@@ -98,6 +98,7 @@
             align="center"
           >
             <v-card
+              v-if="selectedPaymentItem"
               raised
               class="mx-auto"
               height="950"
@@ -214,7 +215,6 @@
                         </v-icon>
                       </v-col>
                       <v-col
-                       
                         justify="center"
                       >
                         <day-list-chips
@@ -380,8 +380,6 @@
                             color="secondary"
                             outlined
                             rounded
-                            :disabled="selectedPaymentItem.paymentDisabled || disabledComponent"
-                            @click="confirmPayment"
                           >
                             <v-icon class="mr-2 ml-n2">
                               mdi-check
@@ -472,7 +470,9 @@
               </v-row>
               <v-row justify="center">
                 <v-card-title>
-                  <p class="text-body-2">
+                  <p
+                    class="text-body-2"
+                  >
                     {{ nextPaymentItem.givenName }} {{ nextPaymentItem.shortFamilyName }}.
                   </p>
                 </v-card-title>
@@ -829,6 +829,11 @@ export default {
       } else if (this.modeOfPayment == 'electronic' && this.selectedPaymentItem.paymentDisabled == false) {
         this.validatePayment('electronic');
       }
+    },
+    paymentsByHandConfirmed() {
+      if (this.paymentsByHandConfirmed == 0) {
+        this.paymentsByHandConfirmed = [];
+      }
     }
   },
   mounted () {
@@ -849,7 +854,7 @@ export default {
           paymentItem.paymentDisabled = false;
           paymentItem.modeOfPayment = false;
           paymentItem.reported = false;
-          paymentItem.confirmed = true;
+          paymentItem.confirmed = false;
           if (paymentItem.id == this.selectedItemId) {
             // we set key and payment of the selected payment
             this.selectedPaymentItem = paymentItem;
@@ -993,8 +998,10 @@ export default {
         this.selectedPaymentItem.modeOfPayment = 1;
         this.sumTopay = this.sumTopay + this.priceTravel;
       } else if (type == 'confirmed') {
+        
         this.paymentsByHandConfirmed.push({id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.modeOfPayment = 2;
+        this.selectedPaymentItem.confirmed = true;
       } 
     },
     // method to remove by hand payment 
@@ -1050,6 +1057,7 @@ export default {
           paymentItem.paymentIsvalidated = false;
           paymentItem.paymentDisabled = false;
           paymentItem.modeOfPayment = null;
+          paymentItem.confirmed = false;
           this.validPayment = paymentItem.paymentIsvalidated;
         }
       });
@@ -1058,6 +1066,7 @@ export default {
         this.selectedPaymentItem.paymentIsvalidated = false;
         this.selectedPaymentItem.paymentDisabled = false;
         this.selectedPaymentItem.modeOfPayment = null;
+        this.selectedPaymentItem.confirmed = false;
         this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
         this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
       } 
@@ -1109,10 +1118,9 @@ export default {
     // method to send confirmed or reported payments to ddb
     sendReport() {
       this.loading = true;
-      this.disabledComponent = true;
       this.selectedPaymentItem.paymentIsvalidated = false;
-      this.selectedPaymentItem.paymentDisabled = true;
       this.selectedPaymentItem.modeOfPayment = 2;
+      this.selectedPaymentItem.reported = true;
       let payments = [];
       // if punctual 
       if (this.frequency == 1) {
@@ -1122,30 +1130,23 @@ export default {
         // we add all available days of the outward travel
         this.selectedPaymentItem.outwardDays.forEach((day) => {
           if (day.id) {
-            payments.push({"id":day.id, "mode":2, "status":3});
+            payments.push({"id":day.id, "mode":2, "status":day.status == 1 ? 3 : day.status});
           }
         })
         // we add all available days of the return travel if return travel exist
         if (this.selectedPaymentItem.returnDays.length > 0) {
           this.selectedPaymentItem.returnDays.forEach((day) => {
             if (day.id) {
-              payments.push({"id":day.id, "mode":2, "status":3});
+              payments.push({"id":day.id, "mode":2, "status":day.status == 1 ? 3 : day.status});
             }
           })
         }
       }
       this.paymentPayment.items = payments;
-     
 
       // we post datas
       axios.post(this.$t("payments.postPayments"), this.paymentPayment)
         .then(res => {
-          this.paymentItems.splice(this.selectedKey, 1);
-          if (this.this.paymentItems.length > 0) {
-            this.nextPayment();
-          } else {
-            window.location.href = this.$t("redirectAfterPayment");
-          }
           this.loading = false;
         })
         .catch((error) => {
