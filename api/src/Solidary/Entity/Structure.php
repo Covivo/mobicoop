@@ -481,6 +481,7 @@ class Structure
         $this->relayPoints = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->structureProofs = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -1144,7 +1145,7 @@ class Structure
         return $this;
     }
 
-    public function getTerritories(): ArrayCollection
+    public function getTerritories()
     {
         return $this->territories;
     }
@@ -1152,7 +1153,7 @@ class Structure
     public function addTerritory(Territory $territory): self
     {
         if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
+            $this->territories->add($territory);
         }
 
         return $this;

@@ -40,6 +40,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -123,15 +124,6 @@ class Territory
     private $geoJsonDetail;
 
     /**
-     * @var ArrayCollection|null The Structures linked to this Territory
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="territories")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $structures;
-
-    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -172,29 +164,6 @@ class Territory
     public function setGeoJsonDetail($geoJsonDetail): self
     {
         $this->geoJsonDetail = $geoJsonDetail;
-
-        return $this;
-    }
-
-    public function getStructures(): ArrayCollection
-    {
-        return $this->structures;
-    }
-
-    public function addStructure(Structure $structure): self
-    {
-        if (!$this->structures->contains($structure)) {
-            $this->structures[] = $structure;
-        }
-
-        return $this;
-    }
-
-    public function removeStructure(Structure $structure): self
-    {
-        if ($this->structures->contains($structure)) {
-            $this->structures->removeElement($structure);
-        }
 
         return $this;
     }
