@@ -70,7 +70,7 @@ use App\Solidary\Entity\SolidaryAsk;
  *          "pending_payment"={
  *              "method"="GET",
  *              "path"="/asks/{id}/pendingPayment",
- *              "normalization_context"={"groups"={"readPaymentStatus"}},
+ *              "normalization_context"={"groups"={"readPayment"}},
  *          }
  *      }
  * )
