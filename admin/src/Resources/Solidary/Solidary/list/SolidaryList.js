@@ -12,6 +12,8 @@ import {
   AutocompleteInput,
   Filter,
   useTranslate,
+  // EditButton,
+  ReferenceField,
 } from 'react-admin';
 
 import { usernameRenderer } from '../../../../utils/renderers';
@@ -19,6 +21,18 @@ import { usernameRenderer } from '../../../../utils/renderers';
 const ActionField = ({ source, record = {} }) => {
   const translate = useTranslate();
   return <span>{translate(`custom.actions.${get(record, source)}`)}</span>;
+};
+
+const SubjectField = (props) => {
+  if (typeof props.record.subject === 'string') {
+    return (
+      <ReferenceField {...props} source="subject" link={false} reference="subjects">
+        <TextField source="label" />
+      </ReferenceField>
+    );
+  }
+
+  return <TextField {...props} source="subject.label" />;
 };
 
 const SolidaryFilter = (props) => (
@@ -48,7 +62,8 @@ export const SolidaryList = (props) => (
   >
     <Datagrid>
       <TextField source="originId" label="ID" />
-      <TextField source="subject.label" />
+      {/* <TextField source="subject.label" /> */}
+      <SubjectField />
       <TextField source="displayLabel" />
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
@@ -56,6 +71,7 @@ export const SolidaryList = (props) => (
       <ActionField source="lastAction" />
       <DateField source="createdDate" />
       <ShowButton />
+      {/* <EditButton /> */}
     </Datagrid>
   </List>
 );
