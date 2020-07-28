@@ -26,9 +26,12 @@ namespace App\Geography\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Controller\TerritoryPost;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Solidary\Entity\Structure;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A geographical territory, represented by a geojson multipolygon.
@@ -120,6 +123,15 @@ class Territory
     private $geoJsonDetail;
 
     /**
+     * @var ArrayCollection|null The Structures linked to this Territory
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="territories")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $structures;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -160,6 +172,29 @@ class Territory
     public function setGeoJsonDetail($geoJsonDetail): self
     {
         $this->geoJsonDetail = $geoJsonDetail;
+
+        return $this;
+    }
+
+    public function getStructures(): ArrayCollection
+    {
+        return $this->structures;
+    }
+
+    public function addStructure(Structure $structure): self
+    {
+        if (!$this->structures->contains($structure)) {
+            $this->structures[] = $structure;
+        }
+
+        return $this;
+    }
+
+    public function removeStructure(Structure $structure): self
+    {
+        if ($this->structures->contains($structure)) {
+            $this->structures->removeElement($structure);
+        }
 
         return $this;
     }

@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Territory;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -468,6 +469,15 @@ class Structure
      * @MaxDepth(1)
      */
     private $address;
+
+    /**
+     * @var ArrayCollection|null The Territories linked to this Structure
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $territories;
 
     public function __construct()
     {
@@ -1156,6 +1166,28 @@ class Structure
         return $this;
     }
 
+    public function getTerritories(): ArrayCollection
+    {
+        return $this->territories;
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+
+        return $this;
+    }
+
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
     
