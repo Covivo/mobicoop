@@ -339,13 +339,6 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
-     * @var Structure|null If the address is a Structure address
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Structure", mappedBy="address")
-     * @MaxDepth(1)
-     */
-    private $structure;
-
-    /**
      * @var Waypoint|null The waypoint of the address.
      *
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
@@ -748,18 +741,6 @@ class Address implements \JsonSerializable
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-
-        return $this;
-    }
-
-    public function getStructure(): ?Structure
-    {
-        return $this->structure;
-    }
-
-    public function setStructure(?Structure $structure): self
-    {
-        $this->structure = $structure;
 
         return $this;
     }

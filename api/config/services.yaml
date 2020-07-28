@@ -117,6 +117,8 @@ services:
         #tags: [ 'api_platform.filter' ]
 
     App\Carpool\Service\AskManager:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -128,6 +130,7 @@ services:
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
                 proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
+                paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -450,6 +453,7 @@ services:
 
     App\Payment\Service\PaymentManager:
         arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
 
     # Price

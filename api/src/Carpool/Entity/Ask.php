@@ -61,6 +61,16 @@ use App\Solidary\Entity\SolidaryAsk;
  *              "method"="PUT",
  *              "path"="/asks/{id}",
  *              "controller"=AskPut::class,
+ *          },
+ *          "payment_status"={
+ *              "method"="GET",
+ *              "path"="/asks/{id}/paymentStatus",
+ *              "normalization_context"={"groups"={"readPaymentStatus"}},
+ *          },
+ *          "pending_payment"={
+ *              "method"="GET",
+ *              "path"="/asks/{id}/pendingPayment",
+ *              "normalization_context"={"groups"={"readPayment"}},
  *          }
  *      }
  * )
@@ -79,13 +89,23 @@ class Ask
     const ASKS_WITHOUT_SOLIDARY = 1;
     const ASKS_WITH_SOLIDARY = 2;
 
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD_ROUNDTRIP = 2;
+    const TYPE_RETURN_ROUNDTRIP = 3;
+
+    const PAYMENT_STATUS_PENDING = 0;
+    const PAYMENT_STATUS_ONLINE = 1;
+    const PAYMENT_STATUS_DIRECT = 2;
+    const PAYMENT_STATUS_UNPAID = 3;
+    const PAYMENT_STATUS_PAID = 4; // Paid but with undertermined method
+    
     /**
      * @var int The id of this ask.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread","readPaymentStatus"})
      */
     private $id;
 
@@ -265,6 +285,12 @@ class Ask
      */
     private $solidaryAsk;
     
+    /**
+     * @var int|null The payment status of the Ask
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentStatus;
+
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -567,6 +593,18 @@ class Ask
     public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }

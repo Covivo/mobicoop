@@ -9,6 +9,7 @@
       :has-ask="hasAtLeastOneAsk"
       :ad-id="ad.id"
       :is-carpool="true"
+      :payment-status="ad.paymentStatus"
     />
 
     <v-card-text v-if="isRegular">

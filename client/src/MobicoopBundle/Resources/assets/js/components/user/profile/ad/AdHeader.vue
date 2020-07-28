@@ -131,6 +131,18 @@
           </v-icon>
         </v-btn>
       </v-col>
+      <v-col
+        v-else-if="paymentStatus!==null"
+        class="text-right"
+      >
+        <AdPayment
+          :is-driver="isDriver"
+          :is-passenger="isPassenger"
+          :payment-status="paymentStatus"
+          outlined
+          show-unpaid
+        />
+      </v-col>
     </v-row>
     
     <!--DIALOG-->
@@ -179,12 +191,15 @@
 <script>
 import axios from "axios";
 import formData from "../../../../utils/request";
-
+import AdPayment from '@components/user/profile/ad/AdPayment.vue';
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
 
 export default {
   i18n: {
     messages: Translations
+  },
+  components: {
+    AdPayment
   },
   props: {
     isDriver: {
@@ -222,6 +237,10 @@ export default {
     isCarpool: {
       type: Boolean,
       default: false
+    },
+    paymentStatus: {
+      type: Number,
+      default: null
     }
   },
   data () {

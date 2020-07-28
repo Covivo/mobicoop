@@ -47,4 +47,10 @@ class PaymentException extends \LogicException
     // BankAccount
     const NO_BANKACCOUNT_ID_IN_UPDATE_REQUEST = "This request must contains en idBankAccount parameter";
     const NOT_THE_OWNER = "The current User is not the owner of this BankAccount";
+
+    // Ad/Ask
+    const NO_ASK_FOUND = "No Ask found";
+    const NO_CARPOOL_ITEM = "No CarpoolItem found";
+    const NO_CARPOOL_ITEMS = "No CarpoolItem found";
+    const INVALID_USER  = "The User must be driver or passenger of this Ask";
 }

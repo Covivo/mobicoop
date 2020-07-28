@@ -25,6 +25,7 @@ namespace App\Payment\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -95,6 +96,11 @@ class CarpoolPayment
      */
     private $carpoolItems;
 
+    public function __construct()
+    {
+        $this->carpoolItems = new ArrayCollection();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;

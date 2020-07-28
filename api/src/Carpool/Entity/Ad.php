@@ -122,7 +122,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "security"="is_granted('ad_delete',object)"
  *          }
- *      }
+ *       }
  * )
  *
  */
@@ -524,6 +524,12 @@ class Ad
      * @var string|null The external Id if the ad was created for an external search.
      */
     private $externalId;
+
+    /**
+     * @var int|null The payment status of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentStatus;
 
     public function __construct()
     {
@@ -1193,6 +1199,18 @@ class Ad
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }

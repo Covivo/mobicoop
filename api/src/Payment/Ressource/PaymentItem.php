@@ -60,6 +60,7 @@ class PaymentItem
     const DAY_UNAVAILABLE = 0;
     const DAY_CARPOOLED = 1;
     const DAY_NOT_CARPOOLED = 2;
+    const DAY_UNPAID = 3;
 
     /**
      * @var int The id of this payment item.
@@ -76,7 +77,10 @@ class PaymentItem
     private $frequency;
 
     /**
-     * @var int The payment type (1 = a payment to be made, 2 = a payment to collect).
+     * @var int The payment type (different that type PAY and COLLECT used only in request params)
+     * 1 : one way trip
+     * 2 : outward of a round trip
+     * 3 : return of a round trip).
      * @Groups({"readPayment"})
      */
     private $type;
@@ -167,22 +171,34 @@ class PaymentItem
 
     /**
      * @var array|null The days concerned by the outward trip.
-     * Each item of the array contains the status for the day :
+     * Each item of the array contains the id of the CarpoolItem and the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
+     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * outwardDays => [
+     *  ["id"=>5, "status=>1],
+     *  ["id"=>null, "status=>0],
+     *  ...
+     * ]
      * @Groups({"readPayment"})
      */
     private $outwardDays;
 
     /**
      * @var array|null The days concerned by the return trip.
-     * Each item of the array contains the status for the day :
+     * Each item of the array contains the id of the CarpoolItem and the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
+     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
+     * returnDays => [
+     *  ["id"=>5, "status=>1],
+     *  ["id"=>null, "status=>0],
+     *  ...
+     * ]
      * @Groups({"readPayment"})
      */
     private $returnDays;
@@ -199,6 +215,18 @@ class PaymentItem
      * @Groups({"readPayment"})
      */
     private $electronicallyPayable;
+
+    /**
+     * @var \DateTimeInterface|null The unpaid date for this Item
+     * @Groups({"readPayment"})
+     *
+     * @ApiProperty(
+     *     attributes={
+     *         "swagger_context"={"type"="string", "format"="date"}
+     *     }
+     * )
+     */
+    private $unpaidDate;
 
     public function __construct($id = null)
     {
@@ -402,6 +430,18 @@ class PaymentItem
     public function setElectronicallyPayable(bool $electronicallyPayable): self
     {
         $this->electronicallyPayable = $electronicallyPayable;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }

@@ -387,6 +387,11 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $deleterId;
 
+    /**
+     * @var int|null The payment status of the Ad
+     */
+    private $paymentStatus;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -1032,6 +1037,18 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1062,7 +1079,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'results' => $this->getResults(),
                 'frequency' => $this->getFrequency(),
                 'potentialCarpoolers' => $this->getPotentialCarpoolers(),
-                'asks' => $this->getAsks()
+                'asks' => $this->getAsks(),
+                'paymentStatus' => $this->getPaymentStatus()
             ];
     }
 }

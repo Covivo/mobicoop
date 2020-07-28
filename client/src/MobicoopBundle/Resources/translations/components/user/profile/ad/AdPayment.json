@@ -1,0 +1,22 @@
+{
+    "fr": {
+        "driver":{
+            "paid":"Déjà payé",
+            "pending":"Valider le paiement"
+        },
+        "passenger":{
+            "paid":"Déjà payé",
+            "pending":"Payer"
+        }        
+    },    
+    "en": {
+        "driver":{
+            "paid":"Paid",
+            "pending":"Confirm payment"
+        },
+        "passenger":{
+            "paid":"Paid",
+            "pending":"Pay"
+        }        
+    }    
+}
