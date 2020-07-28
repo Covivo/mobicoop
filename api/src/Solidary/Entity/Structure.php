@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Territory;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -461,13 +462,13 @@ class Structure
     private $operates;
 
     /**
-     * @var Address|null The address of the Structure
+     * @var ArrayCollection|null The Territories linked to this Structure
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure", cascade={"persist"})
-     * @Groups({"readSolidary", "writeSolidary"})
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
+     * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
-    private $address;
+    private $territories;
 
     public function __construct()
     {
@@ -480,6 +481,7 @@ class Structure
         $this->relayPoints = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->structureProofs = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -1112,19 +1114,6 @@ class Structure
         return $this;
     }
 
-
-    public function getAddress(): ?Address
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?Address $address): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
     /**
     * @return ArrayCollection|Operate[]
     */
@@ -1156,6 +1145,28 @@ class Structure
         return $this;
     }
 
+    public function getTerritories()
+    {
+        return $this->territories;
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories->add($territory);
+        }
+
+        return $this;
+    }
+
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
     
