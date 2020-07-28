@@ -462,15 +462,6 @@ class Structure
     private $operates;
 
     /**
-     * @var Address|null The address of the Structure
-     *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="structure", cascade={"persist"})
-     * @Groups({"readSolidary", "writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $address;
-
-    /**
      * @var ArrayCollection|null The Territories linked to this Structure
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
@@ -1118,19 +1109,6 @@ class Structure
         if ($this->needs->contains($structureProof)) {
             $this->needs->removeElement($structureProof);
         }
-
-        return $this;
-    }
-
-
-    public function getAddress(): ?Address
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?Address $address): self
-    {
-        $this->address = $address;
 
         return $this;
     }
