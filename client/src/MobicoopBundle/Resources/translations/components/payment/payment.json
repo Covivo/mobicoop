@@ -2,26 +2,47 @@
     "fr": {
         "wallet":"Emplacement porte monnaie",
         "donations":"Dons",
-        "title":"Paiements",
+        "titleRegular":"Paiements trajets réguliers",
+        "titleOccasional":"Paiements",
+        "titleConfirmation": "Confirmation paiement passagers",
         "outward":"Aller",
-        "return":"Return",
+        "return":"Retour",
         "price":"Montant: {price} €",
         "sumToPay":"Total à payer: {price} €",
         "payedByHand":"J’ai payé à la main",
-        "payOnLine":"Je paie en ligne",
-        "paymentReceivedByHand":"Total paiement(s) reçu(s) à la main",
-        "report":"Signaler un impayé",
+        "payElectronic":"Je paie en ligne",
+        "paymentReceivedByHand":"Paiement(s) reçu(s) à la main",
+        "report": {
+            "label": "Signaler un impayé",
+            "text1": "Vous déclarez ne pas avoir été payé pour ce covoiturage. Veuillez cliquer sur «Valider» pour confirmer.",
+            "text2": "Une notification sera envoyée au passager. Nous vous invitons à prendre contact via la messagerie, avec le passager, pour régler le problème.",
+            "cancel": "Annuler",
+            "valid": "Valider",
+            "labelIsReported": "Impayé"
+        },
         "buttons": {
             "previous":"Précedent",
             "next":"Suivant",
-            "back":"Retour",
-            "validate":"Valider",
+            "back": {
+                "label": "Retour",
+                "route": "/utilisateur/profil/modifier/mes-annonces"   
+            }, 
+            "validate": "Valider",
             "confirm": "Confirmer",
-            "confirmByHandPayment": "Confirmer paiement à la main"
+            "confirmByHandPayment": "Confirmer paiement à la main",
+            "isConfirmed": "Paiement à la main confirmé"
         },
         "select": {
             "label": "Période"
-        }
+        },
+        "payments": {
+            "getPayments":"/payments/get",
+            "postPayments":"/payments/post",
+            "getWeeksToPay":"/getWeeks"
+        },
+        "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager.",
+        "redirectAfterPayment": "/utilisateur/profil/modifier/mes-annonces"
+
 
     }
 }

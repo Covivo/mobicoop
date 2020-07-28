@@ -21,36 +21,18 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * A payment item.
- *
- * @ApiResource(
- *     attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"}
- *     },
- *     collectionOperations={
- *          "get"
- *      },
- *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
- *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * A PaymentItem
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class PaymentItem
+class PaymentItem implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
-
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
 
@@ -60,188 +42,114 @@ class PaymentItem
     const DAY_UNAVAILABLE = 0;
     const DAY_CARPOOLED = 1;
     const DAY_NOT_CARPOOLED = 2;
-    const DAY_UNPAID = 3;
 
     /**
      * @var int The id of this payment item.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
      * @var int The id of the ask associated to this payment item.
-     * @Groups({"readPayment"})
      *
      */
     private $askId;
 
     /**
      * @var int The frequency (1 = punctual; 2 = regular).
-     * @Groups({"readPayment"})
      */
     private $frequency;
 
     /**
-     * @var int The payment type (different that type PAY and COLLECT used only in request params)
-     * 1 : one way trip
-     * 2 : outward of a round trip
-     * 3 : return of a round trip).
-     * @Groups({"readPayment"})
+     * @var int The payment type (1 = a payment to be made, 2 = a payment to collect).
      */
     private $type;
 
     /**
      * @var string|null The avatar of the user
-     * @Groups({"readPayment"})
      */
     private $avatar;
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"readPayment"})
      */
     private $givenName;
 
     /**
      * @var string|null The shorten family name of the user.
-     * @Groups({"readPayment"})
-     */
+    */
     private $shortFamilyName;
 
     /**
      * @var Address The origin.
-     * @Groups({"readPayment"})
      */
     private $origin;
 
     /**
      * @var Address The destination.
-     * @Groups({"readPayment"})
      */
     private $destination;
 
     /**
      * @var string|null The amount, if punctual.
-     * @Groups({"readPayment"})
      */
     private $amount;
 
     /**
      * @var string|null The amount for the outward, if regular.
-     * @Groups({"readPayment"})
      */
     private $outwardAmount;
 
     /**
      * @var string|null The amount for the return, if regular.
-     * @Groups({"readPayment"})
      */
     private $returnAmount;
 
     /**
      * @var \DateTimeInterface|null The date of the item, if punctual.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
      */
     private $date;
 
     /**
      * @var \DateTimeInterface|null The start date of the item, if regular.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
      */
     private $fromDate;
 
     /**
      * @var \DateTimeInterface|null The end date of the item, if regular.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
      */
     private $toDate;
 
     /**
      * @var array|null The days concerned by the outward trip.
-     * Each item of the array contains the id of the CarpoolItem and the status for the day :
+     * Each item of the array contains the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
-     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
-     * outwardDays => [
-     *  ["id"=>5, "status=>1],
-     *  ["id"=>null, "status=>0],
-     *  ...
-     * ]
-     * @Groups({"readPayment"})
      */
     private $outwardDays;
 
     /**
      * @var array|null The days concerned by the return trip.
-     * Each item of the array contains the id of the CarpoolItem and the status for the day :
+     * Each item of the array contains the status for the day :
      * 0 : unavailable
      * 1 : carpooled
      * 2 : not carpooled
-     * 3 : unpaid
      * The array is indexed by the numeric representation of the week day, from 0 (sunday) to 6 (saturday).
-     * returnDays => [
-     *  ["id"=>5, "status=>1],
-     *  ["id"=>null, "status=>0],
-     *  ...
-     * ]
-     * @Groups({"readPayment"})
      */
     private $returnDays;
 
     /**
      * @var bool If the current payment profile is linked to one or several bank accounts
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="boolean"}
-     *     }
-     * )
-
-     * @Groups({"readPayment"})
      */
+
     private $electronicallyPayable;
 
     /**
      * @var \DateTimeInterface|null The unpaid date for this Item
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
      */
     private $unpaidDate;
 
-    public function __construct($id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if ($id) {
-            $this->id = $id;
-        }
-    }
 
     public function getId(): int
     {
@@ -458,10 +366,35 @@ class PaymentItem
         return $this->unpaidDate;
     }
 
-    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id'                        => $this->getId(),
+                'askId'                     => $this->getAskId(),
+                'frequency'                 => $this->getFrequency(),
+                'type'                      => $this->getType(),
+                'avatar'                    => $this->getAvatar(),
+                'givenName'                 => $this->getGivenName(),
+                'shortFamilyName'           => $this->getShortFamilyName(),
+                'origin'                    => $this->getOrigin(),
+                'destination'               => $this->getDestination(),
+                'amount'                    => $this->getAmount(),
+                'outwardAmount'             => $this->getOutwardAmount(),
+                'returnAmount'              => $this->getReturnAmount(),
+                'date'                      => $this->getDate(),
+                'toDate'                    => $this->getToDate(),
+                'outwardDays'               => $this->getOutwardDays(),
+                'returnDays'                => $this->getReturnDays(),
+                'electronicallyPayable'     => $this->isElectronicallyPayable(),
+                'unpaidDate'                => $this->getUnpaidDate()
+            ];
     }
 }

@@ -180,6 +180,7 @@ class PaymentManager
                 continue;
             }
             $paymentItem = new PaymentItem($carpoolItem->getId());
+            $paymentItem->setAskId($carpoolItem->getAsk()->getId());
             $paymentItem->setType($carpoolItem->getType());
             if ($type == PaymentItem::TYPE_PAY) {
                 $paymentItem->setGivenName($carpoolItem->getCreditorUser()->getGivenName());
@@ -241,7 +242,7 @@ class PaymentManager
 
             // If there is an Unpaid Date, we set the unpaid date of the PaymentItem
             $paymentItem->setUnpaidDate($carpoolItem->getUnpaidDate());
-
+            
             $items[] = $paymentItem;
             $treatedAsks[] = $carpoolItem->getAsk()->getId();
             if (!is_null($carpoolItem->getAsk()->getAskLinked())) {

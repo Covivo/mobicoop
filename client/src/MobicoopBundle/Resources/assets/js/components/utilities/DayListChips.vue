@@ -3,7 +3,7 @@
     <v-chip
       :color="monColor"
       class="mr-1 justify-center"
-      :disabled="monDisabled"
+      :disabled="monDisabled || this.disabled"
       @click="clickDay(daysList[0])"
     >
       {{ dayName(daysList[0]) }}
@@ -11,7 +11,7 @@
     <v-chip
       :color="tueColor"
       class="mr-1 justify-center"
-      :disabled="tueDisabled"
+      :disabled="tueDisabled || this.disabled"
       @click="clickDay(daysList[1])"
     >
       {{ dayName(daysList[1]) }}
@@ -19,7 +19,7 @@
     <v-chip
       :color="wedColor"
       class="mr-1 justify-center"
-      :disabled="wedDisabled"
+      :disabled="wedDisabled || this.disabled"
       @click="clickDay(daysList[2])"
     >
       {{ dayName(daysList[2]) }}
@@ -27,7 +27,7 @@
     <v-chip
       :color="thuColor"
       class="mr-1 justify-center"
-      :disabled="thuDisabled"
+      :disabled="thuDisabled || this.disabled"
       @click="clickDay(daysList[3])"
     >
       {{ dayName(daysList[3]) }}
@@ -35,7 +35,7 @@
     <v-chip
       :color="friColor"
       class="mr-1 justify-center"
-      :disabled="friDisabled"
+      :disabled="friDisabled || this.disabled"
       @click="clickDay(daysList[4])"
     >
       {{ dayName(daysList[4]) }}
@@ -43,7 +43,7 @@
     <v-chip
       :color="satColor"
       class="mr-1 justify-center"
-      :disabled="satDisabled"
+      :disabled="satDisabled || this.disabled"
       @click="clickDay(daysList[5])"
     >
       {{ dayName(daysList[5]) }}
@@ -51,7 +51,7 @@
     <v-chip
       :color="sunColor"
       class="mr-1 justify-center"
-      :disabled="sunDisabled"
+      :disabled="sunDisabled || this.disabled"
       @click="clickDay(daysList[6])"
     >
       {{ dayName(daysList[6]) }}
@@ -128,15 +128,27 @@ export default {
     },
     colorActive:{
       type: String,
-      default: "success"
+      default: "primary"
     },
     colorInactive:{
       type: String,
-      default: "default"
+      default: "primary lighten-3"
+    },
+    colorDisabled:{
+      type: String,
+      default: "grey"
     },
     clickable:{
       type:Boolean,
       default:true
+    },
+    isOutward:{
+      type:Boolean,
+      default:true
+    },
+    disabled:{
+      type:Boolean,
+      default:false
     }
   },
   data() {
@@ -148,17 +160,19 @@ export default {
       thu:(this.thuActive) ? true : false,
       fri:(this.friActive) ? true : false,
       sat:(this.satActive) ? true : false,
-      sun:(this.sunActive) ? true :false
+      sun:(this.sunActive) ? true :false,
+      daysListUpdated: {"mon": null, "tue": null, "wed": null, "thu":null, "fri":null, "sat": null, "sun": null, "isOutward": null} 
     }
+    
   },
   computed:{
-    monColor() { if(this.mon) { return this.colorActive }else {return this.colorInactive}},
-    tueColor() { if(this.tue) { return this.colorActive }else {return this.colorInactive}},
-    wedColor() { if(this.wed) { return this.colorActive }else {return this.colorInactive}},
-    thuColor() { if(this.thu) { return this.colorActive }else {return this.colorInactive}},
-    friColor() { if(this.fri) { return this.colorActive }else {return this.colorInactive}},
-    satColor() { if(this.sat) { return this.colorActive }else {return this.colorInactive}},
-    sunColor() { if(this.sun) { return this.colorActive }else {return this.colorInactive}}
+    monColor() { if(this.monDisabled) { return this.colorDisabled }else if(this.mon) {return this.colorActive}else {return this.colorInactive}},
+    tueColor() { if(this.tueDisabled) { return this.colorDisabled }else if(this.tue) {return this.colorActive}else {return this.colorInactive}},
+    wedColor() { if(this.wedDisabled) { return this.colorDisabled }else if(this.wed) {return this.colorActive}else {return this.colorInactive}},
+    thuColor() { if(this.thuDisabled) { return this.colorDisabled }else if(this.thu) {return this.colorActive}else {return this.colorInactive}},
+    friColor() { if(this.friDisabled) { return this.colorDisabled }else if(this.fri) {return this.colorActive}else {return this.colorInactive}},
+    satColor() { if(this.satDisabled) { return this.colorDisabled }else if(this.sat) {return this.colorActive}else {return this.colorInactive}},
+    sunColor() { if(this.sunDisabled) { return this.colorDisabled }else if(this.sun) {return this.colorActive}else {return this.colorInactive}}
   },
   watch:{
     monActive(newValue){(newValue) ? this.mon = true : this.mon = false;},
@@ -199,7 +213,19 @@ export default {
           break;
         }
       }
-    }
+      this.emitEvent();
+    },
+    emitEvent: function() {
+      this.daysListUpdated["mon"] = this.monDisabled ? 0 : this.mon ? 1 : 2;
+      this.daysListUpdated["tue"] = this.tueDisabled ? 0 : this.tue ? 1 : 2;
+      this.daysListUpdated["wed"] = this.wedDisabled ? 0 : this.wed ? 1 : 2;
+      this.daysListUpdated["thu"] = this.thuDisabled ? 0 : this.thu ? 1 : 2;
+      this.daysListUpdated["fri"] = this.friDisabled ? 0 : this.fri ? 1 : 2;
+      this.daysListUpdated["sat"] = this.satDisabled ? 0 : this.sat ? 1 : 2;
+      this.daysListUpdated["sun"] = this.sunDisabled ? 0 : this.sun ? 1 : 2;
+      this.daysListUpdated["isOutward"] = this.isOutward ? true : false;
+      this.$emit("change",this.daysListUpdated);
+    },
   }
 }
 </script>

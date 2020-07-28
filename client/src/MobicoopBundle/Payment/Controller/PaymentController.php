@@ -23,10 +23,17 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for payments actions.
+ *
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  *
  */
 class PaymentController extends AbstractController
@@ -45,10 +52,43 @@ class PaymentController extends AbstractController
      * Display of the payment page
      *
      */
-    public function payment()
+    public function payment(Request $request)
     {
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "payment_electronic_active"=>($this->payment_electronic_active==="true") ? true : false,
+            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false
         ]);
+    }
+
+  
+    /**
+    * Get all payment itmes of a user
+     * AJAX
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getPaymentItems(Request $request, PaymentManager $paymentManager)
+    {
+        $paymentItems = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($paymentItems = $paymentManager->getPaymentItems($data['frequency'], $data['type'], $data['week'])) {
+                return new JsonResponse($paymentItems);
+            }
+        }
+        return new JsonResponse($paymentItems);
+    }
+
+    public function postPayments(Request $request, PaymentManager $paymentManager)
+    {
+        $paymentPayment = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+           
+            if ($paymentPayment = $paymentManager->postPaymentPayment($data['type'], $data['items'])) {
+                return new JsonResponse($paymentPayment);
+            }
+        }
+        return new JsonResponse($paymentPayment);
     }
 }

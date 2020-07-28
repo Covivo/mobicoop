@@ -5,7 +5,8 @@
  
 {% endblock %}
 {% block main %}
+
    <payment
-       :payment_electronic_active = "{{ payment_electronic_active ? "true" : "false" }}"
+       :payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
    />
 {% endblock %}
