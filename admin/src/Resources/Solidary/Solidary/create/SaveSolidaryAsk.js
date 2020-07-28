@@ -19,11 +19,6 @@ const SaveSolidaryAsk = ({ handleSubmitWithRedirect, ...props }) => {
 
   const handleClick = useCallback(() => {
     const { values } = form.getState();
-    // Alter proofs
-    form.change(
-      'proofs',
-      values.proofs && Object.keys(values.proofs).map((k) => ({ id: k, value: values.proofs[k] }))
-    );
     // Format datetimes objects
     form.change('outwardDatetime', dateObjectToString(values.outwardDatetime));
     form.change('outwardDeadlineDatetime', dateObjectToString(values.outwardDeadlineDatetime));
