@@ -64,7 +64,7 @@ const createActionPropsResolver = (dataProvider) => {
   const ensureSolidarySolutionId = createSolidarySolutionResolver(dataProvider);
 
   return async (action, { userId, solidary }) => {
-    if ([MESSAGE_CONTACT_OPTION, SMS_CONTACT_OPTION].includes(action)) {
+    if ([MESSAGE_CONTACT_OPTION, SMS_CONTACT_OPTION, ADDPOTENTIAL_OPTION].includes(action)) {
       return ensureSolidarySolutionId(userId, solidary).then((solidarySolutionId) => {
         if (solidarySolutionId) {
           return { solidarySolutionId, solidaryId: solidary.originId };
