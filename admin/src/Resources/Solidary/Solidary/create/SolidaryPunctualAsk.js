@@ -1,6 +1,7 @@
 import React from 'react';
 import { useField } from 'react-final-form';
 import { Box } from '@material-ui/core';
+
 import {
   DateTimeSelector,
   today,
@@ -10,8 +11,9 @@ import {
   setTimeFromString,
   setDateFromString,
 } from './DateTimeSelector';
+
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryNeeds from './SolidaryNeeds';
+import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 
 const fromDateChoices = [
   {
@@ -125,9 +127,7 @@ const SolidaryPunctualAsk = () => {
             depedencies={[outwardDatetime]}
           />
         </SolidaryQuestion>
-        <SolidaryQuestion question="Autres informations">
-          <SolidaryNeeds />
-        </SolidaryQuestion>
+        <SolidaryNeedsQuestion label="Autres informations" />
       </Box>
       <Box flex={1}>
         <SolidaryQuestion question="Récapitulatif">

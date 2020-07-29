@@ -43,7 +43,7 @@ export const ArticleShow = (props) => (
         <ArrayField source="sections" reference="sections" addLabel={false}>
           <Datagrid>
             <TextField source="title" label="Titre" />
-            <TextField source="subtitle" label="Sous-titre" />
+            <TextField source="subTitle" label="Sous-titre" />
             <TextField source="position" label="Position" />
             <SelectField source="status" label="Status" choices={statusChoices} />
             <ShowButton />

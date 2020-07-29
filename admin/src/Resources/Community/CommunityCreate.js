@@ -97,7 +97,7 @@ export const CommunityCreate = (props) => {
           source="updatedDate"
           label={translate('custom.label.community.updateDate')}
         />
-        <TextInput disabled source="status" label={translate('custom.label.community.status')} />
+        {/* <TextInput disabled source="status" label={translate('custom.label.community.status')} />*/}
         <ReferenceInput
           fullWidth
           source="user"

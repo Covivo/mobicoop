@@ -205,7 +205,7 @@ const SolidaryForm = (props) => {
               </Box>
               {activeStep === 4 && hasErrors ? (
                 <Alert severity="error">
-                  Le formulaire comporte des erreurs. Corrigez-les avant d&paos;enregistrer.
+                  Le formulaire comporte des erreurs. Corrigez-les avant d'enregistrer.
                 </Alert>
               ) : null}
               <Toolbar>
@@ -228,7 +228,7 @@ const SolidaryForm = (props) => {
                   {activeStep === 4 && (
                     <SaveSolidaryAsk
                       saving={formProps.saving}
-                      disabled={hasErrors}
+                      disabled={!!hasErrors}
                       handleSubmitWithRedirect={formProps.handleSubmitWithRedirect}
                     />
                   )}

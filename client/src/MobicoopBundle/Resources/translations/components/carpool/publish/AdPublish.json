@@ -96,7 +96,8 @@
         "participation": {
             "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
             "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage.",
-            "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié."
+            "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié.",
+            "text": "Les indications de prix indiquées issues de recommandations gouvernementales sont relatives à des trajet privés avec des véhicules privés, elles n’engagent en rien ni les participants, ni la plateforme et ni IBM. L'objectif du service étant uniquement de faciliter la mise en relation entre employé. Plus d'informations sur la <a href='/FAQ'>FAQ</a>."
         },
         "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
         "route": {
