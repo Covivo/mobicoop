@@ -291,6 +291,12 @@ class Ask
      */
     private $paymentStatus;
 
+    /**
+     * @var array The weeks with a pending payment.
+     * @Groups({"readPayment"})
+     */
+    private $weekItems;
+
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -605,6 +611,18 @@ class Ask
     public function setPaymentStatus(int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getWeekItems(): ?array
+    {
+        return $this->weekItems;
+    }
+
+    public function setWeekItems(array $weekItems): self
+    {
+        $this->weekItems = $weekItems;
 
         return $this;
     }

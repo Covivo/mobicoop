@@ -56,8 +56,12 @@
         cols="4"
       >
         <v-select
+          v-model="weekSelected"
           :items="periods"
+          item-value="week"
+          item-text="period"
           :label="$t('select.label')"
+          @change="getPayments"
         />
       </v-col>
     </v-row>
@@ -822,7 +826,8 @@ export default {
       nextKey: null,
       date: null,
       daysList: null,
-
+      loadingPage: false,
+     
       sumTopay:0,
       validPayment: false,
       modeOfPayment: null,
@@ -834,10 +839,12 @@ export default {
         "items": null
       },
 
+      periods: [
+      ],
+
       loading: false,
       disabledComponent: false,
       dialog: false,
-      periods: [],
       pricesElectronic: [],
       pricesByHand: [],
       paymentsByHandConfirmed: []
@@ -866,52 +873,57 @@ export default {
     }
   },
   mounted () {
-    // we set params
-    let params = {
-      'frequency':this.frequency,
-      'type':this.type,
-      'week':this.weekSelected
-    }
-    // we get all paymentItems
-    axios.post(this.$t("payments.getPayments"), params)
-      .then(res => {
-        this.paymentItems = res.data;
-
-        // we select the displayed paymentItems (selected, next and previous)
-        this.paymentItems.forEach((paymentItem, key) => {
-          paymentItem.paymentIsvalidated = false;
-          paymentItem.paymentDisabled = false;
-          paymentItem.modeOfPayment = false;
-          paymentItem.reported = paymentItem.unpaidDate ? true : false;
-          paymentItem.confirmed = false;
-          if (paymentItem.id == this.selectedItemId) {
-            // we set key and payment of the selected payment
-            this.selectedPaymentItem = paymentItem;
-            this.selectedKey = key;
-
-            // we set key and payment of the next payment
-            this.nextKey = (key + 1) <= (this.paymentItems.length - 1) ? (key + 1) : null;
-            this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
-
-            // we set key and payment of the previous payment
-            this.previousKey = (key - 1) > 0 ? (key - 1) : null;
-            this.previousPaymentItem = this.paymentItems[this.previousKey] ? this.paymentItems[this.previousKey] : null;
-            
-            // we format the date for punctual
-            this.formatDate(this.selectedPaymentItem);
-            // we calculate the amout to display
-            this.amoutTodisplay(this.selectedPaymentItem);
-            // we get all weeks to pay
-            this.getWeeksToPay(this.selectedPaymentItem.askId)
-            
-          }
-        });
-      });
+    this.getPayments();
   },
   created() {
     moment.locale(this.locale); 
   },
   methods: {
+    getPayments() {
+      this.loadingPage = true;
+      // we set params
+      let params = {
+        'frequency':this.frequency,
+        'type':this.type,
+        'week':this.weekSelected
+      }
+      // we get all paymentItems
+      axios.post(this.$t("payments.getPayments"), params)
+        .then(res => {
+          this.paymentItems = res.data;
+          this.selectedItemId = this.paymentItems[0].id;
+          // we select the displayed paymentItems (selected, next and previous)
+          this.paymentItems.forEach((paymentItem, key) => {
+            
+            paymentItem.paymentIsvalidated = false;
+            paymentItem.paymentDisabled = false;
+            paymentItem.modeOfPayment = false;
+            paymentItem.reported = paymentItem.unpaidDate ? true : false;
+            paymentItem.confirmed = false;
+            if (paymentItem.id == this.selectedItemId) {
+            // we set key and payment of the selected payment
+              this.selectedPaymentItem = paymentItem;
+              this.selectedKey = key;
+
+              // we set key and payment of the next payment
+              this.nextKey = (key + 1) <= (this.paymentItems.length - 1) ? (key + 1) : null;
+              this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
+
+              // we set key and payment of the previous payment
+              this.previousKey = (key - 1) > 0 ? (key - 1) : null;
+              this.previousPaymentItem = this.paymentItems[this.previousKey] ? this.paymentItems[this.previousKey] : null;
+            
+              // we format the date for punctual
+              this.formatDate(this.selectedPaymentItem);
+              // we calculate the amout to display
+              this.amoutTodisplay(this.selectedPaymentItem);
+              // we get all weeks to pay
+              this.getWeeksToPay(this.selectedPaymentItem.askId)
+            
+            }
+          });
+        });
+    },
     // method to update the dayslist of regular payment
     updateDaysList(daysList) {
       if (daysList.isOutward) {
@@ -966,9 +978,13 @@ export default {
       let params = {
         'askId':this.selectedPaymentItem.askId,
       }
-      // axios.post(this.$t(""), params)
-      //   .then(res => {
-      //     this.periods.push(res.data);});
+      axios.post(this.$t("payments.getWeeksToPay"), params)
+        .then(res => {
+          let weeks = res.data;
+          weeks.forEach((week) => {
+            this.periods.push({"period":this.$t("from")+moment(week.fromDate).format(this.$t("ll"))+this.$t("to")+moment(week.toDate).format(this.$t("ll")), "week":parseInt(week.numWeek.toString()+week.year.toString(), 10)})
+          });
+        });
     },
     // method when we click on next
     nextPayment() {

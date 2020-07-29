@@ -964,8 +964,8 @@ class AskManager
             }
         }
 
+        $ask->setWeekItems($nonValidatedWeeks);
 
-
-        return $nonValidatedWeeks;
+        return $ask;
     }
 }
