@@ -39,7 +39,6 @@ use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use App\Geography\Controller\AddressSearch;
 use App\RelayPoint\Entity\RelayPoint;
-use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
