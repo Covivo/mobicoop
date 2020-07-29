@@ -14,6 +14,7 @@ const SolidaryFrequency = ({ source, label, defaultValue }) => {
   const {
     input: { value, onChange },
   } = useField(source, { initialValue: defaultValue });
+
   return (
     <FormControlLabel
       control={

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useField } from 'react-final-form';
 import { Box } from '@material-ui/core';
+
 import {
   DateTimeSelector,
   today,
@@ -10,8 +11,9 @@ import {
   setTimeFromString,
   setDateFromString,
 } from './DateTimeSelector';
+
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryNeeds from './SolidaryNeeds';
+import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 
 const fromDateChoices = [
   {
@@ -114,11 +116,9 @@ const SolidaryPunctualAsk = () => {
         <SolidaryQuestion question="A quelle date souhaitez-vous partir ?">
           <DateTimeSelector type="date" choices={fromDateChoices} initialChoice={0} />
         </SolidaryQuestion>
-
         <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
           <DateTimeSelector type="time" choices={fromTimeChoices} initialChoice={0} />
         </SolidaryQuestion>
-
         <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
           <DateTimeSelector
             type="datetime-local"
@@ -127,19 +127,18 @@ const SolidaryPunctualAsk = () => {
             depedencies={[outwardDatetime]}
           />
         </SolidaryQuestion>
-
-        <SolidaryQuestion question="Autres informations">
-          <SolidaryNeeds />
-        </SolidaryQuestion>
+        <SolidaryNeedsQuestion label="Autres informations" />
       </Box>
       <Box flex={1}>
         <SolidaryQuestion question="Récapitulatif">
-          {outwardDatetime && <p>{`Départ : ${new Date(outwardDatetime).toLocaleString()} `}</p>}
-          {outwardDeadlineDatetime && (
-            <p>{`Départ limite : ${new Date(outwardDeadlineDatetime).toLocaleString()} `}</p>
-          )}
-          {returnDatetime && <p>{`Retour : ${new Date(returnDatetime).toLocaleString()} `}</p>}
-          {returnDatetime && <p>{`Marge : ${Math.round(marginDuration / 3600)} heures`}</p>}
+          {[
+            outwardDatetime && <p>{`Départ : ${new Date(outwardDatetime).toLocaleString()} `}</p>,
+            outwardDeadlineDatetime && (
+              <p>{`Départ limite : ${new Date(outwardDeadlineDatetime).toLocaleString()} `}</p>
+            ),
+            returnDatetime && <p>{`Retour : ${new Date(returnDatetime).toLocaleString()} `}</p>,
+            returnDatetime && <p>{`Marge : ${Math.round(marginDuration / 3600)} heures`}</p>,
+          ].filter((x) => x)}
         </SolidaryQuestion>
       </Box>
     </Box>

@@ -418,6 +418,11 @@ class UserManager
         $user->addUserAuthAssignment($userAuthAssignment);
 
 
+        // No password given, we generate one
+        if (is_null($user->getPassword())) {
+            $user->setPassword($this->randomPassword());
+        }
+        
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
             $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
@@ -1277,5 +1282,22 @@ class UserManager
         $user->setBankAccounts($bankAccounts);
         $user->setWallets($wallets);
         return $user;
+    }
+    
+    /**
+     * Generate a randomPassword
+     *
+     * @return string
+     */
+    private function randomPassword()
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 10; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 }

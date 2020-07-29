@@ -37,6 +37,18 @@ const customErrorHandler = (type, resource) => (error) => {
     }
   }
 
+  // Handle custom error message when error occured because of missing associated structure for current user
+  if (
+    type === GET_LIST &&
+    error.status === 500 &&
+    error.body &&
+    error.body['hydra:description'] === 'No structure found'
+  ) {
+    throw new Error(
+      "Aucune demande solidaire affichée car votre compte n'est associé à aucune structure accompagnante en tant qu'opérateur"
+    );
+  }
+
   throw error;
 };
 

@@ -22,9 +22,9 @@
 
 namespace App\Solidary\Service;
 
+use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
-use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Repository\SubjectRepository;
@@ -40,20 +40,20 @@ class StructureManager
     private $structureRepository;
     private $structureProofRepository;
     private $subjectRepository;
-    private $needRepository;
+    private $territoryRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         StructureProofRepository $structureProofRepository,
         StructureRepository $structureRepository,
         SubjectRepository $subjectRepository,
-        NeedRepository $needRepository
+        TerritoryRepository $territoryRepository
     ) {
         $this->entityManager = $entityManager;
         $this->structureRepository = $structureRepository;
         $this->structureProofRepository = $structureProofRepository;
         $this->subjectRepository = $subjectRepository;
-        $this->needRepository = $needRepository;
+        $this->territoryRepository = $territoryRepository;
     }
 
     /**
@@ -97,6 +97,9 @@ class StructureManager
      */
     public function getGeolocalisedStructures(float $lat, float $lon): ?array
     {
-        return $this->structureRepository->findAll();
+        // First, we retreive the territories containing $lat/$lon point
+        $territories = $this->territoryRepository->findPointTerritories($lat, $lon);
+
+        return $this->structureRepository->findByTerritories($territories);
     }
 }

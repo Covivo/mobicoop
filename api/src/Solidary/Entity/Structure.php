@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Geography\Entity\Territory;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -459,6 +460,15 @@ class Structure
      */
     private $operates;
 
+    /**
+     * @var ArrayCollection|null The Territories linked to this Structure
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $territories;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -470,6 +480,7 @@ class Structure
         $this->relayPoints = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->structureProofs = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -1102,7 +1113,6 @@ class Structure
         return $this;
     }
 
-
     /**
     * @return ArrayCollection|Operate[]
     */
@@ -1134,6 +1144,28 @@ class Structure
         return $this;
     }
 
+    public function getTerritories()
+    {
+        return $this->territories;
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories->add($territory);
+        }
+
+        return $this;
+    }
+
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
     

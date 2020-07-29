@@ -118,21 +118,22 @@ const GestionRoles = ({ record }) => {
     // Try to adapt with the following : https://marmelab.com/react-admin/Inputs.html#useinput-hook
     // We already use it in Resources/User/FiltersTraject 
     // Do the same in handleRemove and handleAddPair
-    form.change('familyName', 'familyName');
-    form.change('familyName', record.familyName);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   function handleRemove(i) {
     const values = [...fields];
     values.splice(i, 1);
     setFields(values);
-    form.change('familyName', 'familyName');
-    form.change('familyName', record.familyName);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
+
   }
 
   const handleAddPair = (indice, nature) => (e) => {
+
     const values = [...fields];
 
     if (nature === 'roles') values[indice]['roles'] = e.target.value;
@@ -143,8 +144,7 @@ const GestionRoles = ({ record }) => {
       values[indice]['roles'].splice(0, 1);
     }
     setFields(values);
-    form.change('familyName', 'familyName');
-    form.change('familyName', record.familyName);
+    form.change('hidden', Math.floor(Math.random() * Math.floor(500)));
     form.change('fields', fields);
   };
 
