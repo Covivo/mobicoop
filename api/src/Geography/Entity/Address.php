@@ -39,7 +39,6 @@ use App\Image\Entity\Icon;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use App\Geography\Controller\AddressSearch;
 use App\RelayPoint\Entity\RelayPoint;
-use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -337,13 +336,6 @@ class Address implements \JsonSerializable
      * @Groups({"read"})
      */
     private $community;
-
-    /**
-     * @var Structure|null If the address is a Structure address
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Structure", mappedBy="address")
-     * @MaxDepth(1)
-     */
-    private $structure;
 
     /**
      * @var Waypoint|null The waypoint of the address.
@@ -748,18 +740,6 @@ class Address implements \JsonSerializable
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-
-        return $this;
-    }
-
-    public function getStructure(): ?Structure
-    {
-        return $this->structure;
-    }
-
-    public function setStructure(?Structure $structure): self
-    {
-        $this->structure = $structure;
 
         return $this;
     }
