@@ -137,6 +137,12 @@ class PaymentManager
         return $response->getValue();
     }
 
+    /**
+     * Get weeks with a pending payment
+     *
+     * @param int $askId
+     * @return void
+     */
     public function getWeeks($askId)
     {
         $this->dataProvider->setClass(Ask::class);
