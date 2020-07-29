@@ -398,6 +398,12 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $paymentItemId;
 
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -1067,6 +1073,18 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1099,7 +1117,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'potentialCarpoolers' => $this->getPotentialCarpoolers(),
                 'asks' => $this->getAsks(),
                 'paymentStatus' => $this->getPaymentStatus(),
-                'paymentItemId' => $this->getPaymentItemId()
+                'paymentItemId' => $this->getPaymentItemId(),
+                'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null
             ];
     }
 }
