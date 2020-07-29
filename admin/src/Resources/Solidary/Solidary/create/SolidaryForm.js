@@ -58,6 +58,7 @@ const SolidaryForm = (props) => {
     { field: 'id', order: 'ASC' }
   );
   const proofs = Object.values(proofsList);
+
   // List of subjects
   const { data: subjectsList, loaded: subjectsLoaded } = useGetList(
     'subjects',
@@ -75,16 +76,36 @@ const SolidaryForm = (props) => {
       render={(formProps) => {
         const formState = formProps.form.getState();
         const frequencyRegular = formState.values && formState.values.frequency === 2;
+        const hasRegistredUser = formState.values.already_registered_user;
         const hasErrors = formState.errors && Object.keys(formState.errors).length;
 
-        const handleGoNext = (step) => () => {
+        const handleGoNext = (activeStep) => () => {
           const state = formProps.form.getState();
-          if (step === 1 && state.errors.proofs) {
+
+          if (activeStep === 1 && state.errors.proofs) {
             props.showNotification("Vous devez valider l'ensemble des preuves");
             return;
           }
 
+          // If user is registred, go to 3nd step directly
+          if (activeStep === 0 && !!state.values.already_registered_user) {
+            setActiveStep(3);
+            return;
+          }
+
           setActiveStep((s) => s + 1);
+        };
+
+        const handleGoBack = (activeStep) => () => {
+          const state = formProps.form.getState();
+
+          // If user is registred, go back to first step directly
+          if (activeStep <= 3 && !!state.values.already_registered_user) {
+            setActiveStep(0);
+            return;
+          }
+
+          return setActiveStep((s) => s - 1);
         };
 
         return (
@@ -128,28 +149,40 @@ const SolidaryForm = (props) => {
                   </ReferenceInput>
                 </SolidaryQuestion>
               </Box>
-              <Box
-                display={activeStep === 1 ? 'flex' : 'none'}
-                p="1rem"
-                flexDirection="column"
-                flexGrow={1}
-              >
-                <SolidaryQuestion question="Le demandeur est-il éligible ?">
-                  {proofs && proofs.length && proofsLoaded ? (
-                    proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
-                  ) : (
-                    <LinearProgress />
-                  )}
-                </SolidaryQuestion>
-              </Box>
-              <Box
-                display={activeStep === 2 ? 'flex' : 'none'}
-                p="1rem"
-                flexDirection="column"
-                flexGrow={1}
-              >
-                <SolidaryUserBeneficiaryCreateFields form={formProps.form} />
-              </Box>
+              {/*
+                 Keep existing system but disable validation for registred user.
+                 This way we're able to go back to the previous system in the future
+              */}
+              {!hasRegistredUser && (
+                <Box
+                  display={activeStep === 1 ? 'flex' : 'none'}
+                  p="1rem"
+                  flexDirection="column"
+                  flexGrow={1}
+                >
+                  <SolidaryQuestion question="Le demandeur est-il éligible ?">
+                    {proofs && proofs.length && proofsLoaded ? (
+                      proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
+                    ) : (
+                      <LinearProgress />
+                    )}
+                  </SolidaryQuestion>
+                </Box>
+              )}
+              {/*
+                 Keep existing system but disable validation for registred user.
+                 This way we're able to go back to the previous system in the future
+              */}
+              {!hasRegistredUser && (
+                <Box
+                  display={activeStep === 2 ? 'flex' : 'none'}
+                  p="1rem"
+                  flexDirection="column"
+                  flexGrow={1}
+                >
+                  <SolidaryUserBeneficiaryCreateFields form={formProps.form} />
+                </Box>
+              )}
               <Box display={activeStep === 3 ? 'flex' : 'none'} p="1rem" flexDirection="column">
                 <SolidaryQuestion question="Que voulez-vous faire ?">
                   {subjects && subjects.length && subjectsLoaded ? (
@@ -211,11 +244,7 @@ const SolidaryForm = (props) => {
               <Toolbar>
                 <Box display="flex" justifyContent="flex-start" width="100%">
                   {activeStep > 0 && (
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={() => setActiveStep((s) => s - 1)}
-                    >
+                    <Button variant="contained" color="default" onClick={handleGoBack(activeStep)}>
                       Précédent
                     </Button>
                   )}
