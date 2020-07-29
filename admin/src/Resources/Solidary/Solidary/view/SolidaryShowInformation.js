@@ -14,6 +14,7 @@ import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
 import { Trip } from './Trip';
 import { NeedsAndStructure } from './NeedsAndStructure';
 import { SolidaryProgress } from './SolidaryProgress';
+import can from '../../../../auth/permissions';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -47,17 +48,18 @@ const driverSearchOptions = [
     target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
   },
-  {
+  can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole aller',
     target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
-  {
+  can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole retour',
     target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
-];
+].filter((x) => x);
+
 const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
   const history = useHistory();
