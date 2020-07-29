@@ -7,13 +7,13 @@ import SolidaryNeeds from './SolidaryNeeds';
 import DayChipInput from './DayChipInput';
 import DateIntervalSelector from './DateIntervalSelector';
 
-const intervalChoices = [
+export const intervalChoices = [
   { id: 0, label: 'Sur une période fixe' },
   { id: 1, label: 'Pendant une semaine', offsetDays: 7, offsetMonth: 0 },
   { id: 2, label: 'Pendant un mois', offsetDays: 0, offsetMonth: 1 },
 ];
 
-const fromTimeChoices = [
+export const fromTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
@@ -41,7 +41,7 @@ const fromTimeChoices = [
   },
 ];
 
-const toTimeChoices = [
+export const toTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',

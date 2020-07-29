@@ -119,6 +119,19 @@ const fixManagedStructureData = (params) => ({
 });
 
 /**
+ * The backend submit "progression" attribute as string
+ * But it doesn't allows us to send it back as string
+ * So we must format it to a float
+ */
+const fixSolidaryData = (params) => ({
+  ...params,
+  data: {
+    ...params.data,
+    progression: params.data.progression ? parseFloat(params.data.progression) : null,
+  },
+});
+
+/**
  * The backend is not able to handle deep fields like diaries (and we don't need it)
  * So we omit somes unhandled fields
  */
@@ -306,6 +319,10 @@ export const dataProviderAdapter = (originalProvider) => ({
 
     if (resource === 'structures') {
       newParams = fixManagedStructureData(newParams);
+    }
+
+    if (resource === 'solidaries') {
+      newParams = fixSolidaryData(newParams);
     }
 
     return originalProvider.update(resource, newParams);
