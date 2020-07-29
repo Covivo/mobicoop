@@ -10,9 +10,15 @@ import {
   FormTab,
   SimpleFormIterator,
   SelectInput,
+  DeleteButton,
+  Datagrid,
+  TextField,
+  ReferenceArrayField,
   Toolbar,
   BooleanInput,
   ArrayInput,
+  ReferenceArrayInput,
+  SelectArrayInput,
 } from 'react-admin';
 
 import isAuthorized from '../../../auth/permissions';
@@ -65,6 +71,9 @@ export const StructureEdit = (props) => (
     <TabbedForm toolbar={<StructureEditToolbar />}>
       <FormTab label="Caractéristiques">
         <TextInput source="name" label="Nom" validate={required()} />
+        <ReferenceArrayInput source="territories" reference="territories">
+          <SelectArrayInput optionText="name" />
+        </ReferenceArrayInput>
       </FormTab>
       <FormTab label="Objet du déplacement">
         <ArrayInput label="" source="subjects">

@@ -110,6 +110,7 @@ const fixManagedStructureData = (params) => ({
       'eMaxTime',
       'needs',
       'subjects',
+      'territories',
     ]),
     structureProofs: params.data.structureProofs.map((structureProof) => ({
       ...structureProof,
