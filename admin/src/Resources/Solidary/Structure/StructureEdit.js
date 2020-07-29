@@ -15,6 +15,7 @@ import {
   ArrayInput,
 } from 'react-admin';
 
+import isAuthorized from '../../../auth/permissions';
 import { StructureTimeSlotsInput } from './Input/StructureTimeSlotsInput';
 import { proofTypeLabels } from '../../../constants/proofType';
 
@@ -62,11 +63,10 @@ const PositionInput = (props) => {
 export const StructureEdit = (props) => (
   <Edit {...props} title="Structures accompagnantes > éditer">
     <TabbedForm toolbar={<StructureEditToolbar />}>
-      <FormTab label="summary">
+      <FormTab label="Caractéristiques">
         <TextInput source="name" label="Nom" validate={required()} />
-        <StructureTimeSlotsInput />
       </FormTab>
-      <FormTab label="Object du déplacement">
+      <FormTab label="Objet du déplacement">
         <ArrayInput label="" source="subjects">
           <SimpleFormIterator>
             <TextInput source="label" label="Titre" />
@@ -98,6 +98,11 @@ export const StructureEdit = (props) => (
           </SimpleFormIterator>
         </ArrayInput>
       </FormTab>
+      {isAuthorized('solidary_volunteer_manage') && (
+        <FormTab label="Créneaux">
+          <StructureTimeSlotsInput />
+        </FormTab>
+      )}
     </TabbedForm>
   </Edit>
 );
