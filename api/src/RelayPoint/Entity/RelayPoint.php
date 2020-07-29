@@ -249,12 +249,11 @@ class RelayPoint
     private $structure;
 
     /**
-     * @var ArrayCollection|null The relay point types.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\RelayPoint\Entity\RelayPointType")
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType")
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
-    private $relayPointTypes;
+    private $relayPointType;
 
     /**
      * @var ArrayCollection|null The images of the relay point.
@@ -269,7 +268,6 @@ class RelayPoint
 
     public function __construct()
     {
-        $this->relayPointTypes = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
     
@@ -457,29 +455,6 @@ class RelayPoint
         return $this;
     }
 
-    public function getRelayPointTypes()
-    {
-        return $this->relayPointTypes->getValues();
-    }
-    
-    public function addRelayPointType(RelayPointType $relayPointType): self
-    {
-        if (!$this->relayPointTypes->contains($relayPointType)) {
-            $this->relayPointTypes[] = $relayPointType;
-        }
-        
-        return $this;
-    }
-    
-    public function removeRelayPointType(RelayPointType $relayPointType): self
-    {
-        if ($this->relayPointTypes->contains($relayPointType)) {
-            $this->relayPointTypes->removeElement($relayPointType);
-        }
-        
-        return $this;
-    }
-
     public function getImages()
     {
         return $this->images->getValues();
@@ -528,6 +503,18 @@ class RelayPoint
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getRelayPointType(): ?RelayPointType
+    {
+        return $this->relayPointType;
+    }
+
+    public function setRelayPointType(?RelayPointType $relayPointType): self
+    {
+        $this->relayPointType = $relayPointType;
 
         return $this;
     }

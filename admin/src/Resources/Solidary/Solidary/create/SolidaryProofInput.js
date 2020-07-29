@@ -7,26 +7,14 @@ const SolidaryProofInput = ({ record, ...rest }) => {
     ? [(value) => (!value ? 'Cette preuve est obligatoire' : undefined), required()]
     : undefined;
 
+  const source = `proofs.${record.id}`;
+
   if (record.checkbox) {
-    return (
-      <BooleanInput
-        validate={validate}
-        label={record.label}
-        source={`proofs.${record.id}`}
-        {...rest}
-      />
-    );
+    return <BooleanInput validate={validate} label={record.label} source={source} {...rest} />;
   }
 
   if (record.input) {
-    return (
-      <TextInput
-        validate={validate}
-        label={record.label}
-        source={`proofs.${record.id}`}
-        {...rest}
-      />
-    );
+    return <TextInput validate={validate} label={record.label} source={source} {...rest} />;
   }
 
   if (record.selectbox) {
@@ -35,7 +23,7 @@ const SolidaryProofInput = ({ record, ...rest }) => {
     return (
       <SelectInput
         label={record.label}
-        source={`proofs.${record.id}`}
+        source={source}
         validate={validate}
         choices={record.acceptedValues
           .split(';')
@@ -48,7 +36,7 @@ const SolidaryProofInput = ({ record, ...rest }) => {
   if (record.file) {
     return (
       <FileInput
-        source={`proofs.${record.id}`}
+        source={source}
         label={record.label}
         validate={validate}
         accept="application/pdf"

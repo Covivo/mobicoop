@@ -84,4 +84,21 @@ class StructureRepository
     {
         return $this->repository->findAll();
     }
+
+    public function findByTerritories(array $territories)
+    {
+        // Get all the territory id
+        $territoriesId = [];
+        foreach ($territories as $territory) {
+            $territoriesId[] = $territory->getId();
+        }
+        
+        $query = $this->entityManager->createQuery("
+            SELECT s from App\Solidary\Entity\Structure s
+            inner join App\Geography\Entity\Territory t
+            where t.id in ('".implode("','", $territoriesId)."')
+        ");
+        
+        return $query->getResult();
+    }
 }

@@ -15,6 +15,8 @@ import {
 } from 'react-admin';
 
 import FullNameField from '../User/FullNameField';
+import { hasCommunityEditRight } from '.';
+import { isAdmin } from '../../auth/permissions';
 
 const CommunityFilter = (props) => (
   <Filter {...props}>
@@ -24,12 +26,14 @@ const CommunityFilter = (props) => (
 const CommunityPanel = ({ id, record, resource }) => (
   <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
 );
+
 export const CommunityList = (props) => {
   const translate = useTranslate();
 
   return (
     <List
       {...props}
+      hasCreate={isAdmin()}
       title="Communautés > liste"
       perPage={25}
       filters={<CommunityFilter />}
@@ -49,7 +53,7 @@ export const CommunityList = (props) => {
         />
         <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
         <ShowButton />
-        <EditButton />
+        {hasCommunityEditRight() && <EditButton />}
       </Datagrid>
     </List>
   );

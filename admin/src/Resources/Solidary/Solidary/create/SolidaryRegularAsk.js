@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
+
 import { DateTimeSelector, setHours, addHours, setTimeFromString } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryNeeds from './SolidaryNeeds';
 import DayChipInput from './DayChipInput';
 import DateIntervalSelector from './DateIntervalSelector';
+import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 
 export const intervalChoices = [
   { id: 0, label: 'Sur une période fixe' },
@@ -80,7 +81,6 @@ const SolidaryRegularAsk = ({ form }) => {
           <DayChipInput source="days.sun" label="D" />
         </Box>
       </SolidaryQuestion>
-
       <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
         <DateTimeSelector
           form={form}
@@ -92,7 +92,6 @@ const SolidaryRegularAsk = ({ form }) => {
           initialChoice={0}
         />
       </SolidaryQuestion>
-
       <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
         <DateTimeSelector
           form={form}
@@ -103,7 +102,6 @@ const SolidaryRegularAsk = ({ form }) => {
           initialChoice={4}
         />
       </SolidaryQuestion>
-
       <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
         <DateIntervalSelector
           type="date"
@@ -113,10 +111,7 @@ const SolidaryRegularAsk = ({ form }) => {
           initialChoice={0}
         />
       </SolidaryQuestion>
-
-      <SolidaryQuestion question="Autres informations">
-        <SolidaryNeeds />
-      </SolidaryQuestion>
+      <SolidaryNeedsQuestion label="Autres informations" />
     </>
   );
 };

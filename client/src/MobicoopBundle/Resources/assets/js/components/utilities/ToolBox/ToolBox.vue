@@ -26,6 +26,7 @@
         <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
+
     <v-row 
       v-if="items.length>0"
       align="center"
