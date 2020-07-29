@@ -16,6 +16,11 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    structures: {
+      fields: {
+        territories: 'Territoires',
+      },
+    },
     solidary_beneficiaries: {
       fields: {
         id: 'ID',
