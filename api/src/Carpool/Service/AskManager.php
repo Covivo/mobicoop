@@ -748,6 +748,7 @@ class AskManager
             $askWithPaymentStatus = $this->getPaymentStatus($askId);
             $ad->setPaymentStatus($askWithPaymentStatus->getPaymentStatus());
             $ad->setPaymentItemId($askWithPaymentStatus->getPaymentItemId());
+            $ad->setUnpaidDate($askWithPaymentStatus->getUnpaidDate());
         }
 
         // first pass for role
@@ -863,8 +864,9 @@ class AskManager
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
 
             // If the status is Unpaid, it's the same for driver or passenger
-            if ($carpoolItem->getDebtorStatus()==CarpoolItem::CREDITOR_STATUS_UNPAID) {
+            if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_UNPAID) {
                 $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
                     // Driver point of vue
@@ -894,12 +896,14 @@ class AskManager
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
                 if ($nonValidatedWeek->getStatus() == WeekItem::STATUS_UNPAID) {
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                    $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
+                    $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
+                    break;
                 } elseif ($nonValidatedWeek->getStatus() == WeekItem::STATUS_PENDING) {
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
                 }
 
                 $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
-                break;
             }
         }
 
@@ -941,6 +945,7 @@ class AskManager
         // For each week we need to determine all day are confirmed. If not, the week is still in payement
         $nonValidatedWeeks = [];
         $firstCarpoolItem = null;
+        $unpaidDate = null;
         foreach ($arrayWeeks as $currentWeek) {
             $validatedWeek = false;
             $unpaidDetected = false;
@@ -953,6 +958,7 @@ class AskManager
                     }
                     if (!is_null($carpoolItem->getUnpaidDate())) {
                         $unpaidDetected = true;
+                        $unpaidDate = $carpoolItem->getUnpaidDate();
                         break;
                     }
                     
@@ -972,6 +978,7 @@ class AskManager
                 $weekItem->setYear($currentWeek[0]->format('Y'));
                 $weekItem->setStatus(WeekItem::STATUS_PENDING);
                 $weekItem->setPaymentItemId($firstCarpoolItem->getId());
+                $weekItem->setUnpaidDate($unpaidDate);
                 if ($unpaidDetected) {
                     $weekItem->setStatus(WeekItem::STATUS_UNPAID);
                 }

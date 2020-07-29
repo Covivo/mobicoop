@@ -292,10 +292,16 @@ class Ask
     private $paymentStatus;
 
     /**
-     * @var int|null The id of the PaymentItem of the Ad
+     * @var int|null The id of the PaymentItem of the Ask
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentItemId;
+
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ask
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
 
     public function __construct()
     {
@@ -627,6 +633,18 @@ class Ask
         return $this;
     }
     
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**

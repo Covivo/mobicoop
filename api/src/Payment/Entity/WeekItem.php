@@ -81,6 +81,12 @@ class WeekItem
      */
     private $paymentItemId;
 
+    /**
+     * @var int|null The paymentItem id of this Week
+     * @Groups({"readPayment"})
+     */
+    private $unpaidDate;
+
     public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
@@ -149,6 +155,18 @@ class WeekItem
     public function setPaymentItemId(?int $paymentItemId): self
     {
         $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }
