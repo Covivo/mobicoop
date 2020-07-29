@@ -61,9 +61,10 @@ const SolidarySearchFilter = (props) => (
 const ActionsDropDown = ({ record, ...props }) => {
   // @TODO: Will work when authorId is available on the API
   // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
-  const isAlreadySelected = props.solidary.solutions.find(
-    (s) => s.UserId === record.solidaryResultCarpool.authorId
-  );
+  const isAlreadySelected =
+    props.solidary &&
+    Array.isArray(props.solidary.solutions) &&
+    props.solidary.solutions.find((s) => s.UserId === record.solidaryResultCarpool.authorId);
 
   return (
     <SolidaryUserVolunteerActionDropDown
