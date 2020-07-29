@@ -1634,7 +1634,7 @@ class AdManager
                             }
                         }
                     }
-
+                    $ad->setPaymentItemId($askAd->getPaymentItemId());
 
                     $ads[] = $ad;
                 }

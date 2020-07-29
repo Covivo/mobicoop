@@ -8,6 +8,7 @@
       :has-accepted-ask="hasAtLeastOneAcceptedAsk"
       :has-ask="hasAtLeastOneAsk"
       :ad-id="ad.id"
+      :ad-frequency="ad.frequency"
       :is-carpool="true"
       :payment-status="ad.paymentStatus"
     />

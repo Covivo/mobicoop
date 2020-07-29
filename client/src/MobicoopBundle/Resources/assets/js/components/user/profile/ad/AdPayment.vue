@@ -53,21 +53,20 @@ export default {
       type: Number,
       default: 1
     },
-    type: {
-      type: Number,
-      default: 1
-    }
   },
   data(){
     return {
       disabled:false,
-      unpaid:false
+      unpaid:false,
     }
   },
   computed: {
     displayPaymentStatus(){
       let status = this.getStatus(this.paymentStatus);
       return (this.isDriver) ? this.$t('driver.'+status) : this.$t('passenger.'+status);
+    },
+    type(){
+      return (this.isDriver) ? 2 : 1;
     }
   },
   methods:{

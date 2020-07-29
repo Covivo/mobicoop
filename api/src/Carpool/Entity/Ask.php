@@ -291,6 +291,12 @@ class Ask
      */
     private $paymentStatus;
 
+    /**
+     * @var int|null The id of the PaymentItem of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentItemId;
+
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -605,6 +611,18 @@ class Ask
     public function setPaymentStatus(int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
 
         return $this;
     }

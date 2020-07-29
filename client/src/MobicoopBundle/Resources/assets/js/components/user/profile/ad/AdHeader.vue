@@ -139,6 +139,7 @@
           :is-driver="isDriver"
           :is-passenger="isPassenger"
           :payment-status="paymentStatus"
+          :frequency="adFrequency"
           outlined
           show-unpaid
         />
@@ -223,6 +224,10 @@ export default {
       default: false
     },
     adId: {
+      type: Number,
+      default: null
+    },
+    adFrequency: {
       type: Number,
       default: null
     },
