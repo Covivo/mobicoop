@@ -7,6 +7,10 @@ export const ScheduleDaysField = ({ record, source }) => {
   const translate = useTranslate();
   const schedule = get(record, source);
 
+  if (!schedule) {
+    return null;
+  }
+
   return (
     <span>
       {Object.keys(schedule)
