@@ -9,7 +9,7 @@
         rounded
         :outlined="outlined"
         :disabled="disabled"
-        :href="$t('link', {'id':this.itemId,'frequency':this.frequency,'type':this.type})"
+        :href="$t('link', {'id':this.paymentItemId,'frequency':this.frequency,'type':this.type})"
       >
         {{ displayPaymentStatus }}
       </v-btn>          
@@ -45,7 +45,7 @@ export default {
       type: Boolean,
       default: false
     },
-    itemId: {
+    paymentItemId: {
       type: Number,
       default: 1
     },

@@ -741,7 +741,8 @@ class AskManager
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
         $ad->setOutwardLimitDate($ask->getCriteria()->getToDate());
-        
+        $ad->setFrequency($ask->getCriteria()->getFrequency());
+
         // If payment active we retreive the payement status of this ask
         if ($this->paymentActive) {
             $askWithPaymentStatus = $this->getPaymentStatus($askId);

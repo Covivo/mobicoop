@@ -392,6 +392,12 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $paymentStatus;
 
+    /**
+     * @var int|null The id of the PaymentItem of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentItemId;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -1049,6 +1055,18 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1080,7 +1098,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'frequency' => $this->getFrequency(),
                 'potentialCarpoolers' => $this->getPotentialCarpoolers(),
                 'asks' => $this->getAsks(),
-                'paymentStatus' => $this->getPaymentStatus()
+                'paymentStatus' => $this->getPaymentStatus(),
+                'paymentItemId' => $this->getPaymentItemId()
             ];
     }
 }

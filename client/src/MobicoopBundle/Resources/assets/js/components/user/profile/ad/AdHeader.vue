@@ -140,6 +140,7 @@
           :is-passenger="isPassenger"
           :payment-status="paymentStatus"
           :frequency="adFrequency"
+          :payment-item-id="paymentItemId"
           outlined
           show-unpaid
         />
@@ -244,6 +245,10 @@ export default {
       default: false
     },
     paymentStatus: {
+      type: Number,
+      default: null
+    },
+    paymentItemId: {
       type: Number,
       default: null
     }
