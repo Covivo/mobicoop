@@ -9,6 +9,7 @@
         rounded
         :outlined="outlined"
         :disabled="disabled"
+        :href="$t('link', {'id':this.itemId,'frequency':this.frequency,'type':this.type})"
       >
         {{ displayPaymentStatus }}
       </v-btn>          
@@ -43,7 +44,19 @@ export default {
     showUnpaid: {
       type: Boolean,
       default: false
-    }    
+    },
+    itemId: {
+      type: Number,
+      default: 1
+    },
+    frequency: {
+      type: Number,
+      default: 1
+    },
+    type: {
+      type: Number,
+      default: 1
+    }
   },
   data(){
     return {

@@ -1208,7 +1208,7 @@ class Ad
         return $this->paymentStatus;
     }
 
-    public function setPaymentStatus(int $paymentStatus): self
+    public function setPaymentStatus(?int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
 

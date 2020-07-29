@@ -851,7 +851,8 @@ class AskManager
             // Punctual journey, we just check if it's paid on this particular day
             $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
             if (is_null($carpoolItem)) {
-                throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
+                return $ask;
+                //throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
             }
 
             
