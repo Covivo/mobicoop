@@ -56,8 +56,12 @@
         cols="4"
       >
         <v-select
+          v-model="weekSelected"
           :items="periods"
+          item-value="week"
+          item-text="period"
           :label="$t('select.label')"
+          @change="getPayments"
         />
       </v-col>
     </v-row>
@@ -791,7 +795,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 2
+      default: 1
     },
     type: {
       type: Number,
@@ -799,7 +803,11 @@ export default {
     },
     selectedId: {
       type: Number,
-      default: 4
+      default: 3
+    },
+    weekToSelect: {
+      type: Number,
+      default: null
     },
   },
   data() {
@@ -822,24 +830,29 @@ export default {
       nextKey: null,
       date: null,
       daysList: null,
-
+     
       sumTopay:0,
       validPayment: false,
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: 292020,
+      weekSelected: this.weekToSelect,
       paymentPayment: {
         "type": this.type,  
         "items": null
       },
 
+      periods: [
+      ],
+
       loading: false,
       disabledComponent: false,
       dialog: false,
-      periods: [],
+      // array with all electronic payments selected
       pricesElectronic: [],
+      // array with all by hand payments selected
       pricesByHand: [],
+      // array with all by hand payments confirmed
       paymentsByHandConfirmed: []
     };
   },
@@ -866,52 +879,60 @@ export default {
     }
   },
   mounted () {
-    // we set params
-    let params = {
-      'frequency':this.frequency,
-      'type':this.type,
-      'week':this.weekSelected
-    }
-    // we get all paymentItems
-    axios.post(this.$t("payments.getPayments"), params)
-      .then(res => {
-        this.paymentItems = res.data;
-
-        // we select the displayed paymentItems (selected, next and previous)
-        this.paymentItems.forEach((paymentItem, key) => {
-          paymentItem.paymentIsvalidated = false;
-          paymentItem.paymentDisabled = false;
-          paymentItem.modeOfPayment = false;
-          paymentItem.reported = paymentItem.unpaidDate ? true : false;
-          paymentItem.confirmed = false;
-          if (paymentItem.id == this.selectedItemId) {
-            // we set key and payment of the selected payment
-            this.selectedPaymentItem = paymentItem;
-            this.selectedKey = key;
-
-            // we set key and payment of the next payment
-            this.nextKey = (key + 1) <= (this.paymentItems.length - 1) ? (key + 1) : null;
-            this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
-
-            // we set key and payment of the previous payment
-            this.previousKey = (key - 1) > 0 ? (key - 1) : null;
-            this.previousPaymentItem = this.paymentItems[this.previousKey] ? this.paymentItems[this.previousKey] : null;
-            
-            // we format the date for punctual
-            this.formatDate(this.selectedPaymentItem);
-            // we calculate the amout to display
-            this.amoutTodisplay(this.selectedPaymentItem);
-            // we get all weeks to pay
-            this.getWeeksToPay(this.selectedPaymentItem.askId)
-            
-          }
-        });
-      });
+    // we get the payments to poulate the page
+    this.getPayments();
   },
   created() {
     moment.locale(this.locale); 
   },
   methods: {
+    getPayments() {
+      // we set params
+      let params = {
+        'frequency':this.frequency,
+        'type':this.type,
+        'week':this.weekSelected
+      }
+      // we get all paymentItems
+      axios.post(this.$t("payments.getPayments"), params)
+        .then(res => {
+          this.paymentItems = res.data;
+          this.selectedItemId = this.paymentItems[0].id;
+          
+          // we select the displayed paymentItems (selected, next and previous)
+          this.paymentItems.forEach((paymentItem, key) => {
+            // we set dynamic parameters
+            paymentItem.paymentIsvalidated = false;
+            paymentItem.paymentDisabled = false;
+            paymentItem.modeOfPayment = false;
+            paymentItem.reported = paymentItem.unpaidDate ? true : false;
+            paymentItem.confirmed = false;
+
+            if (paymentItem.id == this.selectedItemId) {
+            // we set key and payment of the selected payment
+              this.selectedPaymentItem = paymentItem;
+              this.selectedKey = key;
+
+              // we set key and payment of the next payment
+              this.nextKey = (key + 1) <= (this.paymentItems.length - 1) ? (key + 1) : null;
+              this.nextPaymentItem = this.paymentItems[this.nextKey] ? this.paymentItems[this.nextKey] : null;
+
+              // we set key and payment of the previous payment
+              this.previousKey = (key - 1) > 0 ? (key - 1) : null;
+              this.previousPaymentItem = this.paymentItems[this.previousKey] ? this.paymentItems[this.previousKey] : null;
+            
+              // we format the date for punctual
+              this.formatDate(this.selectedPaymentItem);
+              // we calculate the amout to display
+              this.amoutTodisplay(this.selectedPaymentItem);
+              // we get all weeks to pay if regular
+              if (this.regular) {
+                this.getWeeksToPay(this.selectedPaymentItem.askId) 
+              }
+            }
+          });
+        });
+    },
     // method to update the dayslist of regular payment
     updateDaysList(daysList) {
       if (daysList.isOutward) {
@@ -931,6 +952,7 @@ export default {
         this.selectedPaymentItem.returnDays[5]['status'] = daysList.sat
         this.selectedPaymentItem.returnDays[6]['status'] = daysList.sun
       }
+      // we calculate the amout to display
       this.amoutTodisplay(this.selectedPaymentItem);
     },
     // method to format punctual date
@@ -962,13 +984,18 @@ export default {
         this.priceTravel = numberOutwardDays * paymentItem.outwardAmount +  numberReturnDays * paymentItem.returnAmount;
       }
     },
+    // method to get all weeks to pay for a payment
     getWeeksToPay () {
       let params = {
         'askId':this.selectedPaymentItem.askId,
       }
-      // axios.post(this.$t(""), params)
-      //   .then(res => {
-      //     this.periods.push(res.data);});
+      axios.post(this.$t("payments.getWeeksToPay"), params)
+        .then(res => {
+          let weeks = res.data;
+          weeks.forEach((week) => {
+            this.periods.push({"period":this.$t("from")+moment(week.fromDate).format(this.$t("ll"))+this.$t("to")+moment(week.toDate).format(this.$t("ll")), "week":parseInt(week.numWeek.toString()+week.year.toString(), 10)})
+          });
+        });
     },
     // method when we click on next
     nextPayment() {
@@ -993,7 +1020,9 @@ export default {
       this.nextKey = this.nextKey + 1;
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      // we calculate the new amout
       this.amoutTodisplay(this.selectedPaymentItem);
+      // we update several parameters
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
       this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
     },
@@ -1020,7 +1049,9 @@ export default {
       }
       // we set date of new selected payment 
       this.formatDate(this.selectedPaymentItem);
+      // we calculate the new amout
       this.amoutTodisplay(this.selectedPaymentItem);
+      // we update several parameters
       this.validPayment = this.selectedPaymentItem.paymentIsvalidated;
       this.modeOfPayment = this.selectedPaymentItem.modeOfPayment;
 
@@ -1029,15 +1060,17 @@ export default {
     validatePayment(type) {
       this.selectedPaymentItem.paymentIsvalidated = true;
       this.selectedPaymentItem.paymentDisabled = true;
+      // if by hand payments
       if (type == 'byHand') {
         this.pricesByHand.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.modeOfPayment = 2;
+        // if electronic payments
       } else if (type == 'electronic') {
         this.pricesElectronic.push({ id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.modeOfPayment = 1;
         this.sumTopay = this.sumTopay + this.priceTravel;
+        // if it's confirmed payments
       } else if (type == 'confirmed') {
-        
         this.paymentsByHandConfirmed.push({id: this.selectedPaymentItem.id, name: this.selectedPaymentItem.givenName + ' ' + this.selectedPaymentItem.shortFamilyName, price: this.priceTravel });
         this.selectedPaymentItem.modeOfPayment = 2;
         this.selectedPaymentItem.confirmed = true;
@@ -1115,7 +1148,7 @@ export default {
         this.validatePayment('confirmed');
       }
     },
-    // method to send confirmed or reported payments to ddb
+    // method to send confirmed or payed payments to ddb
     sendValidatedPayments() {
       this.loading = true;
       this.disabledComponent = true;
@@ -1154,7 +1187,7 @@ export default {
           console.error(error);
         });
     },
-    // method to send confirmed or reported payments to ddb
+    // method to send reported payments to ddb
     sendReport() {
       this.loading = true;
       this.selectedPaymentItem.paymentIsvalidated = false;

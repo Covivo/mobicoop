@@ -79,6 +79,13 @@ class PaymentController extends AbstractController
         return new JsonResponse($paymentItems);
     }
 
+    /**
+     * Post payments
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
     public function postPayments(Request $request, PaymentManager $paymentManager)
     {
         $paymentPayment = null;
@@ -90,5 +97,24 @@ class PaymentController extends AbstractController
             }
         }
         return new JsonResponse($paymentPayment);
+    }
+
+    /**
+     * Get weeks with a pending payment
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getWeeks(Request $request, PaymentManager $paymentManager)
+    {
+        $weeks = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($weeks = $paymentManager->getWeeks($data['askId'])) {
+                return new JsonResponse($weeks);
+            }
+        }
+        return new JsonResponse($weeks);
     }
 }

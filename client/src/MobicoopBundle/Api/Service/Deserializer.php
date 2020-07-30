@@ -48,6 +48,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
@@ -188,6 +189,9 @@ class Deserializer
                 break;
             case PaymentPayment::class:
                 return $this->deserializePaymentPayment($data) ;
+                break;
+            case Ask::class:
+                return $this->deserializeAsk($data);
                 break;
             default:
                 break;
@@ -837,7 +841,13 @@ class Deserializer
         return $paymentPayment;
     }
 
+    private function deserializeAsk(array $data) : ?Ask
+    {
+        $ask = new Ask();
+        $ask = $this->autoSet($ask, $data);
 
+        return $ask;
+    }
 
     private function autoSet($object, $data)
     {

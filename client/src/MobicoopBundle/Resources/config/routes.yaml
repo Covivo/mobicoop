@@ -913,7 +913,7 @@ relay_point_list:
 # payment routes #
 ###############    
 
-# Get payment items of a user (POST)
+# Get payment items of a user (POST) AJAX
 payment_items_list:
     methods: [POST]
     path:
@@ -921,7 +921,7 @@ payment_items_list:
         en: /payments/get
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getPaymentItems
 
-# Get payment items of a user (POST)
+# Post payment items of a user (POST)
 payment_payments_post:
     methods: [POST]
     path:
@@ -936,7 +936,7 @@ payment_list:
         en: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
-# Get weeks to pay (POST)
+# Get weeks to pay (POST) AJAX
 payment_weeks_list:
     methods: [POST]
     path:

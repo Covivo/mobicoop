@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 
@@ -110,7 +111,7 @@ class PaymentManager
     }
 
     /**
-     * Undocumented function
+     * Post payments
      *
      * @param integer $type The payment type (1 = a payment to be made, 2 = a payment validation).
      * @param array $items The items concerned by the payment.
@@ -133,6 +134,23 @@ class PaymentManager
             return $response->getValue();
         }
 
+        return $response->getValue();
+    }
+
+    /**
+     * Get weeks with a pending payment
+     *
+     * @param int $askId
+     * @return void
+     */
+    public function getWeeks($askId)
+    {
+        $this->dataProvider->setClass(Ask::class);
+
+        $response = $this->dataProvider->getSpecialItem($askId, 'pendingPayment');
+        if ($response->getCode() != 201) {
+            return $response->getValue()->getWeekItems();
+        }
         return $response->getValue();
     }
 }
