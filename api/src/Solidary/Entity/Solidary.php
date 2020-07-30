@@ -600,12 +600,12 @@ class Solidary
     }
 
 
-    public function getHomeAddress(): array
+    public function getHomeAddress(): ?array
     {
         return $this->homeAddress;
     }
     
-    public function setHomeAddress($homeAddress): self
+    public function setHomeAddress(?array $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
         
