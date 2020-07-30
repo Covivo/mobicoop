@@ -297,6 +297,18 @@ class Ask
      */
     private $weekItems;
 
+    /**
+    * @var int|null The id of the PaymentItem of the Ask
+    * @Groups({"read","readPaymentStatus"})
+    */
+    private $paymentItemId;
+
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ask
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
+
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -584,7 +596,7 @@ class Ask
         return $this->filters;
     }
 
-    public function setFilters(array $filters): self
+    public function setFilters(?array $filters): self
     {
         $this->filters = $filters;
 
@@ -596,7 +608,7 @@ class Ask
         return $this->solidaryAsk;
     }
 
-    public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
+    public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
 
@@ -608,7 +620,7 @@ class Ask
         return $this->paymentStatus;
     }
 
-    public function setPaymentStatus(int $paymentStatus): self
+    public function setPaymentStatus(?int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
 
@@ -620,13 +632,37 @@ class Ask
         return $this->weekItems;
     }
 
-    public function setWeekItems(array $weekItems): self
+    public function setWeekItems(?array $weekItems): self
     {
         $this->weekItems = $weekItems;
 
         return $this;
     }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
     
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**

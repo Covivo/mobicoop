@@ -1634,7 +1634,8 @@ class AdManager
                             }
                         }
                     }
-
+                    $ad->setPaymentItemId($askAd->getPaymentItemId());
+                    $ad->setUnpaidDate($askAd->getUnpaidDate());
 
                     $ads[] = $ad;
                 }

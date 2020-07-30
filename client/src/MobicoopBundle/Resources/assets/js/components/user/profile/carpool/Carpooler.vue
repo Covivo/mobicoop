@@ -120,9 +120,11 @@
         class="text-right"
       >
         <AdPayment
-          :is-driver="isDriver"
+          :is-driver="!isDriver"
           :is-passenger="isPassenger"
           :payment-status="ask.paymentStatus"
+          :frequency="ask.frequency"
+          :payment-item-id="ask.paymentItemId"
         />        
       </v-col>
     </v-row>
