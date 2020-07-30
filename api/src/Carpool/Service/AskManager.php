@@ -749,6 +749,7 @@ class AskManager
             $ad->setPaymentStatus($askWithPaymentStatus->getPaymentStatus());
             $ad->setPaymentItemId($askWithPaymentStatus->getPaymentItemId());
             $ad->setUnpaidDate($askWithPaymentStatus->getUnpaidDate());
+            $ad->setPaymentItemWeek($askWithPaymentStatus->getPaymentItemWeek());
         }
 
         // first pass for role
@@ -864,8 +865,8 @@ class AskManager
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
 
             // If the status is Unpaid, it's the same for driver or passenger
-            if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_UNPAID) {
-                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+            if (!is_null($carpoolItem->getUnpaidDate())) {
+                //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                 $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
@@ -895,16 +896,17 @@ class AskManager
             $askWithNonValidatedWeeks = $this->getNonValidatedWeeks($ask, $user);
             $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
-                if ($nonValidatedWeek->getStatus() == WeekItem::STATUS_UNPAID) {
-                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                if (!is_null($nonValidatedWeek->getUnpaidDate())) {
+                    //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                     $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
                     $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
+                    $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
                     break;
                 } elseif ($nonValidatedWeek->getStatus() == WeekItem::STATUS_PENDING) {
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
                 }
-
                 $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
+                $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
             }
         }
 
@@ -980,9 +982,9 @@ class AskManager
                 $weekItem->setStatus(WeekItem::STATUS_PENDING);
                 $weekItem->setPaymentItemId($firstCarpoolItem->getId());
                 $weekItem->setUnpaidDate($unpaidDate);
-                if ($unpaidDetected) {
-                    $weekItem->setStatus(WeekItem::STATUS_UNPAID);
-                }
+                // if ($unpaidDetected) {
+                //     $weekItem->setStatus(WeekItem::STATUS_UNPAID);
+                // }
                 $nonValidatedWeeks[] = $weekItem;
             }
         }

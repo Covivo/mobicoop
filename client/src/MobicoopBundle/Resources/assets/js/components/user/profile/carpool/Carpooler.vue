@@ -125,6 +125,7 @@
           :payment-status="ask.paymentStatus"
           :frequency="ask.frequency"
           :payment-item-id="ask.paymentItemId"
+          :week="ask.paymentItemWeek"
         />        
       </v-col>
     </v-row>

@@ -538,6 +538,12 @@ class Ad
     private $paymentItemId;
 
     /**
+    * @var int|null The default week of the PaymentItem
+    * @Groups({"read","readPaymentStatus"})
+    */
+    private $paymentItemWeek;
+
+    /**
      * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
      * @Groups({"read","readPaymentStatus"})
      */
@@ -1235,6 +1241,18 @@ class Ad
     public function setPaymentItemId(?int $paymentItemId): self
     {
         $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getPaymentItemWeek(): ?int
+    {
+        return $this->paymentItemWeek;
+    }
+
+    public function setPaymentItemWeek(?int $paymentItemWeek): self
+    {
+        $this->paymentItemWeek = $paymentItemWeek;
 
         return $this;
     }

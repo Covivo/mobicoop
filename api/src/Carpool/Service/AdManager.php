@@ -1624,8 +1624,9 @@ class AdManager
                     $ad->setPaymentStatus(Ask::PAYMENT_STATUS_PAID); // Default value : PAID
                     if ($this->params['paymentActive']) {
                         foreach ($ad->getAsks() as $askAd) {
-                            if ($askAd->getPaymentStatus() == Ask::PAYMENT_STATUS_UNPAID) {
+                            if (!is_null($askAd->getUnpaidDate())) {
                                 $ad->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                                $ad->setUnpaidDate($askAd->getUnpaidDate());
                                 break;
                             }
                             if ($askAd->getPaymentStatus() == Ask::PAYMENT_STATUS_PENDING) {
@@ -1635,7 +1636,7 @@ class AdManager
                         }
                     }
                     $ad->setPaymentItemId($askAd->getPaymentItemId());
-                    $ad->setUnpaidDate($askAd->getUnpaidDate());
+                    $ad->setPaymentItemWeek($askAd->getPaymentItemWeek());
 
                     $ads[] = $ad;
                 }

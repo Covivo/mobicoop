@@ -12,6 +12,8 @@
       :ad-frequency="ad.frequency"
       :is-carpool="true"
       :payment-status="ad.paymentStatus"
+      :payment-week="ad.paymentItemWeek"
+      :unpaid-date="ad.unpaidDate"
     />
 
     <v-card-text v-if="isRegular">

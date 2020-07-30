@@ -304,6 +304,12 @@ class Ask
     private $paymentItemId;
 
     /**
+    * @var int|null The default week of the PaymentItem
+    * @Groups({"read","readPaymentStatus"})
+    */
+    private $paymentItemWeek;
+
+    /**
      * @var \DateTimeInterface|null The date of an unpaid declaration for this Ask
      * @Groups({"read","readPaymentStatus"})
      */
@@ -651,6 +657,18 @@ class Ask
         return $this;
     }
     
+    public function getPaymentItemWeek(): ?int
+    {
+        return $this->paymentItemWeek;
+    }
+
+    public function setPaymentItemWeek(?int $paymentItemWeek): self
+    {
+        $this->paymentItemWeek = $paymentItemWeek;
+
+        return $this;
+    }
+
     public function getUnpaidDate(): ?\DateTimeInterface
     {
         return $this->unpaidDate;

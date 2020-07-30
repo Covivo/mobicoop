@@ -52,7 +52,7 @@ class PaymentController extends AbstractController
      * Display of the payment page
      *
      */
-    public function payment($id, $frequency, $type)
+    public function payment($id, $frequency, $type, $week=null)
     {
         if ($id == '' || $frequency == '' || $type == '') {
             throw new \LogicException("Missing parameters");
@@ -61,7 +61,8 @@ class PaymentController extends AbstractController
             "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false,
             "selectedId" => $id,
             "frequency" => $frequency,
-            "type" => $type
+            "type" => $type,
+            "week" => $week
         ]);
     }
 

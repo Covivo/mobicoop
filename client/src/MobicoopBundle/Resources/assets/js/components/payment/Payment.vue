@@ -804,6 +804,10 @@ export default {
     selectedId: {
       type: Number,
       default: null
+    },
+    week: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -832,7 +836,7 @@ export default {
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: null,
+      weekSelected: this.week,
       paymentPayment: {
         "type": this.type,  
         "items": null

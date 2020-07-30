@@ -394,9 +394,13 @@ class Ad implements ResourceInterface, \JsonSerializable
 
     /**
      * @var int|null The id of the PaymentItem of the Ad
-     * @Groups({"read","readPaymentStatus"})
      */
     private $paymentItemId;
+
+    /**
+    * @var int|null The default week of the PaymentItem
+    */
+    private $paymentItemWeek;
 
     /**
      * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
@@ -1073,6 +1077,18 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getPaymentItemWeek(): ?int
+    {
+        return $this->paymentItemWeek;
+    }
+
+    public function setPaymentItemWeek(?int $paymentItemWeek): self
+    {
+        $this->paymentItemWeek = $paymentItemWeek;
+
+        return $this;
+    }
+
     public function getUnpaidDate(): ?\DateTimeInterface
     {
         return $this->unpaidDate;
@@ -1118,6 +1134,7 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'asks' => $this->getAsks(),
                 'paymentStatus' => $this->getPaymentStatus(),
                 'paymentItemId' => $this->getPaymentItemId(),
+                'paymentItemWeek' => $this->getPaymentItemWeek(),
                 'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null
             ];
     }
