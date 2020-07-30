@@ -531,6 +531,18 @@ class Ad
      */
     private $paymentStatus;
 
+    /**
+     * @var int|null The id of the PaymentItem of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentItemId;
+
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1208,9 +1220,33 @@ class Ad
         return $this->paymentStatus;
     }
 
-    public function setPaymentStatus(int $paymentStatus): self
+    public function setPaymentStatus(?int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }

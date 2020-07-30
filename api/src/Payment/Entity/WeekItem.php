@@ -72,8 +72,20 @@ class WeekItem
     * 1 : payment receveid electronically
     * 2 : payment receveid manually
     * 3 : notified as unpaid
-     */
+    */
     private $status;
+
+    /**
+     * @var int|null The paymentItem id of this Week
+     * @Groups({"readPayment"})
+     */
+    private $paymentItemId;
+
+    /**
+     * @var int|null The paymentItem id of this Week
+     * @Groups({"readPayment"})
+     */
+    private $unpaidDate;
 
     public function getFromDate(): ?\DateTimeInterface
     {
@@ -131,6 +143,30 @@ class WeekItem
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }
