@@ -892,7 +892,8 @@ class AskManager
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PAID);
 
             // Regular journey. To be paid, all the previous week must have been confirmed
-            $nonValidatedWeeks = $this->getNonValidatedWeeks($ask, $user);
+            $askWithNonValidatedWeeks = $this->getNonValidatedWeeks($ask, $user);
+            $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
                 if ($nonValidatedWeek->getStatus() == WeekItem::STATUS_UNPAID) {
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
@@ -917,7 +918,7 @@ class AskManager
      * Get the non validated weeks of an Ask
      *
      * @param Ask $ask
-     * @return WeekItem[]
+     * @return Ask
      */
     public function getNonValidatedWeeks(Ask $ask)
     {
