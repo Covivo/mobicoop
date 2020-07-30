@@ -52,10 +52,17 @@ class PaymentController extends AbstractController
      * Display of the payment page
      *
      */
-    public function payment(Request $request)
+    public function payment($id, $frequency, $type, $week=null)
     {
+        if ($id == '' || $frequency == '' || $type == '') {
+            throw new \LogicException("Missing parameters");
+        }
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false
+            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false,
+            "selectedId" => $id,
+            "frequency" => $frequency,
+            "type" => $type,
+            "week" => $week
         ]);
     }
 

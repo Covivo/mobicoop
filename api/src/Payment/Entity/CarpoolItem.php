@@ -47,7 +47,7 @@ class CarpoolItem
     const CREDITOR_STATUS_PENDING = 0;
     const CREDITOR_STATUS_ONLINE = 1;
     const CREDITOR_STATUS_DIRECT = 2;
-    const CREDITOR_STATUS_UNPAID = 3;
+    //const CREDITOR_STATUS_UNPAID = 3;
 
     /**
      * @var int The id of this item.
@@ -111,7 +111,6 @@ class CarpoolItem
      * 0 : waiting for payment
      * 1 : payment receveid electronically
      * 2 : payment receveid manually
-     * 3 : notified as unpaid
      *
      * @ORM\Column(type="smallint")
      */

@@ -1,19 +1,27 @@
 <template>
   <v-container>
-    <div>
-      <div v-if="showUnpaid && unpaid">
-        Impayé
-      </div>
-      <v-btn
-        color="primary"
-        rounded
-        :outlined="outlined"
-        :disabled="disabled"
-        :href="$t('link', {'id':this.paymentItemId,'frequency':this.frequency,'type':this.type})"
+    <v-row>
+      <v-col
+        v-if="showUnpaid && unpaid"
+        class="warning--text"
+        align-self="center"
       >
-        {{ displayPaymentStatus }}
-      </v-btn>          
-    </div>
+        <v-icon class="warning--text">
+          mdi-alert-outline
+        </v-icon> {{ $t('unpaid') }}
+      </v-col>
+      <v-col>
+        <v-btn
+          color="primary"
+          rounded
+          :outlined="outlined"
+          :disabled="disabled"
+          :href="$t('link', {'id':this.paymentItemId,'frequency':this.frequency,'type':this.type,'week':this.week})"
+        >
+          {{ displayPaymentStatus }}
+        </v-btn>
+      </v-col>         
+    </v-row>
   </v-container>
 </template>      
 <script>
@@ -41,6 +49,10 @@ export default {
       type: Boolean,
       default: false
     },
+    unpaidDate: {
+      type: String,
+      default: null
+    },
     showUnpaid: {
       type: Boolean,
       default: false
@@ -53,11 +65,15 @@ export default {
       type: Number,
       default: 1
     },
+    week: {
+      type: Number,
+      default: null
+    }    
   },
   data(){
     return {
       disabled:false,
-      unpaid:false,
+      unpaid:(this.unpaidDate) ? true : false,
     }
   },
   computed: {
@@ -67,13 +83,12 @@ export default {
     },
     type(){
       return (this.isDriver) ? 2 : 1;
-    }
+    },
   },
   methods:{
     getStatus(paymentStatus){
       if(paymentStatus=="0" || paymentStatus=="3"){
         // Pending or Unpaid
-        if(this.paymentStatus=="3"){this.unpaid = true}
         return "pending";
       }
       else if(paymentStatus=="1" || paymentStatus=="2" || paymentStatus=="4"){

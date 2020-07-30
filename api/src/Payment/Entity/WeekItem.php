@@ -61,7 +61,7 @@ class WeekItem
     private $numWeek;
 
     /**
-     * @var string|null The year of the item
+     * @var int|null The year of the item
      *
      * @Groups({"readPayment"})
      */

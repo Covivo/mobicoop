@@ -8,5 +8,9 @@
 
    <payment
        :payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
+       :selected-id = "{{ selectedId }}"
+       :frequency = "{{ frequency }}"
+       :type = "{{ type }}"
+       :week = "{{ week|json_encode }}"
    />
 {% endblock %}

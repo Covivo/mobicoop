@@ -141,6 +141,8 @@
           :payment-status="paymentStatus"
           :frequency="adFrequency"
           :payment-item-id="paymentItemId"
+          :week="paymentWeek"
+          :unpaid-date="unpaidDate"
           outlined
           show-unpaid
         />
@@ -251,7 +253,15 @@ export default {
     paymentItemId: {
       type: Number,
       default: null
-    }
+    },
+    paymentWeek: {
+      type: Number,
+      default: null
+    },
+    unpaidDate: {
+      type: String,
+      default: null
+    }    
   },
   data () {
     return {

@@ -795,20 +795,20 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 1
+      default: null
     },
     type: {
       type: Number,
-      default:1
+      default: null
     },
     selectedId: {
       type: Number,
-      default: 3
-    },
-    weekToSelect: {
-      type: Number,
       default: null
     },
+    week: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -836,7 +836,7 @@ export default {
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: this.weekToSelect,
+      weekSelected: this.week,
       paymentPayment: {
         "type": this.type,  
         "items": null
@@ -879,7 +879,8 @@ export default {
     }
   },
   mounted () {
-    // we get the payments to poulate the page
+  
+    // we get the payments to populate the page
     this.getPayments();
   },
   created() {
