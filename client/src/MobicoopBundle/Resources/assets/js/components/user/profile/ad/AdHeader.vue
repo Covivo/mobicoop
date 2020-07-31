@@ -145,6 +145,7 @@
           :unpaid-date="unpaidDate"
           outlined
           show-unpaid
+          hide-button
         />
       </v-col>
     </v-row>
