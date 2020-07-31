@@ -972,7 +972,7 @@ class AskManager
                 }
             }
 
-            if (!$validatedWeek || $unpaidDetected && !is_null($firstCarpoolItem)) {
+            if ((!$validatedWeek || $unpaidDetected) && !is_null($firstCarpoolItem)) {
                 $weekItem = new WeekItem();
                 $weekItem->setFromDate($currentWeek[0]);
                 $weekItem->setToDate($currentWeek[count($currentWeek)-1]);
