@@ -806,7 +806,7 @@ export default {
       default: null
     },
     week: {
-      type: Number,
+      type: String,
       default: null
     }
   },
@@ -836,7 +836,7 @@ export default {
       modeOfPayment: null,
       priceTravel: null,
 
-      weekSelected: this.week,
+      weekSelected: parseInt(this.week),
       paymentPayment: {
         "type": this.type,  
         "items": null
@@ -873,7 +873,7 @@ export default {
       }
     },
     paymentsByHandConfirmed() {
-      if (this.paymentsByHandConfirmed == 0) {
+      if (this.paymentsByHandConfirmed === 0) {
         this.paymentsByHandConfirmed = [];
       }
     }
