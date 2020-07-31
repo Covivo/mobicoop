@@ -10,7 +10,7 @@
           mdi-alert-outline
         </v-icon> {{ $t('unpaid') }}
       </v-col>
-      <v-col>
+      <v-col v-if="!hideButton">
         <v-btn
           color="primary"
           rounded
@@ -54,6 +54,10 @@ export default {
       default: null
     },
     showUnpaid: {
+      type: Boolean,
+      default: false
+    },
+    hideButton: {
       type: Boolean,
       default: false
     },

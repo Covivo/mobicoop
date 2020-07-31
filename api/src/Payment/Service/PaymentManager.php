@@ -231,7 +231,7 @@ class PaymentManager
             // default value
             $paymentItem->setElectronicallyPayable(false);
 
-            if ($this->paymentActive) {
+            if ($this->paymentActive && $this->provider !== "") {
                 $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
                 if (is_null($paymentProfile) || count($paymentProfile)==0) {
                     $paymentItem->setElectronicallyPayable(false);
