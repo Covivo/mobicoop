@@ -954,7 +954,6 @@ class AskManager
             $unpaidDetected = false;
             foreach ($currentWeek as $currentDay) {
                 $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $currentDay);
-                
                 if (!is_null($carpoolItem)) {
                     if (is_null($firstCarpoolItem)) {
                         $firstCarpoolItem = $carpoolItem;
@@ -973,7 +972,7 @@ class AskManager
                 }
             }
 
-            if (!$validatedWeek || $unpaidDetected) {
+            if (!$validatedWeek || $unpaidDetected && !is_null($firstCarpoolItem)) {
                 $weekItem = new WeekItem();
                 $weekItem->setFromDate($currentWeek[0]);
                 $weekItem->setToDate($currentWeek[count($currentWeek)-1]);
