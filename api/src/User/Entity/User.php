@@ -1084,6 +1084,13 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
+     * @var array|null used to get the structures of a user
+     * @Groups({"readUser", "write"})
+     * @MaxDepth(1)
+     */
+    private $solidaryStructures;
+
+    /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
      * @Groups({"readUserAdmin" })
      */
@@ -1150,6 +1157,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->solidaryStructures = [];
         $this->roles = [];
         $this->bankAccounts = [];
         $this->wallets = [];
@@ -2566,21 +2574,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    /**
-     * Get User Solidary Structures
-     * @Groups({"readUser", "write"})
-     * @MaxDepth(1)
-     */
     public function getSolidaryStructures()
     {
-        $structures = [];
-        if (!is_null($this->getOperates())) {
-            foreach ($this->getOperates() as $operate) {
-                $structures[] = $operate->getStructure();
-            }
-        }
-
-        return $structures;
+        return $this->solidaryStructures;
     }
 
     public function setSolidaryStructures(?array $solidaryStructures): self
