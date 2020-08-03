@@ -72,6 +72,8 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
               <Grid item xs={6}>
                 <SelectInput
                   source="user"
+                  style={{ width: 300 }}
+                  label="Conducteur potentiel"
                   choices={(solidary.solutions || []).map((solution) => ({
                     id: solution.UserId,
                     name: solution.GivenName
