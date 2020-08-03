@@ -49,7 +49,7 @@ const SwitchableFieldsSelectInput = ({ source, record }) => {
   return (
     <SelectInput
       source={`switchable_${source}`}
-      label="Type de preuve"
+      label="Type"
       initialValue={currentKey}
       onChange={handleChange}
       choices={Object.keys(proofTypeLabels).map((id) => ({
@@ -91,10 +91,11 @@ export const StructureEdit = (props) => (
             <BooleanInput label="Obligatoire" source="mandatory" />
             <SelectInput
               source="type"
-              label="Sujet de la preuve"
+              label="Critère demandé au"
+              required
               choices={[
-                { id: 1, name: 'Solidary Requester' },
-                { id: 2, name: 'Volunteer' },
+                { id: 1, name: 'Demandeur' },
+                { id: 2, name: 'Bénévole' },
               ]}
             />
           </SimpleFormIterator>
