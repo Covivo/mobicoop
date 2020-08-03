@@ -49,6 +49,10 @@ const customErrorHandler = (type, resource) => (error) => {
     );
   }
 
+  if (error.body && error.body['hydra:description']) {
+    throw new Error(error.body['hydra:description']);
+  }
+
   throw error;
 };
 
