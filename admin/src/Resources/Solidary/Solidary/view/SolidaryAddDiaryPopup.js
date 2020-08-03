@@ -66,7 +66,7 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
                   reference="actions"
                   filterToQuery={() => ({ type: 'solidary' })}
                 >
-                  <SelectInput optionText="name" />
+                  <SelectInput optionText={(o) => translate(`custom.actions.${o.name}`)} />
                 </ReferenceInput>
               </Grid>
               <Grid item xs={6}>
