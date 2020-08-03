@@ -196,7 +196,7 @@ const SolidaryForm = (props) => {
                     <LinearProgress />
                   )}
                 </SolidaryQuestion>
-                <SolidaryQuestion question="Ou faut-il aller ?">
+                <SolidaryQuestion question="Où faut-il aller ?">
                   <RadioGroup
                     value={hasDestinationAddress}
                     onChange={(e) => setHasDestinationAddress(parseInt(e.target.value, 10))}
@@ -213,7 +213,7 @@ const SolidaryForm = (props) => {
                     />
                   </Box>
                 </SolidaryQuestion>
-                <SolidaryQuestion question="D'ou devez-vous partir ?">
+                <SolidaryQuestion question="D'où devez-vous partir ?">
                   <GeocompleteInput
                     fullWidth
                     source="origin"
