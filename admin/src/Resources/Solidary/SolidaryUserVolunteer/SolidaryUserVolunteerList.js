@@ -46,7 +46,7 @@ const SolidaryUserVolunteerFilter = (props) => (
   </Filter>
 );
 
-const ActionsDropDown = ({ record, ...props }) => {
+const ActionsDropDown = ({ record, onRefresh, ...props }) => {
   // @TODO: Shouldn't we retrieve the corresponding solution matchin instead of checking user ?
   const isAlreadySelected = props.solidary.solutions.find((s) => s.UserId === record.user.originId);
 
@@ -55,12 +55,13 @@ const ActionsDropDown = ({ record, ...props }) => {
       {...props}
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
       userId={record.user.originId}
+      onActionFinished={onRefresh}
     />
   );
 };
 
 export const SolidaryUserVolunteerListGuesser = (props) => {
-  const { solidary } = useSolidary(props.filterValues.solidary);
+  const { solidary, refresh } = useSolidary(props.filterValues.solidary);
 
   return (
     <List
@@ -87,7 +88,7 @@ export const SolidaryUserVolunteerListGuesser = (props) => {
         <DayField source="Fri" />
         <DayField source="Sat" />
         <DayField source="Sun" />
-        {solidary ? <ActionsDropDown solidary={solidary} /> : <EditButton />}
+        {solidary ? <ActionsDropDown solidary={solidary} onRefresh={refresh} /> : <EditButton />}
       </Datagrid>
     </List>
   );

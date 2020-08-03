@@ -86,7 +86,12 @@ const AddSolidaryNotification = () => {
   return null;
 };
 
-export const SolidaryUserVolunteerActionDropDown = ({ solidary, userId, omittedOptions }) => {
+export const SolidaryUserVolunteerActionDropDown = ({
+  userId,
+  solidary,
+  omittedOptions,
+  onActionFinished,
+}) => {
   const [action, setAction] = useState(null);
   const [actionProps, setActionProps] = useState({});
   const [loading, setLoading] = useState(false);
@@ -111,9 +116,12 @@ export const SolidaryUserVolunteerActionDropDown = ({ solidary, userId, omittedO
       .then((actionProps) => {
         setAction(action);
         setActionProps(actionProps);
+        onActionFinished && onActionFinished(action);
       })
       .catch((e) => notify(e.message, 'warning'))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
