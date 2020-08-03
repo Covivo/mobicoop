@@ -65,8 +65,8 @@ final class StructureProofCollectionDataProvider implements CollectionDataProvid
         }
         
         // If the user whose making the request has a structure, we use its id
-        if (!empty($this->security->getUser()->getSolidaryStructures())) {
-            $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
+        if (!empty($this->security->getUser()->getOperates())) {
+            $structureId = $this->security->getUser()->getOperates()[0]->getStructure()->getId();
         }
 
         if (is_null($structureId)) {
