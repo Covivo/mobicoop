@@ -17,6 +17,7 @@ import {
   SelectArrayInput,
 } from 'react-admin';
 
+import hasPermission from '../../auth/permissions';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { addressRenderer } from '../../utils/renderers';
 import GestionRoles from './GestionRoles';
@@ -182,8 +183,8 @@ const UserEdit = (props) => {
           />
           <TextInput
             fullWidth
-            label=''
-            type='hidden'
+            label=""
+            type="hidden"
             source="hidden"
             formClassName={classes.hiddenInput}
           />
@@ -191,11 +192,13 @@ const UserEdit = (props) => {
         <FormTab label={translate('custom.label.user.manageRoles')}>
           <GestionRoles />
         </FormTab>
-        <FormTab label={translate('custom.label.user.structures')}>
-          <ReferenceArrayInput source="solidaryStructures" reference="structures">
-            <SelectArrayInput optionText="name" />
-          </ReferenceArrayInput>
-        </FormTab>
+        {hasPermission('TODO_REPLACE_21895_ASSIGN_A_STRUCTURE_TO_USER') && (
+          <FormTab label={translate('custom.label.user.structures')}>
+            <ReferenceArrayInput source="solidaryStructures" reference="structures">
+              <SelectArrayInput optionText="name" />
+            </ReferenceArrayInput>
+          </FormTab>
+        )}
       </TabbedForm>
     </Edit>
   );
