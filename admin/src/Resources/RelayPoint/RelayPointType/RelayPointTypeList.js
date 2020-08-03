@@ -1,5 +1,17 @@
 import React from 'react';
-import { List, Datagrid, TextInput, TextField, Filter, ShowButton, EditButton, ImageField } from 'react-admin';
+
+import {
+  List,
+  Datagrid,
+  TextInput,
+  TextField,
+  Filter,
+  ShowButton,
+  EditButton,
+  ImageField,
+} from 'react-admin';
+
+import { isAdmin } from '../../../auth/permissions';
 
 const RelayPointTypeFilter = (props) => (
   <Filter {...props}>
@@ -12,15 +24,13 @@ export const RelayPointTypeList = (props) => (
     title="Types de points relais > liste"
     perPage={25}
     filters={<RelayPointTypeFilter />}
+    exporter={isAdmin()}
     sort={{ field: 'originId', order: 'ASC' }}
   >
     <Datagrid>
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="name" label="Nom" />
-      <ImageField
-        label="Icon"
-        source="icon.url"
-      />
+      <ImageField label="Icon" source="icon.url" />
       <ShowButton />
       <EditButton />
     </Datagrid>

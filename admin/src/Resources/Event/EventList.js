@@ -1,5 +1,4 @@
 import React from 'react';
-import isAuthorized from '../../auth/permissions';
 import Paper from '@material-ui/core/Paper';
 
 import {
@@ -11,6 +10,8 @@ import {
   EditButton,
   useTranslate,
 } from 'react-admin';
+
+import isAuthorized, { isAdmin } from '../../auth/permissions';
 
 const EventPanel = ({ id, record, resource }) => (
   <Paper style={{ padding: '1rem' }}>
@@ -25,8 +26,9 @@ const EventPanel = ({ id, record, resource }) => (
 
 export const EventList = (props) => {
   const translate = useTranslate();
+
   return (
-    <List {...props} title="Evénement > liste" perPage={25}>
+    <List {...props} title="Evénement > liste" exporter={isAdmin()} perPage={25}>
       <Datagrid expand={<EventPanel />} rowClick="show">
         <ImageField
           label={translate('custom.label.event.image')}

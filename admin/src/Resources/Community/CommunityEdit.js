@@ -23,7 +23,6 @@ import {
   List,
   ReferenceField,
   ImageField,
-
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
