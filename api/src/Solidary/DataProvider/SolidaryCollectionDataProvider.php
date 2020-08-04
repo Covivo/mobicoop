@@ -58,7 +58,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         if ($operationName=="getMySolidaries") {
             return $this->solidaryManager->getMySolidaries($this->security->getUser());
         }
-        if (empty($this->security->getUser()->getOperates())) {
+        if (empty($this->security->getUser()->getSolidaryStructures())) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
         }
 
@@ -78,6 +78,6 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
                 throw new SolidaryException(SolidaryException::INVALID_PROGRESSION);
             }
         }
-        return $this->solidaryManager->getSolidaries($this->security->getUser()->getOperates()[0]->getStructure(), $solidaryUserId, $progression);
+        return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId, $progression);
     }
 }
