@@ -5,7 +5,7 @@ import { SolidaryMessagesModal } from '../SolidaryMessagesModal';
 import { SolidarySMSModal } from '../SolidarySMSModal';
 import { SolidaryFormalResponseModal } from './SolidaryFormalResponseModal';
 import { useSolidary } from '../hooks/useSolidary';
-// import { SOLIDARYASK_STATUS_ASKED } from '../../../../constants/solidaryAskStatus';
+import { SOLIDARYASK_STATUS_ASKED } from '../../../../constants/solidaryAskStatus';
 
 const SMS_CONTACT_OPTION = 'Envoyer directement un SMS';
 const MESSAGE_CONTACT_OPTION = 'Écrire vers sa messagerie';
@@ -19,8 +19,7 @@ const resolveOptions = (solidary, ask) => {
 
   return [
     ...options,
-    // Ticket 21890: Je rend l'option disponible, l'API doit pouvoir gérer une formal request sans avoir de ask existante pour autant
-    /* ask && ask.status === SOLIDARYASK_STATUS_ASKED && */ ASKFORRESPONSE_OPTION,
+    ask && ask.status === SOLIDARYASK_STATUS_ASKED && ASKFORRESPONSE_OPTION,
   ].filter((x) => x);
 };
 
