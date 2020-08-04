@@ -30,18 +30,16 @@ const fetchSuggestions = (input) => {
     });
 };
 
-const GeocompleteInput = (props) => {
-  const { classes } = props;
-
+const GeocompleteInput = ({ label, source, validate, classes, defaultValueText }) => {
   const form = useForm();
-  const fieldName = props.source || 'address';
+  const fieldName = source || 'address';
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const debouncedInput = useDebounce(input, 500);
 
   const formState = form.getState();
-  const errorMessage = props.validate(input);
+  const errorMessage = validate(input);
   const errorState = !!(formState.submitFailed && errorMessage);
 
   useEffect(() => {
@@ -62,9 +60,10 @@ const GeocompleteInput = (props) => {
 
   return (
     <FormDataConsumer>
-      {({ dispatch, ...rest }) => (
+      {({ dispatch, formData, ...rest }) => (
         <div className={classes.root}>
           <Downshift
+            initialInputValue={defaultValueText}
             onInputValueChange={(inputValue) => setInput(inputValue ? inputValue.trim() : '')}
             onSelect={(selectedItem, stateAndHelpers) => {
               const address = suggestions.find((element) => element.displayLabel === selectedItem);
@@ -98,20 +97,18 @@ const GeocompleteInput = (props) => {
             {({ getInputProps, getItemProps, isOpen, selectedItem, highlightedIndex }) => (
               <div className={classes.container}>
                 <TextField
-                  label={props.label || 'Adresse'}
+                  label={label || 'Adresse'}
                   className={classes.input}
                   variant="filled"
                   required
+                  source={`${fieldName}.county`}
                   error={errorState}
                   helperText={errorState && errorMessage}
-                  InputProps={{
-                    ...getInputProps({
-                      placeholder: 'Entrer une adresse',
-                    }),
-                  }}
+                  InputProps={getInputProps({
+                    placeholder: 'Entrer une adresse',
+                  })}
                   fullWidth
                 />
-
                 {isOpen ? (
                   <Paper className={classes.paper} square>
                     {suggestions.map((suggestion, index) => (
