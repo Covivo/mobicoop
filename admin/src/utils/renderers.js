@@ -21,3 +21,14 @@ export const solidaryLabelRenderer = ({ record }) =>
           : ''
       }`
     : '';
+
+export const solidaryJourneyRenderer = (solidary) =>
+  solidary.origin &&
+  solidary.destination &&
+  solidary.origin.addressLocality &&
+  solidary.destination.addressLocality
+    ? journeyRenderer({
+        origin: solidary.origin.addressLocality,
+        destination: solidary.destination.addressLocality,
+      })
+    : null;

@@ -16,7 +16,7 @@ import {
   ReferenceField,
 } from 'react-admin';
 
-import { usernameRenderer } from '../../../../utils/renderers';
+import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
 import { isAdmin } from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
@@ -53,6 +53,8 @@ const SolidaryFilter = (props) => (
   </Filter>
 );
 
+const renderDisplayLabel = (solidary) => solidaryJourneyRenderer(solidary) || solidary.displayLabel;
+
 export const SolidaryList = (props) => (
   <List
     {...props}
@@ -66,7 +68,7 @@ export const SolidaryList = (props) => (
       <TextField source="originId" label="ID" />
       {/* <TextField source="subject.label" /> */}
       <SubjectField />
-      <TextField source="displayLabel" />
+      <FunctionField label="displayLabel" render={renderDisplayLabel} />
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />
