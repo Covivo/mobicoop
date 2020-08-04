@@ -20,45 +20,49 @@ import { DayField } from './Field/DayField';
 import { RoleField } from './Field/RoleField';
 import { ScheduleDaysField } from './Field/ScheduleDaysField';
 import { useSolidary } from '../Solidary/hooks/useSolidary';
-import { isAdmin } from '../../../auth/permissions';
+import hasPermission, { isAdmin } from '../../../auth/permissions';
 
 import {
   SolidaryUserVolunteerActionDropDown,
   ADDPOTENTIAL_OPTION,
 } from '../SolidaryUserVolunteer/SolidaryUserVolunteerActionDropDown';
 
-const SolidarySearchFilter = (props) => (
-  <Filter {...props}>
-    <TextInput source="name" label="Nom" alwaysOn />
-    <SelectInput
-      source="type"
-      label="Type"
-      choices={[
-        { id: 'carpool', name: 'Covoiturage' },
-        { id: 'transport', name: 'Transport' },
-      ]}
-      defaultValue="carpool"
-    />
-    <SelectInput
-      source="way"
-      label="Way"
-      choices={[
-        { id: 'outward', name: 'Aller' },
-        { id: 'return', name: 'Retour' },
-      ]}
-      defaultValue="outward"
-    />
-    <ReferenceInput
-      alwaysOn
-      fullWidth
-      label="Demande solidaire"
-      source="solidary"
-      reference="solidaries"
-    >
-      <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
-    </ReferenceInput>
-  </Filter>
-);
+const SolidarySearchFilter = (props) => {
+  return (
+    <Filter {...props}>
+      <TextInput source="name" label="Nom" alwaysOn />
+      {hasPermission('solidary_volunteer_list') && (
+        <SelectInput
+          source="type"
+          label="Type"
+          choices={[
+            { id: 'carpool', name: 'Covoiturage' },
+            { id: 'transport', name: 'Transport' },
+          ]}
+          defaultValue="carpool"
+        />
+      )}
+      <SelectInput
+        source="way"
+        label="Way"
+        choices={[
+          { id: 'outward', name: 'Aller' },
+          { id: 'return', name: 'Retour' },
+        ]}
+        defaultValue="outward"
+      />
+      <ReferenceInput
+        alwaysOn
+        fullWidth
+        label="Demande solidaire"
+        source="solidary"
+        reference="solidaries"
+      >
+        <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
+      </ReferenceInput>
+    </Filter>
+  );
+};
 
 const ActionsDropDown = ({ record, onRefresh, ...props }) => {
   // @TODO: Will work when authorId is available on the API
