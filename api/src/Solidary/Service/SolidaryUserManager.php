@@ -122,10 +122,10 @@ class SolidaryUserManager
     public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
     {
         // Get the structure of the Admin
-        $operates = $this->security->getUser()->getOperates();
+        $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
-        if (is_array($operates) && isset($operates[0])) {
-            $structureAdmin = $operates[0]->getStructure();
+        if (is_array($structures) && isset($structures[0])) {
+            $structureAdmin = $structures[0];
         }
 
         // Get the Solidary User
@@ -306,11 +306,11 @@ class SolidaryUserManager
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
 
         // Get the structure of the Admin
-        if (!empty($this->security->getUser()->getOperates())) {
-            $operates = $this->security->getUser()->getOperates();
+        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
             $structureAdmin = null;
-            if (!is_null($operates) || count($operates)>0) {
-                $structureAdmin = $operates[0]->getStructure();
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
             }
             // If the admin has an identified structure, we take the one that matches on of the SolidaryBeneficiary structure
             if (!is_null($structureAdmin)) {
@@ -1012,9 +1012,9 @@ class SolidaryUserManager
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         if (is_null($structure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $operates = $this->security->getUser()->getOperates();
-            if (!is_null($operates) || count($operates)>0) {
-                $structure = $operates[0]->getStructure();
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structure = $structures[0];
             }
         }
       
@@ -1078,9 +1078,9 @@ class SolidaryUserManager
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         if (is_null($structure)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
-            $operates = $this->security->getUser()->getOperates();
-            if (!is_null($operates) || count($operates)>0) {
-                $structure = $operates[0]->getStructure();
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structure = $structures[0];
             }
         }
         
