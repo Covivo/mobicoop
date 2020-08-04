@@ -79,6 +79,16 @@ class RedirectManager
                         $redirect->setDestinationComplement($article->getTitle());
                     }
                     break;
+                case Redirect::TYPE_COMMUNITY_WIDGET:
+                    if ($community = $this->communityRepository->find($redirect->getDestinationId())) {
+                        $redirect->setDestinationComplement($community->getName());
+                    }
+                    break;
+                case Redirect::TYPE_EVENT_WIDGET:
+                    if ($event = $this->eventRepository->find($redirect->getDestinationId())) {
+                        $redirect->setDestinationComplement($event->getName());
+                    }
+                    break;
             }
             return [$redirect];
         } elseif ($redirects = $this->redirectRepository->findByUriWithWildCard($originUri)) {
