@@ -13,6 +13,8 @@ import {
   EditButton,
 } from 'react-admin';
 
+import { isAdmin } from '../../auth/permissions';
+
 const typeChoices = [
   { id: 1, name: 'Item' },
   { id: 2, name: 'Groupe' },
@@ -33,7 +35,13 @@ const RightFilter = (props) => (
 );
 
 export const RightList = (props) => (
-  <List {...props} title="Droits > liste" perPage={25} filters={<RightFilter />}>
+  <List
+    {...props}
+    title="Droits > liste"
+    exporter={isAdmin()}
+    perPage={25}
+    filters={<RightFilter />}
+  >
     <Datagrid>
       <TextField source="originId" label="ID" sortBy="id" />
       <SelectField source="type" label="Type" choices={typeChoices} sortable={false} />

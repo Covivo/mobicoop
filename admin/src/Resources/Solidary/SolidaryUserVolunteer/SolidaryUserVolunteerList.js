@@ -18,6 +18,7 @@ import { AddressField } from './Fields/AddressField';
 import { RoleField } from './Fields/RoleField';
 import { solidaryLabelRenderer } from '../../../utils/renderers';
 import { useSolidary } from '../Solidary/hooks/useSolidary';
+import { isAdmin } from '../../../auth/permissions';
 
 import {
   SolidaryUserVolunteerActionDropDown,
@@ -71,6 +72,7 @@ export const SolidaryUserVolunteerListGuesser = (props) => {
       perPage={25}
       filters={<SolidaryUserVolunteerFilter />}
       filterDefaultValues={{ validatedCandidate: false }}
+      exporter={isAdmin()}
     >
       <Datagrid>
         <TextField source="givenName" />

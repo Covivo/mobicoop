@@ -17,6 +17,7 @@ import {
 } from 'react-admin';
 
 import { usernameRenderer } from '../../../../utils/renderers';
+import { isAdmin } from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
   const translate = useTranslate();
@@ -59,6 +60,7 @@ export const SolidaryList = (props) => (
     filters={<SolidaryFilter />}
     title="Demandes solidaires > liste"
     perPage={25}
+    exporter={isAdmin()}
   >
     <Datagrid>
       <TextField source="originId" label="ID" />

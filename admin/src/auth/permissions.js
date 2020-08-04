@@ -50,7 +50,7 @@ export const createPermissionChecker = (permissions = []) => (action) =>
 
 export const isAdmin = () => {
   const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-  return !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true;
+  return roles.includes('ROLE_SUPER_ADMIN') || roles.includes('ROLE_ADMIN');
 };
 
 export default (action) => {

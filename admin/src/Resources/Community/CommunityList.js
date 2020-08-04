@@ -37,6 +37,7 @@ export const CommunityList = (props) => {
       title="Communautés > liste"
       perPage={25}
       filters={<CommunityFilter />}
+      exporter={isAdmin()}
       sort={{ field: 'originId', order: 'DESC' }}
     >
       <Datagrid expand={<CommunityPanel />}>
