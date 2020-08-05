@@ -22,9 +22,7 @@ import {
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
 
-
 const RelayPointCreate = (props) => {
-
   const [showSnack, setShowSnack] = useState(false);
   const [errors, setErrors] = useState();
   const translate = useTranslate();
@@ -37,8 +35,7 @@ const RelayPointCreate = (props) => {
     { id: 2, name: 'Inactif' },
   ];
 
-
-  //Used for check if adresses is not empty 
+  //Used for check if adresses is not empty
   const validateRelayPointCreation = (values) => {
     let errors = {};
     if (!values.address) {
@@ -124,7 +121,7 @@ const RelayPointCreate = (props) => {
             </FormTab> */}
       </TabbedForm>
     </Create>
-  )
+  );
 };
 
 export default RelayPointCreate;

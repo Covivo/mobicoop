@@ -68,7 +68,7 @@ const CampaignsList = (props) => {
 
   return (
     <Fragment>
-      <List {...props} title="Utilisateurs > liste" exporter={isAdmin()}>
+      <List {...props} title="Envois de masse > liste" exporter={isAdmin()}>
         <Datagrid rowClick="edit">
           <TextField source="subject" label={translate('custom.label.campaign.object')} />
           <FunctionField

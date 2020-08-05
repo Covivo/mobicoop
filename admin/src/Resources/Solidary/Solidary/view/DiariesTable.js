@@ -53,7 +53,7 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
               <TableCell align="center">
                 {version === 'solidary'
                   ? translate(`custom.actions.${diary.actionName}`)
-                  : diary.action}
+                  : translate(`custom.actions.${diary.action}`)}
               </TableCell>
               <TableCell align="center">
                 {diary.transporter
