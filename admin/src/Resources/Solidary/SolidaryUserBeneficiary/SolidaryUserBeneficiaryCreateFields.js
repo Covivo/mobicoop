@@ -184,7 +184,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
       <GeocompleteInput
         fullWidth
         source="homeAddress"
-        label="Nouvelle Adresse"
+        label="Commune de résidence"
         validate={(a) => (a ? '' : 'Champs obligatoire')}
         classes={classesForGeocompleteInput}
       />
