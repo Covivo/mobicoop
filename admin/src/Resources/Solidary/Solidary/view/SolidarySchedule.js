@@ -13,6 +13,7 @@ const SolidarySchedule = ({
   outwardDeadlineDatetime,
   returnDatetime,
   returnDeadlineDatetime,
+  deadlineDate,
   monCheck,
   tueCheck,
   wedCheck,
@@ -38,7 +39,7 @@ const SolidarySchedule = ({
             <Grid item>
               <b>Fin:</b>
               <br />
-              {formatDate(returnDatetime)}
+              {deadlineDate ? formatDate(deadlineDate) : formatDate(returnDatetime)}
             </Grid>
           )}
         </Grid>

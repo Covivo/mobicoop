@@ -73,6 +73,7 @@ const SolidaryShowInformation = ({ record }) => {
     updatedDate,
     id,
     originId,
+    deadlineDate,
     marginDuration,
     frequency,
     outwardDatetime,
@@ -184,6 +185,7 @@ const SolidaryShowInformation = ({ record }) => {
               outwardDeadlineDatetime={outwardDeadlineDatetime}
               returnDatetime={returnDatetime}
               returnDeadlineDatetime={returnDeadlineDatetime}
+              deadlineDate={deadlineDate}
               monCheck={days && days.mon}
               tueCheck={days && days.tue}
               wedCheck={days && days.wed}
