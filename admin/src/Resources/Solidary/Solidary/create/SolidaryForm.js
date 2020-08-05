@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import omit from 'lodash.omit';
+import { useField } from 'react-final-form';
 
 import {
   FormWithRedirect,
@@ -37,6 +39,7 @@ import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
 import SaveSolidaryAsk from './SaveSolidaryAsk';
+import { addressRenderer } from '../../../../utils/renderers';
 
 const useStyles = makeStyles({
   layout: {
@@ -57,7 +60,7 @@ const useStyles = makeStyles({
   },
 });
 
-const checkHasHomeAddress = (user) => (user.addresses || []).some((address) => !!address.home);
+const getHomeAddress = (user) => (user.addresses || []).find((address) => !!address.home);
 
 const LoadingOverlay = ({ loading, children }) => {
   const classes = useStyles();
@@ -146,11 +149,16 @@ const SolidaryFormWizard = (formProps) => {
   const [hasDestinationAddress, setHasDestinationAddress] = useState(1);
   const [activeStep, setActiveStep] = useState(0);
   const [loadingNextStep, setLoadingNextStep] = useState(false);
+  const originField = useField('origin');
 
   const { values, errors } = formProps.form.getState();
   const hasErrors = errors && Object.keys(errors).length > 0;
 
   const [hasRegistredUser, setHasRegistredUser] = useState(!!values.already_registered_user);
+
+  const originString = originField.input.value
+    ? addressRenderer(originField.input.value)
+    : undefined;
 
   const handleGoNext = (activeStep) => async () => {
     const state = formProps.form.getState();
@@ -166,7 +174,16 @@ const SolidaryFormWizard = (formProps) => {
 
       const hasHomeAddress = await dataProvider
         .getOne('users', { id: state.values.already_registered_user })
-        .then(({ data }) => checkHasHomeAddress(data))
+        .then(({ data }) => {
+          const homeAddress = getHomeAddress(data);
+          if (!!homeAddress) {
+            // We need to omit identifier to avoid sending only id (like "/addresses/42")
+            // The API can't associate an existing address to a solidary origin
+            formProps.form.change('origin', omit(homeAddress, ['@id', 'id', 'originId']));
+          }
+
+          return !!homeAddress;
+        })
         .catch(() => false);
 
       setHasRegistredUser(hasHomeAddress);
@@ -269,6 +286,8 @@ const SolidaryFormWizard = (formProps) => {
               fullWidth
               source="origin"
               label="Adresse de départ"
+              key={originString}
+              defaultValueText={originString}
               validate={(a) => (a ? '' : 'Champs obligatoire')}
             />
           </SolidaryQuestion>
