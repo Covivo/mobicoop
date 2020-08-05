@@ -121,7 +121,7 @@ const SolidaryPunctualAsk = () => {
         </SolidaryQuestion>
         <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
           <DateTimeSelector
-            type="datetime-local"
+            type="time"
             choices={toTimeChoices}
             initialChoice={4}
             depedencies={[outwardDatetime]}
