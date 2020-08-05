@@ -44,7 +44,7 @@ const SolidarySearchFilter = (props) => {
       )}
       <SelectInput
         source="way"
-        label="Way"
+        label="Aller ou retour ?"
         choices={[
           { id: 'outward', name: 'Aller' },
           { id: 'return', name: 'Retour' },

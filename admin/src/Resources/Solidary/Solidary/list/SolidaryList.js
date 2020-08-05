@@ -41,7 +41,7 @@ const SolidaryFilter = (props) => (
     <ReferenceInput
       alwaysOn
       fullWidth
-      label="User solidaire"
+      label="Demandeur solidaire"
       source="solidaryUser"
       reference="solidary_users"
     >
@@ -68,7 +68,7 @@ export const SolidaryList = (props) => (
       <TextField source="originId" label="ID" />
       {/* <TextField source="subject.label" /> */}
       <SubjectField />
-      <FunctionField label="displayLabel" render={renderDisplayLabel} />
+      <FunctionField label="Trajet demandé" render={renderDisplayLabel} />
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />

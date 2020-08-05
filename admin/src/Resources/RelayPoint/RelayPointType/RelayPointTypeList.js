@@ -30,7 +30,7 @@ export const RelayPointTypeList = (props) => (
     <Datagrid>
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="name" label="Nom" />
-      <ImageField label="Icon" source="icon.url" />
+      <ImageField label="Icone" source="icon.url" />
       <ShowButton />
       <EditButton />
     </Datagrid>
