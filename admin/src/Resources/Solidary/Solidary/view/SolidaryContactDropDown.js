@@ -25,12 +25,15 @@ const resolveOptions = (solidary, ask) => {
 
 export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...props }) => {
   const [contactType, setContactType] = useState(null);
-  const { solidary } = useSolidary(`/solidaries/${solidaryId}`);
+  const { solidary, refresh } = useSolidary(`/solidaries/${solidaryId}`);
 
   const ask =
     solidary && solidary.asksList.find((i) => i.solidarySolutionId === solidarySolutionId);
 
-  const closeModal = () => setContactType(null);
+  const handleCloseModal = () => {
+    refresh();
+    setContactType(null);
+  };
 
   return (
     <>
@@ -43,21 +46,21 @@ export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...pro
         <SolidaryMessagesModal
           solidaryId={solidaryId}
           solidarySolutionId={solidarySolutionId}
-          onClose={closeModal}
+          onClose={handleCloseModal}
         />
       )}
       {contactType === SMS_CONTACT_OPTION && (
         <SolidarySMSModal
           solidaryId={solidaryId}
           solidarySolutionId={solidarySolutionId}
-          onClose={closeModal}
+          onClose={handleCloseModal}
         />
       )}
       {contactType === ASKFORRESPONSE_OPTION && (
         <SolidaryFormalResponseModal
           solidaryId={solidaryId}
           solidarySolutionId={solidarySolutionId}
-          onClose={closeModal}
+          onClose={handleCloseModal}
         />
       )}
     </>

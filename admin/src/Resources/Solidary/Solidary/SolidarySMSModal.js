@@ -56,7 +56,7 @@ export const SolidarySMSModal = ({ solidaryId, solidarySolutionId, onClose }) =>
       ) : (
         <>
           <DialogTitle>
-            {data.beneficiary
+            {data.driver
               ? translate('custom.solidary.sendSMSTo', {
                   username: data.driver,
                 })
