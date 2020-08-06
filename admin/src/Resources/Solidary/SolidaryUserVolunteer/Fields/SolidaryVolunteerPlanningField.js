@@ -115,7 +115,7 @@ const AvaibilitySlot = ({ slot, onOpenMessaging }) => {
               <span>{`Contacter ${slot.beneficiary} par messagerie pour la demande #${slot.solidaryId}`}</span>
             </MenuItem>
             {/* <MenuItem onClick={handleOpenSolidarySolicitation(popupState)}>
-              <span>{`Soliciter réponse de ${slot.beneficiary} sur demande #${slot.solidaryId}`}</span>
+              <span>{`Solliciter réponse de ${slot.beneficiary} sur demande #${slot.solidaryId}`}</span>
             </MenuItem> */}
           </Menu>
         </>

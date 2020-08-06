@@ -1,4 +1,4 @@
-import { GET_LIST } from 'react-admin';
+import { GET_LIST, HttpError } from 'react-admin';
 
 import { dataProviderAdapter } from './dataProviderAdapter';
 import { fetchJson } from './fetchJson';
@@ -44,13 +44,13 @@ const customErrorHandler = (type, resource) => (error) => {
     error.body &&
     error.body['hydra:description'] === 'No structure found'
   ) {
-    throw new Error(
+    throw new HttpError(
       "Aucune demande solidaire affichée car votre compte n'est associé à aucune structure accompagnante en tant qu'opérateur"
     );
   }
 
   if (error.body && error.body['hydra:description']) {
-    throw new Error(error.body['hydra:description']);
+    throw new HttpError(error.body['hydra:description']);
   }
 
   throw error;
