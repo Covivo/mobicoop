@@ -8,8 +8,8 @@
         "snackbar-account-delete": "Votre compte à été supprimé avec succès.",
         "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
         "myProfile": "Profil",
-        "urlArticle": "",
-        "altUrlArticle": "",
-        "clickHere": " "
+        "urlArticle": "#",
+        "altUrlArticle": "cliquez-ici",
+        "clickHere": "Cliquez-ici"
     }
 }

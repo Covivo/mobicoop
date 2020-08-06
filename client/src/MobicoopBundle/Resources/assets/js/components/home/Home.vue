@@ -103,12 +103,15 @@
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
-          <a
-            :href="$t('urlArticle')"
-            :alt="$t('altUrlArticle')"
-            style="text-decoration:none;"
-            color="secondary"
-          ><h3>{{ $t("clickHere") }}</h3></a>
+          <v-col v-if="covidTextDisplay">
+            <a
+              :href="$t('urlArticle')"
+              :alt="$t('altUrlArticle')"
+              style="text-decoration:none;"
+              color="secondary"
+            >
+              <h3>{{ $t("clickHere") }}</h3></a>
+          </v-col>
         </v-col>
       </v-row>
       <search
@@ -132,6 +135,7 @@
             :community-display="communityDisplay"
             :event-display="eventDisplay"
             :solidary-display="solidaryDisplay"
+            :covid-text-display="covidTextDisplay"
           />
         </v-col>
       </v-row>
@@ -205,6 +209,10 @@ export default {
       default: ""
     },
     communityDisplay: {
+      type: Boolean,
+      default: false
+    },
+    covidTextDisplay: {
       type: Boolean,
       default: false
     },
