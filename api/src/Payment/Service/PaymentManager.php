@@ -181,7 +181,7 @@ class PaymentManager
             }
             $paymentItem = new PaymentItem($carpoolItem->getId());
             $paymentItem->setAskId($carpoolItem->getAsk()->getId());
-            $paymentItem->setType($carpoolItem->getType());
+            $paymentItem->setType($type);
             if ($type == PaymentItem::TYPE_PAY) {
                 $paymentItem->setGivenName($carpoolItem->getCreditorUser()->getGivenName());
                 $paymentItem->setShortFamilyName($carpoolItem->getCreditorUser()->getShortFamilyName());
