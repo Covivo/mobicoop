@@ -124,7 +124,7 @@ const SolidaryPunctualAsk = () => {
             type="time"
             choices={toTimeChoices}
             initialChoice={4}
-            depedencies={[outwardDatetime]}
+            dependencies={[outwardDatetime]}
           />
         </SolidaryQuestion>
         <SolidaryNeedsQuestion label="Autres informations" />

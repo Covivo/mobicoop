@@ -67,56 +67,55 @@ const PositionInput = (props) => {
   return <TextInput {...props} initialValue={parseInt(match[1], 10)} style={{ display: 'none' }} />;
 };
 
-export const StructureEdit = (props) =>
-  console.log({ props }) || (
-    <Edit {...props} title="Structures accompagnantes > éditer">
-      <TabbedForm toolbar={<StructureEditToolbar />}>
-        <FormTab label="Caractéristiques">
-          <TextInput source="name" label="Nom" validate={required()} />
-          <ReferenceArrayInput source="territories" reference="territories">
-            <SelectArrayInput optionText="name" />
-          </ReferenceArrayInput>
+export const StructureEdit = (props) => (
+  <Edit {...props} title="Structures accompagnantes > éditer">
+    <TabbedForm toolbar={<StructureEditToolbar />}>
+      <FormTab label="Caractéristiques">
+        <TextInput source="name" label="Nom" validate={required()} />
+        <ReferenceArrayInput source="territories" reference="territories">
+          <SelectArrayInput optionText="name" />
+        </ReferenceArrayInput>
+      </FormTab>
+      <FormTab label="Objet du déplacement">
+        <ArrayInput label="" source="subjects">
+          <SimpleFormIterator>
+            <TextInput source="label" label="Titre" />
+          </SimpleFormIterator>
+        </ArrayInput>
+      </FormTab>
+      <FormTab label="Critères éligibilité demandeurs">
+        <ArrayInput label="" source="structureProofs">
+          <SimpleFormIterator>
+            <PositionInput source="position" />
+            <TextInput source="label" label="Titre" />
+            {/* For an unknown reason, the field below doesn't render when we arrive from the structure list */}
+            {/* So, I made this ugly trick to fix that, i'm so sorry :'( */}
+            <SwitchableFieldsSelectInput key={Math.random()} />
+            <BooleanInput label="Obligatoire" source="mandatory" />
+            <SelectInput
+              source="type"
+              label="Critère demandé au"
+              required
+              choices={[
+                { id: 1, name: 'Demandeur' },
+                { id: 2, name: 'Bénévole' },
+              ]}
+            />
+          </SimpleFormIterator>
+        </ArrayInput>
+      </FormTab>
+      <FormTab label="Je suis prêt à">
+        <ArrayInput label="" source="needs">
+          <SimpleFormIterator>
+            <TextInput source="label" label="Titre" />
+          </SimpleFormIterator>
+        </ArrayInput>
+      </FormTab>
+      {isAuthorized('solidary_volunteer_manage') && (
+        <FormTab label="Créneaux">
+          <StructureTimeSlotsInput />
         </FormTab>
-        <FormTab label="Objet du déplacement">
-          <ArrayInput label="" source="subjects">
-            <SimpleFormIterator>
-              <TextInput source="label" label="Titre" />
-            </SimpleFormIterator>
-          </ArrayInput>
-        </FormTab>
-        <FormTab label="Critères éligibilité demandeurs">
-          <ArrayInput label="" source="structureProofs">
-            <SimpleFormIterator>
-              <PositionInput source="position" />
-              <TextInput source="label" label="Titre" />
-              {/* For an unknown reason, the field below doesn't render when we arrive from the structure list */}
-              {/* So, I made this ugly trick to fix that, i'm so sorry :'( */}
-              <SwitchableFieldsSelectInput key={Math.random()} />
-              <BooleanInput label="Obligatoire" source="mandatory" />
-              <SelectInput
-                source="type"
-                label="Critère demandé au"
-                required
-                choices={[
-                  { id: 1, name: 'Demandeur' },
-                  { id: 2, name: 'Bénévole' },
-                ]}
-              />
-            </SimpleFormIterator>
-          </ArrayInput>
-        </FormTab>
-        <FormTab label="Je suis prêt à">
-          <ArrayInput label="" source="needs">
-            <SimpleFormIterator>
-              <TextInput source="label" label="Titre" />
-            </SimpleFormIterator>
-          </ArrayInput>
-        </FormTab>
-        {isAuthorized('solidary_volunteer_manage') && (
-          <FormTab label="Créneaux">
-            <StructureTimeSlotsInput />
-          </FormTab>
-        )}
-      </TabbedForm>
-    </Edit>
-  );
+      )}
+    </TabbedForm>
+  </Edit>
+);
