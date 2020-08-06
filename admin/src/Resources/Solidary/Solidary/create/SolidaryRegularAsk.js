@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
+import { useField } from 'react-final-form';
+import { differenceInSeconds, addSeconds } from 'date-fns';
 
 import { DateTimeSelector, setHours, addHours, setTimeFromString } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
 import DayChipInput from './DayChipInput';
-import DateIntervalSelector from './DateIntervalSelector';
+import DateIntervalSelector, { getTime } from './DateIntervalSelector';
 import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 
 export const intervalChoices = [
@@ -67,7 +69,35 @@ export const toTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
+const castDate = (date) => (typeof date === 'string' ? new Date(date) : date);
+
 const SolidaryRegularAsk = ({ form }) => {
+  const {
+    input: { value: outwardDatetime },
+  } = useField('outwardDatetime');
+
+  const {
+    input: { value: returnDatetime },
+  } = useField('returnDatetime');
+
+  const {
+    input: { value: outwardDeadlineDatetime },
+  } = useField('outwardDeadlineDatetime');
+
+  const {
+    input: { onChange: onChangeReturnDeadlineDatetime },
+  } = useField('returnDeadlineDatetime');
+
+  useEffect(() => {
+    const secondsDiff = differenceInSeconds(castDate(returnDatetime), castDate(outwardDatetime));
+
+    onChangeReturnDeadlineDatetime(
+      secondsDiff > 0
+        ? addSeconds(outwardDeadlineDatetime, secondsDiff)
+        : setTimeFromString(outwardDeadlineDatetime, '00:00')
+    );
+  }, [JSON.stringify({ returnDatetime, outwardDatetime, outwardDeadlineDatetime })]);
+
   return (
     <>
       <SolidaryQuestion question="Quels jours devez-vous voyager ?">
@@ -100,6 +130,7 @@ const SolidaryRegularAsk = ({ form }) => {
           fieldnameEnd="toEndDatetime"
           choices={toTimeChoices}
           initialChoice={4}
+          dependencies={[outwardDatetime]}
         />
       </SolidaryQuestion>
       <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">

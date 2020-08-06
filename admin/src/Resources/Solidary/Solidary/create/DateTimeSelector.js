@@ -10,7 +10,6 @@ const useStyles = makeStyles({
 });
 
 /*
-
 const fromDateChoices = [
   { id: 0, label: 'A une date fixe', outwardDatetime : ({selectedDateTime}) => selectedDateTime },
   { id: 1, label: 'Dans la semaine', outwardDatetime : () => today(), outwardDeadlineDatetime : () => addDays(today, 7) },
@@ -80,7 +79,7 @@ const setDateFromString = (originDate, stringDate) => {
   }
   return alteredDate;
 };
-const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }) => {
+const DateTimeSelector = ({ choices, initialChoice, type = 'date', dependencies }) => {
   const classes = useStyles();
   const [choice, setChoice] = useState(choices[initialChoice]);
   const [selectedDateTime, setSelectedDateTime] = useState(null);
@@ -88,65 +87,56 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
   const {
     input: { value: outwardDatetime, onChange: onChangeOutwardDateTime },
   } = useField('outwardDatetime');
+
   const {
     input: { value: outwardDeadlineDatetime, onChange: onChangeOutwardDeadlineDateTime },
   } = useField('outwardDeadlineDatetime');
+
   const {
     input: { value: returnDatetime, onChange: onChangeReturnDateTime },
   } = useField('returnDatetime');
+
+  const {
+    input: { value: returnDeadlineDatetime, onChange: onChangeReturnDeadlineDateTime },
+  } = useField('returnDeadlineDatetime');
+
   const {
     input: { value: marginDuration, onChange: onChangeMarginDuration },
   } = useField('marginDuration');
+
+  const parameters = {
+    outwardDatetime,
+    outwardDeadlineDatetime,
+    returnDatetime,
+    marginDuration,
+    selectedDateTime,
+  };
 
   useEffect(() => {
     // Set datetime fields according to choice and selectedDateTime
 
     if (choice.outwardDatetime) {
-      onChangeOutwardDateTime(
-        choice.outwardDatetime({
-          outwardDatetime,
-          outwardDeadlineDatetime,
-          returnDatetime,
-          marginDuration,
-          selectedDateTime,
-        })
-      );
+      onChangeOutwardDateTime(choice.outwardDatetime(parameters));
     }
+
     if (choice.outwardDeadlineDatetime) {
-      onChangeOutwardDeadlineDateTime(
-        choice.outwardDeadlineDatetime({
-          outwardDatetime,
-          outwardDeadlineDatetime,
-          returnDatetime,
-          marginDuration,
-          selectedDateTime,
-        })
-      );
+      onChangeOutwardDeadlineDateTime(choice.outwardDeadlineDatetime(parameters));
     }
+
     if (choice.returnDatetime) {
-      onChangeReturnDateTime(
-        choice.returnDatetime({
-          outwardDatetime,
-          outwardDeadlineDatetime,
-          returnDatetime,
-          marginDuration,
-          selectedDateTime,
-        })
-      );
+      onChangeReturnDateTime(choice.returnDatetime(parameters));
     }
+
+    if (choice.returnDeadlineDatetime) {
+      onChangeReturnDeadlineDateTime(choice.returnDeadlineDatetime(parameters));
+    }
+
     if (choice.marginDuration) {
-      onChangeMarginDuration(
-        choice.marginDuration({
-          outwardDatetime,
-          outwardDeadlineDatetime,
-          returnDatetime,
-          marginDuration,
-          selectedDateTime,
-        })
-      );
+      onChangeMarginDuration(choice.marginDuration(parameters));
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [choice, selectedDateTime, ...depedencies]);
+  }, [choice, selectedDateTime && selectedDateTime.toString(), ...dependencies]);
 
   return (
     <Box display="flex">
@@ -160,9 +150,7 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
           <TextField
             label=""
             type={type}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
             onChange={(e) => setSelectedDateTime(e.target.value)}
             className={classes.dateControlWitdh}
           />
@@ -172,19 +160,19 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', depedencies }
   );
 };
 
-DateTimeSelector.type = { time: 'time', datetime: 'datetime-local', date: 'date' };
+DateTimeSelector.type = { time: 'time', date: 'date' };
 
 DateTimeSelector.propTypes = {
   choices: PropTypes.array.isRequired,
   initialChoice: PropTypes.number,
   type: PropTypes.string,
-  depedencies: PropTypes.array,
+  dependencies: PropTypes.array,
 };
 
 DateTimeSelector.defaultProps = {
   initialChoice: 0,
-  type: 'date',
-  depedencies: [],
+  type: DateTimeSelector.type.date,
+  dependencies: [],
 };
 
 export {
