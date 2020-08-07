@@ -10,10 +10,6 @@ import {
   FormTab,
   SimpleFormIterator,
   SelectInput,
-  DeleteButton,
-  Datagrid,
-  TextField,
-  ReferenceArrayField,
   Toolbar,
   BooleanInput,
   ArrayInput,
@@ -24,6 +20,7 @@ import {
 import isAuthorized from '../../../auth/permissions';
 import { StructureTimeSlotsInput } from './Input/StructureTimeSlotsInput';
 import { proofTypeLabels } from '../../../constants/proofType';
+import { StructureProofTypeOptionsListInput } from './Input/StructureProofTypeOptionsListInput';
 
 // Because of <AvailabilityRangeDialogButton /> blur
 // The pristine is set to true on modal close, so we force it here
@@ -101,6 +98,7 @@ export const StructureEdit = (props) => (
                 { id: 2, name: 'Bénévole' },
               ]}
             />
+            <StructureProofTypeOptionsListInput />
           </SimpleFormIterator>
         </ArrayInput>
       </FormTab>
