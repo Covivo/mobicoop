@@ -1,5 +1,6 @@
 <template>
   <v-card
+    v-if="!resultPassed"
     outlined
   >
     <v-container>
@@ -90,6 +91,7 @@ import TranslationsClient from "@clientTranslations/components/carpool/results/M
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
 import JourneySummary from "@components/carpool/utilities/JourneySummary"
 import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
+import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -128,12 +130,16 @@ export default {
   data : function() {
     return {
       locale: this.$i18n.locale,
+      resultPassed: false,
     }
   },
   computed: {
     showRegularSummary() {
       return (this.result.frequency == 2 || (this.distinguishRegular && this.result.frequencyResult == 2));
     }
+  },
+  mounted() {
+    this.checkIfResultIsPassed();
   },
   methods :{
     carpool() {
@@ -146,6 +152,12 @@ export default {
         //matching: this.matching
       });
     },
+    checkIfResultIsPassed() {
+      let now = moment();
+      if (now > moment(this.result.time) && now > moment(this.result.date)) {
+        this.resultPassed = true;
+      } 
+    }
   }
 };
 </script>
