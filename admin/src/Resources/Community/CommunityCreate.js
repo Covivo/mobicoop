@@ -42,7 +42,7 @@ export const CommunityCreate = (props) => {
           formClassName={classes.title}
         />
         <CommunityImageUpload
-          label={translate('custom.label.event.uploadImage')}
+          label={translate('custom.label.event.uploadImage') + ' (2Mb max)'}
           formClassName={classes.fullwidth}
         />
         <GeocompleteInput
@@ -51,7 +51,6 @@ export const CommunityCreate = (props) => {
           validate={required()}
           formClassName={classes.fullwidth}
         />
-
         <BooleanInput
           source="membersHidden"
           label={translate('custom.label.community.memberHidden')}
