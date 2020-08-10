@@ -560,7 +560,6 @@ class UserManager
 
             $key = $date >= $now ? 'ongoing' : 'archived';
             $adsSanitized[$key][$ad->getId()] = $ad;
-
         }
         return $adsSanitized;
     }
