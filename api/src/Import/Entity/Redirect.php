@@ -55,6 +55,8 @@ class Redirect
     const TYPE_COMMUNITY = 0;
     const TYPE_EVENT = 1;
     const TYPE_ARTICLE = 2;
+    const TYPE_COMMUNITY_WIDGET=3;
+    const TYPE_EVENT_WIDGET=4;
     const TYPE_NO_LONGER_EXISTS = 99;
 
     /**

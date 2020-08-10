@@ -69,6 +69,12 @@ class ExceptionListener
                     case Redirect::TYPE_ARTICLE:
                         $url = $this->router->generate('article_get.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
                         break;
+                    case Redirect::TYPE_COMMUNITY_WIDGET:
+                        $url = $this->router->generate('community_get_widget.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
+                        break;
+                    case Redirect::TYPE_EVENT_WIDGET:
+                        $url = $this->router->generate('event_get_widget.' . $redirect->getLanguage(), ['id' => $redirect->getDestinationId()]);
+                        break;
                     case Redirect::TYPE_NO_LONGER_EXISTS:
                         $url = $this->router->generate('page_no_longer_exists');
                         break;
