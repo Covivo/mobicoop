@@ -26,7 +26,7 @@ twig:
         urlAltCommunityAvatar: '%env(resolve:URL_ALT_COMMUNITY_AVATAR)%'
         dataComponents: '%env(resolve:DATA_COMPONENTS)%'
         homeCommunityDisplay: '%env(resolve:COMMUNITY_DISPLAY)%'
-        covidTextDisplay: '%env(resolve:COVID_TEXT_DISPLAY)%'
+        additionalTextDisplay: '%env(resolve:ADDITIONAL_TEXT_DISPLAY)%'
         homeEventDisplay: '%env(resolve:EVENT_DISPLAY)%'
         homeSolidaryDisplay: '%env(resolve:SOLIDARY_DISPLAY)%'
         userAvatarSize: '%env(resolve:USER_AVATAR_SIZE)%'

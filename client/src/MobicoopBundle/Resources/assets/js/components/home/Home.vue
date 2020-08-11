@@ -103,7 +103,7 @@
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
-          <v-col v-if="covidTextDisplay">
+          <v-col v-if="additionalTextDisplay">
             <a
               :href="$t('urlArticle')"
               :alt="$t('altUrlArticle')"
@@ -135,7 +135,7 @@
             :community-display="communityDisplay"
             :event-display="eventDisplay"
             :solidary-display="solidaryDisplay"
-            :covid-text-display="covidTextDisplay"
+            :additional-text-display="additionalTextDisplay"
           />
         </v-col>
       </v-row>
@@ -212,7 +212,7 @@ export default {
       type: Boolean,
       default: false
     },
-    covidTextDisplay: {
+    additionalTextDisplay: {
       type: Boolean,
       default: false
     },
