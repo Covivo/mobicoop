@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNotify, useMutation } from 'react-admin';
 
 import DropDownButton from '../../../../components/button/DropDownButton';
 import { SolidaryMessagesModal } from '../SolidaryMessagesModal';
@@ -23,6 +24,35 @@ const resolveOptions = (solidary, ask) => {
   ].filter((x) => x);
 };
 
+const SolidaryPunctualFormalResponse = ({ outwardDate, solidarySolutionId, onClose }) => {
+  const notify = useNotify();
+  const [send] = useMutation(
+    {},
+    {
+      onSuccess: () => {
+        notify('Demande formelle envoyée', 'success');
+        onClose();
+      },
+    }
+  );
+
+  useEffect(() => {
+    return send({
+      type: 'create',
+      resource: 'solidary_formal_requests',
+      payload: {
+        data: {
+          solidarySolution: `/solidary_solutions/${solidarySolutionId}`,
+          outwardDate,
+          returnDate: outwardDate, // return value = outward one
+        },
+      },
+    });
+  }, []);
+
+  return null;
+};
+
 export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...props }) => {
   const [contactType, setContactType] = useState(null);
   const { solidary, refresh } = useSolidary(`/solidaries/${solidaryId}`);
@@ -35,6 +65,12 @@ export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...pro
     setContactType(null);
   };
 
+  const contactTypeProps = {
+    solidaryId,
+    solidarySolutionId,
+    onClose: handleCloseModal,
+  };
+
   return (
     <>
       <DropDownButton
@@ -42,27 +78,18 @@ export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...pro
         options={resolveOptions(solidary, ask)}
         onSelect={setContactType}
       />
-      {contactType === MESSAGE_CONTACT_OPTION && (
-        <SolidaryMessagesModal
-          solidaryId={solidaryId}
-          solidarySolutionId={solidarySolutionId}
-          onClose={handleCloseModal}
-        />
-      )}
-      {contactType === SMS_CONTACT_OPTION && (
-        <SolidarySMSModal
-          solidaryId={solidaryId}
-          solidarySolutionId={solidarySolutionId}
-          onClose={handleCloseModal}
-        />
-      )}
-      {contactType === ASKFORRESPONSE_OPTION && (
-        <SolidaryFormalResponseModal
-          solidaryId={solidaryId}
-          solidarySolutionId={solidarySolutionId}
-          onClose={handleCloseModal}
-        />
-      )}
+      {contactType === MESSAGE_CONTACT_OPTION && <SolidaryMessagesModal {...contactTypeProps} />}
+      {contactType === SMS_CONTACT_OPTION && <SolidarySMSModal {...contactTypeProps} />}
+      {contactType === ASKFORRESPONSE_OPTION &&
+        solidary &&
+        (solidary.frequency === 1 ? (
+          <SolidaryPunctualFormalResponse
+            {...contactTypeProps}
+            outwardDate={solidary.outwardDatetime}
+          />
+        ) : (
+          <SolidaryFormalResponseModal {...contactTypeProps} />
+        ))}
     </>
   );
 };
