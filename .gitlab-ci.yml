@@ -100,8 +100,8 @@ dev_deploy:
   script:
     - npm run test-and-coverage
     - cd client && npm run compile && cd ../   
-    # - npm run start-ci & wait-on client/public/build/entrypoints.json
-    # - npm run test-functional-ci || true 
+    - npm run start-ci & wait-on client/public/build/entrypoints.json
+    - npm run test-functional-ci-cypress 
     #  Kill all node & php process if the e2e test are greatfully passed
     # - killall node || true
     # - killall php || true                                            
