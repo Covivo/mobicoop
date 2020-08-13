@@ -178,6 +178,10 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                     $adminLevels[] = ['name' => $props[$component], 'level' => $i + 1];
                 }
             }
+            // special treatment for dependency => replaces macroregion
+            if (isset($props['dependency'])) {
+                $adminLevels[] = ['name' => $props['dependency'], 'level' => 5];
+            }
             $result = PeliasAddress::createFromArray([
                 'providedBy' => $this->getName(),
                 'latitude' => $location['geometry']['coordinates'][1],
@@ -192,6 +196,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 'country' => isset($props['country']) ? $props['country'] : null,
                 'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
+        
             $result->setId($id);
             $result->setVenue($venue);
             $result->setDistance($distance);

@@ -179,6 +179,10 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                     $adminLevels[] = ['name' => $props[$component], 'level' => $i + 1];
                 }
             }
+            // special treatment for dependency => replaces macroregion
+            if (isset($props['dependency'])) {
+                $adminLevels[] = ['name' => $props['dependency'], 'level' => 5];
+            }
             $result = PeliasAddress::createFromArray([
                 'providedBy' => $this->getName(),
                 'latitude' => $location['geometry']['coordinates'][1],
@@ -199,6 +203,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
             $result->setLayer($layer);
             $results[] = $result;
         }
+        
         return new AddressCollection($results);
     }
     /**
