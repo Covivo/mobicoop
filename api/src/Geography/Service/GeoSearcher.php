@@ -347,9 +347,6 @@ class GeoSearcher
                         case 5:
                             $address->setMacroRegion($level->getName());
                             break;
-                        case 6:
-                            $address->setMacroRegion($level->getName());
-                            break;
                     }
                 }
                 $address->setPostalCode($geoResult->getPostalCode());
