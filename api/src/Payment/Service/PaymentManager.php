@@ -181,7 +181,7 @@ class PaymentManager
             }
             $paymentItem = new PaymentItem($carpoolItem->getId());
             $paymentItem->setAskId($carpoolItem->getAsk()->getId());
-            $paymentItem->setType($carpoolItem->getType());
+            $paymentItem->setType($type);
             if ($type == PaymentItem::TYPE_PAY) {
                 $paymentItem->setGivenName($carpoolItem->getCreditorUser()->getGivenName());
                 $paymentItem->setShortFamilyName($carpoolItem->getCreditorUser()->getShortFamilyName());
@@ -231,7 +231,7 @@ class PaymentManager
             // default value
             $paymentItem->setElectronicallyPayable(false);
 
-            if ($this->paymentActive) {
+            if ($this->paymentActive && $this->provider !== "") {
                 $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
                 if (is_null($paymentProfile) || count($paymentProfile)==0) {
                     $paymentItem->setElectronicallyPayable(false);

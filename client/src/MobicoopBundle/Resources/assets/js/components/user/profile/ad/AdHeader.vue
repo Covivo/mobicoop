@@ -132,7 +132,7 @@
         </v-btn>
       </v-col>
       <v-col
-        v-else-if="paymentStatus!==null"
+        v-else-if="paymentItemId!==null"
         class="text-right"
       >
         <AdPayment
@@ -145,6 +145,7 @@
           :unpaid-date="unpaidDate"
           outlined
           show-unpaid
+          hide-button
         />
       </v-col>
     </v-row>

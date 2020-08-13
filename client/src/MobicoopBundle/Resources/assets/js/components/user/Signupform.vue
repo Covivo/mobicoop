@@ -203,7 +203,7 @@
                   item-text="genderItem"
                   item-value="genderValue"
                   :rules="form.genderRules"
-                  :label="$t('models.user.gender.placeholder') + ` *`"
+                  :label="$t('gender.label') + ` *`"
                   required
                 />
                 <v-menu
@@ -490,19 +490,19 @@ export default {
         ],
         gender: null,
         genderRules: [
-          (v) => !!v || this.$t("models.user.gender.errors.required"),
+          (v) => !!v || this.$t("gender.errors.required"),
         ],
         genderItems: [
           {
-            genderItem: this.$t("models.user.gender.values.female"),
+            genderItem: this.$t("gender.values.female"),
             genderValue: "1",
           },
           {
-            genderItem: this.$t("models.user.gender.values.male"),
+            genderItem: this.$t("gender.values.male"),
             genderValue: "2",
           },
           {
-            genderItem: this.$t("models.user.gender.values.other"),
+            genderItem: this.$t("gender.values.other"),
             genderValue: "3",
           },
         ],

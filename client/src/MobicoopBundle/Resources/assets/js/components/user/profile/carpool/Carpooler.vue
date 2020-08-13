@@ -115,7 +115,7 @@
         {{ result.roundedPrice }}€
       </v-col>
       <v-col
-        v-if="ask.paymentStatus!==null"
+        v-if="ask.paymentItemId!==null"
         :cols="isPassenger ? 3 : 5"
         class="text-right"
       >
