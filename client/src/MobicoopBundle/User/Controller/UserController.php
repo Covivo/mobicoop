@@ -346,9 +346,9 @@ class UserController extends AbstractController
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
                 $error["message"] = "Ok";
-
                 
                 return new Response(json_encode($error));
+                
                 if ($file) {
                     // Post avatar of the user
                     $image = new Image();
