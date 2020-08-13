@@ -1,17 +1,1 @@
-{
-    "fr": {
-        "gender": {
-            "label": "Civilité",
-            "placeholder": "Civilité",
-            "values": {
-                "male": "Monsieur",
-                "female": "Madame",
-                "other": "Autre"
-            },
-            "errors": {
-                "required": "La civilité est requise"
-              }
-        }
-
-    }
-}
+{}
