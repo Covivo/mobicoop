@@ -541,6 +541,7 @@
                       :origin="origin"
                       :destination="destination"
                       :solidary-exclusive="solidaryExclusive"
+                      :selected-communities="selectedCommunities"
                     />
                   </v-col>
                 </v-row>

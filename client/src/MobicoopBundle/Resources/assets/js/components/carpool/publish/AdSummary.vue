@@ -569,6 +569,11 @@
                     </v-card-text>
                     <v-divider />
                     <v-card-text v-if="user != null">
+                      <p>Communauté(s) sélectionnée(s)</p>
+                      {{ computedSelectedCommunities }}
+                    </v-card-text>
+                    <v-divider />
+                    <v-card-text v-if="user != null">
                       {{ user.smoke == 0 ? 'Non fumeur' : 'Fumeur' }}
                     </v-card-text>
                     <v-card-text v-if="user != null">
@@ -676,11 +681,17 @@ export default {
       type: Boolean,
       default: false
     },
+    selectedCommunities: {
+      type: Array,
+      default: null
+    },
   },
   data() {
     return {
       locale: this.$i18n.locale,
-      birthDate: null
+      birthDate: null,
+      communities: null
+
     };
   },
   computed: {
@@ -765,6 +776,12 @@ export default {
     },
     hasReturn () {
       return this.returnDate !== null && this.returnTime !== null;
+    },
+    computedSelectedCommunities(){
+      if(this.selectedCommunities == 9){
+        return this.communities.name ;
+      }
+      return null;    
     }
   },
   mounted() {
