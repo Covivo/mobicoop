@@ -1,5 +1,5 @@
 describe("Reset", function () {
-	it("Should reset", function () {
+	it.skip("Should reset", function () {
 		cy.exec('cd .. && make go-platform')
 	})
 
