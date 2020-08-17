@@ -26,6 +26,7 @@ namespace App\PublicTransport\Service;
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
 use App\DataProvider\Entity\ConduentPTProvider;
+use App\Geography\Repository\TerritoryRepository;
 use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
@@ -58,10 +59,12 @@ class PTDataProvider
     
     private $geoTools;
     private $PTProviders;
+    private $territoryRepository;
 
-    public function __construct(GeoTools $geoTools, array $params)
+    public function __construct(GeoTools $geoTools, TerritoryRepository $territoryRepository, array $params)
     {
         $this->geoTools = $geoTools;
+        $this->territoryRepository = $territoryRepository;
         $this->PTProviders = $params['ptProviders'];
     }
     
@@ -92,14 +95,25 @@ class PTDataProvider
         string $dateType,
         string $algorithm,
         string $modes,
-        ?string $username=null,
-        ?int $territoryId=null
+        ?string $username=null
     ): ?array {
         $providerUri = null;
         // If there is a territory, we look for the right provider. If there is no, we take the default.
         $provider = $this->PTProviders['default']['dataprovider'];
         $providerUri = $this->PTProviders['default']['url'];
-        if (!is_null($territoryId) && isset($this->PTProviders[$territoryId])) {
+
+        // Get the territory of the request
+        $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
+        $territoryId = null;
+        foreach ($territories as $territory) {
+            // If the territoryId is in the providers.json for PT, we use this one
+            if (isset($this->PTProviders[$territory->getId()])) {
+                $territoryId = $territory->getId();
+                break;
+            }
+        }
+
+        if (!is_null($territoryId)) {
             $provider = $this->PTProviders[$territoryId]['dataprovider'];
             $providerUri = $this->PTProviders[$territoryId]['url'];
         }
