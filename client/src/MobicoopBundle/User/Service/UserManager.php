@@ -526,40 +526,41 @@ class UserManager
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
         $response = $isAcceptedCarpools ? $this->dataProvider->getSpecialCollection("accepted") : $this->dataProvider->getCollection();
 
-        $ads = $response->getValue()->getMember();
-
-//        dump($ads);die;
-
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
         ];
-        /** @var Ad $ad */
-        foreach ($ads as $ad) {
-            $isAlreadyInArray = false;
 
-            if (isset($adsSanitized["ongoing"][$ad->getId()]) ||
-                isset($adsSanitized["archived"][$ad->getId()])) {
-                $isAlreadyInArray = true;
-            }
+        $ads = $response->getValue()->getMember();
 
-            if ($isAlreadyInArray) {
-                continue;
-            }
+        if (!is_null($ads)) {
+            foreach ($ads as $ad) {
+                /** @var Ad $ad */
+                $isAlreadyInArray = false;
 
-            $now = (new \DateTime("now", new \DateTimeZone('Europe/Paris')))->format("Y-m-d H:i:s");
-   
-            // Carpool regular
-            if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
-                $date = $ad->getOutwardLimitDate();
-            }
-            // Carpool punctual
-            else {
-                $date= $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime();
-            }
+                if (isset($adsSanitized["ongoing"][$ad->getId()]) ||
+                    isset($adsSanitized["archived"][$ad->getId()])) {
+                    $isAlreadyInArray = true;
+                }
 
-            $key = $date >= $now ? 'ongoing' : 'archived';
-            $adsSanitized[$key][$ad->getId()] = $ad;
+                if ($isAlreadyInArray) {
+                    continue;
+                }
+
+                $now = (new \DateTime("now", new \DateTimeZone('Europe/Paris')))->format("Y-m-d H:i:s");
+    
+                // Carpool regular
+                if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
+                    $date = $ad->getOutwardLimitDate();
+                }
+                // Carpool punctual
+                else {
+                    $date= $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime();
+                }
+
+                $key = $date >= $now ? 'ongoing' : 'archived';
+                $adsSanitized[$key][$ad->getId()] = $ad;
+            }
         }
         return $adsSanitized;
     }
