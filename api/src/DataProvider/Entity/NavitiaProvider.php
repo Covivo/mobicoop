@@ -36,31 +36,25 @@ use App\PublicTransport\Entity\PTCompany;
 use App\DataProvider\Exception\DataProviderException;
 
 /**
- * Conduent Public Transportation data provider.
+ * Navitia Public Transportation data provider.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-class ConduentPTProvider implements ProviderInterface
+class NavitiaProvider implements ProviderInterface
 {
     private const PT_MODE_CAR = "Driving";
     private const PT_MODE_BUS = "Bus";
     private const PT_MODE_TRAIN_LOCAL = "Train";
-    private const PT_MODE_WALK = "Walking";
-    private const PT_MODE_SUBWAY = "Subway";
-    private const PT_MODE_WAITING = "Waiting";
+    private const PT_MODE_WALK = "walking";
+    private const PT_MODE_SUBWAY = "Metro";
 
     private const COUNTRY = "France";
     private const NC = "NC";
 
-    private const AUTH_RESSOURCE = "AUTH.API/auth";
-    private const PROFILE_RESSOURCE = "MCP.ID.API/profiles";
-    private const COLLECTION_RESSOURCE_JOURNEYS = "MCP.TSUP.API/travelQueries/full";
+    private const COLLECTION_RESSOURCE_JOURNEYS = "v1/journeys";
 
     private const DATETIME_INPUT_FORMAT = "Y-m-d\TH:i:s";
-
-    private const NB_TRAVELERS = 3;
-    private const ALLOW_EXTENDED_QUERIES_IN_PAST = 1;
 
     private $collection;
     private $uri;
@@ -96,71 +90,27 @@ class ConduentPTProvider implements ProviderInterface
 
     private function getCollectionJourneys($class, array $params, string $apikey)
     {
-        // Get auth token
-        $dataProvider = new DataProvider($this->uri, self::AUTH_RESSOURCE);
-        $paramsPost = [
-            "login"=>$params["username"],
-            "password"=>$apikey
-        ];
-        $response = $dataProvider->postCollection($paramsPost);
-
-        $securityToken = null;
-        if ($response->getCode() == 200) {
-            $data = json_decode($response->getValue(), true);
-            $securityToken = $data["token"];
-        } else {
-            throw new DataProviderException(DataProviderException::ERROR_RETREIVING_TOKEN);
-        }
-
-        if (is_null($securityToken) || $securityToken=="") {
-            throw new DataProviderException(DataProviderException::NO_SECURITY_TOKEN);
-        }
-        
-        // Get profile id
-        $dataProvider = new DataProvider($this->uri, self::PROFILE_RESSOURCE);
-        $paramsGet = [
-            "criteria.name"=>$params["username"]
-        ];
-        $headers = [
-            "Cookie"=>"XAuthToken=".$securityToken
-        ];
-        $response = $dataProvider->getCollection($paramsGet, $headers);
-        
-        $profileId = null;
-        if ($response->getCode() == 200) {
-            $data = json_decode($response->getValue(), true);
-            $profileId = (isset($data['data']['list'][0]['data']['profileId'])) ? $data['data']['list'][0]['data']['profileId'] : null;
-        } else {
-            throw new DataProviderException(DataProviderException::ERROR_RETREIVING_PROFILE_ID);
-        }
-
-        if (is_null($profileId) || $profileId=="") {
-            throw new DataProviderException(DataProviderException::NO_PROFILE_ID);
-        }
-
         // Do the PT search
+       // $this->uri = str_replace("https://","https://".$apikey."@",$this->uri);
+        //echo $this->uri;die;
         $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESSOURCE_JOURNEYS);
 
-        $paramsPost = [
-            "origin"=> [
-                'latitude'=> $params["origin_latitude"],
-                'longitude'=> $params["origin_longitude"],
-            ],
-            'destination'=> [
-                'latitude'=> $params["destination_latitude"],
-                'longitude'=> $params["destination_longitude"],
-            ],
-            "travelerProfileId" => $profileId,
-            "nbTravelers" => self::NB_TRAVELERS,
-            "allowExtendedQueriesInPast" => self::ALLOW_EXTENDED_QUERIES_IN_PAST,
-            "departureDate" => $params["date"]->format(self::DATETIME_INPUT_FORMAT)
+        $params = [
+            "from"=> $params["origin_longitude"].";".$params["origin_latitude"],
+            'to'=> $params["destination_longitude"].";".$params["destination_latitude"]
         ];
-        $response = $dataProvider->postCollection($paramsPost, $headers);
+
+        $header = [
+            "Authorization" => $apikey
+        ];
+
+        $response = $dataProvider->getCollection($params, $header);
+        
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
             
-            foreach ($data['data']['list'] as $trip) {
-                $this->collection[] = $this->deserialize($class, $trip);
+            foreach ($data['journeys'] as $journey) {
+                $this->collection[] = $this->deserialize($class, $journey);
             }
         } elseif ($response->getCode() == 510) {
             // Out of bound for conduent
@@ -188,6 +138,7 @@ class ConduentPTProvider implements ProviderInterface
 
     private function deserializeJourney($data)
     {
+        var_dump($data);die;
         $journey = new PTJourney(count($this->collection)+1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
         if (isset($data['data']['result']['travelDuration'])) {
             $journey->setDuration($this->convertToSeconds($data['data']['result']['travelDuration']));

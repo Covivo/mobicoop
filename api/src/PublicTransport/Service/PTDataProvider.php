@@ -26,6 +26,7 @@ namespace App\PublicTransport\Service;
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
 use App\DataProvider\Entity\ConduentPTProvider;
+use App\DataProvider\Entity\NavitiaProvider;
 use App\Geography\Repository\TerritoryRepository;
 use App\Geography\Service\GeoTools;
 use App\PublicTransport\Entity\PTLineStop;
@@ -45,7 +46,8 @@ class PTDataProvider
 {
     const PROVIDERS = [
         "cityway" => CitywayProvider::class,
-        "conduentPT" => ConduentPTProvider::class
+        "conduentPT" => ConduentPTProvider::class,
+        "navitia" => NavitiaProvider::class
     ];
     
     const DATETIME_FORMAT = \DateTime::RFC3339;
@@ -120,6 +122,7 @@ class PTDataProvider
 
         // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
+            // echo "Unauthorized Providers";die;
             return null;
         }
 
