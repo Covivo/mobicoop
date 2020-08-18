@@ -74,71 +74,66 @@ class PTDataProvider
      * Get journeys from an external Public Transport data provider.
      *
      * @param string $provider                  The name of the provider (obsolete : not used anymore)
-     * @param string $apikey                    The API Key for the provider
      * @param string $origin_latitude           The latitude of the origin point
      * @param string $origin_longitude          The longitude of the origin point
      * @param string $destination_latitude      The latitude of the destination point
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
-     * @param string $dateType                  The date type of the trip (departure or arrival)
-     * @param string $algorithm                 The algorithm used for the trip calculation (fastest, shortest or minchanges)
-     * @param string $modes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
-     * @param string $username                  The username for the provider
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
         ?string $provider,
-        string $apikey,
         string $origin_latitude,
         string $origin_longitude,
         string $destination_latitude,
         string $destination_longitude,
-        \Datetime $date,
-        string $dateType,
-        string $algorithm,
-        string $modes,
-        ?string $username=null
+        \Datetime $date
     ): ?array {
         $providerUri = null;
-        // If there is a territory, we look for the right provider. If there is no, we take the default.
-        $provider = $this->PTProviders['default']['dataprovider'];
-        $providerUri = $this->PTProviders['default']['url'];
 
-        // Get the territory of the request
-        $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
-        $territoryId = null;
-        foreach ($territories as $territory) {
-            // If the territoryId is in the providers.json for PT, we use this one
-            if (isset($this->PTProviders[$territory->getId()])) {
-                $territoryId = $territory->getId();
-                break;
+        $territoryId = "default";
+        if (count($this->PTProviders)>1) {
+            // If there is a territory, we look for the right provider. If there is no, we take the default.
+            // Get the territory of the request
+            $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
+            foreach ($territories as $territory) {
+                // If the territoryId is in the providers.json for PT, we use this one
+                if (isset($this->PTProviders[$territory->getId()])) {
+                    $territoryId = $territory->getId();
+                    break;
+                }
             }
         }
 
-        if (!is_null($territoryId)) {
-            $provider = $this->PTProviders[$territoryId]['dataprovider'];
-            $providerUri = $this->PTProviders[$territoryId]['url'];
-        }
-
+        // Values
+        $provider = $this->PTProviders[$territoryId]['dataprovider'];
         // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
             // echo "Unauthorized Providers";die;
             return null;
         }
+        $providerUri = $this->PTProviders[$territoryId]['url'];
+        $apikey = $this->PTProviders[$territoryId]['apikey'];
+        $customParams = $this->PTProviders[$territoryId]['params'];
+
+
 
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass($providerUri);
-        $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
-                "origin_latitude" => $origin_latitude,
-                "origin_longitude" => $origin_longitude,
-                "destination_latitude" => $destination_latitude,
-                "destination_longitude" => $destination_longitude,
-                "date" => $date,
-                "dateType" => $dateType,
-                "algorithm" => $algorithm,
-                "modes" => $modes,
-                "username" => $username
-        ]]);
+
+
+        $params = [
+            "origin_latitude" => $origin_latitude,
+            "origin_longitude" => $origin_longitude,
+            "destination_latitude" => $destination_latitude,
+            "destination_longitude" => $destination_longitude,
+            "date" => $date
+        ];
+        foreach ($customParams as $key => $value) {
+            $params[$key] = $value;
+        }
+
+        $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,$params]);
 
         // Set the display label of the departure and arrival
         foreach ($journeys as $journey) {

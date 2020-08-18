@@ -58,31 +58,22 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     {
         if (
             is_null($this->request->get("provider")) &&
-            is_null($this->request->get("apikey")) &&
             is_null($this->request->get("origin_latitude")) &&
             is_null($this->request->get("origin_longitude")) &&
             is_null($this->request->get("destination_latitude")) &&
             is_null($this->request->get("destination_longitude")) &&
-            is_null($this->request->get("date")) &&
-            is_null($this->request->get("dateType")) &&
-            is_null($this->request->get("algorithm")) &&
-            is_null($this->request->get("modes"))
+            is_null($this->request->get("date"))
         ) {
             return null;
         }
         
         return $this->dataProvider->getJourneys(
             $this->request->get("provider"),
-            $this->request->get("apikey"),
             $this->request->get("origin_latitude"),
             $this->request->get("origin_longitude"),
             $this->request->get("destination_latitude"),
             $this->request->get("destination_longitude"),
-            \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
-            $this->request->get("dateType"),
-            $this->request->get('algorithm'),
-            $this->request->get('modes'),
-            $this->request->get('username')
+            \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date"))
         );
     }
 }
