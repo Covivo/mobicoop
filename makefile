@@ -105,6 +105,12 @@ pull:
 	sleep 20
 	@make -s db-migrate
 
+force-drop-db:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): Dropping database...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm force-drop-database
+
 db-migrate:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Migration...)
@@ -149,3 +155,11 @@ go-db:
 
 connect:
 	@docker exec -it mobicoop_platform /bin/bash
+
+cypress-start-all:
+	$(info $(green)-----------------------------------------------------------------)
+	$(info $(green)Make ($(os)): Dropping database, migration and running Cypress...)
+	$(info $(green)-----------------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm force-drop-database
+	@make -s db-migrate
+	cd client && npm run cypress

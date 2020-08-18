@@ -48,7 +48,7 @@
     "babel-eslint": "^10.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
-    "cypress": "^3.3.1",
+    "cypress": "^3.4.1",
     "deepmerge": "^4.0.0",
     "eslint": "^5.0.0",
     "eslint-loader": "2.1.0",

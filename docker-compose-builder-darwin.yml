@@ -36,11 +36,19 @@ services:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:migrations:diff -n -v
+
+  force-drop-database:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:schema:drop --env=dev --force --full-database
+  
   db-migrate:
     extends:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:migrations:migrate -n -v
+
   app-geography-territory-link-batch:
     extends:
       service: base
