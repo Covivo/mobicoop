@@ -542,18 +542,21 @@ class AskManager
         
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
-        // - the opposite and return opposite if the role wasn't chosen
+        // - the opposite and return opposite if the role wasn't chosen (WE DON'T DO THAT ANYMORE)
         $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
         $ask->setStatus($ad->getAskStatus());
         if ($ask->getAskLinked()) {
             $ask->getAskLinked()->setStatus($ad->getAskStatus());
         }
-        if ($ask->getAskOpposite()) {
-            $ask->getAskOpposite()->setStatus($ad->getAskStatus());
-            if ($ask->getAskOpposite()->getAskLinked()) {
-                $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
-            }
-        }
+        
+        // UNCOMMENT TO UPDATE ALSO THE ASK OPPOSITE
+        // if ($ask->getAskOpposite()) {
+        //     $ask->getAskOpposite()->setStatus($ad->getAskStatus());
+        //     if ($ask->getAskOpposite()->getAskLinked()) {
+        //         $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
+        //     }
+        // }
+        
         if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
             // regular
             // we update the criteria of the master ask
