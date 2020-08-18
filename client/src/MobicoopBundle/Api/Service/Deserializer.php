@@ -583,7 +583,7 @@ class Deserializer
         if (isset($data["community"]) && is_array($data["community"])) {
             $communityUser->setCommunity($this->deserializeCommunity($data["community"]));
         }
-        if (isset($data["user"])) {
+        if (isset($data["user"]) && is_array($data["user"])) {
             $communityUser->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["admin"])) {
