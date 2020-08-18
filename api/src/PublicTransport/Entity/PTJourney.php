@@ -46,20 +46,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
- *                          "name" = "provider",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The public transport data provider"
- *                      },
- *                      {
- *                          "name" = "apikey",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The api key for the data provider"
- *                      },
- *                      {
  *                          "name" = "origin_latitude",
  *                          "in" = "query",
  *                          "required" = "true",
@@ -98,43 +84,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                          "type" = "string",
  *                          "format" = "date-time",
  *                          "description" = "The date of the trip (on RFC3339 format)"
- *                      },
- *                      {
- *                          "name" = "dateType",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The date type of the trip",
- *                          "enum" = {
- *                              "departure",
- *                              "arrival"
- *                          }
- *                      },
- *                      {
- *                          "name" = "algorithm",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The type of calculation algorithm for the trip",
- *                          "enum" = {
- *                              "fastest",
- *                              "shortest",
- *                              "minchanges"
- *                          }
- *                      },
- *                      {
- *                          "name" = "modes",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The transport modes accepted for the trip",
- *                          "enum" = {
- *                              "PT",
- *                              "BIKE",
- *                              "CAR",
- *                              "PT+BIKE",
- *                              "PT+CAR"
- *                          }
  *                      },
  *                  },
  *              }
