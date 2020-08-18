@@ -58,7 +58,7 @@ class NavitiaProvider implements ProviderInterface
     private const PT_MODE_TRAMWAY = "Tramway";
 
     private const COUNTRY = "France";
-    private const NC = "NC";
+    private const NC = "";
 
     private const COLLECTION_RESSOURCE_JOURNEYS = "v1/journeys";
 

@@ -51,7 +51,7 @@ class ConduentPTProvider implements ProviderInterface
     private const PT_MODE_WAITING = "Waiting";
 
     private const COUNTRY = "France";
-    private const NC = "NC";
+    private const NC = "";
 
     private const AUTH_RESSOURCE = "AUTH.API/auth";
     private const PROFILE_RESSOURCE = "MCP.ID.API/profiles";

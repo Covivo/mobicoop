@@ -114,6 +114,7 @@ class PTDataProvider
         }
         $providerUri = $this->PTProviders[$territoryId]['url'];
         $apikey = $this->PTProviders[$territoryId]['apikey'];
+        $username = $this->PTProviders[$territoryId]['username'];
         $customParams = $this->PTProviders[$territoryId]['params'];
 
 
@@ -127,7 +128,8 @@ class PTDataProvider
             "origin_longitude" => $origin_longitude,
             "destination_latitude" => $destination_latitude,
             "destination_longitude" => $destination_longitude,
-            "date" => $date
+            "date" => $date,
+            "username" => $username
         ];
         foreach ($customParams as $key => $value) {
             $params[$key] = $value;
