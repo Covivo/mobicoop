@@ -76,13 +76,7 @@ class CarpoolController extends AbstractController
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
-        int $ptResults,
-        string $ptProvider,
-        string $ptKey,
-        string $ptAlgorithm,
-        string $ptDateCriteria,
-        string $ptMode,
-        string $ptUsername
+        int $ptResults
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -92,12 +86,6 @@ class CarpoolController extends AbstractController
         $this->platformName = $platformName;
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
         $this->ptResults = $ptResults;
-        $this->ptProvider = $ptProvider;
-        $this->ptKey = $ptKey;
-        $this->ptAlgorithm = $ptAlgorithm;
-        $this->ptDateCriteria = $ptDateCriteria;
-        $this->ptMode = $ptMode;
-        $this->ptUsername = $ptUsername;
         $this->publicTransportManager = $publicTransportManager;
         $this->participationText = $participationText;
     }
@@ -532,17 +520,11 @@ class CarpoolController extends AbstractController
             $date = new \DateTime($params['date']." 08:00:00", new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
-            $this->ptProvider,
-            $this->ptKey,
             $params['from_latitude'],
             $params['from_longitude'],
             $params['to_latitude'],
             $params['to_longitude'],
-            $date->format(\DateTime::RFC3339),
-            $this->ptDateCriteria,
-            $this->ptAlgorithm,
-            $this->ptMode,
-            $this->ptUsername
+            $date->format(\DateTime::RFC3339)
         );
         
         if (!is_null($journeys)) {
