@@ -169,24 +169,8 @@ class NavitiaProvider implements ProviderInterface
                         $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                         $departureAddress->setAddressCountry(self::COUNTRY);
                             
-                        $departureAddress->setAddressLocality(self::NC);
-                        if (isset($section['from']['address']['administrative_regions'])) {
-                            foreach ($section['from']['address']['administrative_regions'] as $administrative_region) {
-                                if (isset($administrative_region["level"]) && $administrative_region["level"]==8) {
-                                    $departureAddress->setAddressLocality($administrative_region['name']);
-                                }
-                            }
-                        }
-                            
-                        $departureAddress->setStreetAddress(self::NC);
-                        if (isset($section['from']['address']['name'])) {
-                            $departureAddress->setStreetAddress($section['from']['address']['name']);
-                        }
-                
-                        if (isset($section['from']['address']['coord'])) {
-                            $departureAddress->setLatitude($section['from']['address']['coord']['lat']);
-                            $departureAddress->setLongitude($section['from']['address']['coord']['lon']);
-                        }
+                        $departureAddress = $this->setAddressInfos($departureAddress, $section['from']);
+
                         $departure->setAddress($departureAddress);
                     
                         $journey->setPTDeparture($departure);
@@ -206,24 +190,7 @@ class NavitiaProvider implements ProviderInterface
                         $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                         $arrivalAddress->setAddressCountry(self::COUNTRY);
                             
-                        $arrivalAddress->setAddressLocality(self::NC);
-                        if (isset($section['to']['address']['administrative_regions'])) {
-                            foreach ($section['to']['address']['administrative_regions'] as $administrative_region) {
-                                if (isset($administrative_region["level"]) && $administrative_region["level"]==8) {
-                                    $arrivalAddress->setAddressLocality($administrative_region['name']);
-                                }
-                            }
-                        }
-                            
-                        $arrivalAddress->setStreetAddress(self::NC);
-                        if (isset($section['to']['address']['name'])) {
-                            $arrivalAddress->setStreetAddress($section['to']['address']['name']);
-                        }
-
-                        if (isset($section['to']['address']['coord'])) {
-                            $arrivalAddress->setLatitude($section['to']['address']['coord']['lat']);
-                            $arrivalAddress->setLongitude($section['to']['address']['coord']['lon']);
-                        }
+                        $arrivalAddress = $this->setAddressInfos($arrivalAddress, $section['to']);
 
                         $arrival->setAddress($arrivalAddress);
                         
@@ -311,24 +278,7 @@ class NavitiaProvider implements ProviderInterface
         $departureAddress->setAddressCountry(self::COUNTRY);
                     
         if (isset($data['from'])) {
-            $departureAddress->setAddressLocality(self::NC);
-            if (isset($data['from']['address']['administrative_regions'])) {
-                foreach ($data['from']['address']['administrative_regions'] as $administrative_region) {
-                    if (isset($administrative_region["level"]) && $administrative_region["level"]==8) {
-                        $departureAddress->setAddressLocality($administrative_region['name']);
-                    }
-                }
-            }
-                        
-            $departureAddress->setStreetAddress(self::NC);
-            if (isset($data['from']['address']['name'])) {
-                $departureAddress->setStreetAddress($data['from']['address']['name']);
-            }
-            
-            if (isset($data['from']['address']['coord'])) {
-                $departureAddress->setLatitude($data['from']['address']['coord']['lat']);
-                $departureAddress->setLongitude($data['from']['address']['coord']['lon']);
-            }
+            $departureAddress = $this->setAddressInfos($departureAddress, $data['from']);
         }
 
         $departure->setAddress($departureAddress);
@@ -346,24 +296,7 @@ class NavitiaProvider implements ProviderInterface
         $arrivalAddress->setAddressCountry(self::COUNTRY);
                     
         if (isset($data['to'])) {
-            $arrivalAddress->setAddressLocality(self::NC);
-            if (isset($data['to']['address']['administrative_regions'])) {
-                foreach ($data['to']['address']['administrative_regions'] as $administrative_region) {
-                    if (isset($administrative_region["level"]) && $administrative_region["level"]==8) {
-                        $arrivalAddress->setAddressLocality($administrative_region['name']);
-                    }
-                }
-            }
-                        
-            $arrivalAddress->setStreetAddress(self::NC);
-            if (isset($data['to']['address']['name'])) {
-                $arrivalAddress->setStreetAddress($data['to']['address']['name']);
-            }
-
-            if (isset($data['to']['address']['coord'])) {
-                $arrivalAddress->setLatitude($data['to']['address']['coord']['lat']);
-                $arrivalAddress->setLongitude($data['to']['address']['coord']['lon']);
-            }
+            $arrivalAddress = $this->setAddressInfos($arrivalAddress, $data['to']);
         }
 
         $arrival->setAddress($arrivalAddress);
@@ -400,27 +333,34 @@ class NavitiaProvider implements ProviderInterface
         return $leg;
     }
 
-    /**
-     * Convert a Duration type hh:ii:ss in seconds
-     *
-     * @param string $duration
-     * @return int
-     */
-    private function convertToSeconds(string $duration)
+    private function setAddressInfos(Address $address, $data)
     {
-        $durationTab = explode(":", $duration);
-        $durationInSeconds = 0;
+        $address->setAddressLocality(self::NC);
+        
+        if (isset($data['address'])) {
+            $base = $data['address'];
+        } elseif (isset($data['stop_point'])) {
+            $base = $data['stop_point'];
+        }
+        
+        if (isset($base['administrative_regions'])) {
+            foreach ($base['administrative_regions'] as $administrative_region) {
+                if (isset($administrative_region["level"]) && $administrative_region["level"]==8) {
+                    $address->setAddressLocality($administrative_region['name']);
+                }
+            }
+        }
+                    
+        $address->setStreetAddress(self::NC);
+        if (isset($base['name'])) {
+            $address->setStreetAddress($base['name']);
+        }
 
-        if (isset($durationTab[0])) {
-            $durationInSeconds += (int)($durationTab[0]) * 3600;
-        }
-        if (isset($durationTab[1])) {
-            $durationInSeconds += (int)($durationTab[1]) * 60;
-        }
-        if (isset($durationTab[2])) {
-            $durationInSeconds += (int)($durationTab[2]);
+        if (isset($base['coord'])) {
+            $address->setLatitude($base['coord']['lat']);
+            $address->setLongitude($base['coord']['lon']);
         }
 
-        return $durationInSeconds;
+        return $address;
     }
 }
