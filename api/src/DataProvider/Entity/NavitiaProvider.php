@@ -118,8 +118,8 @@ class NavitiaProvider implements ProviderInterface
             foreach ($data['journeys'] as $journey) {
                 $this->collection[] = $this->deserialize($class, $journey);
             }
-        } elseif ($response->getCode() == 510) {
-            // Out of bound for conduent
+        } elseif ($response->getCode() == 510 || $response->getCode() == 404) {
+            // Out of bound
             //throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
             // For out of bound we do nothing. We just treat it as a no found solution
         } else {
