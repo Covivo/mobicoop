@@ -342,6 +342,10 @@ class UserController extends AbstractController
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 
             if ($user = $userManager->updateUser($user)) {
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                
                 if ($file) {
                     // Post avatar of the user
                     $image = new Image();
