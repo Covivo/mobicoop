@@ -1,4 +1,4 @@
-﻿![Logo mobicoop](https://www.mobicoop.fr/images/Mobicoop/general/logo-mobicoop.png)
+![Logo mobicoop](https://www.mobicoop.fr/images/Mobicoop/general/logo-mobicoop.png)
 
 # Mobicoop Platform
 
@@ -425,9 +425,9 @@ On the other hand, the platform needs information coming from a geographic infor
 ### ℹ️ What screen sizes are covered by Mobicoop Platform, and how do you manage mobile devices ?
 
 To offer a similar user experience to mobile users between the mobile app and the web app, a dedicated project exists : **[Mobicoop Mobile](https://gitlab.com/mobicoop/mobicoop-mobile)** .
-Mobile devices are thus managed by a redirection to a web app instance of Mobicoop Mobile hosted with its own subdomain.
+Mobile devices are thus managed by a redirection to a web app instance of Mobicoop Mobile hosted with its own subdomain. The redirection is based on the device of the user-agent accessing the Mobicoop Platform website.
 
-The redirection depends on the screen size as follows :
+In terms of screen sizes, the following separation is chosen. This separation between screen sizes assigned to Mobicoop Mobile or Mobicoop Platform is independant of the redirection from the desktop website to the mobile website. As stated above, this redirection is based on the type of device (Phone/Tablet) and not the screen resolution.
 
 | Device | Vuetify code | Viewport range  | Assigned project  |
 |-----------------|------------|:---------------:|--------------|

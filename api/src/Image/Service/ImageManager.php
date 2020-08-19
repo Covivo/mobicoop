@@ -140,8 +140,11 @@ class ImageManager
             // the image is an image for a user
             return $this->userRepository->find($image->getUser()->getId());
         } elseif (!is_null($image->getRelayPoint())) {
-            // the image is an image for a user
+            // the image is an image for a relay point
             return $this->relayPointRepository->find($image->getRelayPoint()->getId());
+        } elseif (!is_null($image->getRelayPointId())) {
+            // the image is an image for a relay point
+            return $this->relayPointRepository->find($image->getRelayPointId());
         } elseif (!is_null($image->getCampaign())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaign()->getId());

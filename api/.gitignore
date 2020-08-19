@@ -371,3 +371,6 @@ $RECYCLE.BIN/
 
 # Domains authorized
 /config/user/domains.json
+
+# Modules available
+/config/params/modules.json

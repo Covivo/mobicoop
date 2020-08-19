@@ -13,6 +13,8 @@ import {
   BooleanInput,
   FunctionField,
   useTranslate,
+  ReferenceArrayInput,
+  SelectArrayInput,
 } from 'react-admin';
 
 import GeocompleteInput from '../../components/geolocation/geocomplete';
@@ -78,6 +80,7 @@ const UserEdit = (props) => {
             label={translate('custom.label.user.email')}
             validate={emailRules}
           />
+
           <TextInput
             fullWidth
             required
@@ -188,8 +191,14 @@ const UserEdit = (props) => {
         <FormTab label={translate('custom.label.user.manageRoles')}>
           <GestionRoles />
         </FormTab>
+        <FormTab label={translate('custom.label.user.structures')}>
+          <ReferenceArrayInput source="solidaryStructures" reference="structures">
+            <SelectArrayInput optionText="name" />
+          </ReferenceArrayInput>
+        </FormTab>
       </TabbedForm>
     </Edit>
   );
 };
+
 export default UserEdit;

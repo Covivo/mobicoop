@@ -131,6 +131,23 @@
           </v-icon>
         </v-btn>
       </v-col>
+      <v-col
+        v-else-if="paymentItemId!==null"
+        class="text-right"
+      >
+        <AdPayment
+          :is-driver="isDriver"
+          :is-passenger="isPassenger"
+          :payment-status="paymentStatus"
+          :frequency="adFrequency"
+          :payment-item-id="paymentItemId"
+          :week="paymentWeek"
+          :unpaid-date="unpaidDate"
+          outlined
+          show-unpaid
+          hide-button
+        />
+      </v-col>
     </v-row>
     
     <!--DIALOG-->
@@ -179,12 +196,15 @@
 <script>
 import axios from "axios";
 import formData from "../../../../utils/request";
-
+import AdPayment from '@components/user/profile/ad/AdPayment.vue';
 import Translations from "@translations/components/user/profile/ad/MyAds.js";
 
 export default {
   i18n: {
     messages: Translations
+  },
+  components: {
+    AdPayment
   },
   props: {
     isDriver: {
@@ -211,6 +231,10 @@ export default {
       type: Number,
       default: null
     },
+    adFrequency: {
+      type: Number,
+      default: null
+    },
     hasAsk: {
       type: Boolean,
       default: false
@@ -222,7 +246,23 @@ export default {
     isCarpool: {
       type: Boolean,
       default: false
-    }
+    },
+    paymentStatus: {
+      type: Number,
+      default: null
+    },
+    paymentItemId: {
+      type: Number,
+      default: null
+    },
+    paymentWeek: {
+      type: Number,
+      default: null
+    },
+    unpaidDate: {
+      type: String,
+      default: null
+    }    
   },
   data () {
     return {

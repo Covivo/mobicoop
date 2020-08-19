@@ -1,0 +1,16 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}payment.title{% endtrans %} - {{ app_name }}{% endblock %}
+{% block stylesheets %}
+ 
+{% endblock %}
+{% block main %}
+
+   <payment
+       :payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
+       :selected-id = "{{ selectedId }}"
+       :frequency = "{{ frequency }}"
+       :type = "{{ type }}"
+       :week = "{{ week|json_encode }}"
+   />
+{% endblock %}

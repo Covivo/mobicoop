@@ -12,6 +12,8 @@ import isPlainObject from 'lodash.isplainobject';
  */
 const cache = new Map();
 
+const isHydraObject = (obj) => isPlainObject(obj) && obj['@id'];
+
 /**
  * Transform object with deep fields to a flat map to be handled by the API
  * Eg: { name: "foo", address: { @id: "/addresses/12" } }
@@ -22,15 +24,10 @@ const cache = new Map();
  */
 const stringifyDeepObjects = (obj) =>
   Object.keys(obj).reduce((agg, key) => {
-    if (isPlainObject(obj[key]) && obj[key]['@id']) {
+    if (isHydraObject(obj[key])) {
       agg[key] = obj[key]['@id'];
-    } else if (
-      Array.isArray(obj[key]) &&
-      obj[key].length &&
-      isPlainObject(obj[key][0]) &&
-      obj[key][0]['@id']
-    ) {
-      agg[key] = obj[key].map((object) => object['@id']);
+    } else if (Array.isArray(obj[key]) && obj[key].length) {
+      agg[key] = obj[key].map((object) => (isHydraObject(object) ? object['@id'] : object));
     } else if (isPlainObject(obj[key])) {
       agg[key] = stringifyDeepObjects(obj[key]);
     } else {
@@ -136,7 +133,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint, debug = false) => (
         options: {},
         url: itemUrl,
       });
-    case UPDATE:
+    case UPDATE: {
       return Promise.resolve({
         options: {
           body: JSON.stringify(stringifyDeepObjects(params.data)),
@@ -144,6 +141,7 @@ const createReactAdminToHydraRequestConverter = (entrypoint, debug = false) => (
         },
         url: itemUrl,
       });
+    }
     default:
       throw new Error(`Unsupported fetch action type ${type}`);
   }
@@ -197,7 +195,7 @@ export const jsonLdDocumentToReactAdminDocument = (document) => {
 
   Object.keys(obj).forEach((key) => {
     // to-one
-    if (isPlainObject(obj[key]) && obj[key]['@id']) {
+    if (isHydraObject(obj[key])) {
       obj[key] = normalizeObject(obj[key]);
       cache[obj[key]['@id']] = jsonLdDocumentToReactAdminDocument(document[key]);
 
@@ -205,12 +203,7 @@ export const jsonLdDocumentToReactAdminDocument = (document) => {
     }
 
     // to-many
-    if (
-      Array.isArray(obj[key]) &&
-      obj[key].length &&
-      isPlainObject(obj[key][0]) &&
-      obj[key][0]['@id']
-    ) {
+    if (Array.isArray(obj[key]) && obj[key].length && isHydraObject(obj[key][0])) {
       obj[key] = obj[key].map((object) => {
         cache[object['@id']] = jsonLdDocumentToReactAdminDocument(object);
         return normalizeObject(object);
@@ -258,6 +251,7 @@ export default (
           filter: { id: params.ids },
         });
       }
+
       return Promise.all(
         params.ids.map((id) =>
           cache[id]

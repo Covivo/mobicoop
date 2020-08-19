@@ -41,7 +41,7 @@ export const EventEdit = (props) => {
         <TextInput
           fullWidth
           source="name"
-          label={translate('custom.label.event.image')}
+          label={translate('custom.label.event.name')}
           validate={[required()]}
           required
           formClassName={classes.title}

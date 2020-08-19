@@ -28,9 +28,9 @@ import RelayPointResource from './Resources/RelayPoint/RelayPoint';
 import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
 import SolidaryAnimationResource from './Resources/Solidary/SolidaryAnimation';
 import SolidarySearchResource from './Resources/Solidary/SolidarySearch';
+import StructureResource from './Resources/Solidary/Structure';
 
 // Temporary disabled resources (Don't known why ?)
-// import StructureResource from './Resources/Solidary/Structure';
 // import TerritoryResource from './Resources/Territory';
 // import AddressResource from './Resources/Address';
 
@@ -53,7 +53,10 @@ export default () => (
         <Resource name="users" {...(can('user_manage') ? UserResource : {})} />,
         <Resource name="communities" {...(can('community_manage') ? CommunityResource : {})} />,
         <Resource name="community_users" {...(can('user_manage') ? CommunityUserResource : {})} />,
-        <Resource name={isAdmin() ? "campaigns" : "campaigns/owned"}  {...(can('campaign_manage') ? CampaignResource : {})} />,
+        <Resource
+          name={isAdmin() ? 'campaigns' : 'campaigns/owned'}
+          {...(can('campaign_manage') ? CampaignResource : {})}
+        />,
         <Resource name="events" {...(can('event_manage') ? EventResource : {})} />,
         <Resource name="articles" {...(can('article_manage') ? ArticleResource : {})} />,
         <Resource name="sections" {...(can('article_manage') ? SectionResource : {})} />,
@@ -71,7 +74,7 @@ export default () => (
         />,
         <Resource
           name="solidary_volunteers"
-          {...(can('solidary_manage') ? SolidaryUsersVolunteerResource : {})}
+          {...(can('solidary_volunteer_list') ? SolidaryUsersVolunteerResource : {})}
         />,
         <Resource name="solidaries" {...(can('solidary_manage') ? SolidaryResource : {})} />,
         <Resource
@@ -86,11 +89,7 @@ export default () => (
           name="solidary_searches"
           {...(can('solidary_manage') ? SolidarySearchResource : {})}
         />,
-        // API Fail during "/structures" GET
-        // @TODO: Fix API and remove the comment bellow
-        // <Resource name="structures" {...(can('user_manage') ? StructureResource : {})} />,
-        // These resources were commented on during my refacto, why ?
-        // @TODO: Talk between us about that
+        <Resource name="structures" {...(can('user_manage') ? StructureResource : {})} />,
         <Resource name="addresses" />,
         <Resource name="images" />,
         <Resource name="needs" />,
@@ -99,6 +98,8 @@ export default () => (
         <Resource name="solidary_users" />,
         <Resource name="solidary_contacts" />,
         <Resource name="actions" />,
+        <Resource name="solidary_formal_requests" />,
+        <Resource name="icons" />,
       ].filter((x) => x);
     }}
   </Admin>

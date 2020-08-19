@@ -50,6 +50,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\ClassicProof;
 use App\Carpool\Exception\ProofException;
+use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use DateTime;
 
@@ -1568,6 +1569,7 @@ class AdManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
                 /** @var Ask $ask */
+                $generalPaymentStatus = null;
                 foreach ($matching->getAsks() as $ask) {
                     // We check if the ask is accepted if yes we put the ask in the tab
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
@@ -1615,6 +1617,27 @@ class AdManager
                     continue;
                 } else {
                     // If not we add it to the ads array
+
+                    // If payement is active we determine the general payments status of the Ad taking account of all the sub ads
+                    // If one sub ad is UNPAID, the general Ad is UNPAID
+                    // If one sub ad is PENDING, the general Ad is PENDING
+                    $ad->setPaymentStatus(Ask::PAYMENT_STATUS_PAID); // Default value : PAID
+                    if ($this->params['paymentActive']) {
+                        foreach ($ad->getAsks() as $askAd) {
+                            if (!is_null($askAd->getUnpaidDate())) {
+                                $ad->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                                $ad->setUnpaidDate($askAd->getUnpaidDate());
+                                break;
+                            }
+                            if ($askAd->getPaymentStatus() == Ask::PAYMENT_STATUS_PENDING) {
+                                $ad->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
+                                break;
+                            }
+                        }
+                    }
+                    $ad->setPaymentItemId($askAd->getPaymentItemId());
+                    $ad->setPaymentItemWeek($askAd->getPaymentItemWeek());
+
                     $ads[] = $ad;
                 }
             }

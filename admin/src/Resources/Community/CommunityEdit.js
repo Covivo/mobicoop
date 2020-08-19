@@ -213,12 +213,12 @@ export const CommunityEdit = (props) => {
             label={translate('custom.label.community.updateDate')}
             formClassName={classes.inlineBlock}
           />
-          <TextInput
+          {/* <TextInput
             disabled
             source="status"
             label={translate('custom.label.community.status')}
             formClassName={classes.inlineBlock}
-          />
+          />*/}
           <ReferenceInput
             disabled
             source="user.id"

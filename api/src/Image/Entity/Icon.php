@@ -24,6 +24,7 @@
 namespace App\Image\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,6 +36,17 @@ use App\RelayPoint\Entity\RelayPointType;
  *
  * @ORM\Entity()
  * @ORM\EntityListeners({"App\Image\EntityListener\IconListener"})
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *      },
+ *      collectionOperations={
+ *          "get"
+ *      },
+ *      itemOperations={
+ *          "get"
+ *      }
+ * )
  */
 class Icon
 {
@@ -84,7 +96,7 @@ class Icon
     private $relayPointTypes;
 
     /**
-     * @var Icon|null Linked icon for a private.
+     * @var Icon|null Linked icon for the private related item.
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")

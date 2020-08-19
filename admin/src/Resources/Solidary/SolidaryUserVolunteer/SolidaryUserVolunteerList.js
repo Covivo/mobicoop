@@ -60,7 +60,7 @@ const ActionsDropDown = ({ record, ...props }) => {
 };
 
 export const SolidaryUserVolunteerListGuesser = (props) => {
-  const solidary = useSolidary(props.filterValues.solidary);
+  const { solidary } = useSolidary(props.filterValues.solidary);
 
   return (
     <List

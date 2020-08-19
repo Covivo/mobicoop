@@ -48,6 +48,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
@@ -72,6 +73,9 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Icon;
 use Mobicoop\Bundle\MobicoopBundle\Price\Entity\Price;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 
 /**
  * Custom deserializer service.
@@ -177,6 +181,18 @@ class Deserializer
             case RelayPoint::class:
                 return $this->deserializeRelayPoint($data) ;
                 break;
+            case BankAccount::class:
+                return $this->deserializeBankAccount($data) ;
+                break;
+            case PaymentItem::class:
+                return $this->deserializePaymentItem($data) ;
+                break;
+            case PaymentPayment::class:
+                return $this->deserializePaymentPayment($data) ;
+                break;
+            case Ask::class:
+                return $this->deserializeAsk($data);
+                break;
             default:
                 break;
         }
@@ -204,6 +220,13 @@ class Deserializer
             foreach ($data["images"] as $image) {
                 $user->addImage($this->deserializeImage($image));
             }
+        }
+        if (isset($data["bankAccounts"])) {
+            $bankAccounts = [];
+            foreach ($data["bankAccounts"] as $bankAccount) {
+                $bankAccounts[] = $this->deserializeBankAccount($bankAccount);
+            }
+            $user->setBankAccounts($bankAccounts);
         }
         return $user;
     }
@@ -560,7 +583,7 @@ class Deserializer
         if (isset($data["community"]) && is_array($data["community"])) {
             $communityUser->setCommunity($this->deserializeCommunity($data["community"]));
         }
-        if (isset($data["user"])) {
+        if (isset($data["user"]) && is_array($data["user"])) {
             $communityUser->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["admin"])) {
@@ -786,6 +809,44 @@ class Deserializer
         $icon = $this->autoSet($icon, $data);
 
         return $icon;
+    }
+
+    private function deserializeBankAccount(array $data) : ?BankAccount
+    {
+        $bankAccount = new BankAccount();
+        $bankAccount = $this->autoSet($bankAccount, $data);
+
+        return $bankAccount;
+    }
+
+    private function deserializePaymentItem(array $data) : ?PaymentItem
+    {
+        $paymentItem = new PaymentItem();
+        if (isset($data["origin"])) {
+            $paymentItem->setOrigin($this->deserializeAddress($data['origin']));
+        }
+        if (isset($data["destination"])) {
+            $paymentItem->setDestination($this->deserializeAddress($data['destination']));
+        }
+        $paymentItem = $this->autoSet($paymentItem, $data);
+
+        return $paymentItem;
+    }
+
+    private function deserializePaymentPayment(array $data) : ?PaymentPayment
+    {
+        $paymentPayment = new PaymentPayment();
+        $paymentPayment = $this->autoSet($paymentPayment, $data);
+
+        return $paymentPayment;
+    }
+
+    private function deserializeAsk(array $data) : ?Ask
+    {
+        $ask = new Ask();
+        $ask = $this->autoSet($ask, $data);
+
+        return $ask;
     }
 
     private function autoSet($object, $data)

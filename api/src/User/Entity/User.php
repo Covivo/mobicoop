@@ -99,6 +99,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Match\Entity\MassPerson;
+use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
@@ -249,6 +250,12 @@ use App\User\Controller\UserCanUseEmail;
  *              "normalization_context"={"groups"={"readUser"}},
  *              "method"="GET",
  *              "path"="/users/me",
+ *              "read"="false"
+ *          },
+ *          "paymentProfile"={
+ *              "normalization_context"={"groups"={"readPayment"}},
+ *              "method"="GET",
+ *              "path"="/users/paymentProfile",
  *              "read"="false"
  *          },
  *          "accessAdmin"={
@@ -428,7 +435,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -904,12 +911,12 @@ class User implements UserInterface, EquatableInterface
     private $logs;
 
     /**
-     * @var ArrayCollection|null A user may have many diary action logs as an admin.
+     * @var ArrayCollection|null A user may have many action logs as an delegate.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readUser","write"})
      */
-    private $logsAdmin;
+    private $logsAsDelegate;
 
     /**
      * @var ArrayCollection|null A user may have many action logs.
@@ -1013,7 +1020,7 @@ class User implements UserInterface, EquatableInterface
     private $carpoolProofsAsPassenger;
 
     /**
-     * @var string|null Token for unsubscribee the user from receiving email
+     * @var string|null Token for news unsubscription
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1077,13 +1084,6 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
-     * @var array|null used to get the structures of a user
-     * @Groups({"readUser", "write"})
-     * @MaxDepth(1)
-     */
-    private $solidaryStructures;
-
-    /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
      * @Groups({"readUserAdmin" })
      */
@@ -1107,6 +1107,22 @@ class User implements UserInterface, EquatableInterface
      */
     private $operates;
 
+    /**
+     * @var array|null BankAccounts of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $bankAccounts;
+
+    /**
+     * @var array|null Wallets of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $wallets;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1124,7 +1140,7 @@ class User implements UserInterface, EquatableInterface
         $this->recipients = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
         $this->logs = new ArrayCollection();
-        $this->logsAdmin = new ArrayCollection();
+        $this->logsAsDelegate = new ArrayCollection();
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
@@ -1134,8 +1150,9 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
-        $this->solidaryStructures = [];
         $this->roles = [];
+        $this->bankAccounts = [];
+        $this->wallets = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -2031,28 +2048,28 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getLogsAdmin()
+    public function getLogsAsDelegate()
     {
-        return $this->logsAdmin->getValues();
+        return $this->logsAsDelegate->getValues();
     }
 
-    public function addLogAdmin(Log $logAdmin): self
+    public function addLogAsDelegate(Log $logAsDelegate): self
     {
-        if (!$this->logsAdmin->contains($logAdmin)) {
-            $this->logsAdmin->add($logAdmin);
-            $logAdmin->setAdmin($this);
+        if (!$this->logsAsDelegate->contains($logAsDelegate)) {
+            $this->logsAsDelegate->add($logAsDelegate);
+            $logAsDelegate->setUserDelegate($this);
         }
 
         return $this;
     }
 
-    public function removeLogAdmin(Log $logAdmin): self
+    public function removeLogAsDelegate(Log $logAsDelegate): self
     {
-        if ($this->logsAdmin->contains($logAdmin)) {
-            $this->logsAdmin->removeElement($logAdmin);
+        if ($this->logsAsDelegate->contains($logAsDelegate)) {
+            $this->logsAsDelegate->removeElement($logAsDelegate);
             // set the owning side to null (unless already changed)
-            if ($logAdmin->getAdmin() === $this) {
-                $logAdmin->setAdmin(null);
+            if ($logAsDelegate->getUserDelegate() === $this) {
+                $logAsDelegate->setUserDelegate(null);
             }
         }
 
@@ -2549,9 +2566,21 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    /**
+     * Get User Solidary Structures
+     * @Groups({"readUser", "write"})
+     * @MaxDepth(1)
+     */
     public function getSolidaryStructures()
     {
-        return $this->solidaryStructures;
+        $structures = [];
+        if (!is_null($this->getOperates())) {
+            foreach ($this->getOperates() as $operate) {
+                $structures[] = $operate->getStructure();
+            }
+        }
+
+        return $structures;
     }
 
     public function setSolidaryStructures(?array $solidaryStructures): self
@@ -2604,6 +2633,30 @@ class User implements UserInterface, EquatableInterface
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
         }
+
+        return $this;
+    }
+
+    public function getBankAccounts(): ?array
+    {
+        return $this->bankAccounts;
+    }
+
+    public function setBankAccounts(?array $bankAccounts): self
+    {
+        $this->bankAccounts = $bankAccounts;
+
+        return $this;
+    }
+
+    public function getWallets(): ?array
+    {
+        return $this->wallets;
+    }
+
+    public function setWallets(?array $wallets): self
+    {
+        $this->wallets = $wallets;
 
         return $this;
     }

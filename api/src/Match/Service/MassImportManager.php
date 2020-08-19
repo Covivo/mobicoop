@@ -42,8 +42,11 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassMatching;
+use App\Match\Event\MassAnalyzeErrorsEvent;
+use App\Match\Event\MassMatchedEvent;
 use App\Match\Exception\OwnerNotFoundException;
 use App\Match\Repository\MassRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Mass import manager.
@@ -72,8 +75,7 @@ class MassImportManager
     private $geoSearcher;
     private $geoRouter;
     private $geoMatcher;
-    private $emailManager;
-    private $emailTemplatePath;
+    private $eventDispatcher;
 
     /**
      * Constructor
@@ -96,9 +98,8 @@ class MassImportManager
         GeoSearcher $geoSearcher,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
-        EmailManager $emailManager,
-        array $params,
-        string $emailTemplatePath
+        EventDispatcherInterface $eventDispatcher,
+        array $params
     ) {
         $this->entityManager = $entityManager;
         $this->massRepository = $massRepository;
@@ -111,8 +112,7 @@ class MassImportManager
         $this->geoSearcher = $geoSearcher;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
-        $this->emailManager = $emailManager;
-        $this->emailTemplatePath = $emailTemplatePath;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -373,12 +373,19 @@ class MassImportManager
         }
 
         $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        // Handling errors
         $mass->setErrors($analyseErrors);
+        if (count($analyseErrors)>0) {
+            // Some errors have been found. We send an email to the operator
+            $event = new MassAnalyzeErrorsEvent($mass);
+            $this->eventDispatcher->dispatch(MassAnalyzeErrorsEvent::NAME, $event);
+        }
+
         $mass->setStatus(Mass::STATUS_ANALYZED);
         $mass->setAnalyzedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->sendMail($mass, Mass::STATUS_ANALYZED);
         $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -531,7 +538,11 @@ class MassImportManager
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->sendMail($mass, Mass::STATUS_MATCHED);
+
+        // Send an email to notify the operator that the matching is over
+        $event = new MassMatchedEvent($mass);
+        $this->eventDispatcher->dispatch(MassMatchedEvent::NAME, $event);
+
         $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -768,9 +779,8 @@ class MassImportManager
                 $workAddress = new Address();
                 for ($i = 0; $i < count($tab); $i++) {
                     $setter = 'set' . ucwords($fields[$i]);
-                    if (method_exists($massPerson, $setter)) {
-                        $massPerson->$setter($tab[$i]);
-                    } elseif (substr($fields[$i], 0, 16) == "personalAddress.") {
+
+                    if (substr($fields[$i], 0, 16) == "personalAddress.") {
                         $setter = 'set' . ucwords(substr($fields[$i], 16));
                         if (method_exists($personalAddress, $setter)) {
                             $personalAddress->$setter($tab[$i]);
@@ -780,6 +790,32 @@ class MassImportManager
                         if (method_exists($workAddress, $setter)) {
                             $workAddress->$setter($tab[$i]);
                         }
+                    } elseif ($fields[$i] == "outwardTime") {
+                        $outwardtime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$outwardtime) {
+                            $error = true;
+                            $errors[] = [
+                                'code' => '',
+                                'file' => basename($csv),
+                                'line' => $line,
+                                'message' => "Date d'aller incorrecte"
+                            ];
+                        }
+                        $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
+                    } elseif ($fields[$i] == "returnTime") {
+                        $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
+                        if (!$returntime) {
+                            $error = true;
+                            $errors[] = [
+                                'code' => '',
+                                'file' => basename($csv),
+                                'line' => $line,
+                                'message' => "Date de retour incorrecte"
+                            ];
+                        }
+                        $massPerson->setReturnTime($returntime->format('H:i:s'));
+                    } elseif (method_exists($massPerson, $setter)) {
+                        $massPerson->$setter($tab[$i]);
                     }
                 }
                 $massPerson->setPersonalAddress($personalAddress);
@@ -916,34 +952,6 @@ class MassImportManager
         $surface_union = $surface1+$surface2-$surface_intersect;
         $ratio = $surface_intersect/$surface_union;
         return $ratio;
-    }
-
-    /**
-     * Send an email for a given import status
-     *
-     * @param Mass $mass
-     * @param integer $status
-     * @return void
-     */
-    private function sendMail(Mass $mass, int $status)
-    {
-        $email = new Email();
-
-        // Je récupère le mail du destinataire
-        $email->setRecipientEmail($mass->getUser()->getEmail());
-
-        switch ($status) {
-            case Mass::STATUS_ANALYZED:
-                $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
-                $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
-            break;
-            case Mass::STATUS_MATCHED:
-                $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
-                $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
-                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass");
-            break;
-        }
     }
 }
 

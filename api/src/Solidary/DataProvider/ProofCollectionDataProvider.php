@@ -73,7 +73,7 @@ final class ProofCollectionDataProvider implements CollectionDataProviderInterfa
             // We found no structureId we can't process this method
             throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
         }
-
+        
         return $this->structureManager->getStructureProofs($structureId);
     }
 }

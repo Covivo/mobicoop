@@ -27,6 +27,28 @@ home_logout:
 # user routes #
 ###############
 
+# bank coordinates
+user_bank_coordinates:
+    methods: [POST]
+    path:
+        fr: /utilisateur/coordonnees-bancaires
+        en: /user/bank-coordinates
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getBankCoordinates
+
+user_bank_coordinates_add:
+    methods: [POST]
+    path:
+        fr: /utilisateur/coordonnees-bancaires/ajouter
+        en: /user/bank-coordinates/add
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::addBankCoordinates
+
+user_bank_coordinates_delete:
+    methods: [POST]
+    path:
+        fr: /utilisateur/coordonnees-bancaires/supprimer
+        en: /user/bank-coordinates/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteBankCoordinates
+
 # login
 user_login:
     path:
@@ -887,6 +909,40 @@ relay_point_list:
         en: /relay-points
     controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::relayPointList    
 
+###############
+# payment routes #
+###############    
+
+# Get payment items of a user (POST) AJAX
+payment_items_list:
+    methods: [POST]
+    path:
+        fr: /payments/get
+        en: /payments/get
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getPaymentItems
+
+# Post payment items of a user (POST)
+payment_payments_post:
+    methods: [POST]
+    path:
+        fr: /payments/post
+        en: /payments/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments
+
+# payment 
+payment_list:
+    path:
+        fr: /paiements/{id?}/{frequency?}/{type?}/{week?}
+        en: /payments/{id?}/{frequency?}/{type?}/{week?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
+
+# Get weeks to pay (POST) AJAX
+payment_weeks_list:
+    methods: [POST]
+    path:
+        fr: /getWeeks
+        en: /getWeeks
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
 
 ###############
 # misc routes #

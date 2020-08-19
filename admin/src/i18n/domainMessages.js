@@ -16,6 +16,11 @@ const fr = {
         Sun: 'Dim',
       },
     },
+    structures: {
+      fields: {
+        territories: 'Territoires',
+      },
+    },
     solidary_beneficiaries: {
       fields: {
         id: 'ID',
@@ -37,6 +42,11 @@ const fr = {
         lastAction: 'Dernière action',
       },
     },
+    users: {
+      fields: {
+        solidaryStructures: 'Structures Solidaires',
+      },
+    },
     solidary_searches: {
       fields: {
         author: 'Auteur',
@@ -51,6 +61,15 @@ const fr = {
     },
   },
   custom: {
+    structure_proofs: {
+      type: {
+        checkbox: 'Case a cocher',
+        input: 'Champs Texte',
+        selectbox: 'Select',
+        radio: 'Radio bouton',
+        file: 'Fichier',
+      },
+    },
     actions: {
       solidary_update_progress_manually: 'Mise à jour de la progression',
       solidary_more_infos_sms: "Demande d'informations supplémentaires par SMS",
@@ -140,6 +159,8 @@ const fr = {
     solidary: {
       internalMessages: 'Messages internes',
       internalMessagesWith: 'Messages interne avec %{username}',
+      askFormalResponse: 'Solliciter une réponse formelle',
+      askFormalResponseWith: 'Solliciter une réponse formelle avec %{username}',
       sendSMSTo: 'Envoyer un SMS à %{username}',
       sendSMS: 'Envoyer un SMS',
       associatedAsk: 'Demande associée',
@@ -178,7 +199,7 @@ const fr = {
           'Envoyer des emails en masse aux utilisateurs de %{instanceName} engage votre responsabilité, et a un impact potentiel sur toute la plate-forme. Pour rester conformes à la Réglementation Générale sur la Protection des Données, les emails envoyés doivent rester dans le cadre d"actualité de service" et en aucun cas inciter à l\'usage d\'autres services que %{instanceName} . \n' +
           "Par ailleurs, le droit de retrait des utilisateurs ne peut s'exercer par eux de manière distincte entre les différents expéditeurs : si un utilisateur désapprouve un email envoyé par un administrateur territorial ou un référent de commuauté et se désinscrit, il ne pourra plus être destinataire de tout futur envoi en masse, quelque soit l'expéditeur.\n" +
           'Une grande vigilance est donc demandée à chacun sur la pertinence et la fréquence de ses envois en masse.',
-        buttonAgree: "Je comprend et j'accepte",
+        buttonAgree: "Je comprends et j'accepte",
         buttonDisagree: 'Je refuse',
       },
     },
@@ -359,6 +380,7 @@ const fr = {
         communitiesExclude: 'Exclure les usagers de la communauté',
         proposalValidUntil: "Pas d'annonces valides depuis le",
         trajet: 'Par trajet',
+        structures: 'Structures solidaires',
         filter: {
           range: 'Rayon de recherche (km) autour des lieux filtrés : ',
           origin: 'Lieu de départ',

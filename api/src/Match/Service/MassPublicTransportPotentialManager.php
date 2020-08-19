@@ -36,7 +36,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassPTJourney;
+use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 use App\Match\Repository\MassPTJourneyRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Mass public transport potential manager.
@@ -51,6 +53,9 @@ class MassPublicTransportPotentialManager
     private $massPTJourneyRepository;
     private $geoTools;
     private $params;
+    private $eventDispatcher;
+
+    private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
 
     public function __construct(
         MassRepository $massRepository,
@@ -58,6 +63,7 @@ class MassPublicTransportPotentialManager
         EntityManagerInterface $entityManager,
         MassPTJourneyRepository $massPTJourneyRepository,
         GeoTools $geoTools,
+        EventDispatcherInterface $eventDispatcher,
         array $params
     ) {
         $this->massRepository = $massRepository;
@@ -65,6 +71,7 @@ class MassPublicTransportPotentialManager
         $this->entityManager = $entityManager;
         $this->massPTJourneyRepository = $massPTJourneyRepository;
         $this->geoTools = $geoTools;
+        $this->eventDispatcher = $eventDispatcher;
         $this->params = $params;
     }
 
@@ -109,13 +116,11 @@ class MassPublicTransportPotentialManager
             // var_dump($results);die;
             foreach ($results as $ptjourney) {
                 $massPTJourney = $this->buildMassPTJourney($ptjourney);
-                if ($this->checkValidMassPTJourney($massPTJourney)) {
-                    $massPTJourney->setMassPerson($person);
-                    $TPPotential[] = $massPTJourney;
+                $massPTJourney->setMassPerson($person);
+                $TPPotential[] = $massPTJourney;
 
-                    // We persist the MassPTJourney
-                    $this->entityManager->persist($massPTJourney);
-                }
+                // We persist the MassPTJourney
+                $this->entityManager->persist($massPTJourney);
             }
         }
 
@@ -125,6 +130,10 @@ class MassPublicTransportPotentialManager
         $this->entityManager->flush();
 
         $mass->setPublicTransportPotential($TPPotential);
+
+        // Send an email to the operator
+        $event = new MassPublicTransportSolutionsGatheredEvent($mass);
+        $this->eventDispatcher->dispatch(MassPublicTransportSolutionsGatheredEvent::NAME, $event);
 
         return $mass;
     }
@@ -192,6 +201,11 @@ class MassPublicTransportPotentialManager
             return false;
         }
 
+        // The maximum duration of PT journey must be < xN the duration in car
+        if ($massPTJourney->getDuration() > ($massPTJourney->getMassPerson()->getDuration()*$this->params['ptMaxNbCarDuration'])) {
+            return false;
+        }
+
         return true;
     }
 
@@ -214,6 +228,7 @@ class MassPublicTransportPotentialManager
 
         $computedData = [
             "totalPerson" => count($persons),
+            "totalPTSolutions" => 0,
             "totalPersonWithValidPTSolution" => 0,
             "PTPotential" => 0,
             "totalTravelDistance" => 0,
@@ -234,7 +249,8 @@ class MassPublicTransportPotentialManager
             "criteria" => [
                 "ptMaxConnections" => $this->params['ptMaxConnections'],
                 "ptMaxDistanceWalkFromHome" => $this->params['ptMaxDistanceWalkFromHome'],
-                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork']
+                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork'],
+                "ptMaxNbCarDuration" => $this->params['ptMaxNbCarDuration']
             ]
         ];
 
@@ -242,15 +258,23 @@ class MassPublicTransportPotentialManager
             
             // Original travel
             if (count($person->getMassPTJourneys())>0) {
-                $computedData['totalPersonWithValidPTSolution']++;
+                $ptjourneys = $person->getMassPTJourneys();
+                $computedData['totalPTSolutions'] += count($person->getMassPTJourneys());
 
-                $computedData["totalTravelDistance"] += $person->getDistance();
-                $computedData["totalTravelDuration"] += $person->getDuration();
+                foreach ($ptjourneys as $ptjourney) {
+                    if ($this->checkValidMassPTJourney($ptjourney)) {
+                        $computedData['totalPersonWithValidPTSolution']++;
 
-                $ptjourney = $person->getMassPTJourneys()[0];
+                        $computedData["totalTravelDistance"] += $person->getDistance();
+                        $computedData["totalTravelDuration"] += $person->getDuration();
 
-                $computedData['totalPTDistance'] += $ptjourney->getDistance();
-                $computedData['totalPTDuration'] += $ptjourney->getDuration();
+                        
+
+                        $computedData['totalPTDistance'] += $ptjourney->getDistance();
+                        $computedData['totalPTDuration'] += $ptjourney->getDuration();
+                        break;
+                    }
+                }
             }
         }
 
@@ -279,6 +303,23 @@ class MassPublicTransportPotentialManager
         $computedData["savedDistanceByCarPerYear"] = $computedData["savedDistanceByCar"] * Mass::NB_WORKING_DAY;
 
         $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+
+        if ($this->params['roundTripCompute']) {
+            $computedData["totalTravelDistanceCO2"] *= 2;
+            $computedData['savedCO2'] *= 2;
+            $computedData['savedDurationByCar'] *= 2;
+            $computedData['savedDistanceByCar'] *= 2;
+            $computedData["totalTravelDistancePerYear"] *= 2;
+            $computedData["totalTravelDurationPerYear"] *= 2;
+            $computedData['savedCO2PerYear'] *= 2;
+            $computedData["savedDurationByCarPerYear"] *= 2;
+            $computedData["savedDistanceByCarPerYear"] *= 2;
+        
+            $computedData['roundtripComputed'] = true;
+        } else {
+            $computedData['roundtripComputed'] = false;
+        }
+        
 
         $mass->setPublicTransportPotential($computedData);
 

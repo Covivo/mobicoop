@@ -122,7 +122,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "path"="/carpools/{id}",
  *              "security"="is_granted('ad_delete',object)"
  *          }
- *      }
+ *       }
  * )
  *
  */
@@ -524,6 +524,30 @@ class Ad
      * @var string|null The external Id if the ad was created for an external search.
      */
     private $externalId;
+
+    /**
+     * @var int|null The payment status of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentStatus;
+
+    /**
+     * @var int|null The id of the PaymentItem of the Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $paymentItemId;
+
+    /**
+    * @var int|null The default week of the PaymentItem
+    * @Groups({"read","readPaymentStatus"})
+    */
+    private $paymentItemWeek;
+
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
 
     public function __construct()
     {
@@ -1193,6 +1217,54 @@ class Ad
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(?int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getPaymentItemWeek(): ?int
+    {
+        return $this->paymentItemWeek;
+    }
+
+    public function setPaymentItemWeek(?int $paymentItemWeek): self
+    {
+        $this->paymentItemWeek = $paymentItemWeek;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
 
         return $this;
     }

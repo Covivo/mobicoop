@@ -43,10 +43,10 @@ final class MassReAnalyzeAction
             throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
         }
         $statusAuthorized = [
+            Mass::STATUS_VALID,
             Mass::STATUS_ANALYZED,
             Mass::STATUS_MATCHED
         ];
-
         if (in_array($data->getStatus(), $statusAuthorized)) {
 
             // Rollback the Mass status to only valid

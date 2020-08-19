@@ -51,6 +51,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
+use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
@@ -100,6 +101,7 @@ class UserManager
     private $encoder;
     private $translator;
     private $security;
+    private $paymentProvider;
 
     // Default carpool settings
     private $chat;
@@ -141,6 +143,7 @@ class UserManager
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
+        PaymentDataProvider $paymentProvider,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -168,6 +171,7 @@ class UserManager
         $this->fakeFirstMail = $fakeFirstMail;
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
+        $this->paymentProvider = $paymentProvider;
     }
 
     /**
@@ -178,16 +182,7 @@ class UserManager
      */
     public function getUser(int $id)
     {
-        $user = $this->userRepository->find($id);
-        $structures = [];
-      
-        if (!is_null($user->getOperates())) {
-            foreach ($user->getOperates() as $operate) {
-                $structures[] = $operate->getStructure();
-            }
-        }
-        $user->setSolidaryStructures($structures);
-        return $user;
+        return $this->userRepository->find($id);
     }
 
     /**
@@ -232,7 +227,9 @@ class UserManager
      */
     public function getMe()
     {
-        return $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        
+        return $user;
     }
 
     /**
@@ -246,22 +243,6 @@ class UserManager
     {
         $user = $this->prepareUser($user, $encodePassword);
  
-        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
-        if (!is_null($user->getSolidaryUser())) {
-            if ($user->getSolidaryUser()->isVolunteer()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-            }
-            if ($user->getSolidaryUser()->isBeneficiary()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            }
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-
-            // If there is no availability time information, we get the one from the structure
-            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
-        }
-
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -295,12 +276,6 @@ class UserManager
             $this->entityManager->flush();
         }
 
-        // dispatch SolidaryUser event
-        if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserCreatedEvent::NAME, $event);
-        }
-
         // return the user
         return $user;
     }
@@ -330,7 +305,7 @@ class UserManager
         } else {
             // No structure given. We take the admin's one
             $structures = $this->security->getUser()->getSolidaryStructures();
-            if (!is_null($structures) || count($structures)>0) {
+            if (is_array($structures) && isset($structures[0])) {
                 $solidaryUserstructure = $structures[0];
             }
         }
@@ -443,6 +418,11 @@ class UserManager
         $user->addUserAuthAssignment($userAuthAssignment);
 
 
+        // No password given, we generate one
+        if (is_null($user->getPassword())) {
+            $user->setPassword($this->randomPassword());
+        }
+        
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
             $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
@@ -491,32 +471,6 @@ class UserManager
 
         // update of the geotoken
         $user->setGeoToken($this->createToken($user));
-
-
-        // Check if there is a SolidaryUser. If so, we need to check if the right role. If there is not, we add it.
-        if (!is_null($user->getSolidaryUser())) {
-            // Get the authAssignments
-            $userAuthAssignments = $user->getUserAuthAssignments();
-            $authItems = [];
-            foreach ($userAuthAssignments as $userAuthAssignment) {
-                $authItems[] = $userAuthAssignment->getAuthItem()->getId();
-            }
-
-            if ($user->getSolidaryUser()->isVolunteer() && !in_array(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE, $authItems)) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE);
-            }
-            if ($user->getSolidaryUser()->isBeneficiary() && !in_array(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE, $authItems)) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
-            }
-            if (!empty($authItem)) {
-                $userAuthAssignment = new UserAuthAssignment();
-                $userAuthAssignment->setAuthItem($authItem);
-                $user->addUserAuthAssignment($userAuthAssignment);
-            }
-
-            // If there is no availability time information, we get the one from the structure
-            $user->setSolidaryUser($this->setDefaultSolidaryUserAvailabilities($user->getSolidaryUser()));
-        }
 
         //we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
@@ -568,15 +522,11 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
-        // dispatch SolidaryUser event
-        if (!is_null($user->getSolidaryUser())) {
-            $event = new SolidaryUserUpdatedEvent($user->getSolidaryUser(), $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserUpdatedEvent::NAME, $event);
-        }
-
+       
         // return the user
         return $user;
     }
@@ -1309,5 +1259,45 @@ class UserManager
     {
         $exploded = explode('@', $email);
         return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
+    }
+
+    /**
+     * Get the payment profile (bankaccounts, wallets...) of the User
+     *
+     * @return User|null
+     */
+    public function getPaymentProfile()
+    {
+        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
+        $bankAccounts = $wallets = [];
+        foreach ($paymentProfiles as $paymentProfile) {
+            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                $bankAccounts[] = $bankaccount;
+            }
+            foreach ($paymentProfile->getWallets() as $wallet) {
+                $wallets[] = $wallet;
+            }
+        }
+        $user->setBankAccounts($bankAccounts);
+        $user->setWallets($wallets);
+        return $user;
+    }
+    
+    /**
+     * Generate a randomPassword
+     *
+     * @return string
+     */
+    private function randomPassword()
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 10; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
     }
 }

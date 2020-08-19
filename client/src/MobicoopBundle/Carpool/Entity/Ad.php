@@ -387,6 +387,27 @@ class Ad implements ResourceInterface, \JsonSerializable
      */
     private $deleterId;
 
+    /**
+     * @var int|null The payment status of the Ad
+     */
+    private $paymentStatus;
+
+    /**
+     * @var int|null The id of the PaymentItem of the Ad
+     */
+    private $paymentItemId;
+
+    /**
+    * @var int|null The default week of the PaymentItem
+    */
+    private $paymentItemWeek;
+
+    /**
+     * @var \DateTimeInterface|null The date of an unpaid declaration for this Ad
+     * @Groups({"read","readPaymentStatus"})
+     */
+    private $unpaidDate;
+
     public function __construct($id=null)
     {
         $this->outwardWaypoints = [];
@@ -1032,6 +1053,54 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getPaymentStatus(): ?int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(?int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function getPaymentItemId(): ?int
+    {
+        return $this->paymentItemId;
+    }
+
+    public function setPaymentItemId(?int $paymentItemId): self
+    {
+        $this->paymentItemId = $paymentItemId;
+
+        return $this;
+    }
+
+    public function getPaymentItemWeek(): ?int
+    {
+        return $this->paymentItemWeek;
+    }
+
+    public function setPaymentItemWeek(?int $paymentItemWeek): self
+    {
+        $this->paymentItemWeek = $paymentItemWeek;
+
+        return $this;
+    }
+
+    public function getUnpaidDate(): ?\DateTimeInterface
+    {
+        return $this->unpaidDate;
+    }
+
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
+    {
+        $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -1062,7 +1131,11 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'results' => $this->getResults(),
                 'frequency' => $this->getFrequency(),
                 'potentialCarpoolers' => $this->getPotentialCarpoolers(),
-                'asks' => $this->getAsks()
+                'asks' => $this->getAsks(),
+                'paymentStatus' => $this->getPaymentStatus(),
+                'paymentItemId' => $this->getPaymentItemId(),
+                'paymentItemWeek' => $this->getPaymentItemWeek(),
+                'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null
             ];
     }
 }

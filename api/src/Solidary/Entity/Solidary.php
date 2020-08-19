@@ -248,7 +248,7 @@ class Solidary
     private $outwardDeadlineDatetime;
 
     /**
-     * @var \DateTimeInterface return date and time of the solidary demand
+     * @var \DateTimeInterface|null return date and time of the solidary demand
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDatetime;
@@ -600,12 +600,12 @@ class Solidary
     }
 
 
-    public function getHomeAddress(): array
+    public function getHomeAddress(): ?array
     {
         return $this->homeAddress;
     }
     
-    public function setHomeAddress($homeAddress): self
+    public function setHomeAddress(?array $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
         
@@ -665,7 +665,7 @@ class Solidary
         return $this->returnDatetime;
     }
 
-    public function setReturnDatetime(\DateTimeInterface $returnDatetime): self
+    public function setReturnDatetime(?\DateTimeInterface $returnDatetime): self
     {
         $this->returnDatetime = $returnDatetime;
 

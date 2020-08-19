@@ -103,6 +103,10 @@ services:
         resource: '../src/Auth/Controller'
         tags: ['controller.service_arguments']
 
+    App\Auth\Service\AuthManager:
+        arguments:
+            $modules: '%env(json:file:resolve:MODULES_AUTHORIZED)%'
+
     # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
@@ -113,6 +117,8 @@ services:
         #tags: [ 'api_platform.filter' ]
 
     App\Carpool\Service\AskManager:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -124,6 +130,7 @@ services:
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
                 proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
+                paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -134,6 +141,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
+            $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 
@@ -401,7 +409,6 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
-            $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
         tags:
             - { name: monolog.logger, channel: mass }
 
@@ -414,6 +421,12 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
+    App\Match\Service\MassComputeManager:
+        arguments:
+            $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
+
+        tags:
+            - { name: monolog.logger, channel: mass }
     App\Match\Service\MassPublicTransportPotentialManager:
         arguments:
             $params:
@@ -422,8 +435,26 @@ services:
                 ptMaxConnections: '%env(int:MOBIMATCH_PT_MAXIMAL_CONNECTIONS)%'
                 ptMaxDistanceWalkFromHome: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_HOME)%'
                 ptMaxDistanceWalkFromWork: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%'
+                ptMaxNbCarDuration: '%env(int:MOBIMATCH_PT_MAXIMUM_NB_CAR_DURATION)%'
+                roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
         tags:
             - { name: monolog.logger, channel: mass }
+
+    #Payment
+    App\Payment\Service\PaymentDataProvider:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
+            $clientId: '%env(string:PAYMENT_CLIENTID)%'
+            $apikey: '%env(string:PAYMENT_APIKEY)%'
+            $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
+            $defaultCurrency: '%env(string:PAYMENT_DEFAULT_CURRENCY)%'
+            $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
+
+    App\Payment\Service\PaymentManager:
+        arguments:
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
 
     # Price
     App\Price\Controller\:

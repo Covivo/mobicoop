@@ -25,8 +25,11 @@ namespace App\Communication\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use App\Match\Event\MassAnalyzeErrorsEvent;
+use App\Match\Event\MassMatchedEvent;
 use App\User\Service\UserManager;
 use App\Match\Event\MassMigrateUserMigratedEvent;
+use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 
 class MassSubscriber implements EventSubscriberInterface
 {
@@ -42,12 +45,30 @@ class MassSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            MassMigrateUserMigratedEvent::NAME => 'onMassMigrateUserMigrated'
+            MassMigrateUserMigratedEvent::NAME => 'onMassMigrateUserMigrated',
+            MassAnalyzeErrorsEvent::NAME => 'onMassAnalyzeErrors',
+            MassMatchedEvent::NAME => 'onMassMatched',
+            MassPublicTransportSolutionsGatheredEvent::NAME => 'onMassPublicTransportSolutionsGathered'
         ];
     }
 
     public function onMassMigrateUserMigrated(MassMigrateUserMigratedEvent $event)
     {
         $this->notificationManager->notifies(MassMigrateUserMigratedEvent::NAME, $event->getUser());
+    }
+
+    public function onMassAnalyzeErrors(MassAnalyzeErrorsEvent $event)
+    {
+        $this->notificationManager->notifies(MassAnalyzeErrorsEvent::NAME, $event->getMass()->getUser(), $event->getMass());
+    }
+
+    public function onMassMatched(MassMatchedEvent $event)
+    {
+        $this->notificationManager->notifies(MassMatchedEvent::NAME, $event->getMass()->getUser(), $event->getMass());
+    }
+
+    public function onMassPublicTransportSolutionsGathered(MassPublicTransportSolutionsGatheredEvent $event)
+    {
+        $this->notificationManager->notifies(MassPublicTransportSolutionsGatheredEvent::NAME, $event->getMass()->getUser(), $event->getMass());
     }
 }

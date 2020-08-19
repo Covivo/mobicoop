@@ -14,6 +14,7 @@ import { formatPhone } from '../../SolidaryUserBeneficiary/Fields/PhoneField';
 import { Trip } from './Trip';
 import { NeedsAndStructure } from './NeedsAndStructure';
 import { SolidaryProgress } from './SolidaryProgress';
+import can from '../../../../auth/permissions';
 
 const useStyles = makeStyles((theme) => ({
   main_panel: {
@@ -47,17 +48,18 @@ const driverSearchOptions = [
     target: 'solidary_searches',
     filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
   },
-  {
+  can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole aller',
     target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
-  {
+  can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole retour',
     target: 'solidary_volunteers',
     filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
   },
-];
+].filter((x) => x);
+
 const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
   const history = useHistory();
@@ -104,27 +106,29 @@ const SolidaryShowInformation = ({ record }) => {
       <Card raised className={classes.card}>
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
-            <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-              <Grid item>
-                <Avatar
-                  alt="Remy Sharp"
-                  src={user.avatars && user.avatars.length && user.avatars[0]}
-                />
-              </Grid>
-              <Grid item>
-                <h2>{`${user.givenName} ${user.familyName}`}</h2>
-              </Grid>
-              <Grid item>
-                <small>{user.telephone ? formatPhone(user.telephone) : 'N/A'}</small>
-              </Grid>
-              {/*
+            {user && (
+              <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
+                <Grid item>
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={user.avatars && user.avatars.length && user.avatars[0]}
+                  />
+                </Grid>
+                <Grid item>
+                  <h2>{`${user.givenName} ${user.familyName}`}</h2>
+                </Grid>
+                <Grid item>
+                  <small>{user.telephone ? formatPhone(user.telephone) : 'N/A'}</small>
+                </Grid>
+                {/*
               // @TODO: Should we enable this since we post message from the "demandeur"
               // We can't talk to him
               <Grid item>
                 <SolidaryContactDropDown solidaryId={originId} label="Contacter demandeur" />
               </Grid>
               */}
-            </Grid>
+              </Grid>
+            )}
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>

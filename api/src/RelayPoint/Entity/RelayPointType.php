@@ -110,7 +110,7 @@ class RelayPointType
      * @var Icon|null The icon related to the relayPointType.
      *
      * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
-     * @Groups("readRelayPoint")
+     * @Groups({"readRelayPoint","writeRelayPoint"})
      * @MaxDepth(1)
      */
     private $icon;

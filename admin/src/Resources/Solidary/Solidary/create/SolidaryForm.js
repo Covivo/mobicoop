@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Alert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 
 import {
   FormWithRedirect,
@@ -6,8 +9,10 @@ import {
   ReferenceInput,
   AutocompleteInput,
   useGetList,
+  showNotification,
   useTranslate,
 } from 'react-admin';
+
 import {
   LinearProgress,
   Box,
@@ -21,12 +26,11 @@ import {
   StepLabel,
   Button,
 } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles';
+
 import SolidaryUserBeneficiaryCreateFields from '../../SolidaryUserBeneficiary/SolidaryUserBeneficiaryCreateFields';
 import GeocompleteInput from '../../../../components/geolocation/geocomplete';
 import SolidaryQuestion from './SolidaryQuestion';
-import SolidaryProofField from './SolidaryProofField';
+import SolidaryProofInput from './SolidaryProofInput';
 import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
@@ -54,6 +58,7 @@ const SolidaryForm = (props) => {
     { field: 'id', order: 'ASC' }
   );
   const proofs = Object.values(proofsList);
+
   // List of subjects
   const { data: subjectsList, loaded: subjectsLoaded } = useGetList(
     'subjects',
@@ -71,6 +76,38 @@ const SolidaryForm = (props) => {
       render={(formProps) => {
         const formState = formProps.form.getState();
         const frequencyRegular = formState.values && formState.values.frequency === 2;
+        const hasRegistredUser = formState.values.already_registered_user;
+        const hasErrors = formState.errors && Object.keys(formState.errors).length;
+
+        const handleGoNext = (activeStep) => () => {
+          const state = formProps.form.getState();
+
+          if (activeStep === 1 && state.errors.proofs) {
+            props.showNotification("Vous devez valider l'ensemble des preuves");
+            return;
+          }
+
+          // If user is registred, go to 3nd step directly
+          if (activeStep === 0 && !!state.values.already_registered_user) {
+            setActiveStep(3);
+            return;
+          }
+
+          setActiveStep((s) => s + 1);
+        };
+
+        const handleGoBack = (activeStep) => () => {
+          const state = formProps.form.getState();
+
+          // If user is registred, go back to first step directly
+          if (activeStep <= 3 && !!state.values.already_registered_user) {
+            setActiveStep(0);
+            return;
+          }
+
+          return setActiveStep((s) => s - 1);
+        };
+
         return (
           // here starts the custom form layout
           <form>
@@ -92,7 +129,6 @@ const SolidaryForm = (props) => {
                   <StepLabel>Horaires</StepLabel>
                 </Step>
               </Stepper>
-
               <Box
                 display={activeStep === 0 ? 'flex' : 'none'}
                 p="1rem"
@@ -113,28 +149,40 @@ const SolidaryForm = (props) => {
                   </ReferenceInput>
                 </SolidaryQuestion>
               </Box>
-              <Box
-                display={activeStep === 1 ? 'flex' : 'none'}
-                p="1rem"
-                flexDirection="column"
-                flexGrow={1}
-              >
-                <SolidaryQuestion question="Le demandeur est-il éligible ?">
-                  {proofs && proofs.length && proofsLoaded ? (
-                    proofs.map((p) => <SolidaryProofField key={p.id} proof={p} />)
-                  ) : (
-                    <LinearProgress />
-                  )}
-                </SolidaryQuestion>
-              </Box>
-              <Box
-                display={activeStep === 2 ? 'flex' : 'none'}
-                p="1rem"
-                flexDirection="column"
-                flexGrow={1}
-              >
-                <SolidaryUserBeneficiaryCreateFields form={formProps.form} />
-              </Box>
+              {/*
+                 Keep existing system but disable validation for registred user.
+                 This way we're able to go back to the previous system in the future
+              */}
+              {!hasRegistredUser && (
+                <Box
+                  display={activeStep === 1 ? 'flex' : 'none'}
+                  p="1rem"
+                  flexDirection="column"
+                  flexGrow={1}
+                >
+                  <SolidaryQuestion question="Le demandeur est-il éligible ?">
+                    {proofs && proofs.length && proofsLoaded ? (
+                      proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
+                    ) : (
+                      <LinearProgress />
+                    )}
+                  </SolidaryQuestion>
+                </Box>
+              )}
+              {/*
+                 Keep existing system but disable validation for registred user.
+                 This way we're able to go back to the previous system in the future
+              */}
+              {!hasRegistredUser && (
+                <Box
+                  display={activeStep === 2 ? 'flex' : 'none'}
+                  p="1rem"
+                  flexDirection="column"
+                  flexGrow={1}
+                >
+                  <SolidaryUserBeneficiaryCreateFields form={formProps.form} />
+                </Box>
+              )}
               <Box display={activeStep === 3 ? 'flex' : 'none'} p="1rem" flexDirection="column">
                 <SolidaryQuestion question="Que voulez-vous faire ?">
                   {subjects && subjects.length && subjectsLoaded ? (
@@ -148,7 +196,6 @@ const SolidaryForm = (props) => {
                     <LinearProgress />
                   )}
                 </SolidaryQuestion>
-
                 <SolidaryQuestion question="Ou faut-il aller ?">
                   <RadioGroup
                     value={hasDestinationAddress}
@@ -166,7 +213,6 @@ const SolidaryForm = (props) => {
                     />
                   </Box>
                 </SolidaryQuestion>
-
                 <SolidaryQuestion question="D'ou devez-vous partir ?">
                   <GeocompleteInput
                     fullWidth
@@ -175,7 +221,6 @@ const SolidaryForm = (props) => {
                     validate={(a) => (a ? '' : 'Champs obligatoire')}
                   />
                 </SolidaryQuestion>
-
                 <SolidaryQuestion question="Trajet ponctuel ?">
                   <SolidaryFrequency
                     source="frequency"
@@ -191,37 +236,28 @@ const SolidaryForm = (props) => {
                   <SolidaryPunctualAsk form={formProps.form} />
                 )}
               </Box>
-
-              {activeStep === 4 && formState.errors && Object.keys(formState.errors).length ? (
+              {activeStep === 4 && hasErrors ? (
                 <Alert severity="error">
-                  Le formulaire comporte des erreurs. Corrigez-les avant d&paos;enregistrer.
+                  Le formulaire comporte des erreurs. Corrigez-les avant d'enregistrer.
                 </Alert>
               ) : null}
-
               <Toolbar>
                 <Box display="flex" justifyContent="flex-start" width="100%">
                   {activeStep > 0 && (
-                    <Button
-                      variant="contained"
-                      color="default"
-                      onClick={() => setActiveStep((s) => s - 1)}
-                    >
+                    <Button variant="contained" color="default" onClick={handleGoBack(activeStep)}>
                       Précédent
                     </Button>
                   )}
                   &nbsp;
                   {activeStep < 4 && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => setActiveStep((s) => s + 1)}
-                    >
+                    <Button variant="contained" color="primary" onClick={handleGoNext(activeStep)}>
                       Suivant
                     </Button>
                   )}
                   {activeStep === 4 && (
                     <SaveSolidaryAsk
                       saving={formProps.saving}
+                      disabled={!!hasErrors}
                       handleSubmitWithRedirect={formProps.handleSubmitWithRedirect}
                     />
                   )}
@@ -236,4 +272,4 @@ const SolidaryForm = (props) => {
   );
 };
 
-export default SolidaryForm;
+export default connect(undefined, { showNotification })(SolidaryForm);

@@ -117,7 +117,7 @@ class CommunityUser
     private $user;
 
     /**
-     * @var int The status of the event (active/inactive).
+     * @var int The status of the membership.
      *
      * @ORM\Column(type="smallint")
      * @Groups({"readCommunity","readCommunityUser","write","readUserAdmin"})

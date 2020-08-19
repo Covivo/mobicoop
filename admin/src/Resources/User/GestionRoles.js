@@ -133,6 +133,7 @@ const GestionRoles = ({ record }) => {
   }
 
   const handleAddPair = (indice, nature) => (e) => {
+
     const values = [...fields];
 
     if (nature === 'roles') values[indice]['roles'] = e.target.value;

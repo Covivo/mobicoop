@@ -24,29 +24,27 @@ const statusChoices = [
   { id: 1, name: 'Actif' },
   { id: 2, name: 'Inactif' },
 ];
+const userOptionRenderer = (choice) => `${choice.givenName} ${choice.familyName}`;
 
 const RelayPointShow = (props) => {
   return (
     <Show {...props} title="Points relais > afficher">
       <TabbedShowLayout>
         <Tab label="Identité">
+
           <TextField source="name" label="Nom" />
-          <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
+          <ReferenceField source="address.id" label="Adresse" reference="addresses" link={false}>
             <FunctionField render={addressRenderer} />
           </ReferenceField>
           <SelectField source="status" label="Status" choices={statusChoices} />
-          <ReferenceRecordIdMapper attribute="relayPointTypes">
-            <ReferenceArrayField
-              source="relayPointTypes"
-              label="Types"
-              reference="relay_point_types"
-              allowEmpty
-            >
-              <SingleFieldList>
-                <ChipField source="name" />
-              </SingleFieldList>
-            </ReferenceArrayField>
-          </ReferenceRecordIdMapper>
+
+          <ReferenceField
+            source="relayPointType.id"
+            label="Types de point relais"
+            reference="relay_point_types"
+          >
+            <TextField source="name" />
+          </ReferenceField>
           <TextField source="description" label="Description" />
           <RichTextField source="fullDescription" label="Description complète" />
         </Tab>

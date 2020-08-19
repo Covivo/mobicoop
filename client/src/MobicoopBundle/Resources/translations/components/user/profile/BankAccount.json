@@ -1,0 +1,64 @@
+{
+    "fr": {
+        "title":"Renseignez vos coordonnées bancaires",
+        "titleAlreadyRegistered":"Mes coordonnées bancaires",
+        "form":{
+            "label":{
+                "iban":"IBAN",
+                "bic":"BIC"
+            },
+            "errors":{
+                "iban":"Le numéro IBAN doit être valide",
+                "ibanRequired":"Le numéro IBAN est obligatoire",
+                "bic":"Le numéro BIC doit être valide",
+                "bicRequired":"Le numéro BIC est obligatoire"
+            }
+        },
+        "register":"Enregistrer",
+        "modalSuppr":{
+            "title":"Suppression des coordonnées bancaires ?",
+            "line1":"Vos coordonnées bancaires vont-être supprimée.",
+            "line2":"Vous ne serez plus en mesure de recevoir de paiement électronique.",
+            "line3":"Confirmez-vous cette action ?",
+            "yes":"oui",
+            "no":"non"
+        },
+        "uri":{
+            "getCoordinates":"/utilisateur/coordonnees-bancaires",
+            "deleteCoordinates":"/utilisateur/coordonnees-bancaires/supprimer",
+            "addCoordinates":"/utilisateur/coordonnees-bancaires/ajouter"
+        },
+        "error":"Une erreur est survenue"
+    },    
+    "en": {
+        "title":"Register your bank coordinates",
+        "titleAlreadyRegistered":"My bank coordinates",
+        "form":{
+            "label":{
+                "iban":"IBAN",
+                "bic":"BIC"
+            },
+            "errors":{
+                "iban":"IBAN must be valid",
+                "ibanRequired":"IBAN is required",
+                "bic":"BIC must be valid",
+                "bicRequired":"BIC is required"
+            }
+        },
+        "register":"Register",
+        "modalSuppr":{
+            "title":"Delete your bank coordinates",
+            "line1":"Your bank coordinates will be deleted.",
+            "line2":"You won't be able to receive any electronic payment",
+            "line3":"Do you confirm this action ?",
+            "yes":"yes",
+            "no":"no"
+        },
+        "uri":{
+            "getCoordinates":"/user/bank-coordinates",
+            "deleteCoordinates":"/user/bank-coordinates/delete",
+            "addCoordinates":"/user/bank-coordinates/add"
+        },
+        "error":"An erreur has occured"
+    }    
+}
