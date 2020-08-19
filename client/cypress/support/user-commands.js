@@ -1,11 +1,15 @@
-'use scrit';
+'use script';
+import 'cypress-file-upload';
 
 import '@percy/cypress';
 
 const baseUrl = Cypress.env("baseUrl");
 
 Cypress.Commands.add('registration', (email, password, lastname, name, phone, gender, token) => {
-  cy.visit(baseUrl + 'utilisateur/inscription')
+  cy.get('[href="/utilisateur/inscription"] > .v-btn__content').click();
+  cy.url().should('include', baseUrl + 'utilisateur/inscription');
+  cy.wait(2500)
+
   cy.get('#email').type(email)
   cy.get('#telephone').type(phone)
   cy.get('#password').type(password)
@@ -25,65 +29,89 @@ Cypress.Commands.add('registration', (email, password, lastname, name, phone, ge
   cy.get(':nth-child(4) > :nth-child(4) > .v-btn > .v-btn__content').click();
 
 
-    /* Next */
-    cy.get('#step2 > .row > [type="submit"] > .v-btn__content')
+  /* Next */
+  cy.get('#step2 > .row > [type="submit"] > .v-btn__content')
     .click();
 
-   /* HomeTown */
-   cy.get('#address')
-   .type('Nancy');
-   cy.get('#content')
-     .contains('Nancy').click();
-   cy.wait(2500);
+  /* HomeTown */
+  cy.get('#address')
+    .type('Nancy');
+  cy.get('#content')
+    .contains('Nancy').click();
+  cy.wait(2500);
 
-    /* Validation condition (confirmation) */
-    cy.get('.v-input--selection-controls__ripple')
-        .click();
+  /* Validation condition (confirmation) */
+  cy.get('.v-input--selection-controls__ripple')
+    .click();
 
-    /* Subscribe */
-    cy.get('#step3 > .mb-25 > :nth-child(2) > .v-btn__content')
+  /* Subscribe */
+  cy.get('#step3 > .mb-25 > :nth-child(2) > .v-btn__content')
     .click()
-    cy.url().should('include', baseUrl); // should be redirected to home
+  cy.url().should('include', baseUrl); // should be redirected to home
     
-    /* Account validation */
-    cy.get('.v-alert__wrapper') ;
+  /* Account validation */
+  cy.get('.v-alert__wrapper') ;
 
-    cy.get('#token').click()
-      .type(token);
-    cy.get('#formLoginValidation > .v-btn > .v-btn__content').click()
+  cy.get('#token').click()
+    .type(token);
+  cy.get('#formLoginValidation > .v-btn > .v-btn__content').click()
 });
 
 /* login */
 Cypress.Commands.add('login', (email, password) => {
-  cy.visit( baseUrl + 'utilisateur/connexion')
+  cy.get('[href="/utilisateur/connexion"] > .v-btn__content')
+  .contains('Connexion').click();
+  cy.url().should('include', baseUrl + 'utilisateur/connexion');
+
   /* Email */
   cy.get('#email').type(email)
+
   /* Password */
   cy.get('#password').type(password)
-  cy.get('#formLogin > .v-btn').click()
+
+  cy.get('#formLogin > .v-btn > .v-btn__content').click();
+
 });
 
-// logout
-Cypress.Commands.add('logout', () => {
+/** Logout **/
+Cypress.Commands.add('logOut', () => {
   cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter');
   cy.xpath('//*[@id="list-item-99"]/a').click()
 });
 
+
+
 /* Update profile */
 Cypress.Commands.add('updateProfile', () => {
-  cy.visit("http://localhost:8081/utilisateur/profil/modifier/mon-profil")
+  cy.get('[href="utilisateur/profil/modifier/mon-profil"] > .v-btn__content').click();
+  cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
+  cy.wait(2500)
   cy.get('#input-69').attachFile('profil.jpg');
   cy.get('.v-form > .button > .v-btn__content').click()
   cy.get('.v-snack--active > .v-snack__wrapper > .v-snack__content').contains('Votre profil a bien été mis à jour!')
 });
 
-/* delete account */
+/**delete**/
 Cypress.Commands.add('delete', () => {
-  cy.visit("http://localhost:8081/utilisateur/profil/modifier/mon-profil")
-  cy.get('.text-center > .button > .v-btn__content').click()
-  cy.get('.v-card__actions > a.v-btn > .v-btn__content').click()
-  cy.get('.v-snack__content > div').contains('Votre compte à été supprimé avec succès.')
+
+  // close snackbar
+  cy.get('.v-snack__content > .v-btn > .v-btn__content > .v-icon')
+    .click();
+  
+  cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter') 
+  cy.get(':nth-child(3) > a > .v-list-item__title').should('contain', 'Profil')
+    .click();
+  
+  cy.url().should('include', baseUrl + 'utilisateur/profil');
+  cy.get('.text-center > .button > .v-btn__content')
+    .click();
+  cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
+  cy.get('.v-card__actions > a.v-btn > .v-btn__content')
+    .click();
+  cy.get('.v-snack__content')
+    .contains ('Votre compte à été supprimé avec succès.')
 });
+  
 
 
 // // Carpool

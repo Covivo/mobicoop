@@ -2,7 +2,8 @@
   "extends": [
     "eslint:recommended",
     "eslint-config-prettier",
-    "plugin:vue/recommended"
+    "plugin:vue/recommended",
+    "plugin:cypress/recommended"
   ],
   "parserOptions": {
     "parser": "babel-eslint",
@@ -10,15 +11,22 @@
     "sourceType": "module"
   },
   "plugins": [
-    "vue"
+    "vue",
+    "cypress"
   ],
   "rules": {
     "no-unused-vars": ["warn", { "args": "none", "vars": "local" }],
     "indent": [2, 2],
-    "no-console": ["error", { "allow": ["warn", "error", "log"] }]
+    "no-console": ["error", { "allow": ["warn", "error", "log"] }],
+    "cypress/no-assigning-return-values": "error",
+    "cypress/no-unnecessary-waiting": "error",
+    "cypress/assertion-before-screenshot": "warn",
+    "cypress/no-force": "warn",
+    "cypress/no-async-tests": "error"
   },
   "env": {
     "es6": true,
-    "browser": true
+    "browser": true,
+    "cypress/globals": true
   }
 }

@@ -1,42 +1,47 @@
 describe("User", function() {
 	
-	const baseUrl = Cypress.env("baseUrl");
+  const baseUrl = Cypress.env("baseUrl");
 
-	it("Should register on the se", function() {
-		let email = "first@user.com"
-		let password = "Asefth123"
-		let lastname = "First"
-		let name = "User"
-		let phone = "0612345678"
-		let gender = "Monsieur"
-		let token = "c43604b7bbefdf0565901fd0c5ed638c04eb2c458bd4ac3f901ee24b02e64a7d"
+  beforeEach(() => {
+    cy.visit(baseUrl);
+	  });
 
-	cy.registration(email, password, lastname, name, phone, gender, token)
-	})
+  it("Should register on the se", function() {
+    let email = "first@user.com"
+    let password = "Asefth123"
+    let lastname = "First"
+    let name = "User"
+    let phone = "0612345678"
+    let gender = "Monsieur"
+    let token = "c43604b7bbefdf0565901fd0c5ed638c04eb2c458bd4ac3f901ee24b02e64a7d"
 
-	it("Should connect and disconnect on the site", function() {
-		let email = "first@user.com"
-		let password = "Asefth123"
+    cy.registration(email, password, lastname, name, phone, gender, token)
+  })
 
-		cy.login(email, password)
+  it("Should connect and disconnect on the site", function() {
+    let email = "first@user.com"
+    let password = "Asefth123"
 
-		cy.logout()
-	})
+    cy.login(email, password)
 
-	it("Should change profil picture", function () {
-		let email = "first@user.com"
-		let password = "Asefth123"
+    cy.logOut()
+  })
 
-		cy.signIn(email, password)
-		cy.updateProfile()
-	})
+  it("Should change profil picture", function () {
+    let email = "first@user.com"
+    let password = "Asefth123"
 
-	it("Should delete account", function () {
-		let email = "first@user.com"
-		let password = "Asefth123"
+	cy.login(email, password)
+	
+	cy.updateProfile()
+})
 
-		cy.signIn(email, password)
+  it("Should delete account", function () {
+    let email = "first@user.com"
+    let password = "Asefth123"
 
-		cy.delete()
-	})
+    cy.login(email, password)
+
+    cy.delete()
+  })
 })
