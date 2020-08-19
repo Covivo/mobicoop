@@ -877,8 +877,8 @@ class AdManager
         $schedule = [];
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             // schedule needs data in asks results when the user that display the Ad is not the owner
-            $schedule = $askLinked
-               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal)
+            $schedule = (!is_null($askLinked))
+               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
                : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
             // if schedule is based on results, we do not need to update pickup times because it's already done in results
             if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration() && !$askLinked) {
@@ -929,8 +929,9 @@ class AdManager
         return $schedule;
     }
 
-    public function getScheduleFromResults(Result $results, Proposal $proposal)
+    public function getScheduleFromResults(Result $results, Proposal $proposal, Matching $matching, int $userId)
     {
+
         if (!$proposal->getCriteria()->isDriver() && $results->getResultDriver()) {
             $outward = $results->getResultDriver()->getOutward();
             $return = $results->getResultDriver()->getReturn();
@@ -938,7 +939,16 @@ class AdManager
             $outward = $results->getResultPassenger()->getOutward();
             $return = $results->getResultPassenger()->getReturn();
         } else {
-            return [];
+            // The user registered his proposal as driver and passenger.
+            // We need to know the role that he's playing in the matching
+            if($matching->getProposalOffer()->getUser()->getId()==$userId){
+                $outward = $results->getResultPassenger()->getOutward();
+                $return = $results->getResultPassenger()->getReturn();
+            }
+            elseif($matching->getProposalRequest()->getUser()->getId()==$userId){
+                $outward = $results->getResultDriver()->getOutward();
+                $return = $results->getResultDriver()->getReturn();
+            }
         }
 
         // we clean up every days based on isDayCheck
