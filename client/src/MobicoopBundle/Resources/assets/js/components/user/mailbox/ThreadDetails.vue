@@ -32,7 +32,7 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'primary lighten-5':''"
+            :class="(item.origin==='own')?'own primary lighten-5':''"
           >
             <v-card-text
               v-html="item.text"
@@ -203,5 +203,10 @@ export default {
 .window-scroll{
   max-height:600px;
   overflow:auto;
+}
+.v-timeline-item.own{
+  div.v-card__text{
+    color: rgba(0, 0, 0);
+  }
 }
 </style>
