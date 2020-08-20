@@ -9,8 +9,9 @@
         "return":"Retour",
         "price":"Montant: {price} €",
         "sumToPay":"Total à payer: {price} €",
-        "payElectronic":"Je paie en ligne",
-        "paymentReceivedByHand":"Paiement reçu à la main | Paiements reçus à la main",
+        "electronicPay":"Je paie en ligne",
+        "directPay":"J’ai payé à la main",
+        "directPaymentReceived":"Paiement reçu à la main | Paiements reçus à la main",
         "report": {
             "label": "Signaler un impayé",
             "text1": "Vous déclarez ne pas avoir été payé pour ce covoiturage. Veuillez cliquer sur «Valider» pour confirmer.",
@@ -28,8 +29,8 @@
             }, 
             "validate": "Valider",
             "confirm": "Confirmer",
-            "payedByHand":"J’ai payé à la main",
-            "confirmByHandPayment": "Confirmer paiement à la main",
+            "directPay":"J’ai payé à la main",
+            "directPayConfirm": "Confirmer paiement à la main",
             "isConfirmed": "Paiement à la main confirmé"
         },
         "select": {

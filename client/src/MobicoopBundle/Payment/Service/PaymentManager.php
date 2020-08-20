@@ -92,9 +92,9 @@ class PaymentManager
     /**
      * Get payments
      *
-     * @param integer $frequency
-     * @param integer $type
-     * @param integer $week
+     * @param integer $frequency    The frequency of the carpools to get (1 = punctual, 2 = regular)
+     * @param integer $type         The type of carpools to get (1 = to pay as a passenger, 2 = to collect as a driver)
+     * @param integer $week         The week number and year
      */
     public function getPaymentItems(int $frequency, int $type, int $week=null)
     {

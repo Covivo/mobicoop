@@ -120,6 +120,7 @@
               class="mx-auto"
               height="950"
             >
+              <!-- avatar -->
               <v-row
                 justify="center"
                 class="pt-5"
@@ -130,6 +131,8 @@
                   >
                 </v-avatar>
               </v-row>
+
+              <!-- carpooler name -->
               <v-row justify="center">
                 <v-card-title>
                   <p>
@@ -137,15 +140,17 @@
                   </p>
                 </v-card-title>
               </v-row>
+
+              <!-- departure & arrival -->
               <v-row justify="center">
                 <v-card-text>
-                  <!-- dates -->
+                  <!-- date -->
                   <v-row justify="center">
                     <p class="font-weight-bold">
                       {{ itemDate }}
                     </p>
                   </v-row>
-                  <!-- journey -->
+                  <!-- origin & destination -->
                   <v-row
                     justify="center"
                   >
@@ -174,7 +179,7 @@
                       </p>
                     </v-col>
                   </v-row>
-                  <!-- if regular-->
+                  <!-- regular planning-->
                   <v-row v-if="regular">
                     <v-row
                       v-if="isPayment"
@@ -186,6 +191,7 @@
                     <v-row
                       justify="center"
                     >
+                      <!-- outward -->
                       <v-col
                         cols="3"
                         class="accent--text mt-3"
@@ -199,7 +205,7 @@
                         justify="center"
                       >
                         <day-list-chips 
-                          :disabled="currentItem.selected || disabledComponent"
+                          :disabled="currentItem.mode !== null || disabledComponent"
                           :is-outward="true"
                           :mon-active="currentItem.outwardDays[0]['status'] == 1 ? true : false"
                           :tue-active="currentItem.outwardDays[1]['status'] == 1 ? true : false"
@@ -219,6 +225,8 @@
                         />
                       </v-col>
                     </v-row>
+
+                    <!-- return -->
                     <v-row
                       v-if="currentItem.returnDays"
                       justify="center"
@@ -237,7 +245,7 @@
                       >
                         <day-list-chips
                           :is-outward="false"
-                          :disabled="currentItem.selected || disabledComponent"
+                          :disabled="currentItem.mode !== null || disabledComponent"
                           :mon-active="currentItem.returnDays[0]['status'] == 1 ? true : false"
                           :tue-active="currentItem.returnDays[1]['status'] == 1 ? true : false"
                           :wed-active="currentItem.returnDays[2]['status'] == 1 ? true : false"
@@ -258,9 +266,10 @@
                     </v-row>
                   </v-row>
 
-                  <!-- Passenger : payment -->
+                  <!-- Passenger : journey payment section -->
                   <v-row v-if="isPayment">
                     <v-col>
+                      <!-- price -->
                       <v-row
                         justify="center"
                         class="mt-4"
@@ -271,6 +280,7 @@
                           </p>
                         </v-col>
                       </v-row>
+                      <!-- journey reported as unpaid ? -->
                       <v-row
                         v-if="currentItem.unpaidDate"
                         justify="center"
@@ -283,43 +293,60 @@
                           {{ $t('report.labelIsReported') }}
                         </v-col>
                       </v-row>
+                      <!-- payment mode choice (if ePay enabled) -->
                       <v-row
                         v-if="ePay"
                         justify="center"
                       >
                         <v-radio-group
-                          v-model="mode"
+                          v-model="currentItem.mode"
                           column
                         >
                           <v-radio
-                            :label="$t('payElectronic')"
-                            value="electronic"
-                            :disabled="currentItem.disabled || disabledComponent"
+                            :label="$t('electronicPay')"
+                            value="1"
+                            :disabled="disabledComponent"
                           />
                           <v-radio
-                            :label="$t('payedByHand')"
-                            value="byHand"
-                            :disabled="currentItem.disabled || disabledComponent"
+                            :label="$t('directPay')"
+                            value="2"
+                            :disabled="disabledComponent"
                           />
                         </v-radio-group>
                       </v-row>
+                      <!-- direct payment confirm button (if ePay disabled) -->
                       <v-row
                         v-else
                         justify="center"
                       >
+                        <!-- Item already confirmed -->
                         <v-btn
+                          v-if="currentItem.mode !== null"
+                          color="secondary"
+                          disabled
+                          outlined
+                          rounded
+                        >
+                          <v-icon class="mr-2 ml-n2">
+                            mdi-check
+                          </v-icon>                          
+                          {{ $t('buttons.isConfirmed') }}
+                        </v-btn>
+
+                        <v-btn
+                          v-else
                           color="secondary"
                           rounded
                           :disabled="disabledComponent"
-                          @click="confirmPayment"
+                          @click="confirmPayment(2)"
                         >
-                          {{ $t('buttons.payedByHand') }}
+                          {{ $t('buttons.directPay') }}
                         </v-btn>
                       </v-row>
                     </v-col>
                   </v-row>
 
-                  <!-- Driver : confirmation -->
+                  <!-- Driver : journey confirmation section -->
                   <v-row v-else>
                     <v-col>
                       <v-row
@@ -349,7 +376,7 @@
                               <v-btn
                                 text
                                 class="error--text text-decoration-underline text-lowercase"
-                                :disabled="currentItem.selected || disabledComponent"
+                                :disabled="currentItem.mode !== null || disabledComponent"
                                 v-on="on"
                               >
                                 {{ $t('report.label') }}
@@ -410,7 +437,7 @@
                         <v-col>
                           <!-- Item already confirmed -->
                           <v-btn
-                            v-if="currentItem.selected"
+                            v-if="currentItem.mode !== null"
                             color="secondary"
                             disabled
                             outlined
@@ -427,10 +454,10 @@
                             v-else
                             color="secondary"
                             rounded
-                            :disabled="disabledComponent"
-                            @click="confirmPayment('direct')"
+                            :disabled="disabledComponent || getAmount(currentItem)<=0"
+                            @click="confirmPayment(2)"
                           >
-                            {{ $t('buttons.confirmByHandPayment') }}
+                            {{ $t('buttons.directPayConfirm') }}
                           </v-btn>
                         </v-col>
                       </v-row>
@@ -439,11 +466,12 @@
                 </v-card-text>
               </v-row>
 
-              <!-- actions buttons -->
+              <!-- Action buttons -->
               <v-card-actions>
                 <v-row
                   justify="center"
                 >
+                  <!-- previous button -->
                   <v-col>
                     <v-btn
                       v-if="previousItem"
@@ -459,6 +487,7 @@
                       {{ $t('buttons.previous') }}
                     </v-btn>
                   </v-col>
+                  <!-- next button -->
                   <v-col>
                     <v-btn
                       v-if="nextItem"
@@ -520,11 +549,10 @@
       </v-col>
 
       <!-- PAYMENT / CONFIRMATION SECTION -->
-      <!-- Passenger : payments summary -->
       <v-col
-        v-if="isPayment"
         cols="4"
       >
+        <!-- Wallet -->
         <!-- <v-row
           justify="center"
           align="center"
@@ -543,182 +571,32 @@
             </v-col>
           </v-card>
         </v-row> -->
+
+        <!-- Direct payment / confirmation -->
         <v-row
           v-if="directItems.length > 0"
           justify="center"
         >
+          <!-- passenger : direct payment confirmation --> 
           <v-col
+            v-if="isPayment"
             align="center"
             class="font-weight-bold grey--text"
           >
-            {{ $t('payedByHand') }} :
+            {{ $t('directPay') }} :
+          </v-col>
+          <!-- driver : direct payment received confirmation -->
+          <v-col
+            v-else
+            align="center"
+            class="font-weight-bold"
+          >
+            {{ $tc('directPaymentReceived', directItems.length) }} :
           </v-col>
           <v-col
             align="left"
           >
             <v-list shaped>
-              <v-list-item-group
-                color="primary"
-              >
-                <v-list-item
-                  v-for="(item, i) in directItems"
-                  :key="i"
-                >
-                  <v-list-item-content class="grey--text">
-                    <v-row justify="center">
-                      <v-col
-                        align="center"
-                       
-                        cols="5"
-                      >
-                        <p class="my-n2">
-                          {{ item.name }} 
-                        </p>
-                      </v-col>
-                      <v-col cols="4">
-                        <p class="font-weight-bold my-n2">
-                          {{ item.price }} €
-                        </p>
-                      </v-col>
-                      <v-col class="my-n4">
-                        <v-btn
-                          color="secondary"
-                          fab
-                          x-small
-                          :disabled="disabledComponent"
-                          @click="removeByHandPayment(i, item)"
-                        >
-                          <v-icon>
-                            mdi-trash-can
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
-        <v-divider v-if="ePay && pricesElectronic.length > 0" />
-        <v-row
-          v-if="ePay && pricesElectronic.length > 0"
-          justify="center"
-        >
-          <v-col
-            align="center"
-            class="font-weight-bold"
-          >
-            {{ $t('payElectronic') }} :
-          </v-col>
-          <v-col align="left">
-            <v-list
-              shaped
-            >
-              <v-list-item-group
-                color="primary"
-              >
-                <v-list-item
-                  v-for="(item, i) in pricesElectronic"
-                  :key="i"
-                >
-                  <v-list-item-content>
-                    <v-row justify="center">
-                      <v-col
-                        align="center"
-                        cols="5"
-                      >
-                        <p class="my-n2">
-                          {{ item.name }} 
-                        </p>
-                      </v-col>
-                      <v-col cols="4">
-                        <p class="font-weight-bold my-n2">
-                          {{ item.price }} €
-                        </p>
-                      </v-col>
-                      <v-col class="my-n4">
-                        <v-btn
-                          color="secondary"
-                          fab
-                          x-small
-                          :disabled="disabledComponent"
-                          @click="removeElectronicPayment(i, item)"
-                        >
-                          <v-icon>
-                            mdi-trash-can
-                          </v-icon>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-        </v-row>
-        <!-- donations -->
-        <!-- <v-row
-          justify="center"
-          class="mb-4"
-        >
-          <v-card
-            outlined
-            color="primary lighten-3"
-            height="100"
-            width="500"
-          >
-            <v-col
-              align="center"
-              class="white--text mt-6 font-weight-bold"
-            >
-              {{ $t('donations') }}
-            </v-col>
-          </v-card>
-        </v-row> -->
-        <v-row
-          v-if="ePay && pricesElectronic.length > 0"
-          justify="center"
-        >
-          <v-col align="center">
-            <p class="text-h3">
-              {{ $t('sumToPay', {price: sumTopay}) }}
-            </p>
-          </v-col>
-        </v-row>
-        <v-row
-          v-if="pricesElectronic.length > 0 || pricesByHand.length > 0"
-          justify="center"
-        >
-          <v-btn
-            rounded
-            color="success"
-            :loading="loading"
-            @click="sendValidatedPayments"
-          >
-            {{ $t('buttons.validate') }}
-          </v-btn>
-        </v-row>
-      </v-col>
-
-      <!-- Driver : direct payment confirmation -->
-      <v-col v-else>
-        <v-row
-          v-if="directItems.length > 0"
-          justify="center"
-        >
-          <v-col
-            align="center"
-            class="font-weight-bold"
-          >
-            {{ $tc('paymentReceivedByHand', directItems.length) }} :
-          </v-col>
-          <v-col
-            align="left"
-          >
-            <v-list
-              shaped
-            >
               <v-list-item
                 v-for="(item, i) in directItems"
                 :key="i"
@@ -743,6 +621,7 @@
                         color="secondary"
                         fab
                         x-small
+                        :disabled="disabledComponent"
                         @click="removePayment(i, item)"
                       >
                         <v-icon>
@@ -756,21 +635,100 @@
             </v-list>
           </v-col>
         </v-row>
+        <v-divider v-if="ePay && ePayItems.length > 0 && directItems.length > 0" />
         <v-row
-          v-if="directItems.length > 0"
+          v-if="ePay && ePayItems.length > 0"
+          justify="center"
+        >
+          <v-col
+            align="center"
+            class="font-weight-bold"
+          >
+            {{ $t('electronicPay') }} :
+          </v-col>
+          <v-col align="left">
+            <v-list
+              shaped
+            >
+              <v-list-item
+                v-for="(item, i) in ePayItems"
+                :key="i"
+              >
+                <v-list-item-content>
+                  <v-row justify="center">
+                    <v-col
+                      align="center"
+                      cols="5"
+                    >
+                      <p class="my-n2">
+                        {{ item.givenName }} {{ item.shortFamilyName }}
+                      </p>
+                    </v-col>
+                    <v-col cols="4">
+                      <p class="font-weight-bold my-n2">
+                        {{ getAmount(item) }} €
+                      </p>
+                    </v-col>
+                    <v-col class="my-n4">
+                      <v-btn
+                        color="secondary"
+                        fab
+                        x-small
+                        :disabled="disabledComponent"
+                        @click="removePayment(i, item)"
+                      >
+                        <v-icon>
+                          mdi-trash-can
+                        </v-icon>
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-col>
+        </v-row>
+        <!-- donations -->
+        <!-- <v-row
+          justify="center"
+          class="mb-4"
+        >
+          <v-card
+            outlined
+            color="primary lighten-3"
+            height="100"
+            width="500"
+          >
+            <v-col
+              align="center"
+              class="white--text mt-6 font-weight-bold"
+            >
+              {{ $t('donations') }}
+            </v-col>
+          </v-card>
+        </v-row> -->
+        <v-row
+          v-if="ePay && ePayItems.length > 0"
           justify="center"
         >
           <v-col align="center">
-            <v-btn
-              rounded
-              color="secondary"
-              :loading="loading"
-              :disabled="disabledComponent"
-              @click="sendValidatedPayments"
-            >
-              {{ $t('buttons.confirm') }}
-            </v-btn>
+            <p class="text-h5">
+              {{ $t('sumToPay', {price: sumToPay}) }}
+            </p>
           </v-col>
+        </v-row>
+        <v-row
+          v-if="ePayItems.length > 0 || directItems.length > 0"
+          justify="center"
+        >
+          <v-btn
+            rounded
+            color="success"
+            :loading="loading"
+            @click="sendValidatedPayments"
+          >
+            {{ $t('buttons.validate') }}
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -820,34 +778,14 @@ export default {
       ePay: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.type == 1 ? true : false,
-
       paymentItems: null,
-
       currentKey: 0,
       daysList: null,
-     
-      sumTopay:0,
-      validPayment: false,
-      mode: null,
-      
       weekSelected: parseInt(this.week),
-      paymentPayment: {
-        "type": this.type,  
-        "items": null
-      },
-
-      periods: [
-      ],
-
+      periods: [],
       loading: false,
       disabledComponent: false,
-      dialog: false,
-      // array with all electronic payments selected
-      pricesElectronic: [],
-      // array with all by hand payments selected
-      pricesByHand: [],
-      // array with all by hand payments confirmed
-      paymentsByHandConfirmed: []
+      dialog: false
     };
   },
   computed: {
@@ -867,7 +805,8 @@ export default {
       var items = [];
       if (this.paymentItems !== null) {
         this.paymentItems.forEach((item, key) => {
-          if (item.selected && item.mode=='direct') items.push(item);
+          // mode 2 = direct payment
+          if (item.mode==2) items.push(item);
         });
       }
       return items;
@@ -876,10 +815,20 @@ export default {
       var items = [];
       if (this.paymentItems !== null) {
         this.paymentItems.forEach((item, key) => {
-          if (item.selected && item.mode=='ePay') items.push(item);
+          // mode 1 = electronic payment
+          if (item.mode==1) items.push(item);
         });
       }
       return items;
+    },
+    sumToPay: function() {
+      var sum = 0;
+      if (this.ePayItems.length>0) {
+        this.ePayItems.forEach((item, key) => {
+          sum += this.getAmount(item);
+        });
+      }
+      return sum;
     }
   },
   mounted () {
@@ -903,13 +852,15 @@ export default {
           var items = res.data;
           items.forEach((item, key) => {
             // we set dynamic parameters
-            item.selected = false;
             item.mode = null;
             if (item.id === this.selectedId) {              
               this.currentKey = key;              
             }
           });
           this.paymentItems = items;
+          if (this.regular) {
+            this.getWeeksToPay(this.paymentItems[this.currentKey].askId);
+          }
         });
     },
     getAmount(item) {
@@ -932,23 +883,26 @@ export default {
     },
     // method to update the dayslist of regular payment
     updateDaysList(daysList) {
-      if (daysList.isOutward) {
-        this.currentItem.outwardDays[0]['status'] = daysList.mon 
-        this.currentItem.outwardDays[1]['status'] = daysList.tue
-        this.currentItem.outwardDays[2]['status'] = daysList.wed
-        this.currentItem.outwardDays[3]['status'] = daysList.thu
-        this.currentItem.outwardDays[4]['status'] = daysList.fri
-        this.currentItem.outwardDays[5]['status'] = daysList.sat
-        this.currentItem.outwardDays[6]['status'] = daysList.sun
-      } else if (!daysList.isOutward) {
-        this.currentItem.returnDays[0]['status'] = daysList.mon 
-        this.currentItem.returnDays[1]['status'] = daysList.tue
-        this.currentItem.returnDays[2]['status'] = daysList.wed
-        this.currentItem.returnDays[3]['status'] = daysList.thu
-        this.currentItem.returnDays[4]['status'] = daysList.fri
-        this.currentItem.returnDays[5]['status'] = daysList.sat
-        this.currentItem.returnDays[6]['status'] = daysList.sun
+      if (this.currentItem) {
+        if (daysList.isOutward) {
+          this.currentItem.outwardDays[0]['status'] = daysList.mon 
+          this.currentItem.outwardDays[1]['status'] = daysList.tue
+          this.currentItem.outwardDays[2]['status'] = daysList.wed
+          this.currentItem.outwardDays[3]['status'] = daysList.thu
+          this.currentItem.outwardDays[4]['status'] = daysList.fri
+          this.currentItem.outwardDays[5]['status'] = daysList.sat
+          this.currentItem.outwardDays[6]['status'] = daysList.sun
+        } else if (!daysList.isOutward) {
+          this.currentItem.returnDays[0]['status'] = daysList.mon 
+          this.currentItem.returnDays[1]['status'] = daysList.tue
+          this.currentItem.returnDays[2]['status'] = daysList.wed
+          this.currentItem.returnDays[3]['status'] = daysList.thu
+          this.currentItem.returnDays[4]['status'] = daysList.fri
+          this.currentItem.returnDays[5]['status'] = daysList.sat
+          this.currentItem.returnDays[6]['status'] = daysList.sun
+        }
       }
+      
     },
     // method to get all weeks to pay for a payment
     getWeeksToPay () {
@@ -965,19 +919,20 @@ export default {
     },
     // confirm the current item
     confirmPayment(mode) {
-      this.paymentItems[this.currentKey].selected = true;
+      // mode 1 : electronic payment
+      // mode 2 : direct payment
       this.paymentItems[this.currentKey].mode = mode;
     },
+    // remove a given item from the payment/confirmation list
     removePayment(i, item) {
       this.paymentItems.forEach((paymentItem, key) => {
         if (paymentItem.id == item.id) {
-          paymentItem.selected = false;
           paymentItem.mode = null;
         }
       });
     },
     
-    // method to send confirmed or payed payments to ddb
+    // method to send confirmed or payed payments
     sendValidatedPayments() {
       this.loading = true;
       this.disabledComponent = true;
@@ -1004,9 +959,11 @@ export default {
           }
         }
       });
-      this.paymentPayment.items = payments;
       // we post datas
-      axios.post(this.$t("payments.postPayments"), this.paymentPayment)
+      axios.post(this.$t("payments.postPayments"), {
+        "type": this.type,  
+        "items": payments
+      })
         .then(res => {
           window.location.href = this.$t("redirectAfterPayment");
         })
@@ -1016,12 +973,11 @@ export default {
           console.error(error);
         });
     },
-    // method to send reported payments to ddb
+    // method to send reported payments
     sendReport() {
       this.loading = true;
-      this.currentItem.validated = false;
+      this.currentItem.unpaidDate = moment();
       this.currentItem.mode = 2;
-      this.currentItem.reported = true;
       let payments = [];
       // if punctual 
       if (this.frequency == 1) {
@@ -1043,10 +999,12 @@ export default {
           })
         }
       }
-      this.paymentPayment.items = payments;
 
-      // we post datas
-      axios.post(this.$t("payments.postPayments"), this.paymentPayment)
+      // we post data
+      axios.post(this.$t("payments.postPayments"), {
+        "type": this.type,  
+        "items": payments
+      })
         .then(res => {
           this.loading = false;
         })
