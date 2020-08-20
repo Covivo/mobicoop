@@ -62,10 +62,8 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
         $this->translator->setLocale($locale);
         if ($state = $this->userManager->checkEmail($this->request->get('email'))) {
             if ($state == "email-exist") {
-                //throw new \InvalidArgumentException($this->translator->trans('errors.alreadyUsed'));
                 return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.alreadyUsed')]);
             } elseif ($state != "authorized") {
-//                throw new \InvalidArgumentException($this->translator->trans('errors.wrongDomains', ['domains' => $state ]));
                 return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.wrongDomains', ['domains' => $state ])]);
             }
         }
