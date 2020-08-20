@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -55,15 +56,17 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
         return User::class === $resourceClass && $operationName === "checkEmail";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?\InvalidArgumentException
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
         $locale = $this->request->getLocale();
         $this->translator->setLocale($locale);
         if ($state = $this->userManager->checkEmail($this->request->get('email'))) {
             if ($state == "email-exist") {
-                throw new \InvalidArgumentException($this->translator->trans('errors.alreadyUsed'));
+                //throw new \InvalidArgumentException($this->translator->trans('errors.alreadyUsed'));
+                return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.alreadyUsed')]);
             } elseif ($state != "authorized") {
-                throw new \InvalidArgumentException($this->translator->trans('errors.wrongDomains', ['domains' => $state ]));
+//                throw new \InvalidArgumentException($this->translator->trans('errors.wrongDomains', ['domains' => $state ]));
+                return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.wrongDomains', ['domains' => $state ])]);
             }
         }
         return null;
