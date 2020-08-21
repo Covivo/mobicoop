@@ -664,6 +664,7 @@ class UserManager
      */
     public function checkEmail(string $email)
     {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
     }

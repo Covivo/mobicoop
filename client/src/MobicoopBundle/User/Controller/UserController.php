@@ -342,6 +342,10 @@ class UserController extends AbstractController
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 
             if ($user = $userManager->updateUser($user)) {
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                
                 if ($file) {
                     // Post avatar of the user
                     $image = new Image();
@@ -951,12 +955,7 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $check = $userManager->checkEmail($data['email']);
-                if (is_null($check->getDescription())) {
-                    return new JsonResponse(['error'=>false, 'message'=>'']);
-                } else {
-                    return new JsonResponse(['error'=>false, 'message'=>$check->getDescription()]);
-                }
+                return new JsonResponse($userManager->checkEmail($data['email']));
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
             }

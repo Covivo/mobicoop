@@ -724,7 +724,7 @@ export default {
           }
         )
         .then((response) => {
-          if (!response.data.error) {
+          if (response.data.error) {
             if (response.data.message !== "") {
               this.textEmailError = response.data.message;
               this.emailAlreadyTaken = true;

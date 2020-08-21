@@ -265,16 +265,17 @@ class GeoSearcher
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
                 // set address icon
-                $relayPointTypes = $relayPoint->getRelayPointTypes();
-                if (count($relayPointTypes)>0 && is_null($relayPointTypes[0]->getIcon())) {
-                    $relayPointTypes[0]->setIcon($this->iconRepository->find(1));
+                $relayPointType = $relayPoint->getRelayPointType();
+
+                if (!is_null($relayPointType) && is_null($relayPointType->getIcon())) {
+                    $relayPointType->setIcon($this->iconRepository->find(1));
                 }
-                
-                if (count($relayPointTypes)>0 && !is_null($relayPointTypes[0]->getIcon())) {
-                    if ($relayPointTypes[0]->getIcon()->getPrivateIconLinked()) {
-                        $address->setIcon($this->dataPath.$this->iconPath.$relayPointTypes[0]->getIcon()->getPrivateIconLinked()->getFileName());
+
+                if (!is_null($relayPointType) && !is_null($relayPointType->getIcon())) {
+                    if ($relayPointType->getIcon()->getPrivateIconLinked()) {
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPointType->getIcon()->getPrivateIconLinked()->getFileName());
                     } else {
-                        $address->setIcon($this->dataPath.$this->iconPath.$relayPointTypes[0]->getIcon()->getFileName());
+                        $address->setIcon($this->dataPath.$this->iconPath.$relayPointType->getIcon()->getFileName());
                     }
                 }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
