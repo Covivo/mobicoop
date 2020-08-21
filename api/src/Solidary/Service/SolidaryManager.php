@@ -740,7 +740,7 @@ class SolidaryManager
         // The subject
         $ad->setSubjectId($solidary->getSubject()->getId());
 
-        return $this->adManager->createAd($ad, true);
+        return $this->adManager->createAd($ad);
     }
 
     /**
