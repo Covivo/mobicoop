@@ -1,5 +1,5 @@
 describe("User", function() {
-	it("Should register on the se", function() {
+	it("Should register on the site", function() {
 		let email = "first@user.com"
 		let password = "Asefth123"
 		let lastname = "First"
