@@ -112,12 +112,13 @@ class AdManager
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad $ad The ad to create
-     * @param bool $doPrepare - When we prepare the Proposal
+     * @param Ad $ad                    The ad to create
+     * @param bool $doPrepare           When we prepare the Proposal
+     * @param bool $withSolidaries      Return also the matching solidary asks
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -438,7 +439,7 @@ class AdManager
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
-                    $this->resultManager->createAdResults($outwardProposal),
+                    $this->resultManager->createAdResults($outwardProposal, $withSolidaries),
                     $ad->getFilters()
                 ),
                 $ad->getFilters()
@@ -1060,12 +1061,12 @@ class AdManager
      * Update an ad.
      *  /!\ Only minor data can be updated
      * Otherwise we delete and create new Ad
-     * @param Ad $ad
-     * @param string|null $mailSearchLink
+     * @param Ad $ad                The ad to update
+     * @param bool $withSolidaries  Return also the solidary asks
      * @return Ad
      * @throws \Exception
      */
-    public function updateAd(Ad $ad, ?string $mailSearchLink = null)
+    public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
         $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
@@ -1083,7 +1084,7 @@ class AdManager
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             $this->proposalManager->deleteProposal($proposal);
-            $ad = $this->createAd($ad, true);
+            $ad = $this->createAd($ad, true, $withSolidaries);
 
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()

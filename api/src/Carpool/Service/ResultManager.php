@@ -77,15 +77,16 @@ class ResultManager
      * Create "user-friendly" results from the matchings of an ad proposal
      *
      * @param Proposal $proposal    The proposal with its matchings
+     * @param bool $withSolidaries  Create also the results for solidary asks
      * @return array                The array of results
      */
-    public function createAdResults(Proposal $proposal)
+    public function createAdResults(Proposal $proposal, bool $withSolidaries = true)
     {
         // the outward results are the base results
-        $results = $this->createProposalResults($proposal, false);
+        $results = $this->createProposalResults($proposal, false, $withSolidaries);
         $returnResults = [];
         if ($proposal->getProposalLinked()) {
-            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true);
+            $returnResults = $this->createProposalResults($proposal->getProposalLinked(), true, $withSolidaries);
         }
 
         // the outward results are the base
@@ -399,11 +400,12 @@ class ResultManager
     /**
      * Create results for an outward or a return proposal.
      *
-     * @param Proposal $proposal The proposal
-     * @param boolean $return The result is for the return trip
+     * @param Proposal $proposal    The proposal
+     * @param boolean $return       The result is for the return trip
+     * @param bool $withSolidaries  Create also the results for solidary asks
      * @return array
      */
-    private function createProposalResults(Proposal $proposal, bool $return = false)
+    private function createProposalResults(Proposal $proposal, bool $return = false, bool $withSolidaries = true)
     {
         $results = [];
         // we group the matchings by matching proposalId to merge potential driver and/or passenger candidates
@@ -413,6 +415,10 @@ class ResultManager
         foreach ($proposal->getMatchingRequests() as $request) {
             // we exclude the private proposals
             if ($request->getProposalRequest()->isPrivate() || $request->getProposalRequest()->isPaused()) {
+                continue;
+            }
+            // do we exclude solidary requests ?
+            if (!$withSolidaries && $request->getProposalRequest()->getCriteria()->isSolidary()) {
                 continue;
             }
             // we check if the route hasn't been computed, or if the matching is not complete (we check one of the properties that must be filled if the matching is complete)
