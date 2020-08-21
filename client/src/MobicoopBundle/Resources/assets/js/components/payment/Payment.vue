@@ -207,20 +207,20 @@
                         <day-list-chips 
                           :disabled="currentItem.mode !== null || disabledComponent"
                           :is-outward="true"
-                          :mon-active="currentItem.outwardDays[0]['status'] == 1 ? true : false"
-                          :tue-active="currentItem.outwardDays[1]['status'] == 1 ? true : false"
-                          :wed-active="currentItem.outwardDays[2]['status'] == 1 ? true : false"
-                          :thu-active="currentItem.outwardDays[3]['status'] == 1 ? true : false"
-                          :fri-active="currentItem.outwardDays[4]['status'] == 1 ? true : false"
-                          :sat-active="currentItem.outwardDays[5]['status'] == 1 ? true : false"
-                          :sun-active="currentItem.outwardDays[6]['status'] == 1 ? true : false"
-                          :mon-disabled="currentItem.outwardDays[0]['status'] == 0 ? true : false"
-                          :tue-disabled="currentItem.outwardDays[1]['status'] == 0 ? true : false"
-                          :wed-disabled="currentItem.outwardDays[2]['status'] == 0 ? true : false"
-                          :thu-disabled="currentItem.outwardDays[3]['status'] == 0 ? true : false"
-                          :fri-disabled="currentItem.outwardDays[4]['status'] == 0 ? true : false"
-                          :sat-disabled="currentItem.outwardDays[5]['status'] == 0 ? true : false"
-                          :sun-disabled="currentItem.outwardDays[6]['status'] == 0 ? true : false"
+                          :sun-active="currentItem.outwardDays[0]['status'] == 1 ? true : false"
+                          :mon-active="currentItem.outwardDays[1]['status'] == 1 ? true : false"
+                          :tue-active="currentItem.outwardDays[2]['status'] == 1 ? true : false"
+                          :wed-active="currentItem.outwardDays[3]['status'] == 1 ? true : false"
+                          :thu-active="currentItem.outwardDays[4]['status'] == 1 ? true : false"
+                          :fri-active="currentItem.outwardDays[5]['status'] == 1 ? true : false"
+                          :sat-active="currentItem.outwardDays[6]['status'] == 1 ? true : false"
+                          :sun-disabled="currentItem.outwardDays[0]['status'] == 0 ? true : false"
+                          :mon-disabled="currentItem.outwardDays[1]['status'] == 0 ? true : false"
+                          :tue-disabled="currentItem.outwardDays[2]['status'] == 0 ? true : false"
+                          :wed-disabled="currentItem.outwardDays[3]['status'] == 0 ? true : false"
+                          :thu-disabled="currentItem.outwardDays[4]['status'] == 0 ? true : false"
+                          :fri-disabled="currentItem.outwardDays[5]['status'] == 0 ? true : false"
+                          :sat-disabled="currentItem.outwardDays[6]['status'] == 0 ? true : false"
                           @change="updateDaysList"
                         />
                       </v-col>
@@ -246,20 +246,20 @@
                         <day-list-chips
                           :is-outward="false"
                           :disabled="currentItem.mode !== null || disabledComponent"
-                          :mon-active="currentItem.returnDays[0]['status'] == 1 ? true : false"
-                          :tue-active="currentItem.returnDays[1]['status'] == 1 ? true : false"
-                          :wed-active="currentItem.returnDays[2]['status'] == 1 ? true : false"
-                          :thu-active="currentItem.returnDays[3]['status'] == 1 ? true : false"
-                          :fri-active="currentItem.returnDays[4]['status'] == 1 ? true : false"
-                          :sat-active="currentItem.returnDays[5]['status'] == 1 ? true : false"
-                          :sun-active="currentItem.returnDays[6]['status'] == 1 ? true : false"
-                          :mon-disabled="currentItem.returnDays[0]['status'] == 0 ? true : false"
-                          :tue-disabled="currentItem.returnDays[1]['status'] == 0 ? true : false"
-                          :wed-disabled="currentItem.returnDays[2]['status'] == 0 ? true : false"
-                          :thu-disabled="currentItem.returnDays[3]['status'] == 0 ? true : false"
-                          :fri-disabled="currentItem.returnDays[4]['status'] == 0 ? true : false"
-                          :sat-disabled="currentItem.returnDays[5]['status'] == 0 ? true : false"
-                          :sun-disabled="currentItem.returnDays[6]['status'] == 0 ? true : false"
+                          :sun-active="currentItem.returnDays[0]['status'] == 1 ? true : false"
+                          :mon-active="currentItem.returnDays[1]['status'] == 1 ? true : false"
+                          :tue-active="currentItem.returnDays[2]['status'] == 1 ? true : false"
+                          :wed-active="currentItem.returnDays[3]['status'] == 1 ? true : false"
+                          :thu-active="currentItem.returnDays[4]['status'] == 1 ? true : false"
+                          :fri-active="currentItem.returnDays[5]['status'] == 1 ? true : false"
+                          :sat-active="currentItem.returnDays[6]['status'] == 1 ? true : false"
+                          :sun-disabled="currentItem.returnDays[0]['status'] == 0 ? true : false"
+                          :mon-disabled="currentItem.returnDays[1]['status'] == 0 ? true : false"
+                          :tue-disabled="currentItem.returnDays[2]['status'] == 0 ? true : false"
+                          :wed-disabled="currentItem.returnDays[3]['status'] == 0 ? true : false"
+                          :thu-disabled="currentItem.returnDays[4]['status'] == 0 ? true : false"
+                          :fri-disabled="currentItem.returnDays[5]['status'] == 0 ? true : false"
+                          :sat-disabled="currentItem.returnDays[6]['status'] == 0 ? true : false"
                           @change="updateDaysList"
                         />
                       </v-col>
@@ -885,21 +885,21 @@ export default {
     updateDaysList(daysList) {
       if (this.currentItem) {
         if (daysList.isOutward) {
-          this.currentItem.outwardDays[0]['status'] = daysList.mon 
-          this.currentItem.outwardDays[1]['status'] = daysList.tue
-          this.currentItem.outwardDays[2]['status'] = daysList.wed
-          this.currentItem.outwardDays[3]['status'] = daysList.thu
-          this.currentItem.outwardDays[4]['status'] = daysList.fri
-          this.currentItem.outwardDays[5]['status'] = daysList.sat
-          this.currentItem.outwardDays[6]['status'] = daysList.sun
+          this.currentItem.outwardDays[0]['status'] = daysList.sun 
+          this.currentItem.outwardDays[1]['status'] = daysList.mon
+          this.currentItem.outwardDays[2]['status'] = daysList.tue
+          this.currentItem.outwardDays[3]['status'] = daysList.wed
+          this.currentItem.outwardDays[4]['status'] = daysList.thu
+          this.currentItem.outwardDays[5]['status'] = daysList.fri
+          this.currentItem.outwardDays[6]['status'] = daysList.sat
         } else if (!daysList.isOutward) {
-          this.currentItem.returnDays[0]['status'] = daysList.mon 
-          this.currentItem.returnDays[1]['status'] = daysList.tue
-          this.currentItem.returnDays[2]['status'] = daysList.wed
-          this.currentItem.returnDays[3]['status'] = daysList.thu
-          this.currentItem.returnDays[4]['status'] = daysList.fri
-          this.currentItem.returnDays[5]['status'] = daysList.sat
-          this.currentItem.returnDays[6]['status'] = daysList.sun
+          this.currentItem.returnDays[0]['status'] = daysList.sun 
+          this.currentItem.returnDays[1]['status'] = daysList.mon
+          this.currentItem.returnDays[2]['status'] = daysList.tue
+          this.currentItem.returnDays[3]['status'] = daysList.wed
+          this.currentItem.returnDays[4]['status'] = daysList.thu
+          this.currentItem.returnDays[5]['status'] = daysList.fri
+          this.currentItem.returnDays[6]['status'] = daysList.sat
         }
       }
       
