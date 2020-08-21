@@ -955,12 +955,7 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $check = $userManager->checkEmail($data['email']);
-                if (is_null($check->getDescription())) {
-                    return new JsonResponse(['error'=>false, 'message'=>'']);
-                } else {
-                    return new JsonResponse(['error'=>false, 'message'=>$check->getDescription()]);
-                }
+                return new JsonResponse($userManager->checkEmail($data['email']));
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
             }
