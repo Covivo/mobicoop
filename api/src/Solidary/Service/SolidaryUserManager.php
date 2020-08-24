@@ -390,12 +390,21 @@ class SolidaryUserManager
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
      * @return array
      */
-    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null): array
+    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null, $isSuperAdmin=false): array
     {
         $beneficiaries = [];
 
+        $structureAdmin =  null;
+        if ($isSuperAdmin == false) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+        }
+
+
         // First, we get all user with Beneficiary types of SolidaryUser
-        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters);
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters, $structureAdmin);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
             $beneficiarie = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
@@ -426,12 +435,20 @@ class SolidaryUserManager
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
      * @return array
      */
-    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null): array
+    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null, $isSuperAdmin=false): array
     {
         $volunteers = [];
 
+        $structureAdmin =  null;
+        if ($isSuperAdmin == false) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+        }
+
         // First, we get all user with Beneficiary types of SolidaryUser
-        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE, $filters);
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE, $filters, $structureAdmin);
         foreach ($users as $user) {
 
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
