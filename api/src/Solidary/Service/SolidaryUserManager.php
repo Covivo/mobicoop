@@ -388,14 +388,15 @@ class SolidaryUserManager
      * Get all the SolidaryBeneficiaries
      * @var array $filters optionnal filters
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
+     * @param boolean $returnAllBeneficiaries return all beneficiaries (true, false)
      * @return array
      */
-    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null, $isSuperAdmin=false): array
+    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null, $returnAllBeneficiaries=false): array
     {
         $beneficiaries = [];
 
         $structureAdmin =  null;
-        if ($isSuperAdmin == false) {
+        if ($returnAllBeneficiaries == false) {
             $structures = $this->security->getUser()->getSolidaryStructures();
             if (!is_null($structures) || count($structures)>0) {
                 $structureAdmin = $structures[0];
@@ -429,18 +430,21 @@ class SolidaryUserManager
         return $beneficiaries;
     }
 
+
+
     /**
      * Get all the SolidaryVolunteers
      * @param array $filters optionnal filters
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
+     * @param boolean $returnAllVolonteers return all volunteers (true, false)
      * @return array
      */
-    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null, $isSuperAdmin=false): array
+    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null, $returnAllVolonteers=false): array
     {
         $volunteers = [];
 
         $structureAdmin =  null;
-        if ($isSuperAdmin == false) {
+        if ($returnAllVolonteers == false) {
             $structures = $this->security->getUser()->getSolidaryStructures();
             if (!is_null($structures) || count($structures)>0) {
                 $structureAdmin = $structures[0];

@@ -68,18 +68,6 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
                 }
             }
         }
-
-        // we check if the user is superAdmin
-        $isSuperAdmin = false;
-        $roles = $this->security->getUser()->getRoles();
-        if (!empty($roles)) {
-            foreach ($roles as $role) {
-                if ($role === User::ROLE_SUPER_ADMIN) {
-                    $isSuperAdmin = true;
-                }
-            }
-        }
-
-        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters, $validatedCandidate, $isSuperAdmin);
+        return $this->solidaryUserManager->getSolidaryBeneficiaries($filters, $validatedCandidate);
     }
 }
