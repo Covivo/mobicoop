@@ -27,18 +27,24 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Service\SolidaryUserManager;
+use Symfony\Component\Security\Core\Security;
+use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $solidaryUserManager;
     private $context;
+    private $security;
 
-    public function __construct(SolidaryUserManager $solidaryUserManager)
+
+    public function __construct(SolidaryUserManager $solidaryUserManager, Security $security)
     {
         $this->solidaryUserManager = $solidaryUserManager;
+        $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -62,7 +68,6 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
                 }
             }
         }
-
         return $this->solidaryUserManager->getSolidaryBeneficiaries($filters, $validatedCandidate);
     }
 }
