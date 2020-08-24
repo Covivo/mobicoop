@@ -927,14 +927,17 @@ class AskManager
         $startDate = $ask->getCriteria()->getFromDate();
         $toDate = $ask->getCriteria()->getToDate();
 
-        // We will check until last week (we set on today because de loop is executed until the current week equals the max week)
-        $maxDate = new \DateTime('now');
+        // we limit to the last day of the previous week
+        $maxDate = new \DateTime();
+        $maxDate->modify('last week +6 days');
+
+        $limitDate = min($maxDate, $toDate);
 
         // First we need an array where every element is a week that contains every days on the period
         $currentDate = clone $startDate;
-        $cpt = 0; // to prevent infinite loop
+
         $arrayWeeks = [];
-        while ($currentDate < $maxDate && $currentDate < $toDate && $cpt<=1000) {
+        while ($currentDate <= $limitDate) {
             $currentWeek = [];
             for ($i = 0 ; $i < 7 ; $i++) {
                 $currentWeek[] = clone $currentDate;
