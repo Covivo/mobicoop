@@ -27,6 +27,7 @@ twig:
         dataComponents: '%env(resolve:DATA_COMPONENTS)%'
         homeCommunityDisplay: '%env(resolve:COMMUNITY_DISPLAY)%'
         additionalTextDisplay: '%env(resolve:ADDITIONAL_TEXT_DISPLAY)%'
+        redirectLoginPage: '%env(bool:REDIRECT_LOGIN_PAGE)%'
         homeEventDisplay: '%env(resolve:EVENT_DISPLAY)%'
         homeSolidaryDisplay: '%env(resolve:SOLIDARY_DISPLAY)%'
         userAvatarSize: '%env(resolve:USER_AVATAR_SIZE)%'

@@ -82,6 +82,23 @@
               <v-card-title>
                 <v-row>
                   <v-col
+                    v-if="!isLogged && redirectLoginPage"
+                    cols="6"
+                  >
+                    <a
+                      :href="$t('routes.login')"
+                    >
+                      <v-btn
+                        type="button"
+                        color="secondary"
+                        rounded
+                      >
+                        {{ $t('createEvent') }}
+                      </v-btn>
+                    </a>
+                  </v-col>
+                  <v-col
+                    v-else
                     cols="6"
                   >
                     <a
@@ -170,6 +187,23 @@
               <v-card-title>
                 <v-row>
                   <v-col
+                    v-if="!isLogged && redirectLoginPage"
+                    cols="6"
+                  >
+                    <a
+                      :href="$t('routes.login')"
+                    >
+                      <v-btn
+                        type="button"
+                        color="secondary"
+                        rounded
+                      >
+                        {{ $t('createEvent') }}
+                      </v-btn>
+                    </a>
+                  </v-col>
+                  <v-col
+                    v-else
                     cols="6"
                   >
                     <a
@@ -303,6 +337,10 @@ export default {
     tabDefault: {
       type: String,
       default: ""
+    },
+    redirectLoginPage:{
+      type: Boolean,
+      default:false
     }
 
   },
