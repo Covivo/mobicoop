@@ -918,6 +918,18 @@ export default {
       if (this.regular && !this.schedules) return false;
       // regular schedules validation
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+
+      // Step 2 regular schedule no return without outward
+      if(this.regular && this.schedules){
+        let outwardSchedulesValid = true;
+        this.schedules.forEach((s, index) => {
+          if(s.returnTime !== null && s.outwardTime == null){
+            outwardSchedulesValid = false;
+          }        
+        });
+        return outwardSchedulesValid;
+      }
+
       // Price to high. Forbidden to post
       if(this.priceForbidden) return false;
       // We are in update mode and initialization is not finished yet
@@ -941,6 +953,17 @@ export default {
       // Step 2 regular : you have to setup at least one schedule
       if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
 
+      // Step 2 regular schedule no return without outward
+      if(this.step==2 && this.regular && this.schedules){
+        let outwardSchedulesValid = true;
+        this.schedules.forEach((s, index) => {
+          if(s.returnTime !== null && s.outwardTime == null){
+            outwardSchedulesValid = false;
+          }        
+        });
+        return outwardSchedulesValid;
+      }
+
       //We get here if we give at least the departure time on the 1st day
       //So now we can check on all others days, if visible and date AND at least 1 hour is not defined -> return false
       if(this.step ==2  && this.regular){
@@ -957,7 +980,6 @@ export default {
       if(this.step==2 && ((!this.regular && !(this.outwardDate && this.outwardTime)) || this.returnTimeIsValid === false)) return false;
       // Step 2 punctual, round-trip chosen : you have to set the outward date & time
       if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
-
 
       return true;
     },
