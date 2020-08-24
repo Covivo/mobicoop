@@ -1159,11 +1159,9 @@ export default {
           'content-type': 'application/json'
         }
       })
-        .then(function (response) {
+        .then(response => {
           if (response.data) {
-            // uncomment when results page activated
-            //var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            window.location.href = this.$t('route.myAds');
           }
           //console.log(response);
         })
@@ -1202,7 +1200,7 @@ export default {
               color: "success",
               show: true
             };
-            window.location.href = "/utilisateur/profil/modifier/mes-annonces";
+            window.location.href = this.$t('route.myAds');
           } else {
             this.snackbar = {
               message: this.$t('update.error'),
@@ -1252,11 +1250,18 @@ export default {
       if (this.bike != null) postObject.bike = this.bike;
       if (this.backSeats != null) postObject.backSeats = this.backSeats;
       // price chosen by the driver (not handled yet for passengers)
+      
+      postObject.outwardDriverPrice = 0;
       if (this.driver && this.price) {
         // for now we just handle the outward price
         postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
       }
-      if (this.pricePerKm) postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
+      
+      postObject.priceKm = 0;
+      if (this.pricePerKm){
+        postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;
+      }
+
       if (this.message != null) postObject.message = this.message;
       // the following parameters are not used yet but we keep them here for possible future use
       if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
