@@ -113,6 +113,12 @@ class EventController extends AbstractController
         $this->denyAccessUnlessGranted('create', $event);
         $user = $userManager->getLoggedUser();
 
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            $user = null;
+            return $this->redirectToRoute("user_login");
+        }
+
         if ($request->isMethod('POST')) {
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {

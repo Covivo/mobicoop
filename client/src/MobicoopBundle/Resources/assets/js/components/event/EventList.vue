@@ -82,37 +82,17 @@
               <v-card-title>
                 <v-row>
                   <v-col
-                    v-if="!isLogged && redirectLoginPage"
+                    v-if="buttonDisplay"
                     cols="6"
                   >
-                    <a
-                      :href="$t('routes.login')"
-                    >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
-                  </v-col>
-                  <v-col
-                    v-else
-                    cols="6"
-                  >
-                    <a
-                      v-if="isLogged"
+                    <v-btn
+                      type="button"
+                      color="secondary"
+                      rounded
                       :href="paths.event_create"
                     >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
+                      {{ $t('createEvent') }}
+                    </v-btn>
                   </v-col>
                   <v-col
                     cols="6"
@@ -187,37 +167,16 @@
               <v-card-title>
                 <v-row>
                   <v-col
-                    v-if="!isLogged && redirectLoginPage"
                     cols="6"
                   >
-                    <a
-                      :href="$t('routes.login')"
-                    >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
-                  </v-col>
-                  <v-col
-                    v-else
-                    cols="6"
-                  >
-                    <a
-                      v-if="isLogged"
+                    <v-btn
+                      type="button"
+                      color="secondary"
+                      rounded
                       :href="paths.event_create"
                     >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
+                      {{ $t('createEvent') }}
+                    </v-btn>
                   </v-col>
                   <v-col
                     cols="6"
@@ -338,11 +297,10 @@ export default {
       type: String,
       default: ""
     },
-    redirectLoginPage:{
+    buttonDisplay:{
       type: Boolean,
       default:false
     }
-
   },
   data () {
     return {
