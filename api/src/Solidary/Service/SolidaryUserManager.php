@@ -506,7 +506,7 @@ class SolidaryUserManager
 
             // If there a Structure given, we use it. Otherwise we use the first admin structure
             $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
-            if (is_null($solidaryBeneficiaryStructure)) {
+            if (is_null($solidaryBeneficiaryStructure) && $requester instanceof User) {
                 // We get the Structures of the requester to set the SolidaryUserStructure
                 $structures = $requester->getSolidaryStructures();
                 if (!is_null($structures) || count($structures)>0) {
@@ -778,16 +778,19 @@ class SolidaryUserManager
        
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
-        if (is_null($solidaryVolunteerStructure)) {
+        if (is_null($solidaryVolunteerStructure) && ($this->security->getUser() instanceof User)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
             $structures = $this->structureRepository->findByUser($this->security->getUser());
            
-            $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryVolunteerStructure = $structures[0];
             }
         }
         
+        if (is_null($solidaryVolunteerStructure)) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
