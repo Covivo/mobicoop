@@ -122,10 +122,12 @@ class SolidaryUserManager
     public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
     {
         // Get the structure of the Admin
-        $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
-        if (is_array($structures) && isset($structures[0])) {
-            $structureAdmin = $structures[0];
+        if ($this->security->getUser() instanceof User) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (is_array($structures) && isset($structures[0])) {
+                $structureAdmin = $structures[0];
+            }
         }
 
         // Get the Solidary User
@@ -556,11 +558,11 @@ class SolidaryUserManager
                 // auto valid the registration
                 $user->setValidatedDate(new \DateTime());
             }
-        } else {
-            // We check if this User doesn't already have a Solidary User
-            if (!is_null($user->getSolidaryUser())) {
-                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
-            }
+        }
+
+        // We check if this User doesn't already have a Solidary User
+        if (!is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
         }
 
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
