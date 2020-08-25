@@ -308,7 +308,7 @@ class SolidaryUserManager
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
 
         // Get the structure of the Admin
-        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+        if (($this->security->getUser() instanceof User) && !empty($this->security->getUser()->getSolidaryStructures())) {
             $structures = $this->security->getUser()->getSolidaryStructures();
             $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
@@ -728,7 +728,11 @@ class SolidaryUserManager
             }
         }
         if (!is_null($user->getSolidaryUser())) {
-            $solidaryUser = $user->getSolidaryUser();
+//            $solidaryUser = $user->getSolidaryUser();
+            // We check if this User doesn't already have a Solidary User
+            if (!is_null($user->getSolidaryUser())) {
+                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
+            }
         } else {
             $solidaryUser = new SolidaryUser();
             // We set the link between User and SolidaryUser
