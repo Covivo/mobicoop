@@ -443,7 +443,7 @@ class RdexManager
                 $journey->setReturn($infos['journey']);
             }
 
-            $returnArray[] = $journey;
+            $returnArray[] = ['journeys'=>$journey];
         }
         return $returnArray;
     }
