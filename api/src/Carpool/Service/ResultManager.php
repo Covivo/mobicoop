@@ -477,7 +477,7 @@ class ResultManager
             }
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['request']->getProposalRequest()->getUser();
-                $result->setCarpooler($carpooler);
+                $result->setCarpooler(clone $carpooler);
                 // We check if we have accepted carpool if yes we display the carpooler phone number
                 $hasAsk = false;
                 $asks = $matching['request']->getAsks();
@@ -1064,7 +1064,7 @@ class ResultManager
             }
             if (is_null($result->getCarpooler())) {
                 $carpooler=$matching['offer']->getProposalOffer()->getUser();
-                $result->setCarpooler($carpooler);
+                $result->setCarpooler(clone $carpooler);
                 // We check if we have accepted carpool
                 $hasAsk = false;
                 $asks = $matching['offer']->getAsks();
