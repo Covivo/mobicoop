@@ -1183,7 +1183,7 @@ export default {
       })
         .then(response => {
           if (response.data) {
-            //window.location.href = this.$t('route.myAds');
+            window.location.href = this.$t('route.myAds');
           }
           //console.log(response);
         })

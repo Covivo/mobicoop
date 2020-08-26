@@ -59,7 +59,7 @@ use App\User\Entity\User;
 /**
  * Proposal manager service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class ProposalManager
 {
@@ -94,8 +94,24 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, ResultManager $resultManager, FormatDataManager $formatDataManager, InternalMessageManager $internalMessageManager, CriteriaRepository $criteriaRepository, array $params)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ProposalMatcher $proposalMatcher,
+        ProposalRepository $proposalRepository,
+        DirectionRepository $directionRepository,
+        GeoRouter $geoRouter,
+        ZoneManager $zoneManager,
+        TerritoryManager $territoryManager,
+        LoggerInterface $logger,
+        UserRepository $userRepository,
+        EventDispatcherInterface $dispatcher,
+        AskManager $askManager,
+        ResultManager $resultManager,
+        FormatDataManager $formatDataManager,
+        InternalMessageManager $internalMessageManager,
+        CriteriaRepository $criteriaRepository,
+        array $params
+    ) {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->proposalRepository = $proposalRepository;
@@ -260,7 +276,9 @@ class ProposalManager
         }
 
 
-        if (!$proposal->isPrivate() && !$proposal->isPaused()) {
+        if (!$proposal->isPrivate() && !$proposal->isPaused() &&
+            ($proposal->getType() == Proposal::TYPE_ONE_WAY || $proposal->getType() == Proposal::TYPE_OUTWARD)
+        ) {
             // TODO : see which events send !!!
             $matchingOffers = [];
             $matchingRequests = [];
