@@ -82,7 +82,7 @@
               <v-card-title>
                 <v-row>
                   <v-col
-                    v-if="buttonDisplay"
+                    v-if="eventButtonDisplay"
                     cols="6"
                   >
                     <v-btn
@@ -297,7 +297,7 @@ export default {
       type: String,
       default: ""
     },
-    buttonDisplay:{
+    eventButtonDisplay:{
       type: Boolean,
       default:false
     }
