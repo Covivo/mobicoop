@@ -13,16 +13,16 @@ describe("User", function() {
     let name = "User"
     let phone = "0612345678"
     let gender = "Monsieur"
-    let token = "c43604b7bbefdf0565901fd0c5ed638c04eb2c458bd4ac3f901ee24b02e64a7d"
+    // let token = "c43604b7bbefdf0565901fd0c5ed638c04eb2c458bd4ac3f901ee24b02e64a7d"
 
-    cy.registration(email, password, lastname, name, phone, gender, token)
+    cy.signUp(email, password, lastname, name, phone, gender)
   })
 
   it("Should connect and disconnect on the site", function() {
     let email = "first@user.com"
     let password = "Asefth123"
 
-    cy.login(email, password)
+    cy.signIn(email, password)
 
     cy.logOut()
   })
@@ -31,16 +31,16 @@ describe("User", function() {
     let email = "first@user.com"
     let password = "Asefth123"
 
-	cy.login(email, password)
+	cy.signIn(email, password)
 	
-	cy.updateProfile()
+	cy.changeProfil()
 })
 
   it("Should delete account", function () {
     let email = "first@user.com"
     let password = "Asefth123"
 
-    cy.login(email, password)
+    cy.signIn(email, password)
 
     cy.delete()
   })

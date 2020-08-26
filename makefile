@@ -156,7 +156,7 @@ go-db:
 connect:
 	@docker exec -it mobicoop_platform /bin/bash
 
-cypress-start-all:
+cypress:
 	$(info $(green)-----------------------------------------------------------------)
 	$(info $(green)Make ($(os)): Dropping database, migration and running Cypress...)
 	$(info $(green)-----------------------------------------------------------------$(reset))
