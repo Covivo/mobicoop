@@ -260,7 +260,7 @@ class ProposalManager
         }
 
 
-        if (!$proposal->isPrivate() || !$proposal->isPaused()) {
+        if (!$proposal->isPrivate() && !$proposal->isPaused()) {
             // TODO : see which events send !!!
             $matchingOffers = [];
             $matchingRequests = [];
