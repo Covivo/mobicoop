@@ -99,13 +99,13 @@
                   <template v-slot:activator="{ on }">
                     <a
                       style="text-decoration:none;"
-                      :href="$t('buttons.publish.route', {communityId: community.id})"
+                      :href="$t('buttons.publish.route')"
                       v-on="on"
                     >
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="!isLogged || !checkValidation"
+                        :disabled="!shareAdButtonDisplay && !checkValidation"
                         :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
@@ -137,14 +137,14 @@
                   <template v-slot:activator="{ on }">
                     <a
                       style="text-decoration:none;"
-                      href="#"
+                      :href="$t('buttons.publish.route')"
                       v-on="on"
                     >
 
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="!isLogged || !checkValidation"
+                        :disabled="!shareAdButtonDisplay && !checkValidation"
                         :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
@@ -430,6 +430,10 @@ export default {
     canAccessAdminFromCommunity : {
       type: Boolean,
       default: false
+    },
+    shareAdButtonDisplay:{
+      type: Boolean,
+      default:false
     }
   },
   data () {

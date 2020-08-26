@@ -54,7 +54,7 @@
                   <v-btn
                     v-if="!hidePublish"
                     outlined
-                    :disabled="searchUnavailable || !logged"
+                    :disabled="searchUnavailable && !shareAdButtonDisplay"
                     rounded
                     :loading="loadingPublish"
                     @click="publish"
@@ -191,7 +191,12 @@ export default {
     imageSwap:{
       type:String,
       default:""
+    },
+    shareAdButtonDisplay:{
+      type: Boolean,
+      default:false
     }
+
   },
   data() {
     return {

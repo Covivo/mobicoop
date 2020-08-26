@@ -19,5 +19,6 @@
         :init-destination = "{{ destination is defined ? destination|json_encode : 'null' }}"
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         :points="{{ points|json_encode }}"
+        :share-ad-button-display="{{ shareAdButtonDisplay ? "true" : "false" }}"
     ></event>
 {% endblock %}

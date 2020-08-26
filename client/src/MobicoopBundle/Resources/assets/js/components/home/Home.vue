@@ -119,6 +119,7 @@
         :user="user"
         :regular="regular"
         :punctual-date-optional="punctualDateOptional"
+        :share-ad-button-display="shareAdButtonDisplay"
       />
       <v-row
         align="center"
@@ -216,11 +217,19 @@ export default {
       type: Boolean,
       default: false
     },
+    shareAdButtonDisplay:{
+      type: Boolean,
+      default:false
+    },
     // params to add to the publish and search routes
     params: {
       type: Object,
       default: null
-    }
+    },
+    rss: {
+      type: Object,
+      default: null
+    },
   },
   data () {
     return {
