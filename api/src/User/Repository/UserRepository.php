@@ -26,6 +26,7 @@ namespace App\User\Repository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Entity\Community;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Exception\SolidaryException;
@@ -107,12 +108,16 @@ class UserRepository
      * @param array $filters    Optionnal filters
      * @return array|null
      */
-    public function findUsersBySolidaryUserType(string $type=null, array $filters = null): ?array
+    public function findUsersBySolidaryUserType(string $type=null, array $filters = null, Structure $structureAdmin=null): ?array
     {
         $this->logger->info("Start findUsersBySolidaryUserType");
         $query = $this->repository->createQueryBuilder('u')
         ->join('u.solidaryUser', 'su');
 
+        // filter by structure
+        if (!is_null($structureAdmin)) {
+            $query->join('su.solidaryUserStructures', 'sus');
+        }
 
         // Type
         if ($type==SolidaryBeneficiary::TYPE) {
@@ -129,9 +134,14 @@ class UserRepository
                 $query->andWhere("u.".$filter." like '%".$value."%'");
             }
         }
-        
 
+        // Structure filter
+        if (!is_null($structureAdmin)) {
+            $query->andWhere("sus.structure = :structure");
+            $query->setParameter('structure', $structureAdmin);
+        }
 
+        // var_dump($structureAdmin->getId());die;
         return $query->getQuery()->getResult();
     }
 }

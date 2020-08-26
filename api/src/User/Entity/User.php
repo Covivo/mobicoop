@@ -978,7 +978,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The permissions granted
-     * @Groups("permissions")
+     * @Groups({"permissions"})
      */
     private $permissions;
 

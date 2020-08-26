@@ -42,6 +42,7 @@ use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Criteria;
 use App\Communication\Entity\Message;
 use App\Rdex\Entity\RdexConnection;
 use App\User\Service\UserManager;
@@ -251,7 +252,8 @@ class NotificationManager
                         }
                         // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                         // It's the case when the user who made the ask only checked return days
-                        if (!$result->getOutward()->isMonCheck() &&
+                        if ($object->getFrequency() == Criteria::FREQUENCY_REGULAR &&
+                        !$result->getOutward()->isMonCheck() &&
                         !$result->getOutward()->isTueCheck() &&
                         !$result->getOutward()->isWedCheck() &&
                         !$result->getOutward()->isThuCheck() &&

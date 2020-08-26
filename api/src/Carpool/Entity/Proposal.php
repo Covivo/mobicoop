@@ -203,7 +203,7 @@ class Proposal
      * Can be null for an anonymous search.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
-     * @Groups({"read","results","write",})
+     * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
     private $user;
@@ -223,7 +223,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write",})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $waypoints;
@@ -241,7 +241,7 @@ class Proposal
      * @var ArrayCollection|null The communities related to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
-     * @Groups({"read","results","write",})
+     * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
     private $communities;
@@ -250,7 +250,7 @@ class Proposal
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results",})
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -259,7 +259,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results",})
+     * @Groups({"read","results"})
      * @MaxDepth(1)
      */
     private $matchingRequests;
