@@ -101,30 +101,41 @@ class PaymentManager
      * @param User $user            The user concerned
      * @param integer $frequency    The frequency for the items (1 = punctual, 2 = regular)
      * @param integer $type         The type of items (1 = to pay, 2 = to collect)
+     * @param string|null $day      A day for regular items, from which we extrapolate the week and year, under the form YYYYMMDD
      * @param string|null $week     The week and year for regular items, under the form WWYYYY (ex : 052020 pour for the week 05 of year 2020)
      * @return array The payment items found
      */
-    public function getPaymentItems(User $user, int $frequency = 1, int $type = 1, ?string $week = null)
+    public function getPaymentItems(User $user, int $frequency = 1, int $type = 1, ?string $day = null, ?string $week = null)
     {
         $items = [];
         
         $fromDate = null;
         $toDate = null;
 
+        $minDate = new DateTime('2999-01-01');
+        $maxDate = new DateTime('1970-01-01');
+
         if ($frequency == Criteria::FREQUENCY_REGULAR) {
-            if (is_null($week)) {
-                throw new PaymentException(PaymentException::WEEK_NOT_PROVIDED);
+            if (is_null($day) && is_null($week)) {
+                throw new PaymentException(PaymentException::DAY_OR_WEEK_NOT_PROVIDED);
             }
-            $weekNumber = (int)substr($week, 0, 2);
-            $weekYear = (int)substr($week, 2);
-            if ($weekNumber<self::MIN_WEEK || $weekNumber>self::MAX_WEEK || $weekYear<self::MIN_YEAR || $weekYear>self::MAX_YEAR) {
-                throw new PaymentException(PaymentException::WEEK_WRONG_FORMAT);
+            if (!is_null($day)) {
+                $fromDate = DateTime::createFromFormat('Ymd', $day);
+                $fromDate->modify('first day of this month');
+                $toDate = clone $fromDate;
+                $toDate->modify('last day of this month');
+            } else {
+                $weekNumber = (int)substr($week, 0, 2);
+                $weekYear = (int)substr($week, 2);
+                if ($weekNumber<self::MIN_WEEK || $weekNumber>self::MAX_WEEK || $weekYear<self::MIN_YEAR || $weekYear>self::MAX_YEAR) {
+                    throw new PaymentException(PaymentException::WEEK_WRONG_FORMAT);
+                }
+                $fromDate = new DateTime();
+                $fromDate->setISODate($weekYear, $weekNumber);
+                $toDate = new DateTime();
+                $toDate->setISODate($weekYear, $weekNumber, 7);
             }
-            $fromDate = new DateTime();
-            $fromDate->setISODate($weekYear, $weekNumber);
             $fromDate->setTime(0, 0, 0);
-            $toDate = new DateTime();
-            $toDate->setISODate($weekYear, $weekNumber, 7);
             $toDate->setTime(23, 59, 59);
         }
         
@@ -133,7 +144,6 @@ class PaymentManager
 
         // we get the carpool items
         $carpoolItems = $this->getCarpoolItems($frequency, $type, $user, $fromDate, $toDate);
-
         // for regular items, we need to find the outward and return amount, and the days carpooled
         $regularAmounts = [];
         $regularDays = [];
@@ -179,6 +189,8 @@ class PaymentManager
                     $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['id'] = $carpoolItem->getId();
                     $regularDays[$carpoolItem->getAsk()->getId()]['outward'][$carpoolItem->getItemDate()->format('w')]['status'] = PaymentItem::DAY_CARPOOLED;
                 }
+                $minDate = min($minDate, $carpoolItem->getItemDate());
+                $maxDate = max($maxDate, $carpoolItem->getItemDate());
             }
         }
         // we keep a trace of already treated asks (we return one item for a single ask, even for regular items)
@@ -276,7 +288,11 @@ class PaymentManager
         }
 
         // finally we return the array of PaymentItem
-        return $items;
+        return [
+            'items' => $items,
+            'minDate' => $minDate,
+            'maxDate' => $maxDate
+        ];
     }
 
     /**

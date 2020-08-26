@@ -55,14 +55,33 @@
         class="d-flex"
         cols="4"
       >
-        <v-select
-          v-model="weekSelected"
-          :items="periods"
-          item-value="week"
-          item-text="period"
-          :label="$t('select.label')"
-          @change="getPayments"
-        />
+        <v-menu
+          v-model="menuSelectedWeekDays"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              :value="computedSelectedWeekDays"
+              :label="$t('select.label')"
+              readonly
+              v-on="on"
+            />
+          </template>
+          <v-date-picker
+            v-model="selectedWeekDays"
+            :locale="locale"
+            no-title
+            range
+            first-day-of-week="1"
+            :locale-first-day-of-year="getFirstDayOfYear()"
+            show-week
+            :max="maxDay"
+            @click:date="changeWeekDays()"
+          />
+        </v-menu>
       </v-col>
     </v-row>
     
@@ -774,14 +793,15 @@ export default {
     return {
       locale: this.$i18n.locale,
       message:null,
-      // props
       ePay: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
       isPayment: this.type == 1 ? true : false,
       paymentItems: null,
       currentKey: 0,
       daysList: null,
-      weekSelected: parseInt(this.week),
+      selectedWeekNumber: parseInt(this.week),
+      selectedWeekDays: null,
+      menuSelectedWeekDays: false,
       periods: [],
       loading: false,
       disabledComponent: false,
@@ -789,6 +809,13 @@ export default {
     };
   },
   computed: {
+    computedSelectedWeekDays() {
+      if (this.selectedWeekDays === null) return "";
+      return this.$t("from")+moment(this.selectedWeekDays[0]).format(this.$t("ll"))+this.$t("to")+moment(this.selectedWeekDays[1]).format(this.$t("ll"))
+    },
+    maxDay() {
+      return moment().startOf('week').subtract(1, 'days').format('Y-MM-DD');
+    },
     currentItem: function() {
       return this.paymentItems ? this.paymentItems[this.currentKey] : null
     },
@@ -832,6 +859,7 @@ export default {
     }
   },
   mounted () {
+    this.initSelectedWeekDays();
     // we get the payments to populate the page
     this.getPayments();
   },
@@ -839,28 +867,46 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
+    // get the first day of the current year, used to be sure to have good week numbers in week picker
+    getFirstDayOfYear() {
+      return moment().startOf('year').format('e')
+    },
+    initSelectedWeekDays() {
+      this.selectedWeekDays = [
+        moment(this.week,'wwYYYY').startOf('week').format('Y-MM-DD'),
+        moment(this.week,'wwYYYY').endOf('week').format('Y-MM-DD')
+      ];
+    },
+    changeWeekDays() {
+      this.selectedWeekNumber = ''+moment(this.selectedWeekDays[0]).isoWeek()+moment(this.selectedWeekDays[0]).year();
+      let weekDays = [
+        moment(this.selectedWeekDays[0]).startOf('week').format('Y-MM-DD'),
+        moment(this.selectedWeekDays[0]).endOf('week').format('Y-MM-DD')
+      ];
+      this.selectedWeekDays = weekDays;
+      this.menuSelectedWeekDays = false;
+      this.getPayments();
+    },
     getPayments() {
       // we set params
       let params = {
         'frequency':this.frequency,
         'type':this.type,
-        'week':this.weekSelected
+        'week':this.selectedWeekNumber
       }
       // we get all paymentItems
       axios.post(this.$t("payments.getPayments"), params)
         .then(res => {
-          var items = res.data;
-          items.forEach((item, key) => {
-            // we set dynamic parameters
-            item.mode = null;
-            if (item.id === this.selectedId) {              
-              this.currentKey = key;              
-            }
-          });
-          this.paymentItems = items;
-          if (this.regular) {
-            this.getWeeksToPay(this.paymentItems[this.currentKey].askId);
-          }
+          console.log(res.data);
+          // var items = res.data;
+          // items.forEach((item, key) => {
+          //   // we set dynamic parameters
+          //   item.mode = null;
+          //   if (item.id === this.selectedId) {              
+          //     this.currentKey = key;              
+          //   }
+          // });
+          // this.paymentItems = items;
         });
     },
     getAmount(item) {
@@ -903,19 +949,6 @@ export default {
         }
       }
       
-    },
-    // method to get all weeks to pay for a payment
-    getWeeksToPay () {
-      let params = {
-        'askId':this.currentItem.askId,
-      }
-      axios.post(this.$t("payments.getWeeksToPay"), params)
-        .then(res => {
-          let weeks = res.data;
-          weeks.forEach((week) => {
-            this.periods.push({"period":this.$t("from")+moment(week.fromDate).format(this.$t("ll"))+this.$t("to")+moment(week.toDate).format(this.$t("ll")), "week":parseInt(week.numWeek.toString()+week.year.toString(), 10)})
-          });
-        });
     },
     // confirm the current item
     confirmPayment(mode) {

@@ -28,7 +28,7 @@ namespace App\Payment\Exception;
  */
 class PaymentException extends \LogicException
 {
-    const WEEK_NOT_PROVIDED = "Week number must be provided for regular carpools";
+    const DAY_OR_WEEK_NOT_PROVIDED = "Day or week number must be provided for regular carpools";
     const WEEK_WRONG_FORMAT = "Wrong week number format";
     
     const PAYMENT_INACTIVE = "Payment is not active on this platform";
