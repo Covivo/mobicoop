@@ -119,7 +119,7 @@
         :user="user"
         :regular="regular"
         :punctual-date-optional="punctualDateOptional"
-        :share-ad-button-display="shareAdButtonDisplay"
+        :publish-button-always-active="publishButtonAlwaysActive"
       />
       <v-row
         align="center"
@@ -217,7 +217,7 @@ export default {
       type: Boolean,
       default: false
     },
-    shareAdButtonDisplay:{
+    publishButtonAlwaysActive:{
       type: Boolean,
       default:false
     },

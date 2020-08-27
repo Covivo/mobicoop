@@ -47,7 +47,7 @@
                 <v-btn
                   v-if="!eventPassed"
                   color="secondary"
-                  :disabled="!isLogged"
+                  :disabled="!publishButtonAlwaysActive && !isLogged "
                   rounded
                   @click="publish"
                 >
@@ -127,6 +127,7 @@
           :punctual-date-optional="punctualDateOptional"
           :regular="regular"
           :default-destination="defaultDestination"
+          :publish-button-always-active="publishButtonAlwaysActive"
         />
       </v-row>
     </v-container>
@@ -210,6 +211,10 @@ export default {
       type: Array,
       default: null
     },
+    publishButtonAlwaysActive:{
+      type: Boolean,
+      default:false
+    }
   },
   data () {
     return {
@@ -283,15 +288,19 @@ export default {
     },
     
     publish() {
-      let lParams = {
-        origin: null,
-        destination: JSON.stringify(this.destination),
-        regular: null,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      if (this.isLogged){
+        let lParams = {
+          origin: null,
+          destination: JSON.stringify(this.destination),
+          regular: null,
+          date: null,
+          time: null,
+          ...this.params
+        };
+        this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      }else{
+        window.location.href=this.$t("buttons.login.route");
+      }
     },
 
     showEventProposals () {

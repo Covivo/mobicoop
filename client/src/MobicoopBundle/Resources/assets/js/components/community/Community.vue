@@ -105,7 +105,7 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="!shareAdButtonDisplay && !checkValidation"
+                        :disabled="!publishButtonAlwaysActive && !checkValidation"
                         :loading="loading"
                       >
                         {{ $t('buttons.publish.label') }}
@@ -135,33 +135,27 @@
                   :disabled="isLogged"
                 >
                   <template v-slot:activator="{ on }">
-                    <a
-                      style="text-decoration:none;"
-                      :href="$t('buttons.publish.route')"
-                      v-on="on"
+                    <v-btn
+                      color="secondary"
+                      rounded
+                      :disabled="!publishButtonAlwaysActive && !checkValidation"
+                      :loading="loading"
+                      @click="publish"
                     >
-
-                      <v-btn
-                        color="secondary"
-                        rounded
-                        :disabled="!shareAdButtonDisplay && !checkValidation"
-                        :loading="loading"
-                      >
-                        {{ $t('buttons.publish.label') }}
-                      </v-btn>
+                      {{ $t('buttons.publish.label') }}
+                    </v-btn>
                       
-                      <v-btn
-                        v-if="isSecured == false"
-                        color="secondary"
-                        class="mt-3"
-                        rounded
-                        :loading="loading || (checkValidation && isLogged) "
-                        :disabled="!isLogged || checkValidation"
-                        @click="joinCommunityDialog=true"
-                      >
-                        {{ $t('buttons.join.label') }}
-                      </v-btn>
-                    </a>
+                    <v-btn
+                      v-if="isSecured == false"
+                      color="secondary"
+                      class="mt-3"
+                      rounded
+                      :loading="loading || (checkValidation && isLogged) "
+                      :disabled="!isLogged || checkValidation"
+                      @click="joinCommunityDialog=true"
+                    >
+                      {{ $t('buttons.join.label') }}
+                    </v-btn>
                   </template>
                   <span>{{ $t('tooltips.connected') }}</span>
                 </v-tooltip>
@@ -431,7 +425,7 @@ export default {
       type: Boolean,
       default: false
     },
-    shareAdButtonDisplay:{
+    publishButtonAlwaysActive:{
       type: Boolean,
       default:false
     }
@@ -560,15 +554,19 @@ export default {
       }
     },
     publish() {
-      let lParams = {
-        origin: null,
-        destination: null,
-        regular: this.regular,
-        date: null,
-        time: null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      if (this.isLogged){
+        let lParams = {
+          origin: null,
+          destination: null,
+          regular: this.regular,
+          date: null,
+          time: null,
+          ...this.params
+        };
+        this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      }else{
+        window.location.href=this.$t("buttons.login.route");
+      }
     },
     postLeavingRequest() {
       this.loading = true;

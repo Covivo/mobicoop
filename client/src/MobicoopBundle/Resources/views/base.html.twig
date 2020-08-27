@@ -28,10 +28,10 @@
                     <m-header 
                     :user="{{app.user|json_encode}}"
                     :url-mobile="{{urlMobile|json_encode}}"                    
-                    :share-ad-button-display="{{ shareAdButtonDisplay ? "true" : "false" }}"></m-header>
+                    :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"></m-header>
                 {% else %}
                     <m-header :url-mobile="{{urlMobile|json_encode}}"
-                    :share-ad-button-display="{{ shareAdButtonDisplay ? "true" : "false" }}"></m-header>
+                    :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"></m-header>
             {% endif %}
 
                 {% block content %}                    
