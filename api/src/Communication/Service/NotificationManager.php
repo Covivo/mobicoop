@@ -412,7 +412,7 @@ class NotificationManager
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
-        if ($recipient->getTelephone()) {
+        if (is_null($recipient->getTelephone())) {
             return;
         }
         $sms = new Sms();
