@@ -2,16 +2,25 @@
 
 ################################
 # Backup the platform api data #
+#    To be scheduled in cron   #
 ################################
+
+for i in "$@"
+do
+case $i in
+    --backup-dir=*)
+    BACKUP_DIR="${i#*=}"
+    shift
+    ;;
+    --base-dir=*)
+    BASE_DIR="${i#*=}"
+    shift
+    ;;
+esac
+done
 
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
-
-# Backup dir destination, replace by your destination directory
-BACKUP_DIR="/backup/instance"
-
-# Base api dir, replace by your instance directory
-BASE_DIR="/var/www/instance/mobicoop-platform/api/public/upload/"
 
 # Backup filename
 FILENAME=backup_$DATE.tgz
