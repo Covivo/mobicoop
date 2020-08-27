@@ -1,7 +1,6 @@
 import { fetchUtils } from 'react-admin';
 
 const initialState = [{ roles: [], territory: null }];
-const token = global.localStorage.getItem('token');
 const httpClient = fetchUtils.fetchJson;
 const apiUrlUploadImage = process.env.REACT_APP_API + process.env.REACT_APP_SEND_IMAGES;
 
@@ -14,7 +13,7 @@ function reducer(state, action) {
         if (!options.headers) {
           options.headers = new global.Headers({ Accept: 'application/json' });
         }
-        options.headers.set('Authorization', `Bearer ${token}`);
+        options.headers.set('Authorization', `Bearer ${global.localStorage.getItem('token')}`);
 
         var lid = state[action.indice].image.id;
         httpClient(`${apiUrlUploadImage}/` + lid, {
