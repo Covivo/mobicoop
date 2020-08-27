@@ -412,6 +412,9 @@ class NotificationManager
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
+        if (is_null($recipient->getTelephone())) {
+            return;
+        }
         $sms = new Sms();
         $sms->setRecipientTelephone($recipient->getTelephone());
         $bodyContext = [];
