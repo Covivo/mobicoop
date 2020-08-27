@@ -24,5 +24,6 @@
         :user-community-status="{{ communityUserStatus }}"
         :url-admin="{{urlAdmin|json_encode}}"
         :can-access-admin-from-community="{{canAccessAdminFromCommunity}}"
+        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
     ></community>
 {% endblock %}

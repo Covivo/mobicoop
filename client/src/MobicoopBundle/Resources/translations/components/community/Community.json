@@ -37,6 +37,9 @@
       },
       "contact":{
         "route":"/utilisateur/messages/nouveau"
+      },
+      "login":{
+        "route":"/utilisateur/connexion"
       }
     },
     "tooltips": {

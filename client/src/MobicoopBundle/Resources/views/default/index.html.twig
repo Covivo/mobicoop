@@ -21,6 +21,7 @@
         :solidary-display="{{homeSolidaryDisplay}}"
         :display-delete-account="{{logout is defined ? 1 : 0}}"
         :display-unsubscribe-email="{{ unsubscribe is defined ? unsubscribe : 'null' }}"
+        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
     />
 
 {% endblock %}
