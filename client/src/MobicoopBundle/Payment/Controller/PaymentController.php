@@ -124,4 +124,23 @@ class PaymentController extends AbstractController
         }
         return new JsonResponse($weeks);
     }
+
+    /**
+     * Get the calendar of payments for a regular Ad
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getCalendar(Request $request, PaymentManager $paymentManager)
+    {
+        $periods = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($periods = $paymentManager->getCalendar($data['type'])) {
+                return new JsonResponse($periods);
+            }
+        }
+        return new JsonResponse($periods);
+    }
 }

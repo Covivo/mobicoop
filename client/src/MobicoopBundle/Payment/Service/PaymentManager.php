@@ -28,6 +28,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 
 /**
  * Payment management service.
@@ -152,5 +153,19 @@ class PaymentManager
             return $response->getValue()->getWeekItems();
         }
         return $response->getValue();
+    }
+
+    /**
+     * Get the calendar of payments for a regular Ad
+     *
+     * @param int $type The type of payment (collect/pay)
+     * @return object|array The calendar
+     */
+    public function getCalendar(int $type)
+    {
+        $this->dataProvider->setClass(PaymentPeriod::class);
+
+        $response = $this->dataProvider->getCollection(['type'=>$type]);
+        return $response->getValue()->getMember();
     }
 }

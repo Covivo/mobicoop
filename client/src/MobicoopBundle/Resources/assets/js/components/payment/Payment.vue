@@ -77,6 +77,7 @@
             range
             first-day-of-week="1"
             :locale-first-day-of-year="getFirstDayOfYear()"
+            :allowed-dates="allowedDates"
             show-week
             :max="maxDay"
             @click:date="changeWeekDays()"
@@ -860,22 +861,57 @@ export default {
   },
   mounted () {
     this.initSelectedWeekDays();
-    // we get the payments to populate the page
-    this.getPayments();
+    // if regular, we search the first week where there are payments to confirm or pay
+    if (this.frequency == 2) {
+      this.getFirstWeek();
+    } else {
+      // we get the payments
+      this.getPayments();
+    }
   },
   created() {
     moment.locale(this.locale); 
   },
   methods: {
-    // get the first day of the current year, used to be sure to have good week numbers in week picker
-    getFirstDayOfYear() {
-      return moment().startOf('year').format('e')
-    },
     initSelectedWeekDays() {
       this.selectedWeekDays = [
         moment(this.week,'wwYYYY').startOf('week').format('Y-MM-DD'),
         moment(this.week,'wwYYYY').endOf('week').format('Y-MM-DD')
       ];
+    },
+    getFirstWeek() {
+      this.getCalendar();
+    },
+    getCalendar() {
+      // we set params
+      let params = {
+        'type':this.type
+      }
+      // we get all paymentItems
+      axios.post(this.$t("payments.getCalendar"), params)
+        .then(res => {
+          this.periods = res.data;
+        });
+    },
+    // get the first day of the current year, used to be sure to have good week numbers in week picker
+    getFirstDayOfYear() {
+      return moment().startOf('year').format('E')
+    },
+    allowedDates(val) {
+      if (this.periods.length ==0) return false;
+      var curDate = moment(val);
+      var allowed = false;
+      this.periods.forEach((item) => {
+        var fromDate = moment(item.fromDate.date);
+        var toDate = moment(item.toDate.date);
+        if (curDate.isSameOrAfter(fromDate) && curDate.isSameOrBefore(toDate)) {
+          if (item.days.indexOf(parseInt(curDate.format('e')))>-1) {
+            allowed = true;
+            return;
+          }
+        }
+      });
+      return allowed;
     },
     changeWeekDays() {
       this.selectedWeekNumber = ''+moment(this.selectedWeekDays[0]).isoWeek()+moment(this.selectedWeekDays[0]).year();

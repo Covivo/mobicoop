@@ -37,9 +37,11 @@ use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
+use App\Payment\Ressource\PaymentPeriod;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineExtensions\Query\Mysql\Date;
 
 /**
  * Payment manager service.
@@ -293,6 +295,69 @@ class PaymentManager
             'minDate' => $minDate,
             'maxDate' => $maxDate
         ];
+    }
+
+    /**
+     * Return the payment periods for which the given user has regular carpools planned.
+     *
+     * @param User $user    The user
+     * @param integer $type The type of payments (1 = pay, 2 = collect)
+     * @return array        The periods found
+     */
+    public function getPaymentPeriods(User $user, int $type)
+    {
+        $periods = [];
+
+        // we get the accepted asks of the user
+        if ($type == PaymentItem::TYPE_COLLECT) {
+            // we want the payments to collect => as a driver
+            $asks = $this->askRepository->findAcceptedRegularAsksForUserAsDriver($user);
+        } else {
+            // we want the payments to pay => as a passenger
+            $asks = $this->askRepository->findAcceptedRegularAsksForUserAsPassenger($user);
+        }
+
+        // first we get the periods and the days
+        foreach ($asks as $ask) {
+            $key = null;
+            if ($ask->getType() == Ask::TYPE_RETURN_ROUNDTRIP) {
+                $key = $ask->getAskLinked()->getId();
+            } else {
+                $key = $ask->getId();
+            }
+            if ($key && !isset($periods[$key])) {
+                $period = new PaymentPeriod();
+                $period->setId($key);
+                $period->setFromDate($ask->getCriteria()->getFromDate());
+                $period->setToDate($ask->getCriteria()->getToDate());
+                $days = [];
+                if ($ask->getCriteria()->isMonCheck() || $ask->getAskLinked()->getCriteria()->isMonCheck()) {
+                    $days[] = 1;
+                }
+                if ($ask->getCriteria()->isTueCheck() || $ask->getAskLinked()->getCriteria()->isTueCheck()) {
+                    $days[] = 2;
+                }
+                if ($ask->getCriteria()->isWedCheck() || $ask->getAskLinked()->getCriteria()->isWedCheck()) {
+                    $days[] = 3;
+                }
+                if ($ask->getCriteria()->isThuCheck() || $ask->getAskLinked()->getCriteria()->isThuCheck()) {
+                    $days[] = 4;
+                }
+                if ($ask->getCriteria()->isFriCheck() || $ask->getAskLinked()->getCriteria()->isFriCheck()) {
+                    $days[] = 5;
+                }
+                if ($ask->getCriteria()->isSatCheck() || $ask->getAskLinked()->getCriteria()->isSatCheck()) {
+                    $days[] = 6;
+                }
+                if ($ask->getCriteria()->isSunCheck() || $ask->getAskLinked()->getCriteria()->isSunCheck()) {
+                    $days[] = 0;
+                }
+                $period->setDays($days);
+                $periods[$key] = $period;
+            }
+        }
+
+        return array_values($periods);
     }
 
     /**

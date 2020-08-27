@@ -942,7 +942,15 @@ payment_weeks_list:
     path:
         fr: /getWeeks
         en: /getWeeks
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks      
+
+# Get payment periods to pay/collect (POST) AJAX
+payment_periods_list:
+    methods: [POST]
+    path:
+        fr: /getCalendar
+        en: /getCalendar
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar     
 
 ###############
 # misc routes #
