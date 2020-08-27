@@ -306,7 +306,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $result->setResultDriver($resultDriver);
             }
 
-            if (strpos($currentJourney['url'], 'http')) {
+            if (strpos($currentJourney['url'], 'http')!==false) {
                 $result->setExternalUrl($currentJourney['url']);
             } else {
                 $result->setExternalUrl('https://'.$currentJourney['url']);

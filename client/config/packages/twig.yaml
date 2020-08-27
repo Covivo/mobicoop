@@ -28,6 +28,7 @@ twig:
         homeCommunityDisplay: '%env(resolve:COMMUNITY_DISPLAY)%'
         additionalTextDisplay: '%env(resolve:ADDITIONAL_TEXT_DISPLAY)%'
         publishButtonAlwaysActive: '%env(bool:PUBLISH_BUTTON_ALWAYS_ACTIVE)%'
+        eventButtonDisplay: '%env(resolve:EVENT_BUTTON_DISPLAY)%'
         homeEventDisplay: '%env(resolve:EVENT_DISPLAY)%'
         homeSolidaryDisplay: '%env(resolve:SOLIDARY_DISPLAY)%'
         userAvatarSize: '%env(resolve:USER_AVATAR_SIZE)%'

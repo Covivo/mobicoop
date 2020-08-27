@@ -452,7 +452,6 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
-        
         if ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
             // dispatch en event
             // get the complete ad to have data for the email
@@ -478,6 +477,7 @@ class AskManager
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
         $ad->setMatchingId($ask->getMatching()->getId());
+        $ad->setFrequency($ask->getMatching()->getCriteria()->getFrequency());
 
         // first pass for role
         switch ($ask->getStatus()) {

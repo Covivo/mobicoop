@@ -192,7 +192,7 @@ const UserEdit = (props) => {
         <FormTab label={translate('custom.label.user.manageRoles')}>
           <GestionRoles />
         </FormTab>
-        {hasPermission('assign_structure_to_user') && (
+        {hasPermission('solidary_manager_create') && (
           <FormTab label={translate('custom.label.user.structures')}>
             <ReferenceArrayInput source="solidaryStructures" reference="structures">
               <SelectArrayInput optionText="name" />
