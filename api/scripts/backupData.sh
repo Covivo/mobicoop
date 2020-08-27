@@ -8,12 +8,12 @@
 for i in "$@"
 do
 case $i in
-    --backup-dir=*)
-    BACKUP_DIR="${i#*=}"
+    --source-dir=*)
+    SOURCE_DIR="${i#*=}"
     shift
     ;;
-    --base-dir=*)
-    BASE_DIR="${i#*=}"
+    --backup-dir=*)
+    BACKUP_DIR="${i#*=}"
     shift
     ;;
 esac
@@ -25,11 +25,14 @@ DATE=$(date +"%Y%m%d%H%M%S")
 # Backup filename
 FILENAME=backup_$DATE.tgz
 
+# Create backup dir if not exist
+mkdir -p $BACKUP_DIR
+
 # Retention days (backups older than retention days are removed)
 RETENTION=5
 
 # Make the backup
-tar --create --gzip --file=$BACKUP_DIR/$FILENAME $BASE_DIR
+tar --create --gzip --file=$BACKUP_DIR/$FILENAME $SOURCE_DIR
 
 # Delete old backups
 find $BACKUP_DIR/* -mtime +$RETENTION -delete

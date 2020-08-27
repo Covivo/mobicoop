@@ -8,12 +8,16 @@
 for i in "$@"
 do
 case $i in
-    --backup-dir=*)
-    INSTANCE_BACKUP_DIR="${i#*=}"
+    --source-dir=*)
+    SOURCE_DIR="${i#*=}"
+    shift
+    ;;
+    --prefix=*)
+    PREFIX="${i#*=}"
     shift
     ;;
     --export-dir=*)
-    INSTANCE_EXPORT_DIR="${i#*=}"
+    EXPORT_DIR="${i#*=}"
     shift
     ;;
 esac
@@ -25,8 +29,11 @@ DATE=$(date +"%Y%m%d")
 # Retention days (backups older than retention days are removed)
 RETENTION=5
 
+# Create backup dir if not exist
+mkdir -p $EXPORT_DIR
+
 # Export backups
-cp -R $BACKUP_DIR/"$DATE"* $EXPORT_DIR
+cp -R $SOURCE_DIR/"$PREFIX$DATE"* $EXPORT_DIR
 
 # Delete old backups on the export dirs
 find $EXPORT_DIR/* -mtime +$RETENTION -delete
