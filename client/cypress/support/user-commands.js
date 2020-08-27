@@ -6,9 +6,7 @@ import '@percy/cypress';
 const baseUrl = Cypress.env("baseUrl");
 
 Cypress.Commands.add('signUp', (email, password, lastname, name, phone, gender) => {
-  cy.get('[href="/utilisateur/inscription"] > .v-btn__content').click();
-  cy.url().should('include', baseUrl + 'utilisateur/inscription');
-  cy.wait(2500)
+	cy.visit(baseUrl + "utilisateur/inscription")
 
   cy.get('#email').type(email)
   cy.get('#telephone').type(phone)
@@ -52,9 +50,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, phone, gender) 
 
 /* login */
 Cypress.Commands.add('signIn', (email, password) => {
-  cy.get('[href="/utilisateur/connexion"] > .v-btn__content')
-  .contains('Connexion').click();
-  cy.url().should('include', baseUrl + 'utilisateur/connexion');
+	cy.visit(baseUrl + "utilisateur/connexion")
 
   /* Email */
   cy.get('#email').type(email)
@@ -67,24 +63,20 @@ Cypress.Commands.add('signIn', (email, password) => {
 });
 
 /** Logout **/
-Cypress.Commands.add('logOut', () => {
-  cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter');
-  cy.xpath('//*[@id="list-item-99"]/a').click()
+Cypress.Commands.add('signOut', () => {
+	cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter');
+	cy.xpath('//*[@id="list-item-99"]/a').click()
 });
 
 
 
 /* Update profile */
 Cypress.Commands.add('changeProfil', () => {
-  cy.get('[href="/utilisateur/profil/modifier/mon-profil"] > .v-btn__content')
-  .contains('Profil').click();
-  cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
-
+	cy.visit(baseUrl + "utilisateur/profil/modifier/mon-profil")
 	cy.get('#input-69').attachFile('profil.jpg');
 	cy.get('.v-form > .button > .v-btn__content').click()
 	cy.get('.v-snack--active > .v-snack__wrapper > .v-snack__content').contains('Votre profil a bien été mis à jour!')
 });
-
 
 /**delete**/
 Cypress.Commands.add('delete', () => {
@@ -93,25 +85,18 @@ Cypress.Commands.add('delete', () => {
   cy.get('.v-snack__content > .v-btn > .v-btn__content > .v-icon')
     .click();
   
-  cy.get('[data-v-33788174=""][type="button"] > .v-btn__content').trigger('mouseenter') 
-  cy.get(':nth-child(3) > a > .v-list-item__title').should('contain', 'Profil')
-    .click();
+    cy.visit(baseUrl + "utilisateur/profil/modifier/mon-profil")
+    cy.get('.text-center > .button > .v-btn__content').click()
+    cy.get('.v-card__actions > a.v-btn > .v-btn__content').click()
+    cy.get('.v-snack__content > div').contains('Votre compte à été supprimé avec succès.')
   
-  cy.url().should('include', baseUrl + 'utilisateur/profil');
-  cy.get('.text-center > .button > .v-btn__content')
-    .click();
-  cy.url().should('include', baseUrl + 'utilisateur/profil/modifier/mon-profil');
-  cy.get('.v-card__actions > a.v-btn > .v-btn__content')
-    .click();
-  cy.get('.v-snack__content')
-    .contains ('Votre compte à été supprimé avec succès.')
 });
   
 
 
 // Carpool
 Cypress.Commands.add('createOccasionalCarpool', (start, destination) => {
-  cy.visit("http://localhost:8081/covoiturage/annonce/poster")
+  cy.visit(baseUrl + "covoiturage/annonce/poster")
   
   cy.get('.v-input--radio-group__input > :nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click()
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
@@ -137,19 +122,20 @@ Cypress.Commands.add('createOccasionalCarpool', (start, destination) => {
 });
 
 Cypress.Commands.add('joinOccasionalCarpool', (start, destination) => {
-  cy.visit("http://localhost:8081/")
+  cy.visit(baseUrl)
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
   cy.get('#list-item-94-0').click()
   cy.get('#to > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(destination)
   cy.get('#list-item-134-0').click()
   cy.get('.row > :nth-child(3) > .v-btn').click()
+  cy.wait(2500)
   cy.get('.v-btn__content > span').click()
   cy.get('.v-card__actions > .v-btn > .v-btn__content').click()
   cy.url().should('include', '/utilisateur/messages')
 });
 
 Cypress.Commands.add('createRegularCarpool', (start, destination) => {
-  cy.visit("http://localhost:8081/covoiturage/annonce/poster")
+  cy.visit(baseUrl + "covoiturage/annonce/poster")
   
   cy.get('.v-input--radio-group__input > :nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click()
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
@@ -192,9 +178,9 @@ Cypress.Commands.add('joinRegularCarpool', (start, destination) => {
 // Event
 
 Cypress.Commands.add('createEvent', () => {
-  cy.visit('http://localhost:8081/evenements');
+  cy.visit(baseUrl + 'evenements');
   cy.get('.secondary > .v-btn__content').click();
-  cy.url().should('contains', 'http://localhost:8081/evenement/creer');
+  cy.url().should('contains', baseUrl + 'evenement/creer');
   cy.get('#input-31').type('Title event');
   cy.get('#input-34').type('Short description');
   cy.get('#input-37').type('Long description');
@@ -211,12 +197,12 @@ Cypress.Commands.add('createEvent', () => {
 });
 
 Cypress.Commands.add('createCarpoolEvent', () => {
-  cy.visit('http://localhost:8081/evenements');
+  cy.visit(baseUrl + 'evenements');
   cy.get('.col-6:nth-child(1)').click();
   cy.get('.my-2 .v-btn__content').click();
-  cy.url().should('contains', 'http://localhost:8081/evenement/1');
+  cy.url().should('contains', baseUrl + 'evenement/1');
   cy.get('.secondary').click();
-  cy.url().should('contains', 'http://localhost:8081/covoiturage/recherche/poster');
+  cy.url().should('contains', baseUrl + 'covoiturage/recherche/poster');
   cy.get('.v-radio:nth-child(1) > .v-label').click();
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type('Metz');
   cy.get('#list-item-258-0 .v-list-item__subtitle').click();
@@ -236,7 +222,7 @@ Cypress.Commands.add('createCarpoolEvent', () => {
 });
 
 Cypress.Commands.add('joinCarpoolEvent', (start, destination) => {
-  cy.visit('http://localhost:8081')
+  cy.visit(baseUrl)
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
   cy.get('#list-item-94-0 > .v-list > #content > .v-list-item__content > .v-list-item__title').click()
   cy.get('#to > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(destination)
@@ -248,7 +234,7 @@ Cypress.Commands.add('joinCarpoolEvent', (start, destination) => {
 });
 
 Cypress.Commands.add('signalEvent', (email) => {
-  cy.visit('http://localhost:8081/evenements')
+  cy.visit(baseUrl + 'evenements')
   cy.get(':nth-child(2) > .v-btn > .v-btn__content').click()
   cy.get('#input-94').type(email)
   cy.get('#input-97').type('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nunc sem, fermentum ac convallis eget, venenatis nec neque. Fusce sagittis quam maximus, elementum purus at, posuere leo.')
@@ -259,9 +245,9 @@ Cypress.Commands.add('signalEvent', (email) => {
 // Community
 
 Cypress.Commands.add('createCommunity', () => {
-  cy.visit('http://localhost:8081/communautes')
+  cy.visit(baseUrl + 'communautes')
   cy.get('.secondary > .v-btn__content').click();
-  cy.url().should('contains', 'http://localhost:8081/communaute/creer');
+  cy.url().should('contains', baseUrl + 'communaute/creer');
   cy.get('#input-31').click();
   cy.get('#input-31').type('Ma communauté');
   cy.get('#input-34').type('Description courte de ma communauté');
@@ -274,7 +260,7 @@ Cypress.Commands.add('createCommunity', () => {
 });
 
 Cypress.Commands.add('createCarpoolCommunity', (start, destination) => {
-  cy.visit('http://localhost:8081/communautes')
+  cy.visit(baseUrl + 'communautes')
   cy.get('.pa-6.v-card > :nth-child(1) > .ma-3 > .v-card > .row > .text-center > .my-2 > .secondary > .v-btn__content').click()
   cy.get('.text-center > div > .secondary > .v-btn__content').click()
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
@@ -298,7 +284,7 @@ Cypress.Commands.add('createCarpoolCommunity', (start, destination) => {
 });
 
 Cypress.Commands.add('joinCarpoolCommunity', (start, destination) => {
-  cy.visit('http://localhost:8081/communautes')
+  cy.visit(baseUrl + 'communautes')
   cy.get('.mt-5 > .v-btn__content').click()
   cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
   cy.get('#list-item-103-0 > .v-list > #content > .v-list-item__content > .v-list-item__title').click()
@@ -314,21 +300,21 @@ Cypress.Commands.add('joinCarpoolCommunity', (start, destination) => {
 // Message
 
 Cypress.Commands.add('acceptCarpool', () => {
-  cy.visit('http://localhost:8081/utilisateur/messages')
+  cy.visit(baseUrl + 'utilisateur/messages')
   cy.get(':nth-child(2) > .v-main__wrap > .container > .mx-0 > .row.ma-0 > :nth-child(2) > :nth-child(2) > .col-8').click()
   cy.get('.mr-12 > .v-btn__content').click()
   cy.get('.v-main__wrap > :nth-child(1) > .white--text').contains('Le covoiturage a été accepté')
 });
 
 Cypress.Commands.add('refuseCarpool', () => {
-  cy.visit('http://localhost:8081/utilisateur/messages')
+  cy.visit(baseUrl + 'utilisateur/messages')
   cy.get(':nth-child(2) > .v-main__wrap > .container > .mx-0 > .row.ma-0 > :nth-child(2) > :nth-child(2) > .col-8').click()
   cy.get('.ml-12 > .v-btn__content').click()
   cy.get('.v-main__wrap > :nth-child(1) > .white--text').contains('Le covoiturage a été refusé')
 });
 
 Cypress.Commands.add('sendMessage', (msg) => {
-  cy.visit('http://localhost:8081/utilisateur/messages')
+  cy.visit(baseUrl + 'utilisateur/messages')
   cy.get(':nth-child(1) > .v-main__wrap > .container > .mx-0 > .row.ma-0 > :nth-child(2) > :nth-child(2) > .col-8').click()
   cy.get('#input-100').type(msg)
   cy.get('#validSendMessage > .v-btn__content').click()

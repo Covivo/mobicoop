@@ -160,6 +160,12 @@ cypress:
 	$(info $(green)-----------------------------------------------------------------)
 	$(info $(green)Make ($(os)): Dropping database, migration and running Cypress...)
 	$(info $(green)-----------------------------------------------------------------$(reset))
+	cd client && npm run cypress
+
+cypress-start-all:
+	$(info $(green)-----------------------------------------------------------------)
+	$(info $(green)Make ($(os)): Dropping database, migration and running Cypress...)
+	$(info $(green)-----------------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm force-drop-database
 	@make -s db-migrate
 	cd client && npm run cypress

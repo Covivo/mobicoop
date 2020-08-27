@@ -24,7 +24,7 @@ describe("User", function() {
 
     cy.signIn(email, password)
 
-    cy.logOut()
+    cy.signOut()
   })
 
   it("Should change profil picture", function () {
