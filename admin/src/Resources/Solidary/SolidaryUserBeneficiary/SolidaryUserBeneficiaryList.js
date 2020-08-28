@@ -12,7 +12,7 @@ import {
 
 import { PhoneField } from './Fields/PhoneField';
 import { YesNoField } from './Fields/YesNoField';
-import { isAdmin } from '../../../auth/permissions';
+import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
 
 const SolidaryUserBeneficiaryFilter = (props) => (
   <Filter {...props}>
@@ -35,7 +35,7 @@ export const SolidaryUserBeneficiaryList = (props) => (
     filters={<SolidaryUserBeneficiaryFilter />}
     title="Demandeurs solidaires > liste"
     perPage={25}
-    exporter={isAdmin()}
+    exporter={isSuperAdmin()}
   >
     <Datagrid>
       <TextField source="originId" label="ID" />

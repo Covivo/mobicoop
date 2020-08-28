@@ -11,7 +11,7 @@ import {
   useTranslate,
 } from 'react-admin';
 
-import isAuthorized, { isAdmin } from '../../auth/permissions';
+import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
 
 const EventPanel = ({ id, record, resource }) => (
   <Paper style={{ padding: '1rem' }}>
@@ -28,7 +28,7 @@ export const EventList = (props) => {
   const translate = useTranslate();
 
   return (
-    <List {...props} title="Evénement > liste" exporter={isAdmin()} perPage={25}>
+    <List {...props} title="Evénement > liste" exporter={isSuperAdmin()} perPage={25}>
       <Datagrid expand={<EventPanel />} rowClick="show">
         <ImageField
           label={translate('custom.label.event.image')}

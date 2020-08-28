@@ -16,7 +16,7 @@ const clearAuthStorage = () => {
 
 const getAuthenticatedHeaders = () =>
   new global.Headers({
-    Authorization: `Bearer ${global.localStorage.token}`,
+    Authorization: `Bearer ${global.localStorage.getItem('token')}`,
     Accept: 'application/json',
   });
 

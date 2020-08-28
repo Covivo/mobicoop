@@ -4,11 +4,11 @@
         "url":"url of the api with end /",
         "username":"",
         "apikey":"",
-        "params":{"key":"value","key2":"value2"...}
+        "params":{"key":"value","key2":"value2"}
     },
     "idterritory":{
         "dataprovider":"name used in PTDataProvider",
-        "url":"url of the api with end /"
+        "url":"url of the api with end /",
         "username":"",
         "apikey":"",
         "params":{}
