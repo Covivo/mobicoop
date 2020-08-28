@@ -36,7 +36,6 @@ const ImageUpload = ({ imageSrc, imageId, setImage, campaignId }) => {
   const [afficheUpload, setAfficheUpload] = useState(false);
 
   const apiUrlUploadImage = process.env.REACT_APP_API + process.env.REACT_APP_SEND_IMAGES;
-  const token = localStorage.getItem('token');
 
   const httpClient = fetchUtils.fetchJson;
 
@@ -45,7 +44,7 @@ const ImageUpload = ({ imageSrc, imageId, setImage, campaignId }) => {
     if (!options.headers) {
       options.headers = new global.Headers({ Accept: 'application/json' });
     }
-    options.headers.set('Authorization', `Bearer ${token}`);
+    options.headers.set('Authorization', `Bearer ${global.localStorage.getItem('token')}`);
 
     var data = new FormData();
     data.append('campaignFile', fichier);
