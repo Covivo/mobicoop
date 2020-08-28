@@ -195,7 +195,10 @@ const UserEdit = (props) => {
         {hasPermission('solidary_manager_create') && (
           <FormTab label={translate('custom.label.user.structures')}>
             <ReferenceArrayInput source="solidaryStructures" reference="structures">
-              <SelectArrayInput optionText="name" />
+              <SelectArrayInput
+                disabled={!hasPermission('solidary_manager_update')}
+                optionText="name"
+              />
             </ReferenceArrayInput>
           </FormTab>
         )}
