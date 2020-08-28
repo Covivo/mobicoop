@@ -3,9 +3,12 @@ import { TextField, Button } from '@material-ui/core';
 import { useInput } from 'react-admin';
 
 const structureProofOptionsToMap = (structure) => {
-  const options = structure.options.split(';');
-  return structure.acceptedValues.split(';').reduce((acc, curr, index) => {
-    acc[curr] = options[index];
+  const options = (structure.options || '').split(';');
+  return (structure.acceptedValues || '').split(';').reduce((acc, curr, index) => {
+    if (typeof options[index] !== 'undefined') {
+      acc[curr] = options[index];
+    }
+
     return acc;
   }, {});
 };
