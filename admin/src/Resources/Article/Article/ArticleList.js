@@ -11,7 +11,7 @@ import {
   SelectField,
 } from 'react-admin';
 
-import { isAdmin } from '../../../auth/permissions';
+import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
 
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },
@@ -22,7 +22,7 @@ export const ArticleList = (props) => (
   <List
     {...props}
     title="Articles > liste"
-    exporter={isAdmin()}
+    exporter={isSuperAdmin()}
     perPage={25}
     sort={{ field: 'originId', order: 'ASC' }}
   >
