@@ -67,31 +67,32 @@ const GeocompleteInput = ({ label, source, validate, classes, defaultValueText }
             onInputValueChange={(inputValue) => setInput(inputValue ? inputValue.trim() : '')}
             onSelect={(selectedItem, stateAndHelpers) => {
               const address = suggestions.find((element) => element.displayLabel === selectedItem);
-              if (address) {
-                form.change(fieldName, null);
-                form.change(
-                  `${fieldName}.streetAddress`,
-                  address.streetAddress ? address.streetAddress : null
-                );
-                form.change(`${fieldName}.postalCode`, address.postalCode);
-                form.change(`${fieldName}.addressLocality`, address.addressLocality);
-                form.change(`${fieldName}.addressCountry`, address.addressCountry);
-                form.change(`${fieldName}.latitude`, address.latitude);
-                form.change(`${fieldName}.longitude`, address.longitude);
-                form.change(`${fieldName}.elevation`, address.elevation);
-                form.change(`${fieldName}.name`, address.name);
-                form.change(`${fieldName}.houseNumber`, address.houseNumber);
-                form.change(`${fieldName}.street`, address.street);
-                form.change(`${fieldName}.subLocality`, address.subLocality);
-                form.change(`${fieldName}.localAdmin`, address.localAdmin);
-                form.change(`${fieldName}.county`, address.county);
-                form.change(`${fieldName}.macroCounty`, address.macroCounty);
-                form.change(`${fieldName}.region`, address.region);
-                form.change(`${fieldName}.macroRegion`, address.macroRegion);
-                form.change(`${fieldName}.countryCode`, address.countryCode);
-                form.change(`${fieldName}.home`, address.home);
-                form.change(`${fieldName}.venue`, address.venue);
+              if (!address) {
+                return;
               }
+              form.change(fieldName, null);
+              form.change(
+                `${fieldName}.streetAddress`,
+                address.streetAddress ? address.streetAddress : null
+              );
+              form.change(`${fieldName}.postalCode`, address.postalCode);
+              form.change(`${fieldName}.addressLocality`, address.addressLocality);
+              form.change(`${fieldName}.addressCountry`, address.addressCountry);
+              form.change(`${fieldName}.latitude`, address.latitude);
+              form.change(`${fieldName}.longitude`, address.longitude);
+              form.change(`${fieldName}.elevation`, address.elevation);
+              form.change(`${fieldName}.name`, address.name);
+              form.change(`${fieldName}.houseNumber`, address.houseNumber);
+              form.change(`${fieldName}.street`, address.street);
+              form.change(`${fieldName}.subLocality`, address.subLocality);
+              form.change(`${fieldName}.localAdmin`, address.localAdmin);
+              form.change(`${fieldName}.county`, address.county);
+              form.change(`${fieldName}.macroCounty`, address.macroCounty);
+              form.change(`${fieldName}.region`, address.region);
+              form.change(`${fieldName}.macroRegion`, address.macroRegion);
+              form.change(`${fieldName}.countryCode`, address.countryCode);
+              form.change(`${fieldName}.home`, address.home);
+              form.change(`${fieldName}.venue`, address.venue);
             }}
           >
             {({ getInputProps, getItemProps, isOpen, selectedItem, highlightedIndex }) => (

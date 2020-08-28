@@ -5,7 +5,7 @@ import { useTranslate } from 'react-admin';
 
 export const ScheduleDaysField = ({ record, source }) => {
   const translate = useTranslate();
-  const schedule = get(record, source);
+  const schedule = get(record || {}, source);
 
   if (!schedule) {
     return null;
