@@ -8,7 +8,6 @@ import { fetchUtils, FormDataConsumer, useTranslate } from 'react-admin';
 import { useForm } from 'react-final-form';
 import useDebounce from '../../utils/useDebounce';
 
-const token = localStorage.getItem('token');
 const httpClient = fetchUtils.fetchJson;
 
 const queryString = require('query-string');
@@ -22,7 +21,7 @@ const fetchSuggestions = (input) => {
     headers: new global.Headers({ Accept: 'application/ld+json' }),
   };
 
-  options.headers.set('Authorization', `Bearer ${token}`);
+  options.headers.set('Authorization', `Bearer ${global.localStorage.getItem('token')}`);
 
   const apiUrl = process.env.REACT_APP_API + process.env.REACT_APP_TERRITORY_SEARCH_RESOURCE;
   const parameters = {
