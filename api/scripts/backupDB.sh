@@ -1,8 +1,13 @@
 #!/bin/bash
 
-#################################
-# Backup the platform databases #
-#################################
+###########################################################
+#               Backup the platform databases             #
+#                                                         #
+# This script is used to backup ALL databases of a server #
+#           Do not use as a per-instance backup !         #
+#          The script has to be launched by a user        #
+#                with mariadb access                      #
+###########################################################
 
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
