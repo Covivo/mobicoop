@@ -39,7 +39,7 @@ import SolidaryPunctualAsk from './SolidaryPunctualAsk';
 import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
 import SaveSolidaryAsk from './SaveSolidaryAsk';
-import { addressRenderer } from '../../../../utils/renderers';
+import { addressRenderer, usernameRenderer } from '../../../../utils/renderers';
 
 const useStyles = makeStyles({
   layout: {
@@ -222,14 +222,17 @@ const SolidaryFormWizard = (formProps) => {
         >
           <SolidaryQuestion question="Cherchez le demandeur s'il existe, ou passez directement à l'étape suivante.">
             <ReferenceInput
-              label="Utilisateur"
               fullWidth
+              label="Utilisateur"
               source="already_registered_user"
-              reference="users"
+              reference="solidary_beneficiaries"
             >
               <AutocompleteInput
                 allowEmpty
-                optionText={(record) => `${record.givenName} ${record.familyName}`}
+                optionValue="user.id"
+                optionText={(record) =>
+                  record.user ? usernameRenderer({ record: record.user }) : ''
+                }
               />
             </ReferenceInput>
           </SolidaryQuestion>
