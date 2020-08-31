@@ -29,6 +29,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 
 /**
  * Payment management service.
@@ -167,5 +168,19 @@ class PaymentManager
 
         $response = $this->dataProvider->getCollection(['type'=>$type]);
         return $response->getValue()->getMember();
+    }
+
+    /**
+     * Get the first non validated week for a regular Ask
+     *
+     * @param int $id The id of the ask
+     * @return object|array The week
+     */
+    public function getFirstWeek(int $id)
+    {
+        $this->dataProvider->setClass(PaymentWeek::class);
+
+        $response = $this->dataProvider->getItem($id);
+        return $response->getValue();
     }
 }

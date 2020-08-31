@@ -950,7 +950,15 @@ payment_periods_list:
     path:
         fr: /getCalendar
         en: /getCalendar
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar     
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar    
+
+# Get the first non validated week (POST) AJAX
+payment_week_first:
+    methods: [POST]
+    path:
+        fr: /getFirstWeek
+        en: /getFirstWeek
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
 ###############
 # misc routes #

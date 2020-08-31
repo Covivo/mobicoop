@@ -38,10 +38,12 @@ use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\PaymentPeriod;
+use App\Payment\Ressource\PaymentWeek;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use DoctrineExtensions\Query\Mysql\Date;
+use Exception;
 
 /**
  * Payment manager service.
@@ -98,7 +100,7 @@ class PaymentManager
     }
 
     /**
-     * Get the payment items : create the lacking items from the accepted asks, construct the array of Payment Items
+     * Get the payment items of a user : create the lacking items from the accepted asks, construct the array of Payment Items
      *
      * @param User $user            The user concerned
      * @param integer $frequency    The frequency for the items (1 = punctual, 2 = regular)
@@ -358,6 +360,49 @@ class PaymentManager
         }
 
         return array_values($periods);
+    }
+
+    /**
+     * Get the first non validated week of an Ask
+     *
+     * @param User $user    The user concerned
+     * @param int $id       The id of the ask to look for
+     * @return int          The week number found
+     */
+    public function getFirstNonValidatedWeek(User $user, int $id)
+    {
+        $week = null;
+        $validated = false;
+        if (!$ask = $this->askRepository->find($id)) {
+            return new Exception("Wrong ask id");
+        }
+        if ($ask->getUser()->getId() != $user->getId() && $ask->getUserRelated()->getId() != $user->getId()) {
+            return new Exception("Unauthaurized");
+        }
+        if (count($ask->getCarpoolItems())>0) {
+            $week = $ask->getCarpoolItems()[0]->getItemDate()->format('WY');
+        }
+        if (!is_null($week)) {
+            foreach ($ask->getCarpoolItems() as $carpoolItem) {
+                /**
+                 * @var CarpoolItem $carpoolItem
+                 */
+                if ($carpoolItem->getItemDate()->format('WY') != $week) {
+                    // if the week has changed and the previous week is not validated, we found what we searched !
+                    if (!$validated) {
+                        break;
+                    }
+                    // else we change the week
+                    $week = $carpoolItem->getItemDate()->format('WY');
+                    $validated = false;
+                }
+                $validated = $carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED;
+            }
+        }
+        $paymentWeek = new PaymentWeek();
+        $paymentWeek->setId($id);
+        $paymentWeek->setWeek($week);
+        return $paymentWeek;
     }
 
     /**

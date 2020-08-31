@@ -800,7 +800,7 @@ export default {
       paymentItems: null,
       currentKey: 0,
       daysList: null,
-      selectedWeekNumber: parseInt(this.week),
+      selectedWeekNumber: null,
       selectedWeekDays: null,
       menuSelectedWeekDays: false,
       periods: [],
@@ -879,9 +879,21 @@ export default {
         moment(this.week,'wwYYYY').endOf('week').format('Y-MM-DD')
       ];
     },
+    // get the first week for which payments has to be made or collected
     getFirstWeek() {
-      this.getCalendar();
+      // we set params
+      let params = {
+        'id':this.selectedId
+      }
+      // we get all paymentItems
+      axios.post(this.$t("payments.getFirstWeek"), params)
+        .then(res => {
+          this.selectedWeekNumber = res.data.week;
+          this.getCalendar();
+        });
+      
     },
+    // get the different periods of carpools
     getCalendar() {
       // we set params
       let params = {
@@ -897,6 +909,7 @@ export default {
     getFirstDayOfYear() {
       return moment().startOf('year').format('E')
     },
+    // restrict datepicker choices to the days carpooled
     allowedDates(val) {
       if (this.periods.length ==0) return false;
       var curDate = moment(val);

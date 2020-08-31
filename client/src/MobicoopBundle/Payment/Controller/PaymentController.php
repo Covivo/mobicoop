@@ -126,6 +126,25 @@ class PaymentController extends AbstractController
     }
 
     /**
+     * Get the first non validated week for a regular Ask
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getFirstWeek(Request $request, PaymentManager $paymentManager)
+    {
+        $week = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($week = $paymentManager->getFirstWeek($data['id'])) {
+                return new JsonResponse($week);
+            }
+        }
+        return new JsonResponse($week);
+    }
+
+    /**
      * Get the calendar of payments for a regular Ad
      *
      * @param Request $request

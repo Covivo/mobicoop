@@ -26,10 +26,9 @@ namespace App\Payment\Ressource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
 
 /**
- * Period containing payments (for regular carpools).
+ * A payment week (for regular carpools).
  *
  * @ApiResource(
  *     attributes={
@@ -37,22 +36,24 @@ use App\Geography\Entity\Address;
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"}
  *     },
  *     collectionOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *              "read"="false"
  *          }
  *      }
  * )
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class PaymentPeriod
+class PaymentWeek
 {
     const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this payment period.
+     * @var int The id of this payment week.
      * @Groups({"readPayment"})
      *
      * @ApiProperty(identifier=true)
@@ -60,36 +61,10 @@ class PaymentPeriod
     private $id;
 
     /**
-     * @var \DateTimeInterface|null The start date of the period.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
-     */
-    private $fromDate;
-
-    /**
-     * @var \DateTimeInterface|null The end date of the period.
-     * @Groups({"readPayment"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={"type"="string", "format"="date"}
-     *     }
-     * )
-     */
-    private $toDate;
-
-    /**
-     * @var array|null The week days where there are carpooling planned.
-     * The array contains the representation of the week day, from 0 (sunday) to 6 (saturday).
-     *
+     * @var string|null The week and year fo this payment week.
      * @Groups({"readPayment"})
      */
-    private $days;
+    private $week;
 
     public function __construct($id = null)
     {
@@ -111,38 +86,14 @@ class PaymentPeriod
         return $this;
     }
 
-    public function getFromDate(): ?\DateTimeInterface
+    public function getWeek(): ?string
     {
-        return $this->fromDate;
+        return $this->week;
     }
 
-    public function setFromDate(\DateTimeInterface $fromDate): self
+    public function setWeek(?string $week): self
     {
-        $this->fromDate = $fromDate;
-
-        return $this;
-    }
-
-    public function getToDate(): ?\DateTimeInterface
-    {
-        return $this->toDate;
-    }
-
-    public function setToDate(?\DateTimeInterface $toDate): self
-    {
-        $this->toDate = $toDate;
-
-        return $this;
-    }
-
-    public function getDays(): ?array
-    {
-        return $this->days;
-    }
-
-    public function setDays(array $days): self
-    {
-        $this->days = $days;
+        $this->week = $week;
 
         return $this;
     }

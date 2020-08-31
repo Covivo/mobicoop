@@ -77,6 +77,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 
 /**
  * Custom deserializer service.
@@ -193,6 +194,9 @@ class Deserializer
                 break;
             case PaymentPeriod::class:
                 return $this->deserializePaymentPeriod($data) ;
+                break;
+            case PaymentWeek::class:
+                return $this->deserializePaymentWeek($data) ;
                 break;
             case Ask::class:
                 return $this->deserializeAsk($data);
@@ -851,6 +855,14 @@ class Deserializer
         $paymentPeriod = $this->autoSet($paymentPeriod, $data);
 
         return $paymentPeriod;
+    }
+
+    private function deserializePaymentWeek(array $data) : ?PaymentWeek
+    {
+        $paymentWeek = new PaymentWeek();
+        $paymentWeek = $this->autoSet($paymentWeek, $data);
+
+        return $paymentWeek;
     }
 
     private function deserializeAsk(array $data) : ?Ask
