@@ -71,7 +71,7 @@ const Aside = ({ record }) => {
             <ListItemText
               primary={
                 <Typography variant="body2">
-                  {record.membersHidden
+                  {record.proposalsHidden
                     ? translate('custom.label.community.announceHidden')
                     : translate('custom.label.community.announceVisible')}
                 </Typography>
