@@ -58,7 +58,7 @@ final class UserImportTreatDataPersister implements ContextAwareDataPersisterInt
         /**
          * @var UserImport $data
          */
-        return $this->importManager->treatUserImport($this->request->get("origin"));
+        return $this->importManager->treatUserImport($this->request->get("origin"), null, $this->request->get("lowestId"));
     }
 
     public function remove($data, array $context = [])
