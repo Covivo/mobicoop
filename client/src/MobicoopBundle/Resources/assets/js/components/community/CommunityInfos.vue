@@ -17,7 +17,7 @@
         alt="avatar"
       />
     </v-col>
-      
+
     <v-col
       cols="8"
       md="8"
@@ -30,12 +30,14 @@
           <h3 class="text-h5 text-justify font-weight-bold">
             {{ community.name }}
           </h3>
-          <p class="text-body-1 text-justify">
-            {{ community.description }}
-          </p>
-          <p class="text-body-2 text-justify">
-            {{ community.fullDescription }}
-          </p>
+          <p
+            class="text-body-1 text-justify"
+            v-html="community.description"
+          />
+          <p
+            class="text-body-2 text-justify"
+            v-html="community.fullDescription"
+          />
         </v-card-text>
       </v-card>
     </v-col>
@@ -43,19 +45,19 @@
 </template>
 <script>
 export default {
-  props:{
+  props: {
     community: {
       type: Object,
-      default: null
+      default: null,
     },
     urlAltAvatar: {
       type: String,
-      default: null
+      default: null,
     },
     avatarVersion: {
       type: String,
-      default: null
-    }
-  }
-}
+      default: null,
+    },
+  },
+};
 </script>
