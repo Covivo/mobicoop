@@ -68,7 +68,12 @@ const CampaignsList = (props) => {
 
   return (
     <Fragment>
-      <List {...props} title="Envois de masse > liste" exporter={isSuperAdmin()}>
+      <List
+        {...props}
+        title="Envois de masse > liste"
+        exporter={isSuperAdmin()}
+        sort={{ field: 'updatedDate', order: 'DESC' }}
+      >
         <Datagrid rowClick="edit">
           <TextField source="subject" label={translate('custom.label.campaign.object')} />
           <FunctionField
