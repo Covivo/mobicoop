@@ -69,6 +69,31 @@ class BlockManager
     }
 
     /**
+     * Get the users that block the User given in parameter
+     * optional : get by a given user
+     *
+     * @param User|null $user    The User blocked
+     * @return User[]
+     */
+    public function getBlockedByUsers(?User $user = null): ?array
+    {
+        $users = [];
+        if (!is_null($user)) {
+            $blocks = $this->blockRepository->findBy(['blockedUser'=>$user]);
+        } else {
+            $blocks = $this->blockRepository->findAll();
+        }
+
+        foreach ($blocks as $block) {
+            if (!in_array($block->getUser(), $users)) {
+                $users[] = $block->getUser();
+            }
+        }
+
+        return $users;
+    }
+
+    /**
      * Make a Block Ressource from a Block Entity
      *
      * @param BlockEntity $blockEntity

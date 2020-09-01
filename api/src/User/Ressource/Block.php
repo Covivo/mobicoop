@@ -52,6 +52,12 @@ use App\User\Entity\User;
  *              "path"="/blocked",
  *              "read"="false"
  *          },
+ *          "blockedBy"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"readBlock"}},
+ *              "path"="/blockedBy",
+ *              "read"="false"
+ *          },
  *          "block"={
  *              "method"="POST",
  *              "denormalization_context"={"groups"={"writeBlock"}},
