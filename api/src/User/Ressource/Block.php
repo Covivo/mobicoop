@@ -21,65 +21,88 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Entity;
+namespace App\User\Ressource;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Entity\User;
 
 /**
- * A Block between two Users
+ * A Block made by a User
  *
- * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readBlock"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeBlock"}}
+ *      },
+ *      collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)"
+ *          },
+ *          "blocked"={
+ *              "normalization_context"={"groups"={"readBlock"}},
+ *              "method"="GET",
+ *              "path"="/blocked",
+ *              "read"="false"
+ *          },
+ *          "post"={
  *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- *
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)"
+ *          }
+ *      }
+ * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Block
 {
+    const DEFAULT_ID = "999999999999";
+
     /**
-     * @var int The id of this Block.
+     * @var int The id of this bank account
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"readBlock"})
      * @ApiProperty(identifier=true)
+     * @Groups({"readBlock"})
      */
     private $id;
 
     /**
      * @var User The User who made the Block
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readBlock","writeBlock"})
+     *
     */
     private $user;
-
+    
     /**
-     * @var User The User blocked by $user
+     * @var \DateTimeInterface Creation date.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $blockedUser;
-
-    /**
-     * @var \DateTimeInterface Creation date of this Block.
-     *
-     * @ORM\Column(type="datetime")
      * @Groups({"readBlock"})
      */
     private $createdDate;
 
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(String $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
     }
 
     public function getUser(): ?User
@@ -94,17 +117,6 @@ class Block
         return $this;
     }
 
-    public function getBlockedUser(): ?User
-    {
-        return $this->blockedUser;
-    }
-
-    public function setBlockedUser(User $blockedUser): self
-    {
-        $this->blockedUser = $blockedUser;
-
-        return $this;
-    }
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
@@ -116,18 +128,5 @@ class Block
         $this->createdDate = $createdDate;
 
         return $this;
-    }
-
-
-    // DOCTRINE EVENTS
-
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
     }
 }
