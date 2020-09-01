@@ -129,7 +129,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Morning min range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -137,7 +137,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Morning max range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -145,7 +145,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Afternoon min range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -153,7 +153,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Afternoon max range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -161,7 +161,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Evening min range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -169,7 +169,7 @@ class Structure
 
     /**
      * @var \DateTimeInterface Evening max range time.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -225,7 +225,7 @@ class Structure
     
     /**
      * @var bool Available on monday morning.
-     * @Assert\NotBlank
+     *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
      */
