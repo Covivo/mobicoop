@@ -24,6 +24,7 @@
 namespace App\User\Repository;
 
 use App\User\Entity\Block;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -82,5 +83,26 @@ class BlockRepository
     public function findOneBy(array $criteria): ?Block
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Find all the blocks involving $user1 and $user2
+     *
+     * @param User $user1
+     * @param User $user2
+     * @return array
+     */
+    public function findAllByUsersInvolved(User $user1, User $user2): array
+    {
+        $blocks = [];
+
+        $query = $this->repository->createQueryBuilder('b')
+        ->where('b.user = :blocker or b.blockedUser = :blockedUser')
+        ->setParameter('blocker', $user1)
+        ->setParameter('blockedUser', $user2)
+        ;
+        return $query->getQuery()->getResult();
+
+        return $blocks;
     }
 }

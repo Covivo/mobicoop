@@ -27,7 +27,9 @@ use App\User\Entity\User;
 use App\User\Repository\BlockRepository;
 use App\User\Ressource\Block;
 use App\User\Entity\Block as BlockEntity;
+use App\User\Exception\BlockException;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 
 /**
  * User manager service.
@@ -158,5 +160,16 @@ class BlockManager
     {
         $this->entityManager->remove($block);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Get all the blocks involving $user1 and $user2
+     * @param User $user1
+     * @param User $user2
+     * @return bool
+     */
+    public function getInvolvedInABlock(User $user1, User $user2): array
+    {
+        return $this->blockRepository->findAllByUsersInvolved($user1, $user2);
     }
 }

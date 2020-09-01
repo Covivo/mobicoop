@@ -3,6 +3,7 @@ namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\User\Entity\User;
+use App\User\Exception\BlockException;
 use App\User\Ressource\Block;
 use App\User\Service\BlockManager;
 use LogicException;
@@ -27,7 +28,7 @@ final class BlockDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new LogicException("Only a User can block another User");
+            throw new BlockException(BlockException::ONLY_USER_CAN_BLOCK);
         }
         return $this->blockManager->handleBlock($this->security->getUser(), $data->getUser());
     }
