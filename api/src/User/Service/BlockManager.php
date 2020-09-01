@@ -25,6 +25,9 @@ namespace App\User\Service;
 
 use App\User\Entity\User;
 use App\User\Repository\BlockRepository;
+use App\User\Ressource\Block;
+use App\User\Entity\Block as BlockEntity;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * User manager service.
@@ -34,10 +37,12 @@ use App\User\Repository\BlockRepository;
 class BlockManager
 {
     private $blockRepository;
-    
-    public function __construct(BlockRepository $blockRepository)
+    private $entityManager;
+
+    public function __construct(BlockRepository $blockRepository, EntityManagerInterface $entityManager)
     {
         $this->blockRepository = $blockRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -61,5 +66,72 @@ class BlockManager
         }
 
         return $users;
+    }
+
+    /**
+     * Make a Block Ressource from a Block Entity
+     *
+     * @param BlockEntity $blockEntity
+     * @return Block
+     */
+    public function makeBlockRessource(BlockEntity $blockEntity)
+    {
+        $block = new Block();
+        $block->setUser($blockEntity->getBlockedUser());
+        $block->setCreatedDate($blockEntity->getCreatedDate());
+        return $block;
+    }
+
+    /**
+     * Handle the block status between two Users. It blocks or unblocks according the current state.
+     * @param User $blocker     The user who make the block
+     * @param User $blockedUser The blocked user
+     * @return Block|null
+     */
+    public function handleBlock(User $blocker, User $blockedUser): ?Block
+    {
+        // Determines if the blockedUser is already blocked by the blocker
+        $blocks = $this->blockRepository->findBy([
+            'user'=>$blocker,
+            'blockedUser'=>$blockedUser
+        ]);
+        if (count($blocks)>0) {
+            // Already block, we want to unblock it
+            // I do a foreach by security in case of multiple records. But it should only be one record at the time.
+            foreach ($blocks as $block) {
+                $this->unblock($block);
+            }
+            return null;
+        } else {
+            // Not already block, blocker wants to block blockedUser
+            return $this->makeBlockRessource($this->block($blocker, $blockedUser));
+        }
+    }
+
+    /**
+     * Block the blockedUser by the blocker
+     * @param User $blocker     The user who make the block
+     * @param User $blockedUser The blocked user
+     * @return BlockEntity|null
+     */
+    public function block(User $blocker, User $blockedUser): ?BlockEntity
+    {
+        $block = new BlockEntity();
+        $block->setUser($blocker);
+        $block->setBlockedUser($blockedUser);
+        $this->entityManager->persist($block);
+        $this->entityManager->flush();
+
+        return $block;
+    }
+
+    /**
+     * Delete the Block
+     * @param BlockEntity $block The Block to delete
+     */
+    public function unblock(BlockEntity $block)
+    {
+        $this->entityManager->remove($block);
+        $this->entityManager->flush();
     }
 }

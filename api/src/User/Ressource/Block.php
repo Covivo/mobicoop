@@ -43,15 +43,22 @@ use App\User\Entity\User;
  *          "get"={
  *              "security"="is_granted('reject',object)"
  *          },
+ *          "post"={
+ *              "security"="is_granted('reject',object)"
+ *          },
  *          "blocked"={
- *              "normalization_context"={"groups"={"readBlock"}},
  *              "method"="GET",
+ *              "normalization_context"={"groups"={"readBlock"}},
  *              "path"="/blocked",
  *              "read"="false"
  *          },
- *          "post"={
- *
- *          },
+ *          "block"={
+ *              "method"="POST",
+ *              "denormalization_context"={"groups"={"writeBlock"}},
+ *              "normalization_context"={"groups"={"readBlock"}},
+ *              "path"="/block",
+ *              "read"="false"
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
@@ -76,6 +83,7 @@ class Block
     /**
      * @var User The User who made the Block
      *
+     * @Assert\NotBlank
      * @Groups({"readBlock","writeBlock"})
      *
     */
