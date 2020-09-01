@@ -329,6 +329,14 @@ const MailComposer = ({
             alignItems="center"
             spacing={2}
             className={classes.ligne}
+            style={{
+              /*
+                The MailComposer and SenderSelector components are not well designed...
+                So, not to break everything or loose precious time, I've juste hidden the sender selection row
+                The default expeditor is set when SenderSelector is mounting
+              */
+              display: 'none',
+            }}
           >
             <Grid item>Expéditeur : </Grid>
             <Grid item>
