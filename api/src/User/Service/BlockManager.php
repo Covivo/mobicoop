@@ -47,8 +47,19 @@ class BlockManager
      * @param User|null $user    The User who made the block
      * @return User[]
      */
-    public function getBlockedUser(?User $user = null): ?array
+    public function getBlockedUsers(?User $user = null): ?array
     {
-        return [];
+        $users = [];
+        if (!is_null($user)) {
+            $blocks = $this->blockRepository->findBy(['user'=>$user]);
+        } else {
+            $blocks = $this->blockRepository->findAll();
+        }
+
+        foreach ($blocks as $block) {
+            $users[] = $block->getBlockedUser();
+        }
+
+        return $users;
     }
 }

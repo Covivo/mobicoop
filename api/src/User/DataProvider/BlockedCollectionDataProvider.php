@@ -25,8 +25,10 @@ namespace App\User\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
 use App\User\Ressource\Block;
 use App\User\Service\BlockManager;
+use LogicException;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -50,6 +52,11 @@ final class BlockedCollectionDataProvider implements CollectionDataProviderInter
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return $this->blockManager->getBlockedUser($this->security->getUser());
+        $user = null;
+        // If it's a user who make the call, we use it
+        if ($this->security->getUser() instanceof User) {
+            $user = $this->security->getUser();
+        }
+        return $this->blockManager->getBlockedUsers($user);
     }
 }
