@@ -41,6 +41,7 @@ import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import FullNameField from '../User/FullNameField';
 import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+import { PhoneField } from '../Solidary/SolidaryUserBeneficiary/Fields/PhoneField';
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
@@ -237,6 +238,7 @@ export const CommunityShow = (props) => {
                     source="user.newsSubscription"
                     label={translate('custom.label.user.accepteEmail')}
                   />
+                  <PhoneField source="user.telephone" />
                   <DateField
                     source="createdDate"
                     label={translate('custom.label.community.joinAt')}
