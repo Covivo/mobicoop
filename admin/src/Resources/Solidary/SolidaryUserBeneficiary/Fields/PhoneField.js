@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export const formatPhone = (numb) => {
   const chuncks = numb.match(/.{1,2}/g);
-  return chuncks.join(' ');
+  return <span dangerouslySetInnerHTML={{ __html: chuncks.join('&nbsp;') }} />;
 };
 
 export const PhoneField = ({ record, source }) => {

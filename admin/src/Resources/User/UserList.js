@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { DateInput } from 'react-admin-date-inputs';
+import frLocale from 'date-fns/locale/fr';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
@@ -21,11 +23,9 @@ import {
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
-import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized, { isSuperAdmin } from '../../auth/permissions';
 import FiltersTraject from './FiltersTraject';
-
-import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
-import frLocale from 'date-fns/locale/fr';
+import { PhoneField } from '../Solidary/SolidaryUserBeneficiary/Fields/PhoneField';
 
 const UserList = (props) => {
   const translate = useTranslate();
@@ -184,6 +184,7 @@ const UserList = (props) => {
         <TextField source="givenName" label={translate('custom.label.user.givenName')} />
         <TextField source="familyName" label={translate('custom.label.user.familyName')} />
         <EmailField source="email" label={translate('custom.label.user.email')} />
+        <PhoneField source="telephone" />
         <BooleanField
           source="newsSubscription"
           label={translate('custom.label.user.accepteEmail')}
