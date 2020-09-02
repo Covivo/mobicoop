@@ -343,7 +343,7 @@ const fr = {
         lastActivityDate: 'Date de dernière connection',
         solidary: 'Solidaire',
         territory: 'Territoires',
-        gender: 'Civilité',
+        gender: 'Genre',
         password: 'Mot de passe',
         birthDate: 'Date de naissance',
         telephone: 'Téléphone',
