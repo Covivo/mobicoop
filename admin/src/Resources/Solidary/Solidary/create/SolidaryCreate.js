@@ -9,7 +9,7 @@ const solidaryAskDefaultValues = {
 };
 
 const SolidaryCreate = (props) => (
-  <Create {...props}>
+  <Create {...props} title="Créer une demande solidaire">
     <SolidaryForm initialValues={solidaryAskDefaultValues} />
   </Create>
 );

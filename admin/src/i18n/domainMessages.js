@@ -2,6 +2,8 @@ const fr = {
   ra: { boolean: { null: 'Tous' } },
   resources: {
     solidary_volunteers: {
+      empty: 'Pas encore de transporteur bénévole.',
+      invite: 'Voulez-vous en créer un ?',
       fields: {
         givenName: 'Prénom',
         familyName: 'Nom',
@@ -17,11 +19,15 @@ const fr = {
       },
     },
     structures: {
+      empty: 'Pas encore de structure.',
+      invite: 'Voulez-vous en créer une ?',
       fields: {
         territories: 'Territoires',
       },
     },
     solidary_beneficiaries: {
+      empty: 'Pas encore de demandeur solidaire.',
+      invite: 'Voulez-vous en créer un ?',
       fields: {
         id: 'ID',
         givenName: 'Prénom',
@@ -33,6 +39,8 @@ const fr = {
       },
     },
     solidaries: {
+      empty: 'Pas encore de demandes solidaires.',
+      invite: 'Voulez-vous en créer une ?',
       fields: {
         'subject.label': 'Objet',
         'solidaryUser.user.givenName': 'Prénom',
@@ -42,12 +50,40 @@ const fr = {
         lastAction: 'Dernière action',
       },
     },
+    communities: {
+      empty: 'Pas encore de communauté.',
+      invite: 'Voulez-vous en créer une ?',
+    },
+    campaigns: {
+      empty: "Pas encore d'envoi de masse.",
+      invite: 'Voulez-vous en créer un ?',
+    },
     users: {
+      empty: "Pas encore d'utilisateur.",
+      invite: 'Voulez-vous en créer un ?',
       fields: {
         solidaryStructures: 'Structures Solidaires',
       },
     },
+    relay_points: {
+      empty: 'Pas encore de point relais.',
+      invite: 'Voulez-vous en créer un ?',
+    },
+    relay_point_types: {
+      empty: 'Pas encore de type de point relais.',
+      invite: 'Voulez-vous en créer un ?',
+    },
+    events: {
+      empty: "Pas encore d'événement.",
+      invite: 'Voulez-vous en créer un ?',
+    },
+    articles: {
+      empty: "Pas encore d'article.",
+      invite: 'Voulez-vous en créer un ?',
+    },
     solidary_searches: {
+      empty: 'Pas encore de covoiturage.',
+      invite: 'Voulez-vous en créer un ?',
       fields: {
         author: 'Auteur',
         journey: 'Trajet',
@@ -97,6 +133,16 @@ const fr = {
       solidary_no_solution: 'Pas de solution dans la base de données',
       solidary_no_available_carpooler: "Pas de solution le covoitureur n'est pas disponible",
       solidary_carpool_no_response: 'Pas de solution le covoitureur ne répond pas',
+      solidary_user_create: 'Compte Demandeur solidaire créé',
+      solidary_user_accepted: 'Candidature Demandeur solidaire acceptée',
+      solidary_user_refused: 'Candidature Demandeur solidaire refusée',
+      solidary_user_update: 'Compte Demandeur solidaire mis à jour',
+      solidary_create: 'Demande solidaire créée',
+      solidary_update: 'Demande solidaire mise à jour',
+      solidary_more_infos_call: 'Demande d’informations supplémentaires par téléphone',
+      solidary_contact_call: 'Contacter par téléphone',
+      solidary_reminder_call: 'Relance par téléphone',
+      solidary_off_topic: 'Demande hors sujet',
     },
     days: {
       mon: 'Lun',
@@ -297,7 +343,7 @@ const fr = {
         lastActivityDate: 'Date de dernière connection',
         solidary: 'Solidaire',
         territory: 'Territoires',
-        gender: 'Civilité',
+        gender: 'Genre',
         password: 'Mot de passe',
         birthDate: 'Date de naissance',
         telephone: 'Téléphone',

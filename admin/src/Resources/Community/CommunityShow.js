@@ -4,6 +4,7 @@ import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import TodayIcon from '@material-ui/icons/Today';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
   Show,
@@ -20,10 +21,8 @@ import {
   useTranslate,
   BooleanField,
   List,
-  ReferenceField,
   ImageField,
 } from 'react-admin';
-import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
   Typography,
@@ -45,6 +44,7 @@ import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordI
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
+
   return (
     <Card style={{ width: 300, marginLeft: '1rem' }}>
       <CardHeader title={<Typography variant="button">Paramètres</Typography>} />
@@ -71,7 +71,7 @@ const Aside = ({ record }) => {
             <ListItemText
               primary={
                 <Typography variant="body2">
-                  {record.membersHidden
+                  {record.proposalsHidden
                     ? translate('custom.label.community.announceHidden')
                     : translate('custom.label.community.announceVisible')}
                 </Typography>
@@ -112,7 +112,7 @@ const Aside = ({ record }) => {
                 <Typography variant="body2">
                   {record.updatedDate
                     ? translate('custom.label.community.updatedAt') +
-                    new Date(record.updatedDate).toLocaleDateString()
+                      new Date(record.updatedDate).toLocaleDateString()
                     : translate('custom.label.community.neverUpdate')}
                 </Typography>
               }
@@ -191,13 +191,10 @@ export const CommunityShow = (props) => {
       <TabbedShowLayout>
         <Tab label={translate('custom.label.community.detail')}>
           <TextField source="name" label={translate('custom.label.community.name')} />
-          <ReferenceField
-            reference="images"
-            source="images[0].id"
+          <ImageField
             label={translate('custom.label.event.currentImage')}
-          >
-            <ImageField source="versions.square_250" />
-          </ReferenceField>
+            source="images[0].versions.square_250"
+          />
           <FullNameField source="user" label={translate('custom.label.community.createdBy')} />
           <FunctionField
             source="address"
@@ -252,12 +249,11 @@ export const CommunityShow = (props) => {
                     source="refusedDate"
                     label={translate('custom.label.community.refusedAt')}
                   />
-
                   {/*
-                            Edit and Delete button should be in an Community Edit view
-                            <EditButton />
-                            <DeleteButton />
-                            */}
+                  Edit and Delete button should be in an Community Edit view
+                  <EditButton />
+                  <DeleteButton />
+                  */}
                 </MyDatagridUser>
               </List>
             </ReferenceArrayField>

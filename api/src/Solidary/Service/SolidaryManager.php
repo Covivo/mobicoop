@@ -740,7 +740,7 @@ class SolidaryManager
         // The subject
         $ad->setSubjectId($solidary->getSubject()->getId());
 
-        return $this->adManager->createAd($ad, true);
+        return $this->adManager->createAd($ad);
     }
 
     /**
@@ -753,6 +753,20 @@ class SolidaryManager
      */
     private function solidaryCreateUser(Solidary $solidary, Structure $structure): User
     {
+        // We check if the user exist
+        $user = $solidary->getUser();
+        if (is_null($solidary->getUser())) {
+            // no user provided
+            if (!is_null($solidary->getEmail())) {
+                // email provided
+                $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+                $solidary->setUser($user);
+            } elseif (!is_null($structure->getEmail())) {
+                // no email provided => we try the structure email
+                $solidary->setEmail($this->userManager->generateSubEmail($structure->getEmail()));
+            }
+        }
+           
         // we set the home address
         $homeAddress = null;
         if ($solidary->getHomeAddress()) {
@@ -783,18 +797,7 @@ class SolidaryManager
         if (is_null($homeAddress)) {
             throw new SolidaryException(SolidaryException::NO_HOME_ADDRESS);
         }
-        // We check if the user exist
-        $user = $solidary->getUser();
-        if (is_null($solidary->getUser())) {
-            // no user provided
-            if (!is_null($solidary->getEmail())) {
-                // email provided
-                $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
-            } elseif (!is_null($structure->getEmail())) {
-                // no email provided => we try the structure email
-                $solidary->setEmail($this->userManager->generateSubEmail($structure->getEmail()));
-            }
-        }
+     
         if ($user == null) {
             // We create a new user
             $user = new User();

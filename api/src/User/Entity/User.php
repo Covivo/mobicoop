@@ -387,7 +387,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(NumericFilter::class, properties={"gender"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -978,7 +978,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The permissions granted
-     * @Groups("permissions")
+     * @Groups({"permissions"})
      */
     private $permissions;
 
@@ -1084,6 +1084,13 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
+     * @var array|null Get User Solidary Structures
+     * @Groups({"readUser", "write"})
+     * @MaxDepth(1)
+     */
+    private $solidaryStructures;
+
+    /**
      * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
      * @Groups({"readUserAdmin" })
      */
@@ -1150,6 +1157,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->solidaryStructures = [];
         $this->roles = [];
         $this->bankAccounts = [];
         $this->wallets = [];
@@ -2566,21 +2574,19 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    /**
-     * Get User Solidary Structures
-     * @Groups({"readUser", "write"})
-     * @MaxDepth(1)
-     */
     public function getSolidaryStructures()
     {
+        if ($this->solidaryStructures) {
+            return $this->solidaryStructures;
+        }
         $structures = [];
         if (!is_null($this->getOperates())) {
             foreach ($this->getOperates() as $operate) {
                 $structures[] = $operate->getStructure();
             }
         }
-
         return $structures;
+        ;
     }
 
     public function setSolidaryStructures(?array $solidaryStructures): self

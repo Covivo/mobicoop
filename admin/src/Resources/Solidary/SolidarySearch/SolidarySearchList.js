@@ -19,46 +19,52 @@ import { FrequencyField } from './Field/FrequencyField';
 import { DayField } from './Field/DayField';
 import { RoleField } from './Field/RoleField';
 import { ScheduleDaysField } from './Field/ScheduleDaysField';
+import { useSolidary } from '../Solidary/hooks/useSolidary';
+import hasPermission, { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+
 import {
   SolidaryUserVolunteerActionDropDown,
   ADDPOTENTIAL_OPTION,
 } from '../SolidaryUserVolunteer/SolidaryUserVolunteerActionDropDown';
-import { useSolidary } from '../Solidary/hooks/useSolidary';
 
-const SolidarySearchFilter = (props) => (
-  <Filter {...props}>
-    <TextInput source="name" label="Nom" alwaysOn />
-    <SelectInput
-      source="type"
-      label="Type"
-      choices={[
-        { id: 'carpool', name: 'Covoiturage' },
-        { id: 'transport', name: 'Transport' },
-      ]}
-      defaultValue="carpool"
-    />
-    <SelectInput
-      source="way"
-      label="Way"
-      choices={[
-        { id: 'outward', name: 'Aller' },
-        { id: 'return', name: 'Retour' },
-      ]}
-      defaultValue="outward"
-    />
-    <ReferenceInput
-      alwaysOn
-      fullWidth
-      label="Demande solidaire"
-      source="solidary"
-      reference="solidaries"
-    >
-      <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
-    </ReferenceInput>
-  </Filter>
-);
+const SolidarySearchFilter = (props) => {
+  return (
+    <Filter {...props}>
+      <TextInput source="name" label="Nom" alwaysOn />
+      {hasPermission('solidary_volunteer_list') && (
+        <SelectInput
+          source="type"
+          label="Type"
+          choices={[
+            { id: 'carpool', name: 'Covoiturage' },
+            { id: 'transport', name: 'Transport' },
+          ]}
+          defaultValue="carpool"
+        />
+      )}
+      <SelectInput
+        source="way"
+        label="Aller ou retour ?"
+        choices={[
+          { id: 'outward', name: 'Aller' },
+          { id: 'return', name: 'Retour' },
+        ]}
+        defaultValue="outward"
+      />
+      <ReferenceInput
+        alwaysOn
+        fullWidth
+        label="Demande solidaire"
+        source="solidary"
+        reference="solidaries"
+      >
+        <AutocompleteInput allowEmpty optionText={(record) => solidaryLabelRenderer({ record })} />
+      </ReferenceInput>
+    </Filter>
+  );
+};
 
-const ActionsDropDown = ({ record, ...props }) => {
+const ActionsDropDown = ({ record, onRefresh, ...props }) => {
   // @TODO: Will work when authorId is available on the API
   // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
   const isAlreadySelected =
@@ -71,11 +77,12 @@ const ActionsDropDown = ({ record, ...props }) => {
       {...props}
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
       userId={record.solidaryResultCarpool.authorId}
+      onActionFinished={onRefresh}
     />
   );
 };
 
-const CarpoolDatagrid = ({ solidary, ...props }) => (
+const CarpoolDatagrid = ({ solidary, onRefresh, ...props }) => (
   <Datagrid {...props}>
     <TextField
       source="solidaryResultCarpool.author"
@@ -101,7 +108,7 @@ const CarpoolDatagrid = ({ solidary, ...props }) => (
       source="solidaryResultCarpool.solidaryExlusive"
       label="resources.solidary_searches.fields.exclusive"
     />
-    <ActionsDropDown label="Action" solidary={solidary} />
+    <ActionsDropDown label="Action" solidary={solidary} onRefresh={onRefresh} />
   </Datagrid>
 );
 
@@ -126,7 +133,7 @@ const TransportDatagrid = (
 );
 
 export const SolidarySearchListGuesser = (props) => {
-  const { solidary } = useSolidary(props.filterValues.solidary);
+  const { solidary, refresh } = useSolidary(props.filterValues.solidary);
 
   // Resolve datagrid fields from return data
   // if loading => display null because fields should not match previous data
@@ -134,7 +141,7 @@ export const SolidarySearchListGuesser = (props) => {
   // if solidaryResultTransport is not null => it's a transport list
   const dynamicDatagrid = props.loading ? null : props.ids.length > 0 &&
     props.data[props.ids[0]].solidaryResultCarpool !== null ? (
-    <CarpoolDatagrid solidary={solidary} />
+    <CarpoolDatagrid solidary={solidary} onRefresh={refresh} />
   ) : (
     TransportDatagrid
   );
@@ -145,6 +152,7 @@ export const SolidarySearchListGuesser = (props) => {
       title="Covoiturages"
       perPage={25}
       filters={<SolidarySearchFilter />}
+      exporter={isSuperAdmin()}
       filterDefaultValues={{ way: 'outward', type: 'carpool' }}
     >
       {dynamicDatagrid}

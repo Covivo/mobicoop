@@ -16,7 +16,8 @@ import {
   ReferenceField,
 } from 'react-admin';
 
-import { usernameRenderer } from '../../../../utils/renderers';
+import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
+import { isAdmin, isSuperAdmin } from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
   const translate = useTranslate();
@@ -40,7 +41,7 @@ const SolidaryFilter = (props) => (
     <ReferenceInput
       alwaysOn
       fullWidth
-      label="User solidaire"
+      label="Demandeur solidaire"
       source="solidaryUser"
       reference="solidary_users"
     >
@@ -52,6 +53,8 @@ const SolidaryFilter = (props) => (
   </Filter>
 );
 
+const renderDisplayLabel = (solidary) => solidaryJourneyRenderer(solidary) || solidary.displayLabel;
+
 export const SolidaryList = (props) => (
   <List
     {...props}
@@ -59,12 +62,13 @@ export const SolidaryList = (props) => (
     filters={<SolidaryFilter />}
     title="Demandes solidaires > liste"
     perPage={25}
+    exporter={isSuperAdmin()}
   >
     <Datagrid>
       <TextField source="originId" label="ID" />
       {/* <TextField source="subject.label" /> */}
       <SubjectField />
-      <TextField source="displayLabel" />
+      <FunctionField label="Trajet demandé" render={renderDisplayLabel} />
       <TextField source="solidaryUser.user.givenName" />
       <TextField source="solidaryUser.user.familyName" />
       <FunctionField label="% avanc." render={(r) => `${r.progression}%`} />

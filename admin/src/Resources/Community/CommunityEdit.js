@@ -23,7 +23,6 @@ import {
   List,
   ReferenceField,
   ImageField,
-
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
@@ -142,18 +141,14 @@ export const CommunityEdit = (props) => {
             validate={required()}
             formClassName={classes.title}
           />
-          <ReferenceField
-            reference="images"
-            source="images[0].id"
+          <ImageField
             label={translate('custom.label.event.currentImage')}
-          >
-            <ImageField source="versions.square_250" />
-          </ReferenceField>
+            source="images[0].versions.square_250"
+          />
           <CommunityImageUpload
-            label={translate('custom.label.event.uploadImage')}
+            label={translate('custom.label.event.uploadImage') + ' (2Mb max)'}
             formClassName={classes.fullwidth}
           />
-
           <TextInput disabled source="originId" formClassName={classes.hiddenField} />
           <FunctionField
             label={translate('custom.label.community.oldAdress')}

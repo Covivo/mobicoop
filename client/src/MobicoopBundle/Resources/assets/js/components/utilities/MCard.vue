@@ -156,6 +156,10 @@ export default {
     tile: {
       type: Boolean,
       default:false
+    },
+    image: {
+      type: String,
+      default:""
     }
   },
   data() {

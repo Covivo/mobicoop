@@ -54,7 +54,7 @@
                   <v-btn
                     v-if="!hidePublish"
                     outlined
-                    :disabled="searchUnavailable || !logged"
+                    :disabled="(searchUnavailable || !logged) && !publishButtonAlwaysActive"
                     rounded
                     :loading="loadingPublish"
                     @click="publish"
@@ -191,7 +191,12 @@ export default {
     imageSwap:{
       type:String,
       default:""
+    },
+    publishButtonAlwaysActive:{
+      type: Boolean,
+      default:false
     }
+
   },
   data() {
     return {
@@ -260,16 +265,20 @@ export default {
       this.post(`${this.$t("buttons.search.route")}`, lParams);
     },
     publish: function () {
-      this.loadingPublish = true;
-      let lParams = {
-        origin: JSON.stringify(this.origin),
-        destination: JSON.stringify(this.destination),
-        regular:this.dataRegular,
-        date:this.date?this.date:null,
-        time:this.time?this.time:null,
-        ...this.params
-      };
-      this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      if (this.logged){
+        this.loadingPublish = true;
+        let lParams = {
+          origin: JSON.stringify(this.origin),
+          destination: JSON.stringify(this.destination),
+          regular:this.dataRegular,
+          date:this.date?this.date:null,
+          time:this.time?this.time:null,
+          ...this.params
+        };
+        this.post(`${this.$t("buttons.publish.route")}`, lParams);
+      }else{
+        window.location.href=this.$t("/utilisateur/connexion");
+      }
     },
   },
 };

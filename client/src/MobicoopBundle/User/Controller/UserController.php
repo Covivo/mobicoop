@@ -73,6 +73,7 @@ class UserController extends AbstractController
     private $communityShow;
     private $userProvider;
     private $signUpLinkInConnection;
+    private $loginLinkInConnection;
     private $solidaryDisplay;
     private $paymentElectronicActive;
     private $userManager;
@@ -91,6 +92,7 @@ class UserController extends AbstractController
         $community_show,
         UserProvider $userProvider,
         $signUpLinkInConnection,
+        $loginLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
         UserManager $userManager,
@@ -104,6 +106,7 @@ class UserController extends AbstractController
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
+        $this->loginLinkInConnection = $loginLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
         $this->paymentElectronicActive = $paymentElectronicActive;
         $this->userManager = $userManager;
@@ -207,7 +210,8 @@ class UserController extends AbstractController
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
-                "community_show"=>($this->community_show==="true") ? true : false
+                "community_show"=>($this->community_show==="true") ? true : false,
+                "loginLinkInConnection"=>$this->loginLinkInConnection
         ]);
     }
 
@@ -342,6 +346,10 @@ class UserController extends AbstractController
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 
             if ($user = $userManager->updateUser($user)) {
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                
                 if ($file) {
                     // Post avatar of the user
                     $image = new Image();
@@ -951,12 +959,7 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             if (isset($data['email']) && $data['email']!=="") {
-                $check = $userManager->checkEmail($data['email']);
-                if (is_null($check->getDescription())) {
-                    return new JsonResponse(['error'=>false, 'message'=>'']);
-                } else {
-                    return new JsonResponse(['error'=>false, 'message'=>$check->getDescription()]);
-                }
+                return new JsonResponse($userManager->checkEmail($data['email']));
             } else {
                 return new JsonResponse(['error'=>true, 'message'=>'empty email']);
             }

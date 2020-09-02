@@ -1,11 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { Grid } from '@material-ui/core';
+
 import DayChip from './DayChip';
 
 const formatDate = (d) => new Date(d).toLocaleDateString();
 const formatDateTime = (d) => new Date(d).toLocaleString();
+const formatHour = (d) =>
+  format(new Date(d), "HH'h'mm", {
+    locale: fr,
+  });
 
 const SolidarySchedule = ({
   frequency,
@@ -13,6 +19,7 @@ const SolidarySchedule = ({
   outwardDeadlineDatetime,
   returnDatetime,
   returnDeadlineDatetime,
+  deadlineDate,
   monCheck,
   tueCheck,
   wedCheck,
@@ -38,7 +45,7 @@ const SolidarySchedule = ({
             <Grid item>
               <b>Fin:</b>
               <br />
-              {formatDate(returnDatetime)}
+              {deadlineDate ? formatDate(deadlineDate) : formatDate(returnDatetime)}
             </Grid>
           )}
         </Grid>
@@ -55,9 +62,22 @@ const SolidarySchedule = ({
             <DayChip key={label} label={label} condition={condition} />
           ))}
         </Grid>
+        {outwardDatetime && returnDatetime && (
+          <Grid item>
+            <Grid container direction="row" justify="space-between">
+              <Grid item>
+                <b>Aller:</b> {formatHour(outwardDatetime)}
+              </Grid>
+              <Grid item>
+                <b>Retour:</b> {formatHour(returnDatetime)}
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
       </Grid>
     );
   }
+
   return (
     <Grid container spacing={1}>
       <Grid item xs={4}>

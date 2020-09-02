@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormDataConsumer } from 'react-admin';
 import { useForm } from 'react-final-form';
 
 import ImageUpload from '../../components/media/ImageUpload';
 
-const EventImageUpload = (props) => {
+const EventImageUpload = ({ label }) => {
   const form = useForm();
-  const label = props.label;
 
   return (
     <FormDataConsumer>
       {(formDataProps) => {
         return (
           <ImageUpload
-            imageId={formDataProps.formData.images && formDataProps.formData.images[0]}
-            onChange={(image) => image.id && form.change('images', ['/images/' + image.id])}
+            imageId={
+              formDataProps.formData.images &&
+              formDataProps.formData.images[0] &&
+              formDataProps.formData.images[0].id
+            }
+            onChange={(image) => {
+              image.id && form.change('images', ['/images/' + image.id]);
+            }}
             referenceField="event"
             referenceId={formDataProps.formData.originId}
             label={label}

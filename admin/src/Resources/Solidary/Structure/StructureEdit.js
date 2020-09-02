@@ -10,10 +10,6 @@ import {
   FormTab,
   SimpleFormIterator,
   SelectInput,
-  DeleteButton,
-  Datagrid,
-  TextField,
-  ReferenceArrayField,
   Toolbar,
   BooleanInput,
   ArrayInput,
@@ -24,6 +20,7 @@ import {
 import isAuthorized from '../../../auth/permissions';
 import { StructureTimeSlotsInput } from './Input/StructureTimeSlotsInput';
 import { proofTypeLabels } from '../../../constants/proofType';
+import { StructureProofTypeOptionsListInput } from './Input/StructureProofTypeOptionsListInput';
 
 // Because of <AvailabilityRangeDialogButton /> blur
 // The pristine is set to true on modal close, so we force it here
@@ -45,17 +42,18 @@ const SwitchableFieldsSelectInput = ({ source, record }) => {
   };
 
   const currentKey = Object.keys(proofTypeLabels).find((key) => record[key] === true);
+  const choices = Object.keys(proofTypeLabels).map((id) => ({
+    id,
+    name: proofTypeLabels[id],
+  }));
 
   return (
     <SelectInput
       source={`switchable_${source}`}
-      label="Type de preuve"
+      label="Type"
       initialValue={currentKey}
       onChange={handleChange}
-      choices={Object.keys(proofTypeLabels).map((id) => ({
-        id,
-        name: proofTypeLabels[id],
-      }))}
+      choices={choices}
     />
   );
 };
@@ -87,16 +85,20 @@ export const StructureEdit = (props) => (
           <SimpleFormIterator>
             <PositionInput source="position" />
             <TextInput source="label" label="Titre" />
-            <SwitchableFieldsSelectInput />
+            {/* For an unknown reason, the field below doesn't render when we arrive from the structure list */}
+            {/* So, I made this ugly trick to fix that, i'm so sorry :'( */}
+            <SwitchableFieldsSelectInput key={Math.random()} />
             <BooleanInput label="Obligatoire" source="mandatory" />
             <SelectInput
               source="type"
-              label="Sujet de la preuve"
+              label="Critère demandé au"
+              required
               choices={[
-                { id: 1, name: 'Solidary Requester' },
-                { id: 2, name: 'Volunteer' },
+                { id: 1, name: 'Demandeur' },
+                { id: 2, name: 'Bénévole' },
               ]}
             />
+            <StructureProofTypeOptionsListInput />
           </SimpleFormIterator>
         </ArrayInput>
       </FormTab>

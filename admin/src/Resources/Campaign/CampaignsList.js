@@ -14,6 +14,7 @@ import {
 
 import MailComposer from '../../components/email/MailComposer';
 import FullNameField from '../User/FullNameField';
+import { isAdmin, isSuperAdmin } from '../../auth/permissions';
 
 const CampaignsList = (props) => {
   const translate = useTranslate();
@@ -67,7 +68,7 @@ const CampaignsList = (props) => {
 
   return (
     <Fragment>
-      <List {...props} title="Utilisateurs > liste">
+      <List {...props} title="Envois de masse > liste" exporter={isSuperAdmin()}>
         <Datagrid rowClick="edit">
           <TextField source="subject" label={translate('custom.label.campaign.object')} />
           <FunctionField

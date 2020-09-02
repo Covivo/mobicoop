@@ -108,6 +108,14 @@ const fixManagedStructureData = (params) => ({
       'aMaxTime',
       'eMinTime',
       'eMaxTime',
+      // Impossible to send these values as "null" because the API doesn't accept them
+      // 'mMinRangeTime',
+      // 'mMaxRangeTime',
+      // 'aMinRangeTime',
+      // 'aMaxRangeTime',
+      // 'eMinRangeTime',
+      // 'eMaxRangeTime',
+      // 'mMon',
       'needs',
       'subjects',
       'territories',
@@ -186,7 +194,8 @@ const getOneUser = async (provider, params) => {
   );
 
   // We need to fix bad api handling for structures because of reference system
-  user.solidaryStructures = user.solidaryStructures.map((s) => s.id);
+  // Sometimes, user.solidaryStructures is null, tw I force an array in this case
+  user.solidaryStructures = (user.solidaryStructures || []).map((s) => s.id);
 
   user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
   return { data: user };

@@ -13,7 +13,11 @@ const RelayPointImageUpload = (props) => {
       {(formDataProps) => {
         return (
           <ImageUpload
-            imageId={formDataProps.formData.images && formDataProps.formData.images[0]}
+            imageId={
+              formDataProps.formData.images &&
+              formDataProps.formData.images[0] &&
+              formDataProps.formData.images[0].id
+            }
             onChange={(image) => image.id && form.change('images', ['/images/' + image.id])}
             referenceField="relayPoint"
             referenceId={formDataProps.formData.originId}

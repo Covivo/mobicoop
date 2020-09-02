@@ -13,6 +13,8 @@ import {
   EditButton,
 } from 'react-admin';
 
+import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+
 const statusChoices = [
   { id: 0, name: 'En attente' },
   { id: 1, name: 'Actif' },
@@ -38,6 +40,7 @@ export const RelayPointList = (props) => (
     perPage={25}
     filters={<RelayPointFilter />}
     sort={{ field: 'originId', order: 'ASC' }}
+    exporter={isSuperAdmin()}
   >
     <Datagrid expand={<RelayPointPanel />} rowClick="show">
       <TextField source="originId" label="ID" sortBy="id" />

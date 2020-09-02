@@ -1,20 +1,28 @@
 import React from 'react';
-import { FormDataConsumer } from 'react-admin';
+import { FormDataConsumer, TextInput } from 'react-admin';
 import { useForm } from 'react-final-form';
 
 import ImageUpload from '../../components/media/ImageUpload';
 
-const CommunityImageUpload = (props) => {
+const CommunityImageUpload = ({ label }) => {
   const form = useForm();
-  const label = props.label;
 
   return (
     <FormDataConsumer>
       {(formDataProps) => {
         return (
           <ImageUpload
-            imageId={formDataProps.formData.images && formDataProps.formData.images[0]}
-            onChange={(image) => image.id && form.change('images', ['/images/' + image.id])}
+            imageId={
+              formDataProps.formData.images &&
+              formDataProps.formData.images[0] &&
+              formDataProps.formData.images[0].id
+            }
+            onChange={(image) => {
+              // For an unknown reason, changing image doesn't enable "save" button
+              // The form is always marked as pristine. So I use the "updatedDate" field to enable it
+              form.change('updatedDate', new Date());
+              image.id && form.change('images', ['/images/' + image.id]);
+            }}
             referenceField="community"
             referenceId={formDataProps.formData.originId}
             label={label}

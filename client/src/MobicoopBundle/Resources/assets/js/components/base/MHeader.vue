@@ -244,7 +244,7 @@ export default {
     urlMobile: {
       type: String,
       default: null
-    },
+    }
   },
   data () {
     return {

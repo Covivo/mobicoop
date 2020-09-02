@@ -1,9 +1,10 @@
 import React from 'react';
-
 import { List, Datagrid, TextField, ReferenceField, ShowButton, EditButton } from 'react-admin';
 
+import { isAdmin, isSuperAdmin } from '../../auth/permissions';
+
 export const RoleList = (props) => (
-  <List {...props} title="Rôles > liste" perPage={25}>
+  <List {...props} title="Rôles > liste" exporter={isSuperAdmin()} perPage={25}>
     <Datagrid>
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="title" label="Titre" />

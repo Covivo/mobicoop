@@ -73,6 +73,7 @@ const SolidaryShowInformation = ({ record }) => {
     updatedDate,
     id,
     originId,
+    deadlineDate,
     marginDuration,
     frequency,
     outwardDatetime,
@@ -184,6 +185,7 @@ const SolidaryShowInformation = ({ record }) => {
               outwardDeadlineDatetime={outwardDeadlineDatetime}
               returnDatetime={returnDatetime}
               returnDeadlineDatetime={returnDeadlineDatetime}
+              deadlineDate={deadlineDate}
               monCheck={days && days.mon}
               tueCheck={days && days.tue}
               wedCheck={days && days.wed}
@@ -195,25 +197,7 @@ const SolidaryShowInformation = ({ record }) => {
             />
           </Grid>
           <Grid item md={4} xs={12}>
-            {frequency === 1 ? (
-              <i>Trajet ponctuel</i>
-            ) : (
-              <span>
-                <i>Trajet régulier</i>
-                <br />
-                {[
-                  { label: 'L', condition: days && days.mon },
-                  { label: 'M', condition: days && days.tue },
-                  { label: 'Me', condition: days && days.wed },
-                  { label: 'J', condition: days && days.thu },
-                  { label: 'V', condition: days && days.fri },
-                  { label: 'S', condition: days && days.sat },
-                  { label: 'D', condition: days && days.sun },
-                ].map(({ label, condition }) => (
-                  <DayChip key={label} label={label} condition={condition} />
-                ))}
-              </span>
-            )}
+            <center>{frequency === 1 ? <i>Trajet ponctuel</i> : <i>Trajet régulier</i>}</center>{' '}
           </Grid>
         </Grid>
         <Divider light className={classes.divider} />

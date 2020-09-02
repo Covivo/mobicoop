@@ -2,8 +2,7 @@ import React from 'react';
 import { Login, Resource, Admin } from 'react-admin';
 
 import authProvider from './auth/authProvider';
-import { createPermissionChecker } from './auth/permissions';
-import { isAdmin } from './auth/permissions';
+import { createPermissionChecker, isAdmin } from './auth/permissions';
 import Layout from './components/layout/Layout';
 import i18nProvider from './i18n/translations';
 import KibanaWidget from './components/dashboard/KibanaWidget';

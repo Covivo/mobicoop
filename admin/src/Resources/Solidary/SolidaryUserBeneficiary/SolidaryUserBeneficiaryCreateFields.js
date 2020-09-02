@@ -56,8 +56,10 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const {
     input: { value: userId },
   } = useField('already_registered_user');
+
   const dataProvider = useDataProvider();
   const notify = useNotify();
+
   const prefillUserData = useCallback(
     (id) => {
       if (id) {
@@ -87,6 +89,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
     },
     [dataProvider, notify, form]
   );
+
   useEffect(() => {
     if (userId) {
       prefillUserData(userId);
@@ -184,7 +187,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
       <GeocompleteInput
         fullWidth
         source="homeAddress"
-        label="Nouvelle Adresse"
+        label="Commune de résidence"
         validate={(a) => (a ? '' : 'Champs obligatoire')}
         classes={classesForGeocompleteInput}
       />

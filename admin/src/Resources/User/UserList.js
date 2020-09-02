@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import BlockIcon from '@material-ui/icons/Block';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
 
 import {
@@ -15,7 +14,6 @@ import {
   BooleanField,
   DatagridBody,
   Filter,
-  Button,
   useTranslate,
   useDataProvider,
   AutocompleteInput,
@@ -23,7 +21,7 @@ import {
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
-import isAuthorized from '../../auth/permissions';
+import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
 import FiltersTraject from './FiltersTraject';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
@@ -162,7 +160,7 @@ const UserList = (props) => {
         allowEmpty={false}
         resettable
         perPage={20}
-        filterToQuery={searchText => ({ name: searchText })}
+        filterToQuery={(searchText) => ({ name: searchText })}
       >
         <AutocompleteInput optionText="name" optionValue="id" />
       </ReferenceInput>
@@ -178,8 +176,7 @@ const UserList = (props) => {
       filters={<UserFilter />}
       sort={{ field: 'id', order: 'ASC' }}
       bulkActionButtons={<UserBulkActionButtons />}
-      // exporter={isAuthorized("right_user_assign") ? defaultExporter : false}
-      exporter={false}
+      exporter={isSuperAdmin()}
       hasCreate={isAuthorized('user_create')}
     >
       <MyDatagridUser rowClick="show">

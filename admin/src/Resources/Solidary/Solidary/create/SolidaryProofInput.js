@@ -18,14 +18,14 @@ const SolidaryProofInput = ({ record, ...rest }) => {
   }
 
   if (record.selectbox) {
-    const selectboxLabels = record.options.split(';');
+    const selectboxLabels = (record.options || '').split(';');
 
     return (
       <SelectInput
         label={record.label}
         source={source}
         validate={validate}
-        choices={record.acceptedValues
+        choices={(record.acceptedValues || '')
           .split(';')
           .map((v, i) => ({ id: v, name: selectboxLabels[i] }))}
         {...rest}

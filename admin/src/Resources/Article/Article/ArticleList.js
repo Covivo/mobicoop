@@ -11,13 +11,21 @@ import {
   SelectField,
 } from 'react-admin';
 
+import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },
   { id: 1, name: 'En ligne' },
 ];
 
 export const ArticleList = (props) => (
-  <List {...props} title="Articles > liste" perPage={25} sort={{ field: 'originId', order: 'ASC' }}>
+  <List
+    {...props}
+    title="Articles > liste"
+    exporter={isSuperAdmin()}
+    perPage={25}
+    sort={{ field: 'originId', order: 'ASC' }}
+  >
     <Datagrid rowClick="show">
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="title" label="Titre" />

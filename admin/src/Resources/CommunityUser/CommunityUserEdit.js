@@ -1,6 +1,14 @@
 import React from 'react';
-import { Edit, SimpleForm, ReferenceInput, SelectInput, required } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
+
+import {
+  Edit,
+  SimpleForm,
+  ReferenceInput,
+  SelectInput,
+  required,
+  AutocompleteInput,
+} from 'react-admin';
 
 import { UserRenderer } from '../../utils/renderers';
 import { statusChoices } from '../Community/communityChoices';
@@ -12,6 +20,9 @@ const useStyles = makeStyles({
 export const CommunityUserEdit = (props) => {
   const classes = useStyles();
   const redirect = props.location.backTo || '/communities/';
+
+  const inputText = ({ user }) =>
+    user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
 
   return (
     <Edit {...props} title="Communautés > éditer un membre">
@@ -30,10 +41,16 @@ export const CommunityUserEdit = (props) => {
         <ReferenceInput
           label="Nouveau Membre"
           source="user"
-          reference="users"
+          reference="solidary_users"
           validate={required()}
+          formClassName={classes.halfwidth}
         >
-          <SelectInput optionText={<UserRenderer />} />
+          {/* Should be like that : 
+              <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
+              But https://github.com/marmelab/react-admin/pull/4367
+              So waiting for the next release of react-admin 
+          */}
+          <AutocompleteInput optionValue="user.id" optionText={inputText} allowEmpty={false} />
         </ReferenceInput>
 
         <SelectInput

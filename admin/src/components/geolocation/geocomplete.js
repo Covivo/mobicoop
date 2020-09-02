@@ -6,7 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import { fetchUtils, FormDataConsumer } from 'react-admin';
-import { useForm } from 'react-final-form';
+import { useForm, useField } from 'react-final-form';
+import pick from 'lodash.pick';
 import useDebounce from '../../utils/useDebounce';
 
 const queryString = require('query-string');
@@ -30,18 +31,17 @@ const fetchSuggestions = (input) => {
     });
 };
 
-const GeocompleteInput = (props) => {
-  const { classes } = props;
-
+const GeocompleteInput = ({ label, source, validate, classes, defaultValueText }) => {
   const form = useForm();
-  const fieldName = props.source || 'address';
+  const fieldName = source || 'address';
+  const field = useField(fieldName);
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const debouncedInput = useDebounce(input, 500);
 
   const formState = form.getState();
-  const errorMessage = props.validate(input);
+  const errorMessage = validate(input);
   const errorState = !!(formState.submitFailed && errorMessage);
 
   useEffect(() => {
@@ -62,56 +62,57 @@ const GeocompleteInput = (props) => {
 
   return (
     <FormDataConsumer>
-      {({ dispatch, ...rest }) => (
+      {({ dispatch, formData, ...rest }) => (
         <div className={classes.root}>
           <Downshift
+            initialInputValue={defaultValueText}
             onInputValueChange={(inputValue) => setInput(inputValue ? inputValue.trim() : '')}
             onSelect={(selectedItem, stateAndHelpers) => {
               const address = suggestions.find((element) => element.displayLabel === selectedItem);
-              if (address) {
-                form.change(fieldName, null);
-                form.change(
-                  `${fieldName}.streetAddress`,
-                  address.streetAddress ? address.streetAddress : null
-                );
-                form.change(`${fieldName}.postalCode`, address.postalCode);
-                form.change(`${fieldName}.addressLocality`, address.addressLocality);
-                form.change(`${fieldName}.addressCountry`, address.addressCountry);
-                form.change(`${fieldName}.latitude`, address.latitude);
-                form.change(`${fieldName}.longitude`, address.longitude);
-                form.change(`${fieldName}.elevation`, address.elevation);
-                form.change(`${fieldName}.name`, address.name);
-                form.change(`${fieldName}.houseNumber`, address.houseNumber);
-                form.change(`${fieldName}.street`, address.street);
-                form.change(`${fieldName}.subLocality`, address.subLocality);
-                form.change(`${fieldName}.localAdmin`, address.localAdmin);
-                form.change(`${fieldName}.county`, address.county);
-                form.change(`${fieldName}.macroCounty`, address.macroCounty);
-                form.change(`${fieldName}.region`, address.region);
-                form.change(`${fieldName}.macroRegion`, address.macroRegion);
-                form.change(`${fieldName}.countryCode`, address.countryCode);
-                form.change(`${fieldName}.home`, address.home);
-                form.change(`${fieldName}.venue`, address.venue);
+              if (!address) {
+                return;
               }
+
+              field.input.onChange(
+                pick(address, [
+                  'streetAddress',
+                  'postalCode',
+                  'addressLocality',
+                  'addressCountry',
+                  'latitude',
+                  'longitude',
+                  'elevation',
+                  'name',
+                  'houseNumber',
+                  'street',
+                  'subLocality',
+                  'localAdmin',
+                  'county',
+                  'macroCounty',
+                  'region',
+                  'macroRegion',
+                  'countryCode',
+                  'home',
+                  'venue',
+                ])
+              );
             }}
           >
             {({ getInputProps, getItemProps, isOpen, selectedItem, highlightedIndex }) => (
               <div className={classes.container}>
                 <TextField
-                  label={props.label || 'Adresse'}
+                  label={label || 'Adresse'}
                   className={classes.input}
                   variant="filled"
                   required
+                  source={`${fieldName}.county`}
                   error={errorState}
                   helperText={errorState && errorMessage}
-                  InputProps={{
-                    ...getInputProps({
-                      placeholder: 'Entrer une adresse',
-                    }),
-                  }}
+                  InputProps={getInputProps({
+                    placeholder: 'Entrer une adresse',
+                  })}
                   fullWidth
                 />
-
                 {isOpen ? (
                   <Paper className={classes.paper} square>
                     {suggestions.map((suggestion, index) => (

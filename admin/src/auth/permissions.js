@@ -1,44 +1,3 @@
-// List of permissions:
-// ad_search
-// article_manage
-// article_read
-// carpool_manage
-// carpool_manage_self
-// check_permission
-// check_permission_self
-// community_create
-// community_join
-// community_join_private
-// community_leave
-// community_list
-// community_manage
-// community_manage_self
-// community_read
-// event_create
-// event_list
-// event_manage
-// event_manage_self
-// event_read
-// mass_communication_manage
-// mass_manage
-// relay_point_create
-// relay_point_manage
-// relay_point_manage_self
-// relay_point_read
-// relay_point_type_create
-// solidary_manage
-// territory_manage
-// user_address_manage
-// user_address_manage_self
-// user_car_manage
-// user_car_manage_self
-// user_manage
-// user_manage_self
-// user_message_manage
-// user_message_manage_self
-// user_register
-// user_register_full
-
 export const getPermissions = () => {
   const storagePermissions = localStorage.getItem('permission');
   const permissions = storagePermissions && JSON.parse(storagePermissions);
@@ -50,7 +9,12 @@ export const createPermissionChecker = (permissions = []) => (action) =>
 
 export const isAdmin = () => {
   const roles = JSON.parse(localStorage.getItem('roles') || '[]');
-  return !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? false : true;
+  return roles.includes('ROLE_SUPER_ADMIN') || roles.includes('ROLE_ADMIN');
+};
+
+export const isSuperAdmin = () => {
+  const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+  return roles.includes('ROLE_SUPER_ADMIN');
 };
 
 export default (action) => {
