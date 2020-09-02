@@ -90,8 +90,8 @@ class RelayPointManager
      * @param User $user The User who make the request
      * @return RelayPoint[]
      */
-    public function getRelayPoints(User $user=null)
+    public function getRelayPoints(User $user=null, array $context = [])
     {
-        return $this->relayPointRepository->findRelayPoints($user);
+        return $this->relayPointRepository->findRelayPoints($user, $context);
     }
 }
