@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Rdex\Service\RdexManager;
 use App\Rdex\Entity\RdexError;
 use App\Rdex\Entity\RdexJourney;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Controller class for Rdex Journey collection.
@@ -54,12 +55,12 @@ class JourneyCollectionController
      * @param RdexJourney $data
      * @return Response
      */
-    public function __invoke(array $data): Response
+    public function __invoke(array $data): JsonResponse
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
         }
-        $response = new Response();
+        $response = new JsonResponse();
         // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
         if ($this->rdexManager->isEmptyRequest($this->request)) {
             return $response;
