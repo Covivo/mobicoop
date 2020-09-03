@@ -14,6 +14,7 @@ import {
 
 import { usernameRenderer } from '../../../../utils/renderers';
 import { SolidaryJourney } from './SolidaryJourney';
+import { utcDateFormat } from '../../../../utils/date';
 
 export const DiariesTable = ({ diaries, version = 'solidary' }) => {
   const translate = useTranslate();
@@ -35,11 +36,11 @@ export const DiariesTable = ({ diaries, version = 'solidary' }) => {
             <TableRow key={`i${i}`}>
               <TableCell align="center" component="th" scope="row">
                 {version === 'solidary' && diary.createdDate
-                  ? format(new Date(diary.createdDate), "eee dd LLL HH':'mm", {
+                  ? utcDateFormat(diary.createdDate, "eee dd LLL HH':'mm", {
                       locale: fr,
                     })
                   : diary.date
-                  ? format(new Date(diary.date), "eee dd LLL HH':'mm", {
+                  ? utcDateFormat(diary.date, "eee dd LLL HH':'mm", {
                       locale: fr,
                     })
                   : ''}
