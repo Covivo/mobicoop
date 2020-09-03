@@ -134,28 +134,46 @@
                   color="info"
                   :disabled="isLogged"
                 >
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      color="secondary"
-                      rounded
-                      :disabled="!publishButtonAlwaysActive && !checkValidation"
-                      :loading="loading"
-                      @click="publish"
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-bind="attrs"
+                      v-on="on"                    
                     >
-                      {{ $t("buttons.publish.label") }}
-                    </v-btn>
-
-                    <v-btn
-                      v-if="isSecured == false"
-                      color="secondary"
-                      class="mt-3"
-                      rounded
-                      :loading="loading || (checkValidation && isLogged)"
-                      :disabled="!isLogged || checkValidation"
-                      @click="joinCommunityDialog = true"
+                      <v-btn
+                        color="secondary"
+                        rounded
+                        :disabled="!publishButtonAlwaysActive && !checkValidation"
+                        :loading="loading"
+                        @click="publish"
+                      >
+                        {{ $t("buttons.publish.label") }}
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>{{ $t("tooltips.connected") }}</span>
+                </v-tooltip>
+                <v-tooltip
+                  top
+                  color="info"
+                  :disabled="isLogged"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-bind="attrs"
+                      v-on="on"                    
                     >
-                      {{ $t("buttons.join.label") }}
-                    </v-btn>
+                      <v-btn
+                        v-if="isSecured == false"
+                        color="secondary"
+                        class="mt-3"
+                        rounded
+                        :loading="loading || (checkValidation && isLogged)"
+                        :disabled="!isLogged || checkValidation"
+                        @click="joinCommunityDialog = true"
+                      >
+                        {{ $t("buttons.join.label") }}
+                      </v-btn>
+                    </div>
                   </template>
                   <span>{{ $t("tooltips.connected") }}</span>
                 </v-tooltip>
