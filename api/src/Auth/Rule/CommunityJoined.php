@@ -45,11 +45,6 @@ class CommunityJoined implements AuthRuleInterface
             return false;
         }
 
-        // An app can't see a secured community
-        if ($requester instanceof App) {
-            return false;
-        }
-
         /**
          * @var Community $community
          */
@@ -57,6 +52,11 @@ class CommunityJoined implements AuthRuleInterface
         // We check if this is a secured Community
         // If so, we check if the requester is a member of this community
         if (count($community->getCommunitySecurities())>0) {
+            // An app can't see a secured community
+            if ($requester instanceof App) {
+                return false;
+            }
+            
             $communityUsers = $community->getCommunityUsers();
             foreach ($communityUsers as $communityUser) {
                 if ($communityUser->getUser()->getId() == $requester->getId()) {
