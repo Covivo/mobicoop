@@ -38,7 +38,7 @@
         {{ $t("userDelete") }}
       </v-card-text>
 
-      <div v-if="infosComplete.carpooler">
+      <div v-if="infosComplete.carpooler && !loading">
         <v-btn
           v-if="!carpoolerBlocked"
           class="ma-2"

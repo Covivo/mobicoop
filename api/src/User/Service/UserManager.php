@@ -102,6 +102,7 @@ class UserManager
     private $translator;
     private $security;
     private $paymentProvider;
+    private $blockManager;
 
     // Default carpool settings
     private $chat;
@@ -144,6 +145,7 @@ class UserManager
         string $fakeFirstMail,
         string $fakeFirstToken,
         PaymentDataProvider $paymentProvider,
+        BlockManager $blockManager,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -172,6 +174,7 @@ class UserManager
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
         $this->paymentProvider = $paymentProvider;
+        $this->blockManager = $blockManager;
     }
 
     /**
@@ -647,6 +650,13 @@ class UserManager
                 'selected' => false
             ];
 
+            // We check if the user and it's carpooler are involved in a block
+            $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
+            $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+            if (is_array($blocks) && count($blocks)>0) {
+                $currentMessage['blocked'] = true;
+            }
+
             $messages[] = $currentMessage;
         }
         // Sort with the last message received first
@@ -723,6 +733,14 @@ class UserManager
                         "sunCheck" => $criteria->isSunCheck()
                     ]
                 ];
+
+                // We check if the user and it's carpooler are involved in a block
+                $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
+                $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+                if (is_array($blocks) && count($blocks)>0) {
+                    $currentThread['blocked'] = true;
+                }
+
 
                 $messages[] = $currentThread;
             }

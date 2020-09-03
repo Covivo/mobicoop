@@ -10,6 +10,7 @@
       :id-message="message.idMessage"
       :id-recipient="message.idRecipient"
       :selected-default="message.selected"
+      :blocked="message.blocked"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />

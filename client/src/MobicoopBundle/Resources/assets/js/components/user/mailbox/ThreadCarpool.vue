@@ -121,6 +121,10 @@ export default {
     solidary:{
       type: Boolean,
       default: false
+    },
+    blocked:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -178,7 +182,8 @@ export default {
           idRecipient:this.idRecipient,
           name:this.name,
           avatar:this.avatar,
-          idAsk:this.idAsk
+          idAsk:this.idAsk,
+          blocked:this.blocked
         }
       );
     }

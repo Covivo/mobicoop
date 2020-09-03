@@ -166,6 +166,7 @@
                 :id-recipient="idRecipient"
                 :loading="loadingTypeText"
                 :hidden="hideClickIcon"
+                :recipient-blocked="blocked"
                 @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
@@ -183,6 +184,7 @@
             :loading-btn="loadingBtnAction"
             :recipient-name="recipientName"
             :recipient-avatar="recipientAvatar"
+            :carpooler-blocked="blocked"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
           />
@@ -264,6 +266,7 @@ export default {
       loadingDetails:false,
       loadingBtnAction:false,
       hideClickIcon : false,
+      blocked: false
     };
   },
   mounted() {
@@ -284,13 +287,14 @@ export default {
   },
   methods: {
     updateDetails(data){
-      //console.error(data);
+      // console.error(data);
       this.hideClickIcon = false;
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
       this.recipientAvatar = data.avatar;
+      this.blocked = data.blocked;
     },
     sendInternalMessage(data){
       this.loadingTypeText = true;
@@ -375,7 +379,7 @@ export default {
       this.idMessage = -2;
       this.currentIdAsk = -2;
     },
-    refreshDetailsCompleted(){
+    refreshDetailsCompleted(data){
       //this.refreshActions = true;
       this.refreshDetails = false;
     },

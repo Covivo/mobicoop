@@ -97,9 +97,9 @@ class BlockRepository
         $blocks = [];
 
         $query = $this->repository->createQueryBuilder('b')
-        ->where('b.user = :blocker or b.blockedUser = :blockedUser')
-        ->setParameter('blocker', $user1)
-        ->setParameter('blockedUser', $user2)
+        ->where('(b.user = :user1 and b.blockedUser = :user2) or (b.user = :user2 and b.blockedUser = :user1)')
+        ->setParameter('user1', $user1)
+        ->setParameter('user2', $user2)
         ;
         return $query->getQuery()->getResult();
 
