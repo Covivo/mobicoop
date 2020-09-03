@@ -517,6 +517,9 @@ export default {
           // console.log(response.data);
           this.dataCarpoolerBlocked = !this.dataCarpoolerBlocked;
         })
+        .catch(function (error) {
+          // console.log(error);
+        })
         .finally(() => {
           this.loadingBlock = false;
         });      
