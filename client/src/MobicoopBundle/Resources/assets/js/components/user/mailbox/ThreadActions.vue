@@ -40,11 +40,12 @@
 
       <div v-if="infosComplete.carpooler && !loading">
         <v-btn
-          v-if="!carpoolerBlocked"
+          v-if="!dataCarpoolerBlocked"
           class="ma-2"
           rounded
           text
           color="error"
+          :loading="loadingBlock"
           @click="block"
         >
           <v-icon left>
@@ -57,6 +58,7 @@
           class="ma-2"
           rounded
           color="error"
+          :loading="loadingBlock"
           @click="block"
         >
           <v-icon left>
@@ -300,8 +302,9 @@ export default {
       outwardTrip:[],
       returnTrip:[],
       chosenRole:null,
-      hideClickIcon : false
-
+      hideClickIcon : false,
+      loadingBlock: false,
+      dataCarpoolerBlocked: this.carpoolerBlocked
     }
   },
   computed:{
@@ -326,6 +329,9 @@ export default {
     },
     loadingBtn(){
       this.dataLoadingBtn = this.loadingBtn;
+    },
+    carpoolerBlocked(){
+      this.dataCarpoolerBlocked = this.carpoolerBlocked;
     }
   },
   created() {
@@ -502,19 +508,17 @@ export default {
       this.$emit("updateStatusAskHistory",data);
     },
     block(){
+      this.loadingBlock = true;
       let params = {
         "blockedUserId":this.idRecipient
       }
       axios.post(this.$t("blockUrl"), params)
         .then(response => {
-          console.log(response.data);
-
-        })
-        .catch(function (error) {
-          // console.log(error);
+          // console.log(response.data);
+          this.dataCarpoolerBlocked = !this.dataCarpoolerBlocked;
         })
         .finally(() => {
-          //this.$emit("refreshActionsCompleted");
+          this.loadingBlock = false;
         });      
     }
   }
