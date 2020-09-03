@@ -46,9 +46,9 @@ class CommunityJoined implements AuthRuleInterface
         }
 
         // An app can't see a secured community
-        // if ($requester instanceof App) {
-        //     return false;
-        // }
+        if ($requester instanceof App) {
+            return false;
+        }
 
         /**
          * @var Community $community

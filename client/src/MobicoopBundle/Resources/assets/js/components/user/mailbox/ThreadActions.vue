@@ -40,6 +40,7 @@
 
       <div v-if="infosComplete.carpooler">
         <v-btn
+          v-if="!carpoolerBlocked"
           class="ma-2"
           rounded
           text
@@ -47,7 +48,18 @@
         >
           <v-icon left>
             mdi-account-cancel-outline
-          </v-icon> Bloquer
+          </v-icon>
+          {{ $t('block') }}
+        </v-btn>
+        <v-btn
+          v-else
+          class="ma-2"
+          rounded
+          color="error"
+        >
+          <v-icon left>
+            mdi-account-cancel
+          </v-icon> {{ $t('blocked') }}
         </v-btn>        
       </div>
 
@@ -253,6 +265,10 @@ export default {
     recipientAvatar: {
       type: String,
       default: null
+    },
+    carpoolerBlocked: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
