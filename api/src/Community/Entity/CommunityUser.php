@@ -349,13 +349,9 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        // we check if we pass a status when we create the community_user if this is the case we set it
-        } elseif ($this->getStatus()) {
-            $this->setStatus($this->getStatus());
-        // we check if it's an autovalidation community if so we set the community_user's status as accepted_member
-        } elseif ($this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
-        } else {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
             $this->setStatus(self::STATUS_PENDING);
         }
         $this->setAutoAcceptedOrRefusedDate();
