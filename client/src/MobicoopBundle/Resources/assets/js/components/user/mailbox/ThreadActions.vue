@@ -37,6 +37,20 @@
       >
         {{ $t("userDelete") }}
       </v-card-text>
+
+      <div v-if="infosComplete.carpooler">
+        <v-btn
+          class="ma-2"
+          rounded
+          text
+          color="error"
+        >
+          <v-icon left>
+            mdi-account-cancel-outline
+          </v-icon> Bloquer
+        </v-btn>        
+      </div>
+
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
