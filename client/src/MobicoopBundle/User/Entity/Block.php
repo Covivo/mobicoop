@@ -21,86 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A Block made by a User
- *
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readBlock"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeBlock"}}
- *      },
- *      collectionOperations={
- *          "get"={
- *              "security"="is_granted('reject',object)"
- *          },
- *          "post"={
- *              "denormalization_context"={"groups"={"writeBlock"}},
- *              "normalization_context"={"groups"={"readBlock"}},
- *              "read"="false"
- *          },
- *          "blocked"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"readBlock"}},
- *              "path"="/blocked",
- *              "read"="false"
- *          },
- *          "blockedBy"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"readBlock"}},
- *              "path"="/blockedBy",
- *              "read"="false"
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * A Block
  */
-class Block
+class Block implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this Block
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups({"readBlock"})
+     * @var int The id of this bank account
      */
+    
     private $id;
-
     /**
      * @var User The User who made the Block
-     *
-     * @Assert\NotBlank
-     * @Groups({"readBlock","writeBlock"})
+     * @Groups({"post"})
      *
     */
     private $user;
-    
+
     /**
      * @var \DateTimeInterface Creation date.
-     *
-     * @Groups({"readBlock"})
      */
     private $createdDate;
-
-    public function __construct()
-    {
-        $this->id = self::DEFAULT_ID;
-    }
 
     public function getId(): ?int
     {
@@ -126,7 +73,6 @@ class Block
         return $this;
     }
 
-
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -137,5 +83,16 @@ class Block
         $this->createdDate = $createdDate;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $userSerialized = [
+            'id'                    => $this->getId(),
+            'user'                  => $this->getUser(),
+            'createdDate'           => $this->getCreatedDate()
+        ];
+
+        return $userSerialized;
     }
 }

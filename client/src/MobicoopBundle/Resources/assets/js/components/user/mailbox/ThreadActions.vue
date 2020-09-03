@@ -45,6 +45,7 @@
           rounded
           text
           color="error"
+          @click="block"
         >
           <v-icon left>
             mdi-account-cancel-outline
@@ -56,6 +57,7 @@
           class="ma-2"
           rounded
           color="error"
+          @click="block"
         >
           <v-icon left>
             mdi-account-cancel
@@ -498,6 +500,22 @@ export default {
     carpoolFromMatchingJourney(data){
       this.dialogRegular = false;
       this.$emit("updateStatusAskHistory",data);
+    },
+    block(){
+      let params = {
+        "blockedUserId":this.idRecipient
+      }
+      axios.post(this.$t("blockUrl"), params)
+        .then(response => {
+          console.log(response.data);
+
+        })
+        .catch(function (error) {
+          // console.log(error);
+        })
+        .finally(() => {
+          //this.$emit("refreshActionsCompleted");
+        });      
     }
   }
 }

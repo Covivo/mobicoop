@@ -22,14 +22,15 @@ final class BlockDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Block && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'block';
+        return $data instanceof Block && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new BlockException(BlockException::ONLY_USER_CAN_BLOCK);
+            throw new \LogicException("Only a User can perform this action");
         }
+        
         return $this->blockManager->handleBlock($this->security->getUser(), $data->getUser());
     }
 

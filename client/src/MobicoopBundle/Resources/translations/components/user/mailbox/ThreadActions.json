@@ -13,7 +13,8 @@
         "priceTooltip":"Tarif indicatif",
         "userDelete" : "Utilisateur désinscrit",
         "block":"Bloquer",
-        "blocked":"Bloqué"
+        "blocked":"Bloqué",
+        "blockUrl":"/user/block"
 
      },
     "en": {
@@ -30,6 +31,7 @@
         "priceTooltip":"Indicative price",
         "userDelete" : "Unsubscribed user",
         "block":"Block",
-        "blocked":"Blocked"
+        "blocked":"Blocked",
+        "blockUrl":"/user/block"
     }
 }
