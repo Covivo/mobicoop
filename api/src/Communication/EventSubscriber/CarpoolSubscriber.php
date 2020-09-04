@@ -43,6 +43,8 @@ use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
+use App\User\Entity\User;
+use App\User\Service\BlockManager;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
@@ -56,13 +58,20 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $askHistoryRepository;
     private $logger;
     private $router;
+    private $blockManager;
 
-    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger, UrlGeneratorInterface $router)
-    {
+    public function __construct(
+        NotificationManager $notificationManager,
+        AskHistoryRepository $askHistoryRepository,
+        LoggerInterface $logger,
+        UrlGeneratorInterface $router,
+        BlockManager $blockManager
+    ) {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
         $this->logger = $logger;
         $this->router = $router;
+        $this->blockManager = $blockManager;
     }
     
     public static function getSubscribedEvents()
@@ -161,7 +170,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we check if it's not an anonymous proposal
         if ($event->getMatching()->getProposalOffer()->getUser() && $event->getMatching()->getProposalRequest()->getUser()) {
             $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
-            $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+            if ($this->canNotify($event->getSender(), $askRecipient)) {
+                $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+            }
         }
     }
     
@@ -341,5 +352,21 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
             $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
         }
+    }
+
+    /**
+     * Determine if the Sender can notify the Recipient (i.e. Not involved in a block)
+     *
+     * @param User $sender
+     * @param User $recipient
+     * @return boolean
+     */
+    public function canNotify(User $sender, User $recipient): bool
+    {
+        $blocks = $this->blockManager->getInvolvedInABlock($sender, $recipient);
+        if (is_array($blocks) && count($blocks)>0) {
+            return false;
+        }
+        return true;
     }
 }
