@@ -29,5 +29,5 @@ namespace App\User\Exception;
 class BlockException extends \LogicException
 {
     const ONLY_USER_CAN_BLOCK = "Only a User can block another User";
-    const MESSAGE_INVOLVED_IN_BLOCK = "The sender or the recipient is blocked by the other one";
+    const MESSAGE_INVOLVED_IN_BLOCK = "One of the two users is blocking the other one";
 }
