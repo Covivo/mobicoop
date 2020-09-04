@@ -10,7 +10,7 @@
         flat
       >
         <threads-actions-buttons
-          :can-update-ask="infosComplete.canUpdateAsk"
+          :can-update-ask="infosComplete.canUpdateAsk && !dataCarpoolerBlocked"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
