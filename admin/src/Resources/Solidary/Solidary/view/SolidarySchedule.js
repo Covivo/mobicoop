@@ -1,17 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { Grid } from '@material-ui/core';
 
 import DayChip from './DayChip';
+import { utcDateFormat } from '../../../../utils/date';
 
-const formatDate = (d) => new Date(d).toLocaleDateString();
-const formatDateTime = (d) => new Date(d).toLocaleString();
-const formatHour = (d) =>
-  format(new Date(d), "HH'h'mm", {
-    locale: fr,
-  });
+const formatDate = (d) => utcDateFormat(d, "dd'/'MM'/'yyyy");
+const formatDateTime = (d) => utcDateFormat(d);
+const formatHour = (d) => utcDateFormat(d, "HH'h'mm");
 
 const SolidarySchedule = ({
   frequency,

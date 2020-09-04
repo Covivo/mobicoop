@@ -34,6 +34,7 @@ import { useSolidary } from '../hooks/useSolidary';
 import { solidaryLabelRenderer } from '../../../../utils/renderers';
 import { SliderInput } from '../input/SliderInput';
 import { SolidaryJourney } from './SolidaryJourney';
+import { utcDateFormat } from '../../../../utils/date';
 
 const useStyles = makeStyles({
   loading: { height: '50vh' },
@@ -199,8 +200,8 @@ export const SolidaryFormalResponseModal = ({ solidaryId, solidarySolutionId, on
   const { solidary, loading } = useSolidary(`/solidaries/${solidaryId}`);
 
   const handleSubmit = (values) => {
-    const outwardDate = format(values.outwardDate, "yyyy-MM-dd'T'HH:mm:ssxxx");
-    const outwardLimitDate = format(values.outwardLimitDate, "yyyy-MM-dd'T'HH:mm:ssxxx");
+    const outwardDate = utcDateFormat(values.outwardDate, "yyyy-MM-dd'T'HH:mm:ssxxx");
+    const outwardLimitDate = utcDateFormat(values.outwardLimitDate, "yyyy-MM-dd'T'HH:mm:ssxxx");
 
     const solidaryFormalRequest = {
       outwardSchedule: values.outwardSchedule || [],
