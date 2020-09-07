@@ -1,7 +1,7 @@
 import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import { fetchJson } from './fetchJson';
-import { formatISO, formatRFC3339, isValid, parseISO } from 'date-fns';
+import { formatISO, isValid } from 'date-fns';
 
 /**
  * This file aims to fix some API weaknesses
@@ -17,11 +17,6 @@ const removeTimezonePart = (date) => {
  * Transform an hydra id (eg: /structures/42) in a raw id (eg: 42)
  */
 const rawIdExtractor = (resource) => (hydraId) => hydraId.replace(`/${resource}/`, '');
-
-/**
- * Transform raw id (eg: 42) in an hydra id (eg: /structures/42)
- */
-const hydraIdBuilder = (resource) => (rawId) => `${resource}/${rawId}`;
 
 /**
  * The "id" field contains a string of this type "/api/voluntary/1" because of hydra mapper
@@ -138,13 +133,35 @@ const fixManagedStructureData = (params) => ({
  * But it doesn't allows us to send it back as string
  * So we must format it to a float
  */
-const fixSolidaryData = (params) => ({
-  ...params,
-  data: {
-    ...params.data,
-    progression: params.data.progression ? parseFloat(params.data.progression) : null,
-  },
-});
+const fixSolidaryData = (params) => {
+  const newParams = { ...params };
+
+  // The API is not able to handle UTC date for the moment
+  // So we need to strip the timezone part and submit date "as it"
+  // To resume, we remove the UTC part and send it just like it's UTC+0
+  [
+    'outwardDatetime',
+    'outwardDeadlineDatetime',
+    'returnDatetime',
+    'returnDeadlineDatetime',
+  ].forEach((attr) => {
+    if (
+      newParams.data[attr] &&
+      typeof newParams.data[attr] !== 'undefined' &&
+      isValid(new Date(newParams.data[attr]))
+    ) {
+      newParams.data[attr] = removeTimezonePart(newParams.data[attr]);
+    }
+  });
+
+  return {
+    ...newParams,
+    data: {
+      ...newParams.data,
+      progression: newParams.data.progression ? parseFloat(newParams.data.progression) : null,
+    },
+  };
+};
 
 /**
  * The backend is not able to handle deep fields like diaries (and we don't need it)
