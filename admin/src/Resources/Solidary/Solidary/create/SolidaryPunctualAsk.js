@@ -14,8 +14,10 @@ import {
 
 import SolidaryQuestion from './SolidaryQuestion';
 import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
+import { format } from 'date-fns';
+import { toUTC } from '../../../../utils/date';
 
-const fromDateChoices = [
+export const punctualFromDateChoices = [
   {
     id: 0,
     label: 'A une date fixe',
@@ -43,7 +45,7 @@ const fromDateChoices = [
   },
 ];
 
-const fromTimeChoices = [
+export const punctualFromTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
@@ -71,7 +73,7 @@ const fromTimeChoices = [
   },
 ];
 
-const toTimeChoices = [
+export const punctualToTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
@@ -96,51 +98,31 @@ const toTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
-const SolidaryPunctualAsk = () => {
+const SolidaryPunctualAsk = ({ includeNeeds, summary = null }) => {
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
-  const {
-    input: { value: outwardDeadlineDatetime },
-  } = useField('outwardDeadlineDatetime');
-  const {
-    input: { value: returnDatetime },
-  } = useField('returnDatetime');
-  const {
-    input: { value: marginDuration },
-  } = useField('marginDuration');
 
   return (
     <Box display="flex">
       <Box flex={3} mr="1em">
         <SolidaryQuestion question="A quelle date souhaitez-vous partir ?">
-          <DateTimeSelector type="date" choices={fromDateChoices} initialChoice={0} />
+          <DateTimeSelector type="date" choices={punctualFromDateChoices} initialChoice={0} />
         </SolidaryQuestion>
         <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
-          <DateTimeSelector type="time" choices={fromTimeChoices} initialChoice={0} />
+          <DateTimeSelector type="time" choices={punctualFromTimeChoices} initialChoice={0} />
         </SolidaryQuestion>
         <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
           <DateTimeSelector
             type="time"
-            choices={toTimeChoices}
+            choices={punctualToTimeChoices}
             initialChoice={4}
             dependencies={[outwardDatetime]}
           />
         </SolidaryQuestion>
-        <SolidaryNeedsQuestion label="Autres informations" />
+        {includeNeeds && <SolidaryNeedsQuestion label="Autres informations" />}
       </Box>
-      <Box flex={1}>
-        <SolidaryQuestion question="Récapitulatif">
-          {[
-            outwardDatetime && <p>{`Départ : ${new Date(outwardDatetime).toLocaleString()} `}</p>,
-            outwardDeadlineDatetime && (
-              <p>{`Départ limite : ${new Date(outwardDeadlineDatetime).toLocaleString()} `}</p>
-            ),
-            returnDatetime && <p>{`Retour : ${new Date(returnDatetime).toLocaleString()} `}</p>,
-            returnDatetime && <p>{`Marge : ${Math.round(marginDuration / 3600)} heures`}</p>,
-          ].filter((x) => x)}
-        </SolidaryQuestion>
-      </Box>
+      {summary && <Box flex={1}>{summary}</Box>}
     </Box>
   );
 };
