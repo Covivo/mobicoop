@@ -35,7 +35,9 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
+use App\User\Service\BlockManager;
 use DateTime;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Result manager service.
@@ -50,6 +52,8 @@ class ResultManager
     private $matchingRepository;
     private $askRepository;
     private $params;
+    private $security;
+    private $blockManager;
 
     /**
      * Constructor.
@@ -59,12 +63,20 @@ class ResultManager
      * @param MatchingRepository $matchingRepository
      * @param AskRepository $askRepository
      */
-    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository, AskRepository $askRepository)
-    {
+    public function __construct(
+        FormatDataManager $formatDataManager,
+        ProposalMatcher $proposalMatcher,
+        MatchingRepository $matchingRepository,
+        AskRepository $askRepository,
+        Security $security,
+        BlockManager $blockManager
+    ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->matchingRepository = $matchingRepository;
         $this->askRepository = $askRepository;
+        $this->security = $security;
+        $this->blockManager = $blockManager;
     }
 
     // set the params
@@ -1698,6 +1710,20 @@ class ResultManager
                     return $return;
                 });
             }
+        }
+
+        // We exclude the results where the current user (if he is logged) and the carpooler are involved in a block
+        $user1 = $this->security->getUser();
+        if ($user1 instanceof User) {
+            $resultsWithoutBlock = [];
+            foreach ($results as $result) {
+                $user2 = $result->getCarpooler();
+                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                if (is_null($blocks) || (is_array($blocks) && count($blocks)==0)) {
+                    $resultsWithoutBlock[] = $result;
+                }
+            }
+            return $resultsWithoutBlock;
         }
 
         return $results;
