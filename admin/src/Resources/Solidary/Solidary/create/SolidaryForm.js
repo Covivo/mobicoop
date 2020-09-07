@@ -40,6 +40,7 @@ import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
 import SaveSolidaryAsk from './SaveSolidaryAsk';
 import { addressRenderer, usernameRenderer } from '../../../../utils/renderers';
+import { SolidaryPunctualAskSummary } from './SolidaryPunctualAskSummary';
 
 const useStyles = makeStyles({
   layout: {
@@ -134,6 +135,7 @@ const SolidarySubjectsQuestion = () => {
           label=""
           choices={subjects.map((s) => ({ id: s.id, name: s.label }))}
           validate={[required()]}
+          fullWidth
         />
       ) : (
         <LinearProgress />
@@ -302,7 +304,7 @@ const SolidaryFormWizard = (formProps) => {
           {values && values.frequency === 2 /* 2 = REGULAR */ ? (
             <SolidaryRegularAsk form={formProps.form} />
           ) : (
-            <SolidaryPunctualAsk form={formProps.form} />
+            <SolidaryPunctualAsk form={formProps.form} summary={<SolidaryPunctualAskSummary />} />
           )}
         </Box>
         {activeStep === 4 && hasErrors ? (

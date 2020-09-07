@@ -37,7 +37,7 @@ const SolidaryShowDetail = ({ record }) => {
         </Grid>
         <div style={{ height: 500, marginTop: 30, overflowY: 'scroll' }}>
           <List>
-            {asksList.map((ask) => (
+            {(asksList || []).map((ask) => (
               <SolidaryAskRow solidary={record} ask={ask} />
             ))}
           </List>
