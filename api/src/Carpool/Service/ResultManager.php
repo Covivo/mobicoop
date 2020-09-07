@@ -453,8 +453,30 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
-            $results[$matchingProposalId] = $result;
+
+            // If these matchings is between two Users involved in a block, we skip it
+            $blockedRequest = $blockedOffer = false;
+            if (isset($matching['request'])) {
+                $user1 = $matching['request']->getProposalOffer()->getUser();
+                $user2 = $matching['request']->getProposalRequest()->getUser();
+                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                if (is_array($blocks) && count($blocks)>0) {
+                    $blockedRequest = true;
+                }
+            }
+            if (isset($matching['offer'])) {
+                $user1 = $matching['offer']->getProposalOffer()->getUser();
+                $user2 = $matching['offer']->getProposalRequest()->getUser();
+                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                if (is_array($blocks) && count($blocks)>0) {
+                    $blockedOffer = true;
+                }
+            }
+
+            if (!$blockedRequest && !$blockedOffer) {
+                $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+                $results[$matchingProposalId] = $result;
+            }
         }
         return $results;
     }
