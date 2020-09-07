@@ -441,8 +441,72 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
-            $results[$matchingProposalId] = $result;
+            
+            // Check if the matching's date is passed
+            // Only in case of Punctual search on Regular results
+            // Only in case of the search Date is for today (if it's tommorow, it's never passed... obiously we don't care of the time)
+            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            $passedTime = false;
+            if (isset($matching['request'])
+                && $matching['request']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL
+                && $matching['request']->getProposalRequest()->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR
+            ) {
+                // Get the search time
+                $searchDateTime = DateTime::createFromFormat("U", $matching['request']->getCriteria()->getFromDate()->format('U'));
+                // Correct the timezone
+                $searchDateTime = $searchDateTime->setTimezone(new \DateTimeZone('Europe/Paris'));
+                if ($searchDateTime->format("d/m/Y") == $now->format("d/m/Y")) {
+                    // Get the time of the good day of the week
+                    switch ($searchDateTime->format('D')) {
+                        case 'Mon':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getMonTime();break;
+                        case 'Tue':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getTueTime();break;
+                        case 'Wed':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getWedTime();break;
+                        case 'Thu':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getThuTime();break;
+                        case 'Fri':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getFriTime();break;
+                        case 'Sat':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getSatTime();break;
+                        case 'Sun':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getSunTime();break;
+                    }
+                    // Update the matching date with the correct time
+                    $matchingDate = clone $matching['request']->getCriteria()->getFromDate();
+                    $matchingDate = $matchingDate->setTime($resultTime->format('H'), $resultTime->format('i'));
+                    if ($matchingDate < $searchDateTime) {
+                        $passedTime = true;
+                    }
+                }
+            }
+            
+            if (isset($matching['offer'])
+                && $matching['offer']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL
+                && $matching['offer']->getProposalOffer()->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR
+            ) {
+                // Get the search time
+                $searchDateTime = DateTime::createFromFormat("U", $matching['offer']->getCriteria()->getFromDate()->format('U'));
+                // Correct the timezone
+                $searchDateTime = $searchDateTime->setTimezone(new \DateTimeZone('Europe/Paris'));
+                if ($searchDateTime->format("d/m/Y") == $now->format("d/m/Y")) {
+                    // Get the time of the good day of the week
+                    switch ($searchDateTime->format('D')) {
+                        case 'Mon':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();break;
+                        case 'Tue':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();break;
+                        case 'Wed':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();break;
+                        case 'Thu':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();break;
+                        case 'Fri':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();break;
+                        case 'Sat':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();break;
+                        case 'Sun':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();break;
+                    }
+                    // Update the matching date with the correct time
+                    $matchingDate = clone $matching['offer']->getCriteria()->getFromDate();
+                    $matchingDate = $matchingDate->setTime($resultTime->format('H'), $resultTime->format('i'));
+                    if ($matchingDate < $searchDateTime) {
+                        $passedTime = true;
+                    }
+                }
+            }
+            
+            if (!$passedTime) {
+                $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+                $results[$matchingProposalId] = $result;
+            }
         }
         return $results;
     }
