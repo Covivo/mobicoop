@@ -1061,4 +1061,17 @@ class UserController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Block or Unblock a User
+     * AJAX
+     */
+    public function blockUser(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->userManager->blockUser($data['blockedUserId']));
+        }
+        return new JsonResponse();
+    }
 }
