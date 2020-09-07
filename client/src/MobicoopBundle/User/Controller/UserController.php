@@ -595,6 +595,12 @@ class UserController extends AbstractController
     public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
+
+        // # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+
         $this->denyAccessUnlessGranted('messages', $user);
         $data = $request->request;
 
