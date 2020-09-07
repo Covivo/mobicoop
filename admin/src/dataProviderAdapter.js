@@ -1,11 +1,17 @@
 import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import { fetchJson } from './fetchJson';
+import { formatISO, formatRFC3339, isValid, parseISO } from 'date-fns';
 
 /**
  * This file aims to fix some API weaknesses
  * It therefore acts on a temporary basis until the API is fully able to handle the requests of the admin
  */
+
+const removeTimezonePart = (date) => {
+  const [str] = formatISO(new Date(date)).split('+');
+  return `${str}+00:00`;
+};
 
 /**
  * Transform an hydra id (eg: /structures/42) in a raw id (eg: 42)
@@ -323,6 +329,26 @@ export const dataProviderAdapter = (originalProvider) => ({
         id: k,
         value: newParams.data.proofs[k],
       }));
+    }
+
+    // The API is not able to handle UTC date for the moment
+    // So we need to strip the timezone part and submit date "as it"
+    // To resume, we remove the UTC part and send it just like it's UTC+0
+    if (resource === 'solidaries') {
+      [
+        'outwardDatetime',
+        'outwardDeadlineDatetime',
+        'returnDatetime',
+        'returnDeadlineDatetime',
+      ].forEach((attr) => {
+        if (
+          newParams.data[attr] &&
+          typeof newParams.data[attr] !== 'undefined' &&
+          isValid(new Date(newParams.data[attr]))
+        ) {
+          newParams.data[attr] = removeTimezonePart(newParams.data[attr]);
+        }
+      });
     }
 
     return originalProvider.create(resource, newParams);
