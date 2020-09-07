@@ -79,7 +79,13 @@ const setDateFromString = (originDate, stringDate) => {
   }
   return alteredDate;
 };
-const DateTimeSelector = ({ choices, initialChoice, type = 'date', dependencies }) => {
+const DateTimeSelector = ({
+  choices,
+  initialChoice,
+  initialValue,
+  dependencies,
+  type = 'date',
+}) => {
   const classes = useStyles();
   const [choice, setChoice] = useState(choices[initialChoice]);
   const [selectedDateTime, setSelectedDateTime] = useState(null);
@@ -153,6 +159,7 @@ const DateTimeSelector = ({ choices, initialChoice, type = 'date', dependencies 
             InputLabelProps={{ shrink: true }}
             onChange={(e) => setSelectedDateTime(e.target.value)}
             className={classes.dateControlWitdh}
+            defaultValue={initialValue}
           />
         </div>
       </Box>
