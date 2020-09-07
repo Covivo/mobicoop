@@ -259,5 +259,24 @@ class ActionManager
             $solidaryAnimation->getSolidarySolution(),
             $solidaryAnimation->getProgression()
         );
+
+        // if the animation also implicate a transporter/carpooler we add a diary entry for that transporter/carpooler
+        if ($solidaryAnimation->getSolidarySolution()) {
+            $user = null;
+            if ($solidaryAnimation->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()) {
+                $user = $solidaryAnimation->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+            } else {
+                $user =  $solidaryAnimation->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+            }
+            $this->treatDiary(
+                $action,
+                $user,
+                $solidaryAnimation->getAuthor(),
+                $solidaryAnimation->getComment(),
+                $solidaryAnimation->getSolidary(),
+                null,
+                $solidaryAnimation->getProgression()
+            );
+        }
     }
 }
