@@ -456,23 +456,24 @@ class ResultManager
 
             // If these matchings is between two Users involved in a block, we skip it
             $blockedRequest = $blockedOffer = false;
-            if (isset($matching['request'])) {
-                $user1 = $matching['request']->getProposalOffer()->getUser();
-                $user2 = $matching['request']->getProposalRequest()->getUser();
-                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
-                if (is_array($blocks) && count($blocks)>0) {
-                    $blockedRequest = true;
+            if ($this->security->getUser() instanceof User) {
+                if (isset($matching['request'])) {
+                    $user1 = $matching['request']->getProposalOffer()->getUser();
+                    $user2 = $matching['request']->getProposalRequest()->getUser();
+                    $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                    if (is_array($blocks) && count($blocks)>0) {
+                        $blockedRequest = true;
+                    }
+                }
+                if (isset($matching['offer'])) {
+                    $user1 = $matching['offer']->getProposalOffer()->getUser();
+                    $user2 = $matching['offer']->getProposalRequest()->getUser();
+                    $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                    if (is_array($blocks) && count($blocks)>0) {
+                        $blockedOffer = true;
+                    }
                 }
             }
-            if (isset($matching['offer'])) {
-                $user1 = $matching['offer']->getProposalOffer()->getUser();
-                $user2 = $matching['offer']->getProposalRequest()->getUser();
-                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
-                if (is_array($blocks) && count($blocks)>0) {
-                    $blockedOffer = true;
-                }
-            }
-
             if (!$blockedRequest && !$blockedOffer) {
                 $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
                 $results[$matchingProposalId] = $result;
@@ -1735,18 +1736,19 @@ class ResultManager
         }
 
         // We exclude the results where the current user (if he is logged) and the carpooler are involved in a block
-        $user1 = $this->security->getUser();
-        if ($user1 instanceof User) {
-            $resultsWithoutBlock = [];
-            foreach ($results as $result) {
-                $user2 = $result->getCarpooler();
-                $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
-                if (is_null($blocks) || (is_array($blocks) && count($blocks)==0)) {
-                    $resultsWithoutBlock[] = $result;
-                }
-            }
-            return $resultsWithoutBlock;
-        }
+        // Useless ?
+        // $user1 = $this->security->getUser();
+        // if ($user1 instanceof User) {
+        //     $resultsWithoutBlock = [];
+        //     foreach ($results as $result) {
+        //         $user2 = $result->getCarpooler();
+        //         $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+        //         if (is_null($blocks) || (is_array($blocks) && count($blocks)==0)) {
+        //             $resultsWithoutBlock[] = $result;
+        //         }
+        //     }
+        //     return $resultsWithoutBlock;
+        // }
 
         return $results;
     }
