@@ -46,19 +46,22 @@ use App\User\Entity\User;
  *          "post"={
  *              "denormalization_context"={"groups"={"writeBlock"}},
  *              "normalization_context"={"groups"={"readBlock"}},
- *              "read"="false"
+ *              "read"="false",
+ *              "security_post_denormalize"="is_granted('block_create',object)"
  *          },
  *          "blocked"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"readBlock"}},
  *              "path"="/blocked",
- *              "read"="false"
+ *              "read"="false",
+ *              "security"="is_granted('block_blocked',object)"
  *          },
  *          "blockedBy"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"readBlock"}},
  *              "path"="/blockedBy",
- *              "read"="false"
+ *              "read"="false",
+ *              "security"="is_granted('block_blockedby',object)"
  *          },
  *      },
  *      itemOperations={
