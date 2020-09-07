@@ -653,10 +653,10 @@ class UserManager
             // We check if the user and it's carpooler are involved in a block
             $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+            $currentMessage['blocked'] = false;
             if (is_array($blocks) && count($blocks)>0) {
                 $currentMessage['blocked'] = true;
             }
-
             $messages[] = $currentMessage;
         }
         // Sort with the last message received first
@@ -737,6 +737,7 @@ class UserManager
                 // We check if the user and it's carpooler are involved in a block
                 $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
                 $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+                $currentThread['blocked'] = false;
                 if (is_array($blocks) && count($blocks)>0) {
                     $currentThread['blocked'] = true;
                 }
