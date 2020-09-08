@@ -282,7 +282,16 @@ class AdManager
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             // if the time is not set we use the current time for an ad post, and null for a search
-            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
+            // $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
+            
+            if ($ad->getOutwardTime()) {
+                $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                $outwardProposal->setUseTime(true);
+            } else {
+                $outwardCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+                $outwardProposal->setUseTime(false);
+            }
+            
             $outwardCriteria->setMarginDuration($marginDuration);
         }
 
@@ -377,7 +386,16 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
-                $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : (!$ad->isSearch() ? $outwardCriteria->getFromTime() : null));
+                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
+                
+                if ($ad->getReturnTime()) {
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnProposal->setUseTime(true);
+                } else {
+                    $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+                    $returnProposal->setUseTime(false);
+                }
+                
                 $returnCriteria->setMarginDuration($marginDuration);
             }
 
