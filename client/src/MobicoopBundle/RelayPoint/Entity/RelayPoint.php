@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 
 /**
  * A relay point.
@@ -180,11 +181,11 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
     private $structure;
 
     /**
-     * @var ArrayCollection|null The relay point types.
+     * @var RelayPointType|null The relay point types.
      *
      * @Groups({"post","put"})
      */
-    private $relayPointTypes;
+    private $relayPointType;
 
     /**
      * @var ArrayCollection|null The images of the relay point.
@@ -213,7 +214,6 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
             $this->setId($id);
             $this->setIri("/relay_points/".$id);
         }
-        $this->relayPointTypes = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
     
@@ -416,25 +416,14 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getRelayPointTypes()
+    public function getRelayPointType(): ?RelayPointType
     {
-        return $this->relayPointTypes->getValues();
+        return $this->relayPointType;
     }
     
-    public function addRelayPointType(RelayPointType $relayPointType): self
+    public function setRelayPointType(?RelayPointType $relayPointType): self
     {
-        if (!$this->relayPointTypes->contains($relayPointType)) {
-            $this->relayPointTypes[] = $relayPointType;
-        }
-        
-        return $this;
-    }
-    
-    public function removeRelayPointType(RelayPointType $relayPointType): self
-    {
-        if ($this->relayPointTypes->contains($relayPointType)) {
-            $this->relayPointTypes->removeElement($relayPointType);
-        }
+        $this->relayPointType = $relayPointType;
         
         return $this;
     }
@@ -531,7 +520,7 @@ class RelayPoint implements ResourceInterface, \JsonSerializable
             'permalink'         => $this->getPermalink(),
             'images'            => $this->getImages(),
             'address'           => $this->getAddress(),
-            'relayPointTypes'   => $this->getRelayPointTypes(),
+            'relayPointType'   => $this->getRelayPointType(),
             'images'            => $this->getImages(),
         ];
     }
