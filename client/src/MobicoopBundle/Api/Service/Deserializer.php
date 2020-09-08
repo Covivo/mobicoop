@@ -780,11 +780,10 @@ class Deserializer
         // if (isset($data["structure"])) {
         //     $relayPoint->setStructure($this->deserializeStructure($data["structure"]));
         // }
-        if (isset($data["relayPointTypes"])) {
-            foreach ($data["relayPointTypes"] as $relayPointType) {
-                $relayPoint->addRelayPointType($this->deserializeRelayPointType($relayPointType));
-            }
+        if (isset($data["relayPointType"])) {
+            $relayPoint->setRelayPointType($this->deserializeRelayPointType($data['relayPointType']));
         }
+
         return $relayPoint;
     }
 
