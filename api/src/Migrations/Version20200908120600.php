@@ -22,7 +22,7 @@ final class Version20200908120600 extends AbstractMigration
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (23, "CARPOOLING_AREAS", 1)');
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (24, "PDM", 1)');
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (25, "TALK_ABOUT_US", 1)');
-        $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (26, "INDEMNITIES", 1)');
+        $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (26, "FEES", 1)');
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (27, "MEDIAS", 1)');
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (28, "USEFUL_LINKS", 1)');
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (29, "MOBILE_APP", 1)');

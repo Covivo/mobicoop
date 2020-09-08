@@ -760,84 +760,84 @@ Covid19:
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovid19
 
 # display PrivacyPolicy page
-privacyPolicy:
+PrivacyPolicy:
     path:
         fr: /politique-de-confidentialite
         en: /privacy-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
 # display Convention page
-privacyPolicy:
+Covention:
     path:
         fr: /charte
         en: /covention
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovention
     
 # display HowItWorks page
-privacyPolicy:
+HowItworks:
     path:
         fr: /comment-ça-marche
         en: /how-it-works
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHowItWorks
     
 # display carpool page
-privacyPolicy:
+Carpool:
     path:
         fr: /demarche-covoiturage
         en: /carpool
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpool
 
 # display Carpooling page
-privacyPolicy:
+Carpooling:
     path:
         fr: /covoiturer
         en: /carpooling
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpooling
 
 # display CarpoolingAreas page
-privacyPolicy:
+CarpoolingAreas:
     path:
         fr: /aires-de-covoiturage
         en: /carpooling-areas
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpoolingAreas
 
 # display PDM page
-privacyPolicy:
+Pdm:
     path:
         fr: /plan-de-mobilite
         en: /PDM
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPDM
 
 # display talkAboutUs page
-privacyPolicy:
+TalkAboutUs:
     path:
         fr: /parlez-de-nous
         en: /talk-about-us
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showTalkAboutUs
 
 # display fees page
-privacyPolicy:
+Fees:
     path:
         fr: /frais-du-covoiturage
         en: /fees
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFees
 
 # display medias page
-privacyPolicy:
+Medias:
     path:
         fr: /salle-de-presse
         en: /medias
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMedias
 
 # display usefulLinks page
-privacyPolicy:
+UsefulLinks:
     path:
         fr: /liens-utiles
         en: /useful-links
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showUsefulLinks
 
 # display MobileApp page
-privacyPolicy:
+MobileApp:
     path:
         fr: /sur-mobile-et-tablette
         en: /mobile-app
@@ -850,9 +850,6 @@ LastExternalArticles:
         fr: /articles/derniers/externes
         en: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
-
-
-
 
 
 ####################
