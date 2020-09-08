@@ -21,6 +21,7 @@ import {
 } from 'react-admin';
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
+import CurrentUserInput from '../../User/Input/CurrentUserInput';
 
 const isLatitude = (lat) => isFinite(lat) && Math.abs(lat) <= 90;
 const isLongitude = (lng) => isFinite(lng) && Math.abs(lng) <= 180;
@@ -30,8 +31,6 @@ const RelayPointCreate = (props) => {
   const [errors, setErrors] = useState();
   const translate = useTranslate();
 
-  const userOptionRenderer = (choice) => `${choice.givenName} ${choice.familyName}`;
-  const userId = `/users/${localStorage.getItem('id')}`;
   const statusChoices = [
     { id: 0, name: 'En attente' },
     { id: 1, name: 'Actif' },
@@ -91,9 +90,7 @@ const RelayPointCreate = (props) => {
               </div>
             }
           />
-          <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
-            <SelectInput optionText={userOptionRenderer} />
-          </ReferenceInput>
+          <CurrentUserInput source="user" label="Créateur" />
           <TextInput source="name" label="Nom" validate={required()} />
           <GeocompleteInput source="address" label="Adresse" validate={required()} />
           <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
