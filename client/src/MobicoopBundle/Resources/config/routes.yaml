@@ -776,7 +776,7 @@ Covention:
 # display HowItWorks page
 HowItworks:
     path:
-        fr: /comment-ça-marche
+        fr: /comment-ca-marche
         en: /how-it-works
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHowItWorks
     
