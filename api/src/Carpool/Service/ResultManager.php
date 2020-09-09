@@ -441,72 +441,8 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            
-            // Check if the matching's date is passed
-            // Only in case of Punctual search on Regular results
-            // Only in case of the search Date is for today (if it's tommorow, it's never passed... obiously we don't care of the time)
-            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
-            $passedTime = false;
-            if (isset($matching['request'])
-                && $matching['request']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL
-                && $matching['request']->getProposalRequest()->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR
-            ) {
-                // Get the search time
-                $searchDateTime = DateTime::createFromFormat("U", $matching['request']->getCriteria()->getFromDate()->format('U'));
-                // Correct the timezone
-                $searchDateTime = $searchDateTime->setTimezone(new \DateTimeZone('Europe/Paris'));
-                if ($searchDateTime->format("d/m/Y") == $now->format("d/m/Y")) {
-                    // Get the time of the good day of the week
-                    switch ($searchDateTime->format('D')) {
-                        case 'Mon':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getMonTime();break;
-                        case 'Tue':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getTueTime();break;
-                        case 'Wed':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getWedTime();break;
-                        case 'Thu':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getThuTime();break;
-                        case 'Fri':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getFriTime();break;
-                        case 'Sat':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getSatTime();break;
-                        case 'Sun':$resultTime = $matching['request']->getProposalRequest()->getCriteria()->getSunTime();break;
-                    }
-                    // Update the matching date with the correct time
-                    $matchingDate = clone $matching['request']->getCriteria()->getFromDate();
-                    $matchingDate = $matchingDate->setTime($resultTime->format('H'), $resultTime->format('i'));
-                    if ($matchingDate < $searchDateTime) {
-                        $passedTime = true;
-                    }
-                }
-            }
-            
-            if (isset($matching['offer'])
-                && $matching['offer']->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL
-                && $matching['offer']->getProposalOffer()->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR
-            ) {
-                // Get the search time
-                $searchDateTime = DateTime::createFromFormat("U", $matching['offer']->getCriteria()->getFromDate()->format('U'));
-                // Correct the timezone
-                $searchDateTime = $searchDateTime->setTimezone(new \DateTimeZone('Europe/Paris'));
-                if ($searchDateTime->format("d/m/Y") == $now->format("d/m/Y")) {
-                    // Get the time of the good day of the week
-                    switch ($searchDateTime->format('D')) {
-                        case 'Mon':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();break;
-                        case 'Tue':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();break;
-                        case 'Wed':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();break;
-                        case 'Thu':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();break;
-                        case 'Fri':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();break;
-                        case 'Sat':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();break;
-                        case 'Sun':$resultTime = $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();break;
-                    }
-                    // Update the matching date with the correct time
-                    $matchingDate = clone $matching['offer']->getCriteria()->getFromDate();
-                    $matchingDate = $matchingDate->setTime($resultTime->format('H'), $resultTime->format('i'));
-                    if ($matchingDate < $searchDateTime) {
-                        $passedTime = true;
-                    }
-                }
-            }
-            
-            if (!$passedTime) {
-                $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
-                $results[$matchingProposalId] = $result;
-            }
+            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+            $results[$matchingProposalId] = $result;
         }
         return $results;
     }
@@ -591,16 +527,16 @@ class ResultManager
                 if ($matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
                 } else {
-                    $item->setDate($proposal->getCriteria()->getFromDate());
+                    $regularDayInfos = $this->getMatchingRegularDayAsOffer($matching['request'], $item);
+                    $item = $regularDayInfos['item'];
+                    $fromTime = $regularDayInfos['time'];
                 }
+
                 // time
                 // the carpooler is passenger, the proposal owner is driver : we use his time if it's set
                 // if the proposal is dynamic, we take the updated time of the position linked with the proposal
                 if ($matching['request']->getProposalOffer()->isDynamic()) {
                     $item->setTime($matching['request']->getProposalOffer()->getPosition()->getUpdatedDate());
-                } elseif ($proposal->getCriteria()->getFromTime()) {
-                    $item->setTime($proposal->getCriteria()->getFromTime());
-                    $item->setMarginDuration($proposal->getCriteria()->getMarginDuration());
                 } else {
                     // the time is not set, it must be the matching results of a search (and not an ad)
                     // we have to calculate the starting time so that the driver will get the carpooler on the carpooler time
@@ -609,46 +545,8 @@ class ResultManager
                         // the carpooler proposal is punctual, we take the fromTime
                         $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFromTime();
                         $item->setMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMarginDuration());
-                    } else {
-                        // the carpooler proposal is regular, we have to take the search/ad day's time
-                        switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                            case 0: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSunTime();
-                                $item->setSunMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSunMarginDuration());
-                                break;
-                            }
-                            case 1: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getMonTime();
-                                $item->setMonMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMonMarginDuration());
-                                break;
-                            }
-                            case 2: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getTueTime();
-                                $item->setTueMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getTueMarginDuration());
-                                break;
-                            }
-                            case 3: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getWedTime();
-                                $item->setWedMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getWedMarginDuration());
-                                break;
-                            }
-                            case 4: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getThuTime();
-                                $item->setThuMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getThuMarginDuration());
-                                break;
-                            }
-                            case 5: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getFriTime();
-                                $item->setFriMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getFriMarginDuration());
-                                break;
-                            }
-                            case 6: {
-                                $fromTime = clone $matching['request']->getProposalRequest()->getCriteria()->getSatTime();
-                                $item->setSatMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getSatMarginDuration());
-                                break;
-                            }
-                        }
                     }
+
                     // we search the pickup duration
                     $pickupDuration = null;
                     if (!is_null($matching['request']->getPickUpDuration())) {
@@ -1178,12 +1076,15 @@ class ResultManager
                 // we have to calculate the date and time of the carpool
                 // date :
                 // - if the matching proposal is also punctual, it's the date of the matching proposal (as the date of the matching proposal could be the same or after the date of the search/ad)
-                // - if the matching proposal is regular, it's the date of the search/ad (as the matching proposal "matches", it means that the date is valid => the date is in the range of the regular matching proposal)
+                // - if the matching proposal is regular we search for the first valid carpool day
                 if ($matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $item->setDate($matching['offer']->getProposalOffer()->getCriteria()->getFromDate());
                 } else {
-                    $item->setDate($proposal->getCriteria()->getFromDate());
+                    $regularDayInfos = $this->getMatchingRegularDayAsRequest($matching['offer'], $item);
+                    $item = $regularDayInfos['item'];
+                    $fromTime = $regularDayInfos['time'];
                 }
+
                 // time
                 // the carpooler is driver, the proposal owner is passenger
                 // we have to calculate the starting time using the carpooler time
@@ -1197,46 +1098,8 @@ class ResultManager
                         $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFromTime();
                     }
                     $item->setMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMarginDuration());
-                } else {
-                    // the carpooler proposal is regular, we have to take the search/ad day's time
-                    switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                        case 0: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();
-                            $item->setSunMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSunMarginDuration());
-                            break;
-                        }
-                        case 1: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();
-                            $item->setMonMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getMonMarginDuration());
-                            break;
-                        }
-                        case 2: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();
-                            $item->setTueMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getTueMarginDuration());
-                            break;
-                        }
-                        case 3: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();
-                            $item->setWedMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getWedMarginDuration());
-                            break;
-                        }
-                        case 4: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();
-                            $item->setThuMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getThuMarginDuration());
-                            break;
-                        }
-                        case 5: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();
-                            $item->setFriMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getFriMarginDuration());
-                            break;
-                        }
-                        case 6: {
-                            $fromTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();
-                            $item->setSatMarginDuration($matching['offer']->getProposalOffer()->getCriteria()->getSatMarginDuration());
-                            break;
-                        }
-                    }
                 }
+
                 // we search the pickup duration
                 $pickupDuration = null;
                 if (!is_null($matching['offer']->getPickUpDuration())) {
@@ -1689,6 +1552,362 @@ class ResultManager
 
         return $result;
     }
+
+    
+    /**
+     * Get the first carpooled day in a regular from a request point of view
+     *
+     * @param integer $day          Day's number of the request
+     * @param Proposal $proposal    The Proposal that is matching
+     * @param integer $nbLoop       Current number of try (to avoid infinite loop)
+     * @return array|null
+     */
+    private function getFirstCarpooledRegularDay(Proposal $searchProposal, Proposal $matchingProposal, string $role='request', int $nbLoop = 0): ?array
+    {
+        $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
+        $day = $nbLoop+$pday;
+        if ($day>=7) {
+            $day=$day-7;
+        }
+        $rdate = new \DateTime();
+        $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
+        $rdate->modify('+' . $nbLoop . 'days');
+        $nbLoop++;
+        if ($nbLoop>=7) {
+            return null;
+        } // safeguard to avoid infinite loop
+
+        if ($role=="request") {
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+        } else {
+            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+        }
+
+        if (!is_array($result)) {
+            $result = $this->getFirstCarpooledRegularDay($searchProposal, $matchingProposal, $role, $nbLoop);
+        } else {
+            $result['date'] = $rdate;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Valid the carpool day between a regular and a part of a regular as Request
+     * TO : Use the pickup time instead of the driver's start time
+     *
+     * @param integer $day       Day's number
+     * @param Proposal $proposal The Proposal that is matching
+     * @param DateTime|null $time Time of the search if we want to check it
+     * @return array|null
+     */
+    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, \DateTime $time=null): ?array
+    {
+        switch ($day) {
+            case 0: {
+                if ($proposal->getCriteria()->isSunCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getSunMinTime() &&
+                        $time <= $proposal->getCriteria()->getSunMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    }
+                }
+            }
+            case 1: {
+                if ($proposal->getCriteria()->isMonCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getMonMinTime() &&
+                        $time <= $proposal->getCriteria()->getMonMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    }
+                }
+            }
+            case 2: {
+                if ($proposal->getCriteria()->isTueCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getTueMinTime() &&
+                        $time <= $proposal->getCriteria()->getTueMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    }
+                }
+            }
+            case 3: {
+                if ($proposal->getCriteria()->isWedCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getWedMinTime() &&
+                        $time <= $proposal->getCriteria()->getWedMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    }
+                }
+            }
+            case 4: {
+                if ($proposal->getCriteria()->isThuCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getThuMinTime() &&
+                        $time <= $proposal->getCriteria()->getThuMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    }
+                }
+            }
+            case 5: {
+                if ($proposal->getCriteria()->isFriCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getFriMinTime() &&
+                        $time <= $proposal->getCriteria()->getFriMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    }
+                }
+            }
+            case 6: {
+                if ($proposal->getCriteria()->isSatCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    } elseif (
+                        $time >= $proposal->getCriteria()->getSatMinTime() &&
+                        $time <= $proposal->getCriteria()->getSatMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Valid the carpool day between a regular and a part of a regular as Offer
+     * TO : Use the pickup time instead of the driver's start time
+     *
+     * @param integer $day       Day's number
+     * @param Proposal $proposal The Proposal that is matching
+     * @param DateTime|null $time Time of the search if we want to check it
+     * @return array|null
+     */
+    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, \DateTime $time=null): ?array
+    {
+        switch ($day) {
+            case 0: {
+                if ($proposal->getCriteria()->isSunCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getSunMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    }
+                }
+            }
+            case 1: {
+                if ($proposal->getCriteria()->isMonCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getMonMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    }
+                }
+            }
+            case 2: {
+                if ($proposal->getCriteria()->isTueCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getTueMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    }
+                }
+            }
+            case 3: {
+                if ($proposal->getCriteria()->isWedCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getWedMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    }
+                }
+            }
+            case 4: {
+                if ($proposal->getCriteria()->isThuCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getThuMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    }
+                }
+            }
+            case 5: {
+                if ($proposal->getCriteria()->isFriCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getFriMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    }
+                }
+            }
+            case 6: {
+                if ($proposal->getCriteria()->isSatCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getSatMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the right matching day of a regular as a Request
+     *
+     * @param Matching $matching    The matching
+     * @param ResultItem $item      The result item
+     * @return array|null
+     */
+    private function getMatchingRegularDayAsRequest(Matching $matching, ResultItem $item): ?array
+    {
+        $proposal = $matching->getProposalRequest();
+        $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalOffer(), 'request');
+        $item->setDate($result["date"]);
+        switch ($result["numday"]) {
+            case 0: {
+                $item->setSunMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
+                break;
+            }
+            case 1: {
+                $item->setMonMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
+                break;
+            }
+            case 2: {
+                $item->setTueMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
+                break;
+            }
+            case 3: {
+                $item->setWedMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
+                break;
+            }
+            case 4: {
+                $item->setThuMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
+                break;
+            }
+            case 5: {
+                $item->setFriMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
+                break;
+            }
+            case 6: {
+                $item->setSatMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+
+        
+        return [
+            "item" => $item,
+            "time" => $result["time"]
+        ];
+    }
+    
+
+    /**
+     * Get the right matching day of a regular as an Offer
+     *
+     * @param Matching $matching    The matching
+     * @param ResultItem $item      The result item
+     * @return array|null
+     */
+    private function getMatchingRegularDayAsOffer(Matching $matching, ResultItem $item): ?array
+    {
+        $proposal = $matching->getProposalOffer();
+        $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalRequest(), 'offer');
+        $item->setDate($result["date"]);
+        switch ($result["numday"]) {
+            case 0: {
+                $item->setSunMarginDuration($matching->getProposalRequest()->getCriteria()->getSunMarginDuration());
+                break;
+            }
+            case 1: {
+                $item->setMonMarginDuration($matching->getProposalRequest()->getCriteria()->getMonMarginDuration());
+                break;
+            }
+            case 2: {
+                $item->setTueMarginDuration($matching->getProposalRequest()->getCriteria()->getTueMarginDuration());
+                break;
+            }
+            case 3: {
+                $item->setWedMarginDuration($matching->getProposalRequest()->getCriteria()->getWedMarginDuration());
+                break;
+            }
+            case 4: {
+                $item->setThuMarginDuration($matching->getProposalRequest()->getCriteria()->getThuMarginDuration());
+                break;
+            }
+            case 5: {
+                $item->setFriMarginDuration($matching->getProposalRequest()->getCriteria()->getFriMarginDuration());
+                break;
+            }
+            case 6: {
+                $item->setSatMarginDuration($matching->getProposalRequest()->getCriteria()->getSatMarginDuration());
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+
+        
+        return [
+            "item" => $item,
+            "time" => $result["time"]
+        ];
+    }
+    
 
     /**
      * Order the results
