@@ -527,7 +527,7 @@ class ResultManager
                 if ($matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
                 } else {
-                    $regularDayInfos = $this->getMatchingRegularDayAsRequest($matching['request'], $item);
+                    $regularDayInfos = $this->getMatchingRegularDayAsOffer($matching['request'], $item);
                     $item = $regularDayInfos['item'];
                     $fromTime = $regularDayInfos['time'];
                 }
@@ -537,9 +537,6 @@ class ResultManager
                 // if the proposal is dynamic, we take the updated time of the position linked with the proposal
                 if ($matching['request']->getProposalOffer()->isDynamic()) {
                     $item->setTime($matching['request']->getProposalOffer()->getPosition()->getUpdatedDate());
-                } elseif ($proposal->getCriteria()->getFromTime()) {
-                    $item->setTime($proposal->getCriteria()->getFromTime());
-                    $item->setMarginDuration($proposal->getCriteria()->getMarginDuration());
                 } else {
                     // the time is not set, it must be the matching results of a search (and not an ad)
                     // we have to calculate the starting time so that the driver will get the carpooler on the carpooler time
@@ -1565,7 +1562,7 @@ class ResultManager
      * @param integer $nbLoop       Current number of try (to avoid infinite loop)
      * @return array|null
      */
-    private function getFirstCarpooledRegularDayAsRequest(Proposal $searchProposal, Proposal $matchingProposal, int $nbLoop = 0): ?array
+    private function getFirstCarpooledRegularDay(Proposal $searchProposal, Proposal $matchingProposal, string $role='request', int $nbLoop = 0): ?array
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
@@ -1580,9 +1577,14 @@ class ResultManager
             return null;
         } // safeguard to avoid infinite loop
 
-        $result = $this->getValidCarpool($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+        if ($role=="request") {
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+        } else {
+            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+        }
+
         if (!is_array($result)) {
-            $result = $this->getFirstCarpooledRegularDayAsRequest($searchProposal, $matchingProposal, $nbLoop);
+            $result = $this->getFirstCarpooledRegularDay($searchProposal, $matchingProposal, $role, $nbLoop);
         } else {
             $result['date'] = $rdate;
         }
@@ -1598,7 +1600,7 @@ class ResultManager
      * @param DateTime|null $time Time of the search if we want to check it
      * @return array|null
      */
-    private function getValidCarpool(int $day, Proposal $proposal, \DateTime $time=null): ?array
+    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, \DateTime $time=null): ?array
     {
         switch ($day) {
             case 0: {
@@ -1698,6 +1700,106 @@ class ResultManager
     }
 
     /**
+         * Undocumented function
+         *
+         * @param integer $day       Day's number
+         * @param Proposal $proposal The Proposal that is matching
+         * @param DateTime|null $time Time of the search if we want to check it
+         * @return array|null
+         */
+    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, \DateTime $time=null): ?array
+    {
+        switch ($day) {
+            case 0: {
+                if ($proposal->getCriteria()->isSunCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getSunMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    }
+                }
+            }
+            case 1: {
+                if ($proposal->getCriteria()->isMonCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getMonMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    }
+                }
+            }
+            case 2: {
+                if ($proposal->getCriteria()->isTueCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getTueMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    }
+                }
+            }
+            case 3: {
+                if ($proposal->getCriteria()->isWedCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getWedMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    }
+                }
+            }
+            case 4: {
+                if ($proposal->getCriteria()->isThuCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getThuMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    }
+                }
+            }
+            case 5: {
+                if ($proposal->getCriteria()->isFriCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getFriMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    }
+                }
+            }
+            case 6: {
+                if ($proposal->getCriteria()->isSatCheck()
+                ) {
+                    if (is_null($time)) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    } elseif (
+                        $time <= $proposal->getCriteria()->getSatMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Undocumented function
      *
      * @param Matching $matching
@@ -1707,7 +1809,7 @@ class ResultManager
     private function getMatchingRegularDayAsRequest(Matching $matching, ResultItem $item): ?array
     {
         $proposal = $matching->getProposalRequest();
-        $result = $this->getFirstCarpooledRegularDayAsRequest($proposal, $matching->getProposalOffer());
+        $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalOffer(), 'request');
         $item->setDate($result["date"]);
         switch ($result["numday"]) {
             case 0: {
@@ -1750,7 +1852,61 @@ class ResultManager
         ];
     }
     
+
+    /**
+     * Undocumented function
+     *
+     * @param Matching $matching
+     * @param ResultItem $item
+     * @return array|null
+     */
+    private function getMatchingRegularDayAsOffer(Matching $matching, ResultItem $item): ?array
+    {
+        $proposal = $matching->getProposalOffer();
+        $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalRequest(), 'offer');
+        $item->setDate($result["date"]);
+        switch ($result["numday"]) {
+            case 0: {
+                $item->setSunMarginDuration($matching->getProposalRequest()->getCriteria()->getSunMarginDuration());
+                break;
+            }
+            case 1: {
+                $item->setMonMarginDuration($matching->getProposalRequest()->getCriteria()->getMonMarginDuration());
+                break;
+            }
+            case 2: {
+                $item->setTueMarginDuration($matching->getProposalRequest()->getCriteria()->getTueMarginDuration());
+                break;
+            }
+            case 3: {
+                $item->setWedMarginDuration($matching->getProposalRequest()->getCriteria()->getWedMarginDuration());
+                break;
+            }
+            case 4: {
+                $item->setThuMarginDuration($matching->getProposalRequest()->getCriteria()->getThuMarginDuration());
+                break;
+            }
+            case 5: {
+                $item->setFriMarginDuration($matching->getProposalRequest()->getCriteria()->getFriMarginDuration());
+                break;
+            }
+            case 6: {
+                $item->setSatMarginDuration($matching->getProposalRequest()->getCriteria()->getSatMarginDuration());
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+
+        
+        return [
+            "item" => $item,
+            "time" => $result["time"]
+        ];
+    }
     
+
     /**
      * Order the results
      *
