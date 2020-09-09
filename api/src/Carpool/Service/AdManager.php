@@ -624,7 +624,16 @@ class AdManager
             $ad->setUserId($proposal->getUser()->getId());
         }
         $ad->setCreatedDate($proposal->getCreatedDate());
-        $aFilters = [];
+
+        // default order
+        $aFilters = [
+            'order'=>[
+                'criteria'=>'date',
+                'value'=>'ASC'
+            ]
+
+        ];
+
         if (!is_null($filters)) {
             $aFilters['filters']=$filters;
         }

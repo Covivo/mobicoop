@@ -1593,7 +1593,8 @@ class ResultManager
     }
 
     /**
-     * Undocumented function
+     * Valid the carpool day between a regular and a part of a regular as Request
+     * TO : Use the pickup time instead of the driver's start time
      *
      * @param integer $day       Day's number
      * @param Proposal $proposal The Proposal that is matching
@@ -1700,13 +1701,14 @@ class ResultManager
     }
 
     /**
-         * Undocumented function
-         *
-         * @param integer $day       Day's number
-         * @param Proposal $proposal The Proposal that is matching
-         * @param DateTime|null $time Time of the search if we want to check it
-         * @return array|null
-         */
+     * Valid the carpool day between a regular and a part of a regular as Offer
+     * TO : Use the pickup time instead of the driver's start time
+     *
+     * @param integer $day       Day's number
+     * @param Proposal $proposal The Proposal that is matching
+     * @param DateTime|null $time Time of the search if we want to check it
+     * @return array|null
+     */
     private function getValidCarpoolAsOffer(int $day, Proposal $proposal, \DateTime $time=null): ?array
     {
         switch ($day) {
@@ -1800,10 +1802,10 @@ class ResultManager
     }
 
     /**
-     * Undocumented function
+     * Get the right matching day of a regular as a Request
      *
-     * @param Matching $matching
-     * @param ResultItem $item
+     * @param Matching $matching    The matching
+     * @param ResultItem $item      The result item
      * @return array|null
      */
     private function getMatchingRegularDayAsRequest(Matching $matching, ResultItem $item): ?array
@@ -1854,10 +1856,10 @@ class ResultManager
     
 
     /**
-     * Undocumented function
+     * Get the right matching day of a regular as an Offer
      *
-     * @param Matching $matching
-     * @param ResultItem $item
+     * @param Matching $matching    The matching
+     * @param ResultItem $item      The result item
      * @return array|null
      */
     private function getMatchingRegularDayAsOffer(Matching $matching, ResultItem $item): ?array
