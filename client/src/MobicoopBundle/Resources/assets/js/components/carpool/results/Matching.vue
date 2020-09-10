@@ -53,7 +53,15 @@
               v-else
               cols="12"
             >
-              {{ $t('search') }}
+              <v-alert
+                text
+                color="success"
+              >
+                {{ $t('search') }}
+                <v-progress-linear
+                  indeterminate
+                />
+              </v-alert>
             </v-col>
             <v-col
               v-if="!loading && !loadingExternal && !newSearch"
@@ -72,6 +80,7 @@
           </v-row>
           <v-row v-if="displayNewSearch">
             <v-col
+              v-if="!loading"
               cols="12"
               class="text-left"
             >
