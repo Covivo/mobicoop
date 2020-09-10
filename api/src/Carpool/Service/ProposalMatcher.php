@@ -565,7 +565,7 @@ class ProposalMatcher
         
         // if we use times, we check if the pickup times match
         if (
-            (($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
+            (($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getUseTime()) ||
             ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && (
                 ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) ||
                 ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) ||
