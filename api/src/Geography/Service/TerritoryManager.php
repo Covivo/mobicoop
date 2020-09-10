@@ -261,90 +261,202 @@ class TerritoryManager
     public function updateAddressesAndDirections()
     {
         $conn = $this->entityManager->getConnection();
-        
-        // find all addresses not linked yet
-        $sql = "SELECT id FROM address a LEFT JOIN address_territory at ON a.id = at.address_id WHERE at.address_id IS NULL";
+
+        // ADDRESSES
+        $this->logger->info("CREATE TEMP disaddress | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $in = new \DateTime("UTC");
+        $sql = "CREATE TEMPORARY TABLE disaddress (
+            id int AUTO_INCREMENT NOT NULL,
+            lat decimal(10,6) NOT NULL,
+            lon decimal(10,6) NOT NULL,
+            geo POINT NOT NULL, 
+            SPATIAL INDEX(geo),
+            PRIMARY KEY(id));
+        ";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        $results = $stmt->fetchAll();
-        $address_ids = [];
-        foreach ($results as $result) {
-            $address_ids[] = $result['id'];
-        }
-        $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of addresses to treat : " . count($address_ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        // we will need an array of territory ids
-        $ids= [];
+        // in the following, we will assume addresses with same exact geo coordinates are equals, so they have the same territories...
+        $sql = "INSERT INTO disaddress (lat,lon,geo)
+            (SELECT DISTINCT a.latitude,a.longitude, a.geo_json 
+            FROM address a LEFT JOIN address_territory adt ON a.id = adt.address_id 
+            WHERE adt.address_id IS NULL AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL AND a.geo_json IS NOT NULL)
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
-        if (count($address_ids)>0) {
-            // create address territory link
-            // long process, we need to cut into batches
-            // we will iterate through territories as addresses are simple geometries, it is faster to use the territories as base for loops
-            $sql = "SELECT id FROM territory";
+        $out = new \DateTime("UTC");
+        $diff = $out->diff($in);
+        $secs = ((($diff->format("%a") * 24) + $diff->format("%H")) * 60 + $diff->format("%i")) * 60 + $diff->format("%s");
+        $this->logger->info("DURATION " . $secs . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $sql = "SELECT count(*) as cid from disaddress";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $result = $stmt->fetch();
+        $this->logger->info("NB address " . $result["cid"] . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $this->logger->info("CREATE TEMP adter | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $sql = "CREATE TEMPORARY TABLE adter (
+            aid int NOT NULL,
+            tid int NOT NULL,
+            lat decimal(10,6) NOT NULL,
+            lon decimal(10,6) NOT NULL
+        )";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $sqlt = "SELECT id from territory";
+        $stmtt = $conn->prepare($sqlt);
+        $stmtt->execute();
+        $resultst = $stmtt->fetchAll();
+        foreach ($resultst as $resultt) {
+            $this->logger->info("Treat territory " . $resultt["id"] . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $in = new \DateTime("UTC");
+            $sql = "DELETE FROM adter; INSERT INTO adter (aid,tid,lat,lon)
+            SELECT a.id, t.id, lat, lon
+            FROM disaddress a
+            JOIN territory t
+            WHERE t.id=" . $resultt['id'] . " and ST_INTERSECTS(a.geo, t.geo_json_detail)=1;
+            ";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            $out = new \DateTime("UTC");
+            $diff = $out->diff($in);
+            $secs = ((($diff->format("%a") * 24) + $diff->format("%H")) * 60 + $diff->format("%i")) * 60 + $diff->format("%s");
+            $this->logger->info("DURATION " . $secs . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            
+            $this->logger->info("Insert into address_territory | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $in = new \DateTime("UTC");
+            $sql = "SELECT SQL_NO_CACHE aid,tid,lat,lon
+            FROM adter";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $results = $stmt->fetchAll();
             foreach ($results as $result) {
-                $ids[] = $result['id'];
-            }
-            $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of territories to treat : " . count($ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-            // then we insert addresses for each territory
-            $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            foreach ($ids as $id) {
-                // $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating territory : $id for addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                // we use batches of addresses
-                $forBatch = $address_ids;
-                $continue = true;
-                $start = 0;
-                while ($continue) {
-                    $batch = array_slice($forBatch, $start, self::BATCH_ADDRESSES);
-                    if (count($batch)>0) {
-                        $sql = "INSERT INTO address_territory (address_id,territory_id)
-                            SELECT a.id, t.id
-                            FROM address a
-                            JOIN territory t
-                            WHERE ST_INTERSECTS(t.geo_json_detail,a.geo_json)=1
-                            AND t.id = $id AND a.id IN(" . implode(",", $batch) . ")
-                        ";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute();
-                        $start += self::BATCH_ADDRESSES;
-                    } else {
-                        $continue = false;
-                    }
-                }
+                $sqli = "INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, " . $result['tid'] . " from address WHERE latitude=" . $result['lat'] . " and longitude=" . $result['lon'];
+                $stmti = $conn->prepare($sqli);
+                $stmti->execute();
             }
         }
-        $this->logger->info("TerritoryManager : updateAddressesAndDirections : end treating addresses | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-        // find all directions not linked yet
-        $sql = "SELECT id FROM direction d LEFT JOIN direction_territory dt ON d.id = dt.direction_id WHERE dt.direction_id IS NULL";
+        
+        $sql = "DROP TABLE disaddress;DROP TABLE adter;";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        $results = $stmt->fetchAll();
-        $direction_ids = [];
-        foreach ($results as $result) {
-            $direction_ids[] = $result['id'];
-        }
-        $this->logger->info("TerritoryManager : updateAddressesAndDirections : number of directions to treat : " . count($direction_ids) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info("Insert into address_territory finished | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        if (count($direction_ids)>0) {
-            // then we insert
-            // $this->logger->info("TerritoryManager : updateAddressesAndDirections : start treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            foreach ($direction_ids as $id) {
-                $this->logger->info("TerritoryManager : updateAddressesAndDirections : treating direction : $id | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                $sql = "INSERT INTO direction_territory (direction_id,territory_id)
-                    SELECT d.id, t.id
-                    FROM direction d
-                    JOIN territory t
-                    WHERE ST_INTERSECTS(t.geo_json_detail,d.geo_json_detail)=1
-                    AND d.id = $id
-                ";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute();
+        // END ADDRESSES
+
+        // TERRITORIES
+        $this->logger->info("CREATE TEMP disterritory | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $in = new \DateTime("UTC");
+        $sql = "CREATE TEMPORARY TABLE disterritory (
+            id int AUTO_INCREMENT NOT NULL,
+            distance int not null,
+            duration int not null,
+            bbox_min_lon decimal(10,6) not null,
+            bbox_min_lat decimal(10,6) not null,
+            bbox_max_lon decimal(10,6) not null,
+            bbox_max_lat decimal(10,6) not null,
+            geo linestring not null,
+            SPATIAL INDEX(geo),
+            PRIMARY KEY(id))
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        // in the following, we will assume directions with same exact distance, duration and bbox are equals, so they have the same territories...
+        $sql = "INSERT INTO disterritory (distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat,geo)
+            (SELECT SQL_NO_CACHE distinct d.distance,d.duration,d.bbox_min_lon,d.bbox_min_lat,d.bbox_max_lon,d.bbox_max_lat,d.geo_json_simplified 
+            FROM direction d LEFT JOIN direction_territory dt ON d.id = dt.direction_id 
+            WHERE dt.direction_id IS NULL AND 
+            d.geo_json_simplified IS NOT NULL AND 
+            d.distance>0 AND 
+            d.duration>0 AND 
+            d.bbox_min_lon IS NOT NULL AND
+            d.bbox_min_lat IS NOT NULL AND
+            d.bbox_max_lon IS NOT NULL AND
+            d.bbox_max_lat IS NOT NULL
+        )";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $out = new \DateTime("UTC");
+        $diff = $out->diff($in);
+        $secs = ((($diff->format("%a") * 24) + $diff->format("%H")) * 60 + $diff->format("%i")) * 60 + $diff->format("%s");
+        $this->logger->info("DURATION " . $secs . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $sql = "SELECT count(*) as cid from disterritory";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $result = $stmt->fetch();
+        $this->logger->info("NB directions " . $result["cid"] . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $this->logger->info("CREATE TEMP dirter | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $sql = "CREATE TEMPORARY TABLE dirter (
+            did int NOT NULL,
+            tid int NOT NULL,
+            distance int not null,
+            duration int not null,
+            bbox_min_lon decimal(10,6) not null,
+            bbox_min_lat decimal(10,6) not null,
+            bbox_max_lon decimal(10,6) not null,
+            bbox_max_lat decimal(10,6) not null
+        )";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $sqlt = "SELECT id from territory";
+        $stmtt = $conn->prepare($sqlt);
+        $stmtt->execute();
+        $resultst = $stmtt->fetchAll();
+        foreach ($resultst as $resultt) {
+            $this->logger->info("Treat territory " . $resultt["id"] . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $in = new \DateTime("UTC");
+            $sql = "DELETE FROM dirter; INSERT INTO dirter (did,tid,distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat)
+            SELECT SQL_NO_CACHE d.id, t.id, d.distance, d.duration, d.bbox_min_lon, d.bbox_min_lat, d.bbox_max_lon, d.bbox_max_lat
+            FROM disterritory d
+            JOIN territory t
+            WHERE t.id=" . $resultt['id'] . " and ST_INTERSECTS(d.geo, t.geo_json_detail)=1;
+            ";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+
+            $out = new \DateTime("UTC");
+            $diff = $out->diff($in);
+            $secs = ((($diff->format("%a") * 24) + $diff->format("%H")) * 60 + $diff->format("%i")) * 60 + $diff->format("%s");
+            $this->logger->info("DURATION " . $secs . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            
+            $this->logger->info("Insert into direction_territory | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $in = new \DateTime("UTC");
+            $sql = "SELECT SQL_NO_CACHE did,tid,distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat
+            FROM dirter";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll();
+            foreach ($results as $result) {
+                $sqli = "
+                INSERT IGNORE INTO direction_territory (direction_id, territory_id) 
+                SELECT d.id, " . $result['tid'] . " from direction d
+                WHERE d.distance = " . $result['distance'] . " AND
+                d.duration = " . $result['duration'] . " AND
+                d.bbox_min_lon = " . $result['bbox_min_lon'] . " AND
+                d.bbox_min_lat = " . $result['bbox_min_lat'] . " AND
+                d.bbox_max_lon = " . $result['bbox_max_lon'] . " AND
+                d.bbox_max_lat = " . $result['bbox_max_lat'];
+                $stmti = $conn->prepare($sqli);
+                $stmti->execute();
             }
-            $this->logger->info("TerritoryManager : updateAddressesAndDirections : end treating directions | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
+
+        $sql = "DROP TABLE disterritory;DROP TABLE dirter;";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $this->logger->info("Insert into direction_territory finished | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // END TERRITORIES
     }
 }
