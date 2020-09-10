@@ -508,27 +508,31 @@ export default {
       this.$emit("updateStatusAskHistory",data);
     },
     block(){
-      this.loadingBlock = true;
-      let params = {
-        "blockedUserId":this.idRecipient
+      
+      if( (this.dataBlockerId==null) || (this.dataBlockerId == this.idUser)){
+        this.loadingBlock = true;
+        let params = {
+          "blockedUserId":this.idRecipient
+        }
+        axios.post(this.$t("blockUrl"), params)
+          .then(response => {
+            console.log(response.data);
+            if(this.dataBlockerId == null){
+              this.dataBlockerId = this.idUser;
+            }
+            else{
+              this.dataBlockerId = null;
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+          })
+          .finally(() => {
+            this.loadingBlock = false;
+          });      
       }
-      axios.post(this.$t("blockUrl"), params)
-        .then(response => {
-          console.log(response.data);
-          if(this.dataBlockerId == null){
-            this.dataBlockerId = this.idUser;
-          }
-          else{
-            this.dataBlockerId = null;
-          }
-        })
-        .catch(function (error) {
-          // console.log(error);
-        })
-        .finally(() => {
-          this.loadingBlock = false;
-        });      
     }
+
   }
 }
 </script>
