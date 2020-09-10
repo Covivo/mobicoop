@@ -516,7 +516,6 @@ export default {
         }
         axios.post(this.$t("blockUrl"), params)
           .then(response => {
-            console.log(response.data);
             if(this.dataBlockerId == null){
               this.dataBlockerId = this.idUser;
             }
