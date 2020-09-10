@@ -69,9 +69,9 @@ export default {
       type: Boolean,
       default: false
     },
-    blocked:{
-      type: Boolean,
-      default: false
+    blockerId:{
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -112,7 +112,7 @@ export default {
           idRecipient:this.idRecipient,
           avatar:this.avatar,
           name:this.name,
-          blocked:this.blocked
+          blockerId:this.blockerId
         }
       );
     }

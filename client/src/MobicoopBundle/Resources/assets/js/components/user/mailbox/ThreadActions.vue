@@ -10,7 +10,7 @@
         flat
       >
         <threads-actions-buttons
-          :can-update-ask="infosComplete.canUpdateAsk && !dataCarpoolerBlocked"
+          :can-update-ask="infosComplete.canUpdateAsk && dataBlockerId==null"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
@@ -40,7 +40,7 @@
 
       <div v-if="infosComplete.carpooler && !loading">
         <v-btn
-          v-if="!dataCarpoolerBlocked"
+          v-if="dataBlockerId==null"
           class="ma-2"
           rounded
           text
@@ -270,9 +270,9 @@ export default {
       type: String,
       default: null
     },
-    carpoolerBlocked: {
-      type: Boolean,
-      default: false
+    blockerId: {
+      type: Number,
+      default: null
     }
   },
   data(){
@@ -304,7 +304,7 @@ export default {
       chosenRole:null,
       hideClickIcon : false,
       loadingBlock: false,
-      dataCarpoolerBlocked: this.carpoolerBlocked
+      dataBlockerId: this.blockerId
     }
   },
   computed:{
@@ -330,8 +330,8 @@ export default {
     loadingBtn(){
       this.dataLoadingBtn = this.loadingBtn;
     },
-    carpoolerBlocked(){
-      this.dataCarpoolerBlocked = this.carpoolerBlocked;
+    blockerId(){
+      this.dataBlockerId = this.blockerId;
     }
   },
   created() {
@@ -508,22 +508,30 @@ export default {
       this.$emit("updateStatusAskHistory",data);
     },
     block(){
-      this.loadingBlock = true;
-      let params = {
-        "blockedUserId":this.idRecipient
+      
+      if( (this.dataBlockerId==null) || (this.dataBlockerId == this.idUser)){
+        this.loadingBlock = true;
+        let params = {
+          "blockedUserId":this.idRecipient
+        }
+        axios.post(this.$t("blockUrl"), params)
+          .then(response => {
+            if(this.dataBlockerId == null){
+              this.dataBlockerId = this.idUser;
+            }
+            else{
+              this.dataBlockerId = null;
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+          })
+          .finally(() => {
+            this.loadingBlock = false;
+          });      
       }
-      axios.post(this.$t("blockUrl"), params)
-        .then(response => {
-          // console.log(response.data);
-          this.dataCarpoolerBlocked = !this.dataCarpoolerBlocked;
-        })
-        .catch(function (error) {
-          // console.log(error);
-        })
-        .finally(() => {
-          this.loadingBlock = false;
-        });      
     }
+
   }
 }
 </script>

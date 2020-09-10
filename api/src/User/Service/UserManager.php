@@ -653,9 +653,16 @@ class UserManager
             // We check if the user and it's carpooler are involved in a block
             $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
-            $currentMessage['blocked'] = false;
+            $currentMessage['blockerId'] = null;
             if (is_array($blocks) && count($blocks)>0) {
-                $currentMessage['blocked'] = true;
+                foreach ($blocks as $block) {
+                    if ($block->getUser()->getId() == $user->getId()) {
+                        // The blocker is the current User
+                        $currentMessage['blockerId'] = $user->getId();
+                        break;
+                    }
+                    $currentMessage['blockerId'] = $user2->getId();
+                }
             }
             $messages[] = $currentMessage;
         }
@@ -737,9 +744,16 @@ class UserManager
                 // We check if the user and it's carpooler are involved in a block
                 $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
                 $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
-                $currentThread['blocked'] = false;
+                $currentThread['blockerId'] = null;
                 if (is_array($blocks) && count($blocks)>0) {
-                    $currentThread['blocked'] = true;
+                    foreach ($blocks as $block) {
+                        if ($block->getUser()->getId() == $user->getId()) {
+                            // The blocker is the current User
+                            $currentThread['blockerId'] = $user->getId();
+                            break;
+                        }
+                        $currentThread['blockerId'] = $user2->getId();
+                    }
                 }
 
 
