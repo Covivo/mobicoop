@@ -107,8 +107,10 @@ const SolidaryProofQuestion = () => {
     <SolidaryQuestion question="Le demandeur est-il éligible ?">
       {proofs.length && proofsLoaded ? (
         proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
-      ) : (
+      ) : !proofsLoaded ? (
         <LinearProgress />
+      ) : (
+        <span>Votre structure n'a aucun critère d'éligibilité</span>
       )}
     </SolidaryQuestion>
   );

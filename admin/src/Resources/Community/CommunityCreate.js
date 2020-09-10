@@ -12,10 +12,10 @@ import {
   SelectInput,
   DateInput,
   useTranslate,
+  AutocompleteInput,
 } from 'react-admin';
 
 import GeocompleteInput from '../../components/geolocation/geocomplete';
-import { UserRenderer } from '../../utils/renderers';
 import { validationChoices } from './communityChoices';
 import CommunityImageUpload from './CommunityImageUpload';
 
@@ -31,6 +31,10 @@ export const CommunityCreate = (props) => {
   const classes = useStyles();
   const translate = useTranslate();
   const user = `/users/${localStorage.getItem('id')}`;
+
+  const inputText = (user) =>
+    user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
+
   return (
     <Create {...props} title="Communautés > ajouter">
       <SimpleForm initialValues={{ user }} redirect="list">
@@ -69,7 +73,6 @@ export const CommunityCreate = (props) => {
           source="domain"
           label={translate('custom.label.community.domainName')}
         />
-
         <TextInput
           fullWidth
           source="description"
@@ -85,7 +88,6 @@ export const CommunityCreate = (props) => {
           validate={required()}
           formClassName={classes.richtext}
         />
-
         <DateInput
           disabled
           source="createdDate"
@@ -103,7 +105,12 @@ export const CommunityCreate = (props) => {
           label={translate('custom.label.community.createdBy')}
           reference="users"
         >
-          <SelectInput optionText={<UserRenderer />} />
+          {/* Should be like that : 
+              <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
+              But https://github.com/marmelab/react-admin/pull/4367
+              So waiting for the next release of react-admin 
+          */}
+          <AutocompleteInput optionValue="id" optionText={inputText} allowEmpty={false} />
         </ReferenceInput>
       </SimpleForm>
     </Create>

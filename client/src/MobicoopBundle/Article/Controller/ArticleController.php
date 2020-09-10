@@ -56,7 +56,17 @@ class ArticleController extends AbstractController
     const COOKIES = 16;
     const COVID19 = 17;
     const PRIVACYPOLICY = 18;
-
+    const COVENTION = 19;
+    const HOW_IT_WORKS = 20;
+    const CARPOOL = 21;
+    const CARPOOLING = 22;
+    const CARPOOLING_AREAS = 23;
+    const PDM = 24;
+    const TALK_ABOUT_US = 25;
+    const FEES = 26;
+    const MEDIAS = 27;
+    const USEFUL_LINKS = 28;
+    const MOBILE_APP = 29;
 
     /**
      * Display of the project page
@@ -220,6 +230,105 @@ class ArticleController extends AbstractController
     public function showPrivacyPolicy(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::PRIVACYPOLICY));
+    }
+
+    /**
+    * Display of the COVENTION page
+    *
+    */
+    public function showCovention(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::COVENTION));
+    }
+
+    /**
+    * Display of the HOW_IT_WORKS page
+    *
+    */
+    public function showHowItWorks(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::HOW_IT_WORKS));
+    }
+
+    /**
+    * Display of the CARPOOL page
+    *
+    */
+    public function showCarpool(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::CARPOOL));
+    }
+
+    /**
+    * Display of the CARPOOLING page
+    *
+    */
+    public function showCarpooling(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::CARPOOLING));
+    }
+
+    /**
+    * Display of the CARPOOLING_AREAS page
+    *
+    */
+    public function showCarpoolingAreas(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::CARPOOLING_AREAS));
+    }
+
+    /**
+    * Display of the PDM page
+    *
+    */
+    public function showPDM(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::PDM));
+    }
+
+    /**
+    * Display of the TALK_ABOUT_US page
+    *
+    */
+    public function showTalkAboutUs(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::TALK_ABOUT_US));
+    }
+
+    /**
+    * Display of the MOBILE_APP page
+    *
+    */
+    public function showFees(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::FEES));
+    }
+
+    /**
+    * Display of the MEDIAS page
+    *
+    */
+    public function showMedias(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MEDIAS));
+    }
+
+    /**
+    * Display of the USEFUL_LINKS page
+    *
+    */
+    public function showUsefulLinks(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::USEFUL_LINKS));
+    }
+
+    /**
+    * Display of the MOBILE_APP page
+    *
+    */
+    public function showMobileApp(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOBILE_APP));
     }
 
     /**
