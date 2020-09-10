@@ -14,7 +14,7 @@
       :destination="message.carpoolInfos.destination"
       :criteria="message.carpoolInfos.criteria"
       :id-ask="message.idAsk"
-      :blocked="message.blocked"
+      :blocker-id="message.blockerId"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />

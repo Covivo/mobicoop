@@ -166,7 +166,7 @@
                 :id-recipient="idRecipient"
                 :loading="loadingTypeText"
                 :hidden="hideClickIcon"
-                :recipient-blocked="blocked"
+                :recipient-blocked-id="blockerId"
                 @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
@@ -184,7 +184,7 @@
             :loading-btn="loadingBtnAction"
             :recipient-name="recipientName"
             :recipient-avatar="recipientAvatar"
-            :carpooler-blocked="blocked"
+            :blocker-id="blockerId"
             @refreshActionsCompleted="refreshActionsCompleted"
             @updateStatusAskHistory="updateStatusAskHistory"
           />
@@ -266,7 +266,7 @@ export default {
       loadingDetails:false,
       loadingBtnAction:false,
       hideClickIcon : false,
-      blocked: false
+      blockerId: null
     };
   },
   mounted() {
@@ -294,7 +294,7 @@ export default {
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
       this.recipientAvatar = data.avatar;
-      this.blocked = data.blocked;
+      this.blockerId = data.blockerId;
     },
     sendInternalMessage(data){
       this.loadingTypeText = true;

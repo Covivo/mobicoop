@@ -653,15 +653,15 @@ class UserManager
             // We check if the user and it's carpooler are involved in a block
             $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
-            $currentMessage['blocked'] = null;
+            $currentMessage['blockerId'] = null;
             if (is_array($blocks) && count($blocks)>0) {
                 foreach ($blocks as $block) {
                     if ($block->getUser()->getId() == $user->getId()) {
                         // The blocker is the current User
-                        $currentMessage['blocked'] = $user->getId();
+                        $currentMessage['blockerId'] = $user->getId();
                         break;
                     }
-                    $currentMessage['blocked'] = $user2->getId();
+                    $currentMessage['blockerId'] = $user2->getId();
                 }
             }
             $messages[] = $currentMessage;
@@ -744,15 +744,15 @@ class UserManager
                 // We check if the user and it's carpooler are involved in a block
                 $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
                 $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
-                $currentThread['blocked'] = null;
+                $currentThread['blockerId'] = null;
                 if (is_array($blocks) && count($blocks)>0) {
                     foreach ($blocks as $block) {
                         if ($block->getUser()->getId() == $user->getId()) {
                             // The blocker is the current User
-                            $currentThread['blocked'] = $user->getId();
+                            $currentThread['blockerId'] = $user->getId();
                             break;
                         }
-                        $currentThread['blocked'] = $user2->getId();
+                        $currentThread['blockerId'] = $user2->getId();
                     }
                 }
 
