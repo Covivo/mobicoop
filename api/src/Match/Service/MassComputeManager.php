@@ -173,8 +173,16 @@ class MassComputeManager
         
         // If we compute for round trip, we multiply everything by two
         if ($this->roundTripCompute) {
+            // Not a blacklist 'cause... you know...
+            $coloredList = [
+                "nbCarpoolersAsDrivers",
+                "nbCarpoolersAsPassengers",
+                "nbCarpoolersAsBoth",
+                "nbCarpoolersTotal"
+            ];
+
             foreach ($computedData as $key => $data) {
-                if (is_numeric($data)) {
+                if (is_numeric($data) && !in_array($key, $coloredList)) {
                     $computedData[$key] = $data * 2;
                 }
             }
