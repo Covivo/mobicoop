@@ -57,6 +57,8 @@ class PublicTransportManager
      * @param float     $destination_latitude       The latitude of the destination point
      * @param float     $destination_longitude      The longitude of the destination point
      * @param string    $date                       The date of the journey
+     * @param string    $dateType                   (optional) Date criteria like "arrival" or "departure"
+     * @param string    $modes                      (optional) Mode criteria
      * @return Hydra|null The journeys found (as an Hydra object) or null if not found.
      */
     public function getJourneys(
@@ -64,14 +66,18 @@ class PublicTransportManager
         float $origin_longitude,
         float $destination_latitude,
         float $destination_longitude,
-        string $date
+        string $date,
+        string $dateType = null,
+        string $modes = null
     ) {
         $response = $this->dataProvider->getCollection([
             'origin_latitude'       => $origin_latitude,
             'origin_longitude'      => $origin_longitude,
             'destination_latitude'  => $destination_latitude,
             'destination_longitude' => $destination_longitude,
-            'date'                  => $date
+            'date'                  => $date,
+            'dateType'          => $dateType,
+            'modes'                  => $modes
         ]);
         return $response->getValue();
     }

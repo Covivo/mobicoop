@@ -85,6 +85,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                          "format" = "date-time",
  *                          "description" = "The date of the trip (on RFC3339 format)"
  *                      },
+ *                      {
+ *                          "name" = "dateType",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "description" = "The date type of the trip",
+ *                          "enum" = {
+ *                              "departure",
+ *                              "arrival"
+ *                          }
+ *                      },
+ *                      {
+ *                          "name" = "modes",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "description" = "The transport modes accepted for the trip",
+ *                          "enum" = {
+ *                              "PT",
+ *                              "BIKE",
+ *                              "CAR",
+ *                              "PT+BIKE",
+ *                              "PT+CAR"
+ *                          }
+ *                      }
+ *
  *                  },
  *              }
  *          }
