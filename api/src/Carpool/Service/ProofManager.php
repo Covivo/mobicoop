@@ -545,6 +545,10 @@ class ProofManager
 
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
+            // we first check if both carpooler have a phone number, as it's mandatory !
+            if (is_null($ask->getUser()->getTelephone()) || is_null($ask->getUserRelated()->getTelephone())) {
+                continue;
+            }
             if ($ask->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 // punctual, only one carpool proof
                 // we search if a carpool proof already exists for the date
@@ -633,42 +637,77 @@ class ProofManager
                             // we check for each date of the period if it's a carpoool day
                             case 0:     // sunday
                                 if ($ask->getCriteria()->isSunCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getSunTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getSunTime()->format('H'), $ask->getCriteria()->getSunTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getSunTime()->format('H'), $ask->getCriteria()->getSunTime()->format('i'));
                                 }
                                 break;
                             case 1:     // monday
                                 if ($ask->getCriteria()->isMonCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getMonTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getMonTime()->format('H'), $ask->getCriteria()->getMonTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getMonTime()->format('H'), $ask->getCriteria()->getMonTime()->format('i'));
                                 }
                                 break;
                             case 2:     // tuesday
                                 if ($ask->getCriteria()->isTueCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getTueTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getTueTime()->format('H'), $ask->getCriteria()->getTueTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getTueTime()->format('H'), $ask->getCriteria()->getTueTime()->format('i'));
                                 }
                                 break;
                             case 3:     // wednesday
                                 if ($ask->getCriteria()->isWedCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getWedTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getWedTime()->format('H'), $ask->getCriteria()->getWedTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getWedTime()->format('H'), $ask->getCriteria()->getWedTime()->format('i'));
                                 }
                                 break;
                             case 4:     // thursday
                                 if ($ask->getCriteria()->isThuCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getThuTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
                                 }
                                 break;
                             case 5:     // friday
                                 if ($ask->getCriteria()->isFriCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getFriTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
                                 }
                                 break;
                             case 6:     // saturday
                                 if ($ask->getCriteria()->isSatCheck()) {
+                                    // we check if time is set, could not be the case if ask criteria is different than proposal or matching criteria
+                                    // if time is not set we consider that the day is not carpooled
+                                    if (is_null($ask->getCriteria()->getSatTime())) {
+                                        continue;
+                                    }
                                     $startDate->setTime($ask->getCriteria()->getSatTime()->format('H'), $ask->getCriteria()->getSatTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getSatTime()->format('H'), $ask->getCriteria()->getSatTime()->format('i'));
                                 }
