@@ -79,6 +79,8 @@ class PTDataProvider
      * @param string $destination_latitude      The latitude of the destination point
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
+     * @param string    $dateCriteria           (optional) Date criteria like "arrival" or "departure"
+     * @param string    $mode                   (optional) Mode criteria
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
@@ -87,7 +89,9 @@ class PTDataProvider
         string $origin_longitude,
         string $destination_latitude,
         string $destination_longitude,
-        \Datetime $date
+        \Datetime $date,
+        string $dateType = null,
+        string $modes = null
     ): ?array {
         $providerUri = null;
 
@@ -131,8 +135,20 @@ class PTDataProvider
             "date" => $date,
             "username" => $username
         ];
+
+        // $mode and $dateCriteria are forced if they're send in parameters
+        if (!is_null($dateType)) {
+            $params['dateType'] = $dateType;
+        }
+        if (!is_null($modes)) {
+            $params['modes'] = $modes;
+        }
+
         foreach ($customParams as $key => $value) {
-            $params[$key] = $value;
+            // We don't override previously set parameters
+            if (!isset($params[$key])) {
+                $params[$key] = $value;
+            }
         }
 
         $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,$params]);
