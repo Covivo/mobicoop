@@ -56,6 +56,10 @@ class MangoPayProvider implements PaymentProviderInterface
     const ITEM_WALLET = "wallets";
     const ITEM_PAYIN = "payins/card/web";
 
+    const CURRENCY = "EUR";
+    const CARD_TYPE = "CB_VISA_MASTERCARD";
+    const LANGUAGE = "FR";
+
     private $user;
     private $serverUrl;
     private $authChain;
@@ -360,6 +364,33 @@ class MangoPayProvider implements PaymentProviderInterface
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
     {
+        $user = $carpoolPayment->getUser();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+        $identifier = $paymentProfiles[0]->getIdentifier();
+        $wallet = $this->getWallets($paymentProfiles[0])[0];
+
+        $body = [
+            "AuthorId" => $identifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => $carpoolPayment->getAmount()
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "CreditedWalletId" => $wallet->getId(),
+            "ReturnURL" => "http://www.test.com",
+            "CardType" => self::CARD_TYPE,
+            "Culture" => self::LANGUAGE
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYIN);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+
         return $carpoolPayment;
     }
 
