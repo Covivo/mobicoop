@@ -68,6 +68,10 @@ export default {
     selectedDefault: {
       type: Boolean,
       default: false
+    },
+    blockerId:{
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -107,7 +111,8 @@ export default {
           idMessage:this.idMessage,
           idRecipient:this.idRecipient,
           avatar:this.avatar,
-          name:this.name
+          name:this.name,
+          blockerId:this.blockerId
         }
       );
     }

@@ -122,6 +122,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         switch ($request->get('_route')) {
             case self::USER_LOGIN_ROUTE:
+                if ($targetPath = $request->getSession()->get('_security.main.target_path')) {
+                    return new RedirectResponse($targetPath);
+                }
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_RESULT_ROUTE:
                 return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));
@@ -133,7 +136,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $this->flash->add('notice', 'bad-credentials-api');
-
         return null;
     }
 
@@ -146,7 +148,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             // you might translate this message
             'message' => 'Authentication Required'
         ];
-
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 

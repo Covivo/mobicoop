@@ -38,7 +38,7 @@ databases=`$MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW DATABASES;" | grep -E
 # Copy each database and gzip
 for db in $databases; do
 echo $db
-$MYSQLDUMP --force --opt --user=$MYSQL_USER -p$MYSQL_PASSWORD --skip-lock-tables --events --databases $db | gzip > "$BACKUP_DIR/$DATE/$db.sql.gz"
+$MYSQLDUMP $db --no-create-db --force --opt --user=$MYSQL_USER -p$MYSQL_PASSWORD --skip-lock-tables --events | gzip > "$BACKUP_DIR/$DATE/$db.sql.gz"
 done
 
 # Delete old backups

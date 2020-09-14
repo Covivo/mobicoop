@@ -351,6 +351,11 @@ class Proposal
      */
     private $subject;
 
+    /**
+     * @var bool Use search time or not
+     */
+    private $useTime;
+
     public function __construct($id=null)
     {
         $this->id = self::DEFAULT_ID;
@@ -850,6 +855,18 @@ class Proposal
     public function setSubject(?Subject $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function getUseTime(): bool
+    {
+        return $this->useTime ? true : false;
+    }
+
+    public function setUseTime(?bool $useTime): self
+    {
+        $this->useTime = $useTime;
 
         return $this;
     }

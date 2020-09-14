@@ -80,13 +80,11 @@ export const StructureEdit = (props) => (
           </SimpleFormIterator>
         </ArrayInput>
       </FormTab>
-      <FormTab label="Critères éligibilité demandeurs">
+      {/* <FormTab label="Critères éligibilité demandeurs">
         <ArrayInput label="" source="structureProofs">
           <SimpleFormIterator>
             <PositionInput source="position" />
             <TextInput source="label" label="Titre" />
-            {/* For an unknown reason, the field below doesn't render when we arrive from the structure list */}
-            {/* So, I made this ugly trick to fix that, i'm so sorry :'( */}
             <SwitchableFieldsSelectInput key={Math.random()} />
             <BooleanInput label="Obligatoire" source="mandatory" />
             <SelectInput
@@ -101,7 +99,7 @@ export const StructureEdit = (props) => (
             <StructureProofTypeOptionsListInput />
           </SimpleFormIterator>
         </ArrayInput>
-      </FormTab>
+      </FormTab>*/}
       <FormTab label="Je suis prêt à">
         <ArrayInput label="" source="needs">
           <SimpleFormIterator>

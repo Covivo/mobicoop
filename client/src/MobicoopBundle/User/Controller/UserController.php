@@ -595,6 +595,12 @@ class UserController extends AbstractController
     public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
+
+        // # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+
         $this->denyAccessUnlessGranted('messages', $user);
         $data = $request->request;
 
@@ -1058,6 +1064,19 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             return new JsonResponse($this->paymentManager->deleteBankCoordinates($data['bankAccountId']));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Block or Unblock a User
+     * AJAX
+     */
+    public function blockUser(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->userManager->blockUser($data['blockedUserId']));
         }
         return new JsonResponse();
     }

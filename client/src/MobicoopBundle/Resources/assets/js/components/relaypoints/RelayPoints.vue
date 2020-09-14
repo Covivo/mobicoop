@@ -135,9 +135,9 @@ export default {
       if (this.relayPointsToMap.length > 0) {
         this.relayPointsToMap.forEach(relayPoint => {
           let icon = null;
-          if(relayPoint.relayPointTypes.length>0){
-            if(relayPoint.relayPointTypes[0].icon && relayPoint.relayPointTypes[0].icon.url !== ""){
-              icon = relayPoint.relayPointTypes[0].icon.url;
+          if(relayPoint.relayPointType){
+            if(relayPoint.relayPointType.icon && relayPoint.relayPointType.icon.url !== ""){
+              icon = relayPoint.relayPointType.icon.url;
             }
           }
           this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));

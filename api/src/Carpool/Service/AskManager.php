@@ -47,6 +47,8 @@ use App\Payment\Repository\CarpoolItemRepository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
+use App\User\Exception\BlockException;
+use App\User\Service\BlockManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -65,6 +67,7 @@ class AskManager
     private $security;
     private $carpoolItemRepository;
     private $paymentActive;
+    private $blockManager;
 
     /**
      * Constructor.
@@ -80,6 +83,7 @@ class AskManager
         LoggerInterface $logger,
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
+        BlockManager $blockManager,
         bool $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
@@ -91,6 +95,7 @@ class AskManager
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->paymentActive = $paymentActive;
+        $this->blockManager = $blockManager;
     }
 
     /**
@@ -540,6 +545,12 @@ class AskManager
     {
         $ask = $this->askRepository->find($adId);
         
+        // We check if the two Users in the Ask are involved in a block
+        if ($this->blockManager->getInvolvedInABlock($ask->getUser(), $ask->getUserRelated())) {
+            throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
+        }
+
+
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
         // - the opposite and return opposite if the role wasn't chosen (WE DON'T DO THAT ANYMORE)

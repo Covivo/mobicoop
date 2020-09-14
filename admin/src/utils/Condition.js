@@ -7,7 +7,6 @@ const passthrough = (children, props) =>
 const Condition = ({ when, is, match, children, fallback, ...rest }) => (
   <Field name={when}>
     {({ input: { value }, meta }) => {
-      console.log({ is, value });
       if (typeof is !== 'undefined') {
         return value === is ? passthrough(children, rest) : fallback || null;
       }

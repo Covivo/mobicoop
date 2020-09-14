@@ -43,6 +43,8 @@ use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
+use App\User\Entity\User;
+use App\User\Service\BlockManager;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Psr\Log\LoggerInterface;
@@ -56,13 +58,20 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $askHistoryRepository;
     private $logger;
     private $router;
+    private $blockManager;
 
-    public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository, LoggerInterface $logger, UrlGeneratorInterface $router)
-    {
+    public function __construct(
+        NotificationManager $notificationManager,
+        AskHistoryRepository $askHistoryRepository,
+        LoggerInterface $logger,
+        UrlGeneratorInterface $router,
+        BlockManager $blockManager
+    ) {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
         $this->logger = $logger;
         $this->router = $router;
+        $this->blockManager = $blockManager;
     }
     
     public static function getSubscribedEvents()
@@ -144,8 +153,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
 
 
-
-        $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
+        if ($this->canNotify($event->getAsk()->getUser(), $askRecipient)) {
+            $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
+        }
     }
     
     /**
@@ -161,7 +171,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we check if it's not an anonymous proposal
         if ($event->getMatching()->getProposalOffer()->getUser() && $event->getMatching()->getProposalRequest()->getUser()) {
             $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
-            $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+            if ($this->canNotify($event->getSender(), $askRecipient)) {
+                $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
+            }
         }
     }
     
@@ -210,10 +222,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // todo: passer directement la ask pour pouvoir mieux vérifier qui est à l'origine de l'annonce
         // pas réussi, array vide depuis le template en passant la ask
-        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
-            $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
-        } else {
-            $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
+            if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+                $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+            } else {
+                $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+            }
         }
     }
 
@@ -226,10 +240,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event)
     {
         // todo : idem
-        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
-            $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
-        } else {
-            $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
+            if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+                $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+            } else {
+                $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+            }
         }
     }
 
@@ -241,11 +257,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event)
     {
         // todo : idem
-
-        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
-            $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
-        } else {
-            $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
+            if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+                $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+            } else {
+                $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+            }
         }
     }
 
@@ -258,10 +275,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onDriverAskAdDeleted(DriverAskAdDeletedEvent $event)
     {
         // todo : idem
-        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
-            $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
-        } else {
-            $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
+            if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+                $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+            } else {
+                $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+            }
         }
     }
 
@@ -274,10 +293,12 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onDriverAskAdDeletedUrgent(DriverAskAdDeletedUrgentEvent $event)
     {
         // todo : idem
-        if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
-            $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
-        } else {
-            $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+        if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
+            if ($event->getAsk()->getUser()->getId() == $event->getDeleterId()) {
+                $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
+            } else {
+                $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
+            }
         }
     }
 
@@ -291,7 +312,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
         foreach ($event->getAsks() as $ask) {
             $object->ask = $ask;
-            $this->notificationManager->notifies(AdMinorUpdatedEvent::NAME, $ask->getUser(), $object);
+            if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
+                $this->notificationManager->notifies(AdMinorUpdatedEvent::NAME, $ask->getUser(), $object);
+            }
         }
     }
 
@@ -339,7 +362,25 @@ class CarpoolSubscriber implements EventSubscriberInterface
 //            }
 //            $routeParams = ["pid" => $proposalId];
             $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
-            $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
+            if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
+                $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
+            }
         }
+    }
+
+    /**
+     * Determine if the User1 can notify the User2 (i.e. Not involved in a block)
+     *
+     * @param User $user1
+     * @param User $user2
+     * @return boolean
+     */
+    public function canNotify(User $user1, User $user2): bool
+    {
+        $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+        if (is_array($blocks) && count($blocks)>0) {
+            return false;
+        }
+        return true;
     }
 }

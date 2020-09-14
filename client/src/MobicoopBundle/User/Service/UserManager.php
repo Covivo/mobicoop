@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
  * User management service.
@@ -682,6 +683,25 @@ class UserManager
             if (count($users)==1) {
                 return $users[0]->getBankAccounts();
             }
+        }
+        return null;
+    }
+
+    /**
+     * Post a Block
+     * @param int $userId Id of the User to block
+     * @return Block|null
+     */
+    public function blockUser(int $userId)
+    {
+        $block = new Block();
+        $block->setUser(new User($userId));
+        
+        $this->dataProvider->setClass(Block::class);
+        $response = $this->dataProvider->post($block);
+        
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
         }
         return null;
     }
