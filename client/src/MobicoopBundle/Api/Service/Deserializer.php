@@ -839,6 +839,7 @@ class Deserializer
         if (isset($data["destination"])) {
             $paymentItem->setDestination($this->deserializeAddress($data['destination']));
         }
+        
         $paymentItem = $this->autoSet($paymentItem, $data);
 
         return $paymentItem;

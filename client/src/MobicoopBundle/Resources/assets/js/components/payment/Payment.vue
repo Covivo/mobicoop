@@ -784,10 +784,6 @@ export default {
     selectedId: {
       type: Number,
       default: null
-    },
-    week: {
-      type: String,
-      default: null
     }
   },
   data() {
@@ -860,7 +856,6 @@ export default {
     }
   },
   mounted () {
-    this.initSelectedWeekDays();
     // if regular, we search the first week where there are payments to confirm or pay
     if (this.frequency == 2) {
       this.getFirstWeek();
@@ -873,12 +868,7 @@ export default {
     moment.locale(this.locale); 
   },
   methods: {
-    initSelectedWeekDays() {
-      this.selectedWeekDays = [
-        moment(this.week,'wwYYYY').startOf('week').format('Y-MM-DD'),
-        moment(this.week,'wwYYYY').endOf('week').format('Y-MM-DD')
-      ];
-    },
+    
     // get the first week for which payments has to be made or collected
     getFirstWeek() {
       // we set params
@@ -889,9 +879,13 @@ export default {
       axios.post(this.$t("payments.getFirstWeek"), params)
         .then(res => {
           this.selectedWeekNumber = res.data.week;
+          this.selectedWeekDays = [
+            moment(this.selectedWeekNumber,'wwYYYY').startOf('week').format('Y-MM-DD'),
+            moment(this.selectedWeekNumber,'wwYYYY').endOf('week').format('Y-MM-DD')
+          ];
           this.getCalendar();
-        });
-      
+        })
+        .then(() => this.getPayments());      
     },
     // get the different periods of carpools
     getCalendar() {
@@ -918,7 +912,8 @@ export default {
         var fromDate = moment(item.fromDate.date);
         var toDate = moment(item.toDate.date);
         if (curDate.isSameOrAfter(fromDate) && curDate.isSameOrBefore(toDate)) {
-          if (item.days.indexOf(parseInt(curDate.format('e')))>-1) {
+          // the items are returned using sunday as first day of week, so we use isoWeekday
+          if (item.days.indexOf(parseInt(curDate.isoWeekday()))>-1) {
             allowed = true;
             return;
           }
@@ -946,16 +941,15 @@ export default {
       // we get all paymentItems
       axios.post(this.$t("payments.getPayments"), params)
         .then(res => {
-          console.log(res.data);
-          // var items = res.data;
-          // items.forEach((item, key) => {
-          //   // we set dynamic parameters
-          //   item.mode = null;
-          //   if (item.id === this.selectedId) {              
-          //     this.currentKey = key;              
-          //   }
-          // });
-          // this.paymentItems = items;
+          var items = res.data;
+          items.forEach((item, key) => {
+            // we set dynamic parameters
+            item.mode = null;
+            if (item.id === this.selectedId) {              
+              this.currentKey = key;              
+            }
+          });
+          this.paymentItems = items;
         });
     },
     getAmount(item) {

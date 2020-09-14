@@ -39,7 +39,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import Translations from "@translations/components/utilities/PlatformWidget.json";
 
 

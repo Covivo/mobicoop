@@ -90,7 +90,6 @@ import TranslationsClient from "@clientTranslations/components/carpool/results/M
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
 import JourneySummary from "@components/carpool/utilities/JourneySummary"
 import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
-import moment from "moment";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

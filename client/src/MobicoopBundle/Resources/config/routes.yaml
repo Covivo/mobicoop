@@ -1012,8 +1012,8 @@ payment_payments_post:
 # payment 
 payment_list:
     path:
-        fr: /paiements/{id?}/{frequency?}/{type?}/{week?}
-        en: /payments/{id?}/{frequency?}/{type?}/{week?}
+        fr: /paiements/{id?}/{frequency?}/{type?}
+        en: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 # Get weeks to pay (POST) AJAX

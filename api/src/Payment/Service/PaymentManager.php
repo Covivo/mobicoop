@@ -292,11 +292,12 @@ class PaymentManager
         }
 
         // finally we return the array of PaymentItem
-        return [
-            'items' => $items,
-            'minDate' => $minDate,
-            'maxDate' => $maxDate
-        ];
+        return $items;
+        // return [
+        //     'items' => $items,
+        //     'minDate' => $minDate,
+        //     'maxDate' => $maxDate
+        // ];
     }
 
     /**
@@ -363,19 +364,20 @@ class PaymentManager
     }
 
     /**
-     * Get the first non validated week of an Ask
+     * Get the first non validated week of a carpool Item
      *
      * @param User $user    The user concerned
-     * @param int $id       The id of the ask to look for
+     * @param int $id       The id of the carpool Item to look for
      * @return int          The week number found
      */
     public function getFirstNonValidatedWeek(User $user, int $id)
     {
         $week = null;
         $validated = false;
-        if (!$ask = $this->askRepository->find($id)) {
-            return new Exception("Wrong ask id");
+        if (!$carpoolItem = $this->carpoolItemRepository->find($id)) {
+            return new Exception("Wrong carpoolItem id");
         }
+        $ask = $carpoolItem->getAsk();
         if ($ask->getUser()->getId() != $user->getId() && $ask->getUserRelated()->getId() != $user->getId()) {
             return new Exception("Unauthaurized");
         }
