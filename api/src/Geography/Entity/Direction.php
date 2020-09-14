@@ -39,6 +39,7 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_DIRTER", columns={"distance", "duration", "bbox_min_lon", "bbox_min_lat", "bbox_max_lon", "bbox_max_lat"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
