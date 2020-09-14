@@ -96,6 +96,13 @@ class CarpoolPayment
      */
     private $carpoolItems;
 
+    /**
+     * @var int The transaction id of this payment
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $transactionId;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
@@ -186,6 +193,17 @@ class CarpoolPayment
         return $this;
     }
 
+    public function getTransactionId(): ?int
+    {
+        return $this->transactionId;
+    }
+
+    public function setTransactionId(int $transactionId): self
+    {
+        $this->transactionId = $transactionId;
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 

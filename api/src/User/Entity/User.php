@@ -1115,6 +1115,14 @@ class User implements UserInterface, EquatableInterface
     private $operates;
 
     /**
+     * @var int|null PaymentProfileId of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $paymentProfileId;
+    
+    /**
      * @var array|null BankAccounts of a User
      *
      * @Groups({"readPayment"})
@@ -2639,6 +2647,18 @@ class User implements UserInterface, EquatableInterface
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
         }
+
+        return $this;
+    }
+
+    public function getPaymentProfileId(): ?int
+    {
+        return $this->paymentProfileId;
+    }
+
+    public function setPaymentProfileId(?int $paymentProfileId): self
+    {
+        $this->paymentProfileId = $paymentProfileId;
 
         return $this;
     }

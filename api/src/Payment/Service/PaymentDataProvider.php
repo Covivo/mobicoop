@@ -30,6 +30,7 @@ use App\DataProvider\Entity\MangoPayProvider;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
+use App\Payment\Ressource\ElectronicPayment;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -155,14 +156,17 @@ class PaymentDataProvider
 
         // Get more information for each profiles
         $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
-        if (!is_null($paymentProfiles) && $callExternalProvider) {
+        if (!is_null($paymentProfiles)) {
             foreach ($paymentProfiles as $paymentProfile) {
                 /**
                  * @var PaymentProfile $paymentProfile
                  */
                 
-                $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
-                $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+                if ($callExternalProvider) {
+                    $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
+                    $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+                }
+                $user->setPaymentProfileId($paymentProfile->getId());
             }
         }
         return $paymentProfiles;
@@ -196,5 +200,51 @@ class PaymentDataProvider
         $wallet->setCurrency($this->defaultCurrency);
         $wallet->setOwnerIdentifier($identifier);
         return $this->providerInstance->addWallet($wallet);
+    }
+
+    /**
+     * Create an electronic payment
+     *
+     * @param ElectronicPayment $electronicPayment  The electronic payement to create
+     * @return ElectronicPayment|null
+     */
+    public function createElectronicPayment(ElectronicPayment $electronicPayment): ?ElectronicPayment
+    {
+        $this->checkPaymentConfiguration();
+
+        // Get the paymentprofile with bank account and wallet of the author and the recipient
+        $paymentProfiles = $this->getPaymentProfiles($electronicPayment->getAuthor());
+        $bankAccounts = $wallets = [];
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+        foreach ($paymentProfiles as $paymentProfile) {
+            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                $bankAccounts[] = $bankaccount;
+            }
+            foreach ($paymentProfile->getWallets() as $wallet) {
+                $wallets[] = $wallet;
+            }
+        }
+        $electronicPayment->getAuthor()->setBankAccounts($bankAccounts);
+        $electronicPayment->getAuthor()->setWallets($wallets);
+
+        $paymentProfiles = $this->getPaymentProfiles($electronicPayment->getRecipient());
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+        $bankAccounts = $wallets = [];
+        foreach ($paymentProfiles as $paymentProfile) {
+            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                $bankAccounts[] = $bankaccount;
+            }
+            foreach ($paymentProfile->getWallets() as $wallet) {
+                $wallets[] = $wallet;
+            }
+        }
+        $electronicPayment->getRecipient()->setBankAccounts($bankAccounts);
+        $electronicPayment->getRecipient()->setWallets($wallets);
+
+        return $this->providerInstance->createElectronicPayment($electronicPayment);
     }
 }

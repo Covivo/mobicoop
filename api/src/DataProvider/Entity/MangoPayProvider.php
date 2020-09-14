@@ -25,6 +25,7 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
@@ -32,6 +33,7 @@ use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\ElectronicPayment;
 use App\User\Entity\User;
 use LogicException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
@@ -52,6 +54,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
     const ITEM_USER_NATURAL = "natural";
     const ITEM_WALLET = "wallets";
+    const ITEM_PAYIN = "payins/card/web";
 
     private $user;
     private $serverUrl;
@@ -325,6 +328,40 @@ class MangoPayProvider implements PaymentProviderInterface
         return $data['Id'];
     }
 
+
+    public function processElectronicPayment(User $debtor, array $creditors)
+    {
+        // Credit debtor wallet
+
+        // Transfer to the creditors wallets
+
+        // Payout for all the creditors
+    }
+
+    /**
+     * Credit a Wallet
+     *
+     * @param Wallet $wallet  The Wallet to credit
+     * @return ElectronicPayment|null
+     */
+    public function creditWallet(Wallet $wallet, int $amount)
+    {
+    }
+
+    public function transferWalletToWallet(Wallet $walletFrom, Wallet $walletTo)
+    {
+    }
+
+    /**
+     * Get the secured form's url for electronic payment
+     *
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
+     */
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
+    {
+        return $carpoolPayment;
+    }
 
     /**
      * Deserialize a BankAccount

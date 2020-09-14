@@ -37,6 +37,7 @@ use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
+use App\Payment\Ressource\ElectronicPayment;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,6 +46,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * Payment manager service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PaymentManager
 {
@@ -259,7 +261,7 @@ class PaymentManager
      *
      * @param PaymentPayment $payment   The payments to make
      * @param User $user                The user that makes/receive the payment
-     * @return Payment The resulting payment (with updated statuses)
+     * @return PaymentPayment The resulting payment (with updated statuses)
      */
     public function createPaymentPayment(PaymentPayment $payment, User $user)
     {
@@ -310,14 +312,7 @@ class PaymentManager
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
 
-            // if online amount is not zero, we pay online
-            if ($amountOnline>0) {
-                // TODO : online payment, set the status to success if successful !
-                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
-            } else {
-                // if it's a manual payment, we set it to a success automatically
-                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
-            }
+
 
 
             if ($payment->getStatus() == PaymentPayment::STATUS_SUCCESS) {
@@ -326,21 +321,29 @@ class PaymentManager
                     $carpoolItem = $this->carpoolItemRepository->find($item['id']);
                     if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                         if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
                         } else {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
                             // No confirmation by the Creditor if the payment is online
-                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
+                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
                         }
                     }
                     $this->entityManager->persist($carpoolItem);
                 }
-            } else {
-                $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
             }
             $this->entityManager->persist($carpoolPayment);
-            $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
+
+            // if online amount is not zero, we pay online
+            if ($amountOnline>0) {
+                // TODO : online payment, set the status to success if successful !
+                
+                // generateElectronicPaymentUrl(carpoolpayment)
+                // carpoolpayment->setTransactionid
+                // return PaymentPayment avec urlRedirect
+            } else {
+                $this->treatCarpoolPayment($carpoolPayment);
+            }
         } else {
 
             // COLLECT
@@ -402,6 +405,32 @@ class PaymentManager
         }
         return $payment;
     }
+
+    /**
+     * Update the carpool items after a payment
+     *
+     * @param CarpoolPayment $carpoolPayment    Involved CarpoolPayment
+     * @param boolean $success                  If the payment is a success
+     * @return void
+     */
+    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, bool $success = true)
+    {
+        foreach ($carpoolPayment->getCarpoolItems() as $item) {
+            /**
+             * @var CarpoolItem $item
+             */
+            switch ($item->getDebtorStatus()) {
+                case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
+                    $item->setDebtorStatus(($success) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    break;
+                case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
+                    $item->setDebtorStatus(($success) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    $item->setCreditorStatus(($success) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                    break;
+            }
+        }
+    }
+
 
     /**
      * Create the carpool payment items from the accepted asks.
@@ -649,5 +678,16 @@ class PaymentManager
         $this->entityManager->flush();
 
         return $paymentProfile;
+    }
+
+    /**
+     * Create an ElectronicPayment
+     *
+     * @param ElectronicPayment $electronicPayment  The payment to process
+     * @return ElectronicPayment|null
+     */
+    public function createElectronicPayment(ElectronicPayment $electronicPayment): ?ElectronicPayment
+    {
+        return $this->paymentProvider->createElectronicPayment($electronicPayment);
     }
 }
