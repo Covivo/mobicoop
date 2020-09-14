@@ -1,6 +1,5 @@
 ## This makefile is simply shortcurts for mobicoop docker 
 
-
 pink:=$(shell tput setaf 200)
 blue:=$(shell tput setaf 27)
 green:=$(shell tput setaf 118)
@@ -116,6 +115,24 @@ db-diff:
 	$(info $(builder)Make ($(os)): DB Diff...)
 	$(info $(builder)------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-diff
+
+db-fixtures-basic:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Basic Fixtures...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-basic
+
+db-fixtures-extended:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Extended Fixtures...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-extended
+
+db-fixtures-solidary:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Solidary Fixtures...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-solidary
 
 app-geography-territory-link-batch:
 	$(info $(builder)-----------------------------------------------------------)
