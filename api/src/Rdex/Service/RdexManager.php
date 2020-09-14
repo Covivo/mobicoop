@@ -327,18 +327,6 @@ class RdexManager
          * @var Result $result
          */
         foreach ($ad->getResults() as $result) {
-            $journey = new RdexJourney($result->getId());
-            $journey->setOperator($this->operator->getName());
-            $journey->setOrigin($this->operator->getOrigin());
-
-            // for now we use the default language as languages are not handled yet
-            $journey->setUrl($this->operator->getUrl() . str_replace('{' . self::EXTERNAL_ID_EXPR . '}', $ad->getExternalId(), $this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
-            
-            $journey->setType(RdexJourney::TYPE_ONE_WAY);
-            if ($result->hasReturn()) {
-                $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
-            }
-
             $carpoolerIsDriver = false;
             $carpoolerIsPassenger = false;
             $resultItem = null;
@@ -358,6 +346,19 @@ class RdexManager
             } else {
                 continue;
             }
+
+            $journey = new RdexJourney($resultItem->getOutward()->getProposalId());
+            $journey->setOperator($this->operator->getName());
+            $journey->setOrigin($this->operator->getOrigin());
+
+            // for now we use the default language as languages are not handled yet
+            $journey->setUrl($this->operator->getUrl() . str_replace('{' . self::EXTERNAL_ID_EXPR . '}', $ad->getExternalId(), $this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
+            
+            $journey->setType(RdexJourney::TYPE_ONE_WAY);
+            if ($result->hasReturn()) {
+                $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
+            }
+
 
             $driver = new RdexDriver($result->getCarpooler()->getId());
             $driver->setUuid($result->getCarpooler()->getId());
