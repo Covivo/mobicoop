@@ -11,7 +11,7 @@ import {
   ImageField,
 } from 'react-admin';
 
-import { isAdmin } from '../../../auth/permissions';
+import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
 
 const RelayPointTypeFilter = (props) => (
   <Filter {...props}>
@@ -24,7 +24,7 @@ export const RelayPointTypeList = (props) => (
     title="Types de points relais > liste"
     perPage={25}
     filters={<RelayPointTypeFilter />}
-    exporter={isAdmin()}
+    exporter={isSuperAdmin()}
     sort={{ field: 'originId', order: 'ASC' }}
   >
     <Datagrid>

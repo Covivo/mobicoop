@@ -44,7 +44,9 @@
               "textOkAutoValidation": "Votre demande d'adhésion est validée.",
               "textError": "Une erreur est survenue veuillez essayer à nouveau."
             }
-        }  
+        },
+        "login": "Vous avez déjà un compte ? Identifiez-vous !",
+        "urlLogin": "/utilisateur/connexion/" 
     },
     "en":{
         "title":"Sign Up",
@@ -71,6 +73,9 @@
             "3":"Gender",
             "4":"Birthdate",
             "5":"Home town"
-        }
+        },
+        "login": "Already have an account ? Login !",
+        "urlLogin": "/user/login/" 
+
     }
 }

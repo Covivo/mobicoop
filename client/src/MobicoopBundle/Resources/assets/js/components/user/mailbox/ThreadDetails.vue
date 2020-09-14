@@ -32,9 +32,11 @@
           <v-card
             v-if="item.divider===false"
             class="elevation-2 font-weight-bold"
-            :class="(item.origin==='own')?'primary lighten-4':''"
+            :class="(item.origin==='own')?'own primary lighten-5':''"
           >
-            <v-card-text v-html="item.text" />
+            <v-card-text
+              v-html="item.text"
+            />
           </v-card>
           <p
             v-if="item.divider===false && item.userDelegate"
@@ -201,5 +203,10 @@ export default {
 .window-scroll{
   max-height:600px;
   overflow:auto;
+}
+.v-timeline-item.own{
+  div.v-card__text{
+    color: rgba(0, 0, 0);
+  }
 }
 </style>

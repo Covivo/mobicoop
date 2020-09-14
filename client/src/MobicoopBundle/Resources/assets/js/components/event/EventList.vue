@@ -82,20 +82,17 @@
               <v-card-title>
                 <v-row>
                   <v-col
+                    v-if="eventButtonDisplay"
                     cols="6"
                   >
-                    <a
-                      v-if="isLogged"
+                    <v-btn
+                      type="button"
+                      color="secondary"
+                      rounded
                       :href="paths.event_create"
                     >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
+                      {{ $t('createEvent') }}
+                    </v-btn>
                   </v-col>
                   <v-col
                     cols="6"
@@ -172,18 +169,14 @@
                   <v-col
                     cols="6"
                   >
-                    <a
-                      v-if="isLogged"
+                    <v-btn
+                      type="button"
+                      color="secondary"
+                      rounded
                       :href="paths.event_create"
                     >
-                      <v-btn
-                        type="button"
-                        color="secondary"
-                        rounded
-                      >
-                        {{ $t('createEvent') }}
-                      </v-btn>
-                    </a>
+                      {{ $t('createEvent') }}
+                    </v-btn>
                   </v-col>
                   <v-col
                     cols="6"
@@ -303,8 +296,11 @@ export default {
     tabDefault: {
       type: String,
       default: ""
+    },
+    eventButtonDisplay:{
+      type: Boolean,
+      default:false
     }
-
   },
   data () {
     return {

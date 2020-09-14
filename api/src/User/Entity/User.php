@@ -387,7 +387,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(NumericFilter::class, properties={"gender"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -978,7 +978,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The permissions granted
-     * @Groups("permissions")
+     * @Groups({"permissions"})
      */
     private $permissions;
 

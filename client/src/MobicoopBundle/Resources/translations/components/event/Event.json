@@ -5,6 +5,9 @@
           "label": "Publier une annonce",
           "route": "covoiturage/recherche/poster"
       },
+      "login":{
+        "route":"/utilisateur/connexion"
+      },
       "widget": {
         "label": "Voir le Widget",
         "route": "/evenement/widget/get/",

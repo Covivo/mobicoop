@@ -167,6 +167,16 @@
                 >
                   {{ $t("ui.button.next") }}
                 </v-btn>
+                <v-card-text
+                  v-if="loginLinkInConnection"
+                >
+                  <a
+                    :href="$t('urlLogin')"
+                    class="font-italic"
+                  >
+                    {{ $t('login') }}
+                  </a>
+                </v-card-text>
               </v-form>
             </v-stepper-content>
 
@@ -441,6 +451,10 @@ export default {
       type: Number,
       default: null,
     },
+    loginLinkInConnection: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -724,7 +738,7 @@ export default {
           }
         )
         .then((response) => {
-          if (!response.data.error) {
+          if (response.data.error) {
             if (response.data.message !== "") {
               this.textEmailError = response.data.message;
               this.emailAlreadyTaken = true;

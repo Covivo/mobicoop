@@ -2,25 +2,37 @@
 
 ################################
 # Backup the platform api data #
+#    To be scheduled in cron   #
 ################################
+
+for i in "$@"
+do
+case $i in
+    --source-dir=*)
+    SOURCE_DIR="${i#*=}"
+    shift
+    ;;
+    --backup-dir=*)
+    BACKUP_DIR="${i#*=}"
+    shift
+    ;;
+esac
+done
 
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
 
-# Backup dir destination, replace by your destination directory
-BACKUP_DIR="/backup/instance"
-
-# Base api dir, replace by your instance directory
-BASE_DIR="/var/www/instance/mobicoop-platform/api/public/upload/"
-
 # Backup filename
 FILENAME=backup_$DATE.tgz
+
+# Create backup dir if not exist
+mkdir -p $BACKUP_DIR
 
 # Retention days (backups older than retention days are removed)
 RETENTION=5
 
 # Make the backup
-tar --create --gzip --file=$BACKUP_DIR/$FILENAME $BASE_DIR
+tar --create --gzip --file=$BACKUP_DIR/$FILENAME $SOURCE_DIR
 
 # Delete old backups
 find $BACKUP_DIR/* -mtime +$RETENTION -delete

@@ -9,7 +9,7 @@
           cols="4"
           md="5"
           align="center"
-          class="justify-center"
+          class="justify-center mt-10"
         >
           <iframe
             :src="$t('buttons.widget.externalRoute', {'id':event.id})"

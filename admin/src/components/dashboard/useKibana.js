@@ -7,14 +7,15 @@ const useKibana = () => {
   const translate = useTranslate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const instanceName = process.env.REACT_APP_SCOPE_INSTANCE_NAME;
     const kibanaAuthenticationApi = `${process.env.REACT_APP_KIBANA_URL}/login/${instanceName}`;
 
     const getKibanaCookie = async () => {
       fetch(kibanaAuthenticationApi, {
         credentials: 'include',
-        headers: new global.Headers({ Authorization: `Bearer ${token}` }),
+        headers: new global.Headers({
+          Authorization: `Bearer ${global.localStorage.getItem('token')}`,
+        }),
         method: 'GET',
       })
         .then((reponse) => {
@@ -32,7 +33,7 @@ const useKibana = () => {
           setError(translate('custom.dashboard.kibanaAuthenticationApiFetchError'));
         });
     };
-    if (token && instanceName && kibanaAuthenticationApi) {
+    if (global.localStorage.getItem('token') && instanceName && kibanaAuthenticationApi) {
       getKibanaCookie();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

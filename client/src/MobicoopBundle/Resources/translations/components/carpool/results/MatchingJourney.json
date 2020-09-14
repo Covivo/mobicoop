@@ -14,6 +14,11 @@
     },
     "birthYears": "ans",
     "contact": "Contacter",
+    "contactTips":{
+      "acceptedAsk":"Vous avez déjà planifié un covoiturage avec ce covoitureur",
+      "pendingAsk":"Une demande vers ce covoitureur est en attente de réponse",
+      "initiatedAsk":"Une demande vers ce covoitureur est en attente de réponse"
+    },
     "outward": "Choisir les allers",
     "return": "Choisir les retours",
     "previous": "Précédent",

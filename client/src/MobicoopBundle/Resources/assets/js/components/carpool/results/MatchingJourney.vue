@@ -178,6 +178,29 @@
                           </v-icon>
                           {{ $t('contact') }}
                         </v-btn>
+                        <v-card
+                          v-else
+                          flat
+                        >
+                          <v-card-text
+                            v-if="lResult.acceptedAsk"
+                            class="success--text"
+                          >
+                            {{ $t('contactTips.acceptedAsk') }}
+                          </v-card-text>
+                          <v-card-text
+                            v-else-if="lResult.pendingAsk"
+                            class="warning--text"
+                          >
+                            {{ $t('contactTips.pendingAsk') }}
+                          </v-card-text>
+                          <v-card-text
+                            v-else-if="lResult.initiatedAsk"
+                            class="warning--text"
+                          >
+                            {{ $t('contactTips.initiatedAsk') }}
+                          </v-card-text>
+                        </v-card>
                       </v-col>
                     </v-row>
                   </v-card-text>

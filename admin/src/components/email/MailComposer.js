@@ -6,12 +6,14 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Modal, Grid, Button, TextField, Paper, CircularProgress, Fab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import RichTextInput from './RichTextInput';
 import ImageUpload from './ImageUpload';
 import CreateCampaignButton from './CreateCampaignButton';
 import SenderSelector from './SenderSelector';
 import { reducer, initialState } from './emailStore';
-import Tooltip from '@material-ui/core/Tooltip';
+import { useCurrentUser } from '../../auth/useCurrentUser';
 
 const useStyles = makeStyles((theme) => ({
   main_container: {
@@ -76,7 +78,10 @@ const MailComposer = ({
     MAIL_TEST_ENVOYE: 2,
     MAIL_MASSE_ENVOYE: 3,
   };
+
   const classes = useStyles();
+
+  const { user } = useCurrentUser();
   const [expediteur, setExpediteur] = useState(null);
   const [corpsMail, dispatch] = useReducer(reducer, initialState);
   const [objetMail, setObjetMail] = useState('');
@@ -89,7 +94,7 @@ const MailComposer = ({
   const dataProvider = useDataProvider();
   const apiUrlTest = process.env.REACT_APP_API + process.env.REACT_APP_CAMPAIGN_SEND_TEST;
   const apiUrlReel = process.env.REACT_APP_API + process.env.REACT_APP_CAMPAIGN_SEND;
-  const token = localStorage.getItem('token');
+  const token = global.localStorage.getItem('token');
   const unselectAll = useUnselectAll();
   const [removeUnsuscribe, setRemoveUnsuscribe] = useState(0);
   const translate = useTranslate();
@@ -138,21 +143,21 @@ const MailComposer = ({
       if (sendAll !== null) {
         setCompteRendu(
           `Votre mail va concerner tous les utilisateurs ${
-          sendAll > 0 ? 'de cette communauté' : ''
+            sendAll > 0 ? 'de cette communauté' : ''
           } qui acceptent les emails`
         );
       } else {
         removeUnsuscribe === 0
           ? setCompteRendu(
-            `Votre mail va concerner ${ids.length} utilisateur${ids.length > 1 ? 's' : ''}.`
-          )
+              `Votre mail va concerner ${ids.length} utilisateur${ids.length > 1 ? 's' : ''}.`
+            )
           : setCompteRendu(
-            `Votre mail va concerner ${ids.length} utilisateur${
-            ids.length > 1 ? 's' : ''
-            }, ${removeUnsuscribe} utilisateur${removeUnsuscribe > 1 ? 's' : ''} ignoré${
-            removeUnsuscribe > 1 ? 'es' : ''
-            } `
-          );
+              `Votre mail va concerner ${ids.length} utilisateur${
+                ids.length > 1 ? 's' : ''
+              }, ${removeUnsuscribe} utilisateur${removeUnsuscribe > 1 ? 's' : ''} ignoré${
+                removeUnsuscribe > 1 ? 'es' : ''
+              } `
+            );
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -182,21 +187,18 @@ const MailComposer = ({
   // Sélection des éléments nécessaire à la création / mise à jour d'une campagne
   const campaignCreateParameters = expediteur
     ? {
-      user: expediteur.id,
-      name: objetMail,
-      subject: objetMail,
-
-      sendAll: sendAll !== null ? sendAll : null,
-
-      fromName: expediteur.fromName,
-      email: expediteur.replyTo,
-      replyTo: expediteur.replyTo,
-
-      body: JSON.stringify(corpsMail),
-      status: 0,
-      medium: '/media/2', // media#2 is email
-      deliveries: sendAll == null ? ids.map((id) => ({ user: id })) : [],
-    }
+        user: expediteur.id,
+        name: objetMail,
+        subject: objetMail,
+        sendAll: sendAll !== null ? sendAll : null,
+        fromName: expediteur.fromName,
+        email: expediteur.replyTo,
+        replyTo: expediteur.replyTo,
+        body: JSON.stringify(corpsMail),
+        status: 0,
+        medium: '/media/2', // media#2 is email
+        deliveries: sendAll == null ? ids.map((id) => ({ user: id })) : [],
+      }
     : {};
   // Envoi du mail de test (si la campagne est sauvegardée)
   const handleClickEnvoiTest = () => {
@@ -207,10 +209,11 @@ const MailComposer = ({
     }
     options.headers.set('Authorization', `Bearer ${token}`);
 
-    fetchUtils.fetchJson(`${apiUrlTest}/${campagne.originId}`, options).then(({ json }) => ({
-      data: json,
-    }));
-    setCompteRendu('Le mail de test a été envoyé à ' + expediteur.replyTo);
+    fetchUtils.fetchJson(`${apiUrlTest}/${campagne.originId}`, options);
+    setCompteRendu(
+      user ? `Le mail de test a été envoyé à ${user.email}` : 'Le mail de test a été envoyé'
+    );
+
     setEtat(etats.MAIL_TEST_ENVOYE);
     setLoading(false);
   };
@@ -283,10 +286,10 @@ const MailComposer = ({
                   </span>
                 </Tooltip>
               ) : (
-                  <Button variant="contained" onClick={handleClickEnvoiTest}>
-                    Envoyer Mail de test
-                  </Button>
-                )}{' '}
+                <Button variant="contained" onClick={handleClickEnvoiTest}>
+                  Envoyer Mail de test
+                </Button>
+              )}{' '}
               &nbsp;
               {etat < etats.MAIL_TEST_ENVOYE ? (
                 <Tooltip title={translate('custom.email.texte.testBeforeSend')} placement="bottom">
@@ -302,10 +305,10 @@ const MailComposer = ({
                   </span>
                 </Tooltip>
               ) : (
-                  <Button variant="contained" color="primary" onClick={handleClickEnvoiMasse}>
-                    Envoyer aux {sendAll == null ? ids.length || 0 : ''} destinataires
-                  </Button>
-                )}{' '}
+                <Button variant="contained" color="primary" onClick={handleClickEnvoiMasse}>
+                  Envoyer aux {sendAll == null ? ids.length || 0 : ''} destinataires
+                </Button>
+              )}{' '}
               &nbsp;
             </Grid>
           </Grid>
@@ -317,8 +320,8 @@ const MailComposer = ({
                   <CircularProgress size={12} /> Envoi en cours ....
                 </span>
               ) : (
-                  compteRendu
-                )}{' '}
+                compteRendu
+              )}{' '}
             </p>
           )}
 
@@ -329,6 +332,14 @@ const MailComposer = ({
             alignItems="center"
             spacing={2}
             className={classes.ligne}
+            style={{
+              /*
+              The MailComposer and SenderSelector components are not well designed...
+              So, not to break everything or loose precious time, I've just hidden the sender selection row
+              The default expeditor is set when SenderSelector is mounting
+            */
+              display: 'none',
+            }}
           >
             <Grid item>Expéditeur : </Grid>
             <Grid item>

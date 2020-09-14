@@ -26,10 +26,8 @@ export const CommunityUserCreate = (props) => {
   const community_uri = encodeURIComponent(community);
   const redirect = community_uri ? `/communities/${community_uri}` : 'show';
 
-  const inputText = (choice) => {
-    console.log('Choice inputText', choice);
-    return `${choice.givenName} ${choice.familyName || choice.shortFamilyName}`;
-  };
+  const inputText = ({ user }) =>
+    user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
 
   return (
     <Create {...props} title="Communautés > ajouter un membre">
@@ -48,16 +46,16 @@ export const CommunityUserCreate = (props) => {
         <ReferenceInput
           label="Nouveau Membre"
           source="user"
-          reference="users"
+          reference="solidary_users"
           validate={required()}
           formClassName={classes.halfwidth}
         >
           {/* Should be like that : 
-                    <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
-                    But https://github.com/marmelab/react-admin/pull/4367
-                    So waiting for the next release of react-admin 
-                */}
-          <AutocompleteInput optionValue="id" optionText={inputText} allowEmpty={false} />
+              <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
+              But https://github.com/marmelab/react-admin/pull/4367
+              So waiting for the next release of react-admin 
+          */}
+          <AutocompleteInput optionValue="user.id" optionText={inputText} allowEmpty={false} />
         </ReferenceInput>
 
         <SelectInput

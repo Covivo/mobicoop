@@ -27,6 +27,10 @@ use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 /**
  * @method RelayPoint|null find($id, $lockMode = null, $lockVersion = null)
@@ -42,9 +46,11 @@ class RelayPointRepository
     
     private $entityManager;
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->entityManager = $entityManager;
+        $this->collectionExtensions = $collectionExtensions;
+        $this->managerRegistry = $managerRegistry;
         $this->repository = $entityManager->getRepository(RelayPoint::class);
     }
 
@@ -102,7 +108,7 @@ class RelayPointRepository
      * @param User|null $user The User who make the request
      * @return array|null     The relay points found
      */
-    public function findRelayPoints(User $user=null)
+    public function findRelayPoints(User $user=null, array $context = []): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('rp');
         $query->where("rp.private is null or rp.private = 0");
@@ -111,11 +117,17 @@ class RelayPointRepository
             $query->leftJoin('rp.community', 'c')
             ->leftJoin('c.communityUsers', 'cu')
             ->orWhere("cu.user = :user")
-            ->orderBy('rp.id', 'ASC')
             ->setParameter('user', $user);
         }
+        $queryNameGenerator = new QueryNameGenerator();
 
-
+        foreach ($this->collectionExtensions as $extension) {
+            $extension->applyToCollection($query, $queryNameGenerator, RelayPoint::class, 'get', $context);
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(RelayPoint::class, 'get')) {
+                $result = $extension->getResult($query, RelayPoint::class, 'get');
+                return $result;
+            }
+        }
 
         return $query->getQuery()->getResult();
     }

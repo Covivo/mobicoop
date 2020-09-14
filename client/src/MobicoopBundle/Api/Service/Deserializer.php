@@ -78,6 +78,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
  * Custom deserializer service.
@@ -200,6 +201,9 @@ class Deserializer
                 break;
             case Ask::class:
                 return $this->deserializeAsk($data);
+                break;
+            case Block::class:
+                return $this->deserializeBlock($data);
                 break;
             default:
                 break;
@@ -591,7 +595,7 @@ class Deserializer
         if (isset($data["community"]) && is_array($data["community"])) {
             $communityUser->setCommunity($this->deserializeCommunity($data["community"]));
         }
-        if (isset($data["user"])) {
+        if (isset($data["user"]) && is_array($data["user"])) {
             $communityUser->setUser($this->deserializeUser($data["user"]));
         }
         if (isset($data["admin"])) {
@@ -788,11 +792,10 @@ class Deserializer
         // if (isset($data["structure"])) {
         //     $relayPoint->setStructure($this->deserializeStructure($data["structure"]));
         // }
-        if (isset($data["relayPointTypes"])) {
-            foreach ($data["relayPointTypes"] as $relayPointType) {
-                $relayPoint->addRelayPointType($this->deserializeRelayPointType($relayPointType));
-            }
+        if (isset($data["relayPointType"])) {
+            $relayPoint->setRelayPointType($this->deserializeRelayPointType($data['relayPointType']));
         }
+
         return $relayPoint;
     }
 
@@ -871,6 +874,14 @@ class Deserializer
         $ask = $this->autoSet($ask, $data);
 
         return $ask;
+    }
+
+    private function deserializeBlock(array $data) : ?Block
+    {
+        $block = new Block();
+        $block = $this->autoSet($block, $data);
+
+        return $block;
     }
 
     private function autoSet($object, $data)

@@ -31,13 +31,11 @@ const RelayPointShow = (props) => {
     <Show {...props} title="Points relais > afficher">
       <TabbedShowLayout>
         <Tab label="Identité">
-
           <TextField source="name" label="Nom" />
           <ReferenceField source="address.id" label="Adresse" reference="addresses" link={false}>
             <FunctionField render={addressRenderer} />
           </ReferenceField>
           <SelectField source="status" label="Status" choices={statusChoices} />
-
           <ReferenceField
             source="relayPointType.id"
             label="Types de point relais"
@@ -47,6 +45,8 @@ const RelayPointShow = (props) => {
           </ReferenceField>
           <TextField source="description" label="Description" />
           <RichTextField source="fullDescription" label="Description complète" />
+          <TextField source="address.latitude" />
+          <TextField source="address.longitude" />
         </Tab>
 
         <Tab label="Communauté">

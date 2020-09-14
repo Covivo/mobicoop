@@ -13,7 +13,8 @@
     "noEvent":"Aucun événement",
     "routes": {
       "event": "/evenement/{id}",
-      "getList": "/evenements/getEventList"
+      "getList": "/evenements/getEventList",
+      "login": "/utilisateur/connexion"
     }
   },
   "en": {

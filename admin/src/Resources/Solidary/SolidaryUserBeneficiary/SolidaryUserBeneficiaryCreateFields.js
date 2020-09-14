@@ -56,8 +56,10 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const {
     input: { value: userId },
   } = useField('already_registered_user');
+
   const dataProvider = useDataProvider();
   const notify = useNotify();
+
   const prefillUserData = useCallback(
     (id) => {
       if (id) {
@@ -87,6 +89,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
     },
     [dataProvider, notify, form]
   );
+
   useEffect(() => {
     if (userId) {
       prefillUserData(userId);
@@ -158,7 +161,12 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         source="birthDate"
         label={translate('custom.label.user.birthDate')}
         validate={[required()]}
-        options={{ format: 'dd/MM/yyyy', initialFocusedDate: subYears(new Date(), 18) }}
+        options={{
+          format: 'dd/MM/yyyy',
+          maxDate: subYears(new Date(), process.env.REACT_APP_USER_MIN_AGE || 18),
+          minDate: subYears(new Date(), process.env.REACT_APP_USER_MAX_AGE || 120),
+          initialFocusedDate: subYears(new Date(), process.env.REACT_APP_USER_MIN_AGE || 18),
+        }}
         providerOptions={{ locale: frLocale }}
         className={classes.spacedHalfwidth}
       />

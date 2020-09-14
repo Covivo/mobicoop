@@ -47,6 +47,8 @@ use App\Payment\Repository\CarpoolItemRepository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
+use App\User\Exception\BlockException;
+use App\User\Service\BlockManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -65,6 +67,7 @@ class AskManager
     private $security;
     private $carpoolItemRepository;
     private $paymentActive;
+    private $blockManager;
 
     /**
      * Constructor.
@@ -80,6 +83,7 @@ class AskManager
         LoggerInterface $logger,
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
+        BlockManager $blockManager,
         bool $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
@@ -91,6 +95,7 @@ class AskManager
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->paymentActive = $paymentActive;
+        $this->blockManager = $blockManager;
     }
 
     /**
@@ -452,7 +457,6 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
-        
         if ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
             // dispatch en event
             // get the complete ad to have data for the email
@@ -478,6 +482,7 @@ class AskManager
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
         $ad->setMatchingId($ask->getMatching()->getId());
+        $ad->setFrequency($ask->getMatching()->getCriteria()->getFrequency());
 
         // first pass for role
         switch ($ask->getStatus()) {
@@ -540,20 +545,29 @@ class AskManager
     {
         $ask = $this->askRepository->find($adId);
         
+        // We check if the two Users in the Ask are involved in a block
+        if ($this->blockManager->getInvolvedInABlock($ask->getUser(), $ask->getUserRelated())) {
+            throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
+        }
+
+
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
-        // - the opposite and return opposite if the role wasn't chosen
+        // - the opposite and return opposite if the role wasn't chosen (WE DON'T DO THAT ANYMORE)
         $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
         $ask->setStatus($ad->getAskStatus());
         if ($ask->getAskLinked()) {
             $ask->getAskLinked()->setStatus($ad->getAskStatus());
         }
-        if ($ask->getAskOpposite()) {
-            $ask->getAskOpposite()->setStatus($ad->getAskStatus());
-            if ($ask->getAskOpposite()->getAskLinked()) {
-                $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
-            }
-        }
+        
+        // UNCOMMENT TO UPDATE ALSO THE ASK OPPOSITE
+        // if ($ask->getAskOpposite()) {
+        //     $ask->getAskOpposite()->setStatus($ad->getAskStatus());
+        //     if ($ask->getAskOpposite()->getAskLinked()) {
+        //         $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
+        //     }
+        // }
+        
         if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
             // regular
             // we update the criteria of the master ask

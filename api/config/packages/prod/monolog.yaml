@@ -7,19 +7,19 @@ monolog:
             channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
         grouped:
             type:               group
-            members:            [streamed, swift]
+            members:            [streamed]
         streamed:
             type:               stream
             path:               "%kernel.logs_dir%/%kernel.environment%.log"
             level:              info
-        swift:
-            type:               swift_mailer
-            from_email:         "%env(MAIL_ERROR)%"
-            to_email:           "%env(MAIL_ERROR)%"
-            subject:    'An Error Occurred! %%message%%'
-            level:     error
-            formatter:  monolog.formatter.html
-            content_type: text/html
+        # swift:
+        #     type:               swift_mailer
+        #     from_email:         "%env(MAIL_ERROR)%"
+        #     to_email:           "%env(MAIL_ERROR)%"
+        #     subject:    'An Error Occurred! %%message%%'
+        #     level:     error
+        #     formatter:  monolog.formatter.html
+        #     content_type: text/html
         carpool:        
             type: stream
             level: debug
