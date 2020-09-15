@@ -26,6 +26,8 @@ namespace App\Communication\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Communication\Entity\Message;
 use App\Communication\Service\InternalMessageManager;
+use App\User\Exception\BlockException;
+use App\User\Service\BlockManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -36,10 +38,14 @@ use Symfony\Component\Security\Core\Security;
 final class MessageItemDataPersister implements ContextAwareDataPersisterInterface
 {
     private $internalMessageManager;
+    private $blockManager;
+    private $security;
 
-    public function __construct(InternalMessageManager $internalMessageManager)
+    public function __construct(InternalMessageManager $internalMessageManager, BlockManager $blockManager, Security $security)
     {
         $this->internalMessageManager = $internalMessageManager;
+        $this->blockManager = $blockManager;
+        $this->security = $security;
     }
   
     public function supports($data, array $context = []): bool
@@ -50,8 +56,19 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
     public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad message  id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("No message provided"));
         }
+
+        // We check if one of the recipient has black listed the recipient or the other way around
+        // TO DO : Don't block the whole send if only one User is involved in a block
+        $recipients = $data->getRecipients();
+        foreach ($recipients as $recipient) {
+            $blocks = $this->blockManager->getInvolvedInABlock($this->security->getUser(), $recipient->getUser());
+            if (is_array($blocks) && count($blocks)>0) {
+                throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
+            }
+        }
+
         return $this->internalMessageManager->postMessage($data);
     }
 

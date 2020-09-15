@@ -35,7 +35,9 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
+use App\User\Service\BlockManager;
 use DateTime;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Result manager service.
@@ -50,6 +52,8 @@ class ResultManager
     private $matchingRepository;
     private $askRepository;
     private $params;
+    private $security;
+    private $blockManager;
 
     /**
      * Constructor.
@@ -59,12 +63,20 @@ class ResultManager
      * @param MatchingRepository $matchingRepository
      * @param AskRepository $askRepository
      */
-    public function __construct(FormatDataManager $formatDataManager, ProposalMatcher $proposalMatcher, MatchingRepository $matchingRepository, AskRepository $askRepository)
-    {
+    public function __construct(
+        FormatDataManager $formatDataManager,
+        ProposalMatcher $proposalMatcher,
+        MatchingRepository $matchingRepository,
+        AskRepository $askRepository,
+        Security $security,
+        BlockManager $blockManager
+    ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->matchingRepository = $matchingRepository;
         $this->askRepository = $askRepository;
+        $this->security = $security;
+        $this->blockManager = $blockManager;
     }
 
     // set the params
@@ -441,8 +453,36 @@ class ResultManager
         }
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
-            $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
-            $results[$matchingProposalId] = $result;
+
+            // If these matchings is between two Users involved in a block, we skip it
+            $blockedRequest = $blockedOffer = false;
+            if (isset($matching['request'])) {
+                $user1 = $matching['request']->getProposalOffer()->getUser();
+                $user2 = $matching['request']->getProposalRequest()->getUser();
+                // a user may be null in case of anonymous search
+                if ($user1 && $user2) {
+                    $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                    if (is_array($blocks) && count($blocks)>0) {
+                        $blockedRequest = true;
+                    }
+                }
+            }
+            if (isset($matching['offer'])) {
+                $user1 = $matching['offer']->getProposalOffer()->getUser();
+                $user2 = $matching['offer']->getProposalRequest()->getUser();
+                // a user may be null in case of anonymous search
+                if ($user1 && $user2) {
+                    $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+                    if (is_array($blocks) && count($blocks)>0) {
+                        $blockedOffer = true;
+                    }
+                }
+            }
+            
+            if (!$blockedRequest && !$blockedOffer) {
+                $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+                $results[$matchingProposalId] = $result;
+            }
         }
         return $results;
     }
@@ -1982,6 +2022,21 @@ class ResultManager
                 });
             }
         }
+
+        // We exclude the results where the current user (if he is logged) and the carpooler are involved in a block
+        // Useless ?
+        // $user1 = $this->security->getUser();
+        // if ($user1 instanceof User) {
+        //     $resultsWithoutBlock = [];
+        //     foreach ($results as $result) {
+        //         $user2 = $result->getCarpooler();
+        //         $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
+        //         if (is_null($blocks) || (is_array($blocks) && count($blocks)==0)) {
+        //             $resultsWithoutBlock[] = $result;
+        //         }
+        //     }
+        //     return $resultsWithoutBlock;
+        // }
 
         return $results;
     }

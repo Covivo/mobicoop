@@ -11,7 +11,10 @@
         "seatsAvailable":"Places disponibles",
         "price":"Prix",
         "priceTooltip":"Tarif indicatif",
-        "userDelete" : "Utilisateur désinscrit"
+        "userDelete" : "Utilisateur désinscrit",
+        "block":"Bloquer",
+        "blocked":"Bloqué",
+        "blockUrl":"/user/block"
 
      },
     "en": {
@@ -26,6 +29,9 @@
         "seatsAvailable":"Available seats",
         "price":"Price",
         "priceTooltip":"Indicative price",
-        "userDelete" : "Unsubscribed user"
+        "userDelete" : "Unsubscribed user",
+        "block":"Block",
+        "blocked":"Blocked",
+        "blockUrl":"/user/block"
     }
 }

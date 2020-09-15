@@ -301,6 +301,13 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
+# Get events created by a user (POST)
+user_block:
+    methods: [POST]
+    path:
+        fr: /user/block
+        en: /user/block
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
 ##################
 # carpool routes #
