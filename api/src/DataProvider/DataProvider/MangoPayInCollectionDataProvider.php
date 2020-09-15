@@ -26,7 +26,9 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\DataProvider\Ressource\MangoPayIn;
+use App\Payment\Exception\PaymentException;
 use App\Payment\Service\PaymentDataProvider;
+use App\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -35,12 +37,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class MangoPayInCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $request;
-    private $paymentDataProvider;
+    private $paymentManager;
 
-    public function __construct(RequestStack $requestStack, PaymentDataProvider $paymentDataProvider)
+    public function __construct(RequestStack $requestStack, PaymentManager $paymentManager)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->paymentDataProvider = $paymentDataProvider;
+        $this->paymentManager = $paymentManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -55,7 +57,7 @@ final class MangoPayInCollectionDataProvider implements CollectionDataProviderIn
             is_null($this->request->get('RessourceId')) ||
             is_null($this->request->get('Date'))
         ) {
-            throw new \LogicException("Missing parameter");
+            throw new PaymentException(PaymentException::MISSING_PARAMETER);
         }
         
         if ($this->request->get('EventType')!==MangoPayIn::PAYIN_SUCCEEDED &&
@@ -68,6 +70,6 @@ final class MangoPayInCollectionDataProvider implements CollectionDataProviderIn
         $mangoPayIn->setRessourceId($this->request->get('RessourceId'));
         $mangoPayIn->setDate($this->request->get('Date'));
         $mangoPayIn->setSecurityToken($this->request->get('token'));
-        return $this->paymentDataProvider->handleHook($mangoPayIn);
+        return $this->paymentManager->handleHook($mangoPayIn);
     }
 }

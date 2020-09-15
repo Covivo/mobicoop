@@ -35,7 +35,6 @@ class PaymentException extends \LogicException
     const PAYMENT_NO_PROVIDER = "No provider given";
     const UNSUPPORTED_PROVIDER = "This payment provider is not yet supported";
     const NO_PAYMENT_PROFILE = "No payment profile";
-    const INVALID_SECURITY_TOKEN = "Security token invalid";
     
     // User
     const NO_IDENTIFIER = "No identifier found";
@@ -54,4 +53,9 @@ class PaymentException extends \LogicException
     const NO_CARPOOL_ITEM = "No CarpoolItem found";
     const NO_CARPOOL_ITEMS = "No CarpoolItem found";
     const INVALID_USER  = "The User must be driver or passenger of this Ask";
+
+    // Web hooks
+    const MISSING_PARAMETER = "Missing parameter";
+    const INVALID_SECURITY_TOKEN = "Security token invalid";
+    const CARPOOL_PAYMENT_NOT_FOUND = "CarpoolPayment not found";
 }

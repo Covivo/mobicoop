@@ -453,12 +453,12 @@ services:
             $sandBoxMode: '%env(bool:PAYMENT_SANDBOX_MODE)%'
             $defaultCurrency: '%env(string:PAYMENT_DEFAULT_CURRENCY)%'
             $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
-            $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
 
     App\Payment\Service\PaymentManager:
         arguments:
             $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
+            $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
 
     # Price
     App\Price\Controller\:

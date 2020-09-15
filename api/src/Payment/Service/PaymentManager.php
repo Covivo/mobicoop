@@ -35,6 +35,7 @@ use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\User\Entity\User;
@@ -62,6 +63,8 @@ class PaymentManager
     private $paymentProfileRepository;
     private $userManager;
     private $paymentActive;
+    private $securityToken;
+    private $carpoolPaymentRepository;
 
     /**
      * Constructor.
@@ -78,15 +81,18 @@ class PaymentManager
     public function __construct(
         EntityManagerInterface $entityManager,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         AskRepository $askRepository,
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         bool $paymentActive,
-        String $paymentProviderService
+        String $paymentProviderService,
+        string $securityToken
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->askRepository = $askRepository;
         $this->provider = $paymentProviderService;
         $this->entityManager = $entityManager;
@@ -94,6 +100,7 @@ class PaymentManager
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->userManager = $userManager;
         $this->paymentActive = $paymentActive;
+        $this->securityToken = $securityToken;
     }
 
     /**
@@ -675,5 +682,28 @@ class PaymentManager
         $this->entityManager->flush();
 
         return $paymentProfile;
+    }
+
+    /**
+     * Handle a payment web hook
+     * @var object $hook The web hook from the payment provider
+     * @return void
+     */
+    public function handleHook(object $hook)
+    {
+        if ($this->securityToken !== $hook->getSecurityToken()) {
+            throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
+        }
+
+        $transactionId = $this->paymentProvider->handleHook($hook);
+
+        if (!is_null($transactionId)) {
+            $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transactionId]);
+            if (is_null($carpoolPayment)) {
+                throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+            }
+            echo $transactionId;
+            die;
+        }
     }
 }

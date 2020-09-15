@@ -47,4 +47,9 @@ class CarpoolPaymentRepository
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
+    
+    public function findOneBy(array $criteria): ?CarpoolPayment
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }
