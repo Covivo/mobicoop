@@ -830,7 +830,7 @@ class AskManager
 
             // If the status is Unpaid, it's the same for driver or passenger
             if (!is_null($carpoolItem->getUnpaidDate())) {
-                //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                 $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
@@ -861,7 +861,7 @@ class AskManager
             $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
                 if (!is_null($nonValidatedWeek->getUnpaidDate())) {
-                    //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                     $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
                     $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
                     $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());

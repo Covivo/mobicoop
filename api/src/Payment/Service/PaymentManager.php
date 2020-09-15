@@ -334,25 +334,25 @@ class PaymentManager
                 $period->setFromDate($ask->getCriteria()->getFromDate());
                 $period->setToDate($ask->getCriteria()->getToDate());
                 $days = [];
-                if ($ask->getCriteria()->isMonCheck() || $ask->getAskLinked()->getCriteria()->isMonCheck()) {
+                if ($ask->getCriteria()->isMonCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 1;
                 }
-                if ($ask->getCriteria()->isTueCheck() || $ask->getAskLinked()->getCriteria()->isTueCheck()) {
+                if ($ask->getCriteria()->isTueCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 2;
                 }
-                if ($ask->getCriteria()->isWedCheck() || $ask->getAskLinked()->getCriteria()->isWedCheck()) {
+                if ($ask->getCriteria()->isWedCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 3;
                 }
-                if ($ask->getCriteria()->isThuCheck() || $ask->getAskLinked()->getCriteria()->isThuCheck()) {
+                if ($ask->getCriteria()->isThuCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 4;
                 }
-                if ($ask->getCriteria()->isFriCheck() || $ask->getAskLinked()->getCriteria()->isFriCheck()) {
+                if ($ask->getCriteria()->isFriCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 5;
                 }
-                if ($ask->getCriteria()->isSatCheck() || $ask->getAskLinked()->getCriteria()->isSatCheck()) {
+                if ($ask->getCriteria()->isSatCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 6;
                 }
-                if ($ask->getCriteria()->isSunCheck() || $ask->getAskLinked()->getCriteria()->isSunCheck()) {
+                if ($ask->getCriteria()->isSunCheck() || (!is_null($ask->getAskLinked()) && $ask->getAskLinked()->getCriteria()->isMonCheck())) {
                     $days[] = 0;
                 }
                 $period->setDays($days);

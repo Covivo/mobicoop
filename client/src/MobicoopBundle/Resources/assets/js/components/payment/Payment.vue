@@ -304,7 +304,7 @@
                       <v-row
                         v-if="currentItem.unpaidDate"
                         justify="center"
-                        class="mt-n10"
+                        class="mt-n8"
                       >
                         <v-col>
                           <v-icon class="mr-2 ml-n2">
@@ -382,7 +382,7 @@
 
                       <!-- Report link -->
                       <v-row
-                        v-if="!currentItem.reported"
+                        v-if="!currentItem.unpaidDate"
                         justify="center"
                         class="mt-n10"
                       >
@@ -439,7 +439,7 @@
                       <v-row
                         v-else
                         justify="center"
-                        class="mt-n10"
+                        class="mt-n8"
                       >
                         <v-col>
                           <v-icon class="mr-2 ml-n2">
@@ -1016,19 +1016,22 @@ export default {
       this.paymentItems.forEach((paymentItem) => {
         // if punctual 
         if (this.frequency == 1) {
-          payments.push({"id":paymentItem.id, "mode":paymentItem.mode, "status":1});
+          if (paymentItem.mode) {
+            payments.push({"id":paymentItem.id, "mode":paymentItem.mode, "status":1});
+          } 
         } else {
           // if regular 
           // we add all available days of the outward travel
           paymentItem.outwardDays.forEach((day) => {
-            if (day.id) {
+            // we check if we have made an action of payment on the paymentItem and we send it only if that's the case
+            if (day.id && paymentItem.mode ) {
               payments.push({"id":day.id, "mode":paymentItem.mode, "status":day.status});
             }
           })
           // we add all available days of the return travel if return travel exist
-          if (paymentItem.returnDays.length > 0) {
+          if (paymentItem.returnDays && paymentItem.returnDays.length > 0) {
             paymentItem.returnDays.forEach((day) => {
-              if (day.id) {
+              if (day.id && paymentItem.mode ) {
                 payments.push({"id":day.id, "mode":paymentItem.mode, "status":day.status});
               }
             })
@@ -1057,7 +1060,10 @@ export default {
       let payments = [];
       // if punctual 
       if (this.frequency == 1) {
-        payments.push({"id":this.currentItem.id, "mode":2, "status":3});
+        // we check if we have made an action of payment on the currentItem and we send it only if that's the case
+        if (this.currentItem.mode) {
+          payments.push({"id":this.currentItem.id, "mode":2, "status":3});
+        }
       } else {
         // if regular 
         // we add all available days of the outward travel
@@ -1067,7 +1073,7 @@ export default {
           }
         })
         // we add all available days of the return travel if return travel exist
-        if (this.currentItem.returnDays.length > 0) {
+        if (this.currentItem.regularDays && this.currentItem.returnDays.length > 0) {
           this.currentItem.returnDays.forEach((day) => {
             if (day.id) {
               payments.push({"id":day.id, "mode":2, "status":day.status == 1 ? 3 : day.status});
@@ -1083,6 +1089,7 @@ export default {
       })
         .then(res => {
           this.loading = false;
+          this.dialog = false;
         })
         .catch((error) => {
           console.error(error);
