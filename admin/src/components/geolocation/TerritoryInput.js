@@ -88,6 +88,7 @@ const TerritoryInput = (props) => {
                 territory.link = '/territories/' + territory.id;
                 form.change(props.source, null);
                 form.change(`${props.source}.id`, territory.id);
+                props.setTerritory && props.setTerritory({link:territory.link})
               }
             }}
           >
