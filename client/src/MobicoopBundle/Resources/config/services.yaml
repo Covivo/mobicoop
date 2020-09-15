@@ -120,6 +120,10 @@ services:
         arguments: ['@router']
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+    # Event Subscriber
+    Mobicoop\Bundle\MobicoopBundle\EventSubscriber\RequestSubscriber:
+        tags:
+            - { name: kernel.event_subscriber, event: kernel.request }        
 
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
