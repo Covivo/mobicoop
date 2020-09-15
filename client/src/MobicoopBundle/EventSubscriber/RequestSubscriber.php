@@ -1,5 +1,5 @@
 <?php
-namespace App\EventSubscriber;
+namespace Mobicoop\Bundle\MobicoopBundle\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
