@@ -516,6 +516,7 @@ class PaymentManager
                     //$carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif ($item["status"] == PaymentItem::DAY_CARPOOLED) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
+                    $carpoolItem->setUnpaidDate(null);
                     if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_DIRECT);
 

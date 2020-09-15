@@ -298,7 +298,7 @@ class CarpoolItem
         return $this->unpaidDate;
     }
 
-    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
 
