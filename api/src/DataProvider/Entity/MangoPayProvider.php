@@ -466,11 +466,11 @@ class MangoPayProvider implements PaymentProviderInterface
      * @var MangoPayIn $hook The mango pay hook for the payin
      * @return int|null : return the transactionId if it's a success. Null otherwise.
      */
-    public function handleHook(MangoPayIn $hook): ?int
+    public function handleHook(MangoPayIn $hook): ?array
     {
-        if ($hook->getEventType() == MangoPayIn::PAYIN_SUCCEEDED) {
-            return $hook->getRessourceId();
-        }
-        return null;
+        return [
+            "transactionId" => $hook->getRessourceId(),
+            "success" => ($hook->getEventType() == MangoPayIn::PAYIN_SUCCEEDED) ? true : false
+        ];
     }
 }

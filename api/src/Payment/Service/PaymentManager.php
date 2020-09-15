@@ -695,15 +695,14 @@ class PaymentManager
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
 
-        $transactionId = $this->paymentProvider->handleHook($hook);
+        $transaction = $this->paymentProvider->handleHook($hook);
 
-        if (!is_null($transactionId)) {
-            $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transactionId]);
-            if (is_null($carpoolPayment)) {
-                throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
-            }
-            echo $transactionId;
-            die;
+        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction['transactionId']]);
+
+        if (is_null($carpoolPayment)) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
+    
+        $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
     }
 }
