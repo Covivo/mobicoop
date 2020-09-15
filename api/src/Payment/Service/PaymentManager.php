@@ -346,7 +346,10 @@ class PaymentManager
                 // carpoolpayment->setTransactionid
                 // return PaymentPayment avec urlRedirect
             } else {
+                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
                 $this->treatCarpoolPayment($carpoolPayment);
+                $this->entityManager->persist($carpoolPayment);
+                $this->entityManager->flush();
             }
         } else {
 
@@ -414,10 +417,9 @@ class PaymentManager
      * Update the carpool items after a payment
      *
      * @param CarpoolPayment $carpoolPayment    Involved CarpoolPayment
-     * @param boolean $success                  If the payment is a success
      * @return void
      */
-    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment, bool $success = true)
+    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment)
     {
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
@@ -425,11 +427,11 @@ class PaymentManager
              */
             switch ($item->getDebtorStatus()) {
                 case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
-                    $item->setDebtorStatus(($success) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING);
                     break;
                 case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
-                    $item->setDebtorStatus(($success) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
-                    $item->setCreditorStatus(($success) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    $item->setCreditorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
                     break;
             }
         }
@@ -702,7 +704,10 @@ class PaymentManager
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
-    
+        $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
+        $this->entityManager->persist($carpoolPayment);
+        $this->entityManager->flush();
+
         $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
     }
 }
