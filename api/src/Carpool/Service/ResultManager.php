@@ -456,18 +456,22 @@ class ResultManager
 
             // If these matchings is between two Users involved in a block, we skip it
             $blockedRequest = $blockedOffer = false;
-            if ($this->security->getUser() instanceof User) {
-                if (isset($matching['request'])) {
-                    $user1 = $matching['request']->getProposalOffer()->getUser();
-                    $user2 = $matching['request']->getProposalRequest()->getUser();
+            if (isset($matching['request'])) {
+                $user1 = $matching['request']->getProposalOffer()->getUser();
+                $user2 = $matching['request']->getProposalRequest()->getUser();
+                // a user may be null in case of anonymous search
+                if ($user1 && $user2) {
                     $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
                     if (is_array($blocks) && count($blocks)>0) {
                         $blockedRequest = true;
                     }
                 }
-                if (isset($matching['offer'])) {
-                    $user1 = $matching['offer']->getProposalOffer()->getUser();
-                    $user2 = $matching['offer']->getProposalRequest()->getUser();
+            }
+            if (isset($matching['offer'])) {
+                $user1 = $matching['offer']->getProposalOffer()->getUser();
+                $user2 = $matching['offer']->getProposalRequest()->getUser();
+                // a user may be null in case of anonymous search
+                if ($user1 && $user2) {
                     $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
                     if (is_array($blocks) && count($blocks)>0) {
                         $blockedOffer = true;
