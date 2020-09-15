@@ -276,7 +276,7 @@ class PaymentManager
         }
 
         // we assume the payment is failed until it's a success !
-        $payment->setStatus(PaymentPayment::STATUS_FAILURE);
+        //$payment->setStatus(PaymentPayment::STATUS_FAILURE);
 
         if ($payment->getType() == PaymentPayment::TYPE_PAY) {
             // PAY
@@ -284,6 +284,7 @@ class PaymentManager
             // we create the payment
             $carpoolPayment = new CarpoolPayment();
             $carpoolPayment->setUser($user);
+            $carpoolPayment->setStatus(CarpoolPayment::STATUS_INITIATED);
 
             // for a payment, we need to compute the total amount
             $amountDirect = 0;
@@ -318,25 +319,20 @@ class PaymentManager
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
 
-
-
-
-            if ($payment->getStatus() == PaymentPayment::STATUS_SUCCESS) {
-                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
-                foreach ($payment->getItems() as $item) {
-                    $carpoolItem = $this->carpoolItemRepository->find($item['id']);
-                    if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
-                        if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
-                        } else {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
-                            // No confirmation by the Creditor if the payment is online
-                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
-                        }
+            foreach ($payment->getItems() as $item) {
+                $carpoolItem = $this->carpoolItemRepository->find($item['id']);
+                if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
+                    if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
+                    } else {
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                        // No confirmation by the Creditor if the payment is online
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
                     }
-                    $this->entityManager->persist($carpoolItem);
                 }
+                $this->entityManager->persist($carpoolItem);
             }
+
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
 
@@ -410,6 +406,8 @@ class PaymentManager
             }
             $this->entityManager->flush();
         }
+        
+        $payment->setStatus($carpoolPayment->getStatus());
         return $payment;
     }
 
