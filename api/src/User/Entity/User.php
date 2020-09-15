@@ -110,6 +110,7 @@ use App\User\Controller\UserCanUseEmail;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_NEWS_SUBSCRIPTION", columns={"news_subscription"})})
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity("email")
  * @ApiResource(

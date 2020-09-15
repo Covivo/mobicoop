@@ -49,7 +49,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write_campaign"}}
  *      },
- *      collectionOperations={"get","post",
+ *      collectionOperations={
+ *          "get",
+ *          "post",
  *          "owned"={
  *              "method"="GET",
  *              "path"="/campaigns/owned",
@@ -59,7 +61,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *      },
  *      itemOperations={
  *          "get",
- *          "put",
+ *          "put"={
+ *              "normalization_context"={"groups"={"update_campaign"}, "enable_max_depth"="true"},
+ *              "denormalization_context"={"groups"={"update_campaign"}},
+ *          },
  *          "delete",
  *          "send"={
  *              "method"="GET",
@@ -91,7 +96,7 @@ class Campaign
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("read_campaign")
+     * @Groups({"read_campaign","update_campaign"})
      */
     private $id;
 
@@ -100,7 +105,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $name;
 
@@ -109,7 +114,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $subject;
 
@@ -117,7 +122,7 @@ class Campaign
      * @var string Email used to send the campaign.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $email;
 
@@ -125,7 +130,7 @@ class Campaign
      * @var string Name used to send the campaign.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $fromName;
 
@@ -133,7 +138,7 @@ class Campaign
      * @var string Reply to email.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $replyTo;
 
@@ -142,7 +147,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $body;
 
@@ -159,7 +164,7 @@ class Campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $medium;
 
@@ -167,7 +172,7 @@ class Campaign
      * @var CampaignTemplate The template used for the campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\CampaignTemplate")
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
     private $campaignTemplate;
@@ -177,7 +182,7 @@ class Campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="campaigns")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
     private $user;
@@ -210,7 +215,7 @@ class Campaign
      * @var ArrayCollection The images of the campaign.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade="remove", orphanRemoval=true)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $images;
 
@@ -221,7 +226,7 @@ class Campaign
      * id community -> send to all user in the given community ID
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $sendAll;
 
