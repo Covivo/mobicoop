@@ -53,6 +53,7 @@ class PaymentDataProvider
     private $clientId;
     private $apikey;
     private $sandBoxMode;
+    private $securityToken;
 
     private const SUPPORTED_PROVIDERS = [
         "MangoPay" => MangoPayProvider::class
@@ -67,7 +68,8 @@ class PaymentDataProvider
         string $apikey,
         bool $sandBoxMode,
         string $platformName,
-        string $defaultCurrency
+        string $defaultCurrency,
+        string $securityToken
     ) {
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
@@ -79,6 +81,7 @@ class PaymentDataProvider
         $this->clientId = $clientId;
         $this->apikey = $apikey;
         $this->sandBoxMode = $sandBoxMode;
+        $this->securityToken = $securityToken;
     }
     
     /**
@@ -210,6 +213,9 @@ class PaymentDataProvider
     public function handleHook(object $hook)
     {
         $this->checkPaymentConfiguration();
+        if ($this->securityToken !== $hook->getSecurityToken()) {
+            throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
+        }
         $this->providerInstance->handleHook($hook);
     }
 }

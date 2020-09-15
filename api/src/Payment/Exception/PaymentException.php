@@ -35,6 +35,7 @@ class PaymentException extends \LogicException
     const PAYMENT_NO_PROVIDER = "No provider given";
     const UNSUPPORTED_PROVIDER = "This payment provider is not yet supported";
     const NO_PAYMENT_PROFILE = "No payment profile";
+    const INVALID_SECURITY_TOKEN = "Security token invalid";
     
     // User
     const NO_IDENTIFIER = "No identifier found";

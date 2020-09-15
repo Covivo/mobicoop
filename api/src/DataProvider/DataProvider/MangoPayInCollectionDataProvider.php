@@ -45,6 +45,7 @@ final class MangoPayInCollectionDataProvider implements CollectionDataProviderIn
         $mangoPayIn->setEventType($this->request->get('EventType'));
         $mangoPayIn->setRessourceId($this->request->get('RessourceId'));
         $mangoPayIn->setDate($this->request->get('Date'));
+        $mangoPayIn->setSecurityToken($this->request->get('token'));
         return $this->paymentDataProvider->handleHook($mangoPayIn);
     }
 }

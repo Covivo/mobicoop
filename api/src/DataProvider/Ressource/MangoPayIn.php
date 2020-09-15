@@ -76,7 +76,6 @@ class MangoPayIn
     /**
      * @var string The event type pay in
      *
-     * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
      */
     private $eventType;
@@ -84,7 +83,6 @@ class MangoPayIn
     /**
      * @var int The ressource id (from the payment provider) of this pay in
      *
-     * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
      */
     private $ressourceId;
@@ -92,10 +90,16 @@ class MangoPayIn
     /**
      * @var int The date (timestamp) of this pay in
      *
-     * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
      */
     private $date;
+
+    /**
+     * @var string The security token of the pay in
+     *
+     * @Groups({"readPayment"})
+     */
+    private $securityToken;
 
     public function __construct()
     {
@@ -146,6 +150,18 @@ class MangoPayIn
     public function setDate(int $date): self
     {
         $this->date = $date;
+        
+        return $this;
+    }
+
+    public function getSecurityToken(): ?string
+    {
+        return $this->securityToken;
+    }
+
+    public function setSecurityToken(string $securityToken): self
+    {
+        $this->securityToken = $securityToken;
         
         return $this;
     }
