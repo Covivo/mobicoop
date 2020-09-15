@@ -374,14 +374,14 @@ class MangoPayProvider implements PaymentProviderInterface
             "AuthorId" => $identifier,
             "DebitedFunds" => [
                 "Currency" => self::CURRENCY,
-                "Amount" => $carpoolPayment->getAmount()
+                "Amount" => (int)($carpoolPayment->getAmount()*100)
             ],
             "Fees" => [
                 "Currency" => self::CURRENCY,
                 "Amount" => 0
             ],
             "CreditedWalletId" => $wallet->getId(),
-            "ReturnURL" => "http://www.test.com",
+            "ReturnURL" => "http://www.test.com?carpoolPaymentId=".$carpoolPayment->getId(),
             "CardType" => self::CARD_TYPE,
             "Culture" => self::LANGUAGE
         ];
@@ -391,7 +391,16 @@ class MangoPayProvider implements PaymentProviderInterface
             "Authorization" => $this->authChain
         ];
         $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+        } else {
+            throw new PaymentException(PaymentException::GET_URL_PAYIN_FAILED);
+        }
 
+        $carpoolPayment->setTransactionid($data['Id']);
+        $carpoolPayment->setRedirectUrl($data['RedirectURL']);
+        
         return $carpoolPayment;
     }
 

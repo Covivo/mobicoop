@@ -27,6 +27,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
@@ -210,5 +211,17 @@ class PaymentDataProvider
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->handleHook($hook);
+    }
+
+    /**
+     * Get the secured form's url for electronic payment
+     *
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
+     */
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->generateElectronicPaymentUrl($carpoolPayment);
     }
 }

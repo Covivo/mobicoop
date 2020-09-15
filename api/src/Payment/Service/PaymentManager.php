@@ -326,27 +326,23 @@ class PaymentManager
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
                     } else {
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
-                        // No confirmation by the Creditor if the payment is online
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
                     }
                 }
                 $this->entityManager->persist($carpoolItem);
             }
 
-            $this->entityManager->persist($carpoolPayment);
-            $this->entityManager->flush();
-
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
-                // generateElectronicPaymentUrl(carpoolpayment)
-                // carpoolpayment->setTransactionid
-                // return PaymentPayment avec urlRedirect
+                $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
                 $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
                 $this->treatCarpoolPayment($carpoolPayment);
-                $this->entityManager->persist($carpoolPayment);
-                $this->entityManager->flush();
             }
+
+            $this->entityManager->persist($carpoolPayment);
+            $this->entityManager->flush();
         } else {
 
             // COLLECT
@@ -703,9 +699,10 @@ class PaymentManager
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
         $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
-        $this->entityManager->persist($carpoolPayment);
-        $this->entityManager->flush();
 
         $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
+
+        $this->entityManager->persist($carpoolPayment);
+        $this->entityManager->flush();
     }
 }

@@ -54,6 +54,9 @@ class PaymentException extends \LogicException
     const NO_CARPOOL_ITEMS = "No CarpoolItem found";
     const INVALID_USER  = "The User must be driver or passenger of this Ask";
 
+    // Electronic payment
+    const GET_URL_PAYIN_FAILED = "Failed to get the secured URL for electronic payment";
+
     // Web hooks
     const MISSING_PARAMETER = "Missing parameter";
     const INVALID_SECURITY_TOKEN = "Security token invalid";

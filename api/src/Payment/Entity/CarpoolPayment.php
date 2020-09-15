@@ -103,6 +103,11 @@ class CarpoolPayment
      */
     private $transactionId;
 
+    /**
+     * @var string Secured form's url to process the electronic payement
+     */
+    private $redirectUrl;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
@@ -201,6 +206,18 @@ class CarpoolPayment
     public function setTransactionId(int $transactionId): self
     {
         $this->transactionId = $transactionId;
+
+        return $this;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return $this->redirectUrl;
+    }
+
+    public function setRedirectUrl(string $redirectUrl): self
+    {
+        $this->redirectUrl = $redirectUrl;
 
         return $this;
     }
