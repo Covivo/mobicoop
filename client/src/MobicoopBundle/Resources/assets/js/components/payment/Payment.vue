@@ -1056,7 +1056,6 @@ export default {
     sendReport() {
       this.loading = true;
       this.currentItem.unpaidDate = moment();
-      this.currentItem.mode = 2;
       let payments = [];
       // if punctual 
       if (this.frequency == 1) {
