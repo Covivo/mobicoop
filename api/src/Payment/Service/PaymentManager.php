@@ -37,7 +37,6 @@ use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
-use App\Payment\Ressource\ElectronicPayment;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -336,8 +335,6 @@ class PaymentManager
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
-                // TODO : online payment, set the status to success if successful !
-                
                 // generateElectronicPaymentUrl(carpoolpayment)
                 // carpoolpayment->setTransactionid
                 // return PaymentPayment avec urlRedirect
