@@ -119,7 +119,7 @@ class CarpoolItem
     /**
      * @var Ask The ask related to the item.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
      */
     private $ask;
 
@@ -298,7 +298,7 @@ class CarpoolItem
         return $this->unpaidDate;
     }
 
-    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
 

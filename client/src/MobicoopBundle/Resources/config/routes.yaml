@@ -1012,8 +1012,8 @@ payment_payments_post:
 # payment 
 payment_list:
     path:
-        fr: /paiements/{id?}/{frequency?}/{type?}/{week?}
-        en: /payments/{id?}/{frequency?}/{type?}/{week?}
+        fr: /paiements/{id?}/{frequency?}/{type?}
+        en: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 # Get weeks to pay (POST) AJAX
@@ -1022,7 +1022,23 @@ payment_weeks_list:
     path:
         fr: /getWeeks
         en: /getWeeks
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks      
+
+# Get payment periods to pay/collect (POST) AJAX
+payment_periods_list:
+    methods: [POST]
+    path:
+        fr: /getCalendar
+        en: /getCalendar
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar    
+
+# Get the first non validated week (POST) AJAX
+payment_week_first:
+    methods: [POST]
+    path:
+        fr: /getFirstWeek
+        en: /getFirstWeek
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
 ###############
 # misc routes #

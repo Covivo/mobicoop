@@ -76,6 +76,8 @@ use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
@@ -190,6 +192,12 @@ class Deserializer
                 break;
             case PaymentPayment::class:
                 return $this->deserializePaymentPayment($data) ;
+                break;
+            case PaymentPeriod::class:
+                return $this->deserializePaymentPeriod($data) ;
+                break;
+            case PaymentWeek::class:
+                return $this->deserializePaymentWeek($data) ;
                 break;
             case Ask::class:
                 return $this->deserializeAsk($data);
@@ -831,6 +839,7 @@ class Deserializer
         if (isset($data["destination"])) {
             $paymentItem->setDestination($this->deserializeAddress($data['destination']));
         }
+        
         $paymentItem = $this->autoSet($paymentItem, $data);
 
         return $paymentItem;
@@ -842,6 +851,22 @@ class Deserializer
         $paymentPayment = $this->autoSet($paymentPayment, $data);
 
         return $paymentPayment;
+    }
+
+    private function deserializePaymentPeriod(array $data) : ?PaymentPeriod
+    {
+        $paymentPeriod = new PaymentPeriod();
+        $paymentPeriod = $this->autoSet($paymentPeriod, $data);
+
+        return $paymentPeriod;
+    }
+
+    private function deserializePaymentWeek(array $data) : ?PaymentWeek
+    {
+        $paymentWeek = new PaymentWeek();
+        $paymentWeek = $this->autoSet($paymentWeek, $data);
+
+        return $paymentWeek;
     }
 
     private function deserializeAsk(array $data) : ?Ask

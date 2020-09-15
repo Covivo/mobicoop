@@ -25,16 +25,15 @@ namespace App\Payment\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Carpool\Entity\Criteria;
-use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
+use App\Payment\Ressource\PaymentPeriod;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-final class PaymentItemCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class PaymentPeriodCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $filters;
     private $paymentManager;
@@ -52,32 +51,17 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
             $this->filters = $context['filters'];
         }
 
-        return PaymentItem::class === $resourceClass;
+        return PaymentPeriod::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-
-        // we initialize the frequency
-        $frequency = Criteria::FREQUENCY_PUNCTUAL;
-        if (!empty($this->filters['frequency'])) {
-            $frequency = $this->filters['frequency'];
-        }
-
         // we initialize the type
         $type = PaymentItem::TYPE_PAY;
         if (!empty($this->filters['type'])) {
             $type = $this->filters['type'];
         }
 
-        if (!empty($this->filters['day'])) {
-            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, $this->filters['day']);
-        }
-
-        if (!empty($this->filters['week'])) {
-            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, null, $this->filters['week']);
-        }
-
-        return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type);
+        return $this->paymentManager->getPaymentPeriods($this->security->getUser(), $type);
     }
 }

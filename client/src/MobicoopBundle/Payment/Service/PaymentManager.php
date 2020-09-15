@@ -28,6 +28,8 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 
 /**
  * Payment management service.
@@ -92,9 +94,9 @@ class PaymentManager
     /**
      * Get payments
      *
-     * @param integer $frequency
-     * @param integer $type
-     * @param integer $week
+     * @param integer $frequency    The frequency of the carpools to get (1 = punctual, 2 = regular)
+     * @param integer $type         The type of carpools to get (1 = to pay as a passenger, 2 = to collect as a driver)
+     * @param integer $week         The week number and year
      */
     public function getPaymentItems(int $frequency, int $type, int $week=null)
     {
@@ -151,6 +153,34 @@ class PaymentManager
         if ($response->getCode() != 201) {
             return $response->getValue()->getWeekItems();
         }
+        return $response->getValue();
+    }
+
+    /**
+     * Get the calendar of payments for a regular Ad
+     *
+     * @param int $type The type of payment (collect/pay)
+     * @return object|array The calendar
+     */
+    public function getCalendar(int $type)
+    {
+        $this->dataProvider->setClass(PaymentPeriod::class);
+
+        $response = $this->dataProvider->getCollection(['type'=>$type]);
+        return $response->getValue()->getMember();
+    }
+
+    /**
+     * Get the first non validated week for a regular Ask
+     *
+     * @param int $id The id of the ask
+     * @return object|array The week
+     */
+    public function getFirstWeek(int $id)
+    {
+        $this->dataProvider->setClass(PaymentWeek::class);
+
+        $response = $this->dataProvider->getItem($id);
         return $response->getValue();
     }
 }

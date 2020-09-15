@@ -51,7 +51,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import Translations from "@translations/components/utilities/PlatformWidget.json";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";

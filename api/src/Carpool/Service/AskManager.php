@@ -786,56 +786,6 @@ class AskManager
         return $ad;
     }
 
-
-
-
-    /************
-    *   DYNAMIC *
-    *************/
-
-    /**
-     * Check if a user has a pending dynamic ad ask.
-     *
-     * @param User $user The user
-     * @return boolean
-     */
-    public function hasPendingDynamicAsk(User $user)
-    {
-        // first we get all the asks initiated by the user
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
-        // now we check if one of these asks is related to a dynamic ad, not finished
-        foreach ($asks as $ask) {
-            // if the user is passenger
-            if ($ask->getUser()->getId() == $user->getId() && $ask->getMatching()->getProposalRequest()->isDynamic() && !$ask->getMatching()->getProposalRequest()->isFinished()) {
-                return true;
-            }
-            // if the user is driver
-            if ($ask->getUserRelated()->getId() == $user->getId() && $ask->getMatching()->getProposalOffer()->isDynamic() && !$ask->getMatching()->getProposalOffer()->isFinished()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if a user has a refused dynamic ad ask related to a given matching.
-     *
-     * @param User $user The user
-     * @return boolean
-     */
-    public function hasRefusedDynamicAsk(User $user, Matching $matching)
-    {
-        // first we get all the asks initiated by the user and refused by the carpooler
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
-        // now we check if one of these asks is related to the given matching
-        foreach ($asks as $ask) {
-            if ($ask->getMatching()->getId() == $matching->getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Get the payment status of an Ask
      *
@@ -880,7 +830,7 @@ class AskManager
 
             // If the status is Unpaid, it's the same for driver or passenger
             if (!is_null($carpoolItem->getUnpaidDate())) {
-                //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                 $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
@@ -911,7 +861,7 @@ class AskManager
             $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
                 if (!is_null($nonValidatedWeek->getUnpaidDate())) {
-                    //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                     $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
                     $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
                     $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
@@ -941,14 +891,17 @@ class AskManager
         $startDate = $ask->getCriteria()->getFromDate();
         $toDate = $ask->getCriteria()->getToDate();
 
-        // We will check until last week (we set on today because de loop is executed until the current week equals the max week)
-        $maxDate = new \DateTime('now');
+        // we limit to the last day of the previous week
+        $maxDate = new \DateTime();
+        $maxDate->modify('last week +6 days');
+
+        $limitDate = min($maxDate, $toDate);
 
         // First we need an array where every element is a week that contains every days on the period
         $currentDate = clone $startDate;
-        $cpt = 0; // to prevent infinite loop
+
         $arrayWeeks = [];
-        while ($currentDate < $maxDate && $currentDate < $toDate && $cpt<=1000) {
+        while ($currentDate <= $limitDate) {
             $currentWeek = [];
             for ($i = 0 ; $i < 7 ; $i++) {
                 $currentWeek[] = clone $currentDate;
@@ -1005,5 +958,55 @@ class AskManager
         $ask->setWeekItems($nonValidatedWeeks);
 
         return $ask;
+    }
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Check if a user has a pending dynamic ad ask.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasPendingDynamicAsk(User $user)
+    {
+        // first we get all the asks initiated by the user
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
+        // now we check if one of these asks is related to a dynamic ad, not finished
+        foreach ($asks as $ask) {
+            // if the user is passenger
+            if ($ask->getUser()->getId() == $user->getId() && $ask->getMatching()->getProposalRequest()->isDynamic() && !$ask->getMatching()->getProposalRequest()->isFinished()) {
+                return true;
+            }
+            // if the user is driver
+            if ($ask->getUserRelated()->getId() == $user->getId() && $ask->getMatching()->getProposalOffer()->isDynamic() && !$ask->getMatching()->getProposalOffer()->isFinished()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a user has a refused dynamic ad ask related to a given matching.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasRefusedDynamicAsk(User $user, Matching $matching)
+    {
+        // first we get all the asks initiated by the user and refused by the carpooler
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
+        // now we check if one of these asks is related to the given matching
+        foreach ($asks as $ask) {
+            if ($ask->getMatching()->getId() == $matching->getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

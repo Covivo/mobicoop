@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\AskPost;
 use App\Carpool\Controller\AskPut;
+use App\Payment\Entity\CarpoolItem;
 use App\Solidary\Entity\SolidaryAsk;
 
 /**
@@ -284,6 +285,14 @@ class Ask
      * @Groups({"read"})
      */
     private $solidaryAsk;
+
+    /**
+     * @var ArrayCollection|null A user may have many action logs.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\CarpoolItem", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"itemDate" = "ASC"})
+     */
+    private $carpoolItems;
     
     /**
      * @var int|null The payment status of the Ask
@@ -320,6 +329,7 @@ class Ask
         $this->waypoints = new ArrayCollection();
         $this->askHistories = new ArrayCollection();
         $this->carpoolProofs = new ArrayCollection();
+        $this->carpoolItems = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -617,6 +627,34 @@ class Ask
     public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
+
+        return $this;
+    }
+
+    public function getCarpoolItems()
+    {
+        return $this->carpoolItems->getValues();
+    }
+
+    public function addCarpoolItem(CarpoolItem $carpoolItem): self
+    {
+        if (!$this->carpoolItems->contains($carpoolItem)) {
+            $this->carpoolItems->add($carpoolItem);
+            $carpoolItem->setAsk($this);
+        }
+
+        return $this;
+    }
+
+    public function removecarpoolItem(CarpoolItem $carpoolItem): self
+    {
+        if ($this->carpoolItems->contains($carpoolItem)) {
+            $this->carpoolItems->removeElement($carpoolItem);
+            // set the owning side to null (unless already changed)
+            if ($carpoolItem->getAsk() === $this) {
+                $carpoolItem->setAsk(null);
+            }
+        }
 
         return $this;
     }
