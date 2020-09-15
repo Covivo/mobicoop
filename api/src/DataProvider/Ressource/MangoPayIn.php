@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Ressource;
+namespace App\DataProvider\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -58,17 +58,44 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MangiPayIn
+class MangoPayIn
 {
     const DEFAULT_ID = "999999999999";
 
+    const PAYIN_SUCCEEDED = "PAYIN_NORMAL_SUCCEEDED";
+    const PAYIN_FAILED = "PAYIN_NORMAL_FAILED";
+
     /**
-     * @var int The id of this bank account
+     * @var int The id of this pay in
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readPayment"})
      */
     private $id;
+
+    /**
+     * @var string The event type pay in
+     *
+     * @ApiProperty(identifier=true)
+     * @Groups({"readPayment"})
+     */
+    private $eventType;
+
+    /**
+     * @var int The ressource id (from the payment provider) of this pay in
+     *
+     * @ApiProperty(identifier=true)
+     * @Groups({"readPayment"})
+     */
+    private $ressourceId;
+
+    /**
+     * @var int The date (timestamp) of this pay in
+     *
+     * @ApiProperty(identifier=true)
+     * @Groups({"readPayment"})
+     */
+    private $date;
 
     public function __construct()
     {
@@ -80,9 +107,45 @@ class MangiPayIn
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function getEventType(): ?string
+    {
+        return $this->eventType;
+    }
+
+    public function setEventType(string $eventType): self
+    {
+        $this->eventType = $eventType;
+        
+        return $this;
+    }
+    
+    public function getRessourceId(): ?int
+    {
+        return $this->ressourceId;
+    }
+
+    public function setRessourceId(int $ressourceId): self
+    {
+        $this->ressourceId = $ressourceId;
+        
+        return $this;
+    }
+
+    public function getDate(): ?int
+    {
+        return $this->date;
+    }
+
+    public function setDate(int $date): self
+    {
+        $this->date = $date;
         
         return $this;
     }

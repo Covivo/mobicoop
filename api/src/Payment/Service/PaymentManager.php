@@ -679,15 +679,4 @@ class PaymentManager
 
         return $paymentProfile;
     }
-
-    /**
-     * Create an ElectronicPayment
-     *
-     * @param ElectronicPayment $electronicPayment  The payment to process
-     * @return ElectronicPayment|null
-     */
-    public function createElectronicPayment(ElectronicPayment $electronicPayment): ?ElectronicPayment
-    {
-        return $this->paymentProvider->createElectronicPayment($electronicPayment);
-    }
 }

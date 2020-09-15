@@ -78,6 +78,7 @@ api_platform:
         - '%kernel.project_dir%/src/User/Entity'
         - '%kernel.project_dir%/src/User/Ressource'
         - '%kernel.project_dir%/src/Utility/Entity'
+        - '%kernel.project_dir%/src/DataProvider/Ressource'
         
     formats:
         jsonld:   ['application/ld+json']

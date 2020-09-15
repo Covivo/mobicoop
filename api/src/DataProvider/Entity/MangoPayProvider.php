@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\DataProvider\Ressource\MangoPayIn;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
@@ -458,5 +459,16 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $wallet;
+    }
+
+    /**
+     * Handle a payment web hook
+     *
+     * @return void
+     */
+    public function handleHook(MangoPayIn $hook)
+    {
+        echo "mango";
+        die;
     }
 }

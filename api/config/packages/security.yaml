@@ -116,7 +116,13 @@ security:
             stateless: true
             anonymous: true
 
-            # firewall for dev (profiler)
+        # firewall for MangoPay external requests of payins
+        mangoPayInsHook:
+            pattern:  ^/mango-payins
+            stateless: true
+            anonymous: true
+
+        # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -142,4 +148,5 @@ security:
         - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

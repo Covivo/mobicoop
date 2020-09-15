@@ -203,48 +203,13 @@ class PaymentDataProvider
     }
 
     /**
-     * Create an electronic payment
-     *
-     * @param ElectronicPayment $electronicPayment  The electronic payement to create
-     * @return ElectronicPayment|null
+     * Handle a payment web hook
+     * @var object $hook The web hook from the payment provider
+     * @return void
      */
-    public function createElectronicPayment(ElectronicPayment $electronicPayment): ?ElectronicPayment
+    public function handleHook(object $hook)
     {
         $this->checkPaymentConfiguration();
-
-        // Get the paymentprofile with bank account and wallet of the author and the recipient
-        $paymentProfiles = $this->getPaymentProfiles($electronicPayment->getAuthor());
-        $bankAccounts = $wallets = [];
-        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
-            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
-        }
-        foreach ($paymentProfiles as $paymentProfile) {
-            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                $bankAccounts[] = $bankaccount;
-            }
-            foreach ($paymentProfile->getWallets() as $wallet) {
-                $wallets[] = $wallet;
-            }
-        }
-        $electronicPayment->getAuthor()->setBankAccounts($bankAccounts);
-        $electronicPayment->getAuthor()->setWallets($wallets);
-
-        $paymentProfiles = $this->getPaymentProfiles($electronicPayment->getRecipient());
-        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
-            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
-        }
-        $bankAccounts = $wallets = [];
-        foreach ($paymentProfiles as $paymentProfile) {
-            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                $bankAccounts[] = $bankaccount;
-            }
-            foreach ($paymentProfile->getWallets() as $wallet) {
-                $wallets[] = $wallet;
-            }
-        }
-        $electronicPayment->getRecipient()->setBankAccounts($bankAccounts);
-        $electronicPayment->getRecipient()->setWallets($wallets);
-
-        return $this->providerInstance->createElectronicPayment($electronicPayment);
+        $this->providerInstance->handleHook($hook);
     }
 }
