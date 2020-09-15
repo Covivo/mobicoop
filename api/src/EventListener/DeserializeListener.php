@@ -53,7 +53,7 @@ final class DeserializeListener
     public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
-        if ($request->isMethodCacheable() || $request->isMethod(Request::METHOD_DELETE)) {
+        if ($request->isMethodCacheable(false) || $request->isMethod(Request::METHOD_DELETE)) {
             return;
         }
 
