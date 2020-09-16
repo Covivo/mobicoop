@@ -60,19 +60,50 @@
             <v-col
               cols="12"
               md="10"
+              class="text-center text-h6 pt-4"
+            >
+              {{ $t('titleAddress') }}
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col
+              cols="12"
+              md="10"
+              class="text-center pt-4 font-italic"
+            >
+              {{ $t('textAddress') }}
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col
+              cols="12"
+              md="10"
+            >
+              <GeoComplete
+                :url="geoSearchUrl"
+                :label="$t('form.label.address')"
+                :display-name-in-selected="false"
+                @address-selected="addressSelected"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col
+              cols="12"
+              md="10"
               class="text-center"
             >
               <v-btn 
                 rounded
                 color="secondary" 
                 class="mt-4 justify-self-center"
-                :disabled="!valid"
+                :disabled="!valid || !validAddress"
                 @click="addBankCoordinates"
               >
                 {{ $t('register') }}
               </v-btn>
             </v-col>
-          </v-row>      
+          </v-row>
         </v-container>
       </v-form>
       <div v-else>
@@ -172,15 +203,23 @@
 <script>
 import axios from "axios";
 import Translations from "@translations/components/user/profile/BankAccount.json";
+import GeoComplete from "@js/components/utilities/GeoComplete";
 
 export default {
   i18n: {
     messages: Translations
   },
+  components: {
+    GeoComplete
+  },  
   props: {
     user: {
       type: Object,
       default: () => {}
+    },
+    geoSearchUrl: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -189,6 +228,7 @@ export default {
       form: {
         iban:"",
         bic:"",
+        formAddress:null,
         rules:{
           ibanRules: [
             v => !!v || this.$t('form.errors.ibanRequired'),
@@ -197,14 +237,15 @@ export default {
           bicRules: [
             v => !!v || this.$t('form.errors.bicRequired'),
             v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?/).test(v) || this.$t('form.errors.bic'),
-          ]    
+          ],
         }
       },
-      bankCoordinates:null,
+      bankCoordinates: null,
       loading:false,
       title:this.$t('title'),
       dialog:false,
-      error:false
+      error:false,
+      validAddress:false
     }
   },
   mounted(){
@@ -215,9 +256,9 @@ export default {
       this.loading = true;
       axios.post(this.$t("uri.getCoordinates"))
         .then(response => {
-          console.error(response.data);
+          // console.error(response.data);
           if(response.data){
-            this.bankCoordinates = response.data[0];
+            if(response.data[0]) this.bankCoordinates = response.data[0];
             this.title = this.$t('titleAlreadyRegistered')
             this.loading = false;
           }
@@ -267,6 +308,21 @@ export default {
         .catch(function (error) {
           console.error(error);
         })
+    },
+    addressSelected(address){
+      this.form.formAddress = address;
+      this.validateAddress();
+    },
+    validateAddress(){
+      if(!this.form.formAddress ||
+          !this.form.formAddress.streetAddress || 
+          !this.form.formAddress.addressLocality ||
+          !this.form.formAddress.postalCode){
+        this.validAddress = false;
+      }
+      else{
+        this.validAddress = true;
+      }
     }
   }
 }
