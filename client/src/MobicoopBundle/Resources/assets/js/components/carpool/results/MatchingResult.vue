@@ -1,6 +1,5 @@
 <template>
   <v-card
-    v-if="!resultPassed"
     outlined
   >
     <v-container>
@@ -130,16 +129,12 @@ export default {
   data : function() {
     return {
       locale: this.$i18n.locale,
-      resultPassed: false,
     }
   },
   computed: {
     showRegularSummary() {
       return (this.result.frequency == 2 || (this.distinguishRegular && this.result.frequencyResult == 2));
     }
-  },
-  mounted() {
-    this.checkIfResultIsPassed();
   },
   methods :{
     carpool() {
@@ -151,12 +146,6 @@ export default {
       this.$emit("loginOrRegister", {
         //matching: this.matching
       });
-    },
-    checkIfResultIsPassed() {
-      let now = moment();
-      if (now > moment(this.result.time) && now > moment(this.result.date)) {
-        this.resultPassed = true;
-      } 
     }
   }
 };

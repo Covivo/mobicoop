@@ -4,6 +4,7 @@ import SendIcon from '@material-ui/icons/Send';
 import { fr } from 'date-fns/locale';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
+import { utcDateFormat } from '../../../utils/date';
 
 const useStyles = makeStyles({
   message: {
@@ -65,11 +66,7 @@ const Message = (props) => {
       )}
       <p>{props.text}</p>
       {props.createdDate && (
-        <span className="date">
-          {format(new Date(props.createdDate), "eee dd LLL HH':'mm", {
-            locale: fr,
-          })}
-        </span>
+        <span className="date">{utcDateFormat(props.createdDate, "dd'/'MM'/'yyyy HH':'mm")}</span>
       )}
     </li>
   );

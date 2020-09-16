@@ -34,7 +34,6 @@ import StructureResource from './Resources/Solidary/Structure';
 // import AddressResource from './Resources/Address';
 
 const LoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
-
 export default () => (
   <Admin
     dataProvider={dataProvider}

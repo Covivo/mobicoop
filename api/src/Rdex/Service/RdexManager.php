@@ -301,7 +301,7 @@ class RdexManager
     {
         $returnArray = [];
         $journeys = [];
-
+        
         if (is_null($this->client)) {
             return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
         }
@@ -372,7 +372,7 @@ class RdexManager
             $driver->setSeats($result->getSeatsDriver());
             $driver->setState(($carpoolerIsDriver) ? 1 : 0);
 
-            if (count($result->getCarpooler()->getImages())>0) {
+            if (count($result->getCarpooler()->getImages())>0 && isset($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION])) {
                 $driver->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
             }
             $journey->setDriver($driver);
@@ -390,7 +390,7 @@ class RdexManager
 
             $passenger->setState(($carpoolerIsPassenger) ? 1 : 0);
 
-            if (count($result->getCarpooler()->getImages())>0) {
+            if (count($result->getCarpooler()->getImages())>0 && isset($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION])) {
                 $passenger->setImage($result->getCarpooler()->getImages()[0]->getVersions()[self::IMAGE_VERSION]);
             }
             $journey->setPassenger($passenger);

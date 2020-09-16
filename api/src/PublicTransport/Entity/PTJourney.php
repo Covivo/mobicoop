@@ -46,20 +46,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
- *                          "name" = "provider",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The public transport data provider"
- *                      },
- *                      {
- *                          "name" = "apikey",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The api key for the data provider"
- *                      },
- *                      {
  *                          "name" = "origin_latitude",
  *                          "in" = "query",
  *                          "required" = "true",
@@ -102,7 +88,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                      {
  *                          "name" = "dateType",
  *                          "in" = "query",
- *                          "required" = "true",
  *                          "type" = "string",
  *                          "description" = "The date type of the trip",
  *                          "enum" = {
@@ -111,21 +96,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                          }
  *                      },
  *                      {
- *                          "name" = "algorithm",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The type of calculation algorithm for the trip",
- *                          "enum" = {
- *                              "fastest",
- *                              "shortest",
- *                              "minchanges"
- *                          }
- *                      },
- *                      {
  *                          "name" = "modes",
  *                          "in" = "query",
- *                          "required" = "true",
  *                          "type" = "string",
  *                          "description" = "The transport modes accepted for the trip",
  *                          "enum" = {
@@ -135,7 +107,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                              "PT+BIKE",
  *                              "PT+CAR"
  *                          }
- *                      },
+ *                      }
+ *
  *                  },
  *              }
  *          }

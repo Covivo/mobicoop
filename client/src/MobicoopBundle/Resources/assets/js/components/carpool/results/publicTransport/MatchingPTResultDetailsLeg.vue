@@ -54,10 +54,10 @@ export default {
   },
   computed: {
     departure(){
-      return this.ptLeg.pTDeparture.name;
+      return (this.ptLeg.pTDeparture.address.displayLabel && this.ptLeg.pTDeparture.address.displayLabel.length>0) ? this.ptLeg.pTDeparture.address.displayLabel[0] : this.ptLeg.pTDeparture.address.name;
     },
     arrival(){
-      return this.ptLeg.pTArrival.name;
+      return (this.ptLeg.pTArrival.address.displayLabel && this.ptLeg.pTArrival.address.displayLabel.length>0) ? this.ptLeg.pTArrival.address.displayLabel[0] : this.ptLeg.pTArrival.address.name;
     }
   },
   methods:{

@@ -1,3 +1,10 @@
+# Release 1.12.0
+
+## API
+* Multi PT provider mode. You can now define a specific provider for a specific territory (see providers.json)
+* Support of Navitia for PT searches
+* The entire configuration for PT searches in providers.json, no more in .env (neither API or client .env)
+
 # Release 1.9.0
 
 ## API
