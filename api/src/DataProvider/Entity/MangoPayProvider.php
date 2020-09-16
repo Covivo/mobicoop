@@ -319,6 +319,8 @@ class MangoPayProvider implements PaymentProviderInterface
             }
         }
 
+        $body['KYCLevel'] = "LIGHT";
+
         $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL);
         $headers = [
             "Authorization" => $this->authChain
