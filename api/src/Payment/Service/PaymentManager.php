@@ -337,7 +337,6 @@ class PaymentManager
                 $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
                 $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
-                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
                 $this->treatCarpoolPayment($carpoolPayment);
             }
 
@@ -346,7 +345,7 @@ class PaymentManager
         } else {
 
             // COLLECT
-            // Array of carpoolPayment we could generate if there are DIRECT payments not previously validated par debtors
+            // We will automatically create the carpoolPayments related to an accepted direct payment not previously validated by the debtor.
             $carpoolPayments = [];
             
 
@@ -388,6 +387,7 @@ class PaymentManager
                             $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->addCarpoolItem($carpoolItem);
                         }
                     } else {
+                        // For online payment we don't change the debtor status, only the creditor's
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
                     }
                 } else {
