@@ -298,14 +298,14 @@
                   class="text-justify pb-5"
                 >
                   <community-help
-                    :display-title-community="!displayTitleCommunity"
+                    :display-title-community="false"
                   />
                 </v-row>
 
                 <v-autocomplete
                   v-if="communityShow"
                   v-model="selectedCommunity"
-                  :items="communities.communities"
+                  :items="communities"
                   outlined
                   chips
                   :label="$t('communities.label')"
@@ -619,7 +619,7 @@ export default {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     selectedCommunity() {
-      this.communities.communities.forEach((community, index) => {
+      this.communities.forEach((community, index) => {
         if (community.id == this.selectedCommunity) {
           this.textSnackOk =
             community.validationType == 1

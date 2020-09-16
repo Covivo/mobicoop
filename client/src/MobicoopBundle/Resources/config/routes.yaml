@@ -79,6 +79,14 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
+# community list (AJAX)
+user_sign_up_community_list:
+    methods: [POST]
+    path:
+        fr: /utilisateur/inscription/liste-des-communautes
+        en: /user/register/community-list
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityListForRegistration
+
 user_sign_up_result:
     path:
         fr: /utilisateur/inscription/{proposalId}
