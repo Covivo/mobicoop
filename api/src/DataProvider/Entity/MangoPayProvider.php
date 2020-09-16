@@ -56,6 +56,7 @@ class MangoPayProvider implements PaymentProviderInterface
     const ITEM_WALLET = "wallets";
     const ITEM_PAYIN = "payins/card/web";
     const ITEM_TRANSFERS = "transfers";
+    const ITEM_PAYOUT = "payouts/bankwire";
 
     const CURRENCY = "EUR";
     const CARD_TYPE = "CB_VISA_MASTERCARD";
@@ -401,15 +402,15 @@ class MangoPayProvider implements PaymentProviderInterface
         // Get the wallet of the debtor and his identifier
         $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
         
-        // Transfer to the creditors wallets
+        // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             $creditorWallet = $creditor['user']->getWallets()[0];
             $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
-        }
-        
-        // Payout for all the creditors
-        foreach ($creditors as $creditor) {
+
             // Do the payout to the default bank account
+            $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+            $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
+            $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
         }
     }
 
@@ -420,9 +421,10 @@ class MangoPayProvider implements PaymentProviderInterface
      * @param Wallet $walletFrom    Wallet of the debtor
      * @param Wallet $walletTo      Wallet of the creditor
      * @param float $amount         Amount of the transaction
+     * @param string $tag
      * @return boolean
      */
-    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount): bool
+    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag=""): bool
     {
         $body = [
             "AuthorId" => $debtorIdentifier,
@@ -435,10 +437,49 @@ class MangoPayProvider implements PaymentProviderInterface
                 "Amount" => 0
             ],
             "DebitedWalletId" => $walletFrom->getId(),
-            "CreditedWalletId" => $walletTo->getId()
+            "CreditedWalletId" => $walletTo->getId(),
+            "Tag" => $tag
         ];
 
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_TRANSFERS);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            //$data = json_decode($response->getValue(), true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Trigger a payout from a Wallet to a Bank Account
+     *
+     * @param Wallet $wallet
+     * @param BankAccount $bankAccount
+     * @return boolean
+     */
+    public function triggerPayout(int $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference=""): bool
+    {
+        $body = [
+            "AuthorId" => $authorIdentifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => (int)($amount*100)
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "DebitedWalletId" => $wallet->getId(),
+            "BankAccountId" => $bankAccount->getId(),
+            "BankWireRef" => $reference
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYOUT);
         $headers = [
             "Authorization" => $this->authChain
         ];
