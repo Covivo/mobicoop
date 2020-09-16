@@ -27,8 +27,8 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
       solidary: solidary.id,
     };
 
-    if (content.user) {
-      data.user = `/users/${content.user}`;
+    if (solidary && solidary.solidaryUser && solidary.solidaryUser.user) {
+      data.user = `/users/${solidary.solidaryUser.user.id}`;
     }
 
     mutate(
@@ -69,7 +69,7 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
                   <SelectInput optionText={(o) => translate(`custom.actions.${o.name}`)} />
                 </ReferenceInput>
               </Grid>
-              <Grid item xs={6}>
+              {/* <Grid item xs={6}>
                 <SelectInput
                   source="user"
                   style={{ width: 300 }}
@@ -81,7 +81,7 @@ export const SolidaryAddDiaryPopup = ({ solidary, onClose }) => {
                       : 'Inconnu',
                   }))}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <SaveButton
               handleSubmitWithRedirect={handleSubmitWithRedirect}

@@ -60,12 +60,6 @@ services:
             $platformName: '%env(resolve:APP_NAME)%'
             $carpoolRDEXJourneys: '%env(bool:CARPOOL_RDEX_JOURNEYS)%'
             $ptResults: '%env(int:PT_RESULTS)%'
-            $ptProvider: '%env(string:PT_PROVIDER)%'
-            $ptKey: '%env(string:PT_KEY)%'
-            $ptAlgorithm: '%env(string:PT_ALGORITHM)%'
-            $ptDateCriteria: '%env(string:PT_DATE_CRITERIA)%'
-            $ptMode: '%env(string:PT_MODE)%'
-            $ptUsername: '%env(string:PT_USERNAME)%'
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
@@ -126,6 +120,10 @@ services:
         arguments: ['@router']
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+    # Event Subscriber
+    Mobicoop\Bundle\MobicoopBundle\EventSubscriber\RequestSubscriber:
+        tags:
+            - { name: kernel.event_subscriber, event: kernel.request }        
 
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:

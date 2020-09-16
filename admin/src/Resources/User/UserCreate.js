@@ -92,7 +92,7 @@ const UserCreate = (props) => {
   };
 
   const validateRequired = [required()];
-  const paswwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
+  const passwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
   const phoneRules = [verifPhoneDisplaycountRules()];
   const emailRules = [required(), email()];
   //Used for check if adresses is not empty AND at least 1 roles exist
@@ -164,7 +164,7 @@ const UserCreate = (props) => {
             source="password"
             label={translate('custom.label.user.password')}
             type="password"
-            validate={paswwordRules}
+            validate={passwordRules}
             formClassName={classes.spacedHalfwidth}
           />
 

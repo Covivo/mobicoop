@@ -40,6 +40,7 @@ import SolidaryRegularAsk from './SolidaryRegularAsk';
 import SolidaryFrequency from './SolidaryFrequency';
 import SaveSolidaryAsk from './SaveSolidaryAsk';
 import { addressRenderer, usernameRenderer } from '../../../../utils/renderers';
+import { SolidaryPunctualAskSummary } from './SolidaryPunctualAskSummary';
 
 const useStyles = makeStyles({
   layout: {
@@ -106,8 +107,10 @@ const SolidaryProofQuestion = () => {
     <SolidaryQuestion question="Le demandeur est-il éligible ?">
       {proofs.length && proofsLoaded ? (
         proofs.map((p) => <SolidaryProofInput key={p.id} record={p} />)
-      ) : (
+      ) : !proofsLoaded ? (
         <LinearProgress />
+      ) : (
+        <span>Votre structure n'a aucun critère d'éligibilité</span>
       )}
     </SolidaryQuestion>
   );
@@ -134,6 +137,7 @@ const SolidarySubjectsQuestion = () => {
           label=""
           choices={subjects.map((s) => ({ id: s.id, name: s.label }))}
           validate={[required()]}
+          fullWidth
         />
       ) : (
         <LinearProgress />
@@ -302,7 +306,7 @@ const SolidaryFormWizard = (formProps) => {
           {values && values.frequency === 2 /* 2 = REGULAR */ ? (
             <SolidaryRegularAsk form={formProps.form} />
           ) : (
-            <SolidaryPunctualAsk form={formProps.form} />
+            <SolidaryPunctualAsk form={formProps.form} summary={<SolidaryPunctualAskSummary />} />
           )}
         </Box>
         {activeStep === 4 && hasErrors ? (

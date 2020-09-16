@@ -349,9 +349,9 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        } elseif ($this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
-        } else {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
             $this->setStatus(self::STATUS_PENDING);
         }
         $this->setAutoAcceptedOrRefusedDate();

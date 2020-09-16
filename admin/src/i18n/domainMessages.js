@@ -68,6 +68,10 @@ const fr = {
     relay_points: {
       empty: 'Pas encore de point relais.',
       invite: 'Voulez-vous en créer un ?',
+      fields: {
+        'address.latitude': 'Latitude',
+        'address.longitude': 'Longitude',
+      },
     },
     relay_point_types: {
       empty: 'Pas encore de type de point relais.',
@@ -438,6 +442,10 @@ const fr = {
         territory: 'Territoire',
         changeTerritory: 'Changer de territoire',
         currentTerritory: 'Territoire actuel',
+      },
+      relayPoint: {
+        invalidLatitude: 'La latitude est invalide',
+        invalidLongitude: 'La latitude est invalide',
       },
     },
   },

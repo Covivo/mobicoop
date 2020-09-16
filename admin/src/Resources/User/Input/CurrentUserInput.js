@@ -21,7 +21,8 @@ const CurrentUserInput = (props) => {
         setCurrentUserName(`${data.givenName} ${data.familyName}`);
         onChange(data.id);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e);
         notify("Erreur lors de la recherche de l'utilisateur courant", 'warning');
       });
   });

@@ -43,7 +43,6 @@ class RelayPointTypeListener
     /** @ORM\PostLoad */
     public function postLoadHandler(RelayPointType $relaypointype, LifecycleEventArgs $args)
     {
-        // /$icon->setUrl($this->dataUri.$this->types['icons']['folder']['plain'].$icon->getFileName());
         if (is_null($relaypointype->getIcon())) {
             $relaypointype->setIcon($this->iconRepository->find(Icon::DEFAULT_ICON_ID));
         }

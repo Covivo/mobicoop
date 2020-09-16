@@ -312,6 +312,13 @@ class UserController extends AbstractController
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
+        $user = $userManager->getLoggedUser();
+        
+        // # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+
         $this->denyAccessUnlessGranted('update', $userManager->getLoggedUser());
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -595,6 +602,12 @@ class UserController extends AbstractController
     public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
+
+        // # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+
         $this->denyAccessUnlessGranted('messages', $user);
         $data = $request->request;
 

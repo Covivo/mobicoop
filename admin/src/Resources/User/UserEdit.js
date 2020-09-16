@@ -15,6 +15,7 @@ import {
   useTranslate,
   ReferenceArrayInput,
   SelectArrayInput,
+  FormDataConsumer,
 } from 'react-admin';
 
 import hasPermission from '../../auth/permissions';
@@ -119,7 +120,6 @@ const UserEdit = (props) => {
             required
             source="telephone"
             label={translate('custom.label.user.telephone')}
-            validate={validateRequired}
             formClassName={classes.spacedHalfwidth}
           />
           <BooleanInput
@@ -140,12 +140,16 @@ const UserEdit = (props) => {
             source="addresses"
             render={({ addresses }) => addresses.map(addressRenderer)}
           />
-          <GeocompleteInput
-            source="addresses[0]"
-            label={translate('custom.label.user.newsAdresse')}
-            validate={required()}
-            formClassName={classes.fullwidth}
-          />
+          <FormDataConsumer>
+            {({ record }) => (
+              <GeocompleteInput
+                source="addresses[0]"
+                label={translate('custom.label.user.newsAdresse')}
+                validate={record.addresses.some((a) => a.home) ? undefined : required()}
+                formClassName={classes.fullwidth}
+              />
+            )}
+          </FormDataConsumer>
         </FormTab>
         <FormTab label={translate('custom.label.user.preference')}>
           <SelectInput

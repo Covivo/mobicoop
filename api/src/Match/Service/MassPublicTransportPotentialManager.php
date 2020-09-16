@@ -103,7 +103,6 @@ class MassPublicTransportPotentialManager
              */
             $results = $this->pTDataProvider->getJourneys(
                 $this->params['ptProvider'],
-                1,
                 $person->getPersonalAddress()->getLatitude(),
                 $person->getPersonalAddress()->getLongitude(),
                 $person->getWorkAddress()->getLatitude(),

@@ -7,16 +7,16 @@ import { differenceInSeconds, addSeconds } from 'date-fns';
 import { DateTimeSelector, setHours, addHours, setTimeFromString } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
 import DayChipInput from './DayChipInput';
-import DateIntervalSelector, { getTime } from './DateIntervalSelector';
+import DateIntervalSelector from './DateIntervalSelector';
 import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 
-export const intervalChoices = [
+export const regularIntervalChoices = [
   { id: 0, label: 'Sur une période fixe' },
   { id: 1, label: 'Pendant une semaine', offsetDays: 7, offsetMonth: 0 },
   { id: 2, label: 'Pendant un mois', offsetDays: 0, offsetMonth: 1 },
 ];
 
-export const fromTimeChoices = [
+export const regularFromTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
@@ -44,7 +44,7 @@ export const fromTimeChoices = [
   },
 ];
 
-export const toTimeChoices = [
+export const regularToTimeChoices = [
   {
     id: 0,
     label: 'A une heure fixe',
@@ -71,7 +71,7 @@ export const toTimeChoices = [
 
 const castDate = (date) => (typeof date === 'string' ? new Date(date) : date);
 
-const SolidaryRegularAsk = ({ form }) => {
+const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
@@ -99,56 +99,53 @@ const SolidaryRegularAsk = ({ form }) => {
   }, [JSON.stringify({ returnDatetime, outwardDatetime, outwardDeadlineDatetime })]);
 
   return (
-    <>
-      <SolidaryQuestion question="Quels jours devez-vous voyager ?">
-        <Box>
-          <DayChipInput source="days.mon" label="L" />
-          <DayChipInput source="days.tue" label="Ma" />
-          <DayChipInput source="days.wed" label="Me" />
-          <DayChipInput source="days.thu" label="J" />
-          <DayChipInput source="days.fri" label="V" />
-          <DayChipInput source="days.sat" label="S" />
-          <DayChipInput source="days.sun" label="D" />
-        </Box>
-      </SolidaryQuestion>
-      <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
-        <DateTimeSelector
-          form={form}
-          type="time"
-          fieldnameStart="outwardDatetime"
-          fieldnameEnd="marginDuration"
-          fieldMarginDuration
-          choices={fromTimeChoices}
-          initialChoice={0}
-        />
-      </SolidaryQuestion>
-      <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
-        <DateTimeSelector
-          form={form}
-          type="time"
-          fieldnameStart="toStartDatetime"
-          fieldnameEnd="toEndDatetime"
-          choices={toTimeChoices}
-          initialChoice={4}
-          dependencies={[outwardDatetime]}
-        />
-      </SolidaryQuestion>
-      <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
-        <DateIntervalSelector
-          type="date"
-          fieldnameStart="outwardDatetime"
-          fieldnameEnd="outwardDeadlineDatetime"
-          choices={intervalChoices}
-          initialChoice={0}
-        />
-      </SolidaryQuestion>
-      <SolidaryNeedsQuestion label="Autres informations" />
-    </>
+    <Box display="flex">
+      <Box flex={3} mr="1em">
+        <SolidaryQuestion question="Quels jours devez-vous voyager ?">
+          <Box>
+            <DayChipInput source="days.mon" label="L" />
+            <DayChipInput source="days.tue" label="Ma" />
+            <DayChipInput source="days.wed" label="Me" />
+            <DayChipInput source="days.thu" label="J" />
+            <DayChipInput source="days.fri" label="V" />
+            <DayChipInput source="days.sat" label="S" />
+            <DayChipInput source="days.sun" label="D" />
+          </Box>
+        </SolidaryQuestion>
+        <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
+          <DateTimeSelector
+            type="time"
+            fieldnameStart="outwardDatetime"
+            fieldnameEnd="marginDuration"
+            fieldMarginDuration
+            choices={regularFromTimeChoices}
+            initialChoice={0}
+          />
+        </SolidaryQuestion>
+        <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
+          <DateTimeSelector
+            type="time"
+            fieldnameStart="toStartDatetime"
+            fieldnameEnd="toEndDatetime"
+            choices={regularToTimeChoices}
+            initialChoice={4}
+            dependencies={[outwardDatetime]}
+          />
+        </SolidaryQuestion>
+        <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
+          <DateIntervalSelector
+            type="date"
+            fieldnameStart="outwardDatetime"
+            fieldnameEnd="outwardDeadlineDatetime"
+            choices={regularIntervalChoices}
+            initialChoice={0}
+          />
+        </SolidaryQuestion>
+        {includeNeeds && <SolidaryNeedsQuestion label="Autres informations" />}
+      </Box>
+      {summary && <Box flex={1}>{summary}</Box>}
+    </Box>
   );
-};
-
-SolidaryRegularAsk.propTypes = {
-  form: PropTypes.object.isRequired,
 };
 
 export default SolidaryRegularAsk;

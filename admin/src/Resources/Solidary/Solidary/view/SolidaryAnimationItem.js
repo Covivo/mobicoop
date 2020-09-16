@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'react-admin';
 import { Avatar, ListItem, ListItemAvatar, ListItemText, Grid } from '@material-ui/core';
+import { utcDateFormat } from '../../../../utils/date';
 
 const SolidaryAnimationItem = ({ item }) => {
   const translate = useTranslate();
@@ -22,7 +23,7 @@ const SolidaryAnimationItem = ({ item }) => {
         <Grid item xs={6}>
           <ListItemText
             primary={item.author ? `${item.author.givenName} ${item.author.familyName}` : 'Inconnu'}
-            secondary={new Date(item.updatedDate).toLocaleString()}
+            secondary={utcDateFormat(item.updatedDate)}
           />
         </Grid>
         <Grid item xs={6}>
