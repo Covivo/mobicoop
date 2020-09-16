@@ -224,4 +224,25 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
         return $this->providerInstance->generateElectronicPaymentUrl($carpoolPayment);
     }
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
+     */
+    public function processElectronicPayment(User $debtor, array $creditors)
+    {
+        $this->checkPaymentConfiguration();
+        $this->providerInstance->processElectronicPayment($debtor, $creditors);
+    }
 }

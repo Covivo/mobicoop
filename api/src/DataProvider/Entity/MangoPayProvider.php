@@ -34,7 +34,6 @@ use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
-use App\Payment\Ressource\ElectronicPayment;
 use App\User\Entity\User;
 use LogicException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
@@ -56,6 +55,7 @@ class MangoPayProvider implements PaymentProviderInterface
     const ITEM_USER_NATURAL = "natural";
     const ITEM_WALLET = "wallets";
     const ITEM_PAYIN = "payins/card/web";
+    const ITEM_TRANSFERS = "transfers";
 
     const CURRENCY = "EUR";
     const CARD_TYPE = "CB_VISA_MASTERCARD";
@@ -334,29 +334,6 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
 
-    public function processElectronicPayment(User $debtor, array $creditors)
-    {
-        // Credit debtor wallet
-
-        // Transfer to the creditors wallets
-
-        // Payout for all the creditors
-    }
-
-    /**
-     * Credit a Wallet
-     *
-     * @param Wallet $wallet  The Wallet to credit
-     * @return ElectronicPayment|null
-     */
-    public function creditWallet(Wallet $wallet, int $amount)
-    {
-    }
-
-    public function transferWalletToWallet(Wallet $walletFrom, Wallet $walletTo)
-    {
-    }
-
     /**
      * Get the secured form's url for electronic payment
      *
@@ -402,6 +379,90 @@ class MangoPayProvider implements PaymentProviderInterface
         $carpoolPayment->setRedirectUrl($data['RedirectURL']);
         
         return $carpoolPayment;
+    }
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
+     */
+    public function processElectronicPayment(User $debtor, array $creditors)
+    {
+        // Get the wallet of the debtor and his identifier
+        $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
+        
+        // Transfer to the creditors wallets
+        foreach ($creditors as $creditor) {
+            $creditorWallet = $creditor['user']->getWallets()[0];
+            $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+        }
+        
+        // Payout for all the creditors
+        foreach ($creditors as $creditor) {
+            // Do the payout to the default bank account
+        }
+    }
+
+    /**
+     * Transfer founds bewteen two wallets
+     *
+     * @param integer $debtorIdentifier MangoPay's identifier of the debtor
+     * @param Wallet $walletFrom    Wallet of the debtor
+     * @param Wallet $walletTo      Wallet of the creditor
+     * @param float $amount         Amount of the transaction
+     * @return boolean
+     */
+    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount): bool
+    {
+        $body = [
+            "AuthorId" => $debtorIdentifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => (int)($amount*100)
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "DebitedWalletId" => $walletFrom->getId(),
+            "CreditedWalletId" => $walletTo->getId()
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_TRANSFERS);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            //$data = json_decode($response->getValue(), true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Handle a payment web hook
+     * @var MangoPayIn $hook The mango pay hook for the payin
+     * @return int|null : return the transactionId if it's a success. Null otherwise.
+     */
+    public function handleHook(MangoPayIn $hook): ?array
+    {
+        return [
+            "transactionId" => $hook->getRessourceId(),
+            "success" => ($hook->getEventType() == MangoPayIn::PAYIN_SUCCEEDED) ? true : false
+        ];
     }
 
     /**
@@ -468,18 +529,5 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $wallet;
-    }
-
-    /**
-     * Handle a payment web hook
-     * @var MangoPayIn $hook The mango pay hook for the payin
-     * @return int|null : return the transactionId if it's a success. Null otherwise.
-     */
-    public function handleHook(MangoPayIn $hook): ?array
-    {
-        return [
-            "transactionId" => $hook->getRessourceId(),
-            "success" => ($hook->getEventType() == MangoPayIn::PAYIN_SUCCEEDED) ? true : false
-        ];
     }
 }

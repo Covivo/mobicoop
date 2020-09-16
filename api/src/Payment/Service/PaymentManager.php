@@ -697,8 +697,35 @@ class PaymentManager
 
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        } else {
+            // Perform the payment
+
+            // Get the creditors
+            if (is_null($carpoolPayment->getCarpoolItems()) || count($carpoolPayment->getCarpoolItems())==0) {
+                throw new PaymentException(PaymentException::NO_CARPOOL_ITEMS);
+            }
+            $creditors = [];
+            foreach ($carpoolPayment->getCarpoolItems() as $carpoolItem) {
+                /**
+                 * @var CarpoolItem $carpoolItem
+                 */
+                if (!isset($creditors[$carpoolItem->getCreditorUser()->getId()])) {
+                    // New creditor. We set the amount and the payment profile
+                    $creditors[$carpoolItem->getCreditorUser()->getId()] = [
+                        "user" => $this->userManager->getPaymentProfile($carpoolItem->getCreditorUser()),
+                        "amount" => $carpoolItem->getAmount()
+                    ];
+                } else {
+                    // We already know this creditor, we add the current amount to the global amount
+                    $creditors[$carpoolItem->getCreditorUser()->getId()]["amount"] += $carpoolItem->getAmount();
+                }
+            }
+            
+            $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
+            
+            $this->paymentProvider->processElectronicPayment($debtor, $creditors);
+            $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
         }
-        $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
 
         $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
 

@@ -1299,9 +1299,11 @@ class UserManager
      *
      * @return User|null
      */
-    public function getPaymentProfile()
+    public function getPaymentProfile(User $user=null)
     {
-        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        if (is_null($user)) {
+            $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        }
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
         foreach ($paymentProfiles as $paymentProfile) {

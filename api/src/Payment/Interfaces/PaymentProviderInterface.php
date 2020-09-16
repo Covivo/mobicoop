@@ -80,4 +80,21 @@ interface PaymentProviderInterface
      * @return CarpoolPayment With redirectUrl filled
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment);
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
+     */
+    public function processElectronicPayment(User $debtor, array $creditors);
 }
