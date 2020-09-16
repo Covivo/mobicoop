@@ -133,8 +133,7 @@ use App\Event\Filter\TerritoryFilter;
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(DateFilter::class, properties={"toDate"})
- * @ApiFilter(DateFilter::class, properties={"fromDate"})
+ * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
