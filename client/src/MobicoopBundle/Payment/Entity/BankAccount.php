@@ -207,6 +207,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
                 'id'                => $this->getId(),
                 'iri'               => $this->getIri(),
                 'userLitteral'      => $this->getUserLitteral(),
+                'address'           => $this->getAddress(),
                 'iban'              => $this->getIban(),
                 'bic'               => $this->getBic(),
                 'comment'           => $this->getComment(),

@@ -86,46 +86,46 @@
           </v-col>
         </v-row>
         <v-row justify="center">
-          <v-col cols="8">
-            <v-card
-              class="pa-2"
-              flat
-              color="blue-grey lighten-5"
-            >
-              <v-row>
-                <v-col cols="10">
-                  <v-row>
-                    <v-col cols="12">
-                      <label class="caption">{{ $t('form.label.iban') }}</label> {{ bankCoordinates.iban }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12">
-                      <label class="caption">{{ $t('form.label.bic') }}</label> {{ bankCoordinates.bic }}
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col cols="2">
-                  <v-row align="center">
-                    <v-col
-                      cols="12"
+          <v-col cols="10">
+            <v-row>
+              <v-col cols="8">
+                <v-row>
+                  <v-col cols="12">
+                    <label class="caption">{{ $t('form.label.iban') }}</label> {{ bankCoordinates.iban }}
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <label class="caption">{{ $t('form.label.bic') }}</label> {{ bankCoordinates.bic }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="2">
+                <v-row align="center">
+                  <v-col
+                    cols="12"
+                  >
+                    <v-btn
+                      class="secondary my-1"
+                      icon
+                      @click.stop="dialog = true"
                     >
-                      <v-btn
-                        class="secondary my-1"
-                        icon
-                        @click.stop="dialog = true"
+                      <v-icon
+                        class="white--text"
                       >
-                        <v-icon
-                          class="white--text"
-                        >
-                          mdi-delete-outline
-                        </v-icon>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-card>
+                        mdi-delete-outline
+                      </v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <p>{{ bankCoordinates.address.streetAddress }}</p>
+                <p>{{ bankCoordinates.address.postalCode }} {{ bankCoordinates.address.addressLocality }}</p>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </div>
@@ -215,7 +215,7 @@ export default {
       this.loading = true;
       axios.post(this.$t("uri.getCoordinates"))
         .then(response => {
-          //console.error(response.data);
+          console.error(response.data);
           if(response.data){
             this.bankCoordinates = response.data[0];
             this.title = this.$t('titleAlreadyRegistered')
