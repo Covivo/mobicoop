@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -112,7 +113,6 @@ class CommunityManager
         $return['communitiesUser'] = $returnCommunitiesUser;
         return $return;
     }
-
 
     /**
     * Get all communities
@@ -394,5 +394,23 @@ class CommunityManager
         }
 
         return $lastUsersFormated;
+    }
+
+
+
+    /******************
+     *                *
+     * Refactor start *
+     *                *
+     ******************/
+
+    /**
+    * Get all communities available for registration
+    */
+    public function getCommunityListForRegistration()
+    {
+        $this->dataProvider->setClass(MCommunity::class);
+        $response = $this->dataProvider->getCollection();
+        return $response->getValue()->getMember();
     }
 }

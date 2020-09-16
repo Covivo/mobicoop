@@ -485,4 +485,25 @@ class CommunityController extends AbstractController
             'community' => $community
         ]);
     }
+
+
+
+
+    /******************
+     *                *
+     * Refactor start *
+     *                *
+     ******************/
+
+    /**
+     * Get all communities for registration (AJAX)
+     */
+    public function getCommunityListForRegistration(CommunityManager $communityManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($communityManager->getCommunityListForRegistration());
+        } else {
+            return new JsonResponse("bad method");
+        }
+    }
 }
