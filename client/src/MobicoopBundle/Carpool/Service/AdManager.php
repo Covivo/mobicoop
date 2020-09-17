@@ -365,7 +365,9 @@ class AdManager
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
             $ad->setOneWay(false); // only for punctual journey
         } else {
-            $ad->setOneWay(true); // only for punctual journey
+            if (!$data['regular']) {
+                $ad->setOneWay(true); // only for punctual journey
+            }
         }
 
         // one-way for regular
