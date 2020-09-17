@@ -30,6 +30,8 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
+use App\DataProvider\Ressource\MangoPayHook;
+use App\DataProvider\Ressource\MangoPayKYC;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
@@ -684,11 +686,11 @@ class PaymentManager
     }
 
     /**
-     * Handle a payment web hook
+     * Handle a payin web hook
      * @var object $hook The web hook from the payment provider
      * @return void
      */
-    public function handleHook(object $hook)
+    public function handleHookPayIn(object $hook)
     {
         if ($this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
@@ -734,5 +736,25 @@ class PaymentManager
 
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Handle a validation web hook
+     *
+     * @param object $hook The hook to handle
+     * @return void
+     */
+    public function handleHookValidation(object $hook)
+    {
+        if ($this->securityToken !== $hook->getSecurityToken()) {
+            throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
+        }
+
+        $paymentProfile = $this->paymentProfileRepository->findOneBy(['validationId'=>$hook->getRessourceId()]);
+        if (is_null($paymentProfile)) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+
+        $transaction = $this->paymentProvider->handleHook($hook);
     }
 }

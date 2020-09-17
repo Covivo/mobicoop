@@ -46,6 +46,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="GET",
  *              "path"="/mango-payins"
  *          },
+ *          "mangoPayKYC"={
+ *              "method"="GET",
+ *              "path"="/mango-kyc"
+ *          },
  *          "post"={
  *             "security_post_denormalize"="is_granted('reject',object)"
  *          },
@@ -58,12 +62,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MangoPayIn
+class MangoPayHook
 {
     const DEFAULT_ID = "999999999999";
 
     const PAYIN_SUCCEEDED = "PAYIN_NORMAL_SUCCEEDED";
     const PAYIN_FAILED = "PAYIN_NORMAL_FAILED";
+
+    const VALIDATION_ASKED = "KYC_VALIDATION_ASKED";
+    const VALIDATION_SUCCEEDED = "KYC_SUCCEEDED";
+    const VALIDATION_FAILED = "KYC_FAILED";
+    const VALIDATION_OUTDATED = "KYC_OUTDATED";
 
     /**
      * @var int The id of this pay in

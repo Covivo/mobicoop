@@ -122,6 +122,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for MangoPay external requests of KYC
+        mangoPayKycHook:
+            pattern:  ^/mango-kyc
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -149,4 +155,5 @@ security:
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

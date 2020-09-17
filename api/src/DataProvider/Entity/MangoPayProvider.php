@@ -23,7 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
-use App\DataProvider\Ressource\MangoPayIn;
+use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
@@ -486,15 +486,28 @@ class MangoPayProvider implements PaymentProviderInterface
 
     /**
      * Handle a payment web hook
-     * @var MangoPayIn $hook The mango pay hook for the payin
+     * @var MangoPayHook $hook The mangopay hook
      * @return int|null : return the transactionId if it's a success. Null otherwise.
      */
-    public function handleHook(MangoPayIn $hook): ?array
+    public function handleHook(MangoPayHook $hook): ?array
     {
-        return [
-            "transactionId" => $hook->getRessourceId(),
-            "success" => ($hook->getEventType() == MangoPayIn::PAYIN_SUCCEEDED) ? true : false
-        ];
+        switch ($hook->getEventType()) {
+            case MangoPayHook::PAYIN_SUCCEEDED:
+            case MangoPayHook::VALIDATION_ASKED:
+                echo "yo!!!!";die;
+                return [
+                    "transactionId" => $hook->getRessourceId(),
+                    "success" => true
+                ];
+            break;
+            default:
+                return [
+                    "transactionId" => $hook->getRessourceId(),
+                    "success" => false
+                ];
+        }
+
+        return [];
     }
 
     /**
