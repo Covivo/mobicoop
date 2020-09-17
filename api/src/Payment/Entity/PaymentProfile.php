@@ -44,6 +44,10 @@ class PaymentProfile
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const VALIDATION_PENDING = 0;
+    const VALIDATION_VALIDATED = 1;
+    const VALIDATION_REJECTED = 2;
+
     /**
      * @var int The id of this payment profile
      *
@@ -97,6 +101,14 @@ class PaymentProfile
      * @Groups({"readPayment","writePayment"})
      */
     private $electronicallyPayable;
+
+    /**
+     * @var int The validation status of the profile (0 : pending, 1 : validated, 2 : rejected or suspended)
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $validationStatus;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -175,6 +187,18 @@ class PaymentProfile
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getValidationStatus(): ?int
+    {
+        return $this->validationStatus;
+    }
+
+    public function setValidationStatus(?int $validationStatus): self
+    {
+        $this->validationStatus = $validationStatus;
 
         return $this;
     }

@@ -244,7 +244,9 @@ class PaymentManager
                 if (is_null($paymentProfile) || count($paymentProfile)==0) {
                     $paymentItem->setElectronicallyPayable(false);
                 } else {
-                    $paymentItem->setElectronicallyPayable($paymentProfile[0]->isElectronicallyPayable());
+                    if ($paymentProfile[0]->isElectronicallyPayable() && $paymentProfile[0]->getValidationStatus()==PaymentProfile::VALIDATION_VALIDATED) {
+                        $paymentItem->setElectronicallyPayable(true);
+                    }
                 }
             }
 
@@ -674,6 +676,7 @@ class PaymentManager
         $paymentProfile->setIdentifier($identifier);
         $paymentProfile->setStatus(1);
         $paymentProfile->setElectronicallyPayable($electronicallyPayable);
+        $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_PENDING);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 

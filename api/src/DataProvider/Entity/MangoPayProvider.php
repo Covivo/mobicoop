@@ -135,8 +135,7 @@ class MangoPayProvider implements PaymentProviderInterface
             "PostalCode" => $bankAccount->getAddress()->getPostalCode(),
             "Country" => substr($bankAccount->getAddress()->getCountryCode(), 0, 2)
         ];
-        var_dump($body);
-        die;
+
         // Get the identifier
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();
