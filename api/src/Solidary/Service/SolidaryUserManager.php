@@ -326,8 +326,10 @@ class SolidaryUserManager
         }
 
         // Is he validated ?
-        $solidaryVolunteer->setValidatedCandidate(false);
-        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+        $solidaryVolunteer->setValidatedCandidate(null);
+        if (!is_null($solidaryUserStructure->getRefusedDate())) {
+            $solidaryVolunteer->setValidatedCandidate(false);
+        } elseif (!is_null($solidaryUserStructure->getAcceptedDate())) {
             $solidaryVolunteer->setValidatedCandidate(true);
         }
 
@@ -930,12 +932,11 @@ class SolidaryUserManager
             // Don't do anything, it's not an acceptation or refulsal action
         } elseif (!$solidaryVolunteer->isValidatedCandidate()) {
             // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryVolunteer->getStructure());
+            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
         } elseif ($solidaryVolunteer->isValidatedCandidate()) {
             // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryVolunteer->getStructure());
+            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
         }
-        
         if (!is_null($solidaryVolunteer->getMMinTime())) {
             $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
         }

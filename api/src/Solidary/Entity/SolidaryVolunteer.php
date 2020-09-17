@@ -55,7 +55,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *             "security"="is_granted('solidary_volunteer_read',object)"
  *          },
  *          "put"={
- *             "security"="is_granted('solidary_volunteer_update',object)"
+ *             "security"="is_granted('solidary_volunteer_update',object)",
  *          },
  *          "delete"={
  *             "security"="is_granted('solidary_volunteer_delete',object)"
@@ -155,7 +155,7 @@ class SolidaryVolunteer
     private $comment;
 
     /**
-     * @var bool If the candidate is validated or not
+     * @var bool|null If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $validatedCandidate;
