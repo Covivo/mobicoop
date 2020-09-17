@@ -88,6 +88,14 @@ class PaymentProfile
     private $identifier;
 
     /**
+     * @var string The id used by the provider for a validation (i.e KYC document...)
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $validationId;
+
+    /**
      * @var int The status of this payment profile (0 : Inactive, 1 : Active)
      *
      * @ORM\Column(type="integer")
@@ -200,6 +208,18 @@ class PaymentProfile
     public function setIdentifier(String $identifier): self
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getValidationId(): String
+    {
+        return $this->validationId;
+    }
+
+    public function setValidationId(String $validationId): self
+    {
+        $this->validationId = $validationId;
 
         return $this;
     }
