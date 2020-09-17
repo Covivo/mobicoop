@@ -40,6 +40,11 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const VALIDATION_PENDING = 0;
+    const VALIDATION_VALIDATED = 1;
+    const VALIDATION_REJECTED = 2;
+    const VALIDATION_OUTDATED = 3;
+
     /**
      * @var int The id of this bank account
      */
@@ -94,6 +99,11 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @Groups({"post"})
      */
     private $status;
+
+    /**
+     * @var int The validation status of this bank account (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
+     */
+    private $validationStatus;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -190,6 +200,16 @@ class BankAccount implements ResourceInterface, \JsonSerializable
         $this->status = $status;
     }
 
+    public function getValidationStatus(): ?int
+    {
+        return $this->validationStatus;
+    }
+
+    public function setValidationStatus(?int $validationStatus)
+    {
+        $this->validationStatus = $validationStatus;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -212,6 +232,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
                 'bic'               => $this->getBic(),
                 'comment'           => $this->getComment(),
                 'status'            => $this->getStatus(),
+                'validationStatus'            => $this->getValidationStatus(),
                 'createdDate'       => $this->getCreatedDate()
             ];
     }

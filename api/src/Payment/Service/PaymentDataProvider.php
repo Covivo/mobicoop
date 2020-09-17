@@ -163,7 +163,11 @@ class PaymentDataProvider
                  */
                 
                 if ($callExternalProvider) {
-                    $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
+                    $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
+                    foreach ($bankAccounts as $bankAccount) {
+                        $bankAccount->setValidationStatus($paymentProfile->getValidationStatus());
+                    }
+                    $paymentProfile->setBankAccounts($bankAccounts);
                     $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
                 }
                 $user->setPaymentProfileId($paymentProfile->getId());
