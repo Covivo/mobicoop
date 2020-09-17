@@ -128,25 +128,15 @@ class MangoPayProvider implements PaymentProviderInterface
         $body['IBAN'] = $bankAccount->getIban();
         $body['BIC'] = $bankAccount->getBic();
 
-        // Addresse of the owner
-        $homeAddress = null;
-        foreach ($this->user->getAddresses() as $address) {
-            if ($address->isHome()) {
-                $homeAddress = $address;
-                break;
-            }
-        }
-        
-        if (!is_null($homeAddress)) {
-            $body['OwnerAddress'] = [
-                "AddressLine1" => $homeAddress->getStreetAddress(),
-                "City" => $homeAddress->getAddressLocality(),
-                "Region" => $homeAddress->getRegion(),
-                "PostalCode" => $homeAddress->getPostalCode(),
-                "Country" => substr($homeAddress->getCountryCode(), 0, 2)
-            ];
-        }
-
+        $body['OwnerAddress'] = [
+            "AddressLine1" => $bankAccount->getAddress()->getStreetAddress(),
+            "City" => $bankAccount->getAddress()->getAddressLocality(),
+            "Region" => $bankAccount->getAddress()->getRegion(),
+            "PostalCode" => $bankAccount->getAddress()->getPostalCode(),
+            "Country" => substr($bankAccount->getAddress()->getCountryCode(), 0, 2)
+        ];
+        var_dump($body);
+        die;
         // Get the identifier
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();

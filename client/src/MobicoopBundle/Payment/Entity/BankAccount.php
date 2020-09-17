@@ -57,7 +57,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $userLitteral;
 
     /**
-     * @var Address|null The litteral name of the user owning this bank account
+     * @var Address|null The address linked to this bank account
      *
      * @Groups({"post"})
      */

@@ -1050,7 +1050,7 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            return new JsonResponse($this->paymentManager->addBankCoordinates($data['iban'], $data['bic']));
+            return new JsonResponse($this->paymentManager->addBankCoordinates($data['iban'], $data['bic'], $data['address']));
         }
         return new JsonResponse();
     }

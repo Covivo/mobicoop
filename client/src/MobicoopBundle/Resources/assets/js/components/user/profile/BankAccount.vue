@@ -294,6 +294,7 @@ export default {
       let params = {
         "iban":this.form.iban,
         "bic":this.form.bic,
+        "address":this.form.formAddress
       }
       axios.post(this.$t("uri.addCoordinates"),params)
         .then(response => {
