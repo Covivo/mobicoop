@@ -47,6 +47,7 @@ class PaymentProfile
     const VALIDATION_PENDING = 0;
     const VALIDATION_VALIDATED = 1;
     const VALIDATION_REJECTED = 2;
+    const VALIDATION_OUTDATED = 3;
 
     /**
      * @var int The id of this payment profile
@@ -103,7 +104,7 @@ class PaymentProfile
     private $electronicallyPayable;
 
     /**
-     * @var int The validation status of the profile (0 : pending, 1 : validated, 2 : rejected or suspended)
+     * @var int The validation status of the profile (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readPayment","writePayment"})
@@ -125,6 +126,30 @@ class PaymentProfile
      * @Groups({"readPayment"})
      */
     private $updatedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been asked to the payment provider
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readPayment"})
+     */
+    private $validationAskedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been granted by the payment provider
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readPayment"})
+     */
+    private $validatedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been declared outdated by the payment provider
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readPayment"})
+     */
+    private $validationOutdatedDate;
 
     /**
      * @var array|null A user Bank accounts
@@ -223,6 +248,42 @@ class PaymentProfile
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getValidationAskedDate(): ?\DateTimeInterface
+    {
+        return $this->validationAskedDate;
+    }
+
+    public function setValidationAskedDate(\DateTimeInterface $validationAskedDate): self
+    {
+        $this->validationAskedDate = $validationAskedDate;
+
+        return $this;
+    }
+    
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
+    public function getValidationOutdatedDate(): ?\DateTimeInterface
+    {
+        return $this->validationOutdatedDate;
+    }
+
+    public function setValidationOutdatedDate(\DateTimeInterface $validationOutdatedDate): self
+    {
+        $this->validationOutdatedDate = $validationOutdatedDate;
 
         return $this;
     }
