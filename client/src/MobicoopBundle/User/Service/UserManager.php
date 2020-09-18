@@ -529,8 +529,6 @@ class UserManager
 
         $ads = $response->getValue()->getMember();
 
-//        dump($ads);die;
-
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -548,7 +546,7 @@ class UserManager
                 continue;
             }
 
-            $now = (new \DateTime("now", new \DateTimeZone('Europe/Paris')))->format("Y-m-d H:i:s");
+            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
    
             // Carpool regular
             if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
@@ -556,9 +554,8 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $date= $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime();
+                $date = \DateTime::createFromFormat('Y-m-d H:i:s', $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime());
             }
-
             $key = $date >= $now ? 'ongoing' : 'archived';
             $adsSanitized[$key][$ad->getId()] = $ad;
         }
