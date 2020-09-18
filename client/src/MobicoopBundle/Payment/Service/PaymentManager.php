@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
@@ -55,16 +56,28 @@ class PaymentManager
 
     /**
      * Get the bank coordinates of a User
-     * @param string $iban  IBAN of the bank account
-     * @param string $bic   BIC of the bank account
+     * @param string $iban      IBAN of the bank account
+     * @param string $bic       BIC of the bank account
+     * @param array $address    Address linked to the back account
      */
-    public function addBankCoordinates(string $iban, string $bic)
+    public function addBankCoordinates(string $iban, string $bic, array $address)
     {
         $this->dataProvider->setClass(BankAccount::class);
 
         $bankAccount = new BankAccount();
         $bankAccount->setIban($iban);
         $bankAccount->setBic($bic);
+
+        $bankAccountAddress = new Address();
+        $bankAccountAddress->setStreetAddress($address['streetAddress']);
+        $bankAccountAddress->setAddressLocality($address['addressLocality']);
+        $bankAccountAddress->setRegion($address['macroRegion']);
+        $bankAccountAddress->setPostalCode($address['postalCode']);
+        $bankAccountAddress->setAddressCountry($address['addressCountry']);
+        $bankAccountAddress->setCountryCode($address['countryCode']);
+        
+        $bankAccount->setAddress($bankAccountAddress);
+
         $response = $this->dataProvider->post($bankAccount);
         if ($response->getCode() == 201) {
             return $response->getValue();

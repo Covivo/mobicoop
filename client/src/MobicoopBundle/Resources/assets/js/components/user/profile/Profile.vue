@@ -82,7 +82,10 @@
                 {{ $t("tabs.bankCoordinates") }}
               </v-tab>
               <v-tab-item v-if="bankCoordinates">
-                <BankAccount :user="user" />
+                <BankAccount
+                  :user="user"
+                  :geo-search-url="geoSearchUrl"
+                />
               </v-tab-item>              
             </v-tabs>
           </v-tab-item>

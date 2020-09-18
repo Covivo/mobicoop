@@ -96,6 +96,18 @@ class CarpoolPayment
      */
     private $carpoolItems;
 
+    /**
+     * @var int The transaction id of this payment
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $transactionId;
+
+    /**
+     * @var string Secured form's url to process the electronic payement
+     */
+    private $redirectUrl;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
@@ -186,6 +198,29 @@ class CarpoolPayment
         return $this;
     }
 
+    public function getTransactionId(): ?int
+    {
+        return $this->transactionId;
+    }
+
+    public function setTransactionId(int $transactionId): self
+    {
+        $this->transactionId = $transactionId;
+
+        return $this;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return $this->redirectUrl;
+    }
+
+    public function setRedirectUrl(string $redirectUrl): self
+    {
+        $this->redirectUrl = $redirectUrl;
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 
