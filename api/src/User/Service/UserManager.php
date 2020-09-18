@@ -1308,6 +1308,18 @@ class UserManager
         $bankAccounts = $wallets = [];
         foreach ($paymentProfiles as $paymentProfile) {
             foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                // We replace some characters in Iban and Bic by *
+                $iban = $bankaccount->getIban();
+                for ($i=4 ; $i<strlen($iban)-4 ; $i++) {
+                    $iban[$i] = "*";
+                }
+                $bic = $bankaccount->getBic();
+                for ($i=2 ; $i<strlen($bic)-2 ; $i++) {
+                    $bic[$i] = "*";
+                }
+                
+                $bankaccount->setIban($iban);
+                $bankaccount->setBic($bic);
                 $bankAccounts[] = $bankaccount;
             }
             foreach ($paymentProfile->getWallets() as $wallet) {
