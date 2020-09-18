@@ -491,7 +491,11 @@ class PaymentManager
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
-                $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                $carpoolPayment = $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                if (!is_null($carpoolPayment->getCreateCarpoolProfileIdentifier())) {
+                    // We need to persits the carpoolProfile
+                    $this->createPaymentProfile($user, $carpoolPayment->getCreateCarpoolProfileIdentifier());
+                }
                 $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
                 $this->treatCarpoolPayment($carpoolPayment);

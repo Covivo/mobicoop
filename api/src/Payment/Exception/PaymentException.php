@@ -43,6 +43,7 @@ class PaymentException extends \LogicException
     const NO_ADDRESS = "No home address";
     const ADDRESS_INVALID = "Some field in the address are missing";
     const REGISTER_USER_FAILED = "Registration of this User to the provider has failed";
+    const ADD_WALLET_USER_FAILED = "The addition of a Wallet has failed";
 
     // BankAccount
     const NO_BANKACCOUNT_ID_IN_UPDATE_REQUEST = "This request must contains en idBankAccount parameter";

@@ -227,7 +227,7 @@ class MangoPayProvider implements PaymentProviderInterface
      * @param Wallet $user  The Wallet to create
      * @return Wallet|null
      */
-    public function addWallet(Wallet $wallet)
+    public function addWallet(Wallet $wallet): Wallet
     {
         // Build the body
         $body['Description'] = $wallet->getDescription();
@@ -242,13 +242,17 @@ class MangoPayProvider implements PaymentProviderInterface
         ];
         $response = $dataProvider->postCollection($body, $headers);
         
+        $wallet = new Wallet();
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
+            $wallet->setId($data["Id"]);
+            $wallet->setDescription($data["Description"]);
+            $wallet->setOwnerIdentifier($data['Owners'][0]);
         } else {
-            throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
+            throw new PaymentException(PaymentException::ADD_WALLET_USER_FAILED);
         }
 
-        return $data['Id'];
+        return $wallet;
     }
 
 
@@ -340,20 +344,21 @@ class MangoPayProvider implements PaymentProviderInterface
         $user = $carpoolPayment->getUser();
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
         
-        if(is_null($paymentProfiles) || count($paymentProfiles)==0){
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
             // No active payment profile. The User need at least a Wallet to pay so we register him and create a Wallet
             $identifier = $this->registerUser($user);
             $wallet = new Wallet();
-            $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
             $wallet->setComment("");
             $wallet->setCurrency($this->currency);
+            $wallet->setDescription("From Mobicoop");
             $wallet->setOwnerIdentifier($identifier);
             $wallet = $this->addWallet($wallet);
+            $carpoolPayment->setCreateCarpoolProfileIdentifier($identifier); // To persist the paymentProfile in PaymentManager
+        } else {
+            $identifier = $paymentProfiles[0]->getIdentifier();
+            $wallet = $this->getWallets($paymentProfiles[0])[0];
         }
         
-        $identifier = $paymentProfiles[0]->getIdentifier();
-        $wallet = $this->getWallets($paymentProfiles[0])[0];
-
         $body = [
             "AuthorId" => $identifier,
             "DebitedFunds" => [
