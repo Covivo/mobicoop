@@ -292,6 +292,21 @@ class PaymentManager
                 }
             }
 
+            // Determine if the user can pay electronically
+            // Complete address or an already existing user profile validated
+            $userPaymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
+            if (is_null($userPaymentProfiles) || count($userPaymentProfiles)==0) {
+                // No payment profile. It means that in case of electronic payment, we will register the user to the provider.
+                $paymentItem->setCanPayElectronically(false);
+                // Check if the User is valid for automatic registration
+                if ($this->checkValidForRegistrationToTheProvider($user)) {
+                    $paymentItem->setCanPayElectronically(true);
+                }
+            } else {
+                // The user has a payment profile. It means that he already has an account and a wallet to the provider
+                $paymentItem->setCanPayElectronically(true);
+            }
+
             // If there is an Unpaid Date, we set the unpaid date of the PaymentItem
             $paymentItem->setUnpaidDate($carpoolItem->getUnpaidDate());
             
@@ -312,6 +327,34 @@ class PaymentManager
         // ];
     }
 
+    private function checkValidForRegistrationToTheProvider(User $user): bool
+    {
+        // We check if he has a complete home address otherwise, he can't register automatically
+        $address = null;
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = $address;
+                break;
+            }
+        }
+        
+        if (is_null($homeAddress)) {
+            return false;
+        }
+
+        if (
+            $homeAddress->getStreetAddress()=="" ||
+            $homeAddress->getAddressLocality()=="" ||
+            $homeAddress->getRegion()=="" ||
+            $homeAddress->getPostalCode()=="" ||
+            $homeAddress->getCountryCode()==""
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+    
     /**
      * Return the payment periods for which the given user has regular carpools planned.
      *
