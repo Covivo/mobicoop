@@ -92,3 +92,4 @@
 /admin/.env
 /admin/public/logo.png
 /admin/public/robots.txt
+public/maintenance.enable
