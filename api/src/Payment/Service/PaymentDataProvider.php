@@ -89,7 +89,7 @@ class PaymentDataProvider
     {
         if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
             $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
-            $this->providerInstance = new $providerClass($this->security->getUser(), $this->clientId, $this->apikey, $this->sandBoxMode, $this->paymentProfileRepository);
+            $this->providerInstance = new $providerClass($this->security->getUser(), $this->clientId, $this->apikey, $this->sandBoxMode, $this->defaultCurrency, $this->paymentProfileRepository);
         }
 
         if (!$this->paymentActive) {

@@ -58,13 +58,13 @@ class MangoPayProvider implements PaymentProviderInterface
     const ITEM_TRANSFERS = "transfers";
     const ITEM_PAYOUT = "payouts/bankwire";
 
-    const CURRENCY = "EUR";
     const CARD_TYPE = "CB_VISA_MASTERCARD";
     const LANGUAGE = "FR";
 
     private $user;
     private $serverUrl;
     private $authChain;
+    private $currency;
     private $paymentProfileRepository;
     
     public function __construct(
@@ -72,12 +72,14 @@ class MangoPayProvider implements PaymentProviderInterface
         string $clientId,
         string $apikey,
         bool $sandBoxMode,
+        string $currency,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
         $this->user = $user;
         $this->authChain = "Basic ".base64_encode($clientId.":".$apikey);
         $this->serverUrl .= self::VERSION."/".$clientId."/";
+        $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
     }
     
@@ -337,17 +339,29 @@ class MangoPayProvider implements PaymentProviderInterface
     {
         $user = $carpoolPayment->getUser();
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+        
+        if(is_null($paymentProfiles) || count($paymentProfiles)==0){
+            // No active payment profile. The User need at least a Wallet to pay so we register him and create a Wallet
+            $identifier = $this->registerUser($user);
+            $wallet = new Wallet();
+            $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
+            $wallet->setComment("");
+            $wallet->setCurrency($this->currency);
+            $wallet->setOwnerIdentifier($identifier);
+            $wallet = $this->addWallet($wallet);
+        }
+        
         $identifier = $paymentProfiles[0]->getIdentifier();
         $wallet = $this->getWallets($paymentProfiles[0])[0];
 
         $body = [
             "AuthorId" => $identifier,
             "DebitedFunds" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => (int)($carpoolPayment->getAmount()*100)
             ],
             "Fees" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => 0
             ],
             "CreditedWalletId" => $wallet->getId(),
@@ -421,11 +435,11 @@ class MangoPayProvider implements PaymentProviderInterface
         $body = [
             "AuthorId" => $debtorIdentifier,
             "DebitedFunds" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => (int)($amount*100)
             ],
             "Fees" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => 0
             ],
             "DebitedWalletId" => $walletFrom->getId(),
@@ -459,11 +473,11 @@ class MangoPayProvider implements PaymentProviderInterface
         $body = [
             "AuthorId" => $authorIdentifier,
             "DebitedFunds" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => (int)($amount*100)
             ],
             "Fees" => [
-                "Currency" => self::CURRENCY,
+                "Currency" => $this->currency,
                 "Amount" => 0
             ],
             "DebitedWalletId" => $wallet->getId(),
