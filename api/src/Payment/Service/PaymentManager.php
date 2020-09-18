@@ -327,6 +327,12 @@ class PaymentManager
         // ];
     }
 
+    /**
+     * Check if the User is valid for a registration to the provider
+     *
+     * @param User $user
+     * @return boolean
+     */
     private function checkValidForRegistrationToTheProvider(User $user): bool
     {
         // We check if he has a complete home address otherwise, he can't register automatically
