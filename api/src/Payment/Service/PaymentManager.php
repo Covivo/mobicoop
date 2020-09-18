@@ -743,7 +743,7 @@ class PaymentManager
             $identifier = null;
 
             // First we register the User on the payment provider to get an identifier
-            $identifier = $this->paymentProvider->registerUser($user);
+            $identifier = $this->paymentProvider->registerUser($user, $bankAccount->getAddress());
 
             if ($identifier==null || $identifier=="") {
                 throw new PaymentException(PaymentException::REGISTER_USER_FAILED);

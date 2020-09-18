@@ -254,9 +254,10 @@ class MangoPayProvider implements PaymentProviderInterface
      * Register a User to the provider and create a PaymentProfile
      *
      * @param User $user
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user)
+    public function registerUser(User $user, Address $address=null)
     {
 
         // Build the body
@@ -271,41 +272,41 @@ class MangoPayProvider implements PaymentProviderInterface
 
         
 
-        // Addresse of the user
-        $homeAddress = null;
-        foreach ($user->getAddresses() as $address) {
-            if ($address->isHome()) {
-                $homeAddress = $address;
-                break;
+        
+        if (is_null($address)) {
+            // Addresse of the user
+            foreach ($user->getAddresses() as $homeAddress) {
+                if ($homeAddress->isHome()) {
+                    $address = $homeAddress;
+                    break;
+                }
             }
         }
         
-        if (!is_null($homeAddress)) {
+        if (!is_null($address)) {
             $body['Address'] = [
-                "AddressLine1" => $homeAddress->getStreetAddress(),
-                "City" => $homeAddress->getAddressLocality(),
-                "Region" => $homeAddress->getRegion(),
-                "PostalCode" => $homeAddress->getPostalCode(),
-                "Country" => substr($homeAddress->getCountryCode(), 0, 2)
+                "AddressLine1" => $address->getStreetAddress(),
+                "City" => $address->getAddressLocality(),
+                "Region" => $address->getRegion(),
+                "PostalCode" => $address->getPostalCode(),
+                "Country" => substr($address->getCountryCode(), 0, 2)
             ];
 
             if (
-                $homeAddress->getStreetAddress()=="" ||
-                $homeAddress->getAddressLocality()=="" ||
-                $homeAddress->getRegion()=="" ||
-                $homeAddress->getPostalCode()=="" ||
-                $homeAddress->getCountryCode()==""
+                $address->getStreetAddress()=="" ||
+                $address->getAddressLocality()=="" ||
+                $address->getRegion()=="" ||
+                $address->getPostalCode()=="" ||
+                $address->getCountryCode()==""
             ) {
                 throw new PaymentException(PaymentException::ADDRESS_INVALID);
             }
 
                 
-            $body['Nationality'] = substr($homeAddress->getCountryCode(), 0, 2);
-            $body['CountryOfResidence'] = substr($homeAddress->getCountryCode(), 0, 2);
+            $body['Nationality'] = substr($address->getCountryCode(), 0, 2);
+            $body['CountryOfResidence'] = substr($address->getCountryCode(), 0, 2);
         } else {
-            if (is_null($homeAddress)) {
-                throw new PaymentException(PaymentException::NO_ADDRESS);
-            }
+            throw new PaymentException(PaymentException::NO_ADDRESS);
         }
 
         $body['KYCLevel'] = "LIGHT";

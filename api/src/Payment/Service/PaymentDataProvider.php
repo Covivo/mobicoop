@@ -27,6 +27,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
+use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -181,12 +182,13 @@ class PaymentDataProvider
      * Register a User on the payment provider platform
      *
      * @param User $user
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user)
+    public function registerUser(User $user, Address $address=null)
     {
         $this->checkPaymentConfiguration();
-        return $this->providerInstance->registerUser($user);
+        return $this->providerInstance->registerUser($user, $address);
     }
 
     /**

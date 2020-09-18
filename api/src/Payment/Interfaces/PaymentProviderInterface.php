@@ -23,6 +23,7 @@
 
 namespace App\Payment\Interfaces;
 
+use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use App\Payment\Ressource\BankAccount;
@@ -44,10 +45,11 @@ interface PaymentProviderInterface
     /**
      * Register a User on the platform
      *
-     * @param User $user     The User to register
+     * @param User $user            The User to register
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user);
+    public function registerUser(User $user, Address $address=null);
 
     /**
      * Returns a collection of Bank accounts.
