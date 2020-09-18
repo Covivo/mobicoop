@@ -78,6 +78,11 @@ class BankAccount
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const VALIDATION_PENDING = 0;
+    const VALIDATION_VALIDATED = 1;
+    const VALIDATION_REJECTED = 2;
+    const VALIDATION_OUTDATED = 3;
+
     const DEFAULT_ID = "999999999999";
 
     /**
@@ -133,6 +138,13 @@ class BankAccount
      * @Groups({"readPayment","writePayment"})
      */
     private $status;
+
+    /**
+     * @var int The validation status of this bank account (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $validationStatus;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -228,6 +240,16 @@ class BankAccount
         $this->status = $status;
 
         return $this;
+    }
+
+    public function getValidationStatus(): ?int
+    {
+        return $this->validationStatus;
+    }
+
+    public function setValidationStatus(?int $validationStatus)
+    {
+        $this->validationStatus = $validationStatus;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

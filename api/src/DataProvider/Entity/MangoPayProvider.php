@@ -23,8 +23,10 @@
 
 namespace App\DataProvider\Entity;
 
+use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
@@ -52,6 +54,13 @@ class MangoPayProvider implements PaymentProviderInterface
 
     const ITEM_USER_NATURAL = "natural";
     const ITEM_WALLET = "wallets";
+    const ITEM_PAYIN = "payins/card/web";
+    const ITEM_TRANSFERS = "transfers";
+    const ITEM_PAYOUT = "payouts/bankwire";
+
+    const CURRENCY = "EUR";
+    const CARD_TYPE = "CB_VISA_MASTERCARD";
+    const LANGUAGE = "FR";
 
     private $user;
     private $serverUrl;
@@ -119,24 +128,13 @@ class MangoPayProvider implements PaymentProviderInterface
         $body['IBAN'] = $bankAccount->getIban();
         $body['BIC'] = $bankAccount->getBic();
 
-        // Addresse of the owner
-        $homeAddress = null;
-        foreach ($this->user->getAddresses() as $address) {
-            if ($address->isHome()) {
-                $homeAddress = $address;
-                break;
-            }
-        }
-        
-        if (!is_null($homeAddress)) {
-            $body['OwnerAddress'] = [
-                "AddressLine1" => $homeAddress->getStreetAddress(),
-                "City" => $homeAddress->getAddressLocality(),
-                "Region" => $homeAddress->getRegion(),
-                "PostalCode" => $homeAddress->getPostalCode(),
-                "Country" => substr($homeAddress->getCountryCode(), 0, 2)
-            ];
-        }
+        $body['OwnerAddress'] = [
+            "AddressLine1" => $bankAccount->getAddress()->getStreetAddress(),
+            "City" => $bankAccount->getAddress()->getAddressLocality(),
+            "Region" => $bankAccount->getAddress()->getRegion(),
+            "PostalCode" => $bankAccount->getAddress()->getPostalCode(),
+            "Country" => substr($bankAccount->getAddress()->getCountryCode(), 0, 2)
+        ];
 
         // Get the identifier
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
@@ -310,6 +308,8 @@ class MangoPayProvider implements PaymentProviderInterface
             }
         }
 
+        $body['KYCLevel'] = "LIGHT";
+
         $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL);
         $headers = [
             "Authorization" => $this->authChain
@@ -325,6 +325,190 @@ class MangoPayProvider implements PaymentProviderInterface
         return $data['Id'];
     }
 
+
+    /**
+     * Get the secured form's url for electronic payment
+     *
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
+     */
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
+    {
+        $user = $carpoolPayment->getUser();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+        $identifier = $paymentProfiles[0]->getIdentifier();
+        $wallet = $this->getWallets($paymentProfiles[0])[0];
+
+        $body = [
+            "AuthorId" => $identifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => (int)($carpoolPayment->getAmount()*100)
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "CreditedWalletId" => $wallet->getId(),
+            "ReturnURL" => "http://www.test.com?carpoolPaymentId=".$carpoolPayment->getId(),
+            "CardType" => self::CARD_TYPE,
+            "Culture" => self::LANGUAGE
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYIN);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+        } else {
+            throw new PaymentException(PaymentException::GET_URL_PAYIN_FAILED);
+        }
+
+        $carpoolPayment->setTransactionid($data['Id']);
+        $carpoolPayment->setRedirectUrl($data['RedirectURL']);
+        
+        return $carpoolPayment;
+    }
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
+     */
+    public function processElectronicPayment(User $debtor, array $creditors)
+    {
+        // Get the wallet of the debtor and his identifier
+        $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
+        
+        // Transfer to the creditors wallets and payout
+        foreach ($creditors as $creditor) {
+            $creditorWallet = $creditor['user']->getWallets()[0];
+            $this->transferWalletToWallet($debtorPaymentProfile->getIdentifier(), $debtorPaymentProfile->getWallets()[0], $creditorWallet, $creditor['amount']);
+
+            // Do the payout to the default bank account
+            $creditorPaymentProfile = $this->paymentProfileRepository->find($creditor['user']->getPaymentProfileId());
+            $creditorBankAccount = $creditor['user']->getBankAccounts()[0];
+            $this->triggerPayout($creditorPaymentProfile->getIdentifier(), $creditorWallet, $creditorBankAccount, $creditor['amount']);
+        }
+    }
+
+    /**
+     * Transfer founds bewteen two wallets
+     *
+     * @param integer $debtorIdentifier MangoPay's identifier of the debtor
+     * @param Wallet $walletFrom    Wallet of the debtor
+     * @param Wallet $walletTo      Wallet of the creditor
+     * @param float $amount         Amount of the transaction
+     * @param string $tag
+     * @return boolean
+     */
+    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag=""): bool
+    {
+        $body = [
+            "AuthorId" => $debtorIdentifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => (int)($amount*100)
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "DebitedWalletId" => $walletFrom->getId(),
+            "CreditedWalletId" => $walletTo->getId(),
+            "Tag" => $tag
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_TRANSFERS);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            //$data = json_decode($response->getValue(), true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Trigger a payout from a Wallet to a Bank Account
+     *
+     * @param Wallet $wallet
+     * @param BankAccount $bankAccount
+     * @return boolean
+     */
+    public function triggerPayout(int $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference=""): bool
+    {
+        $body = [
+            "AuthorId" => $authorIdentifier,
+            "DebitedFunds" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => (int)($amount*100)
+            ],
+            "Fees" => [
+                "Currency" => self::CURRENCY,
+                "Amount" => 0
+            ],
+            "DebitedWalletId" => $wallet->getId(),
+            "BankAccountId" => $bankAccount->getId(),
+            "BankWireRef" => $reference
+        ];
+
+        $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYOUT);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->postCollection($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            //$data = json_decode($response->getValue(), true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Handle a payment web hook
+     * @var MangoPayHook $hook The mangopay hook
+     * @return int|null : return the transactionId if it's a success. Null otherwise.
+     */
+    public function handleHook(MangoPayHook $hook): ?array
+    {
+        switch ($hook->getEventType()) {
+            case MangoPayHook::PAYIN_SUCCEEDED:
+            case MangoPayHook::VALIDATION_ASKED:
+                echo "yo!!!!";die;
+                return [
+                    "transactionId" => $hook->getRessourceId(),
+                    "success" => true
+                ];
+            break;
+            default:
+                return [
+                    "transactionId" => $hook->getRessourceId(),
+                    "success" => false
+                ];
+        }
+
+        return [];
+    }
 
     /**
      * Deserialize a BankAccount

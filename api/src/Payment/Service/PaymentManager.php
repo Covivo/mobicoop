@@ -30,11 +30,14 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
+use App\DataProvider\Ressource\MangoPayHook;
+use App\DataProvider\Ressource\MangoPayKYC;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Exception\PaymentException;
+use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\PaymentPeriod;
@@ -49,6 +52,7 @@ use Exception;
  * Payment manager service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PaymentManager
 {
@@ -65,6 +69,8 @@ class PaymentManager
     private $paymentProfileRepository;
     private $userManager;
     private $paymentActive;
+    private $securityToken;
+    private $carpoolPaymentRepository;
 
     /**
      * Constructor.
@@ -81,15 +87,18 @@ class PaymentManager
     public function __construct(
         EntityManagerInterface $entityManager,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolPaymentRepository $carpoolPaymentRepository,
         AskRepository $askRepository,
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         bool $paymentActive,
-        String $paymentProviderService
+        String $paymentProviderService,
+        string $securityToken
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->carpoolPaymentRepository = $carpoolPaymentRepository;
         $this->askRepository = $askRepository;
         $this->provider = $paymentProviderService;
         $this->entityManager = $entityManager;
@@ -97,6 +106,7 @@ class PaymentManager
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->userManager = $userManager;
         $this->paymentActive = $paymentActive;
+        $this->securityToken = $securityToken;
     }
 
     /**
@@ -276,7 +286,9 @@ class PaymentManager
                 if (is_null($paymentProfile) || count($paymentProfile)==0) {
                     $paymentItem->setElectronicallyPayable(false);
                 } else {
-                    $paymentItem->setElectronicallyPayable($paymentProfile[0]->isElectronicallyPayable());
+                    if ($paymentProfile[0]->isElectronicallyPayable() && $paymentProfile[0]->getValidationStatus()==PaymentProfile::VALIDATION_VALIDATED) {
+                        $paymentItem->setElectronicallyPayable(true);
+                    }
                 }
             }
 
@@ -412,7 +424,7 @@ class PaymentManager
      *
      * @param PaymentPayment $payment   The payments to make
      * @param User $user                The user that makes/receive the payment
-     * @return Payment The resulting payment (with updated statuses)
+     * @return PaymentPayment The resulting payment (with updated statuses)
      */
     public function createPaymentPayment(PaymentPayment $payment, User $user)
     {
@@ -421,7 +433,7 @@ class PaymentManager
         }
 
         // we assume the payment is failed until it's a success !
-        $payment->setStatus(PaymentPayment::STATUS_FAILURE);
+        //$payment->setStatus(PaymentPayment::STATUS_FAILURE);
 
         if ($payment->getType() == PaymentPayment::TYPE_PAY) {
             // PAY
@@ -429,6 +441,7 @@ class PaymentManager
             // we create the payment
             $carpoolPayment = new CarpoolPayment();
             $carpoolPayment->setUser($user);
+            $carpoolPayment->setStatus(CarpoolPayment::STATUS_INITIATED);
 
             // for a payment, we need to compute the total amount
             $amountDirect = 0;
@@ -463,40 +476,33 @@ class PaymentManager
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
 
-            // if online amount is not zero, we pay online
-            if ($amountOnline>0) {
-                // TODO : online payment, set the status to success if successful !
-                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
-            } else {
-                // if it's a manual payment, we set it to a success automatically
-                $payment->setStatus(PaymentPayment::STATUS_SUCCESS);
+            foreach ($payment->getItems() as $item) {
+                $carpoolItem = $this->carpoolItemRepository->find($item['id']);
+                if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
+                    if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
+                    } else {
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE);
+                    }
+                }
+                $this->entityManager->persist($carpoolItem);
             }
 
-            if ($payment->getStatus() == PaymentPayment::STATUS_SUCCESS) {
-                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
-                foreach ($payment->getItems() as $item) {
-                    $carpoolItem = $this->carpoolItemRepository->find($item['id']);
-                    if ($item["status"] == PaymentItem::DAY_CARPOOLED) {
-                        if ($item['mode'] == PaymentPayment::MODE_DIRECT) {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
-                        } else {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_ONLINE);
-                            // No confirmation by the Creditor if the payment is online
-                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
-                        }
-                    }
-                    $this->entityManager->persist($carpoolItem);
-                }
+            // if online amount is not zero, we pay online
+            if ($amountOnline>0) {
+                $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
-                $carpoolPayment->setStatus(CarpoolPayment::STATUS_FAILURE);
+                $this->treatCarpoolPayment($carpoolPayment);
             }
+
             $this->entityManager->persist($carpoolPayment);
-            $this->entityManager->persist($carpoolItem);
             $this->entityManager->flush();
         } else {
 
             // COLLECT
-            // Array of carpoolPayment we could generate if there are DIRECT payments not previously validated par debtors
+            // We will automatically create the carpoolPayments related to an accepted direct payment not previously validated by the debtor.
             $carpoolPayments = [];
             
 
@@ -539,6 +545,7 @@ class PaymentManager
                             $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->addCarpoolItem($carpoolItem);
                         }
                     } else {
+                        // For online payment we don't change the debtor status, only the creditor's
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
                     }
                 } else {
@@ -553,8 +560,35 @@ class PaymentManager
             }
             $this->entityManager->flush();
         }
+        
+        $payment->setStatus($carpoolPayment->getStatus());
         return $payment;
     }
+
+    /**
+     * Update the carpool items after a payment
+     *
+     * @param CarpoolPayment $carpoolPayment    Involved CarpoolPayment
+     * @return void
+     */
+    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment)
+    {
+        foreach ($carpoolPayment->getCarpoolItems() as $item) {
+            /**
+             * @var CarpoolItem $item
+             */
+            switch ($item->getDebtorStatus()) {
+                case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
+                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    break;
+                case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
+                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    $item->setCreditorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::CREDITOR_STATUS_ONLINE : CarpoolItem::CREDITOR_STATUS_PENDING);
+                    break;
+            }
+        }
+    }
+
 
     /**
      * Create the carpool payment items from the accepted asks.
@@ -798,9 +832,83 @@ class PaymentManager
         $paymentProfile->setIdentifier($identifier);
         $paymentProfile->setStatus(1);
         $paymentProfile->setElectronicallyPayable($electronicallyPayable);
+        $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_PENDING);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 
         return $paymentProfile;
+    }
+
+    /**
+     * Handle a payin web hook
+     * @var object $hook The web hook from the payment provider
+     * @return void
+     */
+    public function handleHookPayIn(object $hook)
+    {
+        if ($this->securityToken !== $hook->getSecurityToken()) {
+            throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
+        }
+
+        $transaction = $this->paymentProvider->handleHook($hook);
+
+        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction['transactionId']]);
+
+        if (is_null($carpoolPayment)) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        } else {
+            // Perform the payment
+
+            // Get the creditors
+            if (is_null($carpoolPayment->getCarpoolItems()) || count($carpoolPayment->getCarpoolItems())==0) {
+                throw new PaymentException(PaymentException::NO_CARPOOL_ITEMS);
+            }
+            $creditors = [];
+            foreach ($carpoolPayment->getCarpoolItems() as $carpoolItem) {
+                /**
+                 * @var CarpoolItem $carpoolItem
+                 */
+                if (!isset($creditors[$carpoolItem->getCreditorUser()->getId()])) {
+                    // New creditor. We set the amount and the payment profile
+                    $creditors[$carpoolItem->getCreditorUser()->getId()] = [
+                        "user" => $this->userManager->getPaymentProfile($carpoolItem->getCreditorUser()),
+                        "amount" => $carpoolItem->getAmount()
+                    ];
+                } else {
+                    // We already know this creditor, we add the current amount to the global amount
+                    $creditors[$carpoolItem->getCreditorUser()->getId()]["amount"] += $carpoolItem->getAmount();
+                }
+            }
+            
+            $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
+            
+            $this->paymentProvider->processElectronicPayment($debtor, $creditors);
+            $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
+        }
+
+        $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
+
+        $this->entityManager->persist($carpoolPayment);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Handle a validation web hook
+     *
+     * @param object $hook The hook to handle
+     * @return void
+     */
+    public function handleHookValidation(object $hook)
+    {
+        if ($this->securityToken !== $hook->getSecurityToken()) {
+            throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
+        }
+
+        $paymentProfile = $this->paymentProfileRepository->findOneBy(['validationId'=>$hook->getRessourceId()]);
+        if (is_null($paymentProfile)) {
+            throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
+        }
+
+        $transaction = $this->paymentProvider->handleHook($hook);
     }
 }

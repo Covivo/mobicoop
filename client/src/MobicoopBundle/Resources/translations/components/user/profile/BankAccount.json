@@ -1,11 +1,14 @@
 {
     "fr": {
         "title":"Renseignez vos coordonnées bancaires",
+        "titleAddress":"Renseignez votre adresse complète",
+        "textAddress":"Ces coordonnées ne seront pas enregistrées sur la platforme mais uniquement transmise à notre prestataire de paiement. Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
         "titleAlreadyRegistered":"Mes coordonnées bancaires",
         "form":{
             "label":{
                 "iban":"IBAN",
-                "bic":"BIC"
+                "bic":"BIC",
+                "address":"Votre adresse complète"
             },
             "errors":{
                 "iban":"Le numéro IBAN doit être valide",
@@ -32,11 +35,14 @@
     },    
     "en": {
         "title":"Register your bank coordinates",
+        "titleAddress":"Register your full address",
+        "textAddress":"These coordinates won't be stored on the platform. They're only sent to our payment provider. Please, give us your full address (number, street name...) and not just your city.",
         "titleAlreadyRegistered":"My bank coordinates",
         "form":{
             "label":{
                 "iban":"IBAN",
-                "bic":"BIC"
+                "bic":"BIC",
+                "address":"Your complete address"
             },
             "errors":{
                 "iban":"IBAN must be valid",

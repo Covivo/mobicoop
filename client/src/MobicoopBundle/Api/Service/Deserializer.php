@@ -830,6 +830,9 @@ class Deserializer
     {
         $bankAccount = new BankAccount();
         $bankAccount = $this->autoSet($bankAccount, $data);
+        if (isset($data["address"])) {
+            $bankAccount->setAddress($this->deserializeAddress($data['address']));
+        }
 
         return $bankAccount;
     }
