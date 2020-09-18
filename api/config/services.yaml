@@ -202,6 +202,9 @@ services:
             $pushTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_PUSH_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+            $mailsEnabled: '%env(bool:resolve:NOTIFICATION_MAIL_ENABLED)%'
+            $smsEnabled: '%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%'
+            $pushEnabled: '%env(bool:resolve:NOTIFICATION_PUSH_ENABLED)%'
         tags:
             - { name: monolog.logger, channel: notification }
 
