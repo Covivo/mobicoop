@@ -26,6 +26,9 @@ class RequestSubscriber implements EventSubscriberInterface
             || $request->isXmlHttpRequest()
             || $request->isMethod('POST')
             || 'user_login' === $request->attributes->get('_route')
+            || 'user_update_password_reset' === $request->attributes->get('_route')
+            || 'user_update_password_reset' === $request->attributes->get('_route')
+            || 'user_password_reset' === $request->attributes->get('_route')
         ) {
             return;
         }
