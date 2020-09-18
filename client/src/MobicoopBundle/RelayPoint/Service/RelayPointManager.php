@@ -80,7 +80,8 @@ class RelayPointManager
         $params = [
             'official' => $official,
             'address.latitude[between]' => $this->bbox_min_lat . ".." . $this->bbox_max_lat,
-            'address.longitude[between]' => $this->bbox_min_lon . ".." . $this->bbox_max_lon
+            'address.longitude[between]' => $this->bbox_min_lon . ".." . $this->bbox_max_lon,
+            'perPage' => 999999
         ];
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
