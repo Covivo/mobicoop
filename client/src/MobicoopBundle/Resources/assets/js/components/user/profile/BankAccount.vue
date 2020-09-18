@@ -13,7 +13,7 @@
         type="error"
       >
         {{ $t('error') }}
-      </v-alert>        
+      </v-alert>
       <v-form
         v-if="!bankCoordinates"
         v-model="valid"
@@ -26,6 +26,15 @@
               class="text-center text-h6 pt-4"
             >
               {{ $t('title') }}
+              <v-alert
+                type="info"
+                color="accent"
+                class="text-left my-2"
+                dense
+              >
+                {{ $t('textInfo.line1') }}<br>
+                {{ $t('textInfo.line2') }}
+              </v-alert>
             </v-col>
           </v-row>
           <v-row justify="center">
