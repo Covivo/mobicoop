@@ -972,6 +972,8 @@ class AdManager
 
     public function getScheduleFromResults(Result $results, Proposal $proposal, Matching $matching, int $userId)
     {
+        $schedule = [];
+        $outward = $return = null;
         if (!$proposal->getCriteria()->isDriver() && $results->getResultDriver()) {
             $outward = $results->getResultDriver()->getOutward();
             $return = $results->getResultDriver()->getReturn();
@@ -981,13 +983,17 @@ class AdManager
         } else {
             // The user registered his proposal as driver and passenger.
             // We need to know the role that he's playing in the matching
-            if ($matching->getProposalOffer()->getUser()->getId()==$userId) {
+            if ($matching->getProposalOffer()->getUser()->getId() == $userId && !is_null($results->getResultPassenger())) {
                 $outward = $results->getResultPassenger()->getOutward();
                 $return = $results->getResultPassenger()->getReturn();
-            } elseif ($matching->getProposalRequest()->getUser()->getId()==$userId) {
+            } elseif ($matching->getProposalRequest()->getUser()->getId() == $userId && !is_null($results->getResultPassenger())) {
                 $outward = $results->getResultDriver()->getOutward();
                 $return = $results->getResultDriver()->getReturn();
             }
+        }
+
+        if (!$outward) {
+            return $schedule;
         }
 
         // we clean up every days based on isDayCheck
