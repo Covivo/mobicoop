@@ -16,7 +16,6 @@ final class Version20200921111400 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (30, "PARTNERS", 1)');
-    
     }
 
     public function down(Schema $schema) : void
