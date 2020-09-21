@@ -58,6 +58,14 @@ class PaymentException extends \LogicException
     // Electronic payment
     const GET_URL_PAYIN_FAILED = "Failed to get the secured URL for electronic payment";
 
+    // Documents
+    const ERROR_UPLOAD = "Error uploading the document";
+    const ERROR_CREATING_DOC_TO_PROVIDER = "The creation of the document to the provider has failed";
+    const ERROR_VALIDATION_DOC_BAD_EXTENTION = "Validation file bad extension";
+    const ERROR_CREATING_DOC_PAGE_TO_PROVIDER = "The creation of a page for a document to the provider has failed";
+    const ERROR_VALIDATION_ASK_DOC = "The validation ask for a document has failed";
+    const ERROR_VALIDATION_ASK_DOC_BAD_STATUS = "The validation ask for a document has failed (BAD STATUS)";
+
     // Web hooks
     const MISSING_PARAMETER = "Missing parameter";
     const INVALID_SECURITY_TOKEN = "Security token invalid";

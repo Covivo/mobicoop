@@ -34,6 +34,7 @@ use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\ValidationDocument;
 use App\User\Entity\User;
 use LogicException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
@@ -57,22 +58,30 @@ class MangoPayProvider implements PaymentProviderInterface
     const ITEM_PAYIN = "payins/card/web";
     const ITEM_TRANSFERS = "transfers";
     const ITEM_PAYOUT = "payouts/bankwire";
+    
+    const ITEM_KYC_CREATE_DOC = "users/{userId}/KYC/documents/";
+    const ITEM_KYC_CREATE_PAGE = "users/{userId}/KYC/documents/{KYCDocId}/pages";
+    const ITEM_KYC_PUT_DOC = "users/{userId}/KYC/documents/{KYCDocId}";
 
     const CARD_TYPE = "CB_VISA_MASTERCARD";
     const LANGUAGE = "FR";
+    const VALIDATION_DOC_TYPE = "IDENTITY_PROOF";
+    const VALIDATION_ASKED = "VALIDATION_ASKED";
 
     private $user;
     private $serverUrl;
     private $authChain;
     private $currency;
     private $paymentProfileRepository;
-    
+    private $validationDocsPath;
+
     public function __construct(
         ?User $user,
         string $clientId,
         string $apikey,
         bool $sandBoxMode,
         string $currency,
+        string $validationDocsPath,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
@@ -81,6 +90,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $this->serverUrl .= self::VERSION."/".$clientId."/";
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->validationDocsPath = $validationDocsPath;
     }
     
     /**
@@ -528,6 +538,80 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return [];
+    }
+
+    /**
+     * Upload an identity validation document
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
+    {
+        $user = $validationDocument->getUser();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+        $identifier = $paymentProfiles[0]->getIdentifier();
+
+        //$fileContent = base64_encode(file_get_contents(self::VALIDATION_DOCUMENTS_PATH."".$validationDocument->getFileName()));
+        
+
+        // General header for all 3 requests
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+
+
+        // Creation of the doc
+        $urlPost = str_replace("{userId}", $identifier, self::ITEM_KYC_CREATE_DOC);
+        $body = [
+            "Type" => self::VALIDATION_DOC_TYPE,
+            "Tag" => "Automatic"
+        ];
+        $dataProvider = new DataProvider($this->serverUrl, $urlPost);
+        $response = $dataProvider->postCollection($body, $headers);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            $docId = $data['Id'];
+        } else {
+            throw new PaymentException(PaymentException::ERROR_CREATING_DOC_TO_PROVIDER);
+        }
+        
+        // Creation of pages
+        $urlPost = str_replace("{KYCDocId}", $docId, str_replace("{userId}", $identifier, self::ITEM_KYC_CREATE_PAGE));
+
+        $body = [
+            "File" => base64_encode(file_get_contents($this->validationDocsPath."".$validationDocument->getFileName()))
+        ];
+        $dataProvider = new DataProvider($this->serverUrl, $urlPost);
+        $response = $dataProvider->postCollection($body, $headers);
+        if ($response->getCode() !== 204) {
+            throw new PaymentException(PaymentException::ERROR_CREATING_DOC_PAGE_TO_PROVIDER);
+        }
+
+        // Asking validation
+        $urlPost = str_replace("{KYCDocId}", $docId, str_replace("{userId}", $identifier, self::ITEM_KYC_PUT_DOC));
+        
+        $body = [
+            "Status" => self::VALIDATION_ASKED
+        ];
+        
+
+        $dataProvider = new DataProvider($this->serverUrl, $urlPost);
+        $response = $dataProvider->putItem($body, $headers);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if ($data['Status']!== self::VALIDATION_ASKED) {
+                throw new PaymentException(PaymentException::ERROR_VALIDATION_ASK_DOC_BAD_STATUS);
+            }
+        } else {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_ASK_DOC);
+        }
+
+        return $validationDocument;
     }
 
     /**

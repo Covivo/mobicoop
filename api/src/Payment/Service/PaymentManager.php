@@ -30,6 +30,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
+use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Ressource\MangoPayKYC;
 use App\Payment\Entity\CarpoolPayment;
@@ -42,6 +43,7 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\PaymentPeriod;
 use App\Payment\Ressource\PaymentWeek;
+use App\Payment\Ressource\ValidationDocument;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,6 +73,8 @@ class PaymentManager
     private $paymentActive;
     private $securityToken;
     private $carpoolPaymentRepository;
+    private $validationDocsPath;
+    private $validationDocsAuthorizedExtensions;
 
     /**
      * Constructor.
@@ -83,6 +87,9 @@ class PaymentManager
      * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
      * @param boolean $paymentActive                                If the online payment is active
      * @param string $paymentProviderService                        The payment provider service
+     * @param string $securityToken                                 The payment security token (for hooks)
+     * @param string $validationDocsPath                            Path to the temp directory for validation documents
+     * @param array $validationDocsAuthorizedExtensions             Authorized extensions for validation documents
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -94,7 +101,9 @@ class PaymentManager
         UserManager $userManager,
         bool $paymentActive,
         String $paymentProviderService,
-        string $securityToken
+        string $securityToken,
+        string $validationDocsPath,
+        array $validationDocsAuthorizedExtensions
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -107,6 +116,8 @@ class PaymentManager
         $this->userManager = $userManager;
         $this->paymentActive = $paymentActive;
         $this->securityToken = $securityToken;
+        $this->validationDocsPath = $validationDocsPath;
+        $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
     }
 
     /**
@@ -894,10 +905,10 @@ class PaymentManager
 
     /**
      * Handle a payin web hook
-     * @var object $hook The web hook from the payment provider
+     * @var Hook $hook The web hook from the payment provider
      * @return void
      */
-    public function handleHookPayIn(object $hook)
+    public function handleHookPayIn(Hook $hook)
     {
         if ($this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
@@ -948,10 +959,10 @@ class PaymentManager
     /**
      * Handle a validation web hook
      *
-     * @param object $hook The hook to handle
+     * @param Hook $hook The hook to handle
      * @return void
      */
-    public function handleHookValidation(object $hook)
+    public function handleHookValidation(Hook $hook)
     {
         if ($this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
@@ -963,5 +974,41 @@ class PaymentManager
         }
 
         $transaction = $this->paymentProvider->handleHook($hook);
+    }
+
+
+    /**
+     * Upload an identity validation document to the payment provider
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
+    {
+        if (!file_exists($this->validationDocsPath."".$validationDocument->getFileName())) {
+            throw new PaymentException(PaymentException::ERROR_UPLOAD);
+        }
+        if (!in_array(strtolower($validationDocument->getExtension()), $this->validationDocsAuthorizedExtensions)) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_BAD_EXTENTION." (".implode(",", $this->validationDocsAuthorizedExtensions).")");
+        }
+
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$validationDocument->getUser()]);
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+
+        $validationDocument = $this->paymentProvider->uploadValidationDocument($validationDocument);
+
+        // We don't store this kind of documents. We remove it.
+        unlink($this->validationDocsPath."".$validationDocument->getFileName());
+
+        // We set the date of the validation asked
+        $paymentProfile = $paymentProfiles[0];
+        $paymentProfile->setValidationAskedDate(new \DateTime());
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+
+        return $validationDocument;
     }
 }
