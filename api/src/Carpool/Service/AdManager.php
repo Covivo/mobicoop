@@ -194,7 +194,7 @@ class AdManager
         if ($ad->getCommunities()) {
             // todo : check if the user can post/search in each community
             foreach ($ad->getCommunities() as $communityId) {
-                if ($community = $this->communityRepository->findOneBy(['id'=>$communityId])) {
+                if ($community = $this->communityRepository->findOneBy(['id' => $communityId])) {
                     $outwardProposal->addCommunity($community);
                 } else {
                     throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
@@ -290,7 +290,7 @@ class AdManager
                 $outwardCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
                 $outwardProposal->setUseTime(false);
             }
-            
+
             $outwardCriteria->setMarginDuration($marginDuration);
         }
 
@@ -299,7 +299,7 @@ class AdManager
             $waypoint = new Waypoint();
             $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
             $waypoint->setPosition($position);
-            $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
+            $waypoint->setDestination($position == count($ad->getOutwardWaypoints()) - 1);
             $outwardProposal->addWaypoint($waypoint);
         }
 
@@ -386,7 +386,7 @@ class AdManager
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
                 // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
-                
+
                 if ($ad->getReturnTime()) {
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
                     $returnProposal->setUseTime(true);
@@ -394,12 +394,12 @@ class AdManager
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
                     $returnProposal->setUseTime(false);
                 }
-                
+
                 $returnCriteria->setMarginDuration($marginDuration);
             }
 
             // waypoints
-            if (count($ad->getReturnWaypoints())==0) {
+            if (count($ad->getReturnWaypoints()) == 0) {
                 // return waypoints are not set : we use the outward waypoints in reverse order
                 $ad->setReturnWaypoints(array_reverse($ad->getOutwardWaypoints()));
             }
@@ -407,7 +407,7 @@ class AdManager
                 $waypoint = new Waypoint();
                 $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
                 $waypoint->setPosition($position);
-                $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
+                $waypoint->setDestination($position == count($ad->getReturnWaypoints()) - 1);
                 $returnProposal->addWaypoint($waypoint);
             }
 
@@ -445,10 +445,10 @@ class AdManager
 
         // default order
         $ad->setFilters([
-                'order'=>[
-                    'criteria'=>'date',
-                    'value'=>'ASC'
-                ]
+            'order' => [
+                'criteria' => 'date',
+                'value' => 'ASC'
+            ]
 
         ]);
 
@@ -541,7 +541,7 @@ class AdManager
         return $address;
     }
 
-    
+
     /**
      * Add times with margins duration to the criteria's schedules
      *
@@ -627,18 +627,18 @@ class AdManager
 
         // default order
         $aFilters = [
-            'order'=>[
-                'criteria'=>'date',
-                'value'=>'ASC'
+            'order' => [
+                'criteria' => 'date',
+                'value' => 'ASC'
             ]
 
         ];
 
         if (!is_null($filters)) {
-            $aFilters['filters']=$filters;
+            $aFilters['filters'] = $filters;
         }
         if (!is_null($order)) {
-            $aFilters['order']=$order;
+            $aFilters['order'] = $order;
         }
         $ad->setFilters($aFilters);
         $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -685,10 +685,10 @@ class AdManager
         $ad->setCreatedDate($proposal->getCreatedDate());
         $aFilters = [];
         if (!is_null($filters)) {
-            $aFilters['filters']=$filters;
+            $aFilters['filters'] = $filters;
         }
         if (!is_null($order)) {
-            $aFilters['order']=$order;
+            $aFilters['order'] = $order;
         }
         $ad->setFilters($aFilters);
         $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -783,12 +783,12 @@ class AdManager
     {
         $ads = [];
         $user = $this->userManager->getUser($userId);
-        $proposals = $this->proposalRepository->findBy(['user'=>$user, 'private'=>false]);
+        $proposals = $this->proposalRepository->findBy(['user' => $user, 'private' => false]);
 
         $refIdProposals = [];
         foreach ($proposals as $proposal) {
             /* TO DO : This if is ugly... we could use a better method in ProposalRepository **/
-            if ($proposal->getType()==Proposal::TYPE_RETURN) {
+            if ($proposal->getType() == Proposal::TYPE_RETURN) {
                 continue;
             }
             if (!in_array($proposal->getId(), $refIdProposals)) {
@@ -862,15 +862,15 @@ class AdManager
         if ($matching && $matching->getProposalOffer()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalOffer()->getCriteria()->getFromDate();
             $ad->setOutwardDate($date);
-            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
+            $ad->setOutwardTime($date->format('Y-m-d') . ' ' . $matching->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($matching && $matching->getProposalRequest()->getCriteria()->getFromTime()) {
             $date = $matching->getProposalRequest()->getCriteria()->getFromDate();
             $ad->setOutwardDate($date);
-            $ad->setOutwardTime($date->format('Y-m-d').' '.$matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
+            $ad->setOutwardTime($date->format('Y-m-d') . ' ' . $matching->getProposalRequest()->getCriteria()->getFromTime()->format('H:i:s'));
         } elseif ($proposal->getCriteria()->getFromTime()) {
             $date = $proposal->getCriteria()->getFromDate();
             $ad->setOutwardDate($date);
-            $ad->setOutwardTime($date->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+            $ad->setOutwardTime($date->format('Y-m-d') . ' ' . $proposal->getCriteria()->getFromTime()->format('H:i:s'));
         } else {
             $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
             $ad->setOutwardTime(null);
@@ -887,9 +887,9 @@ class AdManager
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
             $ad->setReturnDate($returnDate);
-            
+
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($returnDate->format('Y-m-d')." ".$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+                $ad->setReturnTime($returnDate->format('Y-m-d') . " " . $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -905,8 +905,8 @@ class AdManager
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             // schedule needs data in asks results when the user that display the Ad is not the owner
             $schedule = (!is_null($askLinked))
-               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
-               : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
+                ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
+                : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
             // if schedule is based on results, we do not need to update pickup times because it's already done in results
             if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration() && !$askLinked) {
                 $schedule = $this->updateScheduleTimesWithPickUpDurations($schedule, $matching->getPickUpDuration(), $matching->getMatchingLinked() ? $matching->getMatchingLinked()->getPickUpDuration() : null);
@@ -958,6 +958,8 @@ class AdManager
 
     public function getScheduleFromResults(Result $results, Proposal $proposal, Matching $matching, int $userId)
     {
+        $schedule = [];
+        $outward = $return = null;
         if (!$proposal->getCriteria()->isDriver() && $results->getResultDriver()) {
             $outward = $results->getResultDriver()->getOutward();
             $return = $results->getResultDriver()->getReturn();
@@ -967,13 +969,17 @@ class AdManager
         } else {
             // The user registered his proposal as driver and passenger.
             // We need to know the role that he's playing in the matching
-            if ($matching->getProposalOffer()->getUser()->getId()==$userId) {
+            if ($matching->getProposalOffer()->getUser()->getId() == $userId && !is_null($results->getResultPassenger())) {
                 $outward = $results->getResultPassenger()->getOutward();
                 $return = $results->getResultPassenger()->getReturn();
-            } elseif ($matching->getProposalRequest()->getUser()->getId()==$userId) {
+            } elseif ($matching->getProposalRequest()->getUser()->getId() == $userId && !is_null($results->getResultPassenger())) {
                 $outward = $results->getResultDriver()->getOutward();
                 $return = $results->getResultDriver()->getReturn();
             }
+        }
+
+        if (!$outward) {
+            return $schedule;
         }
 
         // we clean up every days based on isDayCheck
@@ -1053,7 +1059,7 @@ class AdManager
         $ad->setOutwardDate($proposal->getCriteria()->getFromDate());
         $ad->setPaused($proposal->isPaused());
         if ($proposal->getCriteria()->getFromTime()) {
-            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d').' '.$proposal->getCriteria()->getFromTime()->format('H:i:s'));
+            $ad->setOutwardTime($ad->getOutwardDate()->format('Y-m-d') . ' ' . $proposal->getCriteria()->getFromTime()->format('H:i:s'));
         } else {
             $ad->setOutwardTime(null);
         }
@@ -1066,7 +1072,7 @@ class AdManager
             $ad->setReturnWaypoints($proposal->getProposalLinked()->getWaypoints());
             $ad->setReturnDate($proposal->getProposalLinked()->getCriteria()->getFromDate());
             if ($proposal->getProposalLinked()->getCriteria()->getFromTime()) {
-                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d').' '.$proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
+                $ad->setReturnTime($ad->getReturnDate()->format('Y-m-d') . ' ' . $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H:i:s'));
             } else {
                 $ad->setReturnTime(null);
             }
@@ -1113,7 +1119,8 @@ class AdManager
             $ad = $this->createAd($ad, true, $withSolidaries);
 
         // minor update
-        } elseif ($oldAd->hasBike() !== $ad->hasBike()
+        } elseif (
+            $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
             || $oldAd->hasLuggage() !== $ad->hasLuggage()
             || $oldAd->getSeatsDriver() !== $ad->getSeatsDriver()
@@ -1163,22 +1170,28 @@ class AdManager
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
         // checks for regular and punctual
-        if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
+        if (
+            $oldAd->getPriceKm() !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
             || $oldAd->getRole() !== $newAd->getRole()
-            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())) {
+            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())
+        ) {
             return true;
         }
 
         // checks for regular only
-        if ($newAd->getFrequency() === Criteria::FREQUENCY_REGULAR
-            && !$this->compareSchedules($oldAd->getSchedule(), $newAd->getSchedule())) {
+        if (
+            $newAd->getFrequency() === Criteria::FREQUENCY_REGULAR
+            && !$this->compareSchedules($oldAd->getSchedule(), $newAd->getSchedule())
+        ) {
             return true;
         }
 
         // checks for punctual only
-        if ($newAd->getFrequency() === Criteria::FREQUENCY_PUNCTUAL
-            && !$this->compareDateTimes($oldAd, $newAd)) {
+        if (
+            $newAd->getFrequency() === Criteria::FREQUENCY_PUNCTUAL
+            && !$this->compareDateTimes($oldAd, $newAd)
+        ) {
             return true;
         }
 
@@ -1274,8 +1287,10 @@ class AdManager
         for ($i = 0; $i < count($old); $i++) {
             if (is_bool($old[$i]) && is_bool($new[$i]) && $old[$i] !== $new[$i]) {
                 return false;
-            } elseif (is_a($old[$i], \DateTime::class) && is_null($new[$i])
-                || is_a($new[$i], \DateTime::class) && is_null($old[$i])) {
+            } elseif (
+                is_a($old[$i], \DateTime::class) && is_null($new[$i])
+                || is_a($new[$i], \DateTime::class) && is_null($old[$i])
+            ) {
                 return false;
             } elseif (is_a($old[$i], \DateTime::class) && is_a($new[$i], \DateTime::class)) {
                 if ($old[$i]->format('Y-m-d H:i:s') !== $new[$i]->format('Y-m-d H:i:s')) {
@@ -1328,8 +1343,10 @@ class AdManager
             return false;
         }
 
-        if (!is_null($old->getReturnTime()) && is_null($new->getReturnTime())
-            || !is_null($new->getReturnTime()) && is_null($old->getReturnTime())) {
+        if (
+            !is_null($old->getReturnTime()) && is_null($new->getReturnTime())
+            || !is_null($new->getReturnTime()) && is_null($old->getReturnTime())
+        ) {
             return false;
         } elseif ($old->getReturnTime()) {
             $oldReturnTime = new \DateTime($old->getReturnTime());
@@ -1338,8 +1355,10 @@ class AdManager
             }
         }
 
-        if (!is_null($old->getReturnDate()) && is_null($new->getReturnDate())
-            || !is_null($new->getReturnDate()) && is_null($old->getReturnDate())) {
+        if (
+            !is_null($old->getReturnDate()) && is_null($new->getReturnDate())
+            || !is_null($new->getReturnDate()) && is_null($old->getReturnDate())
+        ) {
             return false;
         } elseif ($old->getReturnDate()) {
             if ($old->getReturnDate()->format('Y-m-d') !== $new->getReturnDate()->format('Y-m-d')) {
@@ -1361,8 +1380,8 @@ class AdManager
          * @var Criteria $criterion
          */
         foreach ($criteria as $criterion) {
-            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance() * $this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT / 100);
+            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration() * $this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT / 100);
             $this->entityManager->persist($criterion);
         }
         $this->entityManager->flush();
@@ -1437,11 +1456,11 @@ class AdManager
             $maxtime = $time->add(new \DateInterval("PT1H"))->format("H:i:s");
 
             // if days is null, we are using today
-            
+
             if (is_null($days)) {
                 $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
-                $days = [strtolower($today->format('l'))=>1];
-                $outward = ["mindate"=>$time->format("Y-m-d")];
+                $days = [strtolower($today->format('l')) => 1];
+                $outward = ["mindate" => $time->format("Y-m-d")];
             } else {
                 // We don't have any date so i'm looking for the first date corresponding to the first day
                 $dateFound = "";
@@ -1455,23 +1474,23 @@ class AdManager
                     }
                     $cpt++;
                 }
-                $outward = ["mindate"=>$dateFound->format("Y-m-d")];
+                $outward = ["mindate" => $dateFound->format("Y-m-d")];
             }
         }
         // var_dump($outward);die;
 
         // if days is null, we make an array using outward
-        $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+        $daysList = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         if (is_null($days)) {
             $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             foreach ($outward as $day => $times) {
                 if (in_array($day, $daysList)) {
-                    $days = [$day=>1];
-                } elseif ($day=="mindate") {
+                    $days = [$day => 1];
+                } elseif ($day == "mindate") {
                     // It's the mindate field. We use it to create a day
                     $dayMinDate = new \DateTime($times);
                     $textDayMinDate = strtolower($dayMinDate->format('l'));
-                    $days = [$textDayMinDate=>1];
+                    $days = [$textDayMinDate => 1];
                 }
             }
         }
@@ -1482,8 +1501,8 @@ class AdManager
 
         $schedules = $this->buildSchedule($days, $outward);
         // var_dump($schedules);die;
-        if (count($schedules)>0) {
-            if ($frequency=="punctual") {
+        if (count($schedules) > 0) {
+            if ($frequency == "punctual") {
                 // Punctual journey
                 $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
@@ -1492,13 +1511,13 @@ class AdManager
                 if (isset($schedules[0]["outwardTime"])) {
                     $ad->setOutwardTime($schedules[0]["outwardTime"]);
                 }
-            } elseif ($frequency=="regular") {
+            } elseif ($frequency == "regular") {
                 // Regular journey
                 $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $ad->setSchedule($schedules);
             } else {
                 // If only one schedule with one day punctual. Else it's regular.
-                if (count($schedules)>1 || count($schedules[0])>2) {
+                if (count($schedules) > 1 || count($schedules[0]) > 2) {
                     $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
                     $ad->setSchedule($schedules);
                 } else {
@@ -1529,7 +1548,7 @@ class AdManager
      * @param string|null $dateMax   Maximum date
      * @return \Datetime
      */
-    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax=null)
+    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null)
     {
         (is_null($dateMax)) ? $dateMax = $dateMin : '';
 
@@ -1578,22 +1597,22 @@ class AdManager
     }
 
     /**
-    * Get ads with accepted asks of a user
-    *
-    * @param integer $userId
-    * @return array
-    */
-    public function getUserAcceptedCarpools(int $userId) : array
+     * Get ads with accepted asks of a user
+     *
+     * @param integer $userId
+     * @return array
+     */
+    public function getUserAcceptedCarpools(int $userId): array
     {
         // array of ads
         $ads = [];
         // temporary array
-        $temp=[];
+        $temp = [];
         // array of ads from asks
         $askAds = [];
         $user = $this->userManager->getUser($userId);
         // We retrieve all the proposals of the user
-        $proposals = $this->proposalRepository->findBy(['user'=>$user]);
+        $proposals = $this->proposalRepository->findBy(['user' => $user]);
 
         // We check for each proposal if he have matching
         /** @var Proposal $proposal */
@@ -1687,7 +1706,7 @@ class AdManager
      *  PROOF *
      **********/
 
-    
+
     /**
      * Create a proof for an ask.
      *
@@ -1738,7 +1757,7 @@ class AdManager
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
-        
+
         return $classicProofData;
     }
 }
