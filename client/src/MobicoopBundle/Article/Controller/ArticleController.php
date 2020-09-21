@@ -67,6 +67,8 @@ class ArticleController extends AbstractController
     const MEDIAS = 27;
     const USEFUL_LINKS = 28;
     const MOBILE_APP = 29;
+    const PARTNERS = 30;
+
 
     /**
      * Display of the project page
@@ -302,6 +304,15 @@ class ArticleController extends AbstractController
     public function showFees(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::FEES));
+    }
+
+    /**
+    * Display of the PARTNERS page
+    *
+    */
+    public function showPartners(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::PARTNERS));
     }
 
     /**

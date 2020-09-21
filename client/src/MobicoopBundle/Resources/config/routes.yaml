@@ -858,6 +858,13 @@ MobileApp:
         en: /mobile-app
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobileApp
 
+# display partners page
+Partners:
+    path:
+        fr: /partenaires
+        en: /partners
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPartners
+
 # Get the last external articles (AJAX)
 LastExternalArticles:
     methods: [POST]
