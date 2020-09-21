@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
@@ -519,7 +520,7 @@ class MangoPayProvider implements PaymentProviderInterface
      * @var MangoPayHook $hook The mangopay hook
      * @return int|null : return the transactionId if it's a success. Null otherwise.
      */
-    public function handleHook(MangoPayHook $hook): ?array
+    public function handleHook(Hook $hook): ?array
     {
         switch ($hook->getEventType()) {
             case MangoPayHook::PAYIN_SUCCEEDED:
