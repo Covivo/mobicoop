@@ -157,7 +157,7 @@
           </v-row>
           <v-row>
             <v-col
-              v-if="idMessage || newThread"
+              v-if="(idMessage && idMessage !== -2) || newThread"
               cols="12"
             >
               <type-text
