@@ -1216,7 +1216,12 @@ class User implements UserInterface, EquatableInterface
         if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
             return ".";
         }
-        return strtoupper($this->familyName[0]) . ".";
+
+        $familyName=utf8_decode($this->familyName);
+        $familyName=strtoupper($familyName[0]). ".";
+        $familyName=utf8_encode($familyName);
+        return $familyName;
+
     }
 
     public function getProName(): ?string
@@ -2688,5 +2693,19 @@ class User implements UserInterface, EquatableInterface
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+
+
+    /**
+     * Sanitizable properties
+     */
+    public function getSanitizable()
+    {
+        return [
+            'givenName',
+            'familyName',
+            'shortFamilyName'
+        ];
     }
 }
