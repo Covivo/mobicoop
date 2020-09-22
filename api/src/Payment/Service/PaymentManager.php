@@ -990,6 +990,7 @@ class PaymentManager
             case Hook::STATUS_SUCCESS:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
                 $paymentProfile->setElectronicallyPayable(true);
+                $paymentProfile->setValidatedDate(new \DateTime());
             break;
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
@@ -998,6 +999,7 @@ class PaymentManager
             case Hook::STATUS_OUTDATED_RESSOURCE:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
                 $paymentProfile->setElectronicallyPayable(false);
+                $paymentProfile->setValidationOutdatedDate(new \DateTime());
             break;
         }
 
