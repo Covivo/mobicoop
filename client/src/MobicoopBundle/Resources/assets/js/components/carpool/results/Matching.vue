@@ -607,7 +607,6 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            console.error(response.data.askId);
             window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
           }
           else{
@@ -630,7 +629,6 @@ export default {
         })
         .then((response) => {
           if(response.status == 200){
-            console.error(response.data.askId);
             window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
           }
           else{
