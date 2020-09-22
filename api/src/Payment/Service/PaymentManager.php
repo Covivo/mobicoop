@@ -930,9 +930,10 @@ class PaymentManager
      */
     public function exportPayments(?DateTime $fromDate = null, ?DateTime $toDate = null)
     {
-        // if no dates are sent, we use the origin of times till "now" ("now" = now less the margin time)
+        // if no dates are sent, we use the previous day
         if (is_null($fromDate)) {
-            $fromDate = new DateTime('1970-01-01');
+            $fromDate = new DateTime();
+            $fromDate->modify("-1 day");
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {

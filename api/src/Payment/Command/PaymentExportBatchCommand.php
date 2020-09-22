@@ -54,7 +54,7 @@ class PaymentExportBatchCommand extends Command
         ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
         ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
         ->setDescription('Create the payment export files for the given period.')
-        ->setHelp('Create the payment export files dor the given period (default : Westeros invasion date by the Andals).')
+        ->setHelp('Create the payment export files dor the given period (default : previous day).')
         ;
     }
 
