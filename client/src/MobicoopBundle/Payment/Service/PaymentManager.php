@@ -82,7 +82,7 @@ class PaymentManager
         if ($response->getCode() == 201) {
             return $response->getValue();
         } else {
-            return ['error'=>1];
+            return ['error'=>$response->getValue()];
         }
         return null;
     }

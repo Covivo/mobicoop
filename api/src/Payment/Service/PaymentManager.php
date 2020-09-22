@@ -344,8 +344,17 @@ class PaymentManager
      * @param User $user
      * @return boolean
      */
-    private function checkValidForRegistrationToTheProvider(User $user): bool
+    public function checkValidForRegistrationToTheProvider(User $user): bool
     {
+        // We check if the user has a complete identify
+        if (is_null($user->getGivenName()) || $user->getGivenName()=="" ||
+            is_null($user->getFamilyName()) || $user->getFamilyName()=="" ||
+            is_null($user->getBirthDate()) || $user->getBirthDate()==""
+        ) {
+            return false;
+        }
+        
+        
         // We check if he has a complete home address otherwise, he can't register automatically
         $address = null;
         foreach ($user->getAddresses() as $address) {
@@ -829,7 +838,8 @@ class PaymentManager
         $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
 
         // Update the payment profile
-        $paymentProfile->setElectronicallyPayable(true);
+        $paymentProfile->setElectronicallyPayable(false);
+        $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 
@@ -873,6 +883,7 @@ class PaymentManager
         $profileBankAccounts = $this->paymentProvider->getPaymentProfileBankAccounts($paymentProfiles[0]);
         if (count($profileBankAccounts)==0) {
             $paymentProfiles[0]->setElectronicallyPayable(false);
+            $paymentProfiles[0]->setStatus(PaymentProfile::STATUS_INACTIVE);
             $this->entityManager->persist($paymentProfiles[0]);
             $this->entityManager->flush();
         }
@@ -894,7 +905,7 @@ class PaymentManager
         $paymentProfile->setUser($user);
         $paymentProfile->setProvider($this->provider);
         $paymentProfile->setIdentifier($identifier);
-        $paymentProfile->setStatus(1);
+        $paymentProfile->setStatus(PaymentProfile::STATUS_INACTIVE);
         $paymentProfile->setElectronicallyPayable($electronicallyPayable);
         $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_PENDING);
         $this->entityManager->persist($paymentProfile);

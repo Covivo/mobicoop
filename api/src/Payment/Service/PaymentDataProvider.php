@@ -176,7 +176,7 @@ class PaymentDataProvider
                  * @var PaymentProfile $paymentProfile
                  */
                 
-                if ($callExternalProvider) {
+                if ($callExternalProvider && $paymentProfile->getStatus()==PaymentProfile::STATUS_ACTIVE) {
                     $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
                     foreach ($bankAccounts as $bankAccount) {
                         $bankAccount->setValidationStatus($paymentProfile->getValidationStatus());
