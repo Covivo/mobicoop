@@ -167,7 +167,7 @@ const GestionRoles = ({ record }) => {
             </Grid>
             <Grid item xs={5}>
               <TerritoryInput
-                key={`territory-${i}`}
+                source={`territory-${i}`}
                 setTerritory={handleAddPair(i, 'territory')}
                 initValue={field.territory}
               />

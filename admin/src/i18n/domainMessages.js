@@ -447,6 +447,31 @@ const fr = {
         invalidLatitude: 'La latitude est invalide',
         invalidLongitude: 'La latitude est invalide',
       },
+      article: {
+        title: {
+          list: 'Articles',
+          show: 'Articles > Détails',
+          edit: 'Articles > Editer',
+          create: 'Articles > Créer',
+          add_paragraph: 'Articles > ajouter un paragraphe',
+          edit_paragraph: 'Articles > éditer un paragraphe',
+          add_section: 'Articles > ajouter une section',
+        },
+        action: {
+          add_section: 'Ajouter une section',
+        },
+        label: {
+          draft: "En cours d'édition",
+          published: 'En ligne',
+          title: 'Titre',
+          status: 'Etat',
+          subtitle: 'Sous-titre',
+          position: 'Position',
+          section: 'Section',
+          content: 'Texte',
+          article: 'Article',
+        },
+      },
     },
   },
 };
