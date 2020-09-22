@@ -2694,18 +2694,4 @@ class User implements UserInterface, EquatableInterface
     {
         $this->setUpdatedDate(new \Datetime());
     }
-
-
-
-    /**
-     * Sanitizable properties
-     */
-    public function getSanitizable()
-    {
-        return [
-            'givenName',
-            'familyName',
-            'shortFamilyName'
-        ];
-    }
 }
