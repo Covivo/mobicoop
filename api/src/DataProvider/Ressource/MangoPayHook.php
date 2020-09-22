@@ -64,12 +64,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MangoPayHook extends Hook
 {
-    const DEFAULT_ID = "999999999999";
-
     const PAYIN_SUCCEEDED = "PAYIN_NORMAL_SUCCEEDED";
     const PAYIN_FAILED = "PAYIN_NORMAL_FAILED";
 
-    const VALIDATION_ASKED = "KYC_VALIDATION_ASKED";
     const VALIDATION_SUCCEEDED = "KYC_SUCCEEDED";
     const VALIDATION_FAILED = "KYC_FAILED";
     const VALIDATION_OUTDATED = "KYC_OUTDATED";

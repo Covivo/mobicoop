@@ -37,6 +37,12 @@ class Hook
 {
     const DEFAULT_ID = "999999999999";
 
+    const STATUS_FAILED = 0;
+    const STATUS_SUCCESS = 1;
+    const STATUS_DELAYED = 2;
+    const STATUS_REFUSED = 3;
+    const STATUS_OUTDATED_RESSOURCE = 4;
+
     /**
      * @var int The id of this pay in
      *
@@ -72,6 +78,13 @@ class Hook
      * @Groups({"readPayment"})
      */
     private $securityToken;
+
+    /**
+     * @var int The status of the hook's transaction
+     *
+     * @Groups({"readPayment"})
+     */
+    private $status;
 
     public function __construct()
     {
@@ -135,6 +148,18 @@ class Hook
     {
         $this->securityToken = $securityToken;
         
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+
         return $this;
     }
 }

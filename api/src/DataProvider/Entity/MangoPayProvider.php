@@ -30,7 +30,6 @@ use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Entity\PaymentTransaction;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
@@ -518,23 +517,24 @@ class MangoPayProvider implements PaymentProviderInterface
 
     /**
      * Handle a payment web hook
-     * @var MangoPayHook $hook The mangopay hook
-     * @return PaymentTransaction with status and transaction id
+     * @var Hook $hook The mangopay hook
+     * @return Hook with status and transaction id
      */
-    public function handleHook(Hook $hook): PaymentTransaction
+    public function handleHook(Hook $hook): Hook
     {
-        $paymentTransaction = new PaymentTransaction();
         switch ($hook->getEventType()) {
             case MangoPayHook::PAYIN_SUCCEEDED:
             case MangoPayHook::VALIDATION_SUCCEEDED:
-                echo "yo!!!!";die;
-                return new PaymentTransaction($hook->getRessourceId(), PaymentTransaction::STATUS_SUCCESS);
+                $hook->setStatus(Hook::STATUS_SUCCESS);
+                break;
+            case MangoPayHook::VALIDATION_OUTDATED:
+                $hook->setStatus(Hook::STATUS_OUTDATED_RESSOURCE);
                 break;
             default:
-                return new PaymentTransaction($hook->getRessourceId(), PaymentTransaction::STATUS_FAILED);
+                $hook->setStatus(Hook::STATUS_FAILED);
         }
 
-        return [];
+        return $hook;
     }
 
     /**
@@ -604,6 +604,7 @@ class MangoPayProvider implements PaymentProviderInterface
             if ($data['Status']!== self::VALIDATION_ASKED) {
                 throw new PaymentException(PaymentException::ERROR_VALIDATION_ASK_DOC_BAD_STATUS);
             }
+            $validationDocument->setIdentifier($docId);
         } else {
             throw new PaymentException(PaymentException::ERROR_VALIDATION_ASK_DOC);
         }

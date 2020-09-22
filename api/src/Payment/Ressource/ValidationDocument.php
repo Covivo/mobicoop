@@ -124,6 +124,12 @@ class ValidationDocument
      */
     private $mimeType;
 
+    /**
+     * @var string Payment provider's identifier of this document
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $identifier;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -213,5 +219,15 @@ class ValidationDocument
     public function setMimeType(?string $mimeType)
     {
         $this->mimeType = $mimeType;
+    }
+
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(?string $identifier)
+    {
+        $this->identifier = $identifier;
     }
 }

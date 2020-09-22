@@ -37,7 +37,6 @@ use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Entity\PaymentTransaction;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -915,9 +914,9 @@ class PaymentManager
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
 
-        $transaction = $this->paymentProvider->handleHook($hook);
+        $hook = $this->paymentProvider->handleHook($hook);
 
-        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction->getId()]);
+        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$hook->getRessourceId()]);
 
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
@@ -948,7 +947,7 @@ class PaymentManager
             $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
             
             $this->paymentProvider->processElectronicPayment($debtor, $creditors);
-            $carpoolPayment->setStatus(($transaction->getStatus()==PaymentTransaction::STATUS_SUCCESS) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
+            $carpoolPayment->setStatus(($hook->getStatus()==Hook::STATUS_SUCCESS) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
         }
 
         $this->treatCarpoolPayment($carpoolPayment);
@@ -974,7 +973,25 @@ class PaymentManager
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
         }
 
-        $transaction = $this->paymentProvider->handleHook($hook);
+        $hook = $this->paymentProvider->handleHook($hook);
+
+        switch ($hook->getStatus()) {
+            case Hook::STATUS_SUCCESS:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
+                $paymentProfile->setElectronicallyPayable(true);
+            break;
+            case Hook::STATUS_FAILED:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
+                $paymentProfile->setElectronicallyPayable(false);
+            break;
+            case Hook::STATUS_OUTDATED_RESSOURCE:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
+                $paymentProfile->setElectronicallyPayable(false);
+            break;
+        }
+
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
     }
 
 
@@ -1006,6 +1023,7 @@ class PaymentManager
 
         // We set the date of the validation asked
         $paymentProfile = $paymentProfiles[0];
+        $paymentProfile->setValidationId($validationDocument->getIdentifier());
         $paymentProfile->setValidationAskedDate(new \DateTime());
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
