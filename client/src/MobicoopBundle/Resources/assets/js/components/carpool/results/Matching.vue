@@ -606,8 +606,9 @@ export default {
           }
         })
         .then((response) => {
-          if(response.data=="ok"){
-            window.location = this.$t("mailboxUrl");
+          if(response.status == 200){
+            console.error(response.data.askId);
+            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
           }
           else{
             console.log(response);
@@ -628,8 +629,9 @@ export default {
           }
         })
         .then((response) => {
-          if(response.data=="ok"){
-            window.location = this.$t("mailboxUrl");
+          if(response.status == 200){
+            console.error(response.data.askId);
+            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
           }
           else{
             console.log(response);

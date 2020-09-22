@@ -464,6 +464,8 @@ class AskManager
             $event = new AskPostedEvent($ad);
             $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         }
+        
+        $ad->setAskId($ask->getId());
         return $ad;
     }
 

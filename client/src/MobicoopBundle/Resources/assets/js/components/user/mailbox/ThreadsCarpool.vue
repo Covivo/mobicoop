@@ -14,6 +14,7 @@
       :destination="message.carpoolInfos.destination"
       :criteria="message.carpoolInfos.criteria"
       :id-ask="message.idAsk"
+      :id-ask-selected="idAskSelected"
       :blocker-id="message.blockerId"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
@@ -66,7 +67,8 @@ export default {
       tile: false,
       type: 'list-item-avatar-three-line',
       types: [],
-      SkeletonHidden: false
+      SkeletonHidden: false,
+      idAskSelected: this.idAskToSelect
     }
   },
   watch: {
