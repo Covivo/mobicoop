@@ -141,6 +141,13 @@ class CarpoolItem
     private $creditorUser;
 
     /**
+     * @var ArrayCollection|null Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolPayment", mappedBy="carpoolItems")
+     */
+    private $carpoolPayments;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -269,6 +276,28 @@ class CarpoolItem
     {
         $this->creditorUser = $creditorUser;
 
+        return $this;
+    }
+
+    public function getCarpoolPayments()
+    {
+        return $this->carpoolPayments->getValues();
+    }
+
+    public function addCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        if (!$this->carpoolPayments->contains($carpoolPayment)) {
+            $this->carpoolPayments[] = $carpoolPayment;
+        }
+        
+        return $this;
+    }
+    
+    public function removeCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        if ($this->carpoolPayments->contains($carpoolPayment)) {
+            $this->carpoolPayments->removeElement($carpoolPayment);
+        }
         return $this;
     }
 
