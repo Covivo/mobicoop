@@ -63,6 +63,11 @@ class PaymentPayment implements ResourceInterface, \JsonSerializable
     private $items;
 
     /**
+     * @var string Secured form's url to process the electronic payement
+     */
+    private $redirectUrl;
+
+    /**
      * @var int The payment status (1 = success, 2 = failure).
      */
     private $status;
@@ -115,6 +120,18 @@ class PaymentPayment implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getRedirectUrl(): ?string
+    {
+        return $this->redirectUrl;
+    }
+
+    public function setRedirectUrl(string $redirectUrl): self
+    {
+        $this->redirectUrl = $redirectUrl;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -122,7 +139,8 @@ class PaymentPayment implements ResourceInterface, \JsonSerializable
                 'id'                        => $this->getId(),
                 'type'                      => $this->getType(),
                 'items'                     => $this->getItems(),
-                'status'                    => $this->getstatus()
+                'status'                    => $this->getstatus(),
+                'redirectUrl'               => $this->getRedirectUrl()
             ];
     }
 }
