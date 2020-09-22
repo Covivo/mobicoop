@@ -1038,7 +1038,6 @@ export default {
           }
         }
       });
-      console.error(payments);
       // we post datas
       axios.post(this.$t("payments.postPayments"), {
         "type": this.type,  
