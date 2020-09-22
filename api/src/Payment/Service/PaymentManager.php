@@ -45,7 +45,6 @@ use App\Payment\Ressource\PaymentWeek;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use DoctrineExtensions\Query\Mysql\Date;
 use Exception;
 
 /**
@@ -70,6 +69,7 @@ class PaymentManager
     private $userManager;
     private $paymentActive;
     private $securityToken;
+    private $exportPath;
     private $carpoolPaymentRepository;
 
     /**
@@ -94,7 +94,8 @@ class PaymentManager
         UserManager $userManager,
         bool $paymentActive,
         String $paymentProviderService,
-        string $securityToken
+        string $securityToken,
+        string $exportPath
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -107,6 +108,7 @@ class PaymentManager
         $this->userManager = $userManager;
         $this->paymentActive = $paymentActive;
         $this->securityToken = $securityToken;
+        $this->exportPath = $exportPath;
     }
 
     /**
@@ -910,5 +912,77 @@ class PaymentManager
         }
 
         $transaction = $this->paymentProvider->handleHook($hook);
+    }
+
+
+    /******************
+     *                *
+     * PAYMENT EXPORT *
+     *                *
+     ******************/
+
+    /**
+     * Export online payment to xml files
+     *
+     * @param DateTime|null $fromDate   The start date for the export
+     * @param DateTime|null $toDate     The end date for the export
+     * @return void
+     */
+    public function exportPayments(?DateTime $fromDate = null, ?DateTime $toDate = null)
+    {
+        // if no dates are sent, we use the origin of times till "now" ("now" = now less the margin time)
+        if (is_null($fromDate)) {
+            $fromDate = new DateTime('1970-01-01');
+            $fromDate->setTime(0, 0);
+        }
+        if (is_null($toDate)) {
+            $toDate = new DateTime();
+            $toDate->modify('-1 day');
+            $toDate->setTime(23, 59, 59, 999);
+        }
+
+        // first we search the successful carpool payments for the given period
+        $carpoolPayments = $this->carpoolPaymentRepository->findSuccessfulElectronicPaymentsForPeriod($fromDate, $toDate);
+
+        // then we create the xml string for each payment
+        $payments = [];
+        foreach ($carpoolPayments as $carpoolPayment) {
+            foreach ($carpoolPayment->getCarpoolItems() as $carpoolItem) {
+                /**
+                 * @var CarpoolItem $carpoolItem
+                 */
+                $string = "\t<payment>\n";
+                $string .= "\t\t<paymentDate>" . $carpoolPayment->getTransactionDate()->format('Y-m-d\TH:i:s') . "</paymentDate>\n";
+                $string .= "\t\t<amount>" . $carpoolItem->getAmount() . "</amount>\n";
+                $string .= "\t\t<debtor>\n";
+                $string .= "\t\t\t<givenName>" . $carpoolItem->getDebtorUser()->getGivenName() . "</givenName>\n";
+                $string .= "\t\t\t<familyName>" . $carpoolItem->getDebtorUser()->getFamilyName() . "</familyName>\n";
+                $string .= "\t\t\t<email>" . $carpoolItem->getDebtorUser()->getEmail() . "</email>\n";
+                $string .= "\t\t</debtor>\n";
+                $string .= "\t\t<creditor>\n";
+                $string .= "\t\t\t<givenName>" . $carpoolItem->getCreditorUser()->getGivenName() . "</givenName>\n";
+                $string .= "\t\t\t<familyName>" . $carpoolItem->getCreditorUser()->getFamilyName() . "</familyName>\n";
+                $string .= "\t\t\t<email>" . $carpoolItem->getCreditorUser()->getEmail() . "</email>\n";
+                $string .= "\t\t</creditor>\n";
+                $string .= "\t\t<provider>" . $this->provider . "</provider>\n";
+                $string .= "\t\t<postData>" . $carpoolPayment->getTransactionPostData() . "</postData>\n";
+                $string .= "\t</payment>\n";
+                $payments[$carpoolPayment->getTransactionDate()->format('Ymd')][] = $string;
+            }
+        }
+        
+        // finally we create a file for each day
+        foreach ($payments as $date => $items) {
+            $file = $this->exportPath . "payments_" . $date . ".xml";
+            $fileContent = "<?xml version=\"1.0\"?>\n";
+            $fileContent .= "<payments>\n";
+            foreach ($items as $item) {
+                $fileContent .= $item;
+            }
+            $fileContent .= "</payments>";
+            $fpr = fopen($file, 'w');
+            fwrite($fpr, $fileContent);
+            fclose($fpr);
+        }
     }
 }

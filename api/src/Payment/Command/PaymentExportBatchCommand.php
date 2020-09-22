@@ -31,12 +31,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Generate carpool payment items from the accepted asks.
+ * Generate payment export files for the given period .
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 
-class CarpoolItemBatchCommand extends Command
+class PaymentExportBatchCommand extends Command
 {
     private $paymentManager;
     
@@ -50,11 +50,11 @@ class CarpoolItemBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:payment:item-batch')
+        ->setName('app:payment:export-batch')
         ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
         ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
-        ->setDescription('Create the carpool payment items for the given period.')
-        ->setHelp('Create the carpool payment items from the accepted asks; the items concerns the given period (default : Westeros invasion date by the Andals).')
+        ->setDescription('Create the payment export files for the given period.')
+        ->setHelp('Create the payment export files dor the given period (default : Westeros invasion date by the Andals).')
         ;
     }
 
@@ -72,7 +72,8 @@ class CarpoolItemBatchCommand extends Command
             }
             $toDate->setTime(23, 59, 59, 999);
         }
-        $this->paymentManager->createCarpoolItems($fromDate, $toDate);
+        $this->paymentManager->exportPayments($fromDate, $toDate);
+
         return 0;
     }
 }

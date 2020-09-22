@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+elementFormDefault="qualified">
+
+    <xs:element name="payments">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="payment" type="paymentType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="paymentType">
+        <xs:sequence>
+            <xs:element name="paymentDate" type="xs:dateTime"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="debtor" type="personType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="creditor" type="personType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="provider" type="xs:string"/>
+            <xs:element name="postData" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="personType">
+        <xs:sequence>
+            <xs:element name="givenName" type="xs:string"/>
+            <xs:element name="familyName" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

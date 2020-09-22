@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
 use DateTime;
