@@ -7,7 +7,7 @@ export const StructureList = (props) => (
   <List
     bulkActionButtons={false}
     {...props}
-    exporter={isSuperAdmin()}
+    exporter={isAdmin()}
     title="Structures accompagnantes > liste"
   >
     <Datagrid rowClick="show">
