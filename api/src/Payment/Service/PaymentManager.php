@@ -37,6 +37,7 @@ use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentTransaction;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -916,7 +917,7 @@ class PaymentManager
 
         $transaction = $this->paymentProvider->handleHook($hook);
 
-        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction['transactionId']]);
+        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction->getId()]);
 
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
@@ -947,10 +948,10 @@ class PaymentManager
             $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
             
             $this->paymentProvider->processElectronicPayment($debtor, $creditors);
-            $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
+            $carpoolPayment->setStatus(($transaction->getStatus()==PaymentTransaction::STATUS_SUCCESS) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
         }
 
-        $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
+        $this->treatCarpoolPayment($carpoolPayment);
 
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();

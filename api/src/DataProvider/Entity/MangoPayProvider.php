@@ -30,6 +30,7 @@ use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentTransaction;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
@@ -518,24 +519,19 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Handle a payment web hook
      * @var MangoPayHook $hook The mangopay hook
-     * @return int|null : return the transactionId if it's a success. Null otherwise.
+     * @return PaymentTransaction with status and transaction id
      */
-    public function handleHook(Hook $hook): ?array
+    public function handleHook(Hook $hook): PaymentTransaction
     {
+        $paymentTransaction = new PaymentTransaction();
         switch ($hook->getEventType()) {
             case MangoPayHook::PAYIN_SUCCEEDED:
-            case MangoPayHook::VALIDATION_ASKED:
+            case MangoPayHook::VALIDATION_SUCCEEDED:
                 echo "yo!!!!";die;
-                return [
-                    "transactionId" => $hook->getRessourceId(),
-                    "success" => true
-                ];
-            break;
+                return new PaymentTransaction($hook->getRessourceId(), PaymentTransaction::STATUS_SUCCESS);
+                break;
             default:
-                return [
-                    "transactionId" => $hook->getRessourceId(),
-                    "success" => false
-                ];
+                return new PaymentTransaction($hook->getRessourceId(), PaymentTransaction::STATUS_FAILED);
         }
 
         return [];

@@ -114,7 +114,7 @@ interface PaymentProviderInterface
     /**
      * Handle a payment web hook
      * @var object $hook The web hook from the payment provider
-     * @return void
+     * @return PaymentTransaction with status and transaction id
      */
     public function handleHook(Hook $hook);
 }

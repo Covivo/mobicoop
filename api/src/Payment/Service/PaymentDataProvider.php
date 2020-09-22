@@ -31,6 +31,7 @@ use App\DataProvider\Ressource\Hook;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Entity\PaymentTransaction;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
 use App\Payment\Ressource\ValidationDocument;
@@ -224,9 +225,9 @@ class PaymentDataProvider
     /**
      * Handle a payment web hook
      * @var object $hook The web hook from the payment provider
-     * @return void
+     * @return PaymentTransaction with status and transaction id
      */
-    public function handleHook(Hook $hook)
+    public function handleHook(Hook $hook): PaymentTransaction
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->handleHook($hook);
