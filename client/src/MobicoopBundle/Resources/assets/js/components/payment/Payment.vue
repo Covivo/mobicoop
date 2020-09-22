@@ -315,7 +315,7 @@
                       </v-row>
                       <!-- payment mode choice (if ePay enabled) -->
                       <v-row
-                        v-if="ePay"
+                        v-if="ePay && currentItem.electronicallyPayable"
                         justify="center"
                       >
                         <v-radio-group
@@ -324,12 +324,12 @@
                         >
                           <v-radio
                             :label="$t('electronicPay')"
-                            value="1"
+                            :value="1"
                             :disabled="disabledComponent"
                           />
                           <v-radio
                             :label="$t('directPay')"
-                            value="2"
+                            :value="2"
                             :disabled="disabledComponent"
                           />
                         </v-radio-group>
@@ -1044,7 +1044,11 @@ export default {
         "items": payments
       })
         .then(res => {
-          window.location.href = this.$t("redirectAfterPayment");
+          if (res.data.redirectUrl) {
+            window.location.href = res.data.redirectUrl;
+          } else {
+            window.location.href = this.$t("redirectAfterPayment");
+          }
         })
         .catch((error) => {
           this.disabledComponent = false;
