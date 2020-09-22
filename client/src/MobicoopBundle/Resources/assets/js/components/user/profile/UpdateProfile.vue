@@ -570,6 +570,10 @@ export default {
     menu (val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
+    telephone (val) {
+      this.phoneToken = null;
+      this.diplayVerification = false;
+    }
    },
   computed : {
     years () {
