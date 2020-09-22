@@ -118,6 +118,10 @@ export default {
       type: Number,
       default: null
     },
+    idAskSelected:{
+      type: Number,
+      default: null
+    },
     solidary:{
       type: Boolean,
       default: false
@@ -156,11 +160,16 @@ export default {
     },
     name() {
       return (this.givenName != null && this.shortFamilyName != null ) ? this.givenName + " " + this.shortFamilyName : (this.$t("userDelete"));
-    },
+    }
   },
   watch: {
     selectedDefault(){
       this.selected = this.selectedDefault;
+    }
+  },
+  mounted() { 
+    if (this.idAskSelected == this.idAsk) {
+      this.emit()
     }
   },
   created() {
