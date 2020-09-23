@@ -85,6 +85,7 @@
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"
+                  :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
                 />
               </v-tab-item>              
             </v-tabs>
@@ -172,6 +173,10 @@ export default {
     bankCoordinates: {
       type: Boolean,
       default: false
+    },
+    validationDocsAuthorizedExtensions: {
+      type: String,
+      default: null
     }
   },
   data(){

@@ -126,7 +126,11 @@ class MangoPayProvider implements PaymentProviderInterface
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
             foreach ($data as $account) {
-                $bankAccounts[] = $this->deserializeBankAccount($account);
+                $bankAccount = $this->deserializeBankAccount($account);
+                $bankAccount->setValidationAskedDate($paymentProfile->getValidationAskedDate());
+                $bankAccount->setValidatedDate($paymentProfile->getValidatedDate());
+                $bankAccount->setValidationOutdatedDate($paymentProfile->getValidationOutdatedDate());
+                $bankAccounts[]  = $bankAccount;
             }
         }
         return $bankAccounts;
@@ -622,7 +626,7 @@ class MangoPayProvider implements PaymentProviderInterface
      * @param array $account                    The account to deserialize
      * @return BankAccount
      */
-    public function deserializeBankAccount(array $account)
+    public function deserializeBankAccount(array $account): BankAccount
     {
         $bankAccount = new BankAccount();
         $bankAccount->setId($account['Id']);
@@ -657,7 +661,7 @@ class MangoPayProvider implements PaymentProviderInterface
      * @param array $data  The wallet to deserialize
      * @return Wallet
      */
-    public function deserializeWallet(array $data)
+    public function deserializeWallet(array $data): Wallet
     {
         $wallet = new Wallet();
         $wallet->setId($data['Id']);

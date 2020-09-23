@@ -44,7 +44,7 @@ class PaymentController extends AbstractController
     /**
     * Constructor
     */
-    public function __construct(PaymentManager $paymentManager, $payment_electronic_active)
+    public function __construct(PaymentManager $paymentManager, bool $payment_electronic_active)
     {
         $this->payment_electronic_active = $payment_electronic_active;
         $this->paymentManager = $paymentManager;
@@ -170,7 +170,12 @@ class PaymentController extends AbstractController
         if (is_null($paymentPaymentId) || $paymentPaymentId=="") {
             $paymentPaymentId = -1;
         }
-        return $this->render('@Mobicoop/payment/payment-paid.html.twig', ["paymentPaymentId"=>$paymentPaymentId]);
+        return $this->render(
+            '@Mobicoop/payment/payment-paid.html.twig',
+            [
+                "paymentPaymentId"=>$paymentPaymentId
+            ]
+        );
     }
 
     /**

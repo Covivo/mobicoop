@@ -170,6 +170,14 @@
           </v-col>
         </v-row>
       </div>
+      <v-row justify="center">
+        <v-col cols="10">
+          <IdentityValidation
+            :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+            :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
+          />
+        </v-col>
+      </v-row>
     </div>
 
     <v-dialog
@@ -215,6 +223,7 @@ import axios from "axios";
 import Translations from "@translations/components/user/profile/payment/BankAccount.json";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
+import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
 
 export default {
   i18n: {
@@ -222,7 +231,8 @@ export default {
   },
   components: {
     GeoComplete,
-    PaymentStatus
+    PaymentStatus,
+    IdentityValidation
   },  
   props: {
     user: {
@@ -230,6 +240,10 @@ export default {
       default: () => {}
     },
     geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    validationDocsAuthorizedExtensions: {
       type: String,
       default: null
     }

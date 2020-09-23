@@ -1002,6 +1002,9 @@ class PaymentManager
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
                 $paymentProfile->setElectronicallyPayable(false);
                 $paymentProfile->setValidationOutdatedDate(new \DateTime());
+                // We reinit the dates
+                $paymentProfile->setValidationAskedDate(null);
+                $paymentProfile->setValidatedDate(null);
             break;
         }
 

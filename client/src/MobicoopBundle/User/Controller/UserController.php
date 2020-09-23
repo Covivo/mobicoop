@@ -78,6 +78,7 @@ class UserController extends AbstractController
     private $paymentElectronicActive;
     private $userManager;
     private $paymentManager;
+    private $validationDocsAuthorizedExtensions;
 
     /**
      * Constructor
@@ -95,6 +96,7 @@ class UserController extends AbstractController
         $loginLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
+        string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
         PaymentManager $paymentManager
     ) {
@@ -111,6 +113,7 @@ class UserController extends AbstractController
         $this->paymentElectronicActive = $paymentElectronicActive;
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
+        $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
     }
 
     /***********
@@ -389,7 +392,8 @@ class UserController extends AbstractController
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds(),
             'acceptedCarpools' => $userManager->getAds(true),
-            'bankCoordinates' => $this->paymentElectronicActive
+            'bankCoordinates' => $this->paymentElectronicActive,
+            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions
         ]);
     }
 

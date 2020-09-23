@@ -277,7 +277,7 @@ class PaymentProfile
         return $this->validationAskedDate;
     }
 
-    public function setValidationAskedDate(\DateTimeInterface $validationAskedDate): self
+    public function setValidationAskedDate(?\DateTimeInterface $validationAskedDate): self
     {
         $this->validationAskedDate = $validationAskedDate;
 
@@ -289,7 +289,7 @@ class PaymentProfile
         return $this->validatedDate;
     }
 
-    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    public function setValidatedDate(?\DateTimeInterface $validatedDate): self
     {
         $this->validatedDate = $validatedDate;
 
@@ -301,7 +301,7 @@ class PaymentProfile
         return $this->validationOutdatedDate;
     }
 
-    public function setValidationOutdatedDate(\DateTimeInterface $validationOutdatedDate): self
+    public function setValidationOutdatedDate(?\DateTimeInterface $validationOutdatedDate): self
     {
         $this->validationOutdatedDate = $validationOutdatedDate;
 
