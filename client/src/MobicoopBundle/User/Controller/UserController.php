@@ -600,7 +600,7 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox($askId, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
+    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
 
