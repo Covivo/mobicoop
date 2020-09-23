@@ -3,7 +3,13 @@
         "title":"3. Vérification d'identité",
         "text":"La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements. Cette obligation est motivée par la lutte contre le blanchiement.",
         "fileInput":"Document d'identité à jour",
-        "send":"Envoyer"
+        "send":"Envoyer",
+        "status":{
+            "pending":"Document en cours de validation",
+            "validated":"Identité vérifiée",
+            "outdated":"Document expiré",
+            "refused":"Document refusé"
+        }
     },    
     "en": {
     }    

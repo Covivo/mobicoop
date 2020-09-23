@@ -174,7 +174,9 @@
         <v-col cols="10">
           <IdentityValidation
             :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+            :payment-profile-status="(this.bankCoordinates) ? this.bankCoordinates.status : 0"
             :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
+            :validation-asked-date="(this.bankCoordinates) ? this.bankCoordinates.validationAskedDate : null"
           />
         </v-col>
       </v-row>
@@ -276,7 +278,7 @@ export default {
   },
   computed:{
     canBePaid(){
-      if(!this.bankCoordinates || this.bankCoordinates.status == 0 || this.bankCoordinates.validationStatus == 0){
+      if(!this.bankCoordinates || this.bankCoordinates.status == 0 || this.bankCoordinates.validationStatus == 0 || this.bankCoordinates.validationStatus > 1){
         return false;
       }
       return true;
