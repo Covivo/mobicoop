@@ -25,16 +25,15 @@
               md="10"
               class="text-center text-h6 pt-4"
             >
-              {{ $t('title') }}
               <v-alert
                 type="info"
                 color="accent"
                 class="text-left my-2"
                 dense
               >
-                {{ $t('textInfo.line1') }}<br>
-                {{ $t('textInfo.line2') }}
+                {{ $t('textInfo') }}
               </v-alert>
+              {{ $t('titleCoordinates') }}
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -78,7 +77,7 @@
             <v-col
               cols="12"
               md="10"
-              class="text-center pt-4 font-italic"
+              class="text-left pt-4 font-italic"
             >
               {{ $t('textAddress') }}
             </v-col>

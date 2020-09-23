@@ -1,12 +1,9 @@
 {
     "fr": {
-        "title":"Renseignez vos coordonnées bancaires",
-        "textInfo":{
-            "line1":"Saisir vos coordonnées bancaires n'est nécessaire que si vous souhaitez recevoir des paiements en ligne.",
-            "line2":"Il n'est pas utile de le faire si vous souhaitez uniquement régler vos covoiturages en ligne."
-        },
-        "titleAddress":"Renseignez votre adresse complète",
-        "textAddress":"Ces coordonnées ne seront pas enregistrées sur la platforme mais uniquement transmises à notre prestataire de paiement. Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
+        "titleCoordinates":"1. Coordonnées bancaires",
+        "textInfo":"Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
+        "titleAddress":"2. Adresse complète",
+        "textAddress":"Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
         "titleAlreadyRegistered":"Mes coordonnées bancaires",
         "form":{
             "label":{
