@@ -459,6 +459,7 @@ services:
             $defaultCurrency: '%env(string:PAYMENT_DEFAULT_CURRENCY)%'
             $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
             $validationDocsPath: '%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%'
+            $baseUri: '%env(string:BASE_URI)%'
 
     App\Payment\Service\PaymentManager:
         arguments:

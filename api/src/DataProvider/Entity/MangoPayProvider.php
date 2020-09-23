@@ -49,7 +49,7 @@ class MangoPayProvider implements PaymentProviderInterface
 {
     const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
     const SERVER_URL = "https://api.mangopay.com/";
-    const LANDING_AFTER_PAYMENT = "/paiements/paye";
+    const LANDING_AFTER_PAYMENT = "paiements/paye";
     const VERSION = "V2.01";
 
     const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
@@ -76,6 +76,7 @@ class MangoPayProvider implements PaymentProviderInterface
     private $currency;
     private $paymentProfileRepository;
     private $validationDocsPath;
+    private $baseUri;
 
     public function __construct(
         ?User $user,
@@ -84,6 +85,7 @@ class MangoPayProvider implements PaymentProviderInterface
         bool $sandBoxMode,
         string $currency,
         string $validationDocsPath,
+        string $baseUri,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
@@ -93,6 +95,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
+        $this->baseUri = $baseUri;
     }
     
     /**
@@ -382,7 +385,7 @@ class MangoPayProvider implements PaymentProviderInterface
                 "Amount" => 0
             ],
             "CreditedWalletId" => $wallet->getId(),
-            "ReturnURL" => self::LANDING_AFTER_PAYMENT."?paymentPaymentId=".$carpoolPayment->getId(),
+            "ReturnURL" => $this->baseUri."".self::LANDING_AFTER_PAYMENT."?paymentPaymentId=".$carpoolPayment->getId(),
             "CardType" => self::CARD_TYPE,
             "Culture" => self::LANGUAGE
         ];
@@ -401,7 +404,7 @@ class MangoPayProvider implements PaymentProviderInterface
 
         $carpoolPayment->setTransactionid($data['Id']);
         $carpoolPayment->setRedirectUrl($data['RedirectURL']);
-        //$carpoolPayment->setTransactionData($carpoolPayment->getTransactionData().((!is_null($carpoolPayment->getTransactionData())) ? "|" : "").json_encode($body));
+        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData().((!is_null($carpoolPayment->getTransactionPostData())) ? "|" : "").json_encode($body));
         
         return $carpoolPayment;
     }

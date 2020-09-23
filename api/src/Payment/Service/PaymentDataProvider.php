@@ -52,6 +52,7 @@ class PaymentDataProvider
     private $defaultCurrency;
     private $validationDocsPath;
     private $platformName;
+    private $baseUri;
 
     private $security;
     private $clientId;
@@ -72,12 +73,14 @@ class PaymentDataProvider
         bool $sandBoxMode,
         string $platformName,
         string $defaultCurrency,
-        string $validationDocsPath
+        string $validationDocsPath,
+        string $baseUri
     ) {
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->defaultCurrency = $defaultCurrency;
         $this->validationDocsPath = $validationDocsPath;
+        $this->baseUri = $baseUri;
         $this->platformName = $platformName;
         $this->paymentActive = $paymentActive;
 
@@ -101,6 +104,7 @@ class PaymentDataProvider
                 $this->sandBoxMode,
                 $this->defaultCurrency,
                 $this->validationDocsPath,
+                $this->baseUri,
                 $this->paymentProfileRepository
             );
         }
