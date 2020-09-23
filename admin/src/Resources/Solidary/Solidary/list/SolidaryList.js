@@ -12,7 +12,6 @@ import {
   AutocompleteInput,
   Filter,
   useTranslate,
-  EditButton,
   ReferenceField,
 } from 'react-admin';
 
