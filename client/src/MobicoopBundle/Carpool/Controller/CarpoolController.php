@@ -473,7 +473,7 @@ class CarpoolController extends AbstractController
     {
         $params = json_decode($request->getContent(), true);
 
-        $ask = $adManager->createAsk($params, true);
+        $ask = $adManager->createAsk($params, false);
 
         if (!is_null($ask)) {
             return $this->json($ask);
