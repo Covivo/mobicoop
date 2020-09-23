@@ -35,41 +35,38 @@
         "error":"Une erreur est survenue"
     },    
     "en": {
-        "title":"Register your bank coordinates",
-        "textInfo":{
-            "line1":"Saisir vos coordonnées bancaires n'est nécessaire que si vous souhaitez recevoir des paiement en ligne.",
-            "line2":"Il n'est pas utile de le faire si vous souhaitez uniquement réglez vos covoiturages en ligne."
-        },
-        "titleAddress":"Register your full address",
-        "textAddress":"These coordinates won't be stored on the platform. They're only sent to our payment provider. Please, give us your full address (number, street name...) and not just your city.",
-        "titleAlreadyRegistered":"My bank coordinates",
+        "titleCoordinates":"1. Coordonnées bancaires",
+        "textInfo":"Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
+        "titleAddress":"2. Adresse complète",
+        "textAddress":"Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
+        "titleAlreadyRegistered":"Mes coordonnées bancaires",
         "form":{
             "label":{
                 "iban":"IBAN",
                 "bic":"BIC",
-                "address":"Your complete address"
+                "address":"Votre adresse complète"
             },
             "errors":{
-                "iban":"IBAN must be valid",
-                "ibanRequired":"IBAN is required",
-                "bic":"BIC must be valid",
-                "bicRequired":"BIC is required"
+                "iban":"Le numéro IBAN doit être valide",
+                "ibanRequired":"Le numéro IBAN est obligatoire",
+                "bic":"Le numéro BIC doit être valide",
+                "bicRequired":"Le numéro BIC est obligatoire"
             }
         },
-        "register":"Register",
+        "register":"Enregistrer",
         "modalSuppr":{
-            "title":"Delete your bank coordinates",
-            "line1":"Your bank coordinates will be deleted.",
-            "line2":"You won't be able to receive any electronic payment",
-            "line3":"Do you confirm this action ?",
-            "yes":"yes",
-            "no":"no"
+            "title":"Suppression des coordonnées bancaires ?",
+            "line1":"Vos coordonnées bancaires vont-être supprimée.",
+            "line2":"Vous ne serez plus en mesure de recevoir de paiement électronique.",
+            "line3":"Confirmez-vous cette action ?",
+            "yes":"oui",
+            "no":"non"
         },
         "uri":{
-            "getCoordinates":"/user/bank-coordinates",
-            "deleteCoordinates":"/user/bank-coordinates/delete",
-            "addCoordinates":"/user/bank-coordinates/add"
+            "getCoordinates":"/utilisateur/coordonnees-bancaires",
+            "deleteCoordinates":"/utilisateur/coordonnees-bancaires/supprimer",
+            "addCoordinates":"/utilisateur/coordonnees-bancaires/ajouter"
         },
-        "error":"An erreur has occured"
+        "error":"Une erreur est survenue"
     }    
 }

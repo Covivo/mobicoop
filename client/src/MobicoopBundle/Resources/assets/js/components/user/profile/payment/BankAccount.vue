@@ -14,11 +14,13 @@
       >
         {{ $t('error') }}
       </v-alert>
+      <PaymentStatus :can-be-paid="canBePaid" />
       <v-form
         v-if="!bankCoordinates"
         v-model="valid"
+        class="mt-0"
       >
-        <v-container>
+        <v-container class="pa-0">
           <v-row justify="center">
             <v-col
               cols="12"
@@ -212,13 +214,15 @@
 import axios from "axios";
 import Translations from "@translations/components/user/profile/payment/BankAccount.json";
 import GeoComplete from "@js/components/utilities/GeoComplete";
+import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 
 export default {
   i18n: {
     messages: Translations
   },
   components: {
-    GeoComplete
+    GeoComplete,
+    PaymentStatus
   },  
   props: {
     user: {
@@ -254,6 +258,11 @@ export default {
       dialog:false,
       error:false,
       validAddress:false
+    }
+  },
+  computed:{
+    canBePaid(){
+      return false;
     }
   },
   mounted(){
