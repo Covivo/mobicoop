@@ -1221,7 +1221,6 @@ class User implements UserInterface, EquatableInterface
         $familyName=strtoupper($familyName[0]). ".";
         $familyName=utf8_encode($familyName);
         return $familyName;
-
     }
 
     public function getProName(): ?string
