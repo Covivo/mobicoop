@@ -50,7 +50,6 @@ export default {
       })
       .then(({ token }) => {
         const decodedToken = decodeJwt(token);
-        console.log('decodedToken:', decodedToken);
         if (!decodedToken.admin) throw new Error('Unauthorized');
 
         global.localStorage.setItem('token', token);
