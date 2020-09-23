@@ -9,9 +9,20 @@ import {
   ImageField,
   EditButton,
   useTranslate,
+  Filter,
+  SearchInput,
+  DateInput,
 } from 'react-admin';
 
 import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+
+const EventFilter = ({ translate, ...rest }) => (
+  <Filter {...rest}>
+    <SearchInput label={translate('custom.label.event.name')} source="name" alwaysOn />
+    <DateInput source="fromDate" label={translate('custom.label.event.dateStart')} />
+    <DateInput source="toDate" label={translate('custom.label.event.dateFin')} />
+  </Filter>
+);
 
 const EventPanel = ({ id, record, resource }) => (
   <Paper style={{ padding: '1rem' }}>
@@ -28,7 +39,13 @@ export const EventList = (props) => {
   const translate = useTranslate();
 
   return (
-    <List {...props} title="Evénement > liste" exporter={isSuperAdmin()} perPage={25}>
+    <List
+      {...props}
+      title="Evénement > liste"
+      exporter={isSuperAdmin()}
+      perPage={25}
+      filters={<EventFilter translate={translate} />}
+    >
       <Datagrid expand={<EventPanel />} rowClick="show">
         <ImageField
           label={translate('custom.label.event.image')}

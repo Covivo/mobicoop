@@ -23,6 +23,7 @@
 
 namespace App\Payment\Repository;
 
+use App\Payment\Entity\CarpoolItem;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\PaymentItem;
@@ -51,5 +52,28 @@ class CarpoolPaymentRepository
     public function findOneBy(array $criteria): ?CarpoolPayment
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Find successful electronic payment and related items for the given period
+     *
+     * @param DateTime $fromDate        The start date and time
+     * @param DateTime $toDate          The end date and time
+     * @return CarpoolPayment[]|null    The carpool payments if found
+     */
+    public function findSuccessfulElectronicPaymentsForPeriod(DateTime $fromDate, DateTime $toDate): ?array
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+        ->join('cp.carpoolItems', 'ci')
+        ->where('ci.debtorStatus = :debtorStatus')
+        ->andWhere('cp.status = :success and cp.transactionId IS NOT NULL')
+        ->andWhere('cp.transactionDate between :fromDate and :toDate')
+        ->setParameter('debtorStatus', CarpoolItem::DEBTOR_STATUS_ONLINE)
+        ->setParameter('success', CarpoolPayment::STATUS_SUCCESS)
+        ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
+        ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
+        ;
+                
+        return $query->getQuery()->getResult();
     }
 }

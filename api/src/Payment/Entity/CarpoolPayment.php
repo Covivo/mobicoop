@@ -90,18 +90,32 @@ class CarpoolPayment
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
+     * @var ArrayCollection|null Carpool items for this payment : many tries can be necessary for a successful payment. A payment may concern many items.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolItem")
+     * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolItem", inversedBy="carpoolPayments")
      */
     private $carpoolItems;
 
     /**
-     * @var int The transaction id of this payment
+     * @var int The transaction id of this payment if there is an online part.
      *
      * @ORM\Column(type="integer", nullable=true)
      */
     private $transactionId;
+
+    /**
+     * @var \DateTimeInterface The transaction date of this payment if there is an online part.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $transactionDate;
+
+    /**
+     * @var string The transaction post data of this payment if there is an online part.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $transactionPostData;
 
     /**
      * @var string Secured form's url to process the electronic payement
@@ -211,6 +225,30 @@ class CarpoolPayment
     public function setTransactionId(int $transactionId): self
     {
         $this->transactionId = $transactionId;
+
+        return $this;
+    }
+
+    public function getTransactionDate(): ?\DateTimeInterface
+    {
+        return $this->transactionDate;
+    }
+
+    public function setTransactionDate(\DateTimeInterface $transactionDate): self
+    {
+        $this->transactionDate = $transactionDate;
+
+        return $this;
+    }
+
+    public function getTransactionPostData(): ?string
+    {
+        return $this->transactionPostData;
+    }
+
+    public function setTransactionPostData(?string $transactionPostData): self
+    {
+        $this->transactionPostData = $transactionPostData;
 
         return $this;
     }

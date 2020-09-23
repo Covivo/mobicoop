@@ -91,6 +91,7 @@ services:
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+            
     # CONTROLLERS AND SERVICES
 
     # Article
@@ -466,6 +467,7 @@ services:
             $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
             $validationDocsPath: '%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%'
             $validationDocsAuthorizedExtensions: '%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
+            $exportPath: '%env(resolve:PAYMENT_EXPORT_PATH)%'
 
     # Price
     App\Price\Controller\:
