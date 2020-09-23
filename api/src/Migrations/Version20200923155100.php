@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Community manager mass mailing
  */
-final class Version20200826115700 extends AbstractMigration
+final class Version20200923155100 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
