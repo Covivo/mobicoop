@@ -100,7 +100,7 @@ import Ads from "@components/user/profile/ad/Ads";
 import Carpools from "@components/user/profile/carpool/Carpools";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
-import BankAccount from "@components/user/profile/BankAccount";
+import BankAccount from "@components/user/profile/payment/BankAccount";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";

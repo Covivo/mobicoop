@@ -1043,4 +1043,23 @@ class PaymentManager
 
         return $validationDocument;
     }
+
+    /**
+     * Build a PaymentPayment from a CarpoolPayment
+     *
+     * @param integer $carpoolPaymentId The carpoolPayment
+     * @return PaymentPayment
+     */
+    public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): ?PaymentPayment
+    {
+        $carpoolPayment = $this->carpoolPaymentRepository->find($carpoolPaymentId);
+        if (is_null($carpoolPayment)) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+        $paymentPayment = new PaymentPayment();
+        $paymentPayment->setId($carpoolPayment->getId());
+        $paymentPayment->setStatus($carpoolPayment->getStatus());
+        
+        return $paymentPayment;
+    }
 }

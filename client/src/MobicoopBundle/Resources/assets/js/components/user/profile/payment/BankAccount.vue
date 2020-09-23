@@ -211,7 +211,7 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/profile/BankAccount.json";
+import Translations from "@translations/components/user/profile/payment/BankAccount.json";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 
 export default {

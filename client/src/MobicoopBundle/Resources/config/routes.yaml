@@ -1017,7 +1017,22 @@ payment_payments_post:
         en: /payments/post
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments
 
-# payment 
+# Landing page after online payment
+payment_paid:
+    path:
+        fr: /paiements/paye
+        en: /payments/paid
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::paymentPaid    
+
+# Post payment items of a user (POST)
+payment_payment_status:
+    methods: [POST]
+    path:
+        fr: /payment/status
+        en: /payment/status
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCarpoolPaymentStatus
+
+    # payment 
 payment_list:
     path:
         fr: /paiements/{id?}/{frequency?}/{type?}
