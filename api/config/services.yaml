@@ -75,6 +75,14 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Community User Save Listener
+    mobicoop.community_user.community_user_save_listener:
+        class: App\Community\EventListener\CommunityUserSaveListener
+        arguments: ['@request_stack']
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+
     # Community Load Listener
     mobicoop.community.community_load_listener:
         class: App\Community\EventListener\CommunityLoadListener
