@@ -30,7 +30,7 @@ const EventDuration = (props) => {
         ) : (
           <>
             <DateInput
-              source="createdDate"
+              source="fromDate"
               label={translate('custom.label.event.dateStart')}
               validate={[required()]}
               options={{ format: 'dd/MM/yyyy' }}

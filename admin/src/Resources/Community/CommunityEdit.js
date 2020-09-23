@@ -22,6 +22,7 @@ import {
   useRedirect,
   List,
   ReferenceField,
+  AutocompleteInput,
   ImageField,
 } from 'react-admin';
 import { TableCell, TableRow, Checkbox } from '@material-ui/core';
@@ -30,7 +31,7 @@ import RichTextInput from 'ra-input-rich-text';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 
-import { UserRenderer, addressRenderer } from '../../utils/renderers';
+import { UserShortNameRenderer, addressRenderer } from '../../utils/renderers';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { validationChoices } from './communityChoices';
 import SelectNewStatus from '../CommunityUser/SelectNewStatus';
@@ -130,6 +131,9 @@ export const CommunityEdit = (props) => {
     !roles.includes('ROLE_SUPER_ADMIN') && !roles.includes('ROLE_ADMIN') ? true : false
   );
 
+  const inputText = (user) =>
+    user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
+
   return (
     <Edit {...props} title="Communautés > éditer">
       <TabbedForm>
@@ -215,15 +219,23 @@ export const CommunityEdit = (props) => {
               label={translate('custom.label.community.status')}
               formClassName={classes.inlineBlock}
             />
-          */}
+          
           <ReferenceInput
-            disabled
             source="user.id"
             label={translate('custom.label.community.createdBy')}
             reference="users"
             formClassName={classes.inlineBlock}
           >
-            <SelectInput optionText={<UserRenderer />} />
+            <SelectInput optionText={<UserShortNameRenderer />} />
+          </ReferenceInput>
+          */}
+
+          <ReferenceInput
+            source="user"
+            label={translate('custom.label.community.createdBy')}
+            reference="users"
+          >
+            <AutocompleteInput optionValue="id" optionText={inputText} allowEmpty={false} />
           </ReferenceInput>
         </FormTab>
         <FormTab label={translate('custom.label.community.members')}>

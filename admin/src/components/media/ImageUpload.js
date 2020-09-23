@@ -103,8 +103,6 @@ const ImageUpload = ({
     });
   };
 
-  console.log('image', image);
-
   return (
     <div className={classes.container}>
       {image && image.versions && (

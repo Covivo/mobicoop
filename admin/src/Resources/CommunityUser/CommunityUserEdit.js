@@ -10,7 +10,6 @@ import {
   AutocompleteInput,
 } from 'react-admin';
 
-import { UserRenderer } from '../../utils/renderers';
 import { statusChoices } from '../Community/communityChoices';
 
 const useStyles = makeStyles({
