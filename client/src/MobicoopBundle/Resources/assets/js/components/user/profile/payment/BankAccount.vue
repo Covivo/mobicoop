@@ -262,7 +262,10 @@ export default {
   },
   computed:{
     canBePaid(){
-      return false;
+      if(!this.bankCoordinates || this.bankCoordinates.status == 0 || this.bankCoordinates.validationStatus == 0){
+        return false;
+      }
+      return true;
     }
   },
   mounted(){
