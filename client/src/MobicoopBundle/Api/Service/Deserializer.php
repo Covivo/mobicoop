@@ -79,6 +79,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
@@ -208,6 +209,9 @@ class Deserializer
                 break;
             case MCommunity::class:
                 return $this->deserializeMCommunity($data);
+                break;
+            case ValidationDocument::class:
+                return $this->deserializeValidationDocument($data);
                 break;
             default:
                 break;
@@ -897,6 +901,13 @@ class Deserializer
         $mCommunity = new MCommunity();
         $mCommunity = $this->autoSet($mCommunity, $data);
         return $mCommunity;
+    }
+
+    private function deserializeValidationDocument(array $data): ?ValidationDocument
+    {
+        $validationDocument = new ValidationDocument();
+        $validationDocument = $this->autoSet($validationDocument, $data);
+        return $validationDocument;
     }
 
     private function autoSet($object, $data)

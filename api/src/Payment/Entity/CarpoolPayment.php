@@ -122,6 +122,11 @@ class CarpoolPayment
      */
     private $redirectUrl;
 
+    /**
+     * @var string|null Filled if we need to create the payment profile
+     */
+    private $createCarpoolProfileIdentifier;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
@@ -256,6 +261,18 @@ class CarpoolPayment
     public function setRedirectUrl(string $redirectUrl): self
     {
         $this->redirectUrl = $redirectUrl;
+
+        return $this;
+    }
+
+    public function getCreateCarpoolProfileIdentifier(): ?int
+    {
+        return $this->createCarpoolProfileIdentifier;
+    }
+
+    public function setCreateCarpoolProfileIdentifier(string $createCarpoolProfileIdentifier): self
+    {
+        $this->createCarpoolProfileIdentifier = $createCarpoolProfileIdentifier;
 
         return $this;
     }

@@ -62,6 +62,7 @@ import DayListChips from "@components/utilities/DayListChips";
 
 // PAYMENT
 import Payment from "@components/payment/Payment"
+import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
 
 export default {
   MHeader,
@@ -98,5 +99,6 @@ export default {
   RelayPoints,
   ToolBox,
   DayListChips,
-  Payment
+  Payment,
+  PaymentPaid
 }

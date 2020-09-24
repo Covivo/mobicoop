@@ -30,6 +30,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\AskRepository;
+use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Ressource\MangoPayKYC;
 use App\Payment\Entity\CarpoolPayment;
@@ -42,6 +43,7 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\PaymentPeriod;
 use App\Payment\Ressource\PaymentWeek;
+use App\Payment\Ressource\ValidationDocument;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,6 +73,8 @@ class PaymentManager
     private $securityToken;
     private $exportPath;
     private $carpoolPaymentRepository;
+    private $validationDocsPath;
+    private $validationDocsAuthorizedExtensions;
 
     /**
      * Constructor.
@@ -83,6 +87,9 @@ class PaymentManager
      * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
      * @param boolean $paymentActive                                If the online payment is active
      * @param string $paymentProviderService                        The payment provider service
+     * @param string $securityToken                                 The payment security token (for hooks)
+     * @param string $validationDocsPath                            Path to the temp directory for validation documents
+     * @param array $validationDocsAuthorizedExtensions             Authorized extensions for validation documents
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -95,6 +102,8 @@ class PaymentManager
         bool $paymentActive,
         String $paymentProviderService,
         string $securityToken,
+        string $validationDocsPath,
+        array $validationDocsAuthorizedExtensions,
         string $exportPath
     ) {
         $this->entityManager = $entityManager;
@@ -108,6 +117,8 @@ class PaymentManager
         $this->userManager = $userManager;
         $this->paymentActive = $paymentActive;
         $this->securityToken = $securityToken;
+        $this->validationDocsPath = $validationDocsPath;
+        $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->exportPath = $exportPath;
     }
 
@@ -294,6 +305,21 @@ class PaymentManager
                 }
             }
 
+            // Determine if the user can pay electronically
+            // Complete address or an already existing user profile validated
+            $userPaymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
+            if (is_null($userPaymentProfiles) || count($userPaymentProfiles)==0) {
+                // No payment profile. It means that in case of electronic payment, we will register the user to the provider.
+                $paymentItem->setCanPayElectronically(false);
+                // Check if the User is valid for automatic registration
+                if ($this->checkValidForRegistrationToTheProvider($user)) {
+                    $paymentItem->setCanPayElectronically(true);
+                }
+            } else {
+                // The user has a payment profile. It means that he already has an account and a wallet to the provider
+                $paymentItem->setCanPayElectronically(true);
+            }
+
             // If there is an Unpaid Date, we set the unpaid date of the PaymentItem
             $paymentItem->setUnpaidDate($carpoolItem->getUnpaidDate());
             
@@ -314,6 +340,49 @@ class PaymentManager
         // ];
     }
 
+    /**
+     * Check if the User is valid for a registration to the provider
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function checkValidForRegistrationToTheProvider(User $user): bool
+    {
+        // We check if the user has a complete identify
+        if (is_null($user->getGivenName()) || $user->getGivenName()=="" ||
+            is_null($user->getFamilyName()) || $user->getFamilyName()=="" ||
+            is_null($user->getBirthDate()) || $user->getBirthDate()==""
+        ) {
+            return false;
+        }
+        
+        
+        // We check if he has a complete home address otherwise, he can't register automatically
+        $address = null;
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $homeAddress = $address;
+                break;
+            }
+        }
+        
+        if (is_null($homeAddress)) {
+            return false;
+        }
+
+        if (
+            $homeAddress->getStreetAddress()=="" ||
+            $homeAddress->getAddressLocality()=="" ||
+            $homeAddress->getRegion()=="" ||
+            $homeAddress->getPostalCode()=="" ||
+            $homeAddress->getCountryCode()==""
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+    
     /**
      * Return the payment periods for which the given user has regular carpools planned.
      *
@@ -493,7 +562,11 @@ class PaymentManager
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
-                $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                $carpoolPayment = $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
+                if (!is_null($carpoolPayment->getCreateCarpoolProfileIdentifier())) {
+                    // We need to persits the carpoolProfile
+                    $this->createPaymentProfile($user, $carpoolPayment->getCreateCarpoolProfileIdentifier());
+                }
                 $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
                 $this->treatCarpoolPayment($carpoolPayment);
@@ -745,7 +818,7 @@ class PaymentManager
             $identifier = null;
 
             // First we register the User on the payment provider to get an identifier
-            $identifier = $this->paymentProvider->registerUser($user);
+            $identifier = $this->paymentProvider->registerUser($user, $bankAccount->getAddress());
 
             if ($identifier==null || $identifier=="") {
                 throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
@@ -767,7 +840,8 @@ class PaymentManager
         $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
 
         // Update the payment profile
-        $paymentProfile->setElectronicallyPayable(true);
+        $paymentProfile->setElectronicallyPayable(false);
+        $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 
@@ -811,6 +885,7 @@ class PaymentManager
         $profileBankAccounts = $this->paymentProvider->getPaymentProfileBankAccounts($paymentProfiles[0]);
         if (count($profileBankAccounts)==0) {
             $paymentProfiles[0]->setElectronicallyPayable(false);
+            $paymentProfiles[0]->setStatus(PaymentProfile::STATUS_INACTIVE);
             $this->entityManager->persist($paymentProfiles[0]);
             $this->entityManager->flush();
         }
@@ -832,7 +907,7 @@ class PaymentManager
         $paymentProfile->setUser($user);
         $paymentProfile->setProvider($this->provider);
         $paymentProfile->setIdentifier($identifier);
-        $paymentProfile->setStatus(1);
+        $paymentProfile->setStatus(PaymentProfile::STATUS_INACTIVE);
         $paymentProfile->setElectronicallyPayable($electronicallyPayable);
         $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_PENDING);
         $this->entityManager->persist($paymentProfile);
@@ -843,18 +918,18 @@ class PaymentManager
 
     /**
      * Handle a payin web hook
-     * @var object $hook The web hook from the payment provider
+     * @var Hook $hook The web hook from the payment provider
      * @return void
      */
-    public function handleHookPayIn(object $hook)
+    public function handleHookPayIn(Hook $hook)
     {
         if ($this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
 
-        $transaction = $this->paymentProvider->handleHook($hook);
+        $hook = $this->paymentProvider->handleHook($hook);
 
-        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$transaction['transactionId']]);
+        $carpoolPayment = $this->carpoolPaymentRepository->findOneBy(['transactionId'=>$hook->getRessourceId()]);
 
         if (is_null($carpoolPayment)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
@@ -885,10 +960,10 @@ class PaymentManager
             $debtor = $this->userManager->getPaymentProfile($carpoolPayment->getUser());
             
             $this->paymentProvider->processElectronicPayment($debtor, $creditors);
-            $carpoolPayment->setStatus(($transaction['success']) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
+            $carpoolPayment->setStatus(($hook->getStatus()==Hook::STATUS_SUCCESS) ? CarpoolPayment::STATUS_SUCCESS : CarpoolPayment::STATUS_FAILURE);
         }
 
-        $this->treatCarpoolPayment($carpoolPayment, $transaction['success']);
+        $this->treatCarpoolPayment($carpoolPayment);
 
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
@@ -897,10 +972,10 @@ class PaymentManager
     /**
      * Handle a validation web hook
      *
-     * @param object $hook The hook to handle
+     * @param Hook $hook The hook to handle
      * @return void
      */
-    public function handleHookValidation(object $hook)
+    public function handleHookValidation(Hook $hook)
     {
         if ($this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
@@ -911,7 +986,86 @@ class PaymentManager
             throw new PaymentException(PaymentException::NO_PAYMENT_PROFILE);
         }
 
-        $transaction = $this->paymentProvider->handleHook($hook);
+        $hook = $this->paymentProvider->handleHook($hook);
+
+        switch ($hook->getStatus()) {
+            case Hook::STATUS_SUCCESS:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
+                $paymentProfile->setElectronicallyPayable(true);
+                $paymentProfile->setValidatedDate(new \DateTime());
+            break;
+            case Hook::STATUS_FAILED:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
+                $paymentProfile->setElectronicallyPayable(false);
+            break;
+            case Hook::STATUS_OUTDATED_RESSOURCE:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
+                $paymentProfile->setElectronicallyPayable(false);
+                $paymentProfile->setValidationOutdatedDate(new \DateTime());
+                // We reinit the dates
+                $paymentProfile->setValidationAskedDate(null);
+                $paymentProfile->setValidatedDate(null);
+            break;
+        }
+
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+    }
+
+
+    /**
+     * Upload an identity validation document to the payment provider
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
+    {
+        if (!file_exists($this->validationDocsPath."".$validationDocument->getFileName())) {
+            throw new PaymentException(PaymentException::ERROR_UPLOAD);
+        }
+        if (!in_array(strtolower($validationDocument->getExtension()), $this->validationDocsAuthorizedExtensions)) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_BAD_EXTENTION." (".implode(",", $this->validationDocsAuthorizedExtensions).")");
+        }
+
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$validationDocument->getUser()]);
+        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+
+        $validationDocument = $this->paymentProvider->uploadValidationDocument($validationDocument);
+
+        // We don't store this kind of documents. We remove it.
+        unlink($this->validationDocsPath."".$validationDocument->getFileName());
+
+        // We set the date of the validation asked
+        $paymentProfile = $paymentProfiles[0];
+        $paymentProfile->setValidationId($validationDocument->getIdentifier());
+        $paymentProfile->setValidationAskedDate(new \DateTime());
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
+
+        return $validationDocument;
+    }
+
+    /**
+     * Build a PaymentPayment from a CarpoolPayment
+     *
+     * @param integer $carpoolPaymentId The carpoolPayment
+     * @return PaymentPayment
+     */
+    public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): ?PaymentPayment
+    {
+        $carpoolPayment = $this->carpoolPaymentRepository->find($carpoolPaymentId);
+        if (is_null($carpoolPayment)) {
+            throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+        $paymentPayment = new PaymentPayment();
+        $paymentPayment->setId($carpoolPayment->getId());
+        $paymentPayment->setStatus($carpoolPayment->getStatus());
+        
+        return $paymentPayment;
     }
 
 

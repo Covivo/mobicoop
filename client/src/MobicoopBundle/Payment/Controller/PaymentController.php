@@ -39,13 +39,15 @@ use Symfony\Component\HttpFoundation\Response;
 class PaymentController extends AbstractController
 {
     private $payment_electronic_active;
+    private $paymentManager;
 
     /**
     * Constructor
     */
-    public function __construct($payment_electronic_active)
+    public function __construct(PaymentManager $paymentManager, bool $payment_electronic_active)
     {
         $this->payment_electronic_active = $payment_electronic_active;
+        $this->paymentManager = $paymentManager;
     }
 
     /**
@@ -58,7 +60,7 @@ class PaymentController extends AbstractController
             throw new \LogicException("Missing parameters");
         }
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false,
+            "paymentElectronicActive" => $this->payment_electronic_active ? true : false,
             "selectedId" => $id,
             "frequency" => $frequency,
             "type" => $type,
@@ -71,7 +73,6 @@ class PaymentController extends AbstractController
      * AJAX
      * @param Request $request
      * @param PaymentManager $paymentManager
-     * @return void
      */
     public function getPaymentItems(Request $request, PaymentManager $paymentManager)
     {
@@ -90,7 +91,6 @@ class PaymentController extends AbstractController
      *
      * @param Request $request
      * @param PaymentManager $paymentManager
-     * @return void
      */
     public function postPayments(Request $request, PaymentManager $paymentManager)
     {
@@ -110,7 +110,6 @@ class PaymentController extends AbstractController
      *
      * @param Request $request
      * @param PaymentManager $paymentManager
-     * @return void
      */
     public function getWeeks(Request $request, PaymentManager $paymentManager)
     {
@@ -129,7 +128,6 @@ class PaymentController extends AbstractController
      *
      * @param Request $request
      * @param PaymentManager $paymentManager
-     * @return void
      */
     public function getFirstWeek(Request $request, PaymentManager $paymentManager)
     {
@@ -148,7 +146,6 @@ class PaymentController extends AbstractController
      *
      * @param Request $request
      * @param PaymentManager $paymentManager
-     * @return void
      */
     public function getCalendar(Request $request, PaymentManager $paymentManager)
     {
@@ -160,5 +157,48 @@ class PaymentController extends AbstractController
             }
         }
         return new JsonResponse($periods);
+    }
+
+    /**
+     * Landing page after an online payment
+     *
+     * @param Request $request
+     */
+    public function paymentPaid(Request $request)
+    {
+        $paymentPaymentId = $request->get("paymentPaymentId");
+        if (is_null($paymentPaymentId) || $paymentPaymentId=="") {
+            $paymentPaymentId = -1;
+        }
+        return $this->render(
+            '@Mobicoop/payment/payment-paid.html.twig',
+            [
+                "paymentPaymentId"=>$paymentPaymentId
+            ]
+        );
+    }
+
+    /**
+     * Get the status of a carpoolPaypement
+     *
+     * @param Request $request
+     */
+    public function getCarpoolPaymentStatus(Request $request)
+    {
+        $status = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (!isset($data['paymentPaymentId']) || $data['paymentPaymentId']==="") {
+                $status['error'] = true;
+                $status['message'] = "No paymentPaymentId id";
+                return new JsonResponse($status);
+            }
+
+            $paymentpayment = $this->paymentManager->getPaymentPayment($data['paymentPaymentId']);
+            $status['error'] = false;
+            $status['status'] = $paymentpayment->getStatus();
+            return new JsonResponse($status);
+        }
+        return new JsonResponse($status);
     }
 }

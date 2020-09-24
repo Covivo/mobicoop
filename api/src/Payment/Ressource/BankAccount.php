@@ -147,6 +147,27 @@ class BankAccount
     private $validationStatus;
 
     /**
+     * @var \DateTimeInterface Date when the validation has been asked to the payment provider
+     *
+     * @Groups({"readPayment"})
+     */
+    private $validationAskedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been granted by the payment provider
+     *
+     * @Groups({"readPayment"})
+     */
+    private $validatedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been declared outdated by the payment provider
+     *
+     * @Groups({"readPayment"})
+     */
+    private $validationOutdatedDate;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @Groups({"readPayment"})
@@ -250,6 +271,42 @@ class BankAccount
     public function setValidationStatus(?int $validationStatus)
     {
         $this->validationStatus = $validationStatus;
+    }
+
+    public function getValidationAskedDate(): ?\DateTimeInterface
+    {
+        return $this->validationAskedDate;
+    }
+
+    public function setValidationAskedDate(?\DateTimeInterface $validationAskedDate): self
+    {
+        $this->validationAskedDate = $validationAskedDate;
+
+        return $this;
+    }
+    
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(?\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
+    public function getValidationOutdatedDate(): ?\DateTimeInterface
+    {
+        return $this->validationOutdatedDate;
+    }
+
+    public function setValidationOutdatedDate(?\DateTimeInterface $validationOutdatedDate): self
+    {
+        $this->validationOutdatedDate = $validationOutdatedDate;
+
+        return $this;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

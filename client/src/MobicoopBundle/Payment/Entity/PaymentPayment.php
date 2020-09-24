@@ -38,6 +38,7 @@ class PaymentPayment implements ResourceInterface, \JsonSerializable
     const MODE_ONLINE = 1;
     const MODE_DIRECT = 2;
 
+    const STATUS_INITIATED = 0;
     const STATUS_SUCCESS = 1;
     const STATUS_FAILURE = 2;
 

@@ -27,10 +27,13 @@ use App\Payment\Ressource\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
+use App\DataProvider\Ressource\Hook;
+use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
+use App\Payment\Ressource\ValidationDocument;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -47,7 +50,9 @@ class PaymentDataProvider
     private $providerInstance;
     private $paymentProfileRepository;
     private $defaultCurrency;
+    private $validationDocsPath;
     private $platformName;
+    private $baseUri;
 
     private $security;
     private $clientId;
@@ -67,11 +72,15 @@ class PaymentDataProvider
         string $apikey,
         bool $sandBoxMode,
         string $platformName,
-        string $defaultCurrency
+        string $defaultCurrency,
+        string $validationDocsPath,
+        string $baseUri
     ) {
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->defaultCurrency = $defaultCurrency;
+        $this->validationDocsPath = $validationDocsPath;
+        $this->baseUri = $baseUri;
         $this->platformName = $platformName;
         $this->paymentActive = $paymentActive;
 
@@ -88,7 +97,16 @@ class PaymentDataProvider
     {
         if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
             $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
-            $this->providerInstance = new $providerClass($this->security->getUser(), $this->clientId, $this->apikey, $this->sandBoxMode, $this->paymentProfileRepository);
+            $this->providerInstance = new $providerClass(
+                $this->security->getUser(),
+                $this->clientId,
+                $this->apikey,
+                $this->sandBoxMode,
+                $this->defaultCurrency,
+                $this->validationDocsPath,
+                $this->baseUri,
+                $this->paymentProfileRepository
+            );
         }
 
         if (!$this->paymentActive) {
@@ -181,12 +199,13 @@ class PaymentDataProvider
      * Register a User on the payment provider platform
      *
      * @param User $user
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user)
+    public function registerUser(User $user, Address $address=null)
     {
         $this->checkPaymentConfiguration();
-        return $this->providerInstance->registerUser($user);
+        return $this->providerInstance->registerUser($user, $address);
     }
 
     /**
@@ -209,9 +228,9 @@ class PaymentDataProvider
     /**
      * Handle a payment web hook
      * @var object $hook The web hook from the payment provider
-     * @return void
+     * @return Hook with status and transaction id
      */
-    public function handleHook(object $hook)
+    public function handleHook(Hook $hook): Hook
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->handleHook($hook);
@@ -248,5 +267,18 @@ class PaymentDataProvider
     {
         $this->checkPaymentConfiguration();
         $this->providerInstance->processElectronicPayment($debtor, $creditors);
+    }
+
+    /**
+     * Upload an identity validation document to the payment provider
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
 }

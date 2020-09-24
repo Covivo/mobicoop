@@ -82,7 +82,7 @@ class PaymentManager
         if ($response->getCode() == 201) {
             return $response->getValue();
         } else {
-            return ['error'=>1];
+            return ['error'=>$response->getValue()];
         }
         return null;
     }
@@ -139,7 +139,7 @@ class PaymentManager
     {
         $this->dataProvider->setClass(PaymentPayment::class);
 
-        $paymentPayment = new PaymentPayment;
+        $paymentPayment = new PaymentPayment();
 
         $paymentPayment->setType($type);
         $paymentPayment->setItems($items);
@@ -150,6 +150,22 @@ class PaymentManager
         }
 
         return $response->getValue();
+    }
+
+    /**
+     * Get a PaymentPayment by its id
+     *
+     * @param integer $id Id of the PaymentPayment
+     * @return PaymentPayment|null
+     */
+    public function getPaymentPayment(int $id): ?PaymentPayment
+    {
+        $this->dataProvider->setClass(PaymentPayment::class);
+
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() != 201) {
+            return $response->getValue();
+        }
     }
 
     /**

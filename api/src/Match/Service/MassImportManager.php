@@ -166,7 +166,7 @@ class MassImportManager
     /**
      * Generates a filename and removes the extension.
      *
-     * @param Mass $mass    The mass for whiwh we want a filename
+     * @param Mass $mass    The mass for which we want a filename
      * @return string       The filename
      */
     private function generateFilename(Mass $mass)

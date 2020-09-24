@@ -43,6 +43,8 @@ class PaymentException extends \LogicException
     const NO_ADDRESS = "No home address";
     const ADDRESS_INVALID = "Some field in the address are missing";
     const REGISTER_USER_FAILED = "Registration of this User to the provider has failed";
+    const ADD_WALLET_USER_FAILED = "The addition of a Wallet has failed";
+    const USER_INVALID = "User invalid for online payment. He may miss a few mandatory profile informations";
 
     // BankAccount
     const NO_BANKACCOUNT_ID_IN_UPDATE_REQUEST = "This request must contains en idBankAccount parameter";
@@ -56,6 +58,14 @@ class PaymentException extends \LogicException
 
     // Electronic payment
     const GET_URL_PAYIN_FAILED = "Failed to get the secured URL for electronic payment";
+
+    // Documents
+    const ERROR_UPLOAD = "Error uploading the document";
+    const ERROR_CREATING_DOC_TO_PROVIDER = "The creation of the document to the provider has failed";
+    const ERROR_VALIDATION_DOC_BAD_EXTENTION = "Validation file bad extension";
+    const ERROR_CREATING_DOC_PAGE_TO_PROVIDER = "The creation of a page for a document to the provider has failed";
+    const ERROR_VALIDATION_ASK_DOC = "The validation ask for a document has failed";
+    const ERROR_VALIDATION_ASK_DOC_BAD_STATUS = "The validation ask for a document has failed (BAD STATUS)";
 
     // Web hooks
     const MISSING_PARAMETER = "Missing parameter";

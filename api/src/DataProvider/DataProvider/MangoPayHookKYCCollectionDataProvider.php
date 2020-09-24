@@ -60,7 +60,6 @@ final class MangoPayHookKYCCollectionDataProvider implements CollectionDataProvi
         }
         
         if (
-            $this->request->get('EventType')!==MangoPayHook::VALIDATION_ASKED &&
             $this->request->get('EventType')!==MangoPayHook::VALIDATION_SUCCEEDED &&
             $this->request->get('EventType')!==MangoPayHook::VALIDATION_FAILED &&
             $this->request->get('EventType')!==MangoPayHook::VALIDATION_OUTDATED

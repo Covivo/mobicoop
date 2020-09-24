@@ -13,19 +13,29 @@
         type="error"
       >
         {{ $t('error') }}
-      </v-alert>        
+      </v-alert>
+      <PaymentStatus :can-be-paid="canBePaid" />
       <v-form
         v-if="!bankCoordinates"
         v-model="valid"
+        class="mt-0"
       >
-        <v-container>
+        <v-container class="pa-0">
           <v-row justify="center">
             <v-col
               cols="12"
               md="10"
               class="text-center text-h6 pt-4"
             >
-              {{ $t('title') }}
+              <v-alert
+                type="info"
+                color="accent"
+                class="text-left my-2"
+                dense
+              >
+                {{ $t('textInfo') }}
+              </v-alert>
+              {{ $t('titleCoordinates') }}
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -69,7 +79,7 @@
             <v-col
               cols="12"
               md="10"
-              class="text-center pt-4 font-italic"
+              class="text-left pt-4 font-italic"
             >
               {{ $t('textAddress') }}
             </v-col>
@@ -160,6 +170,17 @@
           </v-col>
         </v-row>
       </div>
+      <v-row justify="center">
+        <v-col cols="10">
+          <IdentityValidation
+            :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+            :payment-profile-status="(this.bankCoordinates) ? this.bankCoordinates.status : 0"
+            :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
+            :validation-asked-date="(this.bankCoordinates) ? this.bankCoordinates.validationAskedDate : null"
+            @identityDocumentSent="identityDocumentSent"
+          />
+        </v-col>
+      </v-row>
     </div>
 
     <v-dialog
@@ -202,15 +223,20 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/profile/BankAccount.json";
+import moment from "moment";
+import Translations from "@translations/components/user/profile/payment/BankAccount.json";
 import GeoComplete from "@js/components/utilities/GeoComplete";
+import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
+import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
 
 export default {
   i18n: {
     messages: Translations
   },
   components: {
-    GeoComplete
+    GeoComplete,
+    PaymentStatus,
+    IdentityValidation
   },  
   props: {
     user: {
@@ -218,6 +244,10 @@ export default {
       default: () => {}
     },
     geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    validationDocsAuthorizedExtensions: {
       type: String,
       default: null
     }
@@ -246,6 +276,14 @@ export default {
       dialog:false,
       error:false,
       validAddress:false
+    }
+  },
+  computed:{
+    canBePaid(){
+      if(!this.bankCoordinates || this.bankCoordinates.status == 0 || this.bankCoordinates.validationStatus == 0 || this.bankCoordinates.validationStatus > 1){
+        return false;
+      }
+      return true;
     }
   },
   mounted(){
@@ -323,6 +361,14 @@ export default {
       }
       else{
         this.validAddress = true;
+      }
+    },
+    identityDocumentSent(data){
+      if(!data.id){
+        this.error = true;
+      }
+      else{
+        this.bankCoordinates.validationAskedDate = moment();
       }
     }
   }

@@ -44,9 +44,7 @@ use App\Geography\Entity\Address;
  *          "post"
  *      },
  *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
+ *          "get"
  *      }
  * )
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
@@ -61,12 +59,13 @@ class PaymentPayment
     const MODE_ONLINE = 1;
     const MODE_DIRECT = 2;
 
+    const STATUS_INITIATED = 0;
     const STATUS_SUCCESS = 1;
     const STATUS_FAILURE = 2;
 
     /**
      * @var int The id of this payment.
-     * @Groups({"writePayment"})
+     * @Groups({"readPayment","writePayment"})
      *
      * @ApiProperty(identifier=true)
      */

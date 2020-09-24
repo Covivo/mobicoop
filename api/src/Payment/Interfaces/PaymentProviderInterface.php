@@ -23,12 +23,15 @@
 
 namespace App\Payment\Interfaces;
 
+use App\DataProvider\Ressource\Hook;
+use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\Wallet;
 use App\Payment\Ressource\ElectronicPayment;
+use App\Payment\Ressource\ValidationDocument;
 
 /**
  * Payment Provider interface.
@@ -44,10 +47,11 @@ interface PaymentProviderInterface
     /**
      * Register a User on the platform
      *
-     * @param User $user     The User to register
+     * @param User $user            The User to register
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user);
+    public function registerUser(User $user, Address $address=null);
 
     /**
      * Returns a collection of Bank accounts.
@@ -97,4 +101,20 @@ interface PaymentProviderInterface
      * @return void
      */
     public function processElectronicPayment(User $debtor, array $creditors);
+
+    /**
+     * Upload an identity validation document
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument);
+
+    /**
+     * Handle a payment web hook
+     * @var object $hook The web hook from the payment provider
+     * @return Hook with status and ressource id
+     */
+    public function handleHook(Hook $hook);
 }

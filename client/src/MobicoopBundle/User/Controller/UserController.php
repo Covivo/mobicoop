@@ -47,6 +47,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -78,6 +79,7 @@ class UserController extends AbstractController
     private $paymentElectronicActive;
     private $userManager;
     private $paymentManager;
+    private $validationDocsAuthorizedExtensions;
 
     /**
      * Constructor
@@ -95,6 +97,7 @@ class UserController extends AbstractController
         $loginLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
+        string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
         PaymentManager $paymentManager
     ) {
@@ -111,6 +114,7 @@ class UserController extends AbstractController
         $this->paymentElectronicActive = $paymentElectronicActive;
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
+        $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
     }
 
     /***********
@@ -389,7 +393,8 @@ class UserController extends AbstractController
             'tabDefault' => $tabDefault,
             'ads' => $userManager->getAds(),
             'acceptedCarpools' => $userManager->getAds(true),
-            'bankCoordinates' => $this->paymentElectronicActive
+            'bankCoordinates' => $this->paymentElectronicActive,
+            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions
         ]);
     }
 
@@ -1074,6 +1079,24 @@ class UserController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Block or Unblock a User
+     * AJAX
+     */
+    public function sendIdentityValidationDocument(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            if (!is_null($request->files->get('document'))) {
+                $document = new ValidationDocument();
+                $document->setFile($request->files->get('document'));
+                
+                return new JsonResponse($this->userManager->sendIdentityValidationDocument($document));
+            }
+        }
+        return new JsonResponse();
+    }
+
 
     /**
      * Block or Unblock a User
