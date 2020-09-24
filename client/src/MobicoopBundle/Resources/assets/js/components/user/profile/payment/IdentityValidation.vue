@@ -78,6 +78,7 @@
       >
         <template>
           <v-file-input
+            v-model="document"
             :accept="validationDocsAuthorizedExtensions"
             :label="$t('fileInput')"
             :disabled="!formActive"
@@ -88,7 +89,9 @@
         <v-btn 
           rounded
           color="secondary"
-          :disabled="!formActive"
+          :disabled="!formActive || document == null"
+          :loading="loading"
+          @click="send"
         >
           {{ $t('send') }}
         </v-btn>          
@@ -97,6 +100,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 import Translations from "@translations/components/user/profile/payment/IdentityValidation.json";
 export default {
   i18n: {
@@ -126,6 +130,11 @@ export default {
   },
   data () {
     return {
+      document:null,
+      documentRules: [
+        (v) => !!v || this.$t("models.user.givenName.errors.required"),
+      ],
+      loading:false
     }
   },
   computed:{
@@ -146,6 +155,26 @@ export default {
     }
   },
   mounted(){
-  }    
+  },
+  methods: {
+    send(){
+      let sendDocument = new FormData();
+      sendDocument.append("document", this.document);
+      this.loading = true;
+      axios
+        .post(this.$t('sendUrl'), sendDocument,
+          {
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
+        .then(res => {
+          this.document = null;
+          this.loading = false;
+          this.$emit("identityDocumentSent",res.data);
+        });
+
+    }
+  }
 }
 </script>

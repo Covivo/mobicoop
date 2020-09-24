@@ -49,6 +49,12 @@ user_bank_coordinates_delete:
         en: /user/bank-coordinates/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteBankCoordinates
 
+user_send_identity_validation_document:
+    path:
+        fr: /utilisateur/document-validation-identite/envoyer
+        en: /user/identity-validation-document/send
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendIdentityValidationDocument
+
 # login
 user_login:
     path:

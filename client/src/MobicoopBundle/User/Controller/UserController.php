@@ -47,6 +47,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -1078,6 +1079,24 @@ class UserController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Block or Unblock a User
+     * AJAX
+     */
+    public function sendIdentityValidationDocument(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            if (!is_null($request->files->get('document'))) {
+                $document = new ValidationDocument();
+                $document->setFile($request->files->get('document'));
+                
+                return new JsonResponse($this->userManager->sendIdentityValidationDocument($document));
+            }
+        }
+        return new JsonResponse();
+    }
+
 
     /**
      * Block or Unblock a User

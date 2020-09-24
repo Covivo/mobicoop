@@ -54,7 +54,6 @@ final class UploadValidationDocumentAction
         if (!$uploadedFile) {
             throw new BadRequestHttpException('"file" is required');
         }
-
         $validationDocument = new ValidationDocument();
         $validationDocument->setFile($uploadedFile);
         $validationDocument->setUser($this->security->getUser());

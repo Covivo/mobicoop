@@ -177,6 +177,7 @@
             :payment-profile-status="(this.bankCoordinates) ? this.bankCoordinates.status : 0"
             :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
             :validation-asked-date="(this.bankCoordinates) ? this.bankCoordinates.validationAskedDate : null"
+            @identityDocumentSent="identityDocumentSent"
           />
         </v-col>
       </v-row>
@@ -222,6 +223,7 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 import Translations from "@translations/components/user/profile/payment/BankAccount.json";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
@@ -359,6 +361,14 @@ export default {
       }
       else{
         this.validAddress = true;
+      }
+    },
+    identityDocumentSent(data){
+      if(!data.id){
+        this.error = true;
+      }
+      else{
+        this.bankCoordinates.validationAskedDate = moment();
       }
     }
   }
