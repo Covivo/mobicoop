@@ -1308,28 +1308,32 @@ class UserManager
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
         foreach ($paymentProfiles as $paymentProfile) {
-            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                /**
-                 * @var BankAccount $bankaccount
-                 */
-                
-                // We replace some characters in Iban and Bic by *
-                $iban = $bankaccount->getIban();
-                for ($i=4 ; $i<strlen($iban)-4 ; $i++) {
-                    $iban[$i] = "*";
+            if (!is_null($paymentProfile->getBankAccounts())) {
+                foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                    /**
+                     * @var BankAccount $bankaccount
+                     */
+                    
+                    // We replace some characters in Iban and Bic by *
+                    $iban = $bankaccount->getIban();
+                    for ($i=4 ; $i<strlen($iban)-4 ; $i++) {
+                        $iban[$i] = "*";
+                    }
+                    $bic = $bankaccount->getBic();
+                    for ($i=2 ; $i<strlen($bic)-2 ; $i++) {
+                        $bic[$i] = "*";
+                    }
+                    
+                    $bankaccount->setIban($iban);
+                    $bankaccount->setBic($bic);
+                    
+                    $bankAccounts[] = $bankaccount;
                 }
-                $bic = $bankaccount->getBic();
-                for ($i=2 ; $i<strlen($bic)-2 ; $i++) {
-                    $bic[$i] = "*";
-                }
-                
-                $bankaccount->setIban($iban);
-                $bankaccount->setBic($bic);
-                
-                $bankAccounts[] = $bankaccount;
             }
-            foreach ($paymentProfile->getWallets() as $wallet) {
-                $wallets[] = $wallet;
+            if (!is_null($paymentProfile->getWallets())) {
+                foreach ($paymentProfile->getWallets() as $wallet) {
+                    $wallets[] = $wallet;
+                }
             }
         }
         $user->setBankAccounts($bankAccounts);

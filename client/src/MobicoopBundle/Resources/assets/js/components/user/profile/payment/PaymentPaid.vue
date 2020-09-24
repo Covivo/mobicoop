@@ -10,8 +10,11 @@
           <v-card-text v-if="error">
             {{ $t('noPaymentPaymentId') }}
           </v-card-text>
-          <v-card-text v-else-if="paymentStatus==0">
-            {{ $t('wait.line1') }}<br>{{ $t('wait.line2') }}
+          <v-card-text v-else-if="paymentStatus==2 || paymentFailed">
+            <v-icon color="error">
+              mdi-alert-outline
+            </v-icon>
+            {{ $t('paymentFailed') }}
           </v-card-text>
           <v-card-text v-else-if="paymentStatus==1">
             <v-icon color="success">
@@ -19,11 +22,8 @@
             </v-icon>
             {{ $t('paymentSucceeded') }}
           </v-card-text>
-          <v-card-text v-else-if="paymentStatus==2">
-            <v-icon color="error">
-              mdi-alert-outline
-            </v-icon>
-            {{ $t('paymentFailed') }}
+          <v-card-text v-else-if="paymentStatus==0">
+            {{ $t('wait.line1') }}<br>{{ $t('wait.line2') }}
           </v-card-text>
         </v-card>
       </v-col>
@@ -52,7 +52,8 @@ export default {
     return {
       loading:this.colorLoading,
       error:false,
-      paymentStatus:0
+      paymentStatus:0,
+      paymentFailed:false
     }
   },
   mounted(){
@@ -72,6 +73,7 @@ export default {
         if(self.paymentStatus>0 || loop>=maxloop){
           self.loading = false;
           clearInterval(loopCheck);
+          if(self.paymentStatus==0) self.paymentFailed = true; // Payment still not validated. For display, we fail it
           return;
         }
 

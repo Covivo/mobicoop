@@ -180,7 +180,7 @@ class PaymentDataProvider
                  * @var PaymentProfile $paymentProfile
                  */
                 
-                if ($callExternalProvider && $paymentProfile->getStatus()==PaymentProfile::STATUS_ACTIVE) {
+                if ($callExternalProvider) {
                     $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
                     foreach ($bankAccounts as $bankAccount) {
                         $bankAccount->setValidationStatus($paymentProfile->getValidationStatus());

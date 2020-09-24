@@ -60,7 +60,7 @@ class PaymentController extends AbstractController
             throw new \LogicException("Missing parameters");
         }
         return $this->render('@Mobicoop/payment/payment.html.twig', [
-            "paymentElectronicActive" => $this->payment_electronic_active === "true" ? true : false,
+            "paymentElectronicActive" => $this->payment_electronic_active ? true : false,
             "selectedId" => $id,
             "frequency" => $frequency,
             "type" => $type,
