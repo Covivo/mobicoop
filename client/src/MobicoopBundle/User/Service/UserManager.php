@@ -562,6 +562,7 @@ class UserManager
         return $adsSanitized;
     }
 
+
     /**
      * Cleaning the Matchings related to private Proposals
      */

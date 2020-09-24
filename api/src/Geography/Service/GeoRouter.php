@@ -70,14 +70,18 @@ class GeoRouter
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      * @param boolean $pointsOnly       Set to true to get the points only
      * @param boolean|null $returnType  Set the return type
+     * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
+    public function getRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);
         if (!is_null($returnType)) {
             $this->router->setReturnType($returnType);
+        }
+        if (!is_null($avoidToll)) {
+            $this->router->setAvoidToll($avoidToll);
         }
         return $this->router->getDirections($addresses, GeorouterInterface::MODE_SYNC);
     }
@@ -89,14 +93,18 @@ class GeoRouter
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      * @param boolean $pointsOnly       Set to true to get the points only
      * @param boolean|null $returnType  Set the return type
+     * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
+    public function getAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);
         if (!is_null($returnType)) {
             $this->router->setReturnType($returnType);
+        }
+        if (!is_null($avoidToll)) {
+            $this->router->setAvoidToll($avoidToll);
         }
         return $this->router->getDirections($addresses, GeorouterInterface::MODE_ASYNC);
     }
@@ -110,14 +118,18 @@ class GeoRouter
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      * @param boolean $pointsOnly       Set to true to get the points only
      * @param boolean|null $returnType  Set the return type
+     * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null): ?array
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);
         if (!is_null($returnType)) {
             $this->router->setReturnType($returnType);
+        }
+        if (!is_null($avoidToll)) {
+            $this->router->setAvoidToll($avoidToll);
         }
         return $this->router->getMultipleDirections($addresses, GeorouterInterface::MODE_MULTIPLE_ASYNC);
     }
