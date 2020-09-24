@@ -122,10 +122,12 @@ class SolidaryUserManager
     public function getSolidaryBeneficiary(int $id): SolidaryBeneficiary
     {
         // Get the structure of the Admin
-        $structures = $this->security->getUser()->getSolidaryStructures();
         $structureAdmin = null;
-        if (is_array($structures) && isset($structures[0])) {
-            $structureAdmin = $structures[0];
+        if ($this->security->getUser() instanceof User) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (is_array($structures) && isset($structures[0])) {
+                $structureAdmin = $structures[0];
+            }
         }
 
         // Get the Solidary User
@@ -306,7 +308,7 @@ class SolidaryUserManager
         $solidaryUserStructure = $solidaryUser->getSolidaryUserStructures()[0];
 
         // Get the structure of the Admin
-        if (!empty($this->security->getUser()->getSolidaryStructures())) {
+        if (($this->security->getUser() instanceof User) && !empty($this->security->getUser()->getSolidaryStructures())) {
             $structures = $this->security->getUser()->getSolidaryStructures();
             $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
@@ -324,8 +326,10 @@ class SolidaryUserManager
         }
 
         // Is he validated ?
-        $solidaryVolunteer->setValidatedCandidate(false);
-        if (!is_null($solidaryUserStructure->getAcceptedDate())) {
+        $solidaryVolunteer->setValidatedCandidate(null);
+        if (!is_null($solidaryUserStructure->getRefusedDate())) {
+            $solidaryVolunteer->setValidatedCandidate(false);
+        } elseif (!is_null($solidaryUserStructure->getAcceptedDate())) {
             $solidaryVolunteer->setValidatedCandidate(true);
         }
 
@@ -388,14 +392,24 @@ class SolidaryUserManager
      * Get all the SolidaryBeneficiaries
      * @var array $filters optionnal filters
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
+     * @param boolean $returnAllBeneficiaries return all beneficiaries (true, false)
      * @return array
      */
-    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null): array
+    public function getSolidaryBeneficiaries(array $filters=null, bool $validatedCandidate=null, $returnAllBeneficiaries=false): array
     {
         $beneficiaries = [];
 
+        $structureAdmin =  null;
+        if ($returnAllBeneficiaries == false) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+        }
+
+
         // First, we get all user with Beneficiary types of SolidaryUser
-        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters);
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryBeneficiary::TYPE, $filters, $structureAdmin);
         foreach ($users as $user) {
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
             $beneficiarie = $this->getSolidaryBeneficiary($user->getSolidaryUser()->getId());
@@ -420,18 +434,29 @@ class SolidaryUserManager
         return $beneficiaries;
     }
 
+
+
     /**
      * Get all the SolidaryVolunteers
      * @param array $filters optionnal filters
      * @param bool $validatedCandidate only the validated candidates or refused candidates (true, false)
+     * @param boolean $returnAllVolonteers return all volunteers (true, false)
      * @return array
      */
-    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null): array
+    public function getSolidaryVolunteers(array $filters=null, bool $validatedCandidate=null, $returnAllVolonteers=false): array
     {
         $volunteers = [];
 
+        $structureAdmin =  null;
+        if ($returnAllVolonteers == false) {
+            $structures = $this->security->getUser()->getSolidaryStructures();
+            if (!is_null($structures) || count($structures)>0) {
+                $structureAdmin = $structures[0];
+            }
+        }
+
         // First, we get all user with Beneficiary types of SolidaryUser
-        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE, $filters);
+        $users = $this->userRepository->findUsersBySolidaryUserType(SolidaryVolunteer::TYPE, $filters, $structureAdmin);
         foreach ($users as $user) {
 
             // Maybe To do : If it's too slow, we can use the User instead of the Id. But we need to rewrite the ItemDataProvider
@@ -483,7 +508,7 @@ class SolidaryUserManager
 
             // If there a Structure given, we use it. Otherwise we use the first admin structure
             $solidaryBeneficiaryStructure = $solidaryBeneficiary->getStructure();
-            if (is_null($solidaryBeneficiaryStructure)) {
+            if (is_null($solidaryBeneficiaryStructure) && $requester instanceof User) {
                 // We get the Structures of the requester to set the SolidaryUserStructure
                 $structures = $requester->getSolidaryStructures();
                 if (!is_null($structures) || count($structures)>0) {
@@ -535,11 +560,11 @@ class SolidaryUserManager
                 // auto valid the registration
                 $user->setValidatedDate(new \DateTime());
             }
-        } else {
-            // We check if this User doesn't already have a Solidary User
-            if (!is_null($user->getSolidaryUser())) {
-                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
-            }
+        }
+
+        // We check if this User doesn't already have a Solidary User
+        if (!is_null($user->getSolidaryUser())) {
+            throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
         }
 
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
@@ -705,7 +730,11 @@ class SolidaryUserManager
             }
         }
         if (!is_null($user->getSolidaryUser())) {
-            $solidaryUser = $user->getSolidaryUser();
+//            $solidaryUser = $user->getSolidaryUser();
+            // We check if this User doesn't already have a Solidary User
+            if (!is_null($user->getSolidaryUser())) {
+                throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
+            }
         } else {
             $solidaryUser = new SolidaryUser();
             // We set the link between User and SolidaryUser
@@ -751,16 +780,19 @@ class SolidaryUserManager
        
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
-        if (is_null($solidaryVolunteerStructure)) {
+        if (is_null($solidaryVolunteerStructure) && ($this->security->getUser() instanceof User)) {
             // We get the Structure of the Admin to set the SolidaryUserStructure
             $structures = $this->structureRepository->findByUser($this->security->getUser());
            
-            $structureAdmin = null;
             if (!is_null($structures) || count($structures)>0) {
                 $solidaryVolunteerStructure = $structures[0];
             }
         }
         
+        if (is_null($solidaryVolunteerStructure)) {
+            throw new SolidaryException(SolidaryException::NO_STRUCTURE);
+        }
+
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
@@ -900,12 +932,11 @@ class SolidaryUserManager
             // Don't do anything, it's not an acceptation or refulsal action
         } elseif (!$solidaryVolunteer->isValidatedCandidate()) {
             // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryVolunteer->getStructure());
+            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
         } elseif ($solidaryVolunteer->isValidatedCandidate()) {
             // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryVolunteer->getStructure());
+            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
         }
-        
         if (!is_null($solidaryVolunteer->getMMinTime())) {
             $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
         }

@@ -49,7 +49,7 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
         return RelayPoint::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
         $user = null;
         
@@ -57,6 +57,6 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
             $user = $this->security->getUser();
         }
         
-        return $this->relayPointManager->getRelayPoints($user);
+        return $this->relayPointManager->getRelayPoints($user, $context);
     }
 }

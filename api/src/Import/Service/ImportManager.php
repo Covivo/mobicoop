@@ -95,13 +95,13 @@ class ImportManager
     /**
      * Treat imported users
      *
-     * @param string $origin    The origin of the data
-     * @param int $massId       The mass id if the import concerns a mass matching
-     * @return array    An empty array (for consistency, as the method can be called from an API get collection route)
+     * @param string $origin        The origin of the data
+     * @param int|null $massId      The mass id if the import concerns a mass matching
+     * @param int|null $lowestId    The lowest user id to import if the import concerns new users to import in an existing db
      */
-    public function treatUserImport(string $origin, ?int $massId=null)
+    public function treatUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
     {
-        $this->prepareUserImport($origin, $massId);
+        $this->prepareUserImport($origin, $massId, $lowestId);
         $this->matchUserImport();
         return [];
     }
@@ -109,11 +109,12 @@ class ImportManager
     /**
      * Treat imported users
      *
-     * @param string $origin    The origin of the data
-     * @param int|null $mass    The mass id if the import concerns a mass matching
+     * @param string $origin        The origin of the data
+     * @param int|null $massId      The mass id if the import concerns a mass matching
+     * @param int|null $lowestId    The lowest user id to import if the import concerns new users to import in an existing db
      * @return void
      */
-    private function prepareUserImport(string $origin, ?int $massId=null)
+    private function prepareUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
     {
         set_time_limit($this->timeLimit);
         
@@ -129,6 +130,8 @@ class ImportManager
             INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) 
             SELECT u.id, '" . $origin . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
             INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = u.id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId . "  ";
+        } elseif (!is_null($lowestId)) {
+            $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user WHERE id>=" . $lowestId;
         } else {
             $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";
         }
@@ -223,7 +226,7 @@ class ImportManager
         set_time_limit($this->timeLimit);
 
         // user import is a huge memory consumer !
-        ini_set('memory_limit', $this->memoryLimit . 'MB');
+        ini_set('memory_limit', $this->memoryLimit . 'M');
         
         if (!$this->sqlLog) {
             $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);

@@ -10,13 +10,13 @@
         align="center"
       >
         <h1 
-          v-if="!displayTitleCommunity"
+          v-if="displayTitleCommunity"
         >
           {{ $t("title") }}
         </h1>
       </v-col>
     </v-row>
-    <v-card>
+    <v-card outlined>
       <v-tabs vertical>
         <v-tab>
           {{ $t("firstQuestion") }}
@@ -76,7 +76,7 @@ export default {
   props: {
     displayTitleCommunity: {
       type: Boolean,
-      default: false
+      default: true
     }
   } 
 }

@@ -28,7 +28,7 @@
         },
         "communities": {
             "label": "Rejoindre une communauté",
-            "route": "/communaute/liste-des-communautes"
+            "route": "/utilisateur/inscription/liste-des-communautes"
         },
         "step":"Etape",
         "steps":{
@@ -44,7 +44,9 @@
               "textOkAutoValidation": "Votre demande d'adhésion est validée.",
               "textError": "Une erreur est survenue veuillez essayer à nouveau."
             }
-        }  
+        },
+        "login": "Vous avez déjà un compte ? Identifiez-vous !",
+        "urlLogin": "/utilisateur/connexion/" 
     },
     "en":{
         "title":"Sign Up",
@@ -62,7 +64,7 @@
             "route": "/cgu"
         },
         "communities": {
-            "route": "community/getCommunityList"
+            "route": "/user/register/community-list"
         },
         "step":"Step",
         "steps":{
@@ -71,6 +73,9 @@
             "3":"Gender",
             "4":"Birthdate",
             "5":"Home town"
-        }
+        },
+        "login": "Already have an account ? Login !",
+        "urlLogin": "/user/login/" 
+
     }
 }

@@ -52,7 +52,7 @@ class PaymentController extends AbstractController
      * Display of the payment page
      *
      */
-    public function payment($id, $frequency, $type, $week=null)
+    public function payment($id, $frequency, $type)
     {
         if ($id == '' || $frequency == '' || $type == '') {
             throw new \LogicException("Missing parameters");
@@ -62,7 +62,6 @@ class PaymentController extends AbstractController
             "selectedId" => $id,
             "frequency" => $frequency,
             "type" => $type,
-            "week" => $week
         ]);
     }
 
@@ -123,5 +122,43 @@ class PaymentController extends AbstractController
             }
         }
         return new JsonResponse($weeks);
+    }
+
+    /**
+     * Get the first non validated week for a regular Ask
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getFirstWeek(Request $request, PaymentManager $paymentManager)
+    {
+        $week = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($week = $paymentManager->getFirstWeek($data['id'])) {
+                return new JsonResponse($week);
+            }
+        }
+        return new JsonResponse($week);
+    }
+
+    /**
+     * Get the calendar of payments for a regular Ad
+     *
+     * @param Request $request
+     * @param PaymentManager $paymentManager
+     * @return void
+     */
+    public function getCalendar(Request $request, PaymentManager $paymentManager)
+    {
+        $periods = null;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if ($periods = $paymentManager->getCalendar($data['type'])) {
+                return new JsonResponse($periods);
+            }
+        }
+        return new JsonResponse($periods);
     }
 }

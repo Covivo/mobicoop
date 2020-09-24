@@ -95,7 +95,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_ON_DEMAND = "TOD";
 
     private const CW_COUNTRY = "France";
-    private const CW_NC = "NC";
+    private const CW_NC = "";
 
     private const COLLECTION_RESSOURCE_JOURNEYS = "journeyplanner/api/opt/PlanTrips/json";
     private const COLLECTION_RESSOURCE_TRIPPOINTS = "api/transport/v3/trippoint/GetTripPoints/json";
@@ -192,7 +192,8 @@ class CitywayProvider implements ProviderInterface
             "DepartureLatitude" => $params["origin_latitude"],
             "DepartureLongitude" => $params["origin_longitude"],
             "ArrivalLatitude" => $params["destination_latitude"],
-            "ArrivalLongitude" => $params["destination_longitude"]
+            "ArrivalLongitude" => $params["destination_longitude"],
+            "UserId" => $params["UserId"]
         ];
         $response = $dataProvider->getCollection($getParams);
         if ($response->getCode() == 200) {

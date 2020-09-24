@@ -1,6 +1,6 @@
 {
   "name": "mobicoop-platform",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
@@ -21,6 +21,7 @@
     "test-mobicoop": "cd client && npm run test",
     "test-functional": "cd client && npm run test-functional",
     "test-functional-ci": "cd client && npm run test-functional-ci",
+    "test-functional-ci-cypress": "cd client && npm run test-functional-ci-cypress",
     "test-and-coverage-mobicoop": "cd client && npm run test-and-coverage",
     "start": "npm-run-all --parallel start-api start-mobicoop start-admin",
     "start-ci": "npm-run-all --silent --parallel start-api-ci start-mobicoop-ci",
@@ -66,6 +67,7 @@
     "kuler": "^1.0.1",
     "npm-run-all": "^4.1.5",
     "replace-in-file": "^4.1.1",
+    "request-dispatcher": "^1.0.0",
     "simple-git": "^1.105.0"
   },
   "devDependencies": {

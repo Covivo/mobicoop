@@ -5,6 +5,7 @@ mobicoop-platform/api/.env.dev.local
 mobicoop-platform/api/.env.test.local
 mobicoop-platform/api/.env.prod.local
 mobicoop-platform/api/config/jwt/
+mobicoop-platform/api/config/params/*.json
 mobicoop-platform/api/config/publicTransport/*.json
 mobicoop-platform/api/config/rdex/*.json
 mobicoop-platform/api/config/user/*.json
@@ -35,7 +36,6 @@ mobicoop-platform/api/public/robots.txt
 + mobicoop-platform/api/public/upload/icons/relaypoint-train.svg
 + mobicoop-platform/api/public/upload/icons/venue.svg
 - mobicoop-platform/api/public/upload/icons/*.svg
-mobicoop-platform/api/public/exampleMassImport.csv
 mobicoop-platform/api/public/upload/events/images/*.jpg
 mobicoop-platform/api/public/upload/events/images/*.jpeg
 mobicoop-platform/api/public/upload/events/images/*.png
@@ -90,3 +90,4 @@ mobicoop-platform/client/public/mobile_app_repository.json
 mobicoop-platform/admin/.env
 mobicoop-platform/admin/public/logo.png
 mobicoop-platform/admin/public/robots.txt
+public/maintenance.enable

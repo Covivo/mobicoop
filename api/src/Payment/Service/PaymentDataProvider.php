@@ -27,6 +27,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Payment\Exception\PaymentException;
 use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
@@ -155,14 +156,21 @@ class PaymentDataProvider
 
         // Get more information for each profiles
         $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
-        if (!is_null($paymentProfiles) && $callExternalProvider) {
+        if (!is_null($paymentProfiles)) {
             foreach ($paymentProfiles as $paymentProfile) {
                 /**
                  * @var PaymentProfile $paymentProfile
                  */
                 
-                $paymentProfile->setBankAccounts($this->providerInstance->getBankAccounts($paymentProfile));
-                $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+                if ($callExternalProvider) {
+                    $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
+                    foreach ($bankAccounts as $bankAccount) {
+                        $bankAccount->setValidationStatus($paymentProfile->getValidationStatus());
+                    }
+                    $paymentProfile->setBankAccounts($bankAccounts);
+                    $paymentProfile->setWallets($this->providerInstance->getWallets($paymentProfile));
+                }
+                $user->setPaymentProfileId($paymentProfile->getId());
             }
         }
         return $paymentProfiles;
@@ -196,5 +204,49 @@ class PaymentDataProvider
         $wallet->setCurrency($this->defaultCurrency);
         $wallet->setOwnerIdentifier($identifier);
         return $this->providerInstance->addWallet($wallet);
+    }
+
+    /**
+     * Handle a payment web hook
+     * @var object $hook The web hook from the payment provider
+     * @return void
+     */
+    public function handleHook(object $hook)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->handleHook($hook);
+    }
+
+    /**
+     * Get the secured form's url for electronic payment
+     *
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
+     */
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->generateElectronicPaymentUrl($carpoolPayment);
+    }
+
+    /**
+     * Process an electronic payment between the $debtor and the $creditors
+     *
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
+     */
+    public function processElectronicPayment(User $debtor, array $creditors)
+    {
+        $this->checkPaymentConfiguration();
+        $this->providerInstance->processElectronicPayment($debtor, $creditors);
     }
 }

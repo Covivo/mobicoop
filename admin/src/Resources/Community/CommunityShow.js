@@ -41,6 +41,8 @@ import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import FullNameField from '../User/FullNameField';
 import { ReferenceRecordIdMapper } from '../../components/utils/ReferenceRecordIdMapper';
+import { format } from 'date-fns';
+import { utcDateFormat } from '../../utils/date';
 
 const Aside = ({ record }) => {
   const translate = useTranslate();
@@ -71,7 +73,7 @@ const Aside = ({ record }) => {
             <ListItemText
               primary={
                 <Typography variant="body2">
-                  {record.membersHidden
+                  {record.proposalsHidden
                     ? translate('custom.label.community.announceHidden')
                     : translate('custom.label.community.announceVisible')}
                 </Typography>
@@ -98,7 +100,7 @@ const Aside = ({ record }) => {
               primary={
                 <Typography variant="body2">
                   {translate('custom.label.community.createdAt') +
-                    new Date(record.createdDate).toLocaleDateString()}
+                    utcDateFormat(record.createdDate)}
                 </Typography>
               }
             />
@@ -112,7 +114,7 @@ const Aside = ({ record }) => {
                 <Typography variant="body2">
                   {record.updatedDate
                     ? translate('custom.label.community.updatedAt') +
-                      new Date(record.updatedDate).toLocaleDateString()
+                      utcDateFormat(record.updatedDate)
                     : translate('custom.label.community.neverUpdate')}
                 </Typography>
               }

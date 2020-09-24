@@ -9,7 +9,7 @@
           cols="4"
           md="5"
           align="center"
-          class="justify-center"
+          class="justify-center mt-10"
         >
           <iframe
             :src="$t('buttons.widget.externalRoute', {'id':event.id})"
@@ -40,7 +40,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/event/Event.json";
 import TranslationsClient from "@clientTranslations/components/event/Event.json";

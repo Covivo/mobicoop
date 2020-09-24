@@ -68,6 +68,10 @@ const fr = {
     relay_points: {
       empty: 'Pas encore de point relais.',
       invite: 'Voulez-vous en créer un ?',
+      fields: {
+        'address.latitude': 'Latitude',
+        'address.longitude': 'Longitude',
+      },
     },
     relay_point_types: {
       empty: 'Pas encore de type de point relais.',
@@ -343,7 +347,7 @@ const fr = {
         lastActivityDate: 'Date de dernière connection',
         solidary: 'Solidaire',
         territory: 'Territoires',
-        gender: 'Civilité',
+        gender: 'Genre',
         password: 'Mot de passe',
         birthDate: 'Date de naissance',
         telephone: 'Téléphone',
@@ -438,6 +442,35 @@ const fr = {
         territory: 'Territoire',
         changeTerritory: 'Changer de territoire',
         currentTerritory: 'Territoire actuel',
+      },
+      relayPoint: {
+        invalidLatitude: 'La latitude est invalide',
+        invalidLongitude: 'La latitude est invalide',
+      },
+      article: {
+        title: {
+          list: 'Articles',
+          show: 'Articles > Détails',
+          edit: 'Articles > Editer',
+          create: 'Articles > Créer',
+          add_paragraph: 'Articles > ajouter un paragraphe',
+          edit_paragraph: 'Articles > éditer un paragraphe',
+          add_section: 'Articles > ajouter une section',
+        },
+        action: {
+          add_section: 'Ajouter une section',
+        },
+        label: {
+          draft: "En cours d'édition",
+          published: 'En ligne',
+          title: 'Titre',
+          status: 'Etat',
+          subtitle: 'Sous-titre',
+          position: 'Position',
+          section: 'Section',
+          content: 'Texte',
+          article: 'Article',
+        },
       },
     },
   },

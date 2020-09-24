@@ -167,6 +167,16 @@
                 >
                   {{ $t("ui.button.next") }}
                 </v-btn>
+                <v-card-text
+                  v-if="loginLinkInConnection"
+                >
+                  <a
+                    :href="$t('urlLogin')"
+                    class="font-italic"
+                  >
+                    {{ $t('login') }}
+                  </a>
+                </v-card-text>
               </v-form>
             </v-stepper-content>
 
@@ -288,14 +298,14 @@
                   class="text-justify pb-5"
                 >
                   <community-help
-                    :display-title-community="!displayTitleCommunity"
+                    :display-title-community="false"
                   />
                 </v-row>
 
                 <v-autocomplete
                   v-if="communityShow"
                   v-model="selectedCommunity"
-                  :items="communities.communities"
+                  :items="communities"
                   outlined
                   chips
                   :label="$t('communities.label')"
@@ -441,6 +451,10 @@ export default {
       type: Number,
       default: null,
     },
+    loginLinkInConnection: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -605,7 +619,7 @@ export default {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     },
     selectedCommunity() {
-      this.communities.communities.forEach((community, index) => {
+      this.communities.forEach((community, index) => {
         if (community.id == this.selectedCommunity) {
           this.textSnackOk =
             community.validationType == 1
@@ -724,7 +738,7 @@ export default {
           }
         )
         .then((response) => {
-          if (!response.data.error) {
+          if (response.data.error) {
             if (response.data.message !== "") {
               this.textEmailError = response.data.message;
               this.emailAlreadyTaken = true;

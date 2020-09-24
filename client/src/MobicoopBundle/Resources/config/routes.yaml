@@ -79,6 +79,14 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
+# community list (AJAX)
+user_sign_up_community_list:
+    methods: [POST]
+    path:
+        fr: /utilisateur/inscription/liste-des-communautes
+        en: /user/register/community-list
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityListForRegistration
+
 user_sign_up_result:
     path:
         fr: /utilisateur/inscription/{proposalId}
@@ -301,6 +309,13 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
+# Get events created by a user (POST)
+user_block:
+    methods: [POST]
+    path:
+        fr: /user/block
+        en: /user/block
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
 ##################
 # carpool routes #
@@ -760,12 +775,88 @@ Covid19:
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovid19
 
 # display PrivacyPolicy page
-privacyPolicy:
+PrivacyPolicy:
     path:
         fr: /politique-de-confidentialite
         en: /privacy-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
+# display Convention page
+Covention:
+    path:
+        fr: /charte
+        en: /covention
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovention
+    
+# display HowItWorks page
+HowItworks:
+    path:
+        fr: /comment-ca-marche
+        en: /how-it-works
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHowItWorks
+    
+# display carpool page
+Carpool:
+    path:
+        fr: /demarche-covoiturage
+        en: /carpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpool
+
+# display Carpooling page
+Carpooling:
+    path:
+        fr: /covoiturer
+        en: /carpooling
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpooling
+
+# display CarpoolingAreas page
+CarpoolingAreas:
+    path:
+        fr: /aires-de-covoiturage
+        en: /carpooling-areas
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpoolingAreas
+
+# display PDM page
+Pdm:
+    path:
+        fr: /plan-de-mobilite
+        en: /PDM
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPDM
+
+# display talkAboutUs page
+TalkAboutUs:
+    path:
+        fr: /parlez-de-nous
+        en: /talk-about-us
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showTalkAboutUs
+
+# display fees page
+Fees:
+    path:
+        fr: /frais-du-covoiturage
+        en: /fees
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFees
+
+# display medias page
+Medias:
+    path:
+        fr: /salle-de-presse
+        en: /medias
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMedias
+
+# display usefulLinks page
+UsefulLinks:
+    path:
+        fr: /liens-utiles
+        en: /useful-links
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showUsefulLinks
+
+# display MobileApp page
+MobileApp:
+    path:
+        fr: /sur-mobile-et-tablette
+        en: /mobile-app
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobileApp
 
 # Get the last external articles (AJAX)
 LastExternalArticles:
@@ -774,9 +865,6 @@ LastExternalArticles:
         fr: /articles/derniers/externes
         en: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
-
-
-
 
 
 ####################
@@ -932,8 +1020,8 @@ payment_payments_post:
 # payment 
 payment_list:
     path:
-        fr: /paiements/{id?}/{frequency?}/{type?}/{week?}
-        en: /payments/{id?}/{frequency?}/{type?}/{week?}
+        fr: /paiements/{id?}/{frequency?}/{type?}
+        en: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 # Get weeks to pay (POST) AJAX
@@ -942,7 +1030,23 @@ payment_weeks_list:
     path:
         fr: /getWeeks
         en: /getWeeks
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks      
+
+# Get payment periods to pay/collect (POST) AJAX
+payment_periods_list:
+    methods: [POST]
+    path:
+        fr: /getCalendar
+        en: /getCalendar
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar    
+
+# Get the first non validated week (POST) AJAX
+payment_week_first:
+    methods: [POST]
+    path:
+        fr: /getFirstWeek
+        en: /getFirstWeek
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
 ###############
 # misc routes #

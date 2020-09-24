@@ -28,7 +28,7 @@ namespace App\Payment\Exception;
  */
 class PaymentException extends \LogicException
 {
-    const WEEK_NOT_PROVIDED = "Week number must be provided for regular carpools";
+    const DAY_OR_WEEK_NOT_PROVIDED = "Day or week number must be provided for regular carpools";
     const WEEK_WRONG_FORMAT = "Wrong week number format";
     
     const PAYMENT_INACTIVE = "Payment is not active on this platform";
@@ -53,4 +53,12 @@ class PaymentException extends \LogicException
     const NO_CARPOOL_ITEM = "No CarpoolItem found";
     const NO_CARPOOL_ITEMS = "No CarpoolItem found";
     const INVALID_USER  = "The User must be driver or passenger of this Ask";
+
+    // Electronic payment
+    const GET_URL_PAYIN_FAILED = "Failed to get the secured URL for electronic payment";
+
+    // Web hooks
+    const MISSING_PARAMETER = "Missing parameter";
+    const INVALID_SECURITY_TOKEN = "Security token invalid";
+    const CARPOOL_PAYMENT_NOT_FOUND = "CarpoolPayment not found";
 }

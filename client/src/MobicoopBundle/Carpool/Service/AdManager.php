@@ -365,7 +365,9 @@ class AdManager
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
             $ad->setOneWay(false); // only for punctual journey
         } else {
-            $ad->setOneWay(true); // only for punctual journey
+            if (!$data['regular']) {
+                $ad->setOneWay(true); // only for punctual journey
+            }
         }
 
         // one-way for regular
@@ -377,7 +379,6 @@ class AdManager
                 }
             }
         }
-
         if (isset($data["id"])) {
             $ad->setId($data["id"]);
             $ad->setAdId($data["id"]);
@@ -389,10 +390,8 @@ class AdManager
         }
 
         // the ad is a search ?
-        // by defaut a search is a round trip
         if (isset($data['search'])) {
             $ad->setSearch($data['search']);
-            $ad->setOneWay(false);
         }
 
         // role

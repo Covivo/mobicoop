@@ -110,6 +110,7 @@ use App\User\Controller\UserCanUseEmail;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_NEWS_SUBSCRIPTION", columns={"news_subscription"})})
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity("email")
  * @ApiResource(
@@ -387,7 +388,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(NumericFilter::class, properties={"gender"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -978,7 +979,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var array|null The permissions granted
-     * @Groups("permissions")
+     * @Groups({"permissions"})
      */
     private $permissions;
 
@@ -1114,6 +1115,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $operates;
 
+    /**
+     * @var int|null PaymentProfileId of a User
+     *
+     * @Groups({"readPayment"})
+     * @MaxDepth(1)
+     */
+    private $paymentProfileId;
+    
     /**
      * @var array|null BankAccounts of a User
      *
@@ -2639,6 +2648,18 @@ class User implements UserInterface, EquatableInterface
         if ($this->operates->contains($operate)) {
             $this->operates->removeElement($operate);
         }
+
+        return $this;
+    }
+
+    public function getPaymentProfileId(): ?int
+    {
+        return $this->paymentProfileId;
+    }
+
+    public function setPaymentProfileId(?int $paymentProfileId): self
+    {
+        $this->paymentProfileId = $paymentProfileId;
 
         return $this;
     }

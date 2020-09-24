@@ -38,7 +38,6 @@
 + /api/public/upload/icons/relaypoint-train.svg
 + /api/public/upload/icons/venue.svg
 - /api/public/upload/icons/*.svg
-/api/public/exampleMassImport.csv
 /api/public/upload/events/images/*.jpg
 /api/public/upload/events/images/*.jpeg
 /api/public/upload/events/images/*.png
@@ -93,3 +92,4 @@
 /admin/.env
 /admin/public/logo.png
 /admin/public/robots.txt
+public/maintenance.enable

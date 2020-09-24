@@ -41,11 +41,31 @@ services:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:migrations:migrate -n -v
+  db-fixtures-basic:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:fixtures:load -n -v --group=basic
+  db-fixtures-extended:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:fixtures:load -n -v --group=extended
+  db-fixtures-solidary:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:fixtures:load -n -v --group=solidary
   app-geography-territory-link-batch:
     extends:
       service: base
     working_dir: /var/www/api
     command: php bin/console app:geography:territory-link-batch
+  app-carpool-proof-batch:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console app:carpool:proof-batch
 
 networks:
   mobicoop_platform:

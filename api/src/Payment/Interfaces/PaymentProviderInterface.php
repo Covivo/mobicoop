@@ -23,10 +23,12 @@
 
 namespace App\Payment\Interfaces;
 
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\Wallet;
+use App\Payment\Ressource\ElectronicPayment;
 
 /**
  * Payment Provider interface.
@@ -72,18 +74,27 @@ interface PaymentProviderInterface
     public function disableBankAccount(BankAccount $bankAccount);
 
     /**
-     * Returns a collection of Wallet.
+     * Get the secured form's url for electronic payment
      *
-     * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
-     * @return BankAccount[]
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
      */
-    public function getWallets(PaymentProfile $paymentProfile);
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment);
 
     /**
-     * Add a Wallet
+     * Process an electronic payment between the $debtor and the $creditors
      *
-     * @param Wallet $user  The Wallet to create
-     * @return Wallet|null
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
      */
-    public function addWallet(Wallet $wallet);
+    public function processElectronicPayment(User $debtor, array $creditors);
 }

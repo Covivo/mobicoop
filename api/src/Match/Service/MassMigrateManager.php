@@ -334,6 +334,6 @@ class MassMigrateManager
             $ad->setCommunities([$community->getId()]);
         }
 
-        return $this->adManager->createAd($ad, false);
+        return $this->adManager->createAd($ad, false, false);
     }
 }

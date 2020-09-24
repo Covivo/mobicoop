@@ -112,12 +112,13 @@ class AdManager
      * This method creates a proposal, and its linked proposal for a return trip.
      * It returns the ad created, with its outward and return results.
      *
-     * @param Ad $ad The ad to create
-     * @param bool $doPrepare - When we prepare the Proposal
+     * @param Ad $ad                    The ad to create
+     * @param bool $doPrepare           When we prepare the Proposal
+     * @param bool $withSolidaries      Return also the matching solidary asks
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true)
     {
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -281,7 +282,15 @@ class AdManager
             // punctual
             $outwardCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             // if the time is not set we use the current time for an ad post, and null for a search
-            $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
+            // $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
+            if ($ad->getOutwardTime()) {
+                $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                $outwardProposal->setUseTime(true);
+            } else {
+                $outwardCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+                $outwardProposal->setUseTime(false);
+            }
+            
             $outwardCriteria->setMarginDuration($marginDuration);
         }
 
@@ -376,7 +385,16 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 // if no return time is specified, we use the outward time to be sure the return date is not before the outward date, and null for a search
-                $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : (!$ad->isSearch() ? $outwardCriteria->getFromTime() : null));
+                // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
+                
+                if ($ad->getReturnTime()) {
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnProposal->setUseTime(true);
+                } else {
+                    $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+                    $returnProposal->setUseTime(false);
+                }
+                
                 $returnCriteria->setMarginDuration($marginDuration);
             }
 
@@ -438,7 +456,7 @@ class AdManager
         $ad->setResults(
             $this->resultManager->orderResults(
                 $this->resultManager->filterResults(
-                    $this->resultManager->createAdResults($outwardProposal),
+                    $this->resultManager->createAdResults($outwardProposal, $withSolidaries),
                     $ad->getFilters()
                 ),
                 $ad->getFilters()
@@ -580,14 +598,15 @@ class AdManager
 
     /**
      * Get an ad.
-     * Returns the ad, with its outward and return results.
+     * Returns the ad, eventually with its outward and return results.
      *
-     * @param int $id       The ad id to get
-     * @param array|null    The filters to apply to the results
-     * @param array|null    The order to apply to the results
+     * @param int $id               The ad id to get
+     * @param array|null $filters   The filters to apply to the results
+     * @param array|null $order     The order to apply to the results
+     * @param bool $createResults   Create the formatted results
      * @return Ad
      */
-    public function getAd(int $id, ?array $filters = null, ?array $order = null)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?bool $createResults = true)
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
@@ -606,25 +625,36 @@ class AdManager
             $ad->setUserId($proposal->getUser()->getId());
         }
         $ad->setCreatedDate($proposal->getCreatedDate());
-        $aFilters = [];
-        if (!is_null($filters)) {
-            $aFilters['filters']=$filters;
-        }
-        if (!is_null($order)) {
-            $aFilters['order']=$order;
-        }
-        $ad->setFilters($aFilters);
-        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ad->setResults(
-            $this->resultManager->orderResults(
-                $this->resultManager->filterResults(
-                    $this->resultManager->createAdResults($proposal),
+
+        if ($createResults) {
+            // default order
+            $aFilters = [
+                'order'=>[
+                    'criteria'=>'date',
+                    'value'=>'ASC'
+                ]
+
+            ];
+            if (!is_null($filters)) {
+                $aFilters['filters']=$filters;
+            }
+            if (!is_null($order)) {
+                $aFilters['order']=$order;
+            }
+            $ad->setFilters($aFilters);
+            $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $ad->setResults(
+                $this->resultManager->orderResults(
+                    $this->resultManager->filterResults(
+                        $this->resultManager->createAdResults($proposal),
+                        $ad->getFilters()
+                    ),
                     $ad->getFilters()
-                ),
-                $ad->getFilters()
-            )
-        );
-        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                )
+            );
+            $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
         return $ad;
     }
 
@@ -714,6 +744,17 @@ class AdManager
         // check if there's a linked proposal
         if ($proposal->getProposalLinked()) {
             $proposal->getProposalLinked()->setUser($this->security->getUser());
+        }
+        // we remove the self matchings eventually
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+            if ($matchingOffer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId()) {
+                $proposal->removeMatchingOffer($matchingOffer);
+            }
+        }
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            if ($matchingRequest->getProposal()->getUser()->getId() == $this->security->getUser()->getId()) {
+                $proposal->removeMatchingRequest($matchingRequest);
+            }
         }
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
@@ -877,8 +918,8 @@ class AdManager
         $schedule = [];
         if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
             // schedule needs data in asks results when the user that display the Ad is not the owner
-            $schedule = $askLinked
-               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal)
+            $schedule = (!is_null($askLinked))
+               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
                : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
             // if schedule is based on results, we do not need to update pickup times because it's already done in results
             if ($ad->getRole() === Ad::ROLE_PASSENGER && !is_null($matching) && $matching->getPickUpDuration() && !$askLinked) {
@@ -929,7 +970,7 @@ class AdManager
         return $schedule;
     }
 
-    public function getScheduleFromResults(Result $results, Proposal $proposal)
+    public function getScheduleFromResults(Result $results, Proposal $proposal, Matching $matching, int $userId)
     {
         if (!$proposal->getCriteria()->isDriver() && $results->getResultDriver()) {
             $outward = $results->getResultDriver()->getOutward();
@@ -938,7 +979,15 @@ class AdManager
             $outward = $results->getResultPassenger()->getOutward();
             $return = $results->getResultPassenger()->getReturn();
         } else {
-            return [];
+            // The user registered his proposal as driver and passenger.
+            // We need to know the role that he's playing in the matching
+            if ($matching->getProposalOffer()->getUser()->getId()==$userId) {
+                $outward = $results->getResultPassenger()->getOutward();
+                $return = $results->getResultPassenger()->getReturn();
+            } elseif ($matching->getProposalRequest()->getUser()->getId()==$userId) {
+                $outward = $results->getResultDriver()->getOutward();
+                $return = $results->getResultDriver()->getReturn();
+            }
         }
 
         // we clean up every days based on isDayCheck
@@ -1052,12 +1101,12 @@ class AdManager
      * Update an ad.
      *  /!\ Only minor data can be updated
      * Otherwise we delete and create new Ad
-     * @param Ad $ad
-     * @param string|null $mailSearchLink
+     * @param Ad $ad                The ad to update
+     * @param bool $withSolidaries  Return also the solidary asks
      * @return Ad
      * @throws \Exception
      */
-    public function updateAd(Ad $ad, ?string $mailSearchLink = null)
+    public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
         $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
@@ -1075,7 +1124,7 @@ class AdManager
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             $this->proposalManager->deleteProposal($proposal);
-            $ad = $this->createAd($ad, true);
+            $ad = $this->createAd($ad, true, $withSolidaries);
 
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()

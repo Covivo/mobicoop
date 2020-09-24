@@ -102,6 +102,7 @@ class UserManager
     private $translator;
     private $security;
     private $paymentProvider;
+    private $blockManager;
 
     // Default carpool settings
     private $chat;
@@ -144,6 +145,7 @@ class UserManager
         string $fakeFirstMail,
         string $fakeFirstToken,
         PaymentDataProvider $paymentProvider,
+        BlockManager $blockManager,
         array $domains
     ) {
         $this->entityManager = $entityManager;
@@ -172,6 +174,7 @@ class UserManager
         $this->fakeFirstToken = $fakeFirstToken;
         $this->domains = $domains;
         $this->paymentProvider = $paymentProvider;
+        $this->blockManager = $blockManager;
     }
 
     /**
@@ -647,6 +650,20 @@ class UserManager
                 'selected' => false
             ];
 
+            // We check if the user and it's carpooler are involved in a block
+            $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
+            $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+            $currentMessage['blockerId'] = null;
+            if (is_array($blocks) && count($blocks)>0) {
+                foreach ($blocks as $block) {
+                    if ($block->getUser()->getId() == $user->getId()) {
+                        // The blocker is the current User
+                        $currentMessage['blockerId'] = $user->getId();
+                        break;
+                    }
+                    $currentMessage['blockerId'] = $user2->getId();
+                }
+            }
             $messages[] = $currentMessage;
         }
         // Sort with the last message received first
@@ -723,6 +740,22 @@ class UserManager
                         "sunCheck" => $criteria->isSunCheck()
                     ]
                 ];
+
+                // We check if the user and it's carpooler are involved in a block
+                $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
+                $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+                $currentThread['blockerId'] = null;
+                if (is_array($blocks) && count($blocks)>0) {
+                    foreach ($blocks as $block) {
+                        if ($block->getUser()->getId() == $user->getId()) {
+                            // The blocker is the current User
+                            $currentThread['blockerId'] = $user->getId();
+                            break;
+                        }
+                        $currentThread['blockerId'] = $user2->getId();
+                    }
+                }
+
 
                 $messages[] = $currentThread;
             }
@@ -1266,9 +1299,11 @@ class UserManager
      *
      * @return User|null
      */
-    public function getPaymentProfile()
+    public function getPaymentProfile(User $user=null)
     {
-        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        if (is_null($user)) {
+            $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        }
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
         foreach ($paymentProfiles as $paymentProfile) {

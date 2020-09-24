@@ -8,7 +8,7 @@
           cols="4"
           md="5"
           align="center"
-          class="justify-center"
+          class="justify-center mt-10"
         >
           <iframe
             :src="$t('widget.externalRoute', {'id':community.id})"
@@ -39,7 +39,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";

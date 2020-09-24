@@ -97,5 +97,6 @@ export default {
   PlatformGetWidget,
   RelayPoints,
   ToolBox,
+  DayListChips,
   Payment
 }

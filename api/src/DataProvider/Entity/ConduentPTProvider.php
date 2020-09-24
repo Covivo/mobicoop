@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ class ConduentPTProvider implements ProviderInterface
     private const PT_MODE_WAITING = "Waiting";
 
     private const COUNTRY = "France";
-    private const NC = "NC";
+    private const NC = "";
 
     private const AUTH_RESSOURCE = "AUTH.API/auth";
     private const PROFILE_RESSOURCE = "MCP.ID.API/profiles";

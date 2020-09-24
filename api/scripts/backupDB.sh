@@ -1,8 +1,13 @@
 #!/bin/bash
 
-#################################
-# Backup the platform databases #
-#################################
+###########################################################
+#               Backup the platform databases             #
+#                                                         #
+# This script is used to backup ALL databases of a server #
+#           Do not use as a per-instance backup !         #
+#          The script has to be launched by a user        #
+#                with mariadb access                      #
+###########################################################
 
 # Date and time
 DATE=$(date +"%Y%m%d%H%M%S")
@@ -33,7 +38,7 @@ databases=`$MYSQL -u$MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW DATABASES;" | grep -E
 # Copy each database and gzip
 for db in $databases; do
 echo $db
-$MYSQLDUMP --force --opt --user=$MYSQL_USER -p$MYSQL_PASSWORD --skip-lock-tables --events --databases $db | gzip > "$BACKUP_DIR/$DATE/$db.sql.gz"
+$MYSQLDUMP $db --no-create-db --force --opt --user=$MYSQL_USER -p$MYSQL_PASSWORD --skip-lock-tables --events | gzip > "$BACKUP_DIR/$DATE/$db.sql.gz"
 done
 
 # Delete old backups

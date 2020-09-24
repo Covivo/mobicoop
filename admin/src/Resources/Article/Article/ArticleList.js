@@ -1,41 +1,36 @@
 import React from 'react';
 
-import {
-  List,
-  Datagrid,
-  EditButton,
-  TextField,
-  ReferenceManyField,
-  ChipField,
-  SingleFieldList,
-  SelectField,
-} from 'react-admin';
+import { List, Datagrid, ShowButton, TextField, SelectField, useTranslate } from 'react-admin';
 
-import { isAdmin } from '../../../auth/permissions';
+import SectionsField from './SectionsField';
 
-const statusChoices = [
-  { id: 0, name: "En cours d'édition" },
-  { id: 1, name: 'En ligne' },
-];
+import { isSuperAdmin } from '../../../auth/permissions';
 
-export const ArticleList = (props) => (
-  <List
-    {...props}
-    title="Articles > liste"
-    exporter={isAdmin()}
-    perPage={25}
-    sort={{ field: 'originId', order: 'ASC' }}
-  >
-    <Datagrid rowClick="show">
-      <TextField source="originId" label="ID" sortBy="id" />
-      <TextField source="title" label="Titre" />
-      <SelectField source="status" label="Status" choices={statusChoices} />
-      <ReferenceManyField label="Sections" reference="sections" target="article" sortable={false}>
-        <SingleFieldList linkType="show">
-          <ChipField source="title" />
-        </SingleFieldList>
-      </ReferenceManyField>
-      <EditButton />
-    </Datagrid>
-  </List>
-);
+export const ArticleList = (props) => {
+  const translate = useTranslate();
+  const statusChoices = [
+    { id: 0, name: translate('custom.label.article.label.draft') },
+    { id: 1, name: translate('custom.label.article.label.published') },
+  ];
+  return (
+    <List
+      {...props}
+      title={translate('custom.label.article.title.list')}
+      exporter={isSuperAdmin()}
+      perPage={25}
+      sort={{ field: 'originId', order: 'ASC' }}
+    >
+      <Datagrid>
+        <TextField source="originId" label="ID" sortBy="id" />
+        <TextField source="title" label={translate('custom.label.article.label.title')} />
+        <SelectField
+          source="status"
+          label={translate('custom.label.article.label.status')}
+          choices={statusChoices}
+        />
+        <SectionsField />
+        <ShowButton />
+      </Datagrid>
+    </List>
+  );
+};

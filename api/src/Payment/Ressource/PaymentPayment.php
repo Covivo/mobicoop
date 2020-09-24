@@ -94,6 +94,12 @@ class PaymentPayment
      */
     private $status;
 
+    /**
+     * @var string Secured form's url to process the electronic payement
+     * @Groups({"readPayment"})
+     */
+    private $redirectUrl;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -143,6 +149,18 @@ class PaymentPayment
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return $this->redirectUrl;
+    }
+
+    public function setRedirectUrl(string $redirectUrl): self
+    {
+        $this->redirectUrl = $redirectUrl;
 
         return $this;
     }

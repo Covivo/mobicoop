@@ -47,6 +47,8 @@ use App\Payment\Repository\CarpoolItemRepository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
+use App\User\Exception\BlockException;
+use App\User\Service\BlockManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -65,6 +67,7 @@ class AskManager
     private $security;
     private $carpoolItemRepository;
     private $paymentActive;
+    private $blockManager;
 
     /**
      * Constructor.
@@ -80,6 +83,7 @@ class AskManager
         LoggerInterface $logger,
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
+        BlockManager $blockManager,
         bool $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
@@ -91,6 +95,7 @@ class AskManager
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->paymentActive = $paymentActive;
+        $this->blockManager = $blockManager;
     }
 
     /**
@@ -452,7 +457,6 @@ class AskManager
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
         
-        
         if ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
             // dispatch en event
             // get the complete ad to have data for the email
@@ -478,6 +482,7 @@ class AskManager
         $ad->setAskId($askId);
         $ad->setAskStatus($ask->getStatus());
         $ad->setMatchingId($ask->getMatching()->getId());
+        $ad->setFrequency($ask->getMatching()->getCriteria()->getFrequency());
 
         // first pass for role
         switch ($ask->getStatus()) {
@@ -540,20 +545,29 @@ class AskManager
     {
         $ask = $this->askRepository->find($adId);
         
+        // We check if the two Users in the Ask are involved in a block
+        if ($this->blockManager->getInvolvedInABlock($ask->getUser(), $ask->getUserRelated())) {
+            throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
+        }
+
+
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
-        // - the opposite and return opposite if the role wasn't chosen
+        // - the opposite and return opposite if the role wasn't chosen (WE DON'T DO THAT ANYMORE)
         $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
         $ask->setStatus($ad->getAskStatus());
         if ($ask->getAskLinked()) {
             $ask->getAskLinked()->setStatus($ad->getAskStatus());
         }
-        if ($ask->getAskOpposite()) {
-            $ask->getAskOpposite()->setStatus($ad->getAskStatus());
-            if ($ask->getAskOpposite()->getAskLinked()) {
-                $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
-            }
-        }
+        
+        // UNCOMMENT TO UPDATE ALSO THE ASK OPPOSITE
+        // if ($ask->getAskOpposite()) {
+        //     $ask->getAskOpposite()->setStatus($ad->getAskStatus());
+        //     if ($ask->getAskOpposite()->getAskLinked()) {
+        //         $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
+        //     }
+        // }
+        
         if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
             // regular
             // we update the criteria of the master ask
@@ -772,56 +786,6 @@ class AskManager
         return $ad;
     }
 
-
-
-
-    /************
-    *   DYNAMIC *
-    *************/
-
-    /**
-     * Check if a user has a pending dynamic ad ask.
-     *
-     * @param User $user The user
-     * @return boolean
-     */
-    public function hasPendingDynamicAsk(User $user)
-    {
-        // first we get all the asks initiated by the user
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
-        // now we check if one of these asks is related to a dynamic ad, not finished
-        foreach ($asks as $ask) {
-            // if the user is passenger
-            if ($ask->getUser()->getId() == $user->getId() && $ask->getMatching()->getProposalRequest()->isDynamic() && !$ask->getMatching()->getProposalRequest()->isFinished()) {
-                return true;
-            }
-            // if the user is driver
-            if ($ask->getUserRelated()->getId() == $user->getId() && $ask->getMatching()->getProposalOffer()->isDynamic() && !$ask->getMatching()->getProposalOffer()->isFinished()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if a user has a refused dynamic ad ask related to a given matching.
-     *
-     * @param User $user The user
-     * @return boolean
-     */
-    public function hasRefusedDynamicAsk(User $user, Matching $matching)
-    {
-        // first we get all the asks initiated by the user and refused by the carpooler
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
-        // now we check if one of these asks is related to the given matching
-        foreach ($asks as $ask) {
-            if ($ask->getMatching()->getId() == $matching->getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Get the payment status of an Ask
      *
@@ -866,7 +830,7 @@ class AskManager
 
             // If the status is Unpaid, it's the same for driver or passenger
             if (!is_null($carpoolItem->getUnpaidDate())) {
-                //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                 $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
@@ -897,7 +861,7 @@ class AskManager
             $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
             foreach ($nonValidatedWeeks as $nonValidatedWeek) {
                 if (!is_null($nonValidatedWeek->getUnpaidDate())) {
-                    //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                     $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
                     $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
                     $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
@@ -927,14 +891,17 @@ class AskManager
         $startDate = $ask->getCriteria()->getFromDate();
         $toDate = $ask->getCriteria()->getToDate();
 
-        // We will check until last week (we set on today because de loop is executed until the current week equals the max week)
-        $maxDate = new \DateTime('now');
+        // we limit to the last day of the previous week
+        $maxDate = new \DateTime();
+        $maxDate->modify('last week +6 days');
+
+        $limitDate = min($maxDate, $toDate);
 
         // First we need an array where every element is a week that contains every days on the period
         $currentDate = clone $startDate;
-        $cpt = 0; // to prevent infinite loop
+
         $arrayWeeks = [];
-        while ($currentDate < $maxDate && $currentDate < $toDate && $cpt<=1000) {
+        while ($currentDate <= $limitDate) {
             $currentWeek = [];
             for ($i = 0 ; $i < 7 ; $i++) {
                 $currentWeek[] = clone $currentDate;
@@ -991,5 +958,55 @@ class AskManager
         $ask->setWeekItems($nonValidatedWeeks);
 
         return $ask;
+    }
+
+
+
+
+    /************
+    *   DYNAMIC *
+    *************/
+
+    /**
+     * Check if a user has a pending dynamic ad ask.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasPendingDynamicAsk(User $user)
+    {
+        // first we get all the asks initiated by the user
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
+        // now we check if one of these asks is related to a dynamic ad, not finished
+        foreach ($asks as $ask) {
+            // if the user is passenger
+            if ($ask->getUser()->getId() == $user->getId() && $ask->getMatching()->getProposalRequest()->isDynamic() && !$ask->getMatching()->getProposalRequest()->isFinished()) {
+                return true;
+            }
+            // if the user is driver
+            if ($ask->getUserRelated()->getId() == $user->getId() && $ask->getMatching()->getProposalOffer()->isDynamic() && !$ask->getMatching()->getProposalOffer()->isFinished()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a user has a refused dynamic ad ask related to a given matching.
+     *
+     * @param User $user The user
+     * @return boolean
+     */
+    public function hasRefusedDynamicAsk(User $user, Matching $matching)
+    {
+        // first we get all the asks initiated by the user and refused by the carpooler
+        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
+        // now we check if one of these asks is related to the given matching
+        foreach ($asks as $ask) {
+            if ($ask->getMatching()->getId() == $matching->getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

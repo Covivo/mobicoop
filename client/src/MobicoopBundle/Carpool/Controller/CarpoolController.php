@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Controller class for carpooling related actions.
@@ -76,13 +77,7 @@ class CarpoolController extends AbstractController
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
-        int $ptResults,
-        string $ptProvider,
-        string $ptKey,
-        string $ptAlgorithm,
-        string $ptDateCriteria,
-        string $ptMode,
-        string $ptUsername
+        int $ptResults
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -92,12 +87,6 @@ class CarpoolController extends AbstractController
         $this->platformName = $platformName;
         $this->carpoolRDEXJourneys = $carpoolRDEXJourneys;
         $this->ptResults = $ptResults;
-        $this->ptProvider = $ptProvider;
-        $this->ptKey = $ptKey;
-        $this->ptAlgorithm = $ptAlgorithm;
-        $this->ptDateCriteria = $ptDateCriteria;
-        $this->ptMode = $ptMode;
-        $this->ptUsername = $ptUsername;
         $this->publicTransportManager = $publicTransportManager;
         $this->participationText = $participationText;
     }
@@ -105,10 +94,18 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(AdManager $adManager, Request $request)
+    public function carpoolAdPost(AdManager $adManager, Request $request, UserManager $userManager)
     {
         $ad = new Ad();
         $this->denyAccessUnlessGranted('create_ad', $ad);
+
+        $user = $userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            $user = null;
+            return $this->redirectToRoute("user_login");
+        }
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -532,17 +529,11 @@ class CarpoolController extends AbstractController
             $date = new \DateTime($params['date']." 08:00:00", new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
-            $this->ptProvider,
-            $this->ptKey,
             $params['from_latitude'],
             $params['from_longitude'],
             $params['to_latitude'],
             $params['to_longitude'],
-            $date->format(\DateTime::RFC3339),
-            $this->ptDateCriteria,
-            $this->ptAlgorithm,
-            $this->ptMode,
-            $this->ptUsername
+            $date->format(\DateTime::RFC3339)
         );
         
         if (!is_null($journeys)) {

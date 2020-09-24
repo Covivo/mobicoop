@@ -3,7 +3,7 @@
     <v-chip
       :color="monColor"
       class="mr-1 justify-center"
-      :disabled="monDisabled || this.disabled"
+      :disabled="monDisabled || disabled"
       @click="clickDay(daysList[0])"
     >
       {{ dayName(daysList[0]) }}
@@ -11,7 +11,7 @@
     <v-chip
       :color="tueColor"
       class="mr-1 justify-center"
-      :disabled="tueDisabled || this.disabled"
+      :disabled="tueDisabled || disabled"
       @click="clickDay(daysList[1])"
     >
       {{ dayName(daysList[1]) }}
@@ -19,7 +19,7 @@
     <v-chip
       :color="wedColor"
       class="mr-1 justify-center"
-      :disabled="wedDisabled || this.disabled"
+      :disabled="wedDisabled || disabled"
       @click="clickDay(daysList[2])"
     >
       {{ dayName(daysList[2]) }}
@@ -27,7 +27,7 @@
     <v-chip
       :color="thuColor"
       class="mr-1 justify-center"
-      :disabled="thuDisabled || this.disabled"
+      :disabled="thuDisabled || disabled"
       @click="clickDay(daysList[3])"
     >
       {{ dayName(daysList[3]) }}
@@ -35,7 +35,7 @@
     <v-chip
       :color="friColor"
       class="mr-1 justify-center"
-      :disabled="friDisabled || this.disabled"
+      :disabled="friDisabled || disabled"
       @click="clickDay(daysList[4])"
     >
       {{ dayName(daysList[4]) }}
@@ -43,7 +43,7 @@
     <v-chip
       :color="satColor"
       class="mr-1 justify-center"
-      :disabled="satDisabled || this.disabled"
+      :disabled="satDisabled || disabled"
       @click="clickDay(daysList[5])"
     >
       {{ dayName(daysList[5]) }}
@@ -51,7 +51,7 @@
     <v-chip
       :color="sunColor"
       class="mr-1 justify-center"
-      :disabled="sunDisabled || this.disabled"
+      :disabled="sunDisabled || disabled"
       @click="clickDay(daysList[6])"
     >
       {{ dayName(daysList[6]) }}

@@ -38,7 +38,9 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Service\AdManager;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
+use App\Community\Resource\MCommunity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Community manager.
@@ -135,7 +137,7 @@ class CommunityManager
      * Get communities available for a user
      *
      * @param integer $userId The user id
-     * @return void
+     * @return array|null
      */
     public function getAvailableCommunitiesForUser(?int $userId)
     {
@@ -149,8 +151,8 @@ class CommunityManager
     /**
      * Get communities where a user is registered
      *
-     * @param integer $userId The user id
-     * @return void
+     * @param integer $userId   The user id
+     * @return array|null       The communities
      */
     public function getCommunitiesForUser(?int $userId)
     {
@@ -339,5 +341,35 @@ class CommunityManager
             $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
         }
         return $communityUser;
+    }
+
+
+    /*************************
+    *                        *
+    * MCommunity management  *
+    *                        *
+    **************************/
+
+    /**
+     * Get the MCommunities
+     *
+     * @param UserInterface $user   The current user
+     * @return array    The communities found
+     */
+    public function getMCommunities(UserInterface $user)
+    {
+        $mCommunities = [];
+        $communities = $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user->getId() : null, ['c.name' => 'asc']);
+        foreach ($communities as $community) {
+            /**
+             * @var Community $community
+             */
+            $mCommunity = new MCommunity();
+            $mCommunity->setId($community->getId());
+            $mCommunity->setName($community->getName());
+            $mCommunity->setValidationType($community->getValidationType());
+            $mCommunities[] = $mCommunity;
+        }
+        return $mCommunities;
     }
 }

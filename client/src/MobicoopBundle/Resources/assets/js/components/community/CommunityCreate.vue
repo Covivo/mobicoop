@@ -82,6 +82,7 @@
               <v-tooltip
                 left
                 color="info"
+                bottom
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field

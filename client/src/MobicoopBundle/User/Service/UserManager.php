@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
  * User management service.
@@ -526,44 +527,41 @@ class UserManager
         $this->dataProvider->setClass(Ad::class, Ad::RESOURCE_NAME);
         $response = $isAcceptedCarpools ? $this->dataProvider->getSpecialCollection("accepted") : $this->dataProvider->getCollection();
 
+        $ads = $response->getValue()->getMember();
+
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
         ];
+        /** @var Ad $ad */
+        foreach ($ads as $ad) {
+            $isAlreadyInArray = false;
 
-        $ads = $response->getValue()->getMember();
-
-        if (!is_null($ads)) {
-            foreach ($ads as $ad) {
-                /** @var Ad $ad */
-                $isAlreadyInArray = false;
-
-                if (isset($adsSanitized["ongoing"][$ad->getId()]) ||
-                    isset($adsSanitized["archived"][$ad->getId()])) {
-                    $isAlreadyInArray = true;
-                }
-
-                if ($isAlreadyInArray) {
-                    continue;
-                }
-
-                $now = (new \DateTime("now", new \DateTimeZone('Europe/Paris')))->format("Y-m-d H:i:s");
-    
-                // Carpool regular
-                if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
-                    $date = $ad->getOutwardLimitDate();
-                }
-                // Carpool punctual
-                else {
-                    $date= $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime();
-                }
-
-                $key = $date >= $now ? 'ongoing' : 'archived';
-                $adsSanitized[$key][$ad->getId()] = $ad;
+            if (isset($adsSanitized["ongoing"][$ad->getId()]) ||
+                isset($adsSanitized["archived"][$ad->getId()])) {
+                $isAlreadyInArray = true;
             }
+
+            if ($isAlreadyInArray) {
+                continue;
+            }
+
+            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+   
+            // Carpool regular
+            if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
+                $date = $ad->getOutwardLimitDate();
+            }
+            // Carpool punctual
+            else {
+                $date = \DateTime::createFromFormat('Y-m-d H:i:s', $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime());
+            }
+            $key = $date >= $now ? 'ongoing' : 'archived';
+            $adsSanitized[$key][$ad->getId()] = $ad;
         }
         return $adsSanitized;
     }
+
 
     /**
      * Cleaning the Matchings related to private Proposals
@@ -665,6 +663,7 @@ class UserManager
      */
     public function checkEmail(string $email)
     {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
     }
@@ -682,6 +681,25 @@ class UserManager
             if (count($users)==1) {
                 return $users[0]->getBankAccounts();
             }
+        }
+        return null;
+    }
+
+    /**
+     * Post a Block
+     * @param int $userId Id of the User to block
+     * @return Block|null
+     */
+    public function blockUser(int $userId)
+    {
+        $block = new Block();
+        $block->setUser(new User($userId));
+        
+        $this->dataProvider->setClass(Block::class);
+        $response = $this->dataProvider->post($block);
+        
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
         }
         return null;
     }

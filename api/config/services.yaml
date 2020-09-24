@@ -91,6 +91,7 @@ services:
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+            
     # CONTROLLERS AND SERVICES
 
     # Article
@@ -371,7 +372,10 @@ services:
             $dataUri: '%env(string:DATA_URI)%'
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
-
+    App\RelayPoint\Repository\RelayPointRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+            
     # Import
     App\Import\Controller\:
         resource: '../src/Import/Controller'
@@ -455,6 +459,8 @@ services:
         arguments:
             $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
+            $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
+            $exportPath: '%env(resolve:PAYMENT_EXPORT_PATH)%'
 
     # Price
     App\Price\Controller\:

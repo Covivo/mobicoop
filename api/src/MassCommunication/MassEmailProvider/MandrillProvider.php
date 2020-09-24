@@ -54,7 +54,7 @@ class MandrillProvider implements MassEmailProviderInterface
         foreach ($recipients as $email=>$context) {
             $to[] = [
                 'email' => $email,
-                'type' => 'to'
+                'type' => 'bcc'
             ];
             $vars = [];
             foreach ($context as $key=>$value) {
