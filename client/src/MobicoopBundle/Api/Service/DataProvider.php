@@ -34,8 +34,8 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Inflector\InflectorFactory;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -111,6 +111,7 @@ class DataProvider
     private $deserializer;
     private $format;
     private $cache;
+    private $inflector;
 
     /**
      * Constructor.
@@ -143,6 +144,7 @@ class DataProvider
         $this->session = $session;
         $this->private = false;
         $this->cache = new FilesystemAdapter();
+        $this->inflector = InflectorFactory::create()->build();
 
         // use the following for debugging token related problems !
         // $this->cache->deleteItem($this->tokenId.'.jwt.token');
@@ -978,7 +980,7 @@ class DataProvider
 
     private function pluralize(string $name): string
     {
-        return Inflector::pluralize(Inflector::tableize($name));
+        return $this->inflector->pluralize($this->inflector->tableize($name));
     }
 }
 
@@ -997,7 +999,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
 
         $data = parent::normalize($object, $format, $context);
         if (is_array($data)) {
-            return self::replaceIris(array_filter($data, function ($value) {
+            return $this->replaceIris(array_filter($data, function ($value) {
                 return (null !== $value) && (!(empty($value) && is_array($value)));
             }));
         }

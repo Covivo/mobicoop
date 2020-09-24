@@ -206,6 +206,7 @@ user_message_list:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
+
 user_message_list_new_thread_direct:
     methods: [POST]
     path:
@@ -243,6 +244,16 @@ user_message_actions_infos:
         fr: /utilisateur/messages/actions/infos
         en: /user/messages/actions/infos
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+user_message_carpool_selected:
+    path:
+        fr: /utilisateur/messages/covoiturage/{askId}
+        en: /user/messages/carpool/{askId}
+    defaults:
+        askId: ""    
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+    requirements:
+        askId: '\d+'           
 
 # send an internal message
 user_message_send:

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
   Show,
   TextField,
@@ -15,12 +14,10 @@ import {
   ReferenceManyField,
   useTranslate,
 } from 'react-admin';
-
 const statusChoices = [
   { id: 0, name: "En cours d'édition" },
   { id: 1, name: 'En ligne' },
 ];
-
 const AddParagraphButton = ({ record }) => (
   <Link
     to={{
@@ -31,7 +28,6 @@ const AddParagraphButton = ({ record }) => (
     <Button label="Ajouter un paragraphe" />
   </Link>
 );
-
 const EditParagraphButton = ({ record }) => (
   <Link
     to={{
@@ -42,7 +38,6 @@ const EditParagraphButton = ({ record }) => (
     <Button label="Modifier" />
   </Link>
 );
-
 export const SectionShow = (props) => {
   const translate = useTranslate();
   return (

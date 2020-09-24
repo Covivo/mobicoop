@@ -75,6 +75,14 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Community User Save Listener
+    mobicoop.community_user.community_user_save_listener:
+        class: App\Community\EventListener\CommunityUserSaveListener
+        arguments: ['@request_stack']
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+
     # Community Load Listener
     mobicoop.community.community_load_listener:
         class: App\Community\EventListener\CommunityLoadListener
@@ -203,6 +211,9 @@ services:
             $pushTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_PUSH_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+            $mailsEnabled: '%env(bool:resolve:NOTIFICATION_MAIL_ENABLED)%'
+            $smsEnabled: '%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%'
+            $pushEnabled: '%env(bool:resolve:NOTIFICATION_PUSH_ENABLED)%'
         tags:
             - { name: monolog.logger, channel: notification }
 

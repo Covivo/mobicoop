@@ -131,8 +131,11 @@ const GestionRoles = ({ record }) => {
   const handleAddPair = (indice, nature) => (e) => {
     const values = [...fields];
 
-    if (nature === 'roles') values[indice]['roles'] = e.target.value;
-    else values[indice]['territory'] = e.link;
+    if (nature === 'roles') {
+      values[indice]['roles'] = e.target.value;
+    } else {
+      values[indice]['territory'] = e.link;
+    }
 
     //Dont found better option than this : it alow to remove 'none' from the roles
     if (values[indice]['roles'][0] === 'none') {

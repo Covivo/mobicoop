@@ -11,6 +11,10 @@ export const usernameRenderer = ({ record }) => `${record.givenName} ${record.fa
 
 export const UserRenderer = ({ record }) => <span>{usernameRenderer({ record })} </span>;
 
+export const UserShortNameRenderer = ({ record }) => (
+  <span>{`${record.givenName} ${record.shortFamilyName}`} </span>
+);
+
 export const solidaryLabelRenderer = ({ record }) =>
   record.originId
     ? `#${record.originId} - ${record.displayLabel} ${

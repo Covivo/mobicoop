@@ -433,7 +433,7 @@ class Ad
     /**
      * @var int The ask id if the ad concerns a given ask.
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $askId;
 

@@ -67,7 +67,7 @@
       "destination":"Destination",
       "regular":"Trajet régulier",
       "search": {
-       "label": "Chercher les covoiturages correspondant"
+       "label": "Chercher les covoiturages correspondants"
       }
     },
     "urlCommunityUser":"/community-user",

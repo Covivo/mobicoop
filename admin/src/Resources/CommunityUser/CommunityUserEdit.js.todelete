@@ -10,7 +10,6 @@ import {
   AutocompleteInput,
 } from 'react-admin';
 
-import { UserRenderer } from '../../utils/renderers';
 import { statusChoices } from '../Community/communityChoices';
 
 const useStyles = makeStyles({
@@ -41,9 +40,10 @@ export const CommunityUserEdit = (props) => {
         <ReferenceInput
           label="Nouveau Membre"
           source="user"
-          reference="solidary_users"
+          reference="users"
           validate={required()}
           formClassName={classes.halfwidth}
+          filterToQuery={(searchText) => ({ familyName: [searchText] })}
         >
           {/* Should be like that : 
               <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>

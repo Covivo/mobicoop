@@ -49,6 +49,7 @@ export const CommunityUserCreate = (props) => {
           reference="users"
           validate={required()}
           formClassName={classes.halfwidth}
+          filterToQuery={(searchText) => ({ familyName: [searchText] })}
         >
           {/* Should be like that : 
               <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
