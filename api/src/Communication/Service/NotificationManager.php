@@ -78,6 +78,9 @@ class NotificationManager
     private $notificationRepository;
     private $userNotificationRepository;
     private $enabled;
+    private $mailsEnabled;
+    private $smsEnabled;
+    private $pushEnabled;
     private $translator;
     private $userManager;
     private $adManager;
@@ -100,6 +103,9 @@ class NotificationManager
         string $pushTitleTemplatePath,
         string $smsTemplatePath,
         bool $enabled,
+        bool $mailsEnabled,
+        bool $smsEnabled,
+        bool $pushEnabled,
         TranslatorInterface $translator,
         UserManager $userManager,
         AdManager $adManager
@@ -119,6 +125,9 @@ class NotificationManager
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
         $this->enabled = $enabled;
+        $this->mailsEnabled = $mailsEnabled;
+        $this->smsEnabled = $smsEnabled;
+        $this->pushEnabled = $pushEnabled;
         $this->translator = $translator;
         $this->userManager = $userManager;
         $this->adManager = $adManager;
@@ -170,16 +179,25 @@ class NotificationManager
                         $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
+                        if (!$this->mailsEnabled) {
+                            break;
+                        }
                         $this->notifyByEmail($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
+                        if (!$this->smsEnabled) {
+                            break;
+                        }
                         $this->notifyBySMS($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Sms notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
+                        if (!$this->pushEnabled) {
+                            break;
+                        }
                         $this->notifyByPush($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Push notification for $action / " . $recipient->getEmail());

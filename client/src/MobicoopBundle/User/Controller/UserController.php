@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
+use App\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -604,7 +605,7 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, Request $request, InternalMessageManager $messageManager)
+    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
         $user = $userManager->getLoggedUser();
 
@@ -615,13 +616,12 @@ class UserController extends AbstractController
 
         $this->denyAccessUnlessGranted('messages', $user);
         $data = $request->request;
-
         $newThread = null;
         $idThreadDefault = null;
         $idMessage = null;
         $idRecipient = null;
-        $idAsk= null;
-
+        $idAsk= $askId ? $askId : null;
+       
         if ($request->isMethod('POST')) {
             // if we ask for a specific thread then we return it
             if ($data->has("idAsk")) {

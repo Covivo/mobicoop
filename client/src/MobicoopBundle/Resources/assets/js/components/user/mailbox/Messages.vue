@@ -157,7 +157,7 @@
           </v-row>
           <v-row>
             <v-col
-              v-if="idMessage || newThread"
+              v-if="(idMessage && idMessage !== -2) || newThread"
               cols="12"
             >
               <type-text
@@ -283,7 +283,9 @@ export default {
         this.idRecipient = this.newThread.idRecipient;
       }
     }
-    if(this.givenIdAsk) this.refreshActions = true;
+    if(this.givenIdAsk) {
+      this.refreshActions = true;
+    }
   },
   methods: {
     updateDetails(data){
@@ -367,6 +369,7 @@ export default {
       
     },
     refreshSelected(data){
+     
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;

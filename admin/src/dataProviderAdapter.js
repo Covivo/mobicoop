@@ -220,7 +220,13 @@ const getOneUser = async (provider, params) => {
   // Sometimes, user.solidaryStructures is null, tw I force an array in this case
   user.solidaryStructures = (user.solidaryStructures || []).map((s) => s.id);
 
-  user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
+  // TODO : explanations needed.
+  // I do not understand this filter
+  // It should be managed in the form (disable read-only fiels).
+  // Otherwise it removes some data when updating teh user profile.
+  // user.rolesTerritory = rolesTerritory.filter((element) => userRoles.includes(element.authItem.id));
+  user.rolesTerritory = rolesTerritory;
+
   return { data: user };
 };
 

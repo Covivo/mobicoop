@@ -1224,7 +1224,11 @@ class User implements UserInterface, EquatableInterface
         if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
             return ".";
         }
-        return strtoupper($this->familyName[0]) . ".";
+
+        $familyName=utf8_decode($this->familyName);
+        $familyName=strtoupper($familyName[0]). ".";
+        $familyName=utf8_encode($familyName);
+        return $familyName;
     }
 
     public function getProName(): ?string

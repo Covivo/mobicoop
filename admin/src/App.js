@@ -72,7 +72,7 @@ export default () => (
         />,
         <Resource
           name="solidary_volunteers"
-          {...(can('solidary_volunteer_list') ? SolidaryUsersVolunteerResource : {})}
+          {...(can('solidary_manage') ? SolidaryUsersVolunteerResource : {})}
         />,
         <Resource name="solidaries" {...(can('solidary_manage') ? SolidaryResource : {})} />,
         <Resource
@@ -87,7 +87,7 @@ export default () => (
           name="solidary_searches"
           {...(can('solidary_manage') ? SolidarySearchResource : {})}
         />,
-        <Resource name="structures" {...(can('user_manage') ? StructureResource : {})} />,
+        <Resource name="structures" {...(can('solidary_manage') ? StructureResource : {})} />,
         <Resource name="addresses" />,
         <Resource name="images" />,
         <Resource name="needs" />,
