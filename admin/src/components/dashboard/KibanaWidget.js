@@ -57,8 +57,8 @@ const KibanaWidget = ({
         <CardContent>
           {(isAdmin() || hasPermission('dashboard_read')) && (
             <Grid container justify="space-between" style={{ marginBottom: 20 }}>
-              <Grid col>&nbsp;</Grid>
-              <Grid col>
+              <Grid item>&nbsp;</Grid>
+              <Grid item>
                 <Button variant="contained" color="primary" href="https://scope.mobicoop.io/">
                   Consulter les autres tableaux de bord
                 </Button>

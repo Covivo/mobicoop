@@ -15,7 +15,7 @@ import {
 } from 'react-admin';
 
 import FullNameField from '../User/FullNameField';
-import { hasCommunityEditRight } from '.';
+import { hasCommunityEditRight } from './hasCommunityEditRight';
 import { isAdmin, isSuperAdmin } from '../../auth/permissions';
 
 const CommunityFilter = (props) => (

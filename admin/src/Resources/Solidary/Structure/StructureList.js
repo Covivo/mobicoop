@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, EditButton } from 'react-admin';
 
-import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+import { isAdmin } from '../../../auth/permissions';
 
 export const StructureList = (props) => (
   <List
