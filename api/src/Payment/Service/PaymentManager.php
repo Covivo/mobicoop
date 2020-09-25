@@ -33,6 +33,7 @@ use App\Carpool\Repository\AskRepository;
 use App\DataProvider\Ressource\Hook;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Ressource\MangoPayKYC;
+use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
@@ -346,7 +347,7 @@ class PaymentManager
      * @param User $user
      * @return boolean
      */
-    public function checkValidForRegistrationToTheProvider(User $user): bool
+    public function checkValidForRegistrationToTheProvider(User $user, Address $homeAddress=null): bool
     {
         // We check if the user has a complete identify
         if (is_null($user->getGivenName()) || $user->getGivenName()=="" ||
@@ -356,18 +357,20 @@ class PaymentManager
             return false;
         }
         
-        
-        // We check if he has a complete home address otherwise, he can't register automatically
-        $address = null;
-        foreach ($user->getAddresses() as $address) {
-            if ($address->isHome()) {
-                $homeAddress = $address;
-                break;
-            }
-        }
-        
+
         if (is_null($homeAddress)) {
-            return false;
+            // We check if he has a complete home address otherwise, he can't register automatically
+            $address = null;
+            foreach ($user->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $homeAddress = $address;
+                    break;
+                }
+            }
+            
+            if (is_null($homeAddress)) {
+                return false;
+            }
         }
 
         if (
