@@ -344,7 +344,8 @@ class PaymentManager
     /**
      * Check if the User is valid for a registration to the provider
      *
-     * @param User $user
+     * @param User $user            The User to test
+     * @param Address $homeAddress  Ignore the home address of the user, use this address instead
      * @return boolean
      */
     public function checkValidForRegistrationToTheProvider(User $user, Address $homeAddress=null): bool
