@@ -381,7 +381,8 @@ class RdexManager
             $passenger = new RdexPassenger($result->getCarpooler()->getId());
             $passenger->setUuid($result->getCarpooler()->getId());
             $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
-            
+            $passenger->setPersons(0);
+
             if ($result->getCarpooler()->getGender()==1) {
                 $passenger->setGender('female');
             } else {
@@ -438,6 +439,9 @@ class RdexManager
             $infos = $this->buildJourneyDetails($result, $roleRequester, "outward");
             $journey->setDays($infos['days']);
             $journey->setOutward($infos['journey']);
+
+            // No waypoint handled for now
+            $journey->setNumberOfWaypoints(0);
 
             // If there is a return
             // TO DO : We don't treat return matching so we don't do it in RDEX also. Maybe one day...
