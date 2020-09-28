@@ -1606,7 +1606,7 @@ class ResultManager
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day>=7) {
+        if ($day>=8) {
             $day=$day-7;
         }
         $rdate = new \DateTime();
