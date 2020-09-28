@@ -1160,4 +1160,14 @@ class SolidaryUserManager
             }
         }
     }
+
+    /**
+     * Get all solidary users
+     * @param array $filters optionnal Filters on SolidaryUser
+     * @return SolidaryUser[]
+     */
+    public function getSolidaryUsers(array $filters=null)
+    {
+        return $this->solidaryUserRepository->findSolidaryUsers($filters);
+    }
 }
