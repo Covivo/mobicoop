@@ -427,7 +427,8 @@ class RdexManager
             
             // Metrics / Prices
             $journey->setDistance($distance);
-//            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
+            $journey->setDuration($resultItem->getOutward()->getNewDuration());
+            //            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
             $journey->setCost(['variable'=>$kilometersPrice]);
 
             // Frequency
@@ -445,10 +446,8 @@ class RdexManager
                 $journey->setReturn($infos['journey']);
             }
 
-            $journeys[] = $journey;
+            $returnArray[] = ['journeys'=>$journey];
         }
-
-        $returnArray[] = ['journeys'=>$journeys];
 
         return $returnArray;
     }
