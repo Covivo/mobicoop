@@ -700,16 +700,13 @@ class SolidaryManager
             // we set the schedule and the limit date of the regular demand
             $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
             $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
-            // Schedule
-            $schedule = [];
-            $days = $solidary->getDays();
-            foreach ($days as $day => $value) {
-                $schedule[0][$day] = $value;
-            }
-            $schedule[0]['outwardTime'] = $solidary->getOutwardDatetime()->format("H:i");
-            $schedule[0]['returnTime'] =$solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null;
 
-            $ad->setSchedule($schedule);
+            $days = $solidary->getDays();
+
+            // We build the schedule
+            $buildedSchedules = $this->buildSchedulesForAd($solidary->getDays(), $solidary->getOutwardTimes(), $solidary->getReturnTimes());
+
+            $ad->setSchedule($buildedSchedules);
         }
         // we set the margin time of the demand
         $ad->setMarginDuration($solidary->getMarginDuration() ? $solidary->getMarginDuration() : null);
@@ -743,6 +740,48 @@ class SolidaryManager
         return $this->adManager->createAd($ad);
     }
 
+    
+    /**
+     * Build a schedule for an Ad from the Solidary $days and $outwardTimes/$returnTimes
+     *
+     * @param array $days   Solidary days
+     * @param array $outwardTimes  Solidary $outwardTimes
+     * @param array $returnTimes  Solidary $returnTimesTimes
+     * @return array The builded schedules
+     */
+    private function buildSchedulesForAd(array $days, array $outwardTimes, ?array $returnTimes): array
+    {
+        $returnSchedules = [];
+        
+        foreach ($days as $day => $value) {
+            $alreadySet = false;
+            // Check if the day is checked
+            if ($value == 1) {
+                // Check if the current time has been already set in a sub schedule
+                foreach ($returnSchedules as $key => $outwardSchedule) {
+                    if ($outwardSchedule['outwardTime']==$outwardTimes[$day]) {
+                        $alreadySet = true;
+                        break;
+                    }
+                }
+
+                if ($alreadySet) {
+                    // Already set the time, we just keep the current day
+                    $returnSchedules[$key][$day] = true;
+                } else {
+                    // Not set already, we create a new sub schedule
+                    $returnSchedules[] = [
+                        "outwardTime" => (isset($outwardTimes[$day])) ? $outwardTimes[$day] : null,
+                        "returnTime" => (isset($returnTimes) && $returnTimes[$day]) ? $returnTimes[$day] : null,
+                        $day => true
+                    ];
+                }
+            }
+        }
+        
+        return $returnSchedules;
+    }
+    
     /**
      * We create the user associate to the solidary demand if the user is not already created
      * We also create the solidaryUser associated if necessary
