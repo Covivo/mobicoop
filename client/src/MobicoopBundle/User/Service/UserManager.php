@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
  * User management service.
@@ -528,8 +529,6 @@ class UserManager
 
         $ads = $response->getValue()->getMember();
 
-//        dump($ads);die;
-
         $adsSanitized = [
             "ongoing" => [],
             "archived" => []
@@ -547,7 +546,7 @@ class UserManager
                 continue;
             }
 
-            $now = (new \DateTime("now", new \DateTimeZone('Europe/Paris')))->format("Y-m-d H:i:s");
+            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
    
             // Carpool regular
             if ($ad->getFrequency() === Ad::FREQUENCY_REGULAR) {
@@ -555,9 +554,8 @@ class UserManager
             }
             // Carpool punctual
             else {
-                $date= $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime();
+                $date = \DateTime::createFromFormat('Y-m-d H:i:s', $ad->getReturnTime() ? $ad->getReturnTime() : $ad->getOutwardTime());
             }
-
             $key = $date >= $now ? 'ongoing' : 'archived';
             $adsSanitized[$key][$ad->getId()] = $ad;
         }
@@ -682,6 +680,25 @@ class UserManager
             if (count($users)==1) {
                 return $users[0]->getBankAccounts();
             }
+        }
+        return null;
+    }
+
+    /**
+     * Post a Block
+     * @param int $userId Id of the User to block
+     * @return Block|null
+     */
+    public function blockUser(int $userId)
+    {
+        $block = new Block();
+        $block->setUser(new User($userId));
+        
+        $this->dataProvider->setClass(Block::class);
+        $response = $this->dataProvider->post($block);
+        
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
         }
         return null;
     }

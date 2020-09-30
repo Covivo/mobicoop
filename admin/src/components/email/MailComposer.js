@@ -6,12 +6,14 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Modal, Grid, Button, TextField, Paper, CircularProgress, Fab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import RichTextInput from './RichTextInput';
 import ImageUpload from './ImageUpload';
 import CreateCampaignButton from './CreateCampaignButton';
 import SenderSelector from './SenderSelector';
 import { reducer, initialState } from './emailStore';
-import Tooltip from '@material-ui/core/Tooltip';
+import { useCurrentUser } from '../../auth/useCurrentUser';
 
 const useStyles = makeStyles((theme) => ({
   main_container: {
@@ -76,7 +78,10 @@ const MailComposer = ({
     MAIL_TEST_ENVOYE: 2,
     MAIL_MASSE_ENVOYE: 3,
   };
+
   const classes = useStyles();
+
+  const { user } = useCurrentUser();
   const [expediteur, setExpediteur] = useState(null);
   const [corpsMail, dispatch] = useReducer(reducer, initialState);
   const [objetMail, setObjetMail] = useState('');
@@ -185,13 +190,10 @@ const MailComposer = ({
         user: expediteur.id,
         name: objetMail,
         subject: objetMail,
-
         sendAll: sendAll !== null ? sendAll : null,
-
         fromName: expediteur.fromName,
         email: expediteur.replyTo,
         replyTo: expediteur.replyTo,
-
         body: JSON.stringify(corpsMail),
         status: 0,
         medium: '/media/2', // media#2 is email
@@ -207,10 +209,11 @@ const MailComposer = ({
     }
     options.headers.set('Authorization', `Bearer ${token}`);
 
-    fetchUtils.fetchJson(`${apiUrlTest}/${campagne.originId}`, options).then(({ json }) => ({
-      data: json,
-    }));
-    setCompteRendu('Le mail de test a été envoyé à ' + expediteur.replyTo);
+    fetchUtils.fetchJson(`${apiUrlTest}/${campagne.originId}`, options);
+    setCompteRendu(
+      user ? `Le mail de test a été envoyé à ${user.email}` : 'Le mail de test a été envoyé'
+    );
+
     setEtat(etats.MAIL_TEST_ENVOYE);
     setLoading(false);
   };
@@ -331,10 +334,10 @@ const MailComposer = ({
             className={classes.ligne}
             style={{
               /*
-                The MailComposer and SenderSelector components are not well designed...
-                So, not to break everything or loose precious time, I've juste hidden the sender selection row
-                The default expeditor is set when SenderSelector is mounting
-              */
+              The MailComposer and SenderSelector components are not well designed...
+              So, not to break everything or loose precious time, I've just hidden the sender selection row
+              The default expeditor is set when SenderSelector is mounting
+            */
               display: 'none',
             }}
           >

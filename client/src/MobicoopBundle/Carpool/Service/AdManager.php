@@ -202,7 +202,7 @@ class AdManager
      *
      * @param array $data           The data used to create the ask
      * @param boolean|null $formal  If the ask is formal
-     * @return void
+     * @return ad
      */
     public function createAsk(array $params, ?bool $formal=false)
     {
@@ -254,8 +254,6 @@ class AdManager
             $ad->setSchedule($schedule);
             $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $params['fromDate']));
             $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $params['toDate']));
-        } else {
-            // punctual or contact ask
         }
         
         // creation of the ad ask
@@ -264,10 +262,6 @@ class AdManager
         } else {
             $response = $this->dataProvider->post($ad, 'contact');
         }
-        if ($response->getCode() != 201) {
-            return $response->getValue();
-        }
-
         return $response->getValue();
     }
 

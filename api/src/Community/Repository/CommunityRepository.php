@@ -87,24 +87,37 @@ class CommunityRepository
      * Find available communities for a user
      * Available communities = communities free of registration or communities where the user is registered
      *
-     * @return void
+     * @param User|null $user       The user
+     * @param array|null $orderBy   The order of the results
+     * @return array    The communities found
      */
-    public function findAvailableCommunitiesForUser(?User $user)
+    public function findAvailableCommunitiesForUser(?User $user, ?array $orderBy = null)
     {
         if ($user) {
-            return $this->repository->createQueryBuilder('c')
+            $query = $this->repository->createQueryBuilder('c')
             ->leftJoin('c.communityUsers', 'cu')
             ->leftJoin('c.communitySecurities', 'cs')
             ->where("cs.id is null OR (cu.user = :user AND cu.status = :status)")
             ->setParameter('user', $user)
-            ->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
-            ->getQuery()->getResult();
+            ->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR);
+            if (is_array($orderBy)) {
+                foreach ($orderBy as $sort=>$order) {
+                    $query->addOrderBy($sort, $order);
+                }
+            }
+            return $query->getQuery()->getResult();
         }
-        return $this->repository->createQueryBuilder('c')
+
+        $query = $this->repository->createQueryBuilder('c')
         ->leftJoin('c.communityUsers', 'cu')
         ->leftJoin('c.communitySecurities', 'cs')
-        ->where("cs.id is null")
-        ->getQuery()->getResult();
+        ->where("cs.id is null");
+        if (is_array($orderBy)) {
+            foreach ($orderBy as $sort=>$order) {
+                $query->addOrderBy($sort, $order);
+            }
+        }
+        return $query->getQuery()->getResult();
     }
 
     /**
@@ -137,7 +150,7 @@ class CommunityRepository
     }
     
     /**
-    *Get communities owned by the user
+    * Get communities owned by the user
     *
     * @param Int $userId
     * @return void
@@ -157,7 +170,7 @@ class CommunityRepository
      * @param Community $community
      * @param User $user
      *
-     * @return void
+     * @return bool
      */
     public function isRegistered(Community $community, User $user)
     {

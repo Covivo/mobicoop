@@ -36,6 +36,7 @@ dev_deploy:
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/$$INSTANCE$$
     - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=$$INSTANCE$$"    # database migration and other after deploy works
+  when: manual      # /!\ important : job executed manually /!\  
   except:
     refs:
       - tags    # job not executed on tags

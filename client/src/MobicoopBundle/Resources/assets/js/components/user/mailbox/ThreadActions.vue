@@ -10,7 +10,7 @@
         flat
       >
         <threads-actions-buttons
-          :can-update-ask="infosComplete.canUpdateAsk"
+          :can-update-ask="infosComplete.canUpdateAsk && dataBlockerId==null"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
           :loading-btn="dataLoadingBtn"
@@ -37,6 +37,36 @@
       >
         {{ $t("userDelete") }}
       </v-card-text>
+
+      <div v-if="infosComplete.carpooler && !loading">
+        <v-btn
+          v-if="dataBlockerId==null"
+          class="ma-2"
+          rounded
+          text
+          color="error"
+          :loading="loadingBlock"
+          @click="block"
+        >
+          <v-icon left>
+            mdi-account-cancel-outline
+          </v-icon>
+          {{ $t('block') }}
+        </v-btn>
+        <v-btn
+          v-else
+          class="ma-2"
+          rounded
+          color="error"
+          :loading="loadingBlock"
+          @click="block"
+        >
+          <v-icon left>
+            mdi-account-cancel
+          </v-icon> {{ $t('blocked') }}
+        </v-btn>        
+      </div>
+
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
@@ -239,6 +269,10 @@ export default {
     recipientAvatar: {
       type: String,
       default: null
+    },
+    blockerId: {
+      type: Number,
+      default: null
     }
   },
   data(){
@@ -268,8 +302,9 @@ export default {
       outwardTrip:[],
       returnTrip:[],
       chosenRole:null,
-      hideClickIcon : false
-
+      hideClickIcon : false,
+      loadingBlock: false,
+      dataBlockerId: this.blockerId
     }
   },
   computed:{
@@ -294,6 +329,9 @@ export default {
     },
     loadingBtn(){
       this.dataLoadingBtn = this.loadingBtn;
+    },
+    blockerId(){
+      this.dataBlockerId = this.blockerId;
     }
   },
   created() {
@@ -468,7 +506,32 @@ export default {
     carpoolFromMatchingJourney(data){
       this.dialogRegular = false;
       this.$emit("updateStatusAskHistory",data);
+    },
+    block(){
+      
+      if( (this.dataBlockerId==null) || (this.dataBlockerId == this.idUser)){
+        this.loadingBlock = true;
+        let params = {
+          "blockedUserId":this.idRecipient
+        }
+        axios.post(this.$t("blockUrl"), params)
+          .then(response => {
+            if(this.dataBlockerId == null){
+              this.dataBlockerId = this.idUser;
+            }
+            else{
+              this.dataBlockerId = null;
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+          })
+          .finally(() => {
+            this.loadingBlock = false;
+          });      
+      }
     }
+
   }
 }
 </script>

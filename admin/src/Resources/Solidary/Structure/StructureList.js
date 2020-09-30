@@ -1,13 +1,13 @@
 import React from 'react';
 import { List, Datagrid, TextField, EditButton } from 'react-admin';
 
-import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+import { isAdmin } from '../../../auth/permissions';
 
 export const StructureList = (props) => (
   <List
     bulkActionButtons={false}
     {...props}
-    exporter={isSuperAdmin()}
+    exporter={isAdmin()}
     title="Structures accompagnantes > liste"
   >
     <Datagrid rowClick="show">

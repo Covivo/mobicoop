@@ -5,9 +5,10 @@
         <v-col class="col-9">
           <v-textarea
             v-model="textToSend"
+            :disabled="recipientBlockedId!==null"
             outlined
             name="typedMessage"
-            :label="$t('enterMessage')"
+            :label="recipientBlockedId==null ? $t('enterMessage') : $t('blocked')"
             background-color="#FFFFFF"
             rows="2"
           />
@@ -55,6 +56,10 @@ export default {
     },
     loading: {
       type: Boolean,
+      default: null
+    },
+    recipientBlockedId: {
+      type: Number,
       default: null
     }
   },

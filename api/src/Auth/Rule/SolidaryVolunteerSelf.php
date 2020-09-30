@@ -35,10 +35,9 @@ class SolidaryVolunteerSelf implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        return true;
-        // if (!isset($params['id'])) {
-        //     return false;
-        // }
-        // return $params['id'] == $requester->getId();
+        if (!isset($params['solidaryVolunteer'])) {
+            return false;
+        }
+        return $params['solidaryVolunteer']->getUser()->getId() == $requester->getId();
     }
 }

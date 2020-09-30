@@ -45,6 +45,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * A postal address (including textual informations and / or geometric coordinates).
  *
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE_LONGITUDE", columns={"latitude", "longitude"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={

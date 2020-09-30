@@ -2,31 +2,38 @@
 
 ############################################
 # Export the backups on an external volume #
+#           To be scheduled in cron        #
 ############################################
+
+for i in "$@"
+do
+case $i in
+    --source-dir=*)
+    SOURCE_DIR="${i#*=}"
+    shift
+    ;;
+    --prefix=*)
+    PREFIX="${i#*=}"
+    shift
+    ;;
+    --export-dir=*)
+    EXPORT_DIR="${i#*=}"
+    shift
+    ;;
+esac
+done
 
 # We will export all the backups with the current date
 DATE=$(date +"%Y%m%d")
 
-# Instance export dir destination
-#INSTANCE_EXPORT_DIR="/mnt/sdb1/backup/instance"
+# Retention days (backups older than retention days are removed)
+RETENTION=5
 
-# Mariadb export dir destination
-MARIADB_EXPORT_DIR="/mnt/sdb1/backup/mariadb"
+# Create backup dir if not exist
+mkdir -p $EXPORT_DIR
 
-# Coviride2MobicoopPlatform export dir destination
-C2MP_EXPORT_DIR="/mnt/sdb1/backup/coviride2mobicoopplatform"
+# Export backups
+cp -R $SOURCE_DIR/"$PREFIX$DATE"* $EXPORT_DIR
 
-# Instance backup dir 
-#INSTANCE_BACKUP_DIR="/backup/instance"
-
-# Mariadb backup dir 
-MARIADB_BACKUP_DIR="/home/ubuntu/backup/mariadb"
-
-# Coviride2MobicoopPlaform backup dir
-C2MP_BACKUP_DIR="/home/ubuntu/backup/coviride2mobicoopplatform"
-
-# Export mariadb backups
-cp -R $MARIADB_BACKUP_DIR/"$DATE"* $MARIADB_EXPORT_DIR
-
-# Export Coviride2MobicoopPlaform backups
-cp -R $C2MP_BACKUP_DIR $C2MP_EXPORT_DIR
+# Delete old backups on the export dirs
+find $EXPORT_DIR/* -mtime +$RETENTION -delete

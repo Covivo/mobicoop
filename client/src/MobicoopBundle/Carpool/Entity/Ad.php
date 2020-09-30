@@ -310,6 +310,13 @@ class Ad implements ResourceInterface, \JsonSerializable
     private $adId;
 
     /**
+     * @var int|null The ad id for which the current ad is an ask.
+     *
+     * @Groups({"post","put"})
+     */
+    private $askId;
+
+    /**
      * @var int|null The matching id related to the above ad id.
      *
      * @Groups({"post","put"})
@@ -910,6 +917,18 @@ class Ad implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getAskId(): ?int
+    {
+        return $this->askId;
+    }
+
+    public function setAskId(?int $askId): self
+    {
+        $this->askId = $askId;
+
+        return $this;
+    }
+
     public function getMatchingId(): ?int
     {
         return $this->matchingId;
@@ -1132,6 +1151,7 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'frequency' => $this->getFrequency(),
                 'potentialCarpoolers' => $this->getPotentialCarpoolers(),
                 'asks' => $this->getAsks(),
+                'askId' => $this->getAskId(),
                 'paymentStatus' => $this->getPaymentStatus(),
                 'paymentItemId' => $this->getPaymentItemId(),
                 'paymentItemWeek' => $this->getPaymentItemWeek(),

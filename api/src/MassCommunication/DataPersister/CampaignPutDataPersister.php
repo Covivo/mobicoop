@@ -48,7 +48,6 @@ final class CampaignPutDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        // We post a community, we add the role community_manager to the author
         return $data instanceof Campaign && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put' && $data->getSendAll() !== null;
     }
 
@@ -59,9 +58,7 @@ final class CampaignPutDataPersister implements ContextAwareDataPersisterInterfa
             throw new \InvalidArgumentException($this->translator->trans("bad campaign id is provided"));
         }
         //We send the campaign to all user who accept email
-
-        $data = $this->campaignManager->setDeliveriesCampaingToAll($data);
-
+        $data = $this->campaignManager->setDeliveriesCampaignToAll($data);
         return $data;
     }
 

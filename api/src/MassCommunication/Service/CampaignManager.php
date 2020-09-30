@@ -289,32 +289,41 @@ class CampaignManager
      * Maybye TODO : set a value in db to check if we already set the deliveries like isSetAll
      *
      * @param Campaign $campaign
-     * @return void
+     * @return Campaign
      */
-    public function setDeliveriesCampaingToAll(Campaign $campaign)
+    public function setDeliveriesCampaignToAll(Campaign $campaign)
     {
-        if ($campaign->getSendAll() == 0) {
-            //Get all user who accepted email
-            $allUsers = $this->userRepository->findBy(['newsSubscription'=> 1 ]);
+        // we use raw sql as the request can deal with a huge amount of data
+        $conn = $this->entityManager->getConnection();
+
+        // clear previously selected users (todo : check if it's really necessary !!!)
+        $sql = "DELETE FROM delivery where campaign_id = " . $campaign->getId();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        if ($campaign->getSendAll() === 0) {
+            // Associate the campaign to all users who accepted email
+            $now = new \DateTime();
+            $sql = "INSERT INTO delivery (campaign_id, user_id, status, created_date)
+            (SELECT " . $campaign->getId() . ",id,0,\"" . $now->format('Y-m-d H:i:s') . "\" FROM user WHERE news_subscription = 1)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $now = new \DateTime();
         } else {
             $community = $this->communityRepository->find($campaign->getSendAll());
             $allUsers = $this->userRepository->getUserInCommunity($community, true);
+            foreach ($allUsers as $user) {
+                $delivery = new Delivery();
+                $delivery->setUser($user);
+                $delivery->setCampaign($campaign);
+                $delivery->setStatus(0);
+                $this->entityManager->persist($delivery);
+            };
         }
 
-        //Clear previous selected
-        foreach ($campaign->getDeliveries() as $delivery) {
-            $this->entityManager->remove($delivery);
-        };
+        // we always flush to keep the possible update on the campaign properties
         $this->entityManager->flush();
-        
-        foreach ($allUsers as $user) {
-            $delivery = new Delivery();
-            $delivery->setUser($user);
-            $delivery->setCampaign($campaign);
-            $delivery->setStatus(0);
-            $this->entityManager->persist($delivery);
-        };
 
-        $this->entityManager->flush();
+        return $campaign;
     }
 }
