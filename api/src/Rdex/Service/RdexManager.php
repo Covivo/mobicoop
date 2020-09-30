@@ -381,7 +381,8 @@ class RdexManager
             $passenger = new RdexPassenger($result->getCarpooler()->getId());
             $passenger->setUuid($result->getCarpooler()->getId());
             $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
-            
+            $passenger->setPersons(0);
+
             if ($result->getCarpooler()->getGender()==1) {
                 $passenger->setGender('female');
             } else {
@@ -427,7 +428,8 @@ class RdexManager
             
             // Metrics / Prices
             $journey->setDistance($distance);
-//            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
+            $journey->setDuration($resultItem->getOutward()->getNewDuration());
+            //            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
             $journey->setCost(['variable'=>$kilometersPrice]);
 
             // Frequency
@@ -438,6 +440,9 @@ class RdexManager
             $journey->setDays($infos['days']);
             $journey->setOutward($infos['journey']);
 
+            // No waypoint handled for now
+            $journey->setNumberOfWaypoints(0);
+
             // If there is a return
             // TO DO : We don't treat return matching so we don't do it in RDEX also. Maybe one day...
             if (isset($parameters["return"]) && !is_null($parameters["return"]) && $result->hasReturn()) {
@@ -445,10 +450,8 @@ class RdexManager
                 $journey->setReturn($infos['journey']);
             }
 
-            $journeys[] = $journey;
+            $returnArray[] = ['journeys'=>$journey];
         }
-
-        $returnArray[] = ['journeys'=>$journeys];
 
         return $returnArray;
     }
