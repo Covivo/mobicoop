@@ -400,6 +400,29 @@ class UserController extends AbstractController
     }
 
     /**
+     * Export list of payments and carpools
+     */
+    public function exportListPaymentsAndCarpools (UserManager $userManager, Request $request, AdManager $adManager) {
+        $user = $userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+        # Carpools accepted
+        $carpools = $userManager->getAds(true);
+
+        $currentDate = date("d-m-Y");
+
+        // dd($carpools);
+        return $this->render('@Mobicoop/pdf/list/list-payment-carpool.html.twig', [
+            'user' => $user,
+            'carpools' => $carpools,
+            'currentDate' => $currentDate,
+        ]);
+    }
+
+    /**
      * User avatar delete.
      * Ajax
      */

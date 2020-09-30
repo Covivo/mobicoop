@@ -27,6 +27,28 @@
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
+              <v-row>
+                <v-col
+                  cols="8"
+                  class="font-weight-bold text-h5"
+                >
+                  Besoin d’une preuve de covoiturage ?
+                </v-col>
+                <v-col                   
+                  cols="8"
+                  class="font-italic text-caption"
+                >
+                  En cliquant sur «Exporter» vous pouvez télécharger tous vos covoiturages au format pdf ou csv.
+                </v-col>
+                <v-btn
+                  color="secondary"
+                  rounded
+                  href="/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
+                  width="175px"
+                >
+                  Exporter
+                </v-btn>
+              </v-row>
               <v-row
                 v-for="ad in localAds.archived"
                 :key="ad.id"

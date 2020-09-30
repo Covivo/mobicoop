@@ -121,6 +121,13 @@ user_profile_update:
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
+# list of payments and carpools
+list_payments_carpools:
+    path:
+        fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
+        en: /user/profile/update/accepted-carpools/export
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::exportListPaymentsAndCarpools
+
 # Delete user by anonymise
 user_delete:
     path:
