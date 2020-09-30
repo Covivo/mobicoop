@@ -108,6 +108,7 @@ urlUpdatePassword: "/utilisateur/mot-de-passe/reset/"
 yourPassword: "Votre mot de passe"
 successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
+changeYourPassword: "Changez votre mot de passe"
 
 # USER_REGISTERED
 inscriptionAt: "VOTRE INSCRIPTION EST VALIDÉE!"
