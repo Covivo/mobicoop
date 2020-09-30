@@ -598,14 +598,15 @@ class AdManager
 
     /**
      * Get an ad.
-     * Returns the ad, with its outward and return results.
+     * Returns the ad, eventually with its outward and return results.
      *
-     * @param int $id       The ad id to get
-     * @param array|null    The filters to apply to the results
-     * @param array|null    The order to apply to the results
+     * @param int $id               The ad id to get
+     * @param array|null $filters   The filters to apply to the results
+     * @param array|null $order     The order to apply to the results
+     * @param bool $createResults   Create the formatted results
      * @return Ad
      */
-    public function getAd(int $id, ?array $filters = null, ?array $order = null)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?bool $createResults = true)
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
@@ -625,33 +626,35 @@ class AdManager
         }
         $ad->setCreatedDate($proposal->getCreatedDate());
 
-        // default order
-        $aFilters = [
-            'order' => [
-                'criteria' => 'date',
-                'value' => 'ASC'
-            ]
+        if ($createResults) {
+            // default order
+            $aFilters = [
+                'order'=>[
+                    'criteria'=>'date',
+                    'value'=>'ASC'
+                ]
 
-        ];
-
-        if (!is_null($filters)) {
-            $aFilters['filters'] = $filters;
-        }
-        if (!is_null($order)) {
-            $aFilters['order'] = $order;
-        }
-        $ad->setFilters($aFilters);
-        $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $ad->setResults(
-            $this->resultManager->orderResults(
-                $this->resultManager->filterResults(
-                    $this->resultManager->createAdResults($proposal),
+            ];
+            if (!is_null($filters)) {
+                $aFilters['filters']=$filters;
+            }
+            if (!is_null($order)) {
+                $aFilters['order']=$order;
+            }
+            $ad->setFilters($aFilters);
+            $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $ad->setResults(
+                $this->resultManager->orderResults(
+                    $this->resultManager->filterResults(
+                        $this->resultManager->createAdResults($proposal),
+                        $ad->getFilters()
+                    ),
                     $ad->getFilters()
-                ),
-                $ad->getFilters()
-            )
-        );
-        $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                )
+            );
+            $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
         return $ad;
     }
 
@@ -741,6 +744,17 @@ class AdManager
         // check if there's a linked proposal
         if ($proposal->getProposalLinked()) {
             $proposal->getProposalLinked()->setUser($this->security->getUser());
+        }
+        // we remove the self matchings eventually
+        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
+            if ($matchingOffer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId()) {
+                $proposal->removeMatchingOffer($matchingOffer);
+            }
+        }
+        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
+            if ($matchingRequest->getProposal()->getUser()->getId() == $this->security->getUser()->getId()) {
+                $proposal->removeMatchingRequest($matchingRequest);
+            }
         }
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();

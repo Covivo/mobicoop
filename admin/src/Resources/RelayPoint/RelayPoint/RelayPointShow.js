@@ -14,14 +14,12 @@ import {
 } from 'react-admin';
 
 import { addressRenderer } from '../../../utils/renderers';
-import { ReferenceRecordIdMapper } from '../../../components/utils/ReferenceRecordIdMapper';
 
 const statusChoices = [
   { id: 0, name: 'En attente' },
   { id: 1, name: 'Actif' },
   { id: 2, name: 'Inactif' },
 ];
-const userOptionRenderer = (choice) => `${choice.givenName} ${choice.familyName}`;
 
 const RelayPointShow = (props) => {
   return (

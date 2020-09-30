@@ -125,6 +125,11 @@ services:
         tags:
             - { name: kernel.event_subscriber, event: kernel.request }        
 
+    # Event Subscriberer
+    Mobicoop\Bundle\MobicoopBundle\EventSubscriber\RequestSubscriber:
+        tags:
+            - { name: kernel.event_subscriber, event: kernel.request }
+
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
         resource: '@MobicoopBundle/ExternalJourney/Service/*'

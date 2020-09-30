@@ -170,6 +170,7 @@
                     cols="6"
                   >
                     <v-btn
+                      v-if="eventButtonDisplay"
                       type="button"
                       color="secondary"
                       rounded

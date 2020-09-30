@@ -60,6 +60,7 @@ api_platform:
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
+        - '%kernel.project_dir%/src/Community/Resource'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
         - '%kernel.project_dir%/src/Event/Entity'
         - '%kernel.project_dir%/src/Geography/Entity'
@@ -76,6 +77,7 @@ api_platform:
         - '%kernel.project_dir%/src/Solidary/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'
+        - '%kernel.project_dir%/src/User/Ressource'
         - '%kernel.project_dir%/src/Utility/Entity'
         
     formats:

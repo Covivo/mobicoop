@@ -21,7 +21,6 @@ import {
   useTranslate,
   useRedirect,
   List,
-  ReferenceField,
   AutocompleteInput,
   ImageField,
 } from 'react-admin';
@@ -31,7 +30,8 @@ import RichTextInput from 'ra-input-rich-text';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 
-import { UserShortNameRenderer, addressRenderer } from '../../utils/renderers';
+//import { UserShortNameRenderer, addressRenderer } from '../../utils/renderers';
+import { addressRenderer } from '../../utils/renderers';
 import GeocompleteInput from '../../components/geolocation/geocomplete';
 import { validationChoices } from './communityChoices';
 import SelectNewStatus from '../CommunityUser/SelectNewStatus';
@@ -224,7 +224,7 @@ export const CommunityEdit = (props) => {
             source="user.id"
             label={translate('custom.label.community.createdBy')}
             reference="users"
-            formClassName={classes.inlineBlock}
+            filterToQuery={(searchText) => ({ familyName: [searchText] })}
           >
             <SelectInput optionText={<UserShortNameRenderer />} />
           </ReferenceInput>

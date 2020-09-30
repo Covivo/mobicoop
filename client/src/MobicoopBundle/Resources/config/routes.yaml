@@ -79,6 +79,14 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
+# community list (AJAX)
+user_sign_up_community_list:
+    methods: [POST]
+    path:
+        fr: /utilisateur/inscription/liste-des-communautes
+        en: /user/register/community-list
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityListForRegistration
+
 user_sign_up_result:
     path:
         fr: /utilisateur/inscription/{proposalId}
@@ -192,6 +200,7 @@ user_message_list:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
+
 user_message_list_new_thread_direct:
     methods: [POST]
     path:
@@ -229,6 +238,16 @@ user_message_actions_infos:
         fr: /utilisateur/messages/actions/infos
         en: /user/messages/actions/infos
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
+
+user_message_carpool_selected:
+    path:
+        fr: /utilisateur/messages/covoiturage/{askId}
+        en: /user/messages/carpool/{askId}
+    defaults:
+        askId: ""    
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+    requirements:
+        askId: '\d+'           
 
 # send an internal message
 user_message_send:
@@ -301,6 +320,13 @@ user_created_events:
         en: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
+# Get events created by a user (POST)
+user_block:
+    methods: [POST]
+    path:
+        fr: /user/block
+        en: /user/block
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
 ##################
 # carpool routes #

@@ -63,6 +63,7 @@ use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
@@ -76,6 +77,7 @@ use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
  * Custom deserializer service.
@@ -192,6 +194,12 @@ class Deserializer
                 break;
             case Ask::class:
                 return $this->deserializeAsk($data);
+                break;
+            case Block::class:
+                return $this->deserializeBlock($data);
+                break;
+            case MCommunity::class:
+                return $this->deserializeMCommunity($data);
                 break;
             default:
                 break;
@@ -846,6 +854,21 @@ class Deserializer
         $ask = $this->autoSet($ask, $data);
 
         return $ask;
+    }
+
+    private function deserializeBlock(array $data) : ?Block
+    {
+        $block = new Block();
+        $block = $this->autoSet($block, $data);
+
+        return $block;
+    }
+
+    private function deserializeMCommunity(array $data): ?MCommunity
+    {
+        $mCommunity = new MCommunity();
+        $mCommunity = $this->autoSet($mCommunity, $data);
+        return $mCommunity;
     }
 
     private function autoSet($object, $data)

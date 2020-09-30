@@ -327,18 +327,6 @@ class RdexManager
          * @var Result $result
          */
         foreach ($ad->getResults() as $result) {
-            $journey = new RdexJourney($result->getId());
-            $journey->setOperator($this->operator->getName());
-            $journey->setOrigin($this->operator->getOrigin());
-
-            // for now we use the default language as languages are not handled yet
-            $journey->setUrl($this->operator->getUrl() . str_replace('{' . self::EXTERNAL_ID_EXPR . '}', $ad->getExternalId(), $this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
-            
-            $journey->setType(RdexJourney::TYPE_ONE_WAY);
-            if ($result->hasReturn()) {
-                $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
-            }
-
             $carpoolerIsDriver = false;
             $carpoolerIsPassenger = false;
             $resultItem = null;
@@ -358,6 +346,19 @@ class RdexManager
             } else {
                 continue;
             }
+
+            $journey = new RdexJourney($resultItem->getOutward()->getProposalId());
+            $journey->setOperator($this->operator->getName());
+            $journey->setOrigin($this->operator->getOrigin());
+
+            // for now we use the default language as languages are not handled yet
+            $journey->setUrl($this->operator->getUrl() . str_replace('{' . self::EXTERNAL_ID_EXPR . '}', $ad->getExternalId(), $this->operator->getResultRoute()[self::DEFAULT_LANGUAGE]));
+            
+            $journey->setType(RdexJourney::TYPE_ONE_WAY);
+            if ($result->hasReturn()) {
+                $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
+            }
+
 
             $driver = new RdexDriver($result->getCarpooler()->getId());
             $driver->setUuid($result->getCarpooler()->getId());
@@ -380,7 +381,8 @@ class RdexManager
             $passenger = new RdexPassenger($result->getCarpooler()->getId());
             $passenger->setUuid($result->getCarpooler()->getId());
             $passenger->setAlias($result->getCarpooler()->getGivenName()." ".$result->getCarpooler()->getShortFamilyName());
-            
+            $passenger->setPersons(0);
+
             if ($result->getCarpooler()->getGender()==1) {
                 $passenger->setGender('female');
             } else {
@@ -426,7 +428,8 @@ class RdexManager
             
             // Metrics / Prices
             $journey->setDistance($distance);
-//            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
+            $journey->setDuration($resultItem->getOutward()->getNewDuration());
+            //            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
             $journey->setCost(['variable'=>$kilometersPrice]);
 
             // Frequency
@@ -437,6 +440,9 @@ class RdexManager
             $journey->setDays($infos['days']);
             $journey->setOutward($infos['journey']);
 
+            // No waypoint handled for now
+            $journey->setNumberOfWaypoints(0);
+
             // If there is a return
             // TO DO : We don't treat return matching so we don't do it in RDEX also. Maybe one day...
             if (isset($parameters["return"]) && !is_null($parameters["return"]) && $result->hasReturn()) {
@@ -444,10 +450,8 @@ class RdexManager
                 $journey->setReturn($infos['journey']);
             }
 
-            $journeys[] = $journey;
+            $returnArray[] = ['journeys'=>$journey];
         }
-
-        $returnArray[] = ['journeys'=>$journeys];
 
         return $returnArray;
     }
