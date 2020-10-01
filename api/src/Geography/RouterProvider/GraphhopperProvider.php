@@ -287,17 +287,18 @@ class GraphhopperProvider implements GeorouterInterface
                 $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
                 // call external script
-                $this->logger->debug('Multiple Async | Call external script start : ' . $this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1');
+                $this->logger->debug('Multiple Async | Call external script start : ' . $this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1 | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $return = exec($this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1', $out, $err);
                 // $filenameReturn = $filename . ".log";
                 // $fpr = fopen($filenameReturn, 'w');
                 // fwrite($fpr, print_r($out, true));
                 // fwrite($fpr, 'status : ' . $err);
                 // fclose($fpr);
-                $this->logger->debug('Multiple Async | Call external script end');
+                $this->logger->debug('Multiple Async | Call external script end | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // treat the response
                 // $this->print_mem(4);
 
+                // note : we use JsonMachine as it's way more efficient than json_decode, but be careful the resulting object is an Iterable, not a Countable => only foreach possible !
                 $response = \JsonMachine\JsonMachine::fromFile($filename);
 
                 // $this->print_mem(5);
@@ -305,7 +306,7 @@ class GraphhopperProvider implements GeorouterInterface
                 switch ($this->returnType) {
                     case self::RETURN_TYPE_OBJECT:
                     {
-                        $this->logger->debug('Multiple Async | Start deserialize routes');
+                        $this->logger->debug('Multiple Async | Start deserialize routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         foreach ($response as $key=>$paths) {
                             if (is_array($paths)) {
                                 foreach ($paths as $path) {
@@ -313,12 +314,12 @@ class GraphhopperProvider implements GeorouterInterface
                                 }
                             }
                         }
-                        $this->logger->debug('Multiple Async | End deserialize routes');
+                        $this->logger->debug('Multiple Async | End deserialize routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         break;
                     }
                     case self::RETURN_TYPE_ARRAY:
                     {
-                        $this->logger->debug('Multiple Async | Start treat array routes');
+                        $this->logger->debug('Multiple Async | Start treat array routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         foreach ($response as $key=>$paths) {
                             // we search the first and last elements for the bearing
                             reset($multiPoints[$requestsOwner[$key]][0]);
@@ -346,7 +347,7 @@ class GraphhopperProvider implements GeorouterInterface
                                 }
                             }
                         }
-                        $this->logger->debug('Multiple Async | End treat array routes');
+                        $this->logger->debug('Multiple Async | End treat array routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         $paths = null;
                         unset($paths);
                         break;
@@ -381,7 +382,7 @@ class GraphhopperProvider implements GeorouterInterface
                 unset($response);
                 gc_collect_cycles();
                 $this->print_mem(7);
-                $this->logger->debug('Multiple Async | Exchange file deletion');
+                $this->logger->debug('Multiple Async | Exchange file deletion | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 unlink($filename);
                 break;
             }

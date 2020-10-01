@@ -600,9 +600,9 @@ class ProposalMatcher
             // criteria
             $matchingCriteria = new Criteria();
             $matchingCriteria->setDriver(true);
-            $direction = $matching->getFilters()['direction'];
-            $direction->setSaveGeoJson(false);
-            $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+            // $direction = $matching->getFilters()['direction'];
+            // $direction->setSaveGeoJson(false);
+            // $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
             $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
             $matchingCriteria->setAnyRouteAsPassenger(true);
@@ -1784,7 +1784,7 @@ class ProposalMatcher
                 // criteria
                 $matchingCriteria = new Criteria();
                 $matchingCriteria->setDriver(true);
-                $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+                // $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
                 $matchingCriteria->setAnyRouteAsPassenger(true);

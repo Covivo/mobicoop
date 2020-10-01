@@ -120,6 +120,7 @@ class AdManager
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true)
     {
+        // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         $outwardProposal = new Proposal();
@@ -152,11 +153,11 @@ class AdManager
 
         // SOLIDARY TEMPORARY FIX
         // if the poster is solidary manager, we assume the Ad is solidary
-        if (isset($user)) {
-            if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
-                $ad->setSolidary(true);
-            }
-        }
+        // if (isset($user)) {
+        //     if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
+        //         $ad->setSolidary(true);
+        //     }
+        // }
 
         // the proposal is private if it's a search only ad
         $outwardProposal->setPrivate($ad->isSearch() ? true : false);

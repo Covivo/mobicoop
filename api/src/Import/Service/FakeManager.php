@@ -246,7 +246,10 @@ class FakeManager
                 $ad->setOutwardWaypoints([$origin->getAddress()->jsonSerialize(),$destination->getAddress()->jsonSerialize()]);
 
                 if (!$ad->isOneWay()) {
-                    // only regular ads have return trips fro now
+                    if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                        $ad->setReturnDate($this->getRandomDate($ad->getOutwardDate()->format('Y-m-d'), self::MAX_DATE));
+                        $ad->setReturnTime($this->getRandomTime(self::MIN_TIME, self::MAX_TIME)->format("H:i"));
+                    }
                     $ad->setReturnDate(\Datetime::createFromFormat('Y-m-d', self::MIN_DATE));
                     $ad->setReturnLimitDate(\Datetime::createFromFormat('Y-m-d', self::MAX_DATE));
                 }

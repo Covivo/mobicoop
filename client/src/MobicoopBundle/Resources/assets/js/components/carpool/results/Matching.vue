@@ -447,6 +447,15 @@ export default {
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
   },
+  beforeUpdate() {
+    console.log("beforeUpdate");
+  },
+  updated() {
+    console.log("updated");
+  },
+  beforeDestroy() {
+    console.log("beforeDestroy");
+  },
   methods :{
     carpool(carpool) {
       this.result = carpool;
