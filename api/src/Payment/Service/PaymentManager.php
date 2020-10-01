@@ -317,6 +317,8 @@ class PaymentManager
                     $paymentItem->setCanPayElectronically(true);
                 }
             } else {
+                echo "heu...non";
+                die;
                 // The user has a payment profile. It means that he already has an account and a wallet to the provider
                 $paymentItem->setCanPayElectronically(true);
             }
