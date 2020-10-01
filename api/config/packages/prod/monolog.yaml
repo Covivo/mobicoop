@@ -4,7 +4,7 @@ monolog:
             type:               fingers_crossed
             action_level:       info
             handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]
         grouped:
             type:               group
             members:            [streamed]
@@ -70,6 +70,11 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/notification.log"
             channels: [notification]     
+        faker:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker]
         console:
             type: console
             process_psr_3_messages: false

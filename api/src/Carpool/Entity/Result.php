@@ -78,7 +78,7 @@ class Result
 
     /**
      * @var boolean True if the origin is the first waypoint of the journey.
-     * @Groups("results")
+     * Groups("results")
      */
     private $originFirst;
 
@@ -90,31 +90,31 @@ class Result
 
     /**
      * @var boolean True if the destination is the last point of the journey.
-     * @Groups("results")
+     * Groups("results")
      */
     private $destinationLast;
 
     /**
      * @var Address The origin address of the driver.
-     * @Groups("results")
+     * Groups("results")
      */
     private $originDriver;
 
     /**
      * @var Address The destination address of the driver.
-     * @Groups("results")
+     * Groups("results")
      */
     private $destinationDriver;
 
     /**
      * @var Address The origin address of the passenger.
-     * @Groups("results")
+     * Groups("results")
      */
     private $originPassenger;
 
     /**
      * @var Address The destination address of the passenger.
-     * @Groups("results")
+     * Groups("results")
      */
     private $destinationPassenger;
 

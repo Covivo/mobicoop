@@ -323,7 +323,7 @@ services:
             $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
             $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
-            - { name: monolog.logger, channel: georouter }
+            - { name: monolog.logger, channel: carpool }
 
     App\Geography\Service\GeoTools:
         arguments:
@@ -399,6 +399,10 @@ services:
             $sqlLog: '%env(bool:IMPORT_SQL_LOG)%'
             $directionsBatch: '%env(int:IMPORT_USERS_DIRECTIONS_BATCH_SIZE)%'
     
+    App\Import\Service\FakeManager:
+        tags:
+            - { name: monolog.logger, channel: faker }
+    
     # Mass Communication
     App\MassCommunication\Controller\:
         resource: '../src/MassCommunication/Controller'
@@ -419,7 +423,7 @@ services:
 
     App\Match\Service\GeoMatcher:
         tags:
-            - { name: monolog.logger, channel: geomatcher }
+            - { name: monolog.logger, channel: carpool }
 
     App\Match\Service\MassImportManager:
         arguments:

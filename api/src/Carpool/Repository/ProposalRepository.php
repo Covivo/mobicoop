@@ -26,8 +26,6 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
-use App\Geography\Service\ZoneManager;
-use App\Geography\Entity\Direction;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
@@ -43,26 +41,23 @@ class ProposalRepository
     const METERS_BY_DEGREE = 111319;            // value of a degree in metres, at the equator
     const BEARING_RANGE = 10;                   // if used, only accept proposal where the bearing direction (cape) is not at the opposite, more or less the range degrees
                                                 // for example, if the bearing is 0 (S->N), the proposals where the bearing is between 170 and 190 (~ N->S) are excluded
-    const PASSENGER_PROPORTION = 0.3;           // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 20% of the driver distance
+    const PASSENGER_PROPORTION = 0.3;           // minimum passenger distance relative to the driver distance, eg passenger distance should be at least 30% of the driver distance
     const MAX_DISTANCE_PUNCTUAL = 0.2;          // percentage of the driver direction to compute the max distance between driver and passenger directions (punctual)
     const MAX_DISTANCE_REGULAR = 0.2;           // percentage of the driver direction to compute the max distance between driver and passenger directions (regular)
     const DISTANCE_RATIO = 100000;              // ratio to use when computing distance filter (used to convert geographic degrees to metres)
 
-    const USE_ZONES = false;                    // use the ~common zones~ filtering
     const USE_BEARING = true;                   // use the ~bearing check~ filtering
     const USE_BBOX = true;                      // use the ~bbox check~ filtering (check if the (extended) bounding box of the proposals intersect)
     const USE_PASSENGER_PROPORTION = true;      // use the ~passenger distance proportion~
     const USE_DISTANCE = true;                  // use the ~distance between the driver and the passenger~ filtering
 
     private $repository;
-    private $zoneManager;
     private $userManager;
     private $geoTools;
     
-    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager, GeoTools $geoTools)
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoTools $geoTools)
     {
         $this->repository = $entityManager->getRepository(Proposal::class);
-        $this->zoneManager = $zoneManager;
         $this->userManager = $userManager;
         $this->geoTools = $geoTools;
     }
@@ -160,15 +155,8 @@ class ProposalRepository
         ->leftJoin('p.communities', 'co')
         ;
 
-        if (self::USE_ZONES) {
-            $query->leftJoin('dp.zones', 'zp');
-        }
-
         if (!$driversOnly) {
             $query->leftJoin('c.directionDriver', 'dd');
-            if (self::USE_ZONES) {
-                $query->leftJoin('dd.zones', 'zd');
-            }
         }
 
         // do we exclude the user itself if the proposal isn't anonymous ?
@@ -239,18 +227,6 @@ class ProposalRepository
                 $proposal->getCriteria()->setDirectionDriver($proposal->getProposalLinked()->getCriteria()->getDirectionDriver());
             }
             $zonePassengerWhere = "";
-            if (self::USE_ZONES) {
-                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionDriver());
-                $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getZones();
-                $zones = [];
-                foreach ($zonesAsDriver as $zone) {
-                    if ($zone->getThinness() == $precision) {
-                        $zones[] = $zone->getZoneid();
-                    }
-                }
-                $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
-                $query->setParameter('thinnessPassenger', $precision);
-            }
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
             if (self::USE_BEARING) {
@@ -329,18 +305,6 @@ class ProposalRepository
         }
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
             $zoneDriverWhere = "";
-            if (self::USE_ZONES) {
-                $precision = $this->getPrecision($proposal->getCriteria()->getDirectionPassenger());
-                $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
-                $zones = [];
-                foreach ($zonesAsPassenger as $zone) {
-                    if ($zone->getThinness() == $precision) {
-                        $zones[] = $zone->getZoneid();
-                    }
-                }
-                $zoneDriverWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
-                $query->setParameter('thinnessDriver', $precision);
-            }
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
             if (self::USE_BEARING && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
@@ -884,7 +848,7 @@ class ProposalRepository
         }
         // var_dump($punctualAndWhere);
         // var_dump($regularAndWhere);
-        // var_dump($query->getQuery()->getSql());die;
+        // var_dump($query->getQuery()->getSql());
         // foreach ($query->getQuery()->getParameters() as $parameter) {
         //     echo $parameter->getName() . " " . $parameter->getValue();
         // }
@@ -943,113 +907,6 @@ class ProposalRepository
         ];
     }
 
-    // public function filterByDirectionDeltaDistance(Proposal $proposal, $proposals, $driversOnly=false)
-    // {
-    //     $query = $this->repository->createQueryBuilder('p')
-    //     ->select('p.id')
-    //     ->distinct()
-    //     ->join('p.criteria', 'c')
-    //     ->leftJoin('c.directionPassenger', 'dp')
-    //     ->leftJoin('c.directionDriver', 'dd')
-    //     ->where('p.id IN (:proposalsId)')
-    //     ->setParameter('proposalsId', array_keys($proposals));
-
-    //     $wherePassenger = '';
-    //     if ($proposal->getCriteria()->isDriver()) {
-    //         $query
-    //         ->join('\App\Geography\Entity\Direction', 'dirDri')
-    //         ->andWhere('dirDri.id = :dirDriId');
-    //         $wherePassenger = "ST_Distance(dirDri.geoJsonDetail,dp.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
-    //         $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
-    //     }
-    //     $whereDriver = '';
-    //     if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
-    //         $query
-    //         ->join('\App\Geography\Entity\Direction', 'dirPas')
-    //         ->andWhere('dirPas.id = :dirPasId');
-    //         $whereDriver = "ST_Distance(dirPas.geoJsonDetail,dd.geoJsonDetail)<=".(self::DISTANCE/self::DISTANCE_RATIO);
-    //         $query->setParameter('dirPasId', $proposal->getCriteria()->getDirectionPassenger()->getId());
-    //     }
-
-    //     // we search if the user can be passenger and/or driver
-    //     if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
-    //         $query->andWhere('((c.driver = 1 and ' . $whereDriver . ') OR (c.passenger = 1 and ' . $wherePassenger . '))');
-    //     } elseif ($proposal->getCriteria()->isDriver()) {
-    //         $query->andWhere('(c.passenger = 1 and ' . $wherePassenger . ')');
-    //     } elseif ($proposal->getCriteria()->isPassenger()) {
-    //         $query->andWhere('(c.driver = 1 and ' . $whereDriver . ')');
-    //     }
-
-    //     return $query->getQuery()->getResult();
-    // }
-
-    // public function filterByPassengerOriginDeltaDistance(Proposal $proposal, $proposals, $driversOnly=false)
-    // {
-    //     $query = $this->repository->createQueryBuilder('p')
-    //     ->select('p.id')
-    //     ->distinct()
-    //     ->join('p.criteria', 'c')
-    //     ->join('p.waypoints', 'w')
-    //     ->join('w.address','a')
-    //     ->where('p.id IN (:proposalsId) and w.position = 0')
-    //     ->setParameter('proposalsId', array_keys($proposals));
-
-    //     $wherePassenger = '';
-    //     if ($proposal->getCriteria()->isDriver()) {
-    //         $query
-    //         ->join('\App\Geography\Entity\Direction', 'dirDri')
-    //         ->andWhere('dirDri.id = :dirDriId');
-    //         $wherePassenger = "ST_Distance(dirDri.geoJsonSimplified,a.geoJson)<=".(self::DISTANCE/self::DISTANCE_RATIO);
-    //         $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
-    //     }
-    //     $whereDriver = '';
-    //     if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
-    //         $query
-    //         ->join('\App\Geography\Entity\Direction', 'dirPas')
-    //         ->andWhere('dirPas.id = :dirPasId');
-    //         $whereDriver = "ST_Distance(dirPas.geoJsonSimplified,a.geoJson)<=".(self::DISTANCE/self::DISTANCE_RATIO);
-    //         $query->setParameter('dirPasId', $proposal->getCriteria()->getDirectionPassenger()->getId());
-    //     }
-
-    //     // we search if the user can be passenger and/or driver
-    //     if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
-    //         $query->andWhere('((c.driver = 1 and ' . $whereDriver . ') OR (c.passenger = 1 and ' . $wherePassenger . '))');
-    //     } elseif ($proposal->getCriteria()->isDriver()) {
-    //         $query->andWhere('(c.passenger = 1 and ' . $wherePassenger . ')');
-    //     } elseif ($proposal->getCriteria()->isPassenger()) {
-    //         $query->andWhere('(c.driver = 1 and ' . $whereDriver . ')');
-    //     }
-
-    //     return $query->getQuery()->getResult();
-    // }
-
-    
-    /**
-     * Get the precision of the grid for a direction.
-     * For now we divide the length of the direction by a 4 factor to estimate the precision degree.
-     *
-     * @param Direction $direction The direction to check
-     * @return int The precision in degrees
-     */
-    private function getPrecision(Direction $direction)
-    {
-        $thinnesses = ZoneManager::THINNESSES;
-        sort($thinnesses);
-        $i = 0;
-        $found = false;
-        while (!$found && $i < count($thinnesses)) {
-            if (($direction->getDistance()/80)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
-                $found = true;
-            } else {
-                $i++;
-            }
-        }
-        if ($found) {
-            return $thinnesses[$i];
-        }
-        return array_pop($thinnesses);
-    }
-
     /**
      * Return the geoJson string representation of a bounding box polygon
      *
@@ -1063,25 +920,6 @@ class ProposalRepository
     {
         return 'POLYGON((' . $minLon . ' ' . $minLat . ',' . $minLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $minLat . ',' . $minLon . ' ' . $minLat . '))';
     }
-
-    private function getGeoPoint(float $lon, float $lat)
-    {
-        return 'POINT('.$lon.','.$lat.')';
-    }
-
-    // private function getGeoLineString($lineString)
-    // {
-    //     $return = 'LINESTRING(';
-    //     $i=0;
-    //     foreach ($lineString->toArray() as $point) {
-    //         if ($i%2==0) {
-    //             $return .= implode(' ', $point) . ',';
-    //         }
-    //         $i++;
-    //     }
-    //     $return = substr($return, 0, -1) . ')';
-    //     return $return;
-    // }
 
     /**
      * Get the extension length of the bounding box from the original distance of the direction.
@@ -1137,6 +975,27 @@ class ProposalRepository
         ->where('i.status = :status and d.distance>0')
         ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
         ->setParameter('status', $status);
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find all valid proposals ids
+     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
+     *
+     * @param integer $status
+     * @return array
+     */
+    public function findAllValidWithoutMatchingsProposalIds()
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->select('p.id')
+        ->join('p.criteria', 'c')
+        ->join('c.directionDriver', 'd')
+        ->join('p.user', 'u')
+        ->leftJoin('p.matchingRequests', 'mr')
+        ->leftJoin('p.matchingOffers', 'mo')
+        ->where('d.distance>0 and mr.id is null and mo.id is null')
+        ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)');
         return $query->getQuery()->getResult();
     }
 }

@@ -189,10 +189,10 @@ class ResultManager
                 $result->setDestinationLast(true);
             }
             // driver and passenger origin/destination
-            $result->setOriginDriver($result->getResultDriver()->getOutward()->getOriginDriver());
-            $result->setDestinationDriver($result->getResultDriver()->getOutward()->getDestinationDriver());
-            $result->setOriginPassenger($result->getResultDriver()->getOutward()->getOriginPassenger());
-            $result->setDestinationPassenger($result->getResultDriver()->getOutward()->getDestinationPassenger());
+            // $result->setOriginDriver($result->getResultDriver()->getOutward()->getOriginDriver());
+            // $result->setDestinationDriver($result->getResultDriver()->getOutward()->getDestinationDriver());
+            // $result->setOriginPassenger($result->getResultDriver()->getOutward()->getOriginPassenger());
+            // $result->setDestinationPassenger($result->getResultDriver()->getOutward()->getDestinationPassenger());
         } else {
             // the carpooler can be driver, we use the requester origin and destination
             $result->setOrigin($requesterOrigin);
@@ -208,10 +208,10 @@ class ResultManager
                 $result->setDestinationLast(true);
             }
             // driver and passenger origin/destination
-            $result->setOriginDriver($result->getResultPassenger()->getOutward()->getOriginDriver());
-            $result->setDestinationDriver($result->getResultPassenger()->getOutward()->getDestinationDriver());
-            $result->setOriginPassenger($result->getResultPassenger()->getOutward()->getOriginPassenger());
-            $result->setDestinationPassenger($result->getResultPassenger()->getOutward()->getDestinationPassenger());
+            // $result->setOriginDriver($result->getResultPassenger()->getOutward()->getOriginDriver());
+            // $result->setDestinationDriver($result->getResultPassenger()->getOutward()->getDestinationDriver());
+            // $result->setOriginPassenger($result->getResultPassenger()->getOutward()->getOriginPassenger());
+            // $result->setDestinationPassenger($result->getResultPassenger()->getOutward()->getDestinationPassenger());
         }
 
         // date / time / seats / price
@@ -437,6 +437,7 @@ class ResultManager
             if (is_null($request->getFilters() && is_null($request->getPickUpDuration()))) {
                 $request->setFilters($this->proposalMatcher->getMatchingFilters($request));
             }
+            
             $matchings[$request->getProposalRequest()->getId()]['request'] = $request;
         }
         // we search the matchings as a request
@@ -451,6 +452,7 @@ class ResultManager
             }
             $matchings[$offer->getProposalOffer()->getId()]['offer'] = $offer;
         }
+
         // we iterate through the matchings to create the results
         foreach ($matchings as $matchingProposalId => $matching) {
 

@@ -384,6 +384,7 @@ class ProposalManager
             }
         }
         $routes = null;
+        $direction = null;
         if ($proposal->getCriteria()->isDriver()) {
             if ($routes = $this->geoRouter->getRoutes($addresses, false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
                 // for now we only keep the first route !
@@ -410,17 +411,19 @@ class ProposalManager
                     $direction = $routes[0];
                 }
             }
-            if (is_null($direction->getBboxMinLon()) && is_null($direction->getBboxMinLat()) && is_null($direction->getBboxMaxLon()) && is_null($direction->getBboxMaxLat())) {
-                $direction->setBboxMaxLat($addresses[0]->getLatitude());
-                $direction->setBboxMaxLon($addresses[0]->getLongitude());
-                $direction->setBboxMinLat($addresses[0]->getLatitude());
-                $direction->setBboxMinLon($addresses[0]->getLongitude());
-            }
-            if ($routes) {
-                // creation of the crossed zones
-                //$direction = $this->zoneManager->createZonesForDirection($direction);
-                $direction->setAutoGeoJsonDetail();
-                $proposal->getCriteria()->setDirectionPassenger($direction);
+            if ($direction) {
+                if (is_null($direction->getBboxMinLon()) && is_null($direction->getBboxMinLat()) && is_null($direction->getBboxMaxLon()) && is_null($direction->getBboxMaxLat())) {
+                    $direction->setBboxMaxLat($addresses[0]->getLatitude());
+                    $direction->setBboxMaxLon($addresses[0]->getLongitude());
+                    $direction->setBboxMinLat($addresses[0]->getLatitude());
+                    $direction->setBboxMinLon($addresses[0]->getLongitude());
+                }
+                if ($routes) {
+                    // creation of the crossed zones
+                    //$direction = $this->zoneManager->createZonesForDirection($direction);
+                    $direction->setAutoGeoJsonDetail();
+                    $proposal->getCriteria()->setDirectionPassenger($direction);
+                }
             }
         }
         return $proposal;
@@ -508,7 +511,87 @@ class ProposalManager
         return $proposal;
     }
 
+    /**
+     * @param Proposal $proposal
+     * @param array|null $body
+     * @return Response
+     * @throws \Exception
+     */
+    public function deleteProposal(Proposal $proposal, ?array $body = null)
+    {
+        $asks = $this->askManager->getAsksFromProposal($proposal);
+        if (count($asks) > 0) {
+            /** @var Ask $ask */
+            foreach ($asks as $ask) {
 
+                // todo : find why class of $ask can be a proxy of Ask class
+                if (get_class($ask) !== Ask::class) {
+                    continue;
+                }
+
+                $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
+                $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
+                if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
+                    $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
+                    $this->entityManager->persist($message);
+                }
+
+                $now = new \DateTime();
+                // Ask user is driver
+                if (($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserPassenger($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
+                    // TO DO check if the deletion is just before 24h and in that case send an other email
+                    // /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                    // Accepted
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                            $event = new DriverAskAdDeletedEvent($ask, $deleter->getId());
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new DriverAskAdDeletedUrgentEvent($ask, $deleter->getId());
+                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                    }
+                    // Ask user is passenger
+                } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
+
+                    // TO DO check if the deletion is just before 24h and in that case send an other email
+                    // /** @var Criteria $criteria */
+                    $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
+                    $askDateTime = $criteria->getFromTime() ?
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
+                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
+
+                    // Accepted
+                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        // If ad is in more than 24h
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                            $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
+                        } else {
+                            $event = new PassengerAskAdDeletedUrgentEvent($ask, $deleter->getId());
+                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
+                        }
+                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
+                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
+                    }
+                }
+            }
+        }
+
+        $this->entityManager->remove($proposal);
+        $this->entityManager->flush();
+
+        return new Response(204, "Deleted with success");
+    }
 
 
 
@@ -620,8 +703,6 @@ class ProposalManager
 
 
 
-
-
     /************
     *   MASS    *
     *************/
@@ -634,22 +715,51 @@ class ProposalManager
      */
     public function setDirectionsAndDefaultsForImport(int $batch)
     {
-        gc_enable();
-        $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        $this->logger->info('Start setDirectionsAndDefaultsForImport | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // we search the criterias that need calculation
         $criteriasFound = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
+        $this->setDirectionsAndDefaultsForCriterias($criteriasFound, $batch);
+        $this->logger->info('End setDirectionsAndDefaultsForImport | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+    }
 
+    /**
+     * Set the directions and default values for all criterias.
+     * Used for fixtures.
+     *
+     * @param integer $batch    The batch size
+     * @return void
+     */
+    public function setDirectionsAndDefaultsForAllCriterias(int $batch)
+    {
+        $this->logger->info('Start setDirectionsAndDefaults | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // we search the criterias that need calculation
+        $criteriasFound = $this->criteriaRepository->findAllForDirectionsAndDefault();
+        $this->setDirectionsAndDefaultsForCriterias($criteriasFound, $batch);
+        $this->logger->info('End setDirectionsAndDefaults | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+    }
+
+    /**
+     * Set the directions and default values for given criterias
+     *
+     * @param array $criterias  The criterias to look for
+     * @param integer $batch    The batch size
+     * @return void
+     */
+    private function setDirectionsAndDefaultsForCriterias(array $criterias, int $batch)
+    {
+        gc_enable();
+        
         $addressesForRoutes = [];
         $owner = [];
         $ids = [];
 
         $i=0;
-        $this->logger->info('setDirectionsForProposals | Start iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $criterias = [];
-        foreach ($criteriasFound as $key=>$criteria) {
-            if (!array_key_exists($criteria['cid'], $criterias)) {
-                $criterias[$criteria['cid']] = [
+        $this->logger->info('setDirectionsAndDefaultsForCriterias | Start iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $criteriasTreated = [];
+        foreach ($criterias as $key=>$criteria) {
+            if (!array_key_exists($criteria['cid'], $criteriasTreated)) {
+                $criteriasTreated[$criteria['cid']] = [
                     'cid'=>$criteria['cid'],
                     'driver'=>$criteria['driver'],
                     'passenger'=>$criteria['passenger'],
@@ -669,13 +779,13 @@ class ProposalManager
                     'latitude'=>$criteria['latitude'],
                     'longitude'=>$criteria['longitude']
                 ];
-                if (!in_array($element, $criterias[$criteria['cid']]['addresses'])) {
-                    $criterias[$criteria['cid']]['addresses'][] = $element;
+                if (!in_array($element, $criteriasTreated[$criteria['cid']]['addresses'])) {
+                    $criteriasTreated[$criteria['cid']]['addresses'][] = $element;
                 }
             }
         }
 
-        foreach ($criterias as $criteria) {
+        foreach ($criteriasTreated as $criteria) {
             $addressesDriver = [];
             $addressesPassenger = [];
             foreach ($criteria['addresses'] as $waypoint) {
@@ -705,13 +815,13 @@ class ProposalManager
             }
             $ids[] = $criteria['cid'];
         }
-        $this->logger->info('setDirectionsForProposals | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('setDirectionsAndDefaultsForCriterias | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $this->logger->info('setDirectionsForProposals | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('setDirectionsAndDefaultsForCriterias | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
-        $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $criterias = null;
-        unset($criterias);
+        $this->logger->info('setDirectionsAndDefaultsForCriterias | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $criteriasTreated = null;
+        unset($criteriasTreated);
 
         if (count($ids)>0) {
             $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
@@ -863,443 +973,21 @@ class ProposalManager
         $this->logger->info('End update status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
-
-
-    // public function setDirectionsAndDefaultsForImport(int $batch)
-    // {
-    //     gc_enable();
-    //     $this->logger->info('setDirectionsForProposals | Start creating arrays for calculation at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-    //     $criterias = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
-
-    //     $addressesForRoutes = [];
-    //     $owner = [];
-    //     $ids = [];
-
-    //     $i=0;
-    //     $this->logger->info('setDirectionsForProposals | Start iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //     foreach ($criterias as $criteria) {
-    //         $addressesDriver = [];
-    //         $addressesPassenger = [];
-    //         foreach ($criteria->getProposal()->getWaypoints() as $waypoint) {
-    //             // waypoints are already retrieved ordered by position, no need to check the position here
-    //             if ($criteria->isDriver()) {
-    //                 $addressesDriver[] = $waypoint->getAddress();
-    //             }
-    //             if ($criteria->isPassenger() && ($waypoint->getPosition() == 0 || $waypoint->isDestination())) {
-    //                 $addressesPassenger[] = $waypoint->getAddress();
-    //             }
-    //         }
-    //         if (count($addressesDriver)>0) {
-    //             $addressesForRoutes[$i] = [$addressesDriver];
-    //             $owner[$criteria->getId()]['driver'] = $i;
-    //             $i++;
-    //         }
-    //         if (count($addressesPassenger)>0) {
-    //             $addressesForRoutes[$i] = [$addressesPassenger];
-    //             $owner[$criteria->getId()]['passenger'] = $i;
-    //             $i++;
-    //         }
-    //         $ids[] = $criteria->getId();
-    //     }
-    //     $this->logger->info('setDirectionsForProposals | End iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-    //     $this->logger->info('setDirectionsForProposals | Start get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //     $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_RAW);
-    //     $this->logger->info('setDirectionsForProposals | End get routes status ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-    //     $directions = [];
-    //     $directionString = "";
-    //     $directionStrings = [];
-
-    //     // TODO : create SQL BATCHES
-    //     $insert_criteria_sql_begin = "
-    //         INSERT INTO criteria (
-    //             id,
-    //             max_detour_distance,
-    //             max_detour_duration,
-    //             direction_driver_id,
-    //             direction_passenger_id,
-    //             any_route_as_passenger,
-    //             strict_date,
-    //             price_km,
-    //             strict_punctual,
-    //             margin_duration,
-    //             strict_regular,
-    //             mon_margin_duration,
-    //             tue_margin_duration,
-    //             wed_margin_duration,
-    //             thu_margin_duration,
-    //             fri_margin_duration,
-    //             sat_margin_duration,
-    //             sun_margin_duration,
-    //             to_date,
-    //             min_time,
-    //             max_time,
-    //             mon_min_time,
-    //             mon_max_time,
-    //             tue_min_time,
-    //             tue_max_time,
-    //             wed_min_time,
-    //             wed_max_time,
-    //             thu_min_time,
-    //             thu_max_time,
-    //             fri_min_time,
-    //             fri_max_time,
-    //             sat_min_time,
-    //             sat_max_time,
-    //             sun_min_time,
-    //             sun_max_time,
-    //             driver_computed_price,
-    //             driver_computed_rounded_price,
-    //             passenger_computed_price,
-    //             passenger_computed_rounded_price
-    //         ) VALUES
-    //     ";
-
-    //     $insert_criteria_sql_end = " ON DUPLICATE KEY UPDATE
-    //     max_detour_distance=VALUES(max_detour_distance),
-    //     max_detour_duration=VALUES(max_detour_duration),
-    //     direction_driver_id=VALUES(direction_driver_id),
-    //     direction_passenger_id=VALUES(direction_passenger_id),
-    //     any_route_as_passenger=VALUES(any_route_as_passenger),
-    //     strict_date=VALUES(strict_date),
-    //     price_km=VALUES(price_km),
-    //     strict_punctual=VALUES(strict_punctual),
-    //     margin_duration=VALUES(margin_duration),
-    //     strict_regular=VALUES(strict_regular),
-    //     mon_margin_duration=VALUES(mon_margin_duration),
-    //     tue_margin_duration=VALUES(tue_margin_duration),
-    //     wed_margin_duration=VALUES(wed_margin_duration),
-    //     thu_margin_duration=VALUES(thu_margin_duration),
-    //     fri_margin_duration=VALUES(fri_margin_duration),
-    //     sat_margin_duration=VALUES(sat_margin_duration),
-    //     sun_margin_duration=VALUES(sun_margin_duration),
-    //     to_date=VALUES(to_date),
-    //     min_time=VALUES(min_time),
-    //     max_time=VALUES(max_time),
-    //     mon_min_time=VALUES(mon_min_time),
-    //     mon_max_time=VALUES(mon_max_time),
-    //     tue_min_time=VALUES(tue_min_time),
-    //     tue_max_time=VALUES(tue_max_time),
-    //     wed_min_time=VALUES(wed_min_time),
-    //     wed_max_time=VALUES(wed_max_time),
-    //     thu_min_time=VALUES(thu_min_time),
-    //     thu_max_time=VALUES(thu_max_time),
-    //     fri_min_time=VALUES(fri_min_time),
-    //     fri_max_time=VALUES(fri_max_time),
-    //     sat_min_time=VALUES(sat_min_time),
-    //     sat_max_time=VALUES(sat_max_time),
-    //     sun_min_time=VALUES(sun_min_time),
-    //     sun_max_time=VALUES(sun_max_time),
-    //     driver_computed_price=VALUES(driver_computed_price),
-    //     driver_computed_rounded_price=VALUES(driver_computed_rounded_price),
-    //     passenger_computed_price=VALUES(passenger_computed_price),
-    //     passenger_computed_rounded_price=VALUES(passenger_computed_rounded_price),
-    //     frequency = frequency,
-    //     driver = driver,
-    //     passenger = passenger,
-    //     seats_driver = seats_driver,
-    //     seats_passenger = seats_passenger,
-    //     from_date = from_date,
-    //     from_time = from_time,
-    //     mon_check = mon_check,
-    //     tue_check = tue_check,
-    //     wed_check = wed_check,
-    //     thu_check = thu_check,
-    //     fri_check = fri_check,
-    //     sat_check = sat_check,
-    //     sun_check = sun_check,
-    //     mon_time = mon_time,
-    //     tue_time = tue_time,
-    //     wed_time = wed_time,
-    //     thu_time = thu_time,
-    //     fri_time = fri_time,
-    //     sat_time = sat_time,
-    //     sun_time = sun_time,
-    //     multi_transport_mode = multi_transport_mode,
-    //     driver_price = driver_price,
-    //     passenger_price = passenger_price,
-    //     luggage = luggage,
-    //     bike = bike,
-    //     back_seats = back_seats,
-    //     solidary = solidary,
-    //     solidary_exclusive = solidary_exclusive,
-    //     avoid_motorway = avoid_motorway,
-    //     avoid_toll = avoid_toll,
-    //     created_date = created_date
-    //     ;";
-
-    //     $update_criteria_sqls = [];
-
-    //     $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //     $id=0; // set here the first direction id
-    //     $i=0;
-    //     $poolCriteria = 0;
-    //     $poolDirection = 0;
-    //     foreach ($criterias as $criteria) {
-    //         //$this->logger->info('Treat row ' . $i . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //         if ($poolCriteria == 0) {
-    //             $update_criteria_sql = $insert_criteria_sql_begin;
-    //         }
-    //         if ($poolDirection == 0) {
-    //             $directionString = "";
-    //         }
-    //         $update_criteria_sql .= "(" . $criteria->getId() . ",";
-    //         if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
-    //             $id++;
-    //             $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
-    //             //$direction = $this->zoneManager->createZonesForDirection($direction);
-    //             $direction->setId($id);
-    //             $direction->setSaveGeoJson(true);
-    //             $direction->setAutoGeoJsonBbox();
-    //             $direction->setAutoGeoJsonDetail();
-    //             $direction->setAutoCreatedDate();
-    //             $directions[$criteria->getId()]['driver'] = ['id'=>$id,'distance'=>$direction->getDistance()];
-    //             $directionString .= $direction->getDirectionString() . "\r\n";
-    //             //fwrite($fpd, $direction->getDirectionString() . "\r\n");
-    //             $update_criteria_sql .= $direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100 . "," . $direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100 . "," . $id . ",";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,null,";
-    //         }
-    //         if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
-    //             $id++;
-    //             $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
-    //             //$direction = $this->zoneManager->createZonesForDirection($direction);
-    //             $direction->setId($id);
-    //             $direction->setSaveGeoJson(true);
-    //             $direction->setAutoGeoJsonBbox();
-    //             $direction->setAutoGeoJsonDetail();
-    //             $direction->setAutoCreatedDate();
-    //             $directions[$criteria->getId()]['passenger'] = ['id'=>$id,'distance'=>$direction->getDistance()];
-    //             $directionString .= $direction->getDirectionString() . "\r\n";
-    //             //fwrite($fpd, $direction->getDirectionString() . "\r\n");
-    //             $update_criteria_sql .= $id . ",";
-    //         } else {
-    //             $update_criteria_sql .= "null,";
-    //         }
-
-    //         if (is_null($criteria->getAnyRouteAsPassenger())) {
-    //             $update_criteria_sql .= ($this->params['defaultAnyRouteAsPassenger'] ? '1' : '0') . ",";
-    //         } else {
-    //             $update_criteria_sql .= ($criteria->getAnyRouteAsPassenger() ? '1' : '0') . ",";
-    //         }
-    //         if (is_null($criteria->isStrictDate())) {
-    //             $update_criteria_sql .= ($this->params['defaultStrictDate'] ? '1' : '0') . ",";
-    //         } else {
-    //             $update_criteria_sql .= ($criteria->isStrictDate() ? '1' : '0') . ",";
-    //         }
-    //         if (is_null($criteria->getPriceKm())) {
-    //             $update_criteria_sql .= $this->params['defaultPriceKm'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getPriceKm() . ",";
-    //         }
-    //         if (is_null($criteria->isStrictPunctual())) {
-    //             $update_criteria_sql .= ($this->params['defaultStrictRegular'] ? '1' : '0') . ",";
-    //         } else {
-    //             $update_criteria_sql .= ($criteria->isStrictPunctual() ? '1' : '0') . ",";
-    //         }
-    //         if (is_null($criteria->getMarginDuration())) {
-    //             $criteria->setMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->isStrictRegular())) {
-    //             $update_criteria_sql .= ($this->params['defaultStrictRegular'] ? '1' : '0') . ",";
-    //         } else {
-    //             $update_criteria_sql .= ($criteria->isStrictRegular() ? '1' : '0') . ",";
-    //         }
-    //         if (is_null($criteria->getMonMarginDuration())) {
-    //             $criteria->setMonMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getMonMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getTueMarginDuration())) {
-    //             $criteria->setTueMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getTueMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getWedMarginDuration())) {
-    //             $criteria->setWedMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getWedMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getThuMarginDuration())) {
-    //             $criteria->setThuMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getThuMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getFriMarginDuration())) {
-    //             $criteria->setFriMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getFriMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getSatMarginDuration())) {
-    //             $criteria->setSatMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getSatMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getSunMarginDuration())) {
-    //             $criteria->setSunMarginDuration($this->params['defaultMarginDuration']);
-    //             $update_criteria_sql .= $this->params['defaultMarginDuration'] . ",";
-    //         } else {
-    //             $update_criteria_sql .= $criteria->getSunMarginDuration() . ",";
-    //         }
-    //         if (is_null($criteria->getToDate())) {
-    //             // end date is usually null, except when creating a proposal after a matching search
-    //             $endDate = clone $criteria->getFromDate();
-    //             // the date can be immutable
-    //             $toDate = $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-    //             $update_criteria_sql .= "'" . $toDate->format('Y-m-d') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "'" . $criteria->getToDate()->format('Y-m-d') . "',";
-    //         }
-
-    //         if ($criteria->getFromTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFromTime(), $criteria->getMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isMonCheck() && $criteria->getMonTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getMonTime(), $criteria->getMonMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isTueCheck() && $criteria->getTueTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getTueTime(), $criteria->getTueMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isWedCheck() && $criteria->getWedTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getWedTime(), $criteria->getWedMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isThuCheck() && $criteria->getThuTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getThuTime(), $criteria->getThuMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isFriCheck() && $criteria->getFriTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getFriTime(), $criteria->getFriMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isSatCheck() && $criteria->getSatTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSatTime(), $criteria->getSatMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if ($criteria->isSunCheck() && $criteria->getSunTime()) {
-    //             list($minTime, $maxTime) = self::getMinMaxTime($criteria->getSunTime(), $criteria->getSunMarginDuration());
-    //             $update_criteria_sql .= "'" . $minTime->format('H:i:s') . "','" . $maxTime->format('H:i:s') . "',";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if (isset($directions[$criteria->getId()]['driver'])) {
-    //             $criteria->setDriverComputedPrice((string)((int)$directions[$criteria->getId()]['driver']['distance']*(float)$criteria->getPriceKm()/1000));
-    //             $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
-    //             $update_criteria_sql .= $criteria->getDriverComputedPrice() . "," . $criteria->getDriverComputedRoundedPrice() . ",";
-    //         } else {
-    //             $update_criteria_sql .= "null,null,";
-    //         }
-    //         if (isset($directions[$criteria->getId()]['passenger'])) {
-    //             $criteria->setPassengerComputedPrice((string)((int)$directions[$criteria->getId()]['passenger']['distance']*(float)$criteria->getPriceKm()/1000));
-    //             $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
-    //             $update_criteria_sql .= $criteria->getPassengerComputedPrice() . "," . $criteria->getPassengerComputedRoundedPrice() . "),";
-    //         } else {
-    //             $update_criteria_sql .= "null,null),";
-    //         }
-    //         $poolCriteria++;
-    //         if ($poolCriteria >= $batch) {
-    //             // delete last comma
-    //             $this->logger->info('Batch Criteria ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //             $update_criteria_sql = substr($update_criteria_sql, 0, -1);
-    //             $update_criteria_sql .= $insert_criteria_sql_end;
-    //             $update_criteria_sqls[] = $update_criteria_sql;
-    //             $poolCriteria = 0;
-    //         }
-    //         $poolDirection++;
-    //         if ($poolDirection >= 1000) {
-    //             $this->logger->info('Batch Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //             $directionStrings[] = $directionString;
-    //             $poolDirection = 0;
-    //         }
-    //         $i++;
-    //     }
-
-    //     // last batch
-    //     if ($poolCriteria>0) {
-    //         $this->logger->info('Batch Criteria ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //         // delete last comma
-    //         $update_criteria_sql = substr($update_criteria_sql, 0, -1);
-    //         $update_criteria_sql .= $insert_criteria_sql_end;
-    //         $update_criteria_sqls[] = $update_criteria_sql;
-    //     }
-    //     if ($poolDirection>0) {
-    //         $this->logger->info('Batch Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    //         $directionStrings[] = $directionString;
-    //     }
-
-    //     $conn = $this->entityManager->getConnection();
-    //     // create rows
-    //     $filenameDirections = "/var/www/api/public/upload/match/directions.txt";
-
-    //     foreach ($directionStrings as $directionString) {
-    //         $fpd = fopen($filenameDirections, 'w');
-    //         fwrite($fpd, $directionString);
-    //         fclose($fpd);
-    //         $sql = "
-    //             LOAD DATA LOCAL INFILE '" . $filenameDirections . "' IGNORE INTO TABLE direction FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n'
-    //             (@id,@distance,@duration,@ascend,@descend,@bboxMinLon,@bboxMinLat,@bboxMaxLon,@bboxMaxLat,@detail,@format,@snapped,@bearing,@geoJsonBbox,@geoJsonDetail,@createdDate,@updatedDate,@geoJsonSimplified)
-    //             set
-    //             `id` = @id,
-    //             `distance` = @distance,
-    //             `duration` = @duration,
-    //             `ascend` = @ascend,
-    //             `descend` = @descend,
-    //             `bbox_min_lon` = @bboxMinLon,
-    //             `bbox_min_lat` = @bboxMinLat,
-    //             `bbox_max_lon` = @bboxMaxLon,
-    //             `bbox_max_lat` = @bboxMaxLat,
-    //             `detail` = @detail,
-    //             `format` = @format,
-    //             `snapped` = @snapped,
-    //             `bearing` = @bearing,
-    //             `geo_json_bbox` = GeomFromText(@geoJsonBbox),
-    //             `geo_json_detail` = GeomFromText(@geoJsonDetail),
-    //             `created_date` = @createdDate,
-    //             `updated_date` = @updatedDate,
-    //             `geo_json_simplified` = GeomFromText(@geoJsonSimplified)
-    //             ;
-    //         ";
-    //         $stmt = $conn->prepare($sql);
-    //         $stmt->execute();
-    //     }
-    //     unlink($filenameDirections);
-    //     $this->logger->info('End Direction ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-    //     foreach ($update_criteria_sqls as $update) {
-    //         $stmt = $conn->prepare($update);
-    //         $stmt->execute();
-    //     }
-
-    //     $this->logger->info('End Criteria ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-    // }
+    /**
+     * Create matchings for all proposals at once
+     *
+     * @return void
+     */
+    public function createMatchingsForAllProposals()
+    {
+        // we create an array of all proposals without matchings to treat
+        $proposalIds = $this->proposalRepository->findAllValidWithoutMatchingsProposalIds();
+        $this->logger->info('Start creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->proposalMatcher->findPotentialMatchingsForProposals($proposalIds, false);
+        $this->logger->info('End creating candidates | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // treat the return and opposite
+        $this->createLinkedAndOppositesForProposals($proposalIds);
+    }
 
     /**
      * Create matchings for multiple proposals at once
@@ -1368,185 +1056,7 @@ class ProposalManager
         return $proposals;
     }
 
-    /************
-    *   RDEX    *
-    *************/
 
-    /**
-     * Returns all proposals matching the parameters.
-     * Used for RDEX export.
-     *
-     * @param bool $offer
-     * @param bool $request
-     * @param float $from_longitude
-     * @param float $from_latitude
-     * @param float $to_longitude
-     * @param float $to_latitude
-     * @param string $frequency
-     * @param \DateTime $outward_mindate
-     * @param \DateTime $outward_maxdate
-     * @param string $outward_monday_mintime
-     * @param string $outward_monday_maxtime
-     * @param string $outward_tuesday_mintime
-     * @param string $outward_tuesday_maxtime
-     * @param string $outward_wednesday_mintime
-     * @param string $outward_wednesday_maxtime
-     * @param string $outward_thursday_mintime
-     * @param string $outward_thursday_maxtime
-     * @param string $outward_friday_mintime
-     * @param string $outward_friday_maxtime
-     * @param string $outward_saturday_mintime
-     * @param string $outward_saturday_maxtime
-     * @param string $outward_sunday_mintime
-     * @param string $outward_sunday_maxtime
-     */
-    // public function getProposalsForRdex(
-    //     bool $offer,
-    //     bool $request,
-    //     float $from_longitude,
-    //     float $from_latitude,
-    //     float $to_longitude,
-    //     float $to_latitude,
-    //     string $frequency = null,
-    //     \DateTime $outward_mindate = null,
-    //     \DateTime $outward_maxdate = null,
-    //     string $outward_monday_mintime = null,
-    //     string $outward_monday_maxtime = null,
-    //     string $outward_tuesday_mintime = null,
-    //     string $outward_tuesday_maxtime = null,
-    //     string $outward_wednesday_mintime = null,
-    //     string $outward_wednesday_maxtime = null,
-    //     string $outward_thursday_mintime = null,
-    //     string $outward_thursday_maxtime = null,
-    //     string $outward_friday_mintime = null,
-    //     string $outward_friday_maxtime = null,
-    //     string $outward_saturday_mintime = null,
-    //     string $outward_saturday_maxtime = null,
-    //     string $outward_sunday_mintime = null,
-    //     string $outward_sunday_maxtime = null
-    // ) {
-    //     // test : we return all proposals
-    //     // we create a proposal with the parameters
-    //     $proposal = new Proposal();
-    //     $proposal->setType(Proposal::TYPE_ONE_WAY);
-    //     $addressFrom = new Address();
-    //     $addressFrom->setLongitude((string)$from_longitude);
-    //     $addressFrom->setLatitude((string)$from_latitude);
-    //     // for now we don't search with coordinates, we force the localities for testing purpose
-    //     // @todo delete the locality search only
-    //     $addressFrom->setAddressLocality("Nancy");
-    //     $addressTo = new Address();
-    //     $addressTo->setLongitude((string)$to_longitude);
-    //     $addressTo->setLatitude((string)$to_latitude);
-    //     $addressTo->setAddressLocality("Metz");
-    //     $waypointFrom = new Waypoint();
-    //     $waypointFrom->setAddress($addressFrom);
-    //     $waypointFrom->setPosition(0);
-    //     $waypointFrom->setDestination(false);
-    //     $waypointTo = new Waypoint();
-    //     $waypointTo->setAddress($addressTo);
-    //     $waypointTo->setPosition(1);
-    //     $waypointTo->setDestination(true);
-    //     $criteria = new Criteria();
-    //     $criteria->setDriver(!$offer);
-    //     $criteria->setPassenger(!$request);
-    //     if (!is_null($outward_mindate)) {
-    //         $criteria->setFromDate($outward_mindate);
-    //     } else {
-    //         $criteria->setFromDate(new \DateTime());
-    //     }
-    //     if (!is_null($outward_maxdate)) {
-    //         $criteria->setToDate($outward_maxdate);
-    //     }
-    //     $proposal->setCriteria($criteria);
-    //     $proposal->addWaypoint($waypointFrom);
-    //     $proposal->addWaypoint($waypointTo);
-    //     // for now we don't use the time parameters
-    //     // @todo add the time parameters
-    //     return $this->proposalRepository->findMatchingProposals($proposal, false);
-    // }
-
-    /**
-     * @param Proposal $proposal
-     * @param array|null $body
-     * @return Response
-     * @throws \Exception
-     */
-    public function deleteProposal(Proposal $proposal, ?array $body = null)
-    {
-        $asks = $this->askManager->getAsksFromProposal($proposal);
-        if (count($asks) > 0) {
-            /** @var Ask $ask */
-            foreach ($asks as $ask) {
-
-                // todo : find why class of $ask can be a proxy of Ask class
-                if (get_class($ask) !== Ask::class) {
-                    continue;
-                }
-
-                $deleter = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUser() : $ask->getUserRelated();
-                $recipient = ($body['deleterId'] == $ask->getUser()->getId()) ? $ask->getUserRelated() : $ask->getUser();
-                if (isset($body["deletionMessage"]) && $body["deletionMessage"] != "") {
-                    $message = $this->internalMessageManager->createMessage($deleter, [$recipient], $body["deletionMessage"], null, null);
-                    $this->entityManager->persist($message);
-                }
-
-                $now = new \DateTime();
-                // Ask user is driver
-                if (($this->askManager->isAskUserDriver($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserPassenger($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
-                    // TO DO check if the deletion is just before 24h and in that case send an other email
-                    // /** @var Criteria $criteria */
-                    $criteria = $ask->getMatching()->getProposalOffer()->getCriteria();
-                    $askDateTime = $criteria->getFromTime() ?
-                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-
-                    // Accepted
-                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
-                            $event = new DriverAskAdDeletedEvent($ask, $deleter->getId());
-                            $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
-                        } else {
-                            $event = new DriverAskAdDeletedUrgentEvent($ask, $deleter->getId());
-                            $this->eventDispatcher->dispatch(DriverAskAdDeletedUrgentEvent::NAME, $event);
-                        }
-                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
-                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
-                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
-                    }
-                    // Ask user is passenger
-                } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
-
-                    // TO DO check if the deletion is just before 24h and in that case send an other email
-                    // /** @var Criteria $criteria */
-                    $criteria = $ask->getMatching()->getProposalRequest()->getCriteria();
-                    $askDateTime = $criteria->getFromTime() ?
-                        new \DateTime($criteria->getFromDate()->format('Y-m-d') . ' ' . $criteria->getFromTime()->format('H:i:s')) :
-                        new \DateTime($criteria->getFromDate()->format('Y-m-d H:i:s'));
-
-                    // Accepted
-                    if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                        // If ad is in more than 24h
-                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
-                            $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
-                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
-                        } else {
-                            $event = new PassengerAskAdDeletedUrgentEvent($ask, $deleter->getId());
-                            $this->eventDispatcher->dispatch(PassengerAskAdDeletedUrgentEvent::NAME, $event);
-                        }
-                    } elseif ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER or $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
-                        $event = new AskAdDeletedEvent($ask, $deleter->getId());
-                        $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
-                    }
-                }
-            }
-        }
-
-        $this->entityManager->remove($proposal);
-        $this->entityManager->flush();
-
-        return new Response(204, "Deleted with success");
-    }
 
     // returns the min and max time from a time and a margin
     private static function getMinMaxTime($time, $margin)

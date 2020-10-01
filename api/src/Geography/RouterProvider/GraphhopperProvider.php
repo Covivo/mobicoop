@@ -39,7 +39,7 @@ use Psr\Log\LoggerInterface;
  */
 class GraphhopperProvider implements GeorouterInterface
 {
-    private const NAME = "GraphHopper";
+    private const NAME = "GH";
     private const DIRECTION_RESOURCE = "route";
     private const MODE_CAR = "CAR";
     private const PROFILE_NO_TOLL = "car_without_toll";
@@ -238,7 +238,7 @@ class GraphhopperProvider implements GeorouterInterface
                 // so after the requests we will be able to know who is the owner
                 $requestsOwner = [];
                 $i = 0;
-                self::print_mem(1);
+                $this->print_mem(1);
                 foreach ($multiPoints as $ownerId => $directionVariants) {
                     foreach ($directionVariants as $addresses) {
                         $rparams = $this->uri ."/" . self::DIRECTION_RESOURCE . "/?";
@@ -270,7 +270,7 @@ class GraphhopperProvider implements GeorouterInterface
                         unset($addresses);
                     }
                 }
-                self::print_mem(2);
+                // $this->print_mem(2);
 
                 // creation of the file that represent all the routes to get
                 $this->logger->debug('Multiple Async | Creation of the exchange file start for ' . $i . ' routes');
@@ -282,7 +282,7 @@ class GraphhopperProvider implements GeorouterInterface
                 $fp = null;
                 unset($urls);
                 unset($fp);
-                self::print_mem(3);
+                // $this->print_mem(3);
 
                 $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
@@ -296,11 +296,11 @@ class GraphhopperProvider implements GeorouterInterface
                 // fclose($fpr);
                 $this->logger->debug('Multiple Async | Call external script end');
                 // treat the response
-                self::print_mem(4);
+                // $this->print_mem(4);
 
                 $response = \JsonMachine\JsonMachine::fromFile($filename);
 
-                self::print_mem(5);
+                // $this->print_mem(5);
 
                 switch ($this->returnType) {
                     case self::RETURN_TYPE_OBJECT:
@@ -364,7 +364,7 @@ class GraphhopperProvider implements GeorouterInterface
                     }
                 }
                 
-                self::print_mem(6);
+                // $this->print_mem(6);
                 foreach ($requestsOwner as $owner) {
                     $owner = null;
                     unset($owner);
@@ -380,7 +380,7 @@ class GraphhopperProvider implements GeorouterInterface
                 $response = null;
                 unset($response);
                 gc_collect_cycles();
-                self::print_mem(7);
+                $this->print_mem(7);
                 $this->logger->debug('Multiple Async | Exchange file deletion');
                 unlink($filename);
                 break;
@@ -487,7 +487,7 @@ class GraphhopperProvider implements GeorouterInterface
         if (isset($data["points"])) {
             // we keep the encoded AND the decoded points (all the points of the path returned by the SIG)
             // the decoded points are not stored in the database
-            $direction->setDetail($data["points"]);
+            //$direction->setDetail($data["points"]);
             if (!$this->pointsOnly) {
                 $direction->setPoints($this->deserializePoints($data['points']));
             } else {
@@ -640,12 +640,12 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * Deserializes geographical points to Addresses.
      *
-     * @param string $data      The data to deserialize
+     * @param mixed $data       The data to deserialize
      * @param bool $encoded     Data encoded
      * @param bool $is3D        Data has elevation information
      * @return Address[]        The deserialized Addresses
      */
-    private function deserializeGHPoints(string $data, bool $encoded, bool $is3D)
+    private function deserializeGHPoints($data, bool $encoded, bool $is3D)
     {
         $addresses = [];
         if ($encoded) {
@@ -761,7 +761,7 @@ class GraphhopperProvider implements GeorouterInterface
         
         /* Peak memory usage */
         $mem_peak = memory_get_peak_usage();
-        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.<br>');
-        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.<br><br>');
+        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.');
+        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.');
     }
 }

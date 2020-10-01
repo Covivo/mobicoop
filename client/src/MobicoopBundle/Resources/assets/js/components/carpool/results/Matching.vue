@@ -523,6 +523,7 @@ export default {
           "filters": this.filters,
           "role": this.role
         };
+        var start = new Date();
         axios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
@@ -539,7 +540,8 @@ export default {
             else{
               this.nbCarpoolPlatform = "-";
             }
-
+            var time = new Date() - start;
+            console.log(time/1000);
           })
           .catch((error) => {
             console.log(error);

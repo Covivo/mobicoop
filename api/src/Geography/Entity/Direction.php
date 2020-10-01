@@ -152,15 +152,13 @@ class Direction
     private $bearing;
 
     /**
-     * @var string The textual encoded detail of the direction.
-     * @ORM\Column(type="text")
+     * @var string|null The textual encoded detail of the direction.
      * @Groups({"read","write"})
      */
     private $detail;
 
     /**
      * @var string The geoJson linestring detail of the direction.
-     * @ORM\Column(type="linestring", nullable=true)
      * Note : the detail should be a MULTIPOINT, but we can't use it as it's not supported by the version of doctrine2 spatial package for mysql 5.7 (?)
      * Todo : try to create a multipoint custom type for doctrine 2 spatial ?
      * @Groups({"read","write"})
@@ -177,7 +175,6 @@ class Direction
 
     /**
      * @var string The textual encoded snapped waypoints of the direction.
-     * @ORM\Column(type="text")
      * @Groups({"read","write"})
      */
     private $snapped;
@@ -418,7 +415,7 @@ class Direction
         return $this;
     }
 
-    public function getDetail(): string
+    public function getDetail(): ?string
     {
         return $this->detail;
     }
@@ -692,29 +689,6 @@ class Direction
         return $this;
     }
 
-    public function getDirectionString(string $delimiter=";")
-    {
-        return
-            $this->getId() . $delimiter .
-            $this->getDistance() . $delimiter .
-            $this->getDuration() . $delimiter .
-            $this->getAscend() . $delimiter .
-            $this->getDescend() . $delimiter .
-            $this->getBboxMinLon() . $delimiter .
-            $this->getBboxMinLat() . $delimiter .
-            $this->getBboxMaxLon() . $delimiter .
-            $this->getBboxMaxLat() . $delimiter .
-            $this->getDetail() . "'" . $delimiter .
-            $this->getFormat() . "'" . $delimiter .
-            $this->getSnapped() . "'" . $delimiter .
-            $this->getBearing() . $delimiter .
-            "POLYGON(" . $this->getGeoJsonBbox() . ")" . $delimiter .
-            "LINESTRING(" . $this->getGeoJsonDetail() . ")" . $delimiter .
-            $this->getCreatedDate()->format('Y-m-d H:i:s') . $delimiter .
-            "0000-00-00'" . $delimiter .
-            "LINESTRING(" . $this->getGeoJsonSimplified() . ")" . $delimiter;
-    }
-
     // DOCTRINE EVENTS
     
     /**
@@ -775,11 +749,11 @@ class Direction
             return;
         }
         if (!is_null($this->getPoints())) {
-            $arrayPoints = [];
-            foreach ($this->getPoints() as $address) {
-                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
-            }
-            $this->setGeoJsonDetail(new LineString($arrayPoints));
+            // $arrayPoints = [];
+            // foreach ($this->getPoints() as $address) {
+            //     $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
+            // }
+            // $this->setGeoJsonDetail(new LineString($arrayPoints));
             $arrayPoints = [];
             $geoTools = new GeoTools();
             $simplifiedPoints = $geoTools->getSimplifiedPoints($this->getPoints());

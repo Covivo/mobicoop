@@ -101,7 +101,6 @@ class GeoMatcher
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
         $this->logger->info("GeoMatcher : end multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        
         // we treat the routes to check if they match
         foreach ($ownerRoutes as $ownerId=>$routes) {
             if ($variants[$ownerId]['role'] == 'driver') {
