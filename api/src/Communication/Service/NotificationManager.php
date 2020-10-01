@@ -55,6 +55,7 @@ use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
 use App\Match\Entity\Mass;
+use App\Payment\Entity\CarpoolItem;
 
 /**
  * Notification manager
@@ -377,6 +378,23 @@ class NotificationManager
                     $titleContext = ['massId'=>$object->getId()];
                     $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
                 break;
+                case CarpoolItem::class:
+                    $titleContext = ['deptor'=>$object->getDebtor()];
+                    foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        }
+                    };
+                    $bodyContext = [
+                        'deptor'=>$object->getDebtor(),
+                        'creditor'=>$object->getCreditor(),
+                        'amount'=>$object->getAmount(),
+                        'origin'=>$passengerOriginWaypoint,
+                        'destination'=>$passengerDestinationWaypoint
+                    ];
+                    break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
@@ -508,6 +526,22 @@ class NotificationManager
                     break;
                 case SolidaryContact::class:
                     $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                    break;
+                case CarpoolItem::class:
+                    foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        }
+                    };
+                    $bodyContext = [
+                        'deptor'=>$object->getDebtor(),
+                        'creditor'=>$object->getCreditor(),
+                        'amount'=>$object->getAmount(),
+                        'origin'=>$passengerOriginWaypoint,
+                        'destination'=>$passengerDestinationWaypoint
+                    ];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
@@ -651,6 +685,23 @@ class NotificationManager
                 case Message::class:
                     $titleContext = [];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    break;
+                case CarpoolItem::class:
+                    $titleContext = ['deptor'=>$object->getDebtor()];
+                    foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                        if ($waypoint->getPosition() == 0) {
+                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        } elseif ($waypoint->isDestination() == true) {
+                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                        }
+                    };
+                    $bodyContext = [
+                        'deptor'=>$object->getDebtor(),
+                        'creditor'=>$object->getCreditor(),
+                        'amount'=>$object->getAmount(),
+                        'origin'=>$passengerOriginWaypoint,
+                        'destination'=>$passengerDestinationWaypoint
+                    ];
                     break;
                 default:
                     $titleContext = [];
