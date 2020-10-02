@@ -489,7 +489,21 @@ class PaymentManager
                     $week = $carpoolItem->getItemDate()->format('WY');
                     $validated = false;
                 }
-                $validated = $carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED;
+               
+                // The validated status depends on the point of vue of the current user
+                if ($carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED) {
+                    if ($carpoolItem->getDebtorUser()->getId() == $user->getId() &&
+                        $carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_PENDING
+                    ) {
+                        // The day has been confirmed by the debtor, the week is validated for him
+                        $validated = true;
+                    } elseif ($carpoolItem->getCreditorUser()->getId() == $user->getId() &&
+                        $carpoolItem->getCreditorStatus() !== CarpoolItem::CREDITOR_STATUS_PENDING
+                    ) {
+                        // The day has been confirmed by the creditor, the week is validated for him
+                        $validated = true;
+                    }
+                }
             }
         }
         $paymentWeek = new PaymentWeek();

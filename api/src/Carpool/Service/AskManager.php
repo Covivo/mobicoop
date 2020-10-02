@@ -830,13 +830,13 @@ class AskManager
             // Init the payment status at pending
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
 
-            // If the status is Unpaid, it's the same for driver or passenger
+            // If the status is Unpaid, it's the same for driver (creditor) or passenger (debtor)
             if (!is_null($carpoolItem->getUnpaidDate())) {
                 $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                 $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
             } else {
                 if ($driver->getId() == $user->getId()) {
-                    // Driver point of vue
+                    // Driver (creditor) point of vue
                     if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_DIRECT) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
                     }
@@ -844,7 +844,7 @@ class AskManager
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
                     }
                 } else {
-                    // Passenger point of vue
+                    // Passenger (debtor) point of vue
                     if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT || $carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
                     }
@@ -885,10 +885,11 @@ class AskManager
     /**
      * Get the non validated weeks of an Ask
      *
-     * @param Ask $ask
+     * @param Ask $ask  Ask
+     * @param Ask $user User that want to get the non validated weeks
      * @return Ask
      */
-    public function getNonValidatedWeeks(Ask $ask)
+    public function getNonValidatedWeeks(Ask $ask, User $user): Ask
     {
         $startDate = $ask->getCriteria()->getFromDate();
         $toDate = $ask->getCriteria()->getToDate();
@@ -932,11 +933,22 @@ class AskManager
                         $unpaidDate = $carpoolItem->getUnpaidDate();
                         break;
                     }
-                    
+
+                    // The validated status depends on the point of vue of the current user
                     if ($carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED) {
-                        // The day has been confirmed, the week is validated
-                        $validatedWeek = true;
-                        break;
+                        if ($carpoolItem->getDebtorUser()->getId() == $user->getId() &&
+                            $carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_PENDING
+                        ) {
+                            // The day has been confirmed by the debtor, the week is validated for him
+                            $validatedWeek = true;
+                            break;
+                        } elseif ($carpoolItem->getCreditorUser()->getId() == $user->getId() &&
+                            $carpoolItem->getCreditorStatus() !== CarpoolItem::CREDITOR_STATUS_PENDING
+                        ) {
+                            // The day has been confirmed by the creditor, the week is validated for him
+                            $validatedWeek = true;
+                            break;
+                        }
                     }
                 }
             }
