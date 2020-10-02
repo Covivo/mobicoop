@@ -116,7 +116,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -454,7 +454,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $givenName;
 
@@ -462,14 +462,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation"})
+     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport"})
      */
     private $shortFamilyName;
 

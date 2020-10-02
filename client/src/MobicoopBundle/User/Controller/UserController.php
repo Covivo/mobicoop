@@ -44,6 +44,7 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ExportManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -81,6 +82,7 @@ class UserController extends AbstractController
     private $userManager;
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
+    private $exportManager;
 
     /**
      * Constructor
@@ -100,7 +102,8 @@ class UserController extends AbstractController
         bool $paymentElectronicActive,
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
-        PaymentManager $paymentManager
+        PaymentManager $paymentManager,
+        ExportManager $exportManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -116,6 +119,7 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
+        $this->exportManager = $exportManager;
     }
 
     /***********
@@ -402,23 +406,22 @@ class UserController extends AbstractController
     /**
      * Export list of payments and carpools
      */
-    public function exportListPaymentsAndCarpools (UserManager $userManager, Request $request, AdManager $adManager) {
-        $user = $userManager->getLoggedUser();
+    public function getExports()
+    {
+        $user = $this->userManager->getLoggedUser();
 
         # Redirect to user_login
         if (!$user instanceof User) {
             return $this->redirectToRoute("user_login");
         }
-        # Carpools accepted
-        $carpools = $userManager->getAds(true);
-
+        
+        $exports = $this->exportManager->getExports();
+        
         $currentDate = date("d-m-Y");
 
-        // dd($carpools);
         return $this->render('@Mobicoop/pdf/list/list-payment-carpool.html.twig', [
             'user' => $user,
-            'carpools' => $carpools,
-            'currentDate' => $currentDate,
+            'currentDate' => $currentDate
         ]);
     }
 
