@@ -273,6 +273,7 @@ class ProposalMatcher
                     'dddistance'=>$proposalFound['dddistance'],
                     'addresses'=>[
                         [
+                            'id'=>$proposalFound['wid'],
                             'position'=>$proposalFound['position'],
                             'destination'=>$proposalFound['destination'],
                             'reached'=>$proposalFound['reached'],
@@ -297,6 +298,7 @@ class ProposalMatcher
                 ];
             } else {
                 $element = [
+                    'id'=>$proposalFound['wid'],
                     'position'=>$proposalFound['position'],
                     'destination'=>$proposalFound['destination'],
                     'reached'=>$proposalFound['reached'],
@@ -591,7 +593,7 @@ class ProposalMatcher
                 if ($key == (count($matching->getFilters()['route'])-1)) {
                     $waypoint->setDestination(true);
                 }
-                $waypoint->setAddress(clone $point['address']);
+                $waypoint->setAddress($point['address']);
                 $waypoint->setDuration($point['duration']);
                 $waypoint->setRole($point['candidate']);
                 $matching->addWaypoint($waypoint);
@@ -664,8 +666,6 @@ class ProposalMatcher
             // seats (set to 1 for now)
             $matchingCriteria->setSeatsDriver(1);
             $matchingCriteria->setSeatsPassenger(1);
-
-            
 
             // pickup times
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {

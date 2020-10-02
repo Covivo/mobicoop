@@ -1972,7 +1972,9 @@ class ResultManager
             $return = -1;
             switch ($criteria) {
                 case "date":
-                    ($value=="ASC") ? $return = $a->getDate() <=> $b->getDate() : $return = $b->getDate() <=> $a->getDate();
+                    $dateTimeA = \DateTime::createFromFormat('Y-m-d H:i', $a->getDate()->format("Y-m-d") . " " . $a->getTime()->format("H:i"));
+                    $dateTimeB = \DateTime::createFromFormat('Y-m-d H:i', $b->getDate()->format("Y-m-d") . " " . $b->getTime()->format("H:i"));
+                    ($value=="ASC") ? $return = $dateTimeA <=> $dateTimeB : $return = $dateTimeB <=> $dateTimeA;
                 break;
             }
             return $return;

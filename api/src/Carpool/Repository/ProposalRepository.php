@@ -113,6 +113,7 @@ class ProposalRepository
             'c.maxDetourDistance',
             'dp.duration as dpduration',
             'dp.distance as dpdistance',
+            'w.id as wid',
             'w.position',
             'w.destination',
             'w.reached',
