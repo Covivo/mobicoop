@@ -382,17 +382,17 @@ class NotificationManager
                     $titleContext = ['deptor'=>$object->getDebtor()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
-                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
                         } elseif ($waypoint->isDestination() == true) {
-                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
                     $bodyContext = [
-                        'deptor'=>$object->getDebtor(),
-                        'creditor'=>$object->getCreditor(),
+                        'deptor'=>$object->getDebtorUser(),
+                        'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOriginWaypoint,
-                        'destination'=>$passengerDestinationWaypoint
+                        'origin'=>$passengerOrigin,
+                        'destination'=>$passengerDestination
                     ];
                     break;
                 default:
@@ -530,17 +530,17 @@ class NotificationManager
                 case CarpoolItem::class:
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
-                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
                         } elseif ($waypoint->isDestination() == true) {
-                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
                     $bodyContext = [
-                        'deptor'=>$object->getDebtor(),
-                        'creditor'=>$object->getCreditor(),
+                        'deptor'=>$object->getDebtorUser(),
+                        'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOriginWaypoint,
-                        'destination'=>$passengerDestinationWaypoint
+                        'origin'=>$passengerOrigin,
+                        'destination'=>$passengerDestination
                     ];
                     break;
                 default:
@@ -690,17 +690,17 @@ class NotificationManager
                     $titleContext = ['deptor'=>$object->getDebtor()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
-                            $passengerOriginWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
                         } elseif ($waypoint->isDestination() == true) {
-                            $passengerDestinationWaypoint = $waypoint->getAddress()->getAddressLocality();
+                            $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
                     $bodyContext = [
-                        'deptor'=>$object->getDebtor(),
-                        'creditor'=>$object->getCreditor(),
+                        'deptor'=>$object->getDebtorUser(),
+                        'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOriginWaypoint,
-                        'destination'=>$passengerDestinationWaypoint
+                        'origin'=>$passengerOrigin,
+                        'destination'=>$passengerDestination
                     ];
                     break;
                 default:

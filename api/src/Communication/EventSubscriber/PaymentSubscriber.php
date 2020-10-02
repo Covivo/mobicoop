@@ -57,84 +57,48 @@ class PaymentSubscriber implements EventSubscriberInterface
         ];
     }
 
-
-   
     public function onConfirmDirectPayment(ConfirmDirectPaymentEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(ConfirmDirectPaymentEvent::NAME, $sender, $event->getCarpoolItem());
+        $recipient = $event->getCarpoolItem()->getCreditorUser();
+        $this->notificationManager->notifies(ConfirmDirectPaymentEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
-   
     public function onConfirmDirectPaymentRegular(ConfirmDirectPaymentRegularEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(ConfirmDirectPaymentRegularEvent::NAME, $sender, $event->getCarpoolItem());
+        $recipient = $event->getCarpoolItem()->getCreditorUser();
+        $this->notificationManager->notifies(ConfirmDirectPaymentRegularEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
-   
     public function onPayAfterCarpool(PayAfterCarpoolEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(PayAfterCarpoolEvent::NAME, $sender, $event->getCarpoolItem());
+        $recipient = $event->getCarpoolItem()->getDebtorUser();
+        $this->notificationManager->notifies(PayAfterCarpoolEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
-   
     public function onPayAfterCarpoolRegular(PayAfterCarpoolRegularEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(PayAfterCarpoolRegularEvent::NAME, $sender, $event->getCarpoolItem());
+        $recipient = $event->getCarpoolItem()->getDebtorUser();
+        $this->notificationManager->notifies(PayAfterCarpoolRegularEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
-   
     public function onSignalDept(SignalDeptEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(SignalDeptEvent::NAME, $sender, $event->getCarpoolItem());
+        $recipient = $event->getCarpoolItem()->getDebtorUser();
+        $this->notificationManager->notifies(SignalDeptEvent::NAME, $recipient, $event->getCarpoolItem());
     }
 
-   
     public function onIdentityProofAccepted(IdentityProofAcceptedEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(IdentityProofAcceptedEvent::NAME, $sender);
+        $this->notificationManager->notifies(IdentityProofAcceptedEvent::NAME, $recipient);
     }
 
-   
     public function onIdentityProofRejected(IdentityProofRejectedEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(IdentityProofRejectedEvent::NAME, $sender);
+        $this->notificationManager->notifies(IdentityProofRejectedEvent::NAME, $recipient);
     }
 
-   
     public function onIdentityProofOutdated(IdentityProofOutdatedEvent $event)
     {
-        // the recipient is the creator of community
-        $sender = ($event->getSender());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(IdentityProofOutdatedEvent::NAME, $sender);
+        $this->notificationManager->notifies(IdentityProofOutdatedEvent::NAME, $recipient);
     }
 }
