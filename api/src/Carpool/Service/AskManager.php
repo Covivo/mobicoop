@@ -845,7 +845,7 @@ class AskManager
                     }
                 } else {
                     // Passenger point of vue
-                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT) {
+                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT || $carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
                     }
                     if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_ONLINE) {

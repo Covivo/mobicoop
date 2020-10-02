@@ -49,6 +49,7 @@ use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * Payment manager service.
@@ -76,6 +77,7 @@ class PaymentManager
     private $carpoolPaymentRepository;
     private $validationDocsPath;
     private $validationDocsAuthorizedExtensions;
+    private $logger;
 
     /**
      * Constructor.
@@ -100,6 +102,7 @@ class PaymentManager
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
+        LoggerInterface $logger,
         bool $paymentActive,
         String $paymentProviderService,
         string $securityToken,
@@ -121,6 +124,7 @@ class PaymentManager
         $this->validationDocsPath = $validationDocsPath;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->exportPath = $exportPath;
+        $this->logger = $logger;
     }
 
     /**
@@ -563,6 +567,7 @@ class PaymentManager
                 }
                 $this->entityManager->persist($carpoolItem);
             }
+            $this->entityManager->flush();
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
@@ -573,8 +578,12 @@ class PaymentManager
                 }
                 $payment->setRedirectUrl($carpoolPayment->getRedirectUrl());
             } else {
-                $this->treatCarpoolPayment($carpoolPayment);
+                $carpoolPayment = $this->treatCarpoolPayment($carpoolPayment);
+                $carpoolPayment->setStatus(CarpoolPayment::STATUS_SUCCESS);
             }
+
+
+            $payment->setStatus($carpoolPayment->getStatus());
 
             $this->entityManager->persist($carpoolPayment);
             $this->entityManager->flush();
@@ -590,7 +599,7 @@ class PaymentManager
                     throw new PaymentException('Wrong item id');
                 }
                 if ($carpoolItem->getCreditorUser()->getId() != $user->getId()) {
-                    throw new PaymentException('This user is not the creditor of item #' . $item['id]']);
+                    throw new PaymentException('This user is not the creditor of item #' . $item['id']);
                 }
                 
                 if ($item["status"] == PaymentItem::DAY_UNPAID) {
@@ -608,21 +617,37 @@ class PaymentManager
                         // Only for DIRECT payment
 
                         // When the creditor says he has been paid, we also valid the payement for the debtor if he hasn't done it.
-                        if ($carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING) {
-                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
-                            
-                            // search for an already instanciated carpoolPayment for this User
-                            // If it doesn't exist, we create it and push it in the array
-                            if (!isset($carpoolPayments[$carpoolItem->getDebtorUser()->getId()])) {
-                                $carpoolPayment = new CarpoolPayment();
-                                $carpoolPayment->setUser($carpoolItem->getDebtorUser());
-                                $carpoolPayment->setAmount(0);
-                                $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $carpoolPayment;
-                            }
+                        // We might need to create a carpoolPayment if it does'nt exists already
 
-                            $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setAmount($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->getAmount()+$carpoolItem->getAmount());
-                            $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->addCarpoolItem($carpoolItem);
+                        // Check if there is a carpoolpayment made by the debtor for this carpool item
+                        $currentCarpoolPayment = $this->carpoolPaymentRepository->findCarpoolPaymentByDebtorAndCarpoolItem($carpoolItem->getDebtorUser(), $carpoolItem);
+
+                        if (is_null($currentCarpoolPayment) || count($currentCarpoolPayment)==0) {
+                            if ($carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING || $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
+                                $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
+                                
+                                // search for an already instanciated carpoolPayment for this User
+                                // If it doesn't exist, we create it and push it in the array
+                                if (!isset($carpoolPayments[$carpoolItem->getDebtorUser()->getId()])) {
+                                    $carpoolPayment = new CarpoolPayment();
+                                    $carpoolPayment->setUser($carpoolItem->getDebtorUser());
+                                    $carpoolPayment->setAmount(0);
+                                    $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $carpoolPayment;
+                                }
+
+                                $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setAmount($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->getAmount()+$carpoolItem->getAmount());
+                                $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->addCarpoolItem($carpoolItem);
+
+                                // I don't know why but the first persist put the status to 0 even if i set it before
+                                $this->entityManager->persist($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]);
+                                $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setStatus(CarpoolPayment::STATUS_SUCCESS);
+                                $this->entityManager->persist($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]);
+                            }
+                        } else {
+                            $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $currentCarpoolPayment[0];
                         }
+
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_DIRECT);
                     } else {
                         // For online payment we don't change the debtor status, only the creditor's
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_ONLINE);
@@ -632,15 +657,11 @@ class PaymentManager
                 }
                 $this->entityManager->persist($carpoolItem);
 
-                // We need to persist the carpool payements
-                foreach ($carpoolPayments as $carpoolPayment) {
-                    $this->entityManager->persist($carpoolPayment);
-                }
+                // Flush also all the carpoolpayments
+                $this->entityManager->flush();
             }
-            $this->entityManager->flush();
         }
         
-        $payment->setStatus($carpoolPayment->getStatus());
         return $payment;
     }
 
@@ -650,7 +671,7 @@ class PaymentManager
      * @param CarpoolPayment $carpoolPayment    Involved CarpoolPayment
      * @return void
      */
-    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment)
+    public function treatCarpoolPayment(CarpoolPayment $carpoolPayment): CarpoolPayment
     {
         foreach ($carpoolPayment->getCarpoolItems() as $item) {
             /**
@@ -658,7 +679,7 @@ class PaymentManager
              */
             switch ($item->getDebtorStatus()) {
                 case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
-                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING);
+                    $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_DIRECT : CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT);
                     break;
                 case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
                     $item->setDebtorStatus(($carpoolPayment->getStatus()==CarpoolPayment::STATUS_SUCCESS) ? CarpoolItem::DEBTOR_STATUS_ONLINE : CarpoolItem::DEBTOR_STATUS_PENDING);
@@ -666,6 +687,8 @@ class PaymentManager
                     break;
             }
         }
+
+        return $carpoolPayment;
     }
 
 

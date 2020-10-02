@@ -76,4 +76,23 @@ class CarpoolPaymentRepository
                 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find a carpoolpayment made by $debtor about a $carpoolItem
+     *
+     * @param User $debtor
+     * @param CarpoolItem $carpoolItem
+     * @return CarpoolPayment[]|null
+     */
+    public function findCarpoolPaymentByDebtorAndCarpoolItem(User $debtor, CarpoolItem $carpoolItem): ?array
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+        ->join('cp.carpoolItems', 'ci')
+        ->where('cp.user = :debtor')
+        ->andWhere('ci.id = :carpoolItemId')
+        ->setParameter('debtor', $debtor)
+        ->setParameter('carpoolItemId', $carpoolItem->getId());
+
+        return $query->getQuery()->getResult();
+    }
 }

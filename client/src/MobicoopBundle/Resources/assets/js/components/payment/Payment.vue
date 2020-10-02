@@ -1059,7 +1059,7 @@ export default {
           }
         }
       });
-      // we post datas
+      //we post datas
       axios.post(this.$t("payments.postPayments"), {
         "type": this.type,  
         "items": payments
