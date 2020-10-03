@@ -72,7 +72,7 @@ export default () => (
         />,
         <Resource
           name="solidary_volunteers"
-          {...(can('solidary_manage') ? SolidaryUsersVolunteerResource : {})}
+          {...(can('solidary_manage') && process.env.REACT_APP_WEBSITE_NAME.toLowerCase().includes('mobicoop4mobicoop') ? SolidaryUsersVolunteerResource : {})}
         />,
         <Resource name="solidaries" {...(can('solidary_manage') ? SolidaryResource : {})} />,
         <Resource
