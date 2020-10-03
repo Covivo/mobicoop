@@ -82,6 +82,7 @@ const ImageUpload = ({
     const data = new global.FormData();
     data.append(`${referenceField}File`, file);
     data.append(`${referenceField}Id`, referenceId);
+    data.append('originalName', file.name);
 
     httpClient(`${apiUrlUploadImage}`, {
       method: 'POST',
