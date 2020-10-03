@@ -2,7 +2,7 @@ import React from 'react';
 import { Login, Resource, Admin } from 'react-admin';
 
 import authProvider from './auth/authProvider';
-import { createPermissionChecker, isAdmin } from './auth/permissions';
+import { createPermissionChecker, isAdmin, isSuperAdmin } from './auth/permissions';
 import Layout from './components/layout/Layout';
 import i18nProvider from './i18n/translations';
 import KibanaWidget from './components/dashboard/KibanaWidget';
@@ -87,7 +87,7 @@ export default () => (
           name="solidary_searches"
           {...(can('solidary_manage') ? SolidarySearchResource : {})}
         />,
-        <Resource name="structures" {...(can('solidary_manage') ? StructureResource : {})} />,
+        <Resource name="structures" {...(can('solidary_manage') && isSuperAdmin() ? StructureResource : {})} />,
         <Resource name="addresses" />,
         <Resource name="images" />,
         <Resource name="needs" />,
