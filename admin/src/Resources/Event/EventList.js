@@ -14,7 +14,8 @@ import {
   DateInput,
 } from 'react-admin';
 
-import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized from '../../auth/permissions';
+import { defaultExporterFunctionSuperAdmin } from '../../utils/utils';
 
 const EventFilter = ({ translate, ...rest }) => (
   <Filter {...rest}>
@@ -42,7 +43,7 @@ export const EventList = (props) => {
     <List
       {...props}
       title="Evénement > liste"
-      exporter={isSuperAdmin()}
+      exporter={defaultExporterFunctionSuperAdmin()}
       perPage={25}
       filters={<EventFilter translate={translate} />}
     >

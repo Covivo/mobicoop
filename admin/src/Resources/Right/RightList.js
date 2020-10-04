@@ -13,7 +13,7 @@ import {
   EditButton,
 } from 'react-admin';
 
-import { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import { defaultExporterFunctionSuperAdmin } from '../../utils/utils';
 
 const typeChoices = [
   { id: 1, name: 'Item' },
@@ -38,7 +38,7 @@ export const RightList = (props) => (
   <List
     {...props}
     title="Droits > liste"
-    exporter={isSuperAdmin()}
+    exporter={defaultExporterFunctionSuperAdmin()}
     perPage={25}
     filters={<RightFilter />}
   >

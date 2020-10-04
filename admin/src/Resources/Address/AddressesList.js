@@ -13,7 +13,8 @@ import {
   Filter,
 } from 'react-admin';
 
-import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized from '../../auth/permissions';
+import { defaultExporterFunctionSuperAdmin } from '../../utils/utils';
 
 const UserFilter = (props) => (
   <Filter {...props}>
@@ -38,7 +39,7 @@ export const AddressesList = (props) => (
     title="Adresses > liste"
     perPage={25}
     filters={<UserFilter />}
-    exporter={isSuperAdmin()}
+    exporter={defaultExporterFunctionSuperAdmin()}
     sort={{ field: 'id', order: 'ASC' }}
   >
     <Datagrid rowClick="show">

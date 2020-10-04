@@ -20,7 +20,8 @@ import { DayField } from './Field/DayField';
 import { RoleField } from './Field/RoleField';
 import { ScheduleDaysField } from './Field/ScheduleDaysField';
 import { useSolidary } from '../Solidary/hooks/useSolidary';
-import hasPermission, { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+import hasPermission from '../../../auth/permissions';
+import { defaultExporterFunctionSuperAdmin } from '../../../utils/utils';
 
 import {
   SolidaryUserVolunteerActionDropDown,
@@ -152,7 +153,7 @@ export const SolidarySearchListGuesser = (props) => {
       title="Covoiturages"
       perPage={25}
       filters={<SolidarySearchFilter />}
-      exporter={isSuperAdmin()}
+      exporter={defaultExporterFunctionSuperAdmin()}
       filterDefaultValues={{ way: 'outward', type: 'carpool' }}
     >
       {dynamicDatagrid}
