@@ -29,19 +29,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
 use App\Event\Entity\Event;
 use App\Geography\Entity\Territory;
-use App\Auth\Service\AuthManager;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
 final class EventTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
-    private $authManager;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    public function __construct(Security $security)
     {
         $this->security = $security;
-        $this->authManager = $authManager;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -54,7 +51,7 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
         // concerns only Event resource, and User users (not Apps)
         if (Event::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
@@ -63,14 +60,6 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
 
         $territories = [];
 
-        // we check if the user has limited territories
-        if ($isItem) {
-        } else {
-            switch ($operationName) {
-                case "get":
-                    $territories = $this->authManager->getTerritoriesForItem("event_list");
-            }
-        }
 
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
