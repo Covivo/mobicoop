@@ -257,123 +257,127 @@ class MassImportManager
                     // we use the first result as best result
                     $geocodedDestinations[$key] = $addresses[0];
                 } else {
-                    throw new MassException('Destination address <' . $address . '> not found');
+                    $analyseErrors[] = 'Destination address <' . $address . '> not found';
+                    // throw new MassException('Destination address <' . $address . '> not found');
                 }
             } else {
-                throw new MassException('Destination address <' . $address . '> not found');
+                $analyseErrors[] = 'Destination address <' . $address . '> not found';
+                // throw new MassException('Destination address <' . $address . '> not found');
             }
         }
         $this->logger->info('Mass analyze | Geocode destinations end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        // we geocode the personal addresses
-        $this->logger->info('Mass analyze | Geocode personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $i = 1;
-        foreach ($mass->getPersons() as $massPerson) {
-            // maybe we already have the gps points
-            if (
-                !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
-                !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
-                !is_null($massPerson->getWorkAddress()->getLongitude()) &&
-                !is_null($massPerson->getWorkAddress()->getLongitude())
-            ) {
-                continue;
-            }
-            // no gps points
-            $address = trim($massPerson->getPersonalAddress()->getHouseNumber()) . " " .
-            trim($massPerson->getPersonalAddress()->getStreet()) . " " .
-            trim($massPerson->getPersonalAddress()->getPostalCode()) . " " .
-            trim($massPerson->getPersonalAddress()->getAddressLocality()) . " " .
-            trim($massPerson->getPersonalAddress()->getAddressCountry());
-            $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            // strip the coma
-            $address = str_replace(",", "", $address);
+        // At this point, we only continue if there is no error in Destination points
+        if (count($analyseErrors)==0) {
+            // we geocode the personal addresses
+            $this->logger->info('Mass analyze | Geocode personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $i = 1;
+            foreach ($mass->getPersons() as $massPerson) {
+                // maybe we already have the gps points
+                if (
+                    !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
+                    !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
+                    !is_null($massPerson->getWorkAddress()->getLongitude()) &&
+                    !is_null($massPerson->getWorkAddress()->getLongitude())
+                ) {
+                    continue;
+                }
+                // no gps points
+                $address = trim($massPerson->getPersonalAddress()->getHouseNumber()) . " " .
+                trim($massPerson->getPersonalAddress()->getStreet()) . " " .
+                trim($massPerson->getPersonalAddress()->getPostalCode()) . " " .
+                trim($massPerson->getPersonalAddress()->getAddressLocality()) . " " .
+                trim($massPerson->getPersonalAddress()->getAddressCountry());
+                $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                // strip the coma
+                $address = str_replace(",", "", $address);
 
-            //$this->logger->info($address);
-            if ($addresses = $this->geoSearcher->geoCode($address)) {
-                if (count($addresses) > 0) {
-                    // we use the first result as best result
-                    $massPerson->getPersonalAddress()->setLongitude($addresses[0]->getLongitude());
-                    $massPerson->getPersonalAddress()->setLatitude($addresses[0]->getLatitude());
-                    // we search the destination (already calculated in the previous step)
-                    foreach ($destinations as $key => $destination) {
-                        if (
-                            $destination['houseNumber'] == $massPerson->getWorkAddress()->getHouseNumber() &&
-                            $destination['street'] == $massPerson->getWorkAddress()->getStreet() &&
-                            $destination['postalCode'] == $massPerson->getWorkAddress()->getPostalCode() &&
-                            $destination['addressLocality'] == $massPerson->getWorkAddress()->getAddressLocality() &&
-                            $destination['addressCountry'] == $massPerson->getWorkAddress()->getAddressCountry()
-                        ) {
-                            $massPerson->getWorkAddress()->setLongitude($geocodedDestinations[$key]->getLongitude());
-                            $massPerson->getWorkAddress()->setLatitude($geocodedDestinations[$key]->getLatitude());
-                            break;
+                //$this->logger->info($address);
+                if ($addresses = $this->geoSearcher->geoCode($address)) {
+                    if (count($addresses) > 0) {
+                        // we use the first result as best result
+                        $massPerson->getPersonalAddress()->setLongitude($addresses[0]->getLongitude());
+                        $massPerson->getPersonalAddress()->setLatitude($addresses[0]->getLatitude());
+                        // we search the destination (already calculated in the previous step)
+                        foreach ($destinations as $key => $destination) {
+                            if (
+                                $destination['houseNumber'] == $massPerson->getWorkAddress()->getHouseNumber() &&
+                                $destination['street'] == $massPerson->getWorkAddress()->getStreet() &&
+                                $destination['postalCode'] == $massPerson->getWorkAddress()->getPostalCode() &&
+                                $destination['addressLocality'] == $massPerson->getWorkAddress()->getAddressLocality() &&
+                                $destination['addressCountry'] == $massPerson->getWorkAddress()->getAddressCountry()
+                            ) {
+                                $massPerson->getWorkAddress()->setLongitude($geocodedDestinations[$key]->getLongitude());
+                                $massPerson->getWorkAddress()->setLatitude($geocodedDestinations[$key]->getLatitude());
+                                break;
+                            }
                         }
+                        $this->entityManager->persist($massPerson);
+                    } else {
+                        $analyseErrors[] = 'Personal address <' . $address . '> not found for id #' . $massPerson->getGivenId();
+                        //throw new MassException('Personal address <' . $address . '> not found');
                     }
-                    $this->entityManager->persist($massPerson);
                 } else {
                     $analyseErrors[] = 'Personal address <' . $address . '> not found for id #' . $massPerson->getGivenId();
                     //throw new MassException('Personal address <' . $address . '> not found');
                 }
-            } else {
-                $analyseErrors[] = 'Personal address <' . $address . '> not found for id #' . $massPerson->getGivenId();
-                //throw new MassException('Personal address <' . $address . '> not found');
+                $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $i++;
             }
-            $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $i++;
-        }
-        $this->entityManager->flush();
-        $this->logger->info('Mass analyze | Geocode personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->entityManager->flush();
+            $this->logger->info('Mass analyze | Geocode personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        // all addresses are geocoded, we can get the directions
-        $this->logger->info('Mass analyze | Direction personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // all addresses are geocoded, we can get the directions
+            $this->logger->info('Mass analyze | Direction personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $i=0;
-        foreach ($mass->getPersons() as $massPerson) {
-            $addressesForRoutes[$i] = [
-                [
-                    0 => $massPerson->getPersonalAddress(),
-                    1 => $massPerson->getWorkAddress()
-                ]
-            ];
-            $routesOwner[$i] = $massPerson;
-            $i++;
-        }
-        $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
-
-        $i=1;
-        foreach ($routesOwner as $key => $massPerson) {
-            if (isset($ownerRoutes[$key])) {
-                $route = $ownerRoutes[$key][0];
-                $massPerson->setDistance($route['distance']);
-                $massPerson->setDuration($route['duration']);
-                $massPerson->setBboxMinLon($route['bbox'][0]);
-                $massPerson->setBboxMinLat($route['bbox'][1]);
-                $massPerson->setBboxMaxLon($route['bbox'][2]);
-                $massPerson->setBboxMaxLat($route['bbox'][3]);
-                $massPerson->setBearing($route['bearing']);
-                $this->entityManager->persist($massPerson);
-            } else {
-                $origin = trim(
-                    $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                    $massPerson->getPersonalAddress()->getStreet() . " " .
-                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
-                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
-                    $massPerson->getPersonalAddress()->getAddressCountry()
-                );
-                $destination = trim(
-                    $massPerson->getWorkAddress()->getHouseNumber() . " " .
-                    $massPerson->getWorkAddress()->getStreet() . " " .
-                    $massPerson->getWorkAddress()->getPostalCode() . " " .
-                    $massPerson->getWorkAddress()->getAddressLocality() . " " .
-                    $massPerson->getWorkAddress()->getAddressCountry()
-                );
-                $analyseErrors[] = 'No route found for <' . $origin . '> => <' . $destination . '>, id #' . $massPerson->getGivenId();
+            $i=0;
+            foreach ($mass->getPersons() as $massPerson) {
+                $addressesForRoutes[$i] = [
+                    [
+                        0 => $massPerson->getPersonalAddress(),
+                        1 => $massPerson->getWorkAddress()
+                    ]
+                ];
+                $routesOwner[$i] = $massPerson;
+                $i++;
             }
-            $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $i++;
-        }
+            $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, false, false, GeorouterInterface::RETURN_TYPE_ARRAY);
 
-        $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+            $i=1;
+            foreach ($routesOwner as $key => $massPerson) {
+                if (isset($ownerRoutes[$key])) {
+                    $route = $ownerRoutes[$key][0];
+                    $massPerson->setDistance($route['distance']);
+                    $massPerson->setDuration($route['duration']);
+                    $massPerson->setBboxMinLon($route['bbox'][0]);
+                    $massPerson->setBboxMinLat($route['bbox'][1]);
+                    $massPerson->setBboxMaxLon($route['bbox'][2]);
+                    $massPerson->setBboxMaxLat($route['bbox'][3]);
+                    $massPerson->setBearing($route['bearing']);
+                    $this->entityManager->persist($massPerson);
+                } else {
+                    $origin = trim(
+                        $massPerson->getPersonalAddress()->getHouseNumber() . " " .
+                        $massPerson->getPersonalAddress()->getStreet() . " " .
+                        $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                        $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                        $massPerson->getPersonalAddress()->getAddressCountry()
+                    );
+                    $destination = trim(
+                        $massPerson->getWorkAddress()->getHouseNumber() . " " .
+                        $massPerson->getWorkAddress()->getStreet() . " " .
+                        $massPerson->getWorkAddress()->getPostalCode() . " " .
+                        $massPerson->getWorkAddress()->getAddressLocality() . " " .
+                        $massPerson->getWorkAddress()->getAddressCountry()
+                    );
+                    $analyseErrors[] = 'No route found for <' . $origin . '> => <' . $destination . '>, id #' . $massPerson->getGivenId();
+                }
+                $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $i++;
+            }
+
+            $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
         // Handling errors
         $mass->setErrors($analyseErrors);
         if (count($analyseErrors)>0) {
