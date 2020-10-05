@@ -423,6 +423,7 @@ export default {
         'coming':coming,
         'perPage':(coming) ? this.itemsPerPage : this.itemsPerPagePassed,
         'page': (coming) ? this.page : this.pagePassed,
+        'showAllEvents':true,
         'search':{
           'name':this.search
         },

@@ -31,15 +31,21 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 final class CommunityTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
+    private $authManager;
+    private $request;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, AuthManager $authManager, RequestStack $request)
     {
         $this->security = $security;
+        $this->authManager = $authManager;
+        $this->requestStack = $request;
+
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -52,7 +58,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null,  array $identifiers = [], array $context = []): void    
     {
         // concerns only Community resource, and User users (not Apps)
         if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
@@ -61,6 +67,17 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
 
         $territories = [];
 
+        // we check if the user has limited territories
+        if ($isItem) {
+        } else {
+            if($this->request->get("showAllCommunities")=="" || !$this->request->get("showAllCommunities")){
+                switch ($operationName) {
+                    case "get":
+                        $territories = $this->authManager->getTerritoriesForItem("community_list");
+                }
+            }
+        }
+        
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
