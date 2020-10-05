@@ -92,6 +92,7 @@ class CarpoolItemRepository
         ->join('a.criteria', 'c')
         ->where('ci.itemDate BETWEEN :fromDate and :toDate')
         ->andWhere('c.frequency = :frequency')
+        ->orderBy('a.type')
         ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
         ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
         ->setParameter('frequency', $frequency);

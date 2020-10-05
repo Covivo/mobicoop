@@ -315,7 +315,7 @@
                       </v-row>
                       <!-- payment mode choice (if ePay enabled) -->
                       <v-row
-                        v-if="ePay && currentItem.electronicallyPayable"
+                        v-if="ePay && currentItem.electronicallyPayable && currentItem.canPayElectronically"
                         justify="center"
                       >
                         <v-radio-group
@@ -339,29 +339,50 @@
                         v-else
                         justify="center"
                       >
-                        <!-- Item already confirmed -->
-                        <v-btn
-                          v-if="currentItem.mode !== null"
-                          color="secondary"
-                          disabled
-                          outlined
-                          rounded
-                        >
-                          <v-icon class="mr-2 ml-n2">
-                            mdi-check
-                          </v-icon>                          
-                          {{ $t('buttons.isConfirmed') }}
-                        </v-btn>
+                        <v-col cols="12">
+                          <v-row justify="center">
+                            <v-col
+                              cols="10"
+                              class="text-center"
+                            >
+                              <v-alert
+                                v-if="currentItem.electronicallyPayable && !currentItem.canPayElectronically"
+                                type="info"
+                              >
+                                {{ $t('noOnlinePayment.line1') }}
+                                <br>
+                                {{ $t('noOnlinePayment.line2') }}
+                              </v-alert>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12">
+                              <!-- Item already confirmed -->
+                              <v-btn
+                                v-if="currentItem.mode !== null"
+                                color="secondary"
+                                disabled
+                                outlined
+                                rounded
+                              >
+                                <v-icon class="mr-2 ml-n2">
+                                  mdi-check
+                                </v-icon>                          
+                                {{ $t('buttons.isConfirmed') }}
+                              </v-btn>
 
-                        <v-btn
-                          v-else
-                          color="secondary"
-                          rounded
-                          :disabled="disabledComponent"
-                          @click="confirmPayment(2)"
-                        >
-                          {{ $t('buttons.directPay') }}
-                        </v-btn>
+                              <v-btn
+                                v-else
+                                color="secondary"
+                                rounded
+                                :disabled="disabledComponent"
+                                @click="confirmPayment(2)"
+                              >
+                                {{ $t('buttons.directPay') }}
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                        </v-col>
                       </v-row>
                     </v-col>
                   </v-row>
@@ -1038,7 +1059,7 @@ export default {
           }
         }
       });
-      // we post datas
+      //we post datas
       axios.post(this.$t("payments.postPayments"), {
         "type": this.type,  
         "items": payments
