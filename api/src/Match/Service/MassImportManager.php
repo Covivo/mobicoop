@@ -552,7 +552,7 @@ class MassImportManager
      * @param Mass $mass
      * @return MassData
      */
-    private function getData(Mass $mass)
+    private function getData(Mass $mass): MassData
     {
         $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', getting data start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', ' . $mass->getMimeType());
@@ -576,10 +576,16 @@ class MassImportManager
                 //     return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
                 //     break;
             default:
-                $this->entityManager->remove($mass);
-                $this->entityManager->flush();
-                throw new MassException('This file type is not accepted');
-                break;
+                $massDataReturn = new MassData();
+                $errors[] = [
+                    'code' => '',
+                    'file' => basename('.' . $this->params['folder'] . $mass->getFileName()),
+                    'line' => 1,
+                    'message' => 'This file type is not accepted (only .csv)'
+                ];
+                $massDataReturn->setErrors($errors);
+                return $massDataReturn;
+            break;
         }
     }
 
@@ -800,8 +806,9 @@ class MassImportManager
                                 'line' => $line,
                                 'message' => "Date d'aller incorrecte"
                             ];
+                        } else {
+                            $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                         }
-                        $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                     } elseif ($fields[$i] == "returnTime") {
                         $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$returntime) {
@@ -812,8 +819,9 @@ class MassImportManager
                                 'line' => $line,
                                 'message' => "Date de retour incorrecte"
                             ];
+                        } else {
+                            $massPerson->setReturnTime($returntime->format('H:i:s'));
                         }
-                        $massPerson->setReturnTime($returntime->format('H:i:s'));
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->$setter($tab[$i]);
                     }
