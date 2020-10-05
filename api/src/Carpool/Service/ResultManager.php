@@ -548,9 +548,8 @@ class ResultManager
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
-                // $communities[$community->getId()] = $community->getName();                
+                // $communities[$community->getId()] = $community->getName();
                 $communities[$community->getId()] = $community->getImage();
-
             }
             
             // outward
