@@ -136,6 +136,18 @@ class SolidarySolutionManager
             $askHistory->setAsk($ask);
             $this->entityManager->persist($askHistory);
             $this->entityManager->flush();
+
+            // If there is an Ask linked we update it (the return)
+            if ($solidaryAsk->getAsk()->getAskLinked()) {
+                $askLinked = $solidaryAsk->getAsk()->getAskLinked();
+
+                // Update the Criteria
+                $askLinkedCriteria = $this->updateCriteriaFromFormalRequest($solidaryFormalRequest, $askLinked->getCriteria(), "return");
+                $this->entityManager->persist($askLinkedCriteria);
+                $this->entityManager->flush();
+
+                // For now, we don't handle AskHistories on AskLinked. If we do, we need to write the code here
+            }
         }
 
         return $solidaryFormalRequest;
@@ -243,7 +255,6 @@ class SolidarySolutionManager
 
     private function buildDaySchedule($schedule, $day, $time, $way)
     {
-        //$templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
         $found = false;
         foreach ($schedule as $key => $currentSchedule) {
             if ($currentSchedule[$way.'Time']==$time) {
@@ -253,7 +264,7 @@ class SolidarySolutionManager
             }
         }
         if (!$found) {
-            $newSchedule = [];
+            $newSchedule = ["mon"=>0,"tue"=>0,"wed"=>0,"thu"=>0,"fri"=>0,"sat"=>0,"sun"=>0];
             $newSchedule[$way.'Time'] = $time;
             $newSchedule[$day] = 1;
             $schedule[] = $newSchedule;
@@ -265,65 +276,68 @@ class SolidarySolutionManager
     /**
      * Update a Criteria based on the SolidaryFormalRequest data
      *
-     * @param SolidaryFormalRequest $solidaryFormalRequest
-     * @param Criteria $criteria
-     * @return Criteria
+     * @param SolidaryFormalRequest $solidaryFormalRequest  The solidary formal request
+     * @param Criteria $criteria                            The Criteria to update
+     * @param string $way                                   Outward or Return
+     * @return Criteria The updated Criteria
      */
-    private function updateCriteriaFromFormalRequest(SolidaryFormalRequest $solidaryFormalRequest, Criteria $criteria): Criteria
+    private function updateCriteriaFromFormalRequest(SolidaryFormalRequest $solidaryFormalRequest, Criteria $criteria, string $way="outward"): Criteria
     {
         $criteria->setFromDate($solidaryFormalRequest->getOutwardDate());
 
         // Treat the schedule
-        $outwardSchedule = $solidaryFormalRequest->getOutwardSchedule()[0];
-        if (isset($outwardSchedule["mon"]) && $outwardSchedule["mon"]==1) {
-            $criteria->setMonCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setMonTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["tue"]) && $outwardSchedule["tue"]==1) {
-            $criteria->setTueCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setTueTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["wed"]) && $outwardSchedule["wed"]==1) {
-            $criteria->setWedCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setWedTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["thu"]) && $outwardSchedule["thu"]==1) {
-            $criteria->setThuCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setThuTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["fri"]) && $outwardSchedule["fri"]==1) {
-            $criteria->setFriCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setFriTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["sat"]) && $outwardSchedule["sat"]==1) {
-            $criteria->setSatCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setSatTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
-        if (isset($outwardSchedule["sun"]) && $outwardSchedule["sun"]==1) {
-            $criteria->setSunCheck(true);
-            if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                $criteria->setSunTime(new \DateTime($outwardSchedule['outwardTime']));
-            }
-        }
+        $schedules = $solidaryFormalRequest->getOutwardSchedule();
 
+        foreach ($schedules as $schedule) {
+            if (isset($schedule["mon"]) && $schedule["mon"]==1) {
+                $criteria->setMonCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setMonTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["tue"]) && $schedule["tue"]==1) {
+                $criteria->setTueCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setTueTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["wed"]) && $schedule["wed"]==1) {
+                $criteria->setWedCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setWedTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["thu"]) && $schedule["thu"]==1) {
+                $criteria->setThuCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setThuTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["fri"]) && $schedule["fri"]==1) {
+                $criteria->setFriCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setFriTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["sat"]) && $schedule["sat"]==1) {
+                $criteria->setSatCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setSatTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+            if (isset($schedule["sun"]) && $schedule["sun"]==1) {
+                $criteria->setSunCheck(true);
+                if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+                    $criteria->setSunTime(new \DateTime($schedule[$way.'Time']));
+                }
+            }
+        }
         // The toDate is only for regular
         if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
             $criteria->setToDate($solidaryFormalRequest->getOutwardLimitDate());
         } else {
             // Punctual journey we update fromTime
-            $criteria->setFromTime(new \DateTime($outwardSchedule['outwardTime']));
+            $criteria->setFromTime(new \DateTime($schedules[0][$way.'Time']));
         }
 
         return $criteria;
