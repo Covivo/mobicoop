@@ -74,6 +74,7 @@
             :external-rdex-journeys="externalRdexJourneys"
             :external-url="(result.externalUrl) ? result.externalUrl : null"
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
+            :communities="result.communities"
             @carpool="carpool"
             @loginOrRegister="loginOrRegister"
           />
@@ -124,6 +125,10 @@ export default {
       type: Boolean,
       default: false
     },
+    communities: {
+      type: Array,
+      default: null
+    }
   },
   data : function() {
     return {

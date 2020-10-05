@@ -48,6 +48,39 @@
           </template>
           <span> {{ $t('inDev') }} </span>
         </v-tooltip>
+
+        <!-- Community -->
+        <v-tooltip
+          color="info"
+          right
+        >
+          <template v-slot:activator="{ on }">
+            <v-row
+              align="center"
+              dense
+              v-on="on"
+            >
+              <v-list-item-avatar
+                v-for="community in communities"
+                :key="community.id"
+                cols="1"
+                color="grey darken-3"
+                size="26"
+                class="ml-0 mr-1"
+              >
+                <!-- {{ community }} -->
+                <v-img
+                  v-for="image in communities"
+                  :key="image.id"
+                  :src="image[0]"
+                  alt="avatar"
+                />
+              </v-list-item-avatar>
+            </v-row>
+          </template>
+          <span>
+            bouh</span>
+        </v-tooltip>
       </v-col>
 
       <!-- Carpooler contact -->
@@ -149,7 +182,19 @@ export default {
     externalOrigin: {
       type: String,
       default: null
-    }, 
+    },
+    communities: {
+      type: Object,
+      default: null,
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null,
+    },
+    avatarVersion: {
+      type: String,
+      default: null,
+    }
   },
   data() {
     return {
