@@ -454,13 +454,18 @@ class AdManager
             ]);
 
             $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            $results = $this->resultManager->filterResults(
+                $this->resultManager->createAdResults($outwardProposal, $withSolidaries),
+                $ad->getFilters()
+            );
+            $ad->setNbResults(count($results));
             $ad->setResults(
-                $this->resultManager->orderResults(
-                    $this->resultManager->filterResults(
-                        $this->resultManager->createAdResults($outwardProposal, $withSolidaries),
+                $this->resultManager->paginateResults(
+                    $this->resultManager->orderResults(
+                        $results,
                         $ad->getFilters()
-                    ),
-                    $ad->getFilters()
+                    )
                 )
             );
             // $results = $this->resultManager->orderResults(
@@ -613,11 +618,15 @@ class AdManager
      * @param int $id               The ad id to get
      * @param array|null $filters   The filters to apply to the results
      * @param array|null $order     The order to apply to the results
+     * @param int|null $page        The result page
      * @param bool $createResults   Create the formatted results
      * @return Ad
      */
-    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?bool $createResults = true)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page=1, ?bool $createResults = true)
     {
+        if (is_null($page)) {
+            $page = 1;
+        }
         $ad = new Ad();
         $proposal = $this->proposalManager->get($id);
         if (is_null($proposal)) {
@@ -643,7 +652,6 @@ class AdManager
                     'criteria'=>'date',
                     'value'=>'ASC'
                 ]
-
             ];
             if (!is_null($filters)) {
                 $aFilters['filters']=$filters;
@@ -653,15 +661,29 @@ class AdManager
             }
             $ad->setFilters($aFilters);
             $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $results = $this->resultManager->filterResults(
+                $this->resultManager->createAdResults($proposal),
+                $ad->getFilters()
+            );
+            $ad->setNbResults(count($results));
             $ad->setResults(
-                $this->resultManager->orderResults(
-                    $this->resultManager->filterResults(
-                        $this->resultManager->createAdResults($proposal),
+                $this->resultManager->paginateResults(
+                    $this->resultManager->orderResults(
+                        $results,
                         $ad->getFilters()
                     ),
-                    $ad->getFilters()
+                    $page
                 )
             );
+            // $ad->setResults(
+            //     $this->resultManager->orderResults(
+            //         $this->resultManager->filterResults(
+            //             $this->resultManager->createAdResults($proposal),
+            //             $ad->getFilters()
+            //         ),
+            //         $ad->getFilters()
+            //     )
+            // );
             $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         

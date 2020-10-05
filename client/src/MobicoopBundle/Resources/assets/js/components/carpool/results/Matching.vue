@@ -78,6 +78,8 @@
               </v-btn>
             </v-col>
           </v-row>
+
+          <!-- Include passengers switch -->
           <v-row v-if="displayNewSearch">
             <v-col
               v-if="!loading"
@@ -101,6 +103,7 @@
             </v-col>
           </v-row>
 
+          <!-- New search -->
           <v-row v-if="newSearch">
             <v-col cols="12">
               <search
@@ -117,10 +120,12 @@
             </v-col>
           </v-row>
 
+          <!-- Tabs : platform results, external results, public transport results -->
           <v-tabs
             v-if="displayTab"
             v-model="modelTabs"
           >
+            <!-- Platform results tab -->
             <v-tab href="#carpools">
               <v-badge
                 color="primary"
@@ -130,6 +135,7 @@
                 {{ $t('tabs.carpools', {'platform':platformName}) }}
               </v-badge>
             </v-tab>
+            <!-- External results tab -->
             <v-tab
               v-if="externalRdexJourneys"
               href="#otherCarpools"
@@ -142,6 +148,7 @@
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
             </v-tab>
+            <!-- Public transport results tab -->
             <v-tab
               v-if="ptSearch"
               href="#ptSearch"
@@ -155,18 +162,24 @@
               </v-badge>
             </v-tab>            
           </v-tabs>
+          <!-- Tabs items  -->
           <v-tabs-items v-model="modelTabs">
+            <!-- Platform results tab item -->
             <v-tab-item value="carpools">
               <matching-results
                 :results="results"
+                :nb-results="nbCarpoolPlatform"
                 :distinguish-regular="distinguishRegular"
                 :carpooler-rate="carpoolerRate"
                 :user="user"
                 :loading-prop="loading"
+                :page="page"
                 @carpool="carpool"
                 @loginOrRegister="loginOrRegister"
+                @paginate="paginate"
               />
             </v-tab-item>
+            <!-- External results tab item -->
             <v-tab-item
               v-if="externalRdexJourneys"
               value="otherCarpools"
@@ -181,6 +194,7 @@
                 @carpool="carpool"
               />
             </v-tab-item>
+            <!-- Public transport results tab item -->
             <v-tab-item
               v-if="ptSearch"
               value="ptSearch"
@@ -395,7 +409,8 @@ export default {
       initFiltersChips:false,
       lCommunityId: this.communityId,
       lCommunityIdBak: this.communityId,
-      resetStepMatchingJourney: false
+      resetStepMatchingJourney: false,
+      page:1
     };
   },
   computed: {
@@ -447,15 +462,6 @@ export default {
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
   },
-  beforeUpdate() {
-    console.log("beforeUpdate");
-  },
-  updated() {
-    console.log("updated");
-  },
-  beforeDestroy() {
-    console.log("beforeDestroy");
-  },
   methods :{
     carpool(carpool) {
       this.result = carpool;
@@ -468,6 +474,10 @@ export default {
       // open the dialog
       this.loginOrRegisterDialog = true;
     },
+    paginate(page) {
+      this.page = page;
+      this.search();
+    },
     login() {
       
     },
@@ -478,8 +488,15 @@ export default {
       // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
+        if (this.filters === null) {
+          this.filters = {
+            "page": this.page
+          };
+        } else {
+          this.filters.page = this.page;
+        }
         let postParams = {
-          "filters": this.filters
+          "filters": this.filters,
         };
         axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
           {
@@ -489,8 +506,8 @@ export default {
           })
           .then((response) => {
             this.loading = false;
-            this.results = response.data;
-            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
+            this.results = response.data.results;
+            this.nbCarpoolPlatform = response.data.nb;
           })
           .catch((error) => {
             console.log(error);
@@ -498,6 +515,13 @@ export default {
       } else if (this.lExternalId) {
         // if an externalId is provided, we load the corresponding proposal results
         this.loading = true;
+        if (this.filters === null) {
+          this.filters = {
+            "page": this.page
+          };
+        } else {
+          this.filters.page = this.page;
+        }
         let postParams = {
           "filters": this.filters
         };
@@ -509,11 +533,12 @@ export default {
           })
           .then((response) => {
             this.loading = false;
-            this.results = response.data;
+            this.results = response.data.results;
+            this.nbCarpoolPlatform = response.data.nb;
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
-            (response.data.length>0) ? this.nbCarpoolPlatform = response.data.length : this.nbCarpoolPlatform = "-";
+            
           })
           .catch((error) => {
             console.log(error);
@@ -521,6 +546,13 @@ export default {
       } else {
       // otherwise we send a proposal search
         this.loading = true;
+        if (this.filters === null) {
+          this.filters = {
+            "page": this.page
+          };
+        } else {
+          this.filters.page = this.page;
+        }
         let postParams = {
           "origin": this.origin,
           "destination": this.destination,
@@ -541,16 +573,11 @@ export default {
           })
           .then((response) => {
             this.loading = false;
-            this.results = response.data;
+            this.results = response.data.results;
+            this.nbCarpoolPlatform = response.data.nb;
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
-              this.nbCarpoolPlatform = this.results.length;
             }
-            else{
-              this.nbCarpoolPlatform = "-";
-            }
-            var time = new Date() - start;
-            console.log(time/1000);
           })
           .catch((error) => {
             console.log(error);
@@ -654,6 +681,7 @@ export default {
         })
     },
     updateFilters(data){
+      this.page=1;
       this.filters = data;
       // Update the default filters also
       this.lCommunityId = (this.filters.filters.community) ? parseInt(this.filters.filters.community) : null;

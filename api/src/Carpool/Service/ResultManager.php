@@ -1972,8 +1972,44 @@ class ResultManager
             $return = -1;
             switch ($criteria) {
                 case "date":
-                    $dateTimeA = \DateTime::createFromFormat('Y-m-d H:i', $a->getDate()->format("Y-m-d") . " " . $a->getTime()->format("H:i"));
-                    $dateTimeB = \DateTime::createFromFormat('Y-m-d H:i', $b->getDate()->format("Y-m-d") . " " . $b->getTime()->format("H:i"));
+                    $dateA = $timeA = null;
+                    $dateB = $timeB = null;
+                    if (!is_null($a->getDate())) {
+                        $dateA = $a->getDate();
+                        if (!is_null($a->getTime())) {
+                            $timeA = $a->getTime();
+                        }
+                    } elseif (!is_null($a->getStartDate())) {
+                        $dateA = $a->getStartDate();
+                        if (!is_null($a->getOutwardTime())) {
+                            $timeA = $a->getOutwardTime();
+                        }
+                    } else {
+                        break;
+                    }
+                    if (!is_null($b->getDate())) {
+                        $dateB = $b->getDate();
+                        if (!is_null($b->getTime())) {
+                            $timeB = $b->getTime();
+                        }
+                    } elseif (!is_null($b->getStartDate())) {
+                        $dateB = $b->getStartDate();
+                        if (!is_null($b->getOutwardTime())) {
+                            $timeB = $b->getOutwardTime();
+                        }
+                    } else {
+                        break;
+                    }
+                    if (!is_null($timeA)) {
+                        $dateTimeA = \DateTime::createFromFormat('Y-m-d H:i', $dateA->format("Y-m-d") . " " . $timeA->format("H:i"));
+                    } else {
+                        $dateTimeA = $dateA;
+                    }
+                    if (!is_null($timeB)) {
+                        $dateTimeB = \DateTime::createFromFormat('Y-m-d H:i', $dateB->format("Y-m-d") . " " . $timeB->format("H:i"));
+                    } else {
+                        $dateTimeB = $dateB;
+                    }
                     ($value=="ASC") ? $return = $dateTimeA <=> $dateTimeB : $return = $dateTimeB <=> $dateTimeA;
                 break;
             }
@@ -2043,6 +2079,18 @@ class ResultManager
         // }
 
         return $results;
+    }
+
+    /**
+     * Paginate the results
+     *
+     * @param array $results        The array of results to paginate
+     * @param array|null $filters   The array of filters to apply (applied successively in the order of the array)
+     * @return array    The results filtered
+     */
+    public function paginateResults(array $results, int $page=1, int $perPage=10)
+    {
+        return array_slice($results, (($page-1)*$perPage), $perPage);
     }
 
     /**
