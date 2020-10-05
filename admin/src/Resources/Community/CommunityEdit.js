@@ -155,11 +155,11 @@ export const CommunityEdit = (props) => {
           <TextInput disabled source="originId" formClassName={classes.hiddenField} />
           <FunctionField
             label={translate('custom.label.community.oldAdress')}
-            source="address"
+            source="address.old"
             render={(r) => addressRenderer(r.address)}
           />
           <GeocompleteInput
-            source="address.id"
+            source="address"
             label={translate('custom.label.community.newAdress')}
             validate={required()}
             formClassName={classes.fullwidth}
