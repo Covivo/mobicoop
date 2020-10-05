@@ -264,11 +264,12 @@ class SolidarySolutionManager
     /**
      * Update a Criteria based on the SolidaryFormalRequest data
      *
-     * @param SolidaryFormalRequest $solidaryFormalRequest
-     * @param Criteria $criteria
-     * @return Criteria
+     * @param SolidaryFormalRequest $solidaryFormalRequest  The solidary formal request
+     * @param Criteria $criteria                            The Criteria to update
+     * @param string $way                                   Outward or Return
+     * @return Criteria The updated Criteria
      */
-    private function updateCriteriaFromFormalRequest(SolidaryFormalRequest $solidaryFormalRequest, Criteria $criteria): Criteria
+    private function updateCriteriaFromFormalRequest(SolidaryFormalRequest $solidaryFormalRequest, Criteria $criteria, string $way="outward"): Criteria
     {
         $criteria->setFromDate($solidaryFormalRequest->getOutwardDate());
 
@@ -279,43 +280,43 @@ class SolidarySolutionManager
             if (isset($schedule["mon"]) && $schedule["mon"]==1) {
                 $criteria->setMonCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setMonTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setMonTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["tue"]) && $schedule["tue"]==1) {
                 $criteria->setTueCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setTueTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setTueTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["wed"]) && $schedule["wed"]==1) {
                 $criteria->setWedCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setWedTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setWedTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["thu"]) && $schedule["thu"]==1) {
                 $criteria->setThuCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setThuTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setThuTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["fri"]) && $schedule["fri"]==1) {
                 $criteria->setFriCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setFriTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setFriTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["sat"]) && $schedule["sat"]==1) {
                 $criteria->setSatCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setSatTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setSatTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
             if (isset($schedule["sun"]) && $schedule["sun"]==1) {
                 $criteria->setSunCheck(true);
                 if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
-                    $criteria->setSunTime(new \DateTime($schedule['outwardTime']));
+                    $criteria->setSunTime(new \DateTime($schedule[$way.'Time']));
                 }
             }
         }
@@ -324,7 +325,7 @@ class SolidarySolutionManager
             $criteria->setToDate($solidaryFormalRequest->getOutwardLimitDate());
         } else {
             // Punctual journey we update fromTime
-            $criteria->setFromTime(new \DateTime($schedules[0]['outwardTime']));
+            $criteria->setFromTime(new \DateTime($schedules[0][$way.'Time']));
         }
 
         return $criteria;
