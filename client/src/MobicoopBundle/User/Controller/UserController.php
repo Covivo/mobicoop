@@ -416,13 +416,8 @@ class UserController extends AbstractController
         }
         
         $exports = $this->exportManager->getExports();
-        
-        $currentDate = date("d-m-Y");
-
-        return $this->render('@Mobicoop/pdf/list/list-payment-carpool.html.twig', [
-            'user' => $user,
-            'currentDate' => $currentDate
-        ]);
+       
+        return $exports;
     }
 
     /**

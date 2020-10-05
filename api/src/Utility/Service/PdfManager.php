@@ -21,37 +21,46 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
+namespace App\Utility\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\CarpoolExport;
+use Knp\Snappy\Pdf;
+use Twig\Environment;
 
 /**
- * Proposal management service.
+ * Version manager service.
+ *
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class ExportManager
+class PdfManager
 {
-    private $dataProvider;
-
-    /**
-     * Constructor.
-     *
-     * @param DataProvider $dataProvider
-     */
-    public function __construct(DataProvider $dataProvider)
+    private $pdf;
+    private $twig;
+    
+    public function __construct(Pdf $pdf, Environment $twig)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(CarpoolExport::class);
+        $this->pdf = $pdf;
+        $this->twig = $twig;
     }
- 
+   
     /**
-     * Get carpoolExports for a user
+     * Create an PDF export of an array.
      *
-     * @return String|null CarpoolExports of a user
+     * @param array $dataToPdf
+     * @return String link to the pdf file.
      */
-    public function getExports()
+    public function generatePDF(array $dataToPdf)
     {
-        $response = $this->dataProvider->getCollection();
-        return $response->getValue();
+        $this->pdf->generateFromHtml(
+            $this->twig->render(
+                $dataToPdf['twigPath'],
+                [
+                        'array' => $dataToPdf
+                    ]
+            ),
+            $dataToPdf['filePath'].$dataToPdf['fileName'],
+            [],
+            true
+        );
+        return $dataToPdf['returnUrl'];
     }
 }

@@ -192,9 +192,15 @@ services:
                 importBatchMatchSize: '%env(int:IMPORT_PROPOSALS_BATCH_MATCH_SIZE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
+    
+    App\Carpool\Service\CarpoolExportManager:
+        arguments:
+            $carpoolExportUri: '%env(CARPOOL_EXPORT_URI)%'
+            $carpoolExportPath: '%env(CARPOOL_EXPORT_FILE_PATH)%'
+            $carpoolExportPlatformName: '%env(CARPOOL_EXPORT_APP_NAME)%'       
 
     # Communication
-    App\Communication\Controller\:
+    App\Communication\Controller\: 
         resource: '../src/Communication/Controller'
         arguments:
                 $params:

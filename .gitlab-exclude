@@ -74,6 +74,7 @@
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
 /api/public/upload/mass/files/*.json
+/api/public/export/carpool/*.pdf
 /api/public/import/
 /api/public/import/*.*
 /api/public/import/Avatar/*.*
