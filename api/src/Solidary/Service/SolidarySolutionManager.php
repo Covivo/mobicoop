@@ -243,7 +243,6 @@ class SolidarySolutionManager
 
     private function buildDaySchedule($schedule, $day, $time, $way)
     {
-        //$templateSchedule = ["mon"=>false,"tue"=>false,"wed"=>false,"thu"=>false,"fri"=>false,"sat"=>false,"sun"=>false];
         $found = false;
         foreach ($schedule as $key => $currentSchedule) {
             if ($currentSchedule[$way.'Time']==$time) {
@@ -253,7 +252,7 @@ class SolidarySolutionManager
             }
         }
         if (!$found) {
-            $newSchedule = [];
+            $newSchedule = ["mon"=>0,"tue"=>0,"wed"=>0,"thu"=>0,"fri"=>0,"sat"=>0,"sun"=>0];
             $newSchedule[$way.'Time'] = $time;
             $newSchedule[$day] = 1;
             $schedule[] = $newSchedule;
