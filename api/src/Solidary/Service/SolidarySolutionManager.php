@@ -136,6 +136,18 @@ class SolidarySolutionManager
             $askHistory->setAsk($ask);
             $this->entityManager->persist($askHistory);
             $this->entityManager->flush();
+
+            // If there is an Ask linked we update it (the return)
+            if ($solidaryAsk->getAsk()->getAskLinked()) {
+                $askLinked = $solidaryAsk->getAsk()->getAskLinked();
+
+                // Update the Criteria
+                $askLinkedCriteria = $this->updateCriteriaFromFormalRequest($solidaryFormalRequest, $askLinked->getCriteria(), "return");
+                $this->entityManager->persist($askLinkedCriteria);
+                $this->entityManager->flush();
+
+                // For now, we don't handle AskHistories on AskLinked. If we do, we need to write the code here
+            }
         }
 
         return $solidaryFormalRequest;
