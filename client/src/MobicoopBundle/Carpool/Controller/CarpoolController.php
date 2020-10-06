@@ -77,8 +77,8 @@ class CarpoolController extends AbstractController
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
-        int $ptResults
-    ) {
+        int $ptResults) 
+        {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
         $this->forbiddenPrice = $forbiddenPrice;

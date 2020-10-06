@@ -60,7 +60,7 @@
               dense
               v-on="on"
             >
-              <v-list-item-avatar
+              <v-avatar
                 v-for="community in communities"
                 :key="community.id"
                 cols="1"
@@ -70,16 +70,15 @@
               >
                 <!-- {{ community }} -->
                 <v-img
-                  v-for="image in communities"
-                  :key="image.id"
-                  :src="image[0]"
+                  src="https://cdn.vuetifyjs.com/images/john.jpg"
                   alt="avatar"
                 />
-              </v-list-item-avatar>
+              </v-avatar>
             </v-row>
           </template>
+          <!-- mettre le nom de la communauté -->
           <span>
-            bouh</span>
+            bouh</span> 
         </v-tooltip>
       </v-col>
 
@@ -184,16 +183,8 @@ export default {
       default: null
     },
     communities: {
-      type: Object,
-      default: null,
-    },
-    urlAltAvatar: {
-      type: String,
-      default: null,
-    },
-    avatarVersion: {
-      type: String,
-      default: null,
+      type: Array,
+      default: null
     }
   },
   data() {
