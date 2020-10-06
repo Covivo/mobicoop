@@ -78,7 +78,7 @@
 								{# Date #}
 								<td>{{ carpoolExport.date|date("m/d/Y") }}</td>
 								{# Role #}
-								{% if (carpoolExport.role == 1 or carpool.role == 3) %}
+								{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
 									<td>{{ "driver"|trans }}</td>
 								{% else  %}
 									<td>{{ "passenger"|trans }}</td>
