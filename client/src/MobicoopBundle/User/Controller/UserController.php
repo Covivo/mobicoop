@@ -44,7 +44,6 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ExportManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -82,7 +81,6 @@ class UserController extends AbstractController
     private $userManager;
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
-    private $exportManager;
 
     /**
      * Constructor
@@ -102,8 +100,7 @@ class UserController extends AbstractController
         bool $paymentElectronicActive,
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
-        PaymentManager $paymentManager,
-        ExportManager $exportManager
+        PaymentManager $paymentManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -119,7 +116,6 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
-        $this->exportManager = $exportManager;
     }
 
     /***********
@@ -404,9 +400,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * Export list of payments and carpools
+     * Export list carpools for a user
+     * AJAX post
      */
-    public function getExports()
+    public function getExport(Request $request)
     {
         $user = $this->userManager->getLoggedUser();
 
@@ -414,10 +411,10 @@ class UserController extends AbstractController
         if (!$user instanceof User) {
             return $this->redirectToRoute("user_login");
         }
-        
-        $exports = $this->exportManager->getExports();
-       
-        return $exports;
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getCarpoolExport($user)->getCarpoolExport());
+        }
+        return null;
     }
 
     /**

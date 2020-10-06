@@ -126,7 +126,7 @@ list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
         en: /user/profile/update/accepted-carpools/export
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExports
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
 
 # Delete user by anonymise
 user_delete:

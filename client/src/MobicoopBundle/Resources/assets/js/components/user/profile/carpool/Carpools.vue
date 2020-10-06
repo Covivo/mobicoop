@@ -11,6 +11,28 @@
           <v-tab>{{ $t('carpools.ongoing') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.ongoing">
+              <v-row>
+                <v-col
+                  cols="8"
+                  class="font-weight-bold text-h5"
+                >
+                  {{ $t('needCarpoolProofs') }}
+                </v-col>
+                <v-col                   
+                  cols="8"
+                  class="font-italic text-caption"
+                >
+                  {{ $t('clickAndGetFile') }}
+                </v-col>
+                <v-btn
+                  color="secondary"
+                  rounded
+                  width="175px"
+                  @click="getExport()"
+                >
+                  {{ $t('export') }}
+                </v-btn>
+              </v-row>
               <v-row
                 v-for="ad in localAds.ongoing"
                 :key="ad.id"
@@ -32,34 +54,34 @@
                   cols="8"
                   class="font-weight-bold text-h5"
                 >
-                  Besoin d’une preuve de covoiturage ?
+                  {{ $t('needCarpoolProofs') }}
                 </v-col>
                 <v-col                   
                   cols="8"
                   class="font-italic text-caption"
                 >
-                  En cliquant sur «Exporter» vous pouvez télécharger tous vos covoiturages au format pdf ou csv.
+                  {{ $t('clickAndGetFile') }}
                 </v-col>
                 <v-btn
                   color="secondary"
                   rounded
-                  href="/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
                   width="175px"
+                  @click="getExport()"
                 >
-                  Exporter
+                  {{ $t('export') }}
                 </v-btn>
-              </v-row>
-              <v-row
-                v-for="ad in localAds.archived"
-                :key="ad.id"
-              >
-                <v-col cols="12">
-                  <Carpool
-                    :ad="ad"
-                    :is-archived="true"
-                    :user="user"
-                  />
-                </v-col>
+                <v-row
+                  v-for="ad in localAds.archived"
+                  :key="ad.id"
+                >
+                  <v-col cols="12">
+                    <Carpool
+                      :ad="ad"
+                      :is-archived="true"
+                      :user="user"
+                    />
+                  </v-col>
+                </v-row>
               </v-row>
             </v-container>
           </v-tab-item>
@@ -69,8 +91,8 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 import Translations from "@translations/components/user/profile/carpool/AcceptedCarpools.js";
-
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
 
 export default {
@@ -93,6 +115,17 @@ export default {
   data(){
     return {
       localAds: this.acceptedCarpools
+    }
+  },
+  methods:{
+    getExport(){
+      axios.post(this.$t("exportUrl"))
+        .then(res => {
+          console.error(res.data)
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     }
   }
 }

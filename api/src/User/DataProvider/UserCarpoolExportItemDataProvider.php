@@ -21,11 +21,11 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\User\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Ressource\CarpoolExport;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 use App\Carpool\Service\CarpoolExportManager;
 
@@ -33,7 +33,7 @@ use App\Carpool\Service\CarpoolExportManager;
  * Collection data provider for user's carpoolExports.
  *
  */
-final class CarpoolExportCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $security;
     private $carpoolExportManager;
@@ -46,11 +46,16 @@ final class CarpoolExportCollectionDataProvider implements CollectionDataProvide
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CarpoolExport::class === $resourceClass && $operationName === "get";
+        return User::class === $resourceClass && $operationName === "getCarpoolExport";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): User
     {
-        return $this->carpoolExportManager->getcarpoolExports($this->security->getUser()->getId());
+        /**
+         * @var User
+         */
+        $user = $this->security->getUser();
+        $user->setCarpoolExport($this->carpoolExportManager->getCarpoolExports());
+        return $user;
     }
 }

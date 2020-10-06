@@ -54,7 +54,7 @@ class PdfManager
             $this->twig->render(
                 $dataToPdf['twigPath'],
                 [
-                        'array' => $dataToPdf
+                        'dataToPdf' => $dataToPdf
                     ]
             ),
             $dataToPdf['filePath'].$dataToPdf['fileName'],

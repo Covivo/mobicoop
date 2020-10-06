@@ -21,31 +21,14 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Ressource;
+namespace App\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 
 /**
  * A CarpoolExport item.
  *
- * @ApiResource(
- *     attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readExport"}, "enable_max_depth"="true"}
- *     },
- *     collectionOperations={
- *          "get"
- *      },
- *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
  *  @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CarpoolExport
@@ -64,58 +47,47 @@ class CarpoolExport
 
     /**
      * @var int The id of this carpoolExport item.
-     * @Groups({"readExport"})
-     *
-     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
      * @var \DateTimeInterface|null The date of the carpool.
-     * @Groups({"readExport"})
      *
      */
     private $date;
 
     /**
      * @var int The frequency (1 = driver; 2 = passenger).
-     * @Groups({"readExport"})
      */
     private $role;
 
     /**
      * @var User The carpooler
-     * @Groups({"readExport"})
      */
     private $carpooler;
 
     /**
      * @var Address The origin of the carpool
-     * @Groups({"readExport"})
      */
     private $pickUp;
 
     /**
      * @var Address The destination of the carpool
-     * @Groups({"readExport"})
      */
     private $dropOff;
 
     /**
      * @var string|null The amount for the carpool.
-     * @Groups({"readExport"})
      */
     private $amount;
 
     /**
      * @var int|null The mode of payment for the carpool.
-     * @Groups({"readExport"})
      */
     private $mode;
 
     /**
      * @var string|null The Certification of the payment for the carpool.
-     * @Groups({"readExport"})
      */
     private $certification;
    

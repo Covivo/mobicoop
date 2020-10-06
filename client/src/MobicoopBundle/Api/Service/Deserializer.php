@@ -81,7 +81,6 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\CarpoolExport;
 
 /**
  * Custom deserializer service.
@@ -213,9 +212,6 @@ class Deserializer
                 break;
             case ValidationDocument::class:
                 return $this->deserializeValidationDocument($data);
-                break;
-            case CarpoolExport::class:
-                return $this->deserializeCarpoolExport($data);
                 break;
             default:
                 break;
@@ -912,22 +908,6 @@ class Deserializer
         $validationDocument = new ValidationDocument();
         $validationDocument = $this->autoSet($validationDocument, $data);
         return $validationDocument;
-    }
-
-    private function deserializeCarpoolExport(array $data) : ?CarpoolExport
-    {
-        $carpoolExport = new CarpoolExport();
-        $carpoolExport = $this->autoSet($carpoolExport, $data);
-        if (isset($data["carpooler"])) {
-            $carpoolExport->setCarpooler($this->deserializeUser($data['carpooler']));
-        }
-        if (isset($data["origin"])) {
-            $carpoolExport->setOrigin($this->deserializeAddress($data['origin']));
-        }
-        if (isset($data["destination"])) {
-            $carpoolExport->setDestination($this->deserializeAddress($data['destination']));
-        }
-        return $carpoolExport;
     }
 
     private function autoSet($object, $data)

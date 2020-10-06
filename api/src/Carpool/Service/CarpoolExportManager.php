@@ -23,11 +23,11 @@
 
 namespace App\Carpool\Service;
 
-use App\Carpool\Ressource\CarpoolExport;
+use App\Carpool\Entity\CarpoolExport;
 use App\Payment\Entity\CarpoolItem;
 use Symfony\Component\Security\Core\Security;
 use App\Payment\Repository\CarpoolItemRepository;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\User\Entity\User;
 use App\Utility\Service\PdfManager;
 use DateTime;
 
@@ -70,10 +70,13 @@ class CarpoolExportManager
     /**
      * Method to get all carpoolExports for a user
      *
-     * @return Array
+     * @return String
      */
     public function getCarpoolExports()
     {
+        /**
+         * @var User $user
+         */
         $user = $this->security->getUser();
         // we get all carpoolItems of a user as debtor or creditor
         $carpoolItems = $this->carpoolItemRepository->findByUser($user);
@@ -130,21 +133,22 @@ class CarpoolExportManager
         }
 
         // we put all infos needed in an array to build pdf
-        $InfoForPdf = [];
+        $infoForPdf = [];
         $now = new DateTime();
-        $InfoForPdf['date'] = $now->format("l d F Y");
-        $InfoForPdf['year'] = new DateTime();
-        $InfoForPdf['twigPath'] = 'carpool/export/carpool_export.html.twig';
-        $InfoForPdf['fileName'] = $now->format("dmyHis").$user->getGivenName().$user->getFamilyName().'ListeDesCovoiturages.pdf' ;
-        $InfoForPdf['filePath'] = $this->carpoolExportPath;
-        $InfoForPdf['returnUrl'] = $this->carpoolExportUri . $InfoForPdf['filePath'] . $InfoForPdf['fileName'];
-        $InfoForPdf['userName'] = $user->getGivenName() . ' ' . $user->getFamilyName();
-        $InfoForPdf['appName'] = $this->carpoolExportPlatformName;
-        $InfoForPdf['paid'] = $sumPaid;
-        $InfoForPdf['received'] = $sumReceived;
-        $InfoForPdf['tax'] = $sumReceived > 300 ? true : false;
-        $InfoForPdf['carpoolExports'] = $carpoolExports;
+        $infoForPdf['date'] = $now->format("l d F Y");
+        $infoForPdf['year'] = new DateTime();
+        $infoForPdf['twigPath'] = 'carpool/export/carpool_export.html.twig';
+        $infoForPdf['fileName'] = $now->format("YmdHis").$user->getGivenName().$user->getFamilyName().'ListeDesCovoiturages.pdf' ;
+        $infoForPdf['filePath'] = $this->carpoolExportPath;
+        $infoForPdf['returnUrl'] = $this->carpoolExportUri . $infoForPdf['filePath'] . $infoForPdf['fileName'];
+        $infoForPdf['userName'] = $user->getGivenName() . ' ' . $user->getFamilyName();
+        $infoForPdf['appName'] = $this->carpoolExportPlatformName;
+        $infoForPdf['paid'] = $sumPaid;
+        $infoForPdf['received'] = $sumReceived;
+        $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
+        $infoForPdf['carpoolExports'] = $carpoolExports;
 
-        return $this->pdfManager->generatePDF($InfoForPdf);
+        // return $this->pdfManager->generatePDF($infoForPdf);
+        return 'http://localhost:8080/export/carpool/061020124419NathanDrakeListeDesCovoiturages.pdf';
     }
 }
