@@ -148,7 +148,6 @@ class CarpoolExportManager
         $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
         $infoForPdf['carpoolExports'] = $carpoolExports;
 
-        // return $this->pdfManager->generatePDF($infoForPdf);
-        return 'http://localhost:8080/export/carpool/061020124419NathanDrakeListeDesCovoiturages.pdf';
+        return $this->pdfManager->generatePDF($infoForPdf);
     }
 }

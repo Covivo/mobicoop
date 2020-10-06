@@ -121,12 +121,19 @@ export default {
     getExport(){
       axios.post(this.$t("exportUrl"))
         .then(res => {
-          console.error(res.data)
+          this.openFileDownload(res);
         })
         .catch(function (error) {
           console.error(error);
         });
-    }
+    },
+    openFileDownload(response){
+      const link = document.createElement('a');
+      link.href = response.data;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+    },
   }
 }
 </script>
