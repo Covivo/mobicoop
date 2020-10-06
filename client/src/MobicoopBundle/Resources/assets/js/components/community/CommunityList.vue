@@ -238,7 +238,8 @@ export default {
           'name':this.search
         },
         'order':this.orderCriteria,
-        'orderWay':this.orderWay
+        'orderWay':this.orderWay,
+        'showAllCommunities':true
       }
 
       axios
