@@ -44,8 +44,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
     {
         $this->security = $security;
         $this->authManager = $authManager;
-        $this->requestStack = $request;
-
+        $this->request = $request->getCurrentRequest();
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -58,7 +57,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null,  array $identifiers = [], array $context = []): void    
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
         // concerns only Community resource, and User users (not Apps)
         if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
@@ -70,7 +69,8 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if($this->request->get("showAllCommunities")=="" || !$this->request->get("showAllCommunities")){
+            if ($this->request->get("showAllCommunitites")=="" || !$this->request->get("showAllCommunitites")) {
+            }else{
                 switch ($operationName) {
                     case "get":
                         $territories = $this->authManager->getTerritoriesForItem("community_list");
