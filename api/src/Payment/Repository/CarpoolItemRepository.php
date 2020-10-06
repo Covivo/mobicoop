@@ -110,4 +110,19 @@ class CarpoolItemRepository
 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find carpoolItems for a user as creditor or deptor
+     *
+     * @param User $user
+     * @return array
+     */
+    public function findByUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+        ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
+        ->setParameter('user', $user);
+        
+        return $query->getQuery()->getResult();
+    }
 }

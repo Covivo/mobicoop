@@ -721,4 +721,20 @@ class UserManager
         }
         return null;
     }
+
+    /**
+    * Get carpoolExport file
+    *
+    * @param User $user the user
+    *
+    * @return User|null The user or null if error.
+    */
+    public function getCarpoolExport(User $user)
+    {
+        $response = $this->dataProvider->getSpecialItem($user->getId(), "carpool_export");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
 }

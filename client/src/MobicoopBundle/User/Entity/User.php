@@ -378,6 +378,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $wallets;
 
+    /**
+     * @var string|null CarpoolExport of a User
+     */
+    private $carpoolExport;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1111,6 +1116,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->wallets = $wallets;
     }
 
+    public function getCarpoolExport(): ?string
+    {
+        return $this->carpoolExport;
+    }
+
+    public function setCarpoolExport(?string $carpoolExport): self
+    {
+        $this->carpoolExport = $carpoolExport;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1139,8 +1156,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
             'phoneToken'            => $this->getPhoneToken(),
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
-            'communityId'         => $this->getCommunityId(),
-            'bankAccounts'         => $this->getBankAccounts()
+            'communityId'           => $this->getCommunityId(),
+            'bankAccounts'          => $this->getBankAccounts(),
+            'carpoolExport'         => $this->getCarpoolExport()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
