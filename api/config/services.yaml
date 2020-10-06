@@ -439,6 +439,7 @@ services:
     App\Match\Service\MassComputeManager:
         arguments:
             $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
+            $aberrantCoefficient: '%env(int:MOBIMATCH_ABERRANT_COEFFICIENT)%'
 
         tags:
             - { name: monolog.logger, channel: mass }
