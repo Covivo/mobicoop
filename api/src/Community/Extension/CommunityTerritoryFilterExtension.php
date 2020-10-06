@@ -70,7 +70,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         if ($isItem) {
         } else {
             if ($this->request->get("showAllCommunitites")=="" || !$this->request->get("showAllCommunitites")) {
-            }else{
+            } else {
                 switch ($operationName) {
                     case "get":
                         $territories = $this->authManager->getTerritoriesForItem("community_list");

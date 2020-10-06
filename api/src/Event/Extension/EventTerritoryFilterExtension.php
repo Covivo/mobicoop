@@ -57,11 +57,11 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void    
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
         // concerns only Event resource, and User users (not Apps)
         if (Event::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
-        return;
+            return;
         }
 
         $territories = [];
@@ -70,7 +70,7 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         if ($isItem) {
         } else {
             if ($this->request->get("showAllEvents")=="" || !$this->request->get("showAllEvents")) {
-            }else{
+            } else {
                 switch ($operationName) {
                     case "get":
                         $territories = $this->authManager->getTerritoriesForItem("event_list");
