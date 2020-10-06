@@ -439,6 +439,8 @@ services:
     App\Match\Service\MassComputeManager:
         arguments:
             $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
+            $aberrantCoefficient: '%env(int:MOBIMATCH_ABERRANT_COEFFICIENT)%'
+            $kilometerPrice: '%env(float:MOBIMATCH_KILOMETER_PRICE)%'
 
         tags:
             - { name: monolog.logger, channel: mass }

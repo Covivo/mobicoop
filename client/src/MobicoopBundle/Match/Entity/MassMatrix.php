@@ -49,6 +49,11 @@ class MassMatrix
     private $savedDistance;
 
     /**
+     * @var float Saved money
+     */
+    private $savedMoney;
+
+    /**
      * @var int Saved duration
      */
     private $savedDuration;
@@ -109,6 +114,16 @@ class MassMatrix
     public function setSavedDistance(int $savedDistance)
     {
         $this->savedDistance = $savedDistance;
+    }
+
+    public function getSavedMoney(): ?float
+    {
+        return $this->savedMoney;
+    }
+
+    public function setSavedMoney(?float $savedMoney)
+    {
+        $this->savedMoney = $savedMoney;
     }
 
     public function getSavedDuration(): int

@@ -396,6 +396,12 @@ class Mass
     private $errors;
 
     /**
+     * @var array The abberant addresses.
+     * @Groups({"massCompute"})
+     */
+    private $aberrantAddresses;
+
+    /**
      * @var array people's coordinates of this mass.
      * @Groups({"massCompute"})
      */
@@ -738,6 +744,16 @@ class Mass
     public function setErrors(?array $errors)
     {
         $this->errors = $errors;
+    }
+
+    public function getAberrantAddresses(): ?array
+    {
+        return $this->aberrantAddresses;
+    }
+
+    public function setAberrantAddresses(?array $aberrantAddresses)
+    {
+        $this->aberrantAddresses = $aberrantAddresses;
     }
 
     public function preventSerialization()
