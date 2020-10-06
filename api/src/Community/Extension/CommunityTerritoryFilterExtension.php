@@ -69,7 +69,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if ($this->request->get("showAllCommunitites")=="" || !$this->request->get("showAllCommunitites")) {
+            if ($this->request->get("showAllCommunities")=="" || !$this->request->get("showAllCommunities")) {
             } else {
                 switch ($operationName) {
                     case "get":
