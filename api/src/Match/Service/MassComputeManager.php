@@ -47,19 +47,22 @@ class MassComputeManager
     private $massPersonRepository;
     private $roundTripCompute;
     private $aberrantCoefficient;
+    private $kilometerPrice;
 
     public function __construct(
         FormatDataManager $formatDataManager,
         GeoTools $geoTools,
         MassPersonRepository $massPersonRepository,
         bool $roundTripCompute,
-        int $aberrantCoefficient
+        int $aberrantCoefficient,
+        float $kilometerPrice
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
         $this->massPersonRepository = $massPersonRepository;
         $this->roundTripCompute = $roundTripCompute;
         $this->aberrantCoefficient = $aberrantCoefficient;
+        $this->kilometerPrice = $kilometerPrice;
     }
 
     /**
@@ -89,7 +92,8 @@ class MassComputeManager
             "humanTotalTravelDuration" => "",
             "humanTotalTravelDurationPerYear" => "",
             "humanAverageTravelDuration" => "",
-            "humanAverageTravelDurationPerYear" => ""
+            "humanAverageTravelDurationPerYear" => "",
+            "kilometerPrice" => $this->kilometerPrice
         ];
 
         $persons = $mass->getPersons();
@@ -185,7 +189,8 @@ class MassComputeManager
                 "nbCarpoolersAsDrivers",
                 "nbCarpoolersAsPassengers",
                 "nbCarpoolersAsBoth",
-                "nbCarpoolersTotal"
+                "nbCarpoolersTotal",
+                "kilometerPrice"
             ];
 
             foreach ($computedData as $key => $data) {
@@ -224,6 +229,7 @@ class MassComputeManager
                 $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
             }
             $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
+            $matrix->setSavedMoney(round(($matrix->getSavedDistance()/1000)*$this->kilometerPrice));
             $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
             $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
             $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
