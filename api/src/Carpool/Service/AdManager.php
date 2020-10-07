@@ -309,11 +309,11 @@ class AdManager
             $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
         }
 
-        $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         //$this->entityManager->persist($outwardProposal);
 
-        $this->logger->info("AdManager : end persisting outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // $this->logger->info("AdManager : end persisting outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // return trip ?
         if (!$ad->isOneWay()) {
@@ -425,21 +425,19 @@ class AdManager
 
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
+            $this->logger->info("AdManager : start related link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
-            $this->entityManager->persist($outwardProposal);
-            $this->entityManager->flush();
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
         if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
             // linking for the outward
+            $this->logger->info("AdManager : start opposite link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $outwardProposal = $this->proposalManager->linkOppositeMatchings($outwardProposal);
-            $this->entityManager->persist($outwardProposal);
             if (!$ad->isOneWay()) {
                 // linking for the return
                 $returnProposal = $this->proposalManager->linkOppositeMatchings($returnProposal);
-                $this->entityManager->persist($returnProposal);
             }
-            $this->entityManager->flush();
+            $this->logger->info("AdManager : end opposite link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
 
         // we compute the results

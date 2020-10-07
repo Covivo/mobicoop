@@ -457,34 +457,23 @@ class ProposalManager
      */
     public function linkRelatedMatchings(Proposal $proposal)
     {
-        // link as an offer
-        foreach ($proposal->getMatchingRequests() as $matching) {
-            // we search the linked matching
-            if ($matching->getProposalRequest()->getProposalLinked()) {
-                // the request proposal has a linked proposal, we loop through its matchingOffers to check if one of them is the proposalLinked
-                foreach ($matching->getProposalRequest()->getProposalLinked()->getMatchingOffers() as $potentialMatchingLinked) {
-                    if ($potentialMatchingLinked->getProposalOffer() === $proposal->getProposalLinked()) {
-                        // we found a matching linked !
-                        $matching->setMatchingLinked($potentialMatchingLinked);
-                        break;
-                    }
-                }
-            }
-        }
-        // link as a request
-        foreach ($proposal->getMatchingOffers() as $matching) {
-            // we search the linked matching
-            if ($matching->getProposalOffer()->getProposalLinked()) {
-                // the offer proposal has a linked proposal, we loop through its matchingRequests to check if one of them is the proposalLinked
-                foreach ($matching->getProposalOffer()->getProposalLinked()->getMatchingRequests() as $potentialMatchingLinked) {
-                    if ($potentialMatchingLinked->getProposalRequest() === $proposal->getProposalLinked()) {
-                        // we found a matching linked !
-                        $matching->setMatchingLinked($potentialMatchingLinked);
-                        break;
-                    }
-                }
-            }
-        }
+        $conn = $this->entityManager->getConnection();
+        $sql = "
+            UPDATE matching AS MRA
+            INNER JOIN proposal AS POA ON POA.id = MRA.proposal_offer_id
+            INNER JOIN proposal AS PRA ON PRA.id = MRA.proposal_request_id
+            SET matching_linked_id = (
+                SELECT MRR.id FROM matching AS MRR
+                INNER JOIN proposal AS PRR ON PRR.id = MRR.proposal_request_id
+                INNER JOIN proposal AS POR ON POR.id = MRR.proposal_offer_id
+                WHERE 
+                    POR.id = POA.proposal_linked_id AND
+                    PRR.id = PRA.proposal_linked_id
+            ) 
+            WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = " . $proposal->getId() . " OR MRA.proposal_request_id = " . $proposal->getId() . ")";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    
         return $proposal;
     }
 
@@ -497,17 +486,18 @@ class ProposalManager
      */
     public function linkOppositeMatchings(Proposal $proposal)
     {
-        // link as an offer
-        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
-            // we search the opposite matching
-            foreach ($proposal->getMatchingOffers() as $matchingOffer) {
-                if ($matchingRequest->getProposalRequest() === $matchingOffer->getProposalOffer()) {
-                    // we found a matching linked !
-                    $matchingRequest->setMatchingOpposite($matchingOffer);
-                    break;
-                }
-            }
-        }
+        $conn = $this->entityManager->getConnection();
+        $sql = "
+            UPDATE matching AS MR
+            INNER JOIN proposal AS PO ON PO.id = MR.proposal_offer_id
+            SET matching_opposite_id = (
+                SELECT MO.id FROM matching AS MO
+                INNER JOIN proposal AS PR ON PR.id = MO.proposal_request_id
+                WHERE PO.id = PR.id
+            )
+            WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = " . $proposal->getId() . ")";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
         return $proposal;
     }
 

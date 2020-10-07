@@ -187,13 +187,6 @@ class Direction
     private $format;
 
     /**
-     * @var ArrayCollection The geographical zones crossed by the direction.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
-     */
-    private $zones;
-
-    /**
      * @var int|null The CO2 emission for this direction.
      * @Groups({"read","mass"})
      */
@@ -276,7 +269,6 @@ class Direction
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
-        $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
         $this->criteriaDrivers = new ArrayCollection();
         $this->criteriaPassengers = new ArrayCollection();
@@ -471,34 +463,6 @@ class Direction
     public function setFormat(string $format): self
     {
         $this->format = $format;
-        
-        return $this;
-    }
-    
-    public function getZones()
-    {
-        return $this->zones->getValues();
-    }
-    
-    public function addZone(Zone $zone): self
-    {
-        if (!$this->zones->contains($zone)) {
-            $this->zones[] = $zone;
-            $zone->setDirection($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeZone(Zone $zone): self
-    {
-        if ($this->zones->contains($zone)) {
-            $this->zones->removeElement($zone);
-            // set the owning side to null (unless already changed)
-            if ($zone->getDirection() === $this) {
-                $zone->setDirection(null);
-            }
-        }
         
         return $this;
     }

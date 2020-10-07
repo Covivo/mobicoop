@@ -507,7 +507,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data.results;
-            this.nbCarpoolPlatform = response.data.nb;
+            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
           })
           .catch((error) => {
             console.log(error);
@@ -534,7 +534,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data.results;
-            this.nbCarpoolPlatform = response.data.nb;
+            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
@@ -574,7 +574,7 @@ export default {
           .then((response) => {
             this.loading = false;
             this.results = response.data.results;
-            this.nbCarpoolPlatform = response.data.nb;
+            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }
