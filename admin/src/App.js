@@ -5,7 +5,7 @@ import authProvider from './auth/authProvider';
 import { createPermissionChecker, isAdmin } from './auth/permissions';
 import Layout from './components/layout/Layout';
 import i18nProvider from './i18n/translations';
-import KibanaWidget from './components/dashboard/KibanaWidget';
+import Dashboard from './components/dashboard/Dashboard';
 import dataProvider from './dataProvider';
 import theme from './theme';
 
@@ -41,7 +41,7 @@ export default () => (
     loginPage={LoginPage}
     i18nProvider={i18nProvider}
     theme={theme}
-    dashboard={KibanaWidget}
+    dashboard={Dashboard}
     layout={Layout}
   >
     {(permissions) => {
