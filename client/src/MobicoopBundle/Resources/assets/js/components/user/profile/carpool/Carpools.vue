@@ -11,7 +11,7 @@
           <v-tab>{{ $t('carpools.ongoing') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.ongoing">
-              <v-row>
+              <v-row v-if="localAds.ongoing.length != 0">
                 <v-col
                   cols="8"
                   class="font-weight-bold text-h5"
@@ -49,7 +49,7 @@
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
-              <v-row>
+              <v-row v-if="localAds.archived.length != 0">
                 <v-col
                   cols="8"
                   class="font-weight-bold text-h5"
@@ -70,18 +70,18 @@
                 >
                   {{ $t('export') }}
                 </v-btn>
-                <v-row
-                  v-for="ad in localAds.archived"
-                  :key="ad.id"
-                >
-                  <v-col cols="12">
-                    <Carpool
-                      :ad="ad"
-                      :is-archived="true"
-                      :user="user"
-                    />
-                  </v-col>
-                </v-row>
+              </v-row>
+              <v-row
+                v-for="ad in localAds.archived"
+                :key="ad.id"
+              >
+                <v-col cols="12">
+                  <Carpool
+                    :ad="ad"
+                    :is-archived="true"
+                    :user="user"
+                  />
+                </v-col>
               </v-row>
             </v-container>
           </v-tab-item>
