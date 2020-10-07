@@ -2,7 +2,7 @@
   <v-row
     align="center"
     justify="end"
-    class="min-width-no-flex"
+    class="min-width-no-flex mr-1"
   >
     <div v-if="user && carpooler.telephone">
       <v-btn

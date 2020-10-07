@@ -6,7 +6,7 @@
     >
       <!-- Carpooler identity -->
       <v-col
-        cols="4"
+        cols="3"
       >
         <carpooler-identity
           :carpooler="carpooler"
@@ -14,77 +14,87 @@
       </v-col>
 
       <!-- Carpooler rate -->
-      <v-col
-        v-if="carpoolerRate"
-        cols="1"
-      >
-        <v-tooltip
-          bottom
-          color="info"
-        >
-          <template v-slot:activator="{ on }">
-            <v-container
-              class="pt-0 pb-0 pl-0 pr-0"
+      <v-row align="center">
+        <v-col>
+          <v-row justify="center">
+            <v-col
+              v-if="carpoolerRate"
+              cols="1"
             >
-              <v-row
-                align="center"
-                dense
-                v-on="on"
+              <v-tooltip
+                bottom
+                color="info"
               >
-                <span
-                  class="yellow--text text--darken-2"
-                >
-                  4.7
-                </span>
+                <template v-slot:activator="{ on }">
+                  <v-container
+                    class="pt-0 pb-0 pl-0 pr-0"
+                  >
+                    <v-row
+                      align="center"
+                      dense
+                      v-on="on"
+                    >
+                      <span
+                        class="yellow--text text--darken-2"
+                      >
+                        4.7
+                      </span>
 
-                <v-icon
-                  :color="'yellow darken-2'"
-                  class="ml-1"
-                >
-                  mdi-star
-                </v-icon>
-              </v-row>
-            </v-container>
-          </template>
-          <span> {{ $t('inDev') }} </span>
-        </v-tooltip>
-
-        <!-- Community -->
-        <v-tooltip
-          color="info"
-          right
-        >
-          <template v-slot:activator="{ on }">
-            <v-row
-              align="center"
-              dense
-              v-on="on"
-            >
-              <v-avatar
+                      <v-icon
+                        :color="'yellow darken-2'"
+                        class="ml-1"
+                      >
+                        mdi-star
+                      </v-icon>
+                    </v-row>
+                  </v-container>
+                </template>
+                <span> {{ $t('inDev') }} </span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <!-- Community -->
+          <v-row>
+            <v-col>
+              <v-tooltip
                 v-for="community in communities"
                 :key="community.id"
-                cols="1"
-                color="grey darken-3"
-                size="26"
-                class="ml-0 mr-1"
+                color="info"
+                right
               >
-                <!-- {{ community }} -->
-                <v-img
-                  src="https://cdn.vuetifyjs.com/images/john.jpg"
-                  alt="avatar"
-                />
-              </v-avatar>
-            </v-row>
-          </template>
-          <!-- mettre le nom de la communauté -->
-          <span>
-            bouh</span> 
-        </v-tooltip>
-      </v-col>
+                <template v-slot:activator="{ on }">
+                  <v-list-item-avatar
+                    class="grey lighten-2 ml-1 mr-1"
+                    contain
+                    :size="avatarSize" 
+                    v-on="on"
+                  >
+                    <!-- {{ community }} -->
+                    <v-img
+                      v-if="community.image[0]"
+                      :src="community.image[0]['versions']['square_100']"
+                      alt="avatar"
+                    />
+                    <v-img
+                      v-else
+                      class="grey lighten-2"
+                      src="/images/avatarsDefault/avatar.svg"
+                      alt="avatar"
+                    />
+                  </v-list-item-avatar>
+                </template>
+                <!-- mettre le nom de la communauté -->
+                <span>
+                  {{ community.name }}</span> 
+              </v-tooltip>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
 
       <!-- Carpooler contact -->
       <v-col
-        cols="4"
+        cols="3"
       >
         <carpooler-contact
           :carpooler="carpooler"
@@ -131,7 +141,7 @@
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
         </v-card-text>
-      </v-col>      
+      </v-col>  
     </v-row>
   </div>
 </template>
@@ -183,7 +193,7 @@ export default {
       default: null
     },
     communities: {
-      type: Array,
+      type: Object,
       default: null
     }
   },
@@ -191,6 +201,17 @@ export default {
     return {
       connected: this.user !== null,
     };
+  },
+  computed: {
+    avatarSize() {
+      switch (this.$vuetify.breakpoint.name) {
+      case "md":
+        return '20';
+      case "lg":
+        return '35';
+      }
+      return this.avatarSize;
+    }
   },
   methods: {
     buttonAlert(msg, e) {

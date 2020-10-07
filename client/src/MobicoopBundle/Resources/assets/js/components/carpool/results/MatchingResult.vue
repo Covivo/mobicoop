@@ -126,7 +126,7 @@ export default {
       default: false
     },
     communities: {
-      type: Array,
+      type: Object,
       default: null
     }
   },

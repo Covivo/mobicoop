@@ -548,8 +548,12 @@ class ResultManager
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getImages();
-            }  
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
+            }
+            
             // outward
             $item = new ResultItem();
             // we set the proposalId
@@ -1099,8 +1103,11 @@ class ResultManager
 
             // communities
             foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getImages();
-            } 
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
+            }
             // outward
             $item = new ResultItem();
             // we set the proposalId
