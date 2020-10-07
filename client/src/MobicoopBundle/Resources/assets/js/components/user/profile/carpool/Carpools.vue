@@ -4,6 +4,40 @@
   >
     <v-row justify="center">
       <v-col>
+        <v-row>
+          <v-col
+            cols="8"
+            class="font-weight-bold text-h5"
+          >
+            {{ $t('needCarpoolProofs') }}
+          </v-col>
+          <v-col                   
+            cols="8"
+            class="font-italic text-caption"
+          >
+            {{ $t('clickAndGetFile') }}
+          </v-col>
+          <v-tooltip
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <div
+                v-on="disableExportButton && on"
+              >
+                <v-btn
+                  color="secondary"
+                  rounded
+                  :disabled="disableExportButton" 
+                  width="175px"
+                  @click="getExport()"
+                >
+                  {{ $t('export') }}
+                </v-btn>
+              </div>
+            </template>
+            <span>{{ $t('tooltip') }}</span>
+          </v-tooltip>
+        </v-row>
         <v-tabs
           centered
           grow
@@ -11,28 +45,6 @@
           <v-tab>{{ $t('carpools.ongoing') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.ongoing">
-              <v-row>
-                <v-col
-                  cols="8"
-                  class="font-weight-bold text-h5"
-                >
-                  {{ $t('needCarpoolProofs') }}
-                </v-col>
-                <v-col                   
-                  cols="8"
-                  class="font-italic text-caption"
-                >
-                  {{ $t('clickAndGetFile') }}
-                </v-col>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  width="175px"
-                  @click="getExport()"
-                >
-                  {{ $t('export') }}
-                </v-btn>
-              </v-row>
               <v-row
                 v-for="ad in localAds.ongoing"
                 :key="ad.id"
@@ -49,39 +61,17 @@
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
-              <v-row>
-                <v-col
-                  cols="8"
-                  class="font-weight-bold text-h5"
-                >
-                  {{ $t('needCarpoolProofs') }}
+              <v-row
+                v-for="ad in localAds.archived"
+                :key="ad.id"
+              >
+                <v-col cols="12">
+                  <Carpool
+                    :ad="ad"
+                    :is-archived="true"
+                    :user="user"
+                  />
                 </v-col>
-                <v-col                   
-                  cols="8"
-                  class="font-italic text-caption"
-                >
-                  {{ $t('clickAndGetFile') }}
-                </v-col>
-                <v-btn
-                  color="secondary"
-                  rounded
-                  width="175px"
-                  @click="getExport()"
-                >
-                  {{ $t('export') }}
-                </v-btn>
-                <v-row
-                  v-for="ad in localAds.archived"
-                  :key="ad.id"
-                >
-                  <v-col cols="12">
-                    <Carpool
-                      :ad="ad"
-                      :is-archived="true"
-                      :user="user"
-                    />
-                  </v-col>
-                </v-row>
               </v-row>
             </v-container>
           </v-tab-item>
@@ -115,6 +105,13 @@ export default {
   data(){
     return {
       localAds: this.acceptedCarpools
+    }
+  },
+  computed: {
+    disableExportButton() {
+      let testOngoing = this.acceptedCarpools.ongoing.length == 0 || Object.keys(this.acceptedCarpools.ongoing).length == 0 ? true : false;
+      let testArchived = this.acceptedCarpools.archived.length == 0 || Object.keys(this.acceptedCarpools.archived).length == 0 ? true : false;
+      return testOngoing && testArchived;
     }
   },
   methods:{
