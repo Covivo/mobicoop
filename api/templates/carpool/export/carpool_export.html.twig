@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title> {{ "listCrapoolPayments"|trans }}</title>
+		
+		<style type="text/css">
+			table{
+				border-collapse: collapse
+			  }
+
+			  th{
+				border: 1px solid black;
+				padding: 10px;
+			  }
+			  
+			  td{
+				border: 1px solid black;
+				padding: 10px;
+			  }
+			</style>
+        	
+	  </head>
+  	<body>
+        <div class="container container-pdf">
+        
+        	<div class="row">
+                <img src="{{api_env('CARPOOL_EXPORT_BANNER_URL')}}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+        	</div>
+
+			{# header #}
+        	<div>
+        		<div>
+                    <h1 style="font-family:Roboto,sans-serif;text-align:center;">{{ "carpoolRealizedBy"|trans }} 
+						<br>{{ dataToPdf.userName }}
+						<br>{{ "onTheSite"|trans }}
+						{{ dataToPdf.appName }}
+						<br>
+					</h1>
+					<h2 style="font-family:Roboto,sans-serif;text-align:right;">{{ dataToPdf.date }}</h2>
+        	</div>
+        	
+        	{# body #}
+			<div>
+                {# sum paid #}
+                {% if dataToPdf.paid %}
+                    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
+                {% endif %}
+                {# sum received #}
+                {% if dataToPdf.received %}
+				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
+                {% endif %}
+                {# tax info #}
+				{% if dataToPdf.tax %}
+				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "taxInfo"|trans }}</p>
+				{% endif %}
+
+				<h3>Année {{ dataToPdf.year|date("Y") }}</h3>
+
+				<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
+
+						{# thead #}
+						<tr>
+							<th>{{ "date"|trans }}</th>
+							<th>{{ "role"|trans }}</th>
+							<th>{{ "carpooler"|trans }}</th>
+							<th>{{ "pickUpLocality"|trans }}</th>
+							<th>{{ "dropOffLocality"|trans }}</th>
+							<th>{{ "amount"|trans }}</th>
+							<th>{{ "typeOfpaiement"|trans }}</th>
+							<th>{{ "certified"|trans }}</th>
+						</tr>
+						{# tbody #}
+						{% for carpoolExport in dataToPdf.carpoolExports %}
+							<tr>
+								{# Date #}
+								<td>{{ carpoolExport.date|date("m/d/Y") }}</td>
+								{# Role #}
+								{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
+									<td>{{ "driver"|trans }}</td>
+								{% else  %}
+									<td>{{ "passenger"|trans }}</td>
+								{% endif %}
+                                {# carpooler name #}
+								<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
+								{# pickup locality #}
+								<td>{{ carpoolExport.pickUp.addressLocality }}</td>
+                                {# dropOff locality #}
+                                <td>{{ carpoolExport.dropOff.addressLocality }}</td>
+                                {# amount paid/received #}
+								{% if carpoolExport.Amount %}
+									<td>{{ carpoolExport.Amount }}€</td>
+								{% else %}
+									<td>{{ "paiementNotDone"|trans }}</td>		
+								{% endif %}
+                                {# type of payment #}
+                                {% if (carpoolExport.mode == 1) %}
+                                    <td>{{ "onLinePaiement"|trans }}</td>
+								{% elseif (carpoolExport.mode == 2) %}
+                                    <td>{{ "directPaiement"|trans }}</td>  
+								{% else %}
+									<td></td>	       
+                                {% endif %}
+                                {# certification #}
+                                {% if (carpoolExport.certification) %}
+								    <td> {{ carpoolExport.certification }} </td>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}        
+							</tr>
+						{% endfor %}
+				</table>
+			</div>
+
+    	</div>
+	</body>
+</html>

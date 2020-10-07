@@ -116,7 +116,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -359,6 +359,12 @@ use App\User\Controller\UserCanUseEmail;
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
  *              "controller"=UserUnsubscribeFromEmail::class
+ *          },
+ *          "getCarpoolExport"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/carpool_export",
+ *              "normalization_context"={"groups"={"carpoolExport"}},
+ *              "security"="is_granted('user_update',object)"
  *          }
  *      }
  * )
@@ -436,7 +442,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment","carpoolExport"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -454,7 +460,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $givenName;
 
@@ -462,14 +468,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation"})
+     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport"})
      */
     private $shortFamilyName;
 
@@ -1138,6 +1144,14 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $wallets;
+
+    /**
+    * @var string|null CarpoolExport of a User
+    *
+    * @Groups({"carpoolExport"})
+    * @MaxDepth(1)
+    */
+    private $carpoolExport;
 
     public function __construct($status = null)
     {
@@ -2688,6 +2702,18 @@ class User implements UserInterface, EquatableInterface
     public function setWallets(?array $wallets): self
     {
         $this->wallets = $wallets;
+
+        return $this;
+    }
+
+    public function getCarpoolExport(): ?string
+    {
+        return $this->carpoolExport;
+    }
+
+    public function setCarpoolExport(?string $carpoolExport): self
+    {
+        $this->carpoolExport = $carpoolExport;
 
         return $this;
     }

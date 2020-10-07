@@ -31,17 +31,20 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 final class CommunityTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
     private $authManager;
+    private $request;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    public function __construct(Security $security, AuthManager $authManager, RequestStack $request)
     {
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->request = $request->getCurrentRequest();
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -66,12 +69,15 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            switch ($operationName) {
-                case "get":
-                    $territories = $this->authManager->getTerritoriesForItem("community_list");
+            if ($this->request->get("showAllCommunities")=="" || !$this->request->get("showAllCommunities")) {
+            } else {
+                switch ($operationName) {
+                    case "get":
+                        $territories = $this->authManager->getTerritoriesForItem("community_list");
+                }
             }
         }
-
+        
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');

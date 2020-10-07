@@ -548,7 +548,10 @@ class ResultManager
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getName();
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
             }
             
             // outward
@@ -1100,9 +1103,11 @@ class ResultManager
 
             // communities
             foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getName();
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
             }
-            
             // outward
             $item = new ResultItem();
             // we set the proposalId
@@ -1606,7 +1611,7 @@ class ResultManager
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day>=7) {
+        if ($day>=8) {
             $day=$day-7;
         }
         $rdate = new \DateTime();

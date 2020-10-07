@@ -69,6 +69,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class SolidaryUser
 {
     const DEFAULT_MAX_DISTANCE = 20000; // meters
+    const AUTHORIZED_GENERIC_FILTERS = ['q'];
 
     /**
      * @var int The id of this solidary user.

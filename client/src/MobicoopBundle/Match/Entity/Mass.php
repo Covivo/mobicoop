@@ -138,6 +138,11 @@ class Mass implements ResourceInterface
     private $errors;
 
     /**
+     * @var array The abberant addresses.
+     */
+    private $aberrantAddresses;
+
+    /**
      * @var array The persons.
      */
     private $persons;
@@ -385,6 +390,16 @@ class Mass implements ResourceInterface
     public function setErrors(?array $errors)
     {
         $this->errors = $errors;
+    }
+
+    public function getAberrantAddresses(): ?array
+    {
+        return $this->aberrantAddresses;
+    }
+
+    public function setAberrantAddresses(?array $aberrantAddresses)
+    {
+        $this->aberrantAddresses = $aberrantAddresses;
     }
 
     public function getPersons(): Collection

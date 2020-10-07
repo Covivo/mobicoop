@@ -92,6 +92,7 @@ class CarpoolItemRepository
         ->join('a.criteria', 'c')
         ->where('ci.itemDate BETWEEN :fromDate and :toDate')
         ->andWhere('c.frequency = :frequency')
+        ->orderBy('a.type')
         ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
         ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
         ->setParameter('frequency', $frequency);
@@ -108,6 +109,21 @@ class CarpoolItemRepository
             ->setParameter('creditorStatusWaiting', 0);
         }
 
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpoolItems for a user as creditor or deptor
+     *
+     * @param User $user
+     * @return array
+     */
+    public function findByUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+        ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
+        ->setParameter('user', $user);
+        
         return $query->getQuery()->getResult();
     }
 }

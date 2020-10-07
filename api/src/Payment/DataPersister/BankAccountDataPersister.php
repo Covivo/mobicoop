@@ -52,7 +52,7 @@ final class BankAccountDataPersister implements ContextAwareDataPersisterInterfa
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            if (!$this->paymentManager->checkValidForRegistrationToTheProvider($this->security->getUser())) {
+            if (!$this->paymentManager->checkValidForRegistrationToTheProvider($this->security->getUser(), $data->getAddress())) {
                 throw new PaymentException(PaymentException::USER_INVALID);
             }
             $data = $this->paymentManager->createBankAccount($this->security->getUser(), $data);
