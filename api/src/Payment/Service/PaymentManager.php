@@ -354,6 +354,13 @@ class PaymentManager
      */
     public function checkValidForRegistrationToTheProvider(User $user, Address $homeAddress=null): bool
     {
+
+        // If the user already has a profile, we return true
+        $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
+        if (!is_null($paymentProfiles) && count($paymentProfiles)>0) {
+            return true;
+        }
+
         // We check if the user has a complete identify
         if (is_null($user->getGivenName()) || $user->getGivenName()=="" ||
             is_null($user->getFamilyName()) || $user->getFamilyName()=="" ||
