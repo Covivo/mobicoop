@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Grid, Button } from '@material-ui/core';
-import { useDataProvider, Title, useTranslate } from 'react-admin';
+import { useDataProvider, Title, useTranslate, Loading } from 'react-admin';
 
 import { useKibana } from './useKibana';
 import getKibanaFilter from './kibanaFilters';
@@ -58,6 +58,7 @@ const KibanaWidget = ({
   if (isCommunityManager || isAdmin()) {
     return (
       <>
+        {kibanaStatus !== 'CONNECTED' && <Loading />}
         {(isAdmin() || hasPermission('dashboard_read')) && kibanaIsAvailable && (
           <Grid container justify="space-between" style={{ marginBottom: 20 }}>
             <Grid item>&nbsp;</Grid>

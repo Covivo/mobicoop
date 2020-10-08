@@ -12,7 +12,7 @@ import UserIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
 import Grid from '@material-ui/core/Grid';
 
-import { useTranslate, useQueryWithStore } from 'react-admin';
+import { useTranslate, useQueryWithStore, Loading } from 'react-admin';
 import CardWithIcon from './CardWithIcon';
 import UsersChart from './UsersChart';
 
@@ -41,7 +41,7 @@ const SimplifiedDashboard = () => {
     },
   });
 
-  if (!loaded) return null;
+  if (!loaded) return <Loading />;
 
   return (
     <Grid container spacing={3}>
