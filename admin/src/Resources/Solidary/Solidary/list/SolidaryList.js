@@ -13,6 +13,7 @@ import {
   Filter,
   useTranslate,
   ReferenceField,
+  EditButton,
 } from 'react-admin';
 
 import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
@@ -74,8 +75,7 @@ export const SolidaryList = (props) => (
       <ActionField source="lastAction" />
       <DateField source="createdDate" />
       <ShowButton />
-      {/* @UNCOMMENT (22149) */}
-      {/* <EditButton /> */}
+      <EditButton />
     </Datagrid>
   </List>
 );

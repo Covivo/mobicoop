@@ -74,12 +74,13 @@ export const SolidaryEdit = (props) => (
         </SolidaryQuestion>
         <Condition when="frequency" is={2 /* 2 === regular */} fallback={null}>
           <SolidaryRegularAsk
+            edit
             includeNeeds={false}
             summary={<SolidaryPunctualAskSummary regularMode />}
           />
         </Condition>
         <Condition when="frequency" is={1 /* 2 === punctual */} fallback={null}>
-          <SolidaryPunctualAsk includeNeeds={false} summary={<SolidaryPunctualAskSummary />} />
+          <SolidaryPunctualAsk edit includeNeeds={false} summary={<SolidaryPunctualAskSummary />} />
         </Condition>
       </FormTab>
     </TabbedForm>

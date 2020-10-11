@@ -71,7 +71,7 @@ export const regularToTimeChoices = [
 
 const castDate = (date) => (typeof date === 'string' ? new Date(date) : date);
 
-const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
+const SolidaryRegularAsk = ({ includeNeeds = true, summary = null, edit = false }) => {
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
@@ -120,6 +120,8 @@ const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
             fieldMarginDuration
             choices={regularFromTimeChoices}
             initialChoice={0}
+            initialValue={outwardDatetime}
+            edit
           />
         </SolidaryQuestion>
         <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
@@ -128,8 +130,10 @@ const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
             fieldnameStart="toStartDatetime"
             fieldnameEnd="toEndDatetime"
             choices={regularToTimeChoices}
-            initialChoice={4}
+            initialChoice={edit && returnDatetime ? 0 : 4}
             dependencies={[outwardDatetime]}
+            initialValue={returnDatetime}
+            edit
           />
         </SolidaryQuestion>
         <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
