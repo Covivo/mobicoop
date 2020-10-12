@@ -69,7 +69,9 @@
 							<th>{{ "pickUpLocality"|trans }}</th>
 							<th>{{ "dropOffLocality"|trans }}</th>
 							<th>{{ "amount"|trans }}</th>
-							<th>{{ "typeOfpaiement"|trans }}</th>
+							{% if dataToPdf.paymentActive %}
+								<th>{{ "typeOfpaiement"|trans }}</th>
+							{% endif %}
 							<th>{{ "certified"|trans }}</th>
 						</tr>
 						{# tbody #}
@@ -95,13 +97,15 @@
 								{% else %}
 									<td>{{ "paiementNotDone"|trans }}</td>		
 								{% endif %}
-                                {# type of payment #}
-                                {% if (carpoolExport.mode == 1) %}
-                                    <td>{{ "onLinePaiement"|trans }}</td>
-								{% elseif (carpoolExport.mode == 2) %}
-                                    <td>{{ "directPaiement"|trans }}</td>  
-								{% else %}
-									<td></td>	       
+								{# type of payment #}
+								{% if dataToPdf.paymentActive %}
+									{% if (carpoolExport.mode == 1) %}
+										<td>{{ "onLinePaiement"|trans }}</td>
+									{% elseif (carpoolExport.mode == 2) %}
+										<td>{{ "directPaiement"|trans }}</td>  
+									{% else %}
+										<td></td>	       
+									{% endif %}
                                 {% endif %}
                                 {# certification #}
                                 {% if (carpoolExport.certification) %}
