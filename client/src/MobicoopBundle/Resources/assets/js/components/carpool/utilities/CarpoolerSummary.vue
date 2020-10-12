@@ -214,7 +214,7 @@ export default {
       case "lg":
         return '35';
       case "xl":
-        return '38';
+        return '35';
         break;
       default:'20';
       }
