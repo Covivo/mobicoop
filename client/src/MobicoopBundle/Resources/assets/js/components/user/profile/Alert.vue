@@ -79,7 +79,7 @@ export default {
       default:null
     },
     medium:{
-      type: Array,
+      type: Object,
       default:null
     }
   },

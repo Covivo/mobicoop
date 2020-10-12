@@ -859,11 +859,11 @@ class UserManager
                 continue;
             }
             if (!in_array($userNotification->getNotification()->getAction()->getName(), $alerts)) {
-                $alerts[$userNotification->getNotification()->getAction()->getPosition()] = [
+                $alerts[$userNotification->getNotification()->getAction()->getId()] = [
                     'action' => $userNotification->getNotification()->getAction()->getName(),
                     'alert' => []
                 ];
-                $actions[$userNotification->getNotification()->getAction()->getId()] = $userNotification->getNotification()->getAction()->getPosition();
+                $actions[$userNotification->getNotification()->getAction()->getId()] = $userNotification->getNotification()->getAction()->getId();
             }
         }
         ksort($alerts);
@@ -883,6 +883,7 @@ class UserManager
                 'active' => $userNotification->isActive()
             ];
         }
+       
         // third pass to order media
         $mediaOrdered = [];
         foreach ($media as $actionID => $unorderedMedia) {

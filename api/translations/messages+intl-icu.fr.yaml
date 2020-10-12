@@ -346,6 +346,7 @@ haveYouForgotToPayTheDriver: "Avez-vous oublié d’indemniser votre covoitureur
 iContactYouAgainAboutPayment: "Je me permets de vous relancer concernant le paiement des covoiturages que nous avons réalisés ensemble pour un montant de"
 signalThatYouhaveToPay: "signale que vous ne l’avez pas encore indemnisé des"
 forTheCarpoolsYouHadTogether: "que vous lui deviez pour les covoiturages que vous avez réalisés ensemble."
+byJourney: "(par trajet)"
 
 #EXPORT CARPOOL
 listCrapoolPayments: "Liste Paiements et covoiturages"

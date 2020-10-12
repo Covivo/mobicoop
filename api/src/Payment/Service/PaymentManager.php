@@ -38,6 +38,9 @@ use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Repository\CarpoolItemRepository;
 use DateTime;
 use App\Payment\Entity\PaymentProfile;
+use App\Payment\Event\ConfirmDirectPaymentEvent;
+use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
+use App\Payment\Event\SignalDeptEvent;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -50,6 +53,7 @@ use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Payment manager service.
@@ -77,6 +81,7 @@ class PaymentManager
     private $carpoolPaymentRepository;
     private $validationDocsPath;
     private $validationDocsAuthorizedExtensions;
+    private $eventDispatcher;
     private $logger;
 
     /**
@@ -108,7 +113,8 @@ class PaymentManager
         string $securityToken,
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
-        string $exportPath
+        string $exportPath,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -124,6 +130,7 @@ class PaymentManager
         $this->validationDocsPath = $validationDocsPath;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->exportPath = $exportPath;
+        $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
     }
 
@@ -547,6 +554,9 @@ class PaymentManager
             $amountDirect = 0;
             $amountOnline = 0;
 
+            // we set this askIds array to know asks affected we needed it to execute events
+            $askIds = [];
+
             foreach ($payment->getItems() as $item) {
                 if (!$carpoolItem = $this->carpoolItemRepository->find($item['id'])) {
                     throw new PaymentException('Wrong item id');
@@ -589,6 +599,23 @@ class PaymentManager
                 $this->entityManager->persist($carpoolItem);
             }
             $this->entityManager->flush();
+            
+            // we send execute event to inform driver that passenger paid by hand
+            // case punctual
+            if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
+                $event = new ConfirmDirectPaymentEvent($carpoolItem, $user);
+                $this->eventDispatcher->dispatch(ConfirmDirectPaymentEvent::NAME, $event);
+            // case regular
+            } elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
+                // We send only one email for the all week
+                if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
+                    $event = new ConfirmDirectPaymentRegularEvent($carpoolItem, $user);
+                    $this->eventDispatcher->dispatch(ConfirmDirectPaymentRegularEvent::NAME, $event);
+                    // we put in array the ask and the ask linked
+                    $askIds[] = $carpoolItem->getAsk()->getId();
+                    $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                }
+            }
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
@@ -614,6 +641,8 @@ class PaymentManager
             // We will automatically create the carpoolPayments related to an accepted direct payment not previously validated by the debtor.
             $carpoolPayments = [];
             
+            // we set this askIds array to know asks affected we needed it to execute events
+            $askIds = [];
 
             foreach ($payment->getItems() as $item) {
                 if (!$carpoolItem = $this->carpoolItemRepository->find($item['id'])) {
@@ -680,6 +709,25 @@ class PaymentManager
 
                 // Flush also all the carpoolpayments
                 $this->entityManager->flush();
+
+                // event to inform passenger that driver alert about an unpaid carpool
+                // case punctual
+                if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $carpoolItem->getUnpaidDate()) {
+                    $event = new SignalDeptEvent($carpoolItem, $user);
+                    $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
+                // case regular
+                } elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $carpoolItem->getUnpaidDate()) {
+                
+                    // We send only one email for the all week
+                    if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
+                        $event = new SignalDeptEvent($carpoolItem, $user);
+                        $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
+                        
+                        // we put in array the ask and the ask linked
+                        $askIds[] = $carpoolItem->getAsk()->getId();
+                        $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                    }
+                }
             }
         }
         

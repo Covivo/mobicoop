@@ -379,7 +379,7 @@ class NotificationManager
                     $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
                 break;
                 case CarpoolItem::class:
-                    $titleContext = ['deptor'=>$object->getDebtor()];
+                    $titleContext = ['deptor'=>$object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
@@ -687,7 +687,7 @@ class NotificationManager
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
                     break;
                 case CarpoolItem::class:
-                    $titleContext = ['deptor'=>$object->getDebtor()];
+                    $titleContext = ['deptor'=>$object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if ($waypoint->getPosition() == 0) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
