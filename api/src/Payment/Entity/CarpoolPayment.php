@@ -299,7 +299,7 @@ class CarpoolPayment
         $this->origin = $origin;
 
         return $this;
-    }    
+    }
 
     // DOCTRINE EVENTS
 

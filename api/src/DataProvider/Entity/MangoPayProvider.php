@@ -382,15 +382,12 @@ class MangoPayProvider implements PaymentProviderInterface
         
         
         $returnUrl = self::LANDING_AFTER_PAYMENT;
-        if($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE){
-            echo "mobile";die;
+        if ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE) {
             $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE;
-        }
-        elseif($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE){
-            echo "mobile site";die;
+        } elseif ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE) {
             $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE_SITE;
         }
-        echo "desktop";die;
+        
         $body = [
             "AuthorId" => $identifier,
             "DebitedFunds" => [
