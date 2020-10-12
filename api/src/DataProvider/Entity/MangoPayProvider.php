@@ -50,8 +50,8 @@ class MangoPayProvider implements PaymentProviderInterface
     const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
     const SERVER_URL = "https://api.mangopay.com/";
     const LANDING_AFTER_PAYMENT = "paiements/paye";
-    const LANDING_AFTER_PAYMENT_MOBILE = "paiements/paye";
-    const LANDING_AFTER_PAYMENT_MOBILE_SITE = "paiements/paye";
+    const LANDING_AFTER_PAYMENT_MOBILE = "#/carpools/payment/paye";
+    const LANDING_AFTER_PAYMENT_MOBILE_SITE = "#/carpools/payment/paye";
     const VERSION = "V2.01";
 
     const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
@@ -387,7 +387,7 @@ class MangoPayProvider implements PaymentProviderInterface
         } elseif ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE) {
             $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE_SITE;
         }
-        
+
         $body = [
             "AuthorId" => $identifier,
             "DebitedFunds" => [
