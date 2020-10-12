@@ -50,6 +50,8 @@ class MangoPayProvider implements PaymentProviderInterface
     const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
     const SERVER_URL = "https://api.mangopay.com/";
     const LANDING_AFTER_PAYMENT = "paiements/paye";
+    const LANDING_AFTER_PAYMENT_MOBILE = "paiements/paye";
+    const LANDING_AFTER_PAYMENT_MOBILE_SITE = "paiements/paye";
     const VERSION = "V2.01";
 
     const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
@@ -378,6 +380,17 @@ class MangoPayProvider implements PaymentProviderInterface
             $wallet = $this->getWallets($paymentProfiles[0])[0];
         }
         
+        
+        $returnUrl = self::LANDING_AFTER_PAYMENT;
+        if($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE){
+            echo "mobile";die;
+            $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE;
+        }
+        elseif($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE){
+            echo "mobile site";die;
+            $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE_SITE;
+        }
+        echo "desktop";die;
         $body = [
             "AuthorId" => $identifier,
             "DebitedFunds" => [
@@ -389,7 +402,7 @@ class MangoPayProvider implements PaymentProviderInterface
                 "Amount" => 0
             ],
             "CreditedWalletId" => $wallet->getId(),
-            "ReturnURL" => $this->baseUri."".self::LANDING_AFTER_PAYMENT."?paymentPaymentId=".$carpoolPayment->getId(),
+            "ReturnURL" => $this->baseUri."".$returnUrl."?paymentPaymentId=".$carpoolPayment->getId(),
             "CardType" => self::CARD_TYPE,
             "Culture" => self::LANGUAGE
         ];
