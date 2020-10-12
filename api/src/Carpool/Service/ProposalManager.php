@@ -36,6 +36,7 @@ use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\CriteriaRepository;
+use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Service\InternalMessageManager;
@@ -70,6 +71,7 @@ class ProposalManager
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
+    private $matchingRepository;
     private $geoRouter;
     private $zoneManager;
     private $directionRepository;
@@ -98,6 +100,7 @@ class ProposalManager
         EntityManagerInterface $entityManager,
         ProposalMatcher $proposalMatcher,
         ProposalRepository $proposalRepository,
+        MatchingRepository $matchingRepository,
         DirectionRepository $directionRepository,
         GeoRouter $geoRouter,
         ZoneManager $zoneManager,
@@ -115,6 +118,7 @@ class ProposalManager
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->proposalRepository = $proposalRepository;
+        $this->matchingRepository = $matchingRepository;
         $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
@@ -445,59 +449,6 @@ class ProposalManager
             $proposal->getCriteria()->setPassengerComputedPrice((string)((int)$proposal->getCriteria()->getDirectionPassenger()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
             $proposal->getCriteria()->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPassengerComputedPrice(), $proposal->getCriteria()->getFrequency()));
         }
-        return $proposal;
-    }
-
-    /**
-     * Link related matchings of a proposal.
-     * This methods links the corresponding outward and return matchings of a proposal.
-     *
-     * @param Proposal $proposal
-     * @return Proposal
-     */
-    public function linkRelatedMatchings(Proposal $proposal)
-    {
-        $conn = $this->entityManager->getConnection();
-        $sql = "
-            UPDATE matching AS MRA
-            INNER JOIN proposal AS POA ON POA.id = MRA.proposal_offer_id
-            INNER JOIN proposal AS PRA ON PRA.id = MRA.proposal_request_id
-            SET matching_linked_id = (
-                SELECT MRR.id FROM matching AS MRR
-                INNER JOIN proposal AS PRR ON PRR.id = MRR.proposal_request_id
-                INNER JOIN proposal AS POR ON POR.id = MRR.proposal_offer_id
-                WHERE 
-                    POR.id = POA.proposal_linked_id AND
-                    PRR.id = PRA.proposal_linked_id
-            ) 
-            WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = " . $proposal->getId() . " OR MRA.proposal_request_id = " . $proposal->getId() . ")";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-    
-        return $proposal;
-    }
-
-    /**
-     * Link opposite matchings of a proposal.
-     * This methods links the corresponding matchings of a proposal where the roles can be reversed.
-     *
-     * @param Proposal $proposal
-     * @return Proposal
-     */
-    public function linkOppositeMatchings(Proposal $proposal)
-    {
-        $conn = $this->entityManager->getConnection();
-        $sql = "
-            UPDATE matching AS MR
-            INNER JOIN proposal AS PO ON PO.id = MR.proposal_offer_id
-            SET matching_opposite_id = (
-                SELECT MO.id FROM matching AS MO
-                INNER JOIN proposal AS PR ON PR.id = MO.proposal_request_id
-                WHERE PO.id = PR.id
-            )
-            WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = " . $proposal->getId() . ")";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
         return $proposal;
     }
 
@@ -1027,23 +978,18 @@ class ProposalManager
             $proposal = $this->proposalRepository->find($proposalId['id']);
             // if the proposal is a round trip, we want to link the potential matching results
             if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
-                $proposal = $this->linkRelatedMatchings($proposal);
-                $this->entityManager->persist($proposal);
+                $this->matchingRepository->linkRelatedMatchings($proposalId['id']);
             }
             // if the requester can be driver and passenger, we want to link the potential opposite matching results
             if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                 // linking for the outward
-                $proposal = $this->linkOppositeMatchings($proposal);
-                $this->entityManager->persist($proposal);
+                $this->matchingRepository->linkOppositeMatchings($proposalId['id']);
                 if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
                     // linking for the return
-                    $return = $this->linkOppositeMatchings($proposal->getProposalLinked());
-                    $this->entityManager->persist($return);
+                    $this->matchingRepository->linkOppositeMatchings($proposal->getProposalLinked()->getId());
                 }
             }
         }
-        $this->entityManager->flush();
-        return $proposals;
     }
 
 

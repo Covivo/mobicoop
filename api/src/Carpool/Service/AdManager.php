@@ -50,6 +50,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\ClassicProof;
 use App\Carpool\Exception\ProofException;
+use App\Carpool\Repository\MatchingRepository;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use DateTime;
@@ -71,6 +72,7 @@ class AdManager
     private $params;
     private $logger;
     private $proposalRepository;
+    private $matchingRepository;
     private $criteriaRepository;
     private $proposalMatcher;
     private $askManager;
@@ -86,7 +88,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -97,6 +99,7 @@ class AdManager
         $this->logger = $logger;
         $this->params = $params;
         $this->proposalRepository = $proposalRepository;
+        $this->matchingRepository = $matchingRepository;
         $this->criteriaRepository = $criteriaRepository;
         $this->proposalMatcher = $proposalMatcher;
         $this->askManager = $askManager;
@@ -423,21 +426,30 @@ class AdManager
         $this->entityManager->flush();
         $this->logger->info("AdManager : end flush proposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
+        // in the following, raw updates can be performed, we use a flag to check if proposal refresh is neede
+        $proposalRefresh = false;
+
         // if the ad is a round trip, we want to link the potential matching results
         if (!$ad->isOneWay()) {
             $this->logger->info("AdManager : start related link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $outwardProposal = $this->proposalManager->linkRelatedMatchings($outwardProposal);
+            $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
+            $proposalRefresh = true;
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
         if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
             // linking for the outward
             $this->logger->info("AdManager : start opposite link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $outwardProposal = $this->proposalManager->linkOppositeMatchings($outwardProposal);
+            $this->matchingRepository->linkOppositeMatchings($outwardProposal->getId());
             if (!$ad->isOneWay()) {
                 // linking for the return
-                $returnProposal = $this->proposalManager->linkOppositeMatchings($returnProposal);
+                $this->matchingRepository->linkOppositeMatchings($returnProposal->getId());
             }
             $this->logger->info("AdManager : end opposite link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $proposalRefresh = true;
+        }
+        // we load the proposal again to get the last updates
+        if ($proposalRefresh) {
+            $outwardProposal = $this->proposalRepository->find($outwardProposal->getId());
         }
 
         // we compute the results
@@ -673,15 +685,6 @@ class AdManager
                     $page
                 )
             );
-            // $ad->setResults(
-            //     $this->resultManager->orderResults(
-            //         $this->resultManager->filterResults(
-            //             $this->resultManager->createAdResults($proposal),
-            //             $ad->getFilters()
-            //         ),
-            //         $ad->getFilters()
-            //     )
-            // );
             $this->logger->info("AdManager : end set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         
@@ -857,7 +860,6 @@ class AdManager
     {
         $ads = [];
         $event = $this->eventManager->getEvent($eventId);
-
 
         $refIdProposals = [];
         foreach ($event->getProposals() as $proposal) {

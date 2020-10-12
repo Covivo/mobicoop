@@ -30,6 +30,8 @@ final class Version20201006120700 extends AbstractMigration
         $this->addSql("
             DROP TABLE direction_remove;
         ");
+
+        $this->addSql("OPTIMIZE TABLE direction;");
     }
 
     public function down(Schema $schema) : void

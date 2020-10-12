@@ -1597,25 +1597,26 @@ class ResultManager
 
     
     /**
-     * Get the first carpooled day in a regular from a request point of view
+     * Get the first carpooled day in a regular trip
      *
-     * @param integer $day          Day's number of the request
-     * @param Proposal $proposal    The Proposal that is matching
-     * @param integer $nbLoop       Current number of try (to avoid infinite loop)
+     * @param Proposal $searchProposal      The search Proposal
+     * @param Proposal $matchingProposal    The matching Proposal
+     * @param string $role                  The role (request or offer)
+     * @param integer $nbLoop               Current number of try (to avoid infinite loop)
      * @return array|null
      */
     private function getFirstCarpooledRegularDay(Proposal $searchProposal, Proposal $matchingProposal, string $role='request', int $nbLoop = 0): ?array
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day>=7) {
-            $day=$day-7;
+        if ($day == 7) {
+            $day=0;
         }
         $rdate = new \DateTime();
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
         $nbLoop++;
-        if ($nbLoop>=7) {
+        if ($nbLoop>7) {
             return null;
         } // safeguard to avoid infinite loop
 
