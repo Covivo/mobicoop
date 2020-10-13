@@ -63,6 +63,10 @@ class PaymentPayment
     const STATUS_SUCCESS = 1;
     const STATUS_FAILURE = 2;
 
+    const ORIGIN_DESKTOP = 0;
+    const ORIGIN_MOBILE = 1;
+    const ORIGIN_MOBILE_SITE = 2;
+
     /**
      * @var int The id of this payment.
      * @Groups({"readPayment","writePayment"})
@@ -94,6 +98,12 @@ class PaymentPayment
     private $status;
 
     /**
+     * @var int Origin of this payment
+     * @Groups({"writePayment"})
+     */
+    private $origin;
+
+    /**
      * @var string Secured form's url to process the electronic payement
      * @Groups({"readPayment"})
      */
@@ -102,6 +112,7 @@ class PaymentPayment
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
+        $this->origin = self::ORIGIN_DESKTOP;
     }
 
     public function getId(): int
@@ -124,6 +135,18 @@ class PaymentPayment
     public function setType(int $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getOrigin(): ?int
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(int $origin): self
+    {
+        $this->origin = $origin;
 
         return $this;
     }

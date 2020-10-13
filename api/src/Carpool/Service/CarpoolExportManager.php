@@ -44,7 +44,7 @@ class CarpoolExportManager
     private $carpoolExportUri;
     private $carpoolExportPath;
     private $carpoolExportPlatformName;
-
+    private $paymentActive;
 
     /**
      * Constructor.
@@ -57,7 +57,8 @@ class CarpoolExportManager
         CarpoolItemRepository $carpoolItemRepository,
         String $carpoolExportUri,
         String $carpoolExportPath,
-        String $carpoolExportPlatformName
+        String $carpoolExportPlatformName,
+        bool $paymentActive
     ) {
         $this->security = $security;
         $this->pdfManager = $pdfManager;
@@ -65,6 +66,7 @@ class CarpoolExportManager
         $this->carpoolExportUri = $carpoolExportUri;
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
+        $this->paymentActive = $paymentActive;
     }
 
     /**
@@ -147,6 +149,7 @@ class CarpoolExportManager
         $infoForPdf['received'] = $sumReceived;
         $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
         $infoForPdf['carpoolExports'] = $carpoolExports;
+        $infoForPdf['paymentActive'] = $this->paymentActive;
 
         return $this->pdfManager->generatePDF($infoForPdf);
     }
