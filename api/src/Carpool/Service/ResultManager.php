@@ -1606,14 +1606,14 @@ class ResultManager
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day>=8) {
-            $day=$day-7;
+        if ($day==7) {
+            $day=0;
         }
         $rdate = new \DateTime();
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
         $nbLoop++;
-        if ($nbLoop>=7) {
+        if ($nbLoop>7) {
             return null;
         } // safeguard to avoid infinite loop
 
