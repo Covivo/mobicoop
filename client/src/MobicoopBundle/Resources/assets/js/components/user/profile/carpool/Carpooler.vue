@@ -115,17 +115,16 @@
         {{ result.roundedPrice }}€
       </v-col>
       <v-col
-        v-if="ask.paymentItemId!==null"
+        v-if="ask.paymentItemId!==null || ask.paymentStatus == 4"
         :cols="isPassenger ? 3 : 5"
         class="text-right"
       >
-        <AdPayment
+        <ad-payment
           :is-driver="!isDriver"
           :is-passenger="isPassenger"
           :payment-status="ask.paymentStatus"
           :frequency="ask.frequency"
           :payment-item-id="ask.paymentItemId"
-          :week="ask.paymentItemWeek"
         />        
       </v-col>
     </v-row>

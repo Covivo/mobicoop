@@ -16,7 +16,7 @@
           rounded
           :outlined="outlined"
           :disabled="disabled"
-          :href="$t('link', {'id':this.paymentItemId,'frequency':this.frequency,'type':this.type,'week':this.week})"
+          :href="$t('link', {'id':paymentItemId,'frequency':frequency,'type':type})"
         >
           {{ displayPaymentStatus }}
         </v-btn>
@@ -68,11 +68,7 @@ export default {
     frequency: {
       type: Number,
       default: 1
-    },
-    week: {
-      type: Number,
-      default: null
-    }    
+    }
   },
   data(){
     return {

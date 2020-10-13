@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
 use DateTime;
@@ -91,6 +92,7 @@ class CarpoolItemRepository
         ->join('a.criteria', 'c')
         ->where('ci.itemDate BETWEEN :fromDate and :toDate')
         ->andWhere('c.frequency = :frequency')
+        ->orderBy('a.type')
         ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
         ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
         ->setParameter('frequency', $frequency);

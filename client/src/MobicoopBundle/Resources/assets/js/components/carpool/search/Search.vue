@@ -111,7 +111,6 @@ import {merge} from "lodash";
 import Translations from "@translations/components/carpool/search/Search.json";
 import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
 import SearchJourney from "@components/carpool/search/SearchJourney";
-import axios from 'axios';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

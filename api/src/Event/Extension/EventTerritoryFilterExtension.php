@@ -32,16 +32,19 @@ use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class EventTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
     private $authManager;
+    private $request;
 
-    public function __construct(Security $security, AuthManager $authManager)
+    public function __construct(Security $security, AuthManager $authManager, RequestStack $request)
     {
         $this->security = $security;
         $this->authManager = $authManager;
+        $this->request = $request->getCurrentRequest();
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -66,11 +69,15 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            switch ($operationName) {
-                case "get":
-                    $territories = $this->authManager->getTerritoriesForItem("event_list");
+            if ($this->request->get("showAllEvents")=="" || !$this->request->get("showAllEvents")) {
+            } else {
+                switch ($operationName) {
+                    case "get":
+                        $territories = $this->authManager->getTerritoriesForItem("event_list");
+                }
             }
         }
+        
 
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];

@@ -70,8 +70,12 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
             $type = $this->filters['type'];
         }
 
+        if (!empty($this->filters['day'])) {
+            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, $this->filters['day']);
+        }
+
         if (!empty($this->filters['week'])) {
-            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, $this->filters['week']);
+            return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type, null, $this->filters['week']);
         }
 
         return $this->paymentManager->getPaymentItems($this->security->getUser(), $frequency, $type);

@@ -43,6 +43,7 @@
         "willdurand/geocoder-bundle": "^5.3"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.3",
         "symfony/maker-bundle": "^1.7"
     },
     "config": {

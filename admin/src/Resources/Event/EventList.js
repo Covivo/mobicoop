@@ -10,7 +10,7 @@ import {
   EditButton,
   useTranslate,
   Filter,
-  SearchInput,
+  TextInput,
   DateInput,
 } from 'react-admin';
 
@@ -18,7 +18,7 @@ import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
 
 const EventFilter = ({ translate, ...rest }) => (
   <Filter {...rest}>
-    <SearchInput source="name" alwaysOn />
+    <TextInput label={translate('custom.label.event.name')} source="name" alwaysOn />
     <DateInput source="fromDate" label={translate('custom.label.event.dateStart')} />
     <DateInput source="toDate" label={translate('custom.label.event.dateFin')} />
   </Filter>

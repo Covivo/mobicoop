@@ -73,6 +73,7 @@ use App\User\Repository\UserRepository;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
+use App\Payment\Ressource\BankAccount;
 
 /**
  * User manager service.
@@ -1299,17 +1300,40 @@ class UserManager
      *
      * @return User|null
      */
-    public function getPaymentProfile()
+    public function getPaymentProfile(User $user=null)
     {
-        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        if (is_null($user)) {
+            $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+        }
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
         foreach ($paymentProfiles as $paymentProfile) {
-            foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
-                $bankAccounts[] = $bankaccount;
+            if (!is_null($paymentProfile->getBankAccounts())) {
+                foreach ($paymentProfile->getBankAccounts() as $bankaccount) {
+                    /**
+                     * @var BankAccount $bankaccount
+                     */
+                    
+                    // We replace some characters in Iban and Bic by *
+                    $iban = $bankaccount->getIban();
+                    for ($i=4 ; $i<strlen($iban)-4 ; $i++) {
+                        $iban[$i] = "*";
+                    }
+                    $bic = $bankaccount->getBic();
+                    for ($i=2 ; $i<strlen($bic)-2 ; $i++) {
+                        $bic[$i] = "*";
+                    }
+                    
+                    $bankaccount->setIban($iban);
+                    $bankaccount->setBic($bic);
+                    
+                    $bankAccounts[] = $bankaccount;
+                }
             }
-            foreach ($paymentProfile->getWallets() as $wallet) {
-                $wallets[] = $wallet;
+            if (!is_null($paymentProfile->getWallets())) {
+                foreach ($paymentProfile->getWallets() as $wallet) {
+                    $wallets[] = $wallet;
+                }
             }
         }
         $user->setBankAccounts($bankAccounts);

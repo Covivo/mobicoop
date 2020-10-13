@@ -30,3 +30,9 @@
 
 # each day at 1am : create and send the carpool proofs for the day before
 0 1 * * *   $1 $2 app:carpool:proof-batch --env=$3
+
+# each day at 2am : create the payment export
+# 0 2 * * *   $1 $2 app:payment:export-batch --env=$3
+
+# each day at 2am : create the carpoolitem for the payment
+0 2 * * * $1 $2 app:payment:item-batch --env=$3

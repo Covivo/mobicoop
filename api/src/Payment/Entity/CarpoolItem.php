@@ -41,12 +41,15 @@ class CarpoolItem
     const STATUS_NOT_REALIZED = 2;
 
     const DEBTOR_STATUS_PENDING = 0;
-    const DEBTOR_STATUS_ONLINE = 1;
-    const DEBTOR_STATUS_DIRECT = 2;
+    const DEBTOR_STATUS_PENDING_ONLINE = 1;
+    const DEBTOR_STATUS_PENDING_DIRECT = 2;
+    const DEBTOR_STATUS_ONLINE = 3;
+    const DEBTOR_STATUS_DIRECT = 4;
 
     const CREDITOR_STATUS_PENDING = 0;
-    const CREDITOR_STATUS_ONLINE = 1;
-    const CREDITOR_STATUS_DIRECT = 2;
+    const CREDITOR_STATUS_PENDING_ONLINE = 1;
+    const CREDITOR_STATUS_ONLINE = 3;
+    const CREDITOR_STATUS_DIRECT = 4;
     //const CREDITOR_STATUS_UNPAID = 3;
 
     /**
@@ -119,7 +122,7 @@ class CarpoolItem
     /**
      * @var Ask The ask related to the item.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
      */
     private $ask;
 
@@ -136,6 +139,13 @@ class CarpoolItem
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      */
     private $creditorUser;
+
+    /**
+     * @var ArrayCollection|null Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolPayment", mappedBy="carpoolItems")
+     */
+    private $carpoolPayments;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -269,6 +279,28 @@ class CarpoolItem
         return $this;
     }
 
+    public function getCarpoolPayments()
+    {
+        return $this->carpoolPayments->getValues();
+    }
+
+    public function addCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        if (!$this->carpoolPayments->contains($carpoolPayment)) {
+            $this->carpoolPayments[] = $carpoolPayment;
+        }
+        
+        return $this;
+    }
+    
+    public function removeCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        if ($this->carpoolPayments->contains($carpoolPayment)) {
+            $this->carpoolPayments->removeElement($carpoolPayment);
+        }
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -298,7 +330,7 @@ class CarpoolItem
         return $this->unpaidDate;
     }
 
-    public function setUnpaidDate(\DateTimeInterface $unpaidDate): self
+    public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
 

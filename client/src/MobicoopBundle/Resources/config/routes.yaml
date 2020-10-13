@@ -49,6 +49,12 @@ user_bank_coordinates_delete:
         en: /user/bank-coordinates/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteBankCoordinates
 
+user_send_identity_validation_document:
+    path:
+        fr: /utilisateur/document-validation-identite/envoyer
+        en: /user/identity-validation-document/send
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendIdentityValidationDocument
+
 # login
 user_login:
     path:
@@ -1028,11 +1034,26 @@ payment_payments_post:
         en: /payments/post
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments
 
-# payment 
+# Landing page after online payment
+payment_paid:
+    path:
+        fr: /paiements/paye
+        en: /payments/paid
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::paymentPaid    
+
+# Post payment items of a user (POST)
+payment_payment_status:
+    methods: [POST]
+    path:
+        fr: /payment/status
+        en: /payment/status
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCarpoolPaymentStatus
+
+    # payment 
 payment_list:
     path:
-        fr: /paiements/{id?}/{frequency?}/{type?}/{week?}
-        en: /payments/{id?}/{frequency?}/{type?}/{week?}
+        fr: /paiements/{id?}/{frequency?}/{type?}
+        en: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 # Get weeks to pay (POST) AJAX
@@ -1041,7 +1062,23 @@ payment_weeks_list:
     path:
         fr: /getWeeks
         en: /getWeeks
-    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks        
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks      
+
+# Get payment periods to pay/collect (POST) AJAX
+payment_periods_list:
+    methods: [POST]
+    path:
+        fr: /getCalendar
+        en: /getCalendar
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar    
+
+# Get the first non validated week (POST) AJAX
+payment_week_first:
+    methods: [POST]
+    path:
+        fr: /getFirstWeek
+        en: /getFirstWeek
+    controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
 ###############
 # misc routes #

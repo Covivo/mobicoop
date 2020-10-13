@@ -73,5 +73,6 @@ class CarpoolItemBatchCommand extends Command
             $toDate->setTime(23, 59, 59, 999);
         }
         $this->paymentManager->createCarpoolItems($fromDate, $toDate);
+        return 0;
     }
 }
