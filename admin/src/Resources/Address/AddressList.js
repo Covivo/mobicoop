@@ -8,7 +8,6 @@ import {
   ReferenceInput,
   BooleanInput,
   TextField,
-  EmailField,
   DateField,
   EditButton,
   Filter,
@@ -46,7 +45,7 @@ export const AddressList = (props) => (
       <TextField source="originId" label="ID" sortBy="id" />
       <TextField source="givenName" label="Prénom" />
       <TextField source="familyName" label="Nom" />
-      <EmailField source="email" label="Email" />
+      <TextField source="email" label="Email" />
       <DateField source="createdDate" label="Date de création" />
       {isAuthorized('user_update') && <EditButton />}
     </Datagrid>

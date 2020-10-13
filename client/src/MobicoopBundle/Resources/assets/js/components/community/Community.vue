@@ -619,7 +619,7 @@ export default {
     showCommunityProposals() {
       this.pointsToMap.length = 0;
       // add the community address to display on the map
-      if (this.community.address) {
+      if (this.community.address && this.community.address.latitude !== null) {
         this.pointsToMap.push(
           this.buildPoint(
             this.community.address.latitude,

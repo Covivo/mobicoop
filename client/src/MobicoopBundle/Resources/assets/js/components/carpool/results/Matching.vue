@@ -426,8 +426,8 @@ export default {
       this.results.forEach((result,key) => {
         if (result.communities) {
           for (let key in result.communities) {  
-            if (communities.indexOf(result.communities[key]) == -1) {
-              communities.push({text:result.communities[key],value:key});    
+            if (communities.indexOf(result.communities[key].name) == -1) {
+              communities.push({text:result.communities[key].name,value:key});    
             }
           }            
         }

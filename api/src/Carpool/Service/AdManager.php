@@ -579,7 +579,7 @@ class AdManager
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
         foreach ($schedules as $schedule) {
-            if ($schedule[$key] != '') {
+            if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
                     $criteria->setMonCheck(true);
                     $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
@@ -1509,15 +1509,16 @@ class AdManager
         // if days is null, we make an array using outward
         $daysList = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
         if (is_null($days)) {
+            $day = [];
             $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             foreach ($outward as $day => $times) {
                 if (in_array($day, $daysList)) {
-                    $days = [$day=>1];
+                    $days[$day] = 1;
                 } elseif ($day=="mindate") {
                     // It's the mindate field. We use it to create a day
                     $dayMinDate = new \DateTime($times);
                     $textDayMinDate = strtolower($dayMinDate->format('l'));
-                    $days = [$textDayMinDate=>1];
+                    $days[$textDayMinDate] = 1;
                 }
             }
         }
@@ -1527,7 +1528,6 @@ class AdManager
         // die;
 
         $schedules = $this->buildSchedule($days, $outward);
-        // var_dump($schedules);die;
         if (count($schedules)>0) {
             if ($frequency=="punctual") {
                 // Punctual journey

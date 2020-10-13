@@ -183,7 +183,7 @@ class Address implements \JsonSerializable
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
+     * @Groups({"read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -309,7 +309,7 @@ class Address implements \JsonSerializable
     /**
      * @var array|null Label for display
      *
-     * @Groups({"read","readUser","readCommunity","readEvent","results","pt","readRelayPoint"})
+     * @Groups({"read","readUser","readCommunity","readEvent","results","pt","readRelayPoint", "readExport"})
      */
     private $displayLabel;
 

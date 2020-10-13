@@ -144,7 +144,13 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
      */
 
     private $electronicallyPayable;
+    
+    /**
+     * @var bool If the current User can pay electronically this item (i.e. has a complete address for subscription or an already registered bank account)
+     */
 
+    private $canPayElectronically;
+    
     /**
      * @var \DateTimeInterface|null The unpaid date for this Item
      */
@@ -361,6 +367,18 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getCanPayElectronically(): ?bool
+    {
+        return $this->canPayElectronically;
+    }
+
+    public function setCanPayElectronically(bool $canPayElectronically): self
+    {
+        $this->canPayElectronically = $canPayElectronically;
+
+        return $this;
+    }
+
     public function getUnpaidDate(): ?\DateTimeInterface
     {
         return $this->unpaidDate;
@@ -394,6 +412,7 @@ class PaymentItem implements ResourceInterface, \JsonSerializable
                 'outwardDays'               => $this->getOutwardDays(),
                 'returnDays'                => $this->getReturnDays(),
                 'electronicallyPayable'     => $this->isElectronicallyPayable(),
+                'canPayElectronically'      => $this->getCanPayElectronically(),
                 'unpaidDate'                => $this->getUnpaidDate()
             ];
     }

@@ -83,6 +83,37 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ *
+ *  Exemples for regular :
+ *
+ *  "days":  {
+ *      "mon": 1,
+ *      "tue": 1,
+ *      "wed": 0,
+ *      "thu": 1,
+ *      "fri": 1,
+ *      "sat": 0,
+ *      "sun": 0
+ *    },
+ *  "outwardTimes": {
+ *     "mon": "08:00",
+ *     "tue": "08:00",
+ *     "wed": null,
+ *     "thu": "09:00",
+ *     "fri": "08:00",
+ *     "sat": null,
+ *     "sun": null
+ *  },
+ *  "returnTimes": {
+ *     "mon": "18:00",
+ *     "tue": "18:00",
+ *     "wed": null,
+ *     "thu": "19:00",
+ *     "fri": "18:00",
+ *     "sat": null,
+ *     "sun": null
+ *  }
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
@@ -236,7 +267,7 @@ class Solidary
     private $destination;
 
     /**
-     * @var \DateTimeInterface outward date and time of the solidary demand
+     * @var \DateTimeInterface outward date and time of the solidary demand PUNCTUAL (and only DATE for REGULAR)
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $outwardDatetime;
@@ -248,7 +279,7 @@ class Solidary
     private $outwardDeadlineDatetime;
 
     /**
-     * @var \DateTimeInterface|null return date and time of the solidary demand
+     * @var \DateTimeInterface|null return date and time of the solidary demand PUNCTUAL (and only DATE for REGULAR)
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $returnDatetime;
@@ -327,11 +358,23 @@ class Solidary
     private $frequency;
 
     /**
-     * @var Array|null Origin address of the solidary
+     * @var Array|null Days for the solidary if it's regular
      * @Groups ({"writeSolidary", "readSolidary"})
      */
     private $days;
 
+    /**
+     * @var Array|null Outward times for the solidary if it's regular
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $outwardTimes;
+
+    /**
+     * @var Array|null Return times for the solidary if it's regular
+     * @Groups ({"writeSolidary", "readSolidary"})
+     */
+    private $returnTimes;
+    
     /**
     * @var Int|null margin time of the solidary demand
     * @Groups ({"writeSolidary", "readSolidary"})
@@ -824,6 +867,30 @@ class Solidary
     public function setDays(?array $days): self
     {
         $this->days = $days;
+        
+        return $this;
+    }
+
+    public function getOutwardTimes(): ?array
+    {
+        return $this->outwardTimes;
+    }
+    
+    public function setOutwardTimes(?array $outwardTimes): self
+    {
+        $this->outwardTimes = $outwardTimes;
+        
+        return $this;
+    }
+
+    public function getReturnTimes(): ?array
+    {
+        return $this->returnTimes;
+    }
+    
+    public function setReturnTimes(?array $returnTimes): self
+    {
+        $this->returnTimes = $returnTimes;
         
         return $this;
     }

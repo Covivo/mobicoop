@@ -20,6 +20,7 @@
         "geocoder-php/open-cage-provider": "^4.0",
         "gesdinet/jwt-refresh-token-bundle": "^0.9.1",
         "halaxa/json-machine": "^0.3.2",
+        "knplabs/knp-snappy-bundle": "^1.7",
         "laminas/laminas-code": "^3.4",
         "laminas/laminas-eventmanager": "^3.2",
         "lexik/jwt-authentication-bundle": "^2.6",
