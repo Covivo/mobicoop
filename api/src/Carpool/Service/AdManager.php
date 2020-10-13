@@ -80,6 +80,8 @@ class AdManager
     private $proofManager;
     private $subjectRepository;
 
+    private $currentMargin = null;
+
     /**
      * Constructor.
      *
@@ -554,7 +556,7 @@ class AdManager
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
         foreach ($schedules as $schedule) {
-            if ($schedule[$key] != '') {
+            if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
                     $criteria->setMonCheck(true);
                     $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
@@ -1491,15 +1493,16 @@ class AdManager
         // if days is null, we make an array using outward
         $daysList = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         if (is_null($days)) {
+            $day = [];
             $today = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             foreach ($outward as $day => $times) {
                 if (in_array($day, $daysList)) {
-                    $days = [$day => 1];
-                } elseif ($day == "mindate") {
+                    $days[$day] = 1;
+                } elseif ($day=="mindate") {
                     // It's the mindate field. We use it to create a day
                     $dayMinDate = new \DateTime($times);
                     $textDayMinDate = strtolower($dayMinDate->format('l'));
-                    $days = [$textDayMinDate => 1];
+                    $days[$textDayMinDate] = 1;
                 }
             }
         }
@@ -1542,9 +1545,16 @@ class AdManager
         } else {
             // No schedule
             $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            if ($frequency=="regular") {
+                $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
+            }
             $ad->setOutwardDate(\DateTime::createFromFormat("Y-m-d", $outward["mindate"]));
         }
-        // var_dump($ad);die;
+
+        if (!is_null($this->currentMargin)) {
+            $ad->setMarginDuration($this->currentMargin);
+        }
+
         return $this->createAd($ad);
     }
 
@@ -1573,6 +1583,25 @@ class AdManager
     }
 
     /**
+     * Get the difference in seconds between two times and dates
+     *
+     * @param string $heureMin
+     * @param string $heureMax
+     * @param string $dateMin
+     * @param string|null $dateMax
+     * @return int
+     */
+    private function dateDiff(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax=null)
+    {
+        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
+        $mintime = $min->getTimestamp();
+        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
+        $maxtime = $max->getTimestamp();
+        $diff = $maxtime - $mintime;
+        return $diff;
+    }
+
+    /**
      * Build an Ad Schedule
      * @var array $day      Array of the selected days
      * @var array $outward  Array of the time for each days
@@ -1584,18 +1613,31 @@ class AdManager
         $refTimes = [];
         foreach ($days as $day => $value) {
             $shortDay = substr($day, 0, 3);
-            if (isset($outward[$day]['mintime']) && isset($outward[$day]['maxtime'])) {
+            if (isset($outward[$day]['mintime'])) {
                 $outward_mindate = $outward['mindate'];
-                (!isset($outward['maxdate'])) ? $outward_maxdate = $outward_mindate : $outward['maxdate'];
-                $middleHour = $this->middleHour($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
 
-                $previousKey = array_search($middleHour, $refTimes);
+                if (isset($outward[$day]['mintime']) && isset($outward[$day]['maxtime'])) {
+                    (!isset($outward['maxdate'])) ? $outward_maxdate = $outward_mindate : $outward_maxdate = $outward['maxdate'];
+                
+                    // We compute the difference between mintime and maxtime to use it as a margin in the generated Ad
+                    $diff = $this->dateDiff($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
+                    if (
+                        !is_numeric($this->currentMargin) ||
+                        (is_numeric($this->currentMargin) && $diff > $this->currentMargin)
+                    ) {
+                        $this->currentMargin = $diff;
+                    }
+                }
+
+                $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['mintime'], new \DateTimeZone('UTC'))->format('H:i');
+
+                $previousKey = array_search($outwardTime, $refTimes);
 
                 if (is_null($previousKey) || !is_numeric($previousKey)) {
-                    $refTimes[] = $middleHour;
-                    $previousKey = array_search($middleHour, $refTimes);
+                    $refTimes[] = $outwardTime;
+                    $previousKey = array_search($outwardTime, $refTimes);
                     $schedules[$previousKey] = [
-                        'outwardTime' => $middleHour->format("H:i")
+                        'outwardTime' => $outwardTime
                     ];
                 }
 

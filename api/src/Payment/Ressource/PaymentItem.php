@@ -224,6 +224,19 @@ class PaymentItem
     private $electronicallyPayable;
 
     /**
+     * @var bool If the current User can pay electronically this item (i.e. has a complete address for subscription or an already registered bank account)
+     *
+     * @ApiProperty(
+     *     attributes={
+     *         "swagger_context"={"type"="boolean"}
+     *     }
+     * )
+
+     * @Groups({"readPayment"})
+     */
+    private $canPayElectronically;
+
+    /**
      * @var \DateTimeInterface|null The unpaid date for this Item
      * @Groups({"readPayment"})
      *
@@ -449,6 +462,18 @@ class PaymentItem
     public function setElectronicallyPayable(bool $electronicallyPayable): self
     {
         $this->electronicallyPayable = $electronicallyPayable;
+
+        return $this;
+    }
+
+    public function getCanPayElectronically(): ?bool
+    {
+        return $this->canPayElectronically;
+    }
+
+    public function setCanPayElectronically(bool $canPayElectronically): self
+    {
+        $this->canPayElectronically = $canPayElectronically;
 
         return $this;
     }

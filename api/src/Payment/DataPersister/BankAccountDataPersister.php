@@ -23,6 +23,7 @@
 namespace App\Payment\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Payment\Exception\PaymentException;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
@@ -51,6 +52,9 @@ final class BankAccountDataPersister implements ContextAwareDataPersisterInterfa
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            if (!$this->paymentManager->checkValidForRegistrationToTheProvider($this->security->getUser(), $data->getAddress())) {
+                throw new PaymentException(PaymentException::USER_INVALID);
+            }
             $data = $this->paymentManager->createBankAccount($this->security->getUser(), $data);
         }
 

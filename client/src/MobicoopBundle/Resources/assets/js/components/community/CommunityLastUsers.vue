@@ -48,7 +48,6 @@
 </template>
 <script>
 
-import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/community/CommunityLastUsers.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityLastUsers.json";

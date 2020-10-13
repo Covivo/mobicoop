@@ -23,10 +23,15 @@
 
 namespace App\Payment\Interfaces;
 
+use App\DataProvider\Ressource\Hook;
+use App\Geography\Entity\Address;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Entity\Wallet;
+use App\Payment\Ressource\ElectronicPayment;
+use App\Payment\Ressource\ValidationDocument;
 
 /**
  * Payment Provider interface.
@@ -42,10 +47,11 @@ interface PaymentProviderInterface
     /**
      * Register a User on the platform
      *
-     * @param User $user     The User to register
+     * @param User $user            The User to register
+     * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user);
+    public function registerUser(User $user, Address $address=null);
 
     /**
      * Returns a collection of Bank accounts.
@@ -72,18 +78,43 @@ interface PaymentProviderInterface
     public function disableBankAccount(BankAccount $bankAccount);
 
     /**
-     * Returns a collection of Wallet.
+     * Get the secured form's url for electronic payment
      *
-     * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
-     * @return BankAccount[]
+     * @param CarpoolPayment $carpoolPayment
+     * @return CarpoolPayment With redirectUrl filled
      */
-    public function getWallets(PaymentProfile $paymentProfile);
+    public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment);
 
     /**
-     * Add a Wallet
+     * Process an electronic payment between the $debtor and the $creditors
      *
-     * @param Wallet $user  The Wallet to create
-     * @return Wallet|null
+     * array of creditors are like this :
+     * $creditors = [
+     *  "userId" => [
+     *      "user" => User object
+     *      "amount" => float
+     *  ]
+     * ]
+     *
+     * @param User $debtor
+     * @param array $creditors
+     * @return void
      */
-    public function addWallet(Wallet $wallet);
+    public function processElectronicPayment(User $debtor, array $creditors);
+
+    /**
+     * Upload an identity validation document
+     * The document is not stored on the platform. It has to be deleted.
+     *
+     * @param ValidationDocument $validationDocument
+     * @return ValidationDocument
+     */
+    public function uploadValidationDocument(ValidationDocument $validationDocument);
+
+    /**
+     * Handle a payment web hook
+     * @var object $hook The web hook from the payment provider
+     * @return Hook with status and ressource id
+     */
+    public function handleHook(Hook $hook);
 }

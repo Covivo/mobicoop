@@ -1,3 +1,14 @@
+# Release 1.14.0
+
+## API
+
+* [Payment] : Online payment (with MangoPay provider)
+* Possibility to avoid toll for the georouter
+
+## CLIENT
+
+* [Payment] : Better payment component and online payment
+
 # Release 1.12.0
 
 ## API

@@ -23,6 +23,7 @@
  namespace App\Payment\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Payment\Exception\PaymentException;
 use App\Payment\Ressource\PaymentPayment;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
@@ -50,6 +51,21 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
     {
         // call your persistence layer to save $data
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            
+            /**
+             * @var PaymentPayment $data
+             */
+
+            // If there is at least one online payment we check if the can pay electronicaly
+            $electronicPayment = false;
+            foreach ($data->getItems() as $item) {
+                if ($item['mode']==PaymentPayment::MODE_ONLINE) {
+                    $electronicPayment = true;
+                }
+            }
+            if ($electronicPayment && !$this->paymentManager->checkValidForRegistrationToTheProvider($this->security->getUser())) {
+                throw new PaymentException(PaymentException::USER_INVALID);
+            }
             $data = $this->paymentManager->createPaymentPayment($data, $this->security->getUser());
         }
         return $data;

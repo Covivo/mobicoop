@@ -788,6 +788,192 @@ class AskManager
         return $ad;
     }
 
+    /**
+     * Get the payment status of an Ask
+     *
+     * @param integer $id       Id of the Ask to check
+     * @param User    $user     The User we ask for (if null, it's the security token User)
+     * @return Ask
+     */
+    public function getPaymentStatus(int $id, User $user = null): Ask
+    {
+        // search the ask
+        if (!$ask = $this->getAsk($id)) {
+            throw new PaymentException(PaymentException::NO_ASK_FOUND);
+        }
+
+        $driver = $ask->getMatching()->getProposalOffer()->getUser();
+        $passenger = $ask->getMatching()->getProposalRequest()->getUser();
+
+        if ($user==null) {
+            $user = $this->security->getUser();
+        }
+
+        // The User can't be an App and has to be one of the Ask actor
+        if (!($user instanceof User) || ($driver->getId() !== $user->getId() && $passenger->getId() !== $user->getId())) {
+            throw new PaymentException(PaymentException::INVALID_USER);
+        }
+
+        // NB : We ignore the returns. For now, it's not possible to pay (or at least validate) only the outwards without the returns.
+        // So we only treating the outwards to evaluate the payment status.
+        $carpoolItemId = null;
+        if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+
+            // Punctual journey, we just check if it's paid on this particular day
+            $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
+            if (is_null($carpoolItem)) {
+                return $ask;
+                //throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
+            }
+
+            
+            // Init the payment status at pending
+            $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
+
+            // If the status is Unpaid, it's the same for driver (creditor) or passenger (debtor)
+            if (!is_null($carpoolItem->getUnpaidDate())) {
+                $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
+            } else {
+                if ($driver->getId() == $user->getId()) {
+                    // Driver (creditor) point of vue
+                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_DIRECT) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
+                    }
+                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_ONLINE) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
+                    }
+                } else {
+                    // Passenger (debtor) point of vue
+                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT || $carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
+                    }
+                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_ONLINE) {
+                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
+                    }
+                }
+            }
+            // Id of the CarpoolItem
+            $carpoolItemId = $carpoolItem->getId();
+        } else {
+            $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PAID);
+
+            // Regular journey. To be paid, all the previous week must have been confirmed
+            $askWithNonValidatedWeeks = $this->getNonValidatedWeeks($ask, $user);
+            $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
+            foreach ($nonValidatedWeeks as $nonValidatedWeek) {
+                if (!is_null($nonValidatedWeek->getUnpaidDate())) {
+                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
+                    $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
+                    $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
+                    $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
+                    break;
+                } elseif ($nonValidatedWeek->getStatus() == WeekItem::STATUS_PENDING) {
+                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
+                }
+                $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
+                $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
+            }
+        }
+
+        // Id of the CarpoolItem
+        $ask->setPaymentItemId($carpoolItemId);
+
+        return $ask;
+    }
+
+    /**
+     * Get the non validated weeks of an Ask
+     *
+     * @param Ask $ask  Ask
+     * @param Ask $user User that want to get the non validated weeks
+     * @return Ask
+     */
+    public function getNonValidatedWeeks(Ask $ask, User $user): Ask
+    {
+        $startDate = $ask->getCriteria()->getFromDate();
+        $toDate = $ask->getCriteria()->getToDate();
+
+        // we limit to the last day of the previous week
+        $maxDate = new \DateTime();
+        $maxDate->modify('last week +6 days');
+
+        $limitDate = min($maxDate, $toDate);
+
+        // First we need an array where every element is a week that contains every days on the period
+        $currentDate = clone $startDate;
+
+        $arrayWeeks = [];
+        while ($currentDate <= $limitDate) {
+            $currentWeek = [];
+            for ($i = 0 ; $i < 7 ; $i++) {
+                $currentWeek[] = clone $currentDate;
+                $currentDate->modify("+1 day");
+            }
+            $arrayWeeks[] = $currentWeek;
+        }
+
+        // var_dump($arrayWeeks);die;
+
+        // For each week we need to determine all day are confirmed. If not, the week is still in payement
+        $nonValidatedWeeks = [];
+        $firstCarpoolItem = null;
+        $unpaidDate = null;
+        foreach ($arrayWeeks as $currentWeek) {
+            $validatedWeek = false;
+            $unpaidDetected = false;
+            foreach ($currentWeek as $currentDay) {
+                $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $currentDay);
+                if (!is_null($carpoolItem)) {
+                    if (is_null($firstCarpoolItem)) {
+                        $firstCarpoolItem = $carpoolItem;
+                    }
+                    if (!is_null($carpoolItem->getUnpaidDate())) {
+                        $unpaidDetected = true;
+                        $unpaidDate = $carpoolItem->getUnpaidDate();
+                        break;
+                    }
+
+                    // The validated status depends on the point of vue of the current user
+                    if ($carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED) {
+                        if ($carpoolItem->getDebtorUser()->getId() == $user->getId() &&
+                            $carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_PENDING
+                        ) {
+                            // The day has been confirmed by the debtor, the week is validated for him
+                            $validatedWeek = true;
+                            break;
+                        } elseif ($carpoolItem->getCreditorUser()->getId() == $user->getId() &&
+                            $carpoolItem->getCreditorStatus() !== CarpoolItem::CREDITOR_STATUS_PENDING
+                        ) {
+                            // The day has been confirmed by the creditor, the week is validated for him
+                            $validatedWeek = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ((!$validatedWeek || $unpaidDetected) && !is_null($firstCarpoolItem)) {
+                $weekItem = new WeekItem();
+                $weekItem->setFromDate($currentWeek[0]);
+                $weekItem->setToDate($currentWeek[count($currentWeek)-1]);
+                $weekItem->setNumWeek($currentWeek[0]->format('W'));
+                $weekItem->setYear($currentWeek[0]->format('Y'));
+                $weekItem->setStatus(WeekItem::STATUS_PENDING);
+                $weekItem->setPaymentItemId($firstCarpoolItem->getId());
+                $weekItem->setUnpaidDate($unpaidDate);
+                // if ($unpaidDetected) {
+                //     $weekItem->setStatus(WeekItem::STATUS_UNPAID);
+                // }
+                $nonValidatedWeeks[] = $weekItem;
+            }
+        }
+
+        $ask->setWeekItems($nonValidatedWeeks);
+
+        return $ask;
+    }
+
 
 
 
@@ -836,176 +1022,5 @@ class AskManager
             }
         }
         return false;
-    }
-
-    /**
-     * Get the payment status of an Ask
-     *
-     * @param integer $id       Id of the Ask to check
-     * @param User    $user     The User we ask for (if null, it's the security token User)
-     * @return Ask
-     */
-    public function getPaymentStatus(int $id, User $user = null): Ask
-    {
-        // search the ask
-        if (!$ask = $this->getAsk($id)) {
-            throw new PaymentException(PaymentException::NO_ASK_FOUND);
-        }
-
-        $driver = $ask->getMatching()->getProposalOffer()->getUser();
-        $passenger = $ask->getMatching()->getProposalRequest()->getUser();
-
-        if ($user==null) {
-            $user = $this->security->getUser();
-        }
-
-        // The User can't be an App and has to be one of the Ask actor
-        if (!($user instanceof User) || ($driver->getId() !== $user->getId() && $passenger->getId() !== $user->getId())) {
-            throw new PaymentException(PaymentException::INVALID_USER);
-        }
-
-        // NB : We ignore the returns. For now, it's not possible to pay (or at least validate) only the outwards without the returns.
-        // So we only treating the outwards to evaluate the payment status.
-        $carpoolItemId = null;
-        if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-
-            // Punctual journey, we just check if it's paid on this particular day
-            $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
-            if (is_null($carpoolItem)) {
-                return $ask;
-                //throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
-            }
-
-            
-            // Init the payment status at pending
-            $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
-
-            // If the status is Unpaid, it's the same for driver or passenger
-            if (!is_null($carpoolItem->getUnpaidDate())) {
-                //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
-                $ask->setUnpaidDate($carpoolItem->getUnpaidDate());
-            } else {
-                if ($driver->getId() == $user->getId()) {
-                    // Driver point of vue
-                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_DIRECT) {
-                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
-                    }
-                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_ONLINE) {
-                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
-                    }
-                } else {
-                    // Passenger point of vue
-                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT) {
-                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
-                    }
-                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_ONLINE) {
-                        $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
-                    }
-                }
-            }
-            // Id of the CarpoolItem
-            $carpoolItemId = $carpoolItem->getId();
-        } else {
-            $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PAID);
-
-            // Regular journey. To be paid, all the previous week must have been confirmed
-            $askWithNonValidatedWeeks = $this->getNonValidatedWeeks($ask, $user);
-            $nonValidatedWeeks = $askWithNonValidatedWeeks->getWeekItems();
-            foreach ($nonValidatedWeeks as $nonValidatedWeek) {
-                if (!is_null($nonValidatedWeek->getUnpaidDate())) {
-                    //$ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
-                    $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
-                    $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
-                    $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
-                    break;
-                } elseif ($nonValidatedWeek->getStatus() == WeekItem::STATUS_PENDING) {
-                    $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
-                }
-                $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
-                $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
-            }
-        }
-
-        // Id of the CarpoolItem
-        $ask->setPaymentItemId($carpoolItemId);
-
-        return $ask;
-    }
-
-    /**
-     * Get the non validated weeks of an Ask
-     *
-     * @param Ask $ask
-     * @return Ask
-     */
-    public function getNonValidatedWeeks(Ask $ask)
-    {
-        $startDate = $ask->getCriteria()->getFromDate();
-        $toDate = $ask->getCriteria()->getToDate();
-
-        // We will check until last week (we set on today because de loop is executed until the current week equals the max week)
-        $maxDate = new \DateTime('now');
-
-        // First we need an array where every element is a week that contains every days on the period
-        $currentDate = clone $startDate;
-        $cpt = 0; // to prevent infinite loop
-        $arrayWeeks = [];
-        while ($currentDate < $maxDate && $currentDate < $toDate && $cpt<=1000) {
-            $currentWeek = [];
-            for ($i = 0 ; $i < 7 ; $i++) {
-                $currentWeek[] = clone $currentDate;
-                $currentDate->modify("+1 day");
-            }
-            $arrayWeeks[] = $currentWeek;
-        }
-
-        // var_dump($arrayWeeks);die;
-
-        // For each week we need to determine all day are confirmed. If not, the week is still in payement
-        $nonValidatedWeeks = [];
-        $firstCarpoolItem = null;
-        $unpaidDate = null;
-        foreach ($arrayWeeks as $currentWeek) {
-            $validatedWeek = false;
-            $unpaidDetected = false;
-            foreach ($currentWeek as $currentDay) {
-                $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $currentDay);
-                if (!is_null($carpoolItem)) {
-                    if (is_null($firstCarpoolItem)) {
-                        $firstCarpoolItem = $carpoolItem;
-                    }
-                    if (!is_null($carpoolItem->getUnpaidDate())) {
-                        $unpaidDetected = true;
-                        $unpaidDate = $carpoolItem->getUnpaidDate();
-                        break;
-                    }
-                    
-                    if ($carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED) {
-                        // The day has been confirmed, the week is validated
-                        $validatedWeek = true;
-                        break;
-                    }
-                }
-            }
-
-            if ((!$validatedWeek || $unpaidDetected) && !is_null($firstCarpoolItem)) {
-                $weekItem = new WeekItem();
-                $weekItem->setFromDate($currentWeek[0]);
-                $weekItem->setToDate($currentWeek[count($currentWeek)-1]);
-                $weekItem->setNumWeek($currentWeek[0]->format('W'));
-                $weekItem->setYear($currentWeek[0]->format('Y'));
-                $weekItem->setStatus(WeekItem::STATUS_PENDING);
-                $weekItem->setPaymentItemId($firstCarpoolItem->getId());
-                $weekItem->setUnpaidDate($unpaidDate);
-                // if ($unpaidDetected) {
-                //     $weekItem->setStatus(WeekItem::STATUS_UNPAID);
-                // }
-                $nonValidatedWeeks[] = $weekItem;
-            }
-        }
-
-        $ask->setWeekItems($nonValidatedWeeks);
-
-        return $ask;
     }
 }

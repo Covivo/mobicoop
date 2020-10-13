@@ -44,9 +44,7 @@ use App\Geography\Entity\Address;
  *          "post"
  *      },
  *      itemOperations={
- *          "get"={
- *             "security"="is_granted('reject',object)"
- *          }
+ *          "get"
  *      }
  * )
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
@@ -61,12 +59,13 @@ class PaymentPayment
     const MODE_ONLINE = 1;
     const MODE_DIRECT = 2;
 
+    const STATUS_INITIATED = 0;
     const STATUS_SUCCESS = 1;
     const STATUS_FAILURE = 2;
 
     /**
      * @var int The id of this payment.
-     * @Groups({"writePayment"})
+     * @Groups({"readPayment","writePayment"})
      *
      * @ApiProperty(identifier=true)
      */
@@ -93,6 +92,12 @@ class PaymentPayment
      * @Groups({"readPayment"})
      */
     private $status;
+
+    /**
+     * @var string Secured form's url to process the electronic payement
+     * @Groups({"readPayment"})
+     */
+    private $redirectUrl;
 
     public function __construct($id = null)
     {
@@ -143,6 +148,18 @@ class PaymentPayment
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return $this->redirectUrl;
+    }
+
+    public function setRedirectUrl(string $redirectUrl): self
+    {
+        $this->redirectUrl = $redirectUrl;
 
         return $this;
     }

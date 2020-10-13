@@ -20,7 +20,6 @@
 </template>
 <script>
 import axios from "axios";
-import { merge } from "lodash";
 import Translations from "@translations/components/user/MFacebookAuth.json";
 import facebookLogin from 'facebook-login-vuejs';
 

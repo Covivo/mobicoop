@@ -8,7 +8,6 @@ import {
   SelectInput,
   ReferenceInput,
   TextField,
-  EmailField,
   DateField,
   EditButton,
   BooleanField,
@@ -183,7 +182,7 @@ const UserList = (props) => {
         <TextField source="originId" label={translate('custom.label.user.id')} sortBy="id" />
         <TextField source="givenName" label={translate('custom.label.user.givenName')} />
         <TextField source="familyName" label={translate('custom.label.user.familyName')} />
-        <EmailField source="email" label={translate('custom.label.user.email')} />
+        <TextField source="email" label={translate('custom.label.user.email')} />
         <BooleanField
           source="newsSubscription"
           label={translate('custom.label.user.accepteEmail')}

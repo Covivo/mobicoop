@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
@@ -562,6 +563,7 @@ class UserManager
         return $adsSanitized;
     }
 
+
     /**
      * Cleaning the Matchings related to private Proposals
      */
@@ -680,6 +682,23 @@ class UserManager
             if (count($users)==1) {
                 return $users[0]->getBankAccounts();
             }
+        }
+        return null;
+    }
+
+    /**
+     * Send an Identity validation document
+     *
+     * @param ValidationDocument $document
+     * @return ValidationDocument|null
+     */
+    public function sendIdentityValidationDocument(ValidationDocument $document): ?ValidationDocument
+    {
+        $this->dataProvider->setClass(ValidationDocument::class);
+        $response = $this->dataProvider->postMultiPart($document);
+
+        if ($response->getCode() == 201) {
+            return $response->getValue();
         }
         return null;
     }

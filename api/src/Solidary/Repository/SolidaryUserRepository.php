@@ -252,4 +252,28 @@ class SolidaryUserRepository
 
         return $results;
     }
+
+    /**
+     * Find all solidary users
+     * @param array $filters Optionnal Filters on SolidaryUser
+     * @return SolidaryUser[]
+     */
+    public function findSolidaryUsers(array $filters)
+    {
+        $query = $this->repository->createQueryBuilder('su')
+        ->join('su.user', 'u');
+
+        // Filters
+        if (!is_null($filters)) {
+            foreach ($filters as $filter => $value) {
+                if ($filter !== 'q') {
+                    $query->andWhere("u.".$filter." like '%".$value."%'");
+                } else {
+                    $query->andWhere("u.givenName like '%".$value."%' or u.familyName like '%".$value."%' or CONCAT(u.givenName,' ',u.familyName) like '%".$value."%'");
+                }
+            }
+        }
+
+        return $query->getQuery()->getResult();
+    }
 }

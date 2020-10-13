@@ -42,6 +42,7 @@ class GraphhopperProvider implements GeorouterInterface
     private const NAME = "GraphHopper";
     private const DIRECTION_RESOURCE = "route";
     private const MODE_CAR = "CAR";
+    private const PROFILE_NO_TOLL = "car_without_toll";
     private const LOCALE = "fr-FR";
     private const WEIGHTING = "fastest";
     private const INSTRUCTIONS = "false";
@@ -185,14 +186,22 @@ class GraphhopperProvider implements GeorouterInterface
                         foreach ($points as $address) {
                             $params .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
                         }
-                        $params .= "locale=" . self::LOCALE .
+                        if (!$this->avoidToll) {
+                            $params .= "locale=" . self::LOCALE .
                             "&vehicle=" . self::MODE_CAR .
                             "&weighting=" . self::WEIGHTING .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
                             ($this->detailDuration?'&details=time':'').
-                            ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                             "&elevation=" . self::ELEVATION;
+                        } else {
+                            $params .= "locale=" . self::LOCALE .
+                            "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
+                            "&instructions=" . self::INSTRUCTIONS .
+                            "&points_encoded=".self::POINTS_ENCODED .
+                            ($this->detailDuration?'&details=time':'').
+                            "&elevation=" . self::ELEVATION;
+                        }
                         $getParams[$i] = $params;
                         $requestsOwner[$i] = $ownerId;
                         $i++;
@@ -238,14 +247,22 @@ class GraphhopperProvider implements GeorouterInterface
                             $address = null;
                             unset($address);
                         }
-                        $rparams .= "locale=" . self::LOCALE .
+                        if (!$this->avoidToll) {
+                            $rparams .= "locale=" . self::LOCALE .
                             "&vehicle=" . self::MODE_CAR .
                             "&weighting=" . self::WEIGHTING .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
                             ($this->detailDuration?'&details=time':'').
-                            ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                             "&elevation=" . self::ELEVATION;
+                        } else {
+                            $rparams .= "locale=" . self::LOCALE .
+                            "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
+                            "&instructions=" . self::INSTRUCTIONS .
+                            "&points_encoded=".self::POINTS_ENCODED .
+                            ($this->detailDuration?'&details=time':'').
+                            "&elevation=" . self::ELEVATION;
+                        }
                         $urls[$i] = $rparams;
                         $requestsOwner[$i] = $ownerId;
                         $i++;
@@ -386,14 +403,22 @@ class GraphhopperProvider implements GeorouterInterface
                 foreach ($points as $address) {
                     $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
                 }
-                $getParams .= "locale=" . self::LOCALE .
+                if (!$this->avoidToll) {
+                    $getParams .= "locale=" . self::LOCALE .
                     "&vehicle=" . self::MODE_CAR .
                     "&weighting=" . self::WEIGHTING .
                     "&instructions=" . self::INSTRUCTIONS .
                     "&points_encoded=".self::POINTS_ENCODED .
                     ($this->detailDuration?'&details=time':'').
-                    ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                     "&elevation=" . self::ELEVATION;
+                } else {
+                    $getParams .= "locale=" . self::LOCALE .
+                    "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
+                    "&instructions=" . self::INSTRUCTIONS .
+                    "&points_encoded=".self::POINTS_ENCODED .
+                    ($this->detailDuration?'&details=time':'').
+                    "&elevation=" . self::ELEVATION;
+                }
                 $this->bearing = $this->geoTools->getRhumbLineBearing($points[0]->getLatitude(), $points[0]->getLongitude(), $points[count($points)-1]->getLatitude(), $points[count($points)-1]->getLongitude());
                 $response = $this->dataProvider->getCollection($getParams);
                 if ($response instanceof Response && $response->getCode() == 200) {

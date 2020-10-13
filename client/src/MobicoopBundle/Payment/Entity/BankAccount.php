@@ -40,6 +40,11 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
+    const VALIDATION_PENDING = 0;
+    const VALIDATION_VALIDATED = 1;
+    const VALIDATION_REJECTED = 2;
+    const VALIDATION_OUTDATED = 3;
+
     /**
      * @var int The id of this bank account
      */
@@ -57,7 +62,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $userLitteral;
 
     /**
-     * @var Address|null The litteral name of the user owning this bank account
+     * @var Address|null The address linked to this bank account
      *
      * @Groups({"post"})
      */
@@ -94,6 +99,26 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @Groups({"post"})
      */
     private $status;
+
+    /**
+     * @var int The validation status of this bank account (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
+     */
+    private $validationStatus;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been asked to the payment provider
+     */
+    private $validationAskedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been granted by the payment provider
+     */
+    private $validatedDate;
+
+    /**
+     * @var \DateTimeInterface Date when the validation has been declared outdated by the payment provider
+     */
+    private $validationOutdatedDate;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -190,6 +215,52 @@ class BankAccount implements ResourceInterface, \JsonSerializable
         $this->status = $status;
     }
 
+    public function getValidationStatus(): ?int
+    {
+        return $this->validationStatus;
+    }
+
+    public function getValidationAskedDate(): ?\DateTimeInterface
+    {
+        return $this->validationAskedDate;
+    }
+
+    public function setValidationAskedDate(?\DateTimeInterface $validationAskedDate): self
+    {
+        $this->validationAskedDate = $validationAskedDate;
+
+        return $this;
+    }
+    
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(?\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
+    public function getValidationOutdatedDate(): ?\DateTimeInterface
+    {
+        return $this->validationOutdatedDate;
+    }
+
+    public function setValidationOutdatedDate(?\DateTimeInterface $validationOutdatedDate): self
+    {
+        $this->validationOutdatedDate = $validationOutdatedDate;
+
+        return $this;
+    }
+
+    public function setValidationStatus(?int $validationStatus)
+    {
+        $this->validationStatus = $validationStatus;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -204,14 +275,19 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     {
         return
             [
-                'id'                => $this->getId(),
-                'iri'               => $this->getIri(),
-                'userLitteral'      => $this->getUserLitteral(),
-                'iban'              => $this->getIban(),
-                'bic'               => $this->getBic(),
-                'comment'           => $this->getComment(),
-                'status'            => $this->getStatus(),
-                'createdDate'       => $this->getCreatedDate()
+                'id'                            => $this->getId(),
+                'iri'                           => $this->getIri(),
+                'userLitteral'                  => $this->getUserLitteral(),
+                'address'                       => $this->getAddress(),
+                'iban'                          => $this->getIban(),
+                'bic'                           => $this->getBic(),
+                'comment'                       => $this->getComment(),
+                'status'                        => $this->getStatus(),
+                'validationStatus'              => $this->getValidationStatus(),
+                'validationAskedDate'           => $this->getValidationAskedDate(),
+                'validatedDate'                 => $this->getValidatedDate(),
+                'validationOutdatedDate'        => $this->getValidationOutdatedDate(),
+                'createdDate'                   => $this->getCreatedDate()
             ];
     }
 }

@@ -77,6 +77,9 @@ use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 
 /**
@@ -192,6 +195,12 @@ class Deserializer
             case PaymentPayment::class:
                 return $this->deserializePaymentPayment($data) ;
                 break;
+            case PaymentPeriod::class:
+                return $this->deserializePaymentPeriod($data) ;
+                break;
+            case PaymentWeek::class:
+                return $this->deserializePaymentWeek($data) ;
+                break;
             case Ask::class:
                 return $this->deserializeAsk($data);
                 break;
@@ -200,6 +209,9 @@ class Deserializer
                 break;
             case MCommunity::class:
                 return $this->deserializeMCommunity($data);
+                break;
+            case ValidationDocument::class:
+                return $this->deserializeValidationDocument($data);
                 break;
             default:
                 break;
@@ -822,6 +834,9 @@ class Deserializer
     {
         $bankAccount = new BankAccount();
         $bankAccount = $this->autoSet($bankAccount, $data);
+        if (isset($data["address"])) {
+            $bankAccount->setAddress($this->deserializeAddress($data['address']));
+        }
 
         return $bankAccount;
     }
@@ -835,6 +850,7 @@ class Deserializer
         if (isset($data["destination"])) {
             $paymentItem->setDestination($this->deserializeAddress($data['destination']));
         }
+        
         $paymentItem = $this->autoSet($paymentItem, $data);
 
         return $paymentItem;
@@ -846,6 +862,22 @@ class Deserializer
         $paymentPayment = $this->autoSet($paymentPayment, $data);
 
         return $paymentPayment;
+    }
+
+    private function deserializePaymentPeriod(array $data) : ?PaymentPeriod
+    {
+        $paymentPeriod = new PaymentPeriod();
+        $paymentPeriod = $this->autoSet($paymentPeriod, $data);
+
+        return $paymentPeriod;
+    }
+
+    private function deserializePaymentWeek(array $data) : ?PaymentWeek
+    {
+        $paymentWeek = new PaymentWeek();
+        $paymentWeek = $this->autoSet($paymentWeek, $data);
+
+        return $paymentWeek;
     }
 
     private function deserializeAsk(array $data) : ?Ask
@@ -869,6 +901,13 @@ class Deserializer
         $mCommunity = new MCommunity();
         $mCommunity = $this->autoSet($mCommunity, $data);
         return $mCommunity;
+    }
+
+    private function deserializeValidationDocument(array $data): ?ValidationDocument
+    {
+        $validationDocument = new ValidationDocument();
+        $validationDocument = $this->autoSet($validationDocument, $data);
+        return $validationDocument;
     }
 
     private function autoSet($object, $data)
