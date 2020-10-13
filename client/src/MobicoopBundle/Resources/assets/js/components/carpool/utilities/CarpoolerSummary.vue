@@ -94,7 +94,7 @@
 
       <!-- Carpooler contact -->
       <v-col
-        cols="3"
+        cols="2"
       >
         <carpooler-contact
           :carpooler="carpooler"
@@ -205,12 +205,19 @@ export default {
   computed: {
     avatarSize() {
       switch (this.$vuetify.breakpoint.name) {
+      case "xs":
+        return '20';
+      case "sm":
+        return '20';
       case "md":
         return '20';
       case "lg":
         return '35';
+      case "xl":
+        return '35';
+      default:
+        return '20';
       }
-      return this.avatarSize;
     }
   },
   methods: {

@@ -40,8 +40,12 @@ class CarpoolPayment
     const STATUS_SUCCESS = 1;
     const STATUS_FAILURE = 2;
 
+    const ORIGIN_DESKTOP = 0;
+    const ORIGIN_MOBILE = 1;
+    const ORIGIN_MOBILE_SITE = 2;
+
     /**
-     * @var int The id of this item.
+     * @var int The id of this payment.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -127,9 +131,17 @@ class CarpoolPayment
      */
     private $createCarpoolProfileIdentifier;
 
+    /**
+     * @var int Origin of this payment
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $origin;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
+        $this->origin = self::ORIGIN_DESKTOP;
     }
     
     public function getId(): ?int
@@ -273,6 +285,18 @@ class CarpoolPayment
     public function setCreateCarpoolProfileIdentifier(string $createCarpoolProfileIdentifier): self
     {
         $this->createCarpoolProfileIdentifier = $createCarpoolProfileIdentifier;
+
+        return $this;
+    }
+
+    public function getOrigin(): ?int
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(int $origin): self
+    {
+        $this->origin = $origin;
 
         return $this;
     }

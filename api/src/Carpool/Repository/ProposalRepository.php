@@ -482,7 +482,8 @@ class ProposalRepository
                             $offset,
                             $proposal->getCriteria()->isDriver(),
                             $proposal->getCriteria()->isPassenger(),
-                            $driversOnly
+                            $driversOnly,
+                            $proposal->getCriteria()->getFromTime() && $proposal->getUseTime()
                         );
                         $regularAndWhere .= $where;
                         if ($minTime) {
@@ -847,8 +848,7 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
-        // var_dump($punctualAndWhere);
-        // var_dump($regularAndWhere);
+        // echo '(' . $punctualAndWhere . ' or ' .$regularAndWhere . ')';
         // var_dump($query->getQuery()->getSql());
         // foreach ($query->getQuery()->getParameters() as $parameter) {
         //     echo $parameter->getName() . " " . $parameter->getValue();
@@ -860,12 +860,24 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
+    /**
+     * Build the regular where part for a punctual proposal
+     *
+     * @param \DateTime $fromDate   The date of the journey
+     * @param integer $offset       The day offset
+     * @param boolean $driver       If the proposal is for a driver
+     * @param boolean $passenger    If the proposal is for a passenger
+     * @param boolean $driversOnly  If we search only drivers
+     * @param boolean $useTime      If we use the time
+     * @return array
+     */
     private function buildRegularAndWhere(
         \DateTime $fromDate,
         int $offset,
         bool $driver,
         bool $passenger,
-        bool $driversOnly
+        bool $driversOnly,
+        bool $useTime
     ): array {
         $regularAndWhere = "";
         
@@ -880,22 +892,25 @@ class ProposalRepository
         $regularAndWhere .= '(c.'.$dayLitteral.'Check = 1';
         $setMinTime = $setMaxTime = false;
         if (!$driversOnly && $driver && $passenger) {
-            $regularAndWhere .= ' and (
-                (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').') or 
-                (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')
-            )';
-            $setMinTime = true;
-            $setMaxTime = true;
+            if ($useTime) {
+                $regularAndWhere .= ' and (
+                    (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').') or 
+                    (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')
+                )';
+                $setMinTime = true;
+                $setMaxTime = true;
+            }
         } elseif ($driver) {
-            $regularAndWhere .= ' and (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').')';
-            $setMinTime = true;
+            if ($useTime) {
+                $regularAndWhere .= ' and (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').')';
+                $setMinTime = true;
+            }
         } else {
-            $regularAndWhere .= ' and (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')';
-            $setMaxTime = true;
+            if ($useTime) {
+                $regularAndWhere .= ' and (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')';
+                $setMaxTime = true;
+            }
         }
-
-
-
 
         $regularAndWhere .= ' and (c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and ';
         $regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";

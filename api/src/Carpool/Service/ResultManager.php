@@ -736,7 +736,6 @@ class ResultManager
                         // we init the time to the one of the carpooler
                         if ($matching['request']->getProposalRequest()->getCriteria()->isMonCheck() &&
                             !is_null($matching['request']->getProposalRequest()->getCriteria()->getMonTime())) {
-//                            dump($matching['request']->getAsks());die;
                             $monTime = clone $matching['request']->getProposalRequest()->getCriteria()->getMonTime();
                             if ($pickupDuration) {
                                 $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
@@ -821,54 +820,6 @@ class ResultManager
             // waypoints of the item
             $waypoints = [];
             $time = $item->getTime() ? clone $item->getTime() : null;
-
-            // // we will have to compute the number of steps for each candidate
-            // $steps = [
-            //     'requester' => 0,
-            //     'carpooler' => 0
-            // ];
-            // // first pass to get the maximum position fo each candidate
-            // foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
-            //     if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
-            //         $steps['requester'] = (int)$waypoint['position'];
-            //     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
-            //         $steps['carpooler'] = (int)$waypoint['position'];
-            //     }
-            // }
-            // // second pass to fill the waypoints array
-            // foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
-            //     $curTime = null;
-            //     if ($time) {
-            //         $curTime = clone $time;
-            //     }
-            //     if ($curTime) {
-            //         $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
-            //     }
-            //     $waypoints[$key] = [
-            //         'id' => $key,
-            //         'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
-            //         'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
-            //         'time' =>  $curTime,
-            //         'address' => $waypoint['address'],
-            //         'type' => $waypoint['position'] == '0' ? 'origin' :
-            //             (
-            //                 ($waypoint['candidate'] == 1) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
-            //                 ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
-            //             )
-            //     ];
-            //     // origin and destination guess
-            //     if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
-            //         $item->setOrigin($waypoint['address']);
-            //         $item->setOriginPassenger($waypoint['address']);
-            //     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
-            //         $item->setDestination($waypoint['address']);
-            //         $item->setDestinationPassenger($waypoint['address']);
-            //     } elseif ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
-            //         $item->setOriginDriver($waypoint['address']);
-            //     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['requester']) {
-            //         $item->setDestinationDriver($waypoint['address']);
-            //     }
-            // }
 
             // we will have to compute the number of steps for each candidate
             $origins = [
@@ -1615,18 +1566,18 @@ class ResultManager
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
         if ($day == 7) {
-            $day=0;
+            $day = 0;
         }
         $rdate = new \DateTime();
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
         $nbLoop++;
-        if ($nbLoop>7) {
+        if ($nbLoop > 7) {
             return null;
         } // safeguard to avoid infinite loop
 
         if ($role=="request") {
-            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
         } else {
             $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
         }
@@ -1644,12 +1595,13 @@ class ResultManager
      * Valid the carpool day between a regular and a part of a regular as Request
      * TO : Use the pickup time instead of the driver's start time
      *
-     * @param integer $day       Day's number
-     * @param Proposal $proposal The Proposal that is matching
-     * @param DateTime|null $time Time of the search if we want to check it
+     * @param integer $day          Day's number
+     * @param Proposal $proposal    The Proposal that is matching
+     * @param bool $useTime         If we use the time
+     * @param DateTime|null $time   Time of the search if we want to check it
      * @return array|null
      */
-    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, \DateTime $time=null): ?array
+    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, bool $useTime = true, \DateTime $time=null): ?array
     {
         switch ($day) {
             case 0: {
@@ -1658,7 +1610,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getSunMinTime() &&
+                        $time <= $proposal->getCriteria()->getSunMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getSunMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
@@ -1671,7 +1629,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getMonMinTime() &&
+                        $time <= $proposal->getCriteria()->getMonMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getMonMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
@@ -1684,7 +1648,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getTueMinTime() &&
+                        $time <= $proposal->getCriteria()->getTueMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getTueMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
@@ -1697,7 +1667,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getWedMinTime() &&
+                        $time <= $proposal->getCriteria()->getWedMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getWedMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
@@ -1710,7 +1686,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getThuMinTime() &&
+                        $time <= $proposal->getCriteria()->getThuMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getThuMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
@@ -1723,7 +1705,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getFriMinTime() &&
+                        $time <= $proposal->getCriteria()->getFriMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getFriMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
@@ -1736,7 +1724,13 @@ class ResultManager
                     if (is_null($time)) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
                     } elseif (
+                        $useTime &&
                         $time >= $proposal->getCriteria()->getSatMinTime() &&
+                        $time <= $proposal->getCriteria()->getSatMaxTime()
+                    ) {
+                        return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
+                    } elseif (
+                        !$useTime &&
                         $time <= $proposal->getCriteria()->getSatMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
@@ -1894,7 +1888,6 @@ class ResultManager
                 return null;
             }
         }
-
         
         return [
             "item" => $item,

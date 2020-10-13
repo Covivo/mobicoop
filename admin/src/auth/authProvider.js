@@ -2,6 +2,7 @@ import { fetchUtils } from 'react-admin';
 import decodeJwt from 'jwt-decode';
 
 import { getPermissions } from './permissions';
+import kibanaLogout from '../components/dashboard/kibanaLogout';
 
 require('dotenv').config();
 
@@ -75,6 +76,7 @@ export default {
   },
   logout: () => {
     clearAuthStorage();
+    kibanaLogout();
     return Promise.resolve();
   },
   checkAuth: () => {
