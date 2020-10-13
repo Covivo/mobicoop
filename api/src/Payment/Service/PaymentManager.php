@@ -542,6 +542,7 @@ class PaymentManager
             $carpoolPayment = new CarpoolPayment();
             $carpoolPayment->setUser($user);
             $carpoolPayment->setStatus(CarpoolPayment::STATUS_INITIATED);
+            $carpoolPayment->setOrigin($payment->getOrigin());
 
             // for a payment, we need to compute the total amount
             $amountDirect = 0;
@@ -654,6 +655,7 @@ class PaymentManager
                                     $carpoolPayment->setUser($carpoolItem->getDebtorUser());
                                     $carpoolPayment->setAmount(0);
                                     $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $carpoolPayment;
+                                    $carpoolPayment->setOrigin($payment->getOrigin());
                                 }
 
                                 $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setAmount($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->getAmount()+$carpoolItem->getAmount());
