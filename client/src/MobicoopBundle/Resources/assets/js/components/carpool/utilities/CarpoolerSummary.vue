@@ -215,9 +215,9 @@ export default {
         return '35';
       case "xl":
         return '35';
-        break;
-      default:'20';
-      }
+      default:
+        return '20';
+      } 
     }
   },
   methods: {
