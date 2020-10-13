@@ -466,7 +466,14 @@ class RdexManager
     private function computeMinMaxTime(\DateTime $time, int $margin)
     {
         $mintime = clone($time);
-        $mintime->sub(new \DateInterval("PT" . $margin. "S"));
+
+        // No margin on mintime because we use margin to handle mintime and maxtime from RDEX request.
+        // exemple :
+        // Mintime : 08:00
+        // Maxtime : 12:00
+        // 4 hours of margin so we keep mintime = 08:00 and mintime + margin = 12:00 and not 04:00->12:00
+        //$mintime->sub(new \DateInterval("PT" . $margin. "S"));
+
         $maxtime = clone($time);
         $maxtime->add(new \DateInterval("PT" . $margin. "S"));
 
@@ -578,7 +585,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getMonTime(), $journey->getMonMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setMonday($rdexDayTime);
             }
             if ($result->isTueCheck() && !is_null($journey->getTueTime())) {
@@ -586,7 +593,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getTueTime(), $journey->getTueMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setMonday($rdexDayTime);
             }
             if ($result->isWedCheck() && !is_null($journey->getWedTime())) {
@@ -594,7 +601,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getWedTime(), $journey->getWedMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setWednesday($rdexDayTime);
             }
             if ($result->isThuCheck() && !is_null($journey->getThuTime())) {
@@ -602,7 +609,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getThuTime(), $journey->getThuMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setThursday($rdexDayTime);
             }
             if ($result->isFriCheck() && !is_null($journey->getFriTime())) {
@@ -610,7 +617,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getFriTime(), $journey->getFriMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setFriday($rdexDayTime);
             }
             if ($result->isSatCheck() && !is_null($journey->getSatTime())) {
@@ -618,7 +625,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getSatTime(), $journey->getSatMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setSaturday($rdexDayTime);
             }
             if ($result->isSunCheck() && !is_null($journey->getSunTime())) {
@@ -626,7 +633,7 @@ class RdexManager
                 $rdexDayTime = new RdexDayTime();
                 $minMaxTime = $this->computeMinMaxTime($journey->getSunTime(), $journey->getSunMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format("H:i:s"));
-                $rdexDayTime->setMaxtime($minMaxTime[0]->format("H:i:s"));
+                $rdexDayTime->setMaxtime($minMaxTime[1]->format("H:i:s"));
                 $infos->setSunday($rdexDayTime);
             }
 
