@@ -89,16 +89,19 @@ class PaymentSubscriber implements EventSubscriberInterface
 
     public function onIdentityProofAccepted(IdentityProofAcceptedEvent $event)
     {
-        $this->notificationManager->notifies(IdentityProofAcceptedEvent::NAME, $recipient);
+        $recipient = $event->getPaymentProfile()->getUser();
+        $this->notificationManager->notifies(IdentityProofAcceptedEvent::NAME, $recipient, $event->getPaymentProfile());
     }
 
     public function onIdentityProofRejected(IdentityProofRejectedEvent $event)
     {
-        $this->notificationManager->notifies(IdentityProofRejectedEvent::NAME, $recipient);
+        $recipient = $event->getPaymentProfile()->getUser();
+        $this->notificationManager->notifies(IdentityProofRejectedEvent::NAME, $recipient, $event->getPaymentProfile());
     }
 
     public function onIdentityProofOutdated(IdentityProofOutdatedEvent $event)
     {
-        $this->notificationManager->notifies(IdentityProofOutdatedEvent::NAME, $recipient);
+        $recipient = $event->getPaymentProfile()->getUser();
+        $this->notificationManager->notifies(IdentityProofOutdatedEvent::NAME, $recipient, $event->getPaymentProfile());
     }
 }

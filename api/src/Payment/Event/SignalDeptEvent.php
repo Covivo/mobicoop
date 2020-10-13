@@ -24,7 +24,6 @@
 namespace App\Payment\Event;
 
 use App\Payment\Entity\CarpoolItem;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class SignalDeptEvent extends Event
@@ -35,15 +34,10 @@ class SignalDeptEvent extends Event
      * @var CarpoolItem
      */
     private $carpoolItem;
-    /**
-     * @var UserInterface
-     */
-    private $sender;
 
-    public function __construct(CarpoolItem $carpoolItem, UserInterface $sender)
+    public function __construct(CarpoolItem $carpoolItem)
     {
         $this->carpoolItem = $carpoolItem;
-        $this->sender = $sender;
     }
 
     /**
@@ -52,13 +46,5 @@ class SignalDeptEvent extends Event
     public function getCarpoolItem(): CarpoolItem
     {
         return $this->carpoolItem;
-    }
-   
-    /**
-     * @return UserInterface
-     */
-    public function getSender(): UserInterface
-    {
-        return $this->sender;
     }
 }

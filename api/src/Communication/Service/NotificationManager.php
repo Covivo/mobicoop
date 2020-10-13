@@ -56,6 +56,7 @@ use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
 use App\Match\Entity\Mass;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\PaymentProfile;
 
 /**
  * Notification manager
@@ -387,13 +388,25 @@ class NotificationManager
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
+                    // if regular we get the first day of the week
+                    $firstDayOfWeek = null;
+                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                        $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
+                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $firstDayOfWeek = $day->format('l d F Y');
+                    };
                     $bodyContext = [
                         'deptor'=>$object->getDebtorUser(),
                         'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
                         'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination
+                        'destination'=>$passengerDestination,
+                        'week'=>$firstDayOfWeek
                     ];
+                    break;
+                case PaymentProfile::class:
+                    $titleContext = [];
+                    $bodyContext = ['paymentProfile'=>$object];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
@@ -535,13 +548,23 @@ class NotificationManager
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
+                    $firstDayOfWeek = null;
+                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                        $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
+                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $firstDayOfWeek = $day->format('l d F Y');
+                    };
                     $bodyContext = [
                         'deptor'=>$object->getDebtorUser(),
                         'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
                         'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination
+                        'destination'=>$passengerDestination,
+                        'week'=>$firstDayOfWeek
                     ];
+                    break;
+                case PaymentProfile::class:
+                    $bodyContext = ['paymentProfile'=>$object];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
@@ -695,13 +718,24 @@ class NotificationManager
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
                     };
+                    $firstDayOfWeek = null;
+                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                        $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
+                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $firstDayOfWeek = $day->format('l d F Y');
+                    };
                     $bodyContext = [
                         'deptor'=>$object->getDebtorUser(),
                         'creditor'=>$object->getCreditorUser(),
                         'amount'=>$object->getAmount(),
                         'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination
+                        'destination'=>$passengerDestination,
+                        'week'=>$firstDayOfWeek
                     ];
+                    break;
+                case PaymentProfile::class:
+                    $titleContext = [];
+                    $bodyContext = ['paymentProfile'=>$object];
                     break;
                 default:
                     $titleContext = [];

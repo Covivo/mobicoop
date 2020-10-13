@@ -23,7 +23,7 @@
 
 namespace App\Payment\Event;
 
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Payment\Entity\PaymentProfile;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class IdentityProofRejectedEvent extends Event
@@ -31,13 +31,16 @@ class IdentityProofRejectedEvent extends Event
     public const NAME = 'identity_proof_rejected';
 
 
-    public function __construct(UserInterface $sender)
+    public function __construct(PaymentProfile $paymentProfile)
     {
-        $this->sender = $sender;
+        $this->paymentProfile = $paymentProfile;
     }
 
-    public function getSender(): UserInterface
+    /**
+     * @return PaymentProfile
+     */
+    public function getPaymentProfile(): PaymentProfile
     {
-        return $this->sender;
+        return $this->paymentProfile;
     }
 }
