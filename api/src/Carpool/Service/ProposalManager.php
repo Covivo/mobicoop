@@ -605,7 +605,7 @@ class ProposalManager
                 $proposal->getCriteria()->getDirectionDriver()->setDuration($direction->getDuration());
                 $proposal->getCriteria()->getDirectionDriver()->setAscend($direction->getAscend());
                 $proposal->getCriteria()->getDirectionDriver()->setDescend($direction->getDescend());
-                $proposal->getCriteria()->getDirectionDriver()->setDetail($direction->getDetail());
+                //$proposal->getCriteria()->getDirectionDriver()->setDetail($direction->getDetail());
                 $proposal->getCriteria()->getDirectionDriver()->setFormat($direction->getFormat());
                 $proposal->getCriteria()->getDirectionDriver()->setSnapped($direction->getSnapped());
                 $proposal->getCriteria()->getDirectionDriver()->setGeoJsonDetail($direction->getGeoJsonDetail());
@@ -631,7 +631,7 @@ class ProposalManager
                 $proposal->getCriteria()->getDirectionPassenger()->setDuration($direction->getDuration());
                 $proposal->getCriteria()->getDirectionPassenger()->setAscend($direction->getAscend());
                 $proposal->getCriteria()->getDirectionPassenger()->setDescend($direction->getDescend());
-                $proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
+                //$proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
                 $proposal->getCriteria()->getDirectionPassenger()->setFormat($direction->getFormat());
                 $proposal->getCriteria()->getDirectionPassenger()->setSnapped($direction->getSnapped());
                 $proposal->getCriteria()->getDirectionPassenger()->setGeoJsonDetail($direction->getGeoJsonDetail());

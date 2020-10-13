@@ -104,7 +104,6 @@ class ProposalMatcher
         $this->logger->info("ProposalMatcher : createMatchingsForProposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         set_time_limit(360);
-        $date = new \DateTime("UTC");
 
         // we search the matchings
         $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
@@ -593,7 +592,7 @@ class ProposalMatcher
                 if ($key == (count($matching->getFilters()['route'])-1)) {
                     $waypoint->setDestination(true);
                 }
-                $waypoint->setAddress($point['address']);
+                $waypoint->setAddress(clone $point['address']);
                 $waypoint->setDuration($point['duration']);
                 $waypoint->setRole($point['candidate']);
                 $matching->addWaypoint($waypoint);
@@ -1463,7 +1462,7 @@ class ProposalMatcher
         $destinationMatching->setPickUpDuration($sourceMatching->getPickUpDuration());
         $destinationMatching->setDropOffDuration($sourceMatching->getDropOffDuration());
 
-        // matching waypoints
+        // matching waypoints => we replace old waypoints with the new ones
         foreach ($destinationMatching->getWaypoints() as $waypoint) {
             $destinationMatching->removeWaypoint($waypoint);
         }

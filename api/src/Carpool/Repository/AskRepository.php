@@ -169,7 +169,7 @@ class AskRepository
             ) 
             or 
             (
-                c.frequency = :regular and c.fromDate between :fromDate and :toDate and
+                c.frequency = :regular and c.fromDate <= :fromDate and c.toDate >= :toDate and
                 (' . $regularWhere . ')
             )
         )')
