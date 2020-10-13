@@ -341,9 +341,11 @@ class NotificationManager
                     $titleContext = [];
                     $ad = $this->adManager->getAd($object->getJourneysId());
                     if (!is_null($object->getDriver()->getUuid())) {
-                        $journey = $ad->getResults()[0]->getResultPassenger();
-                    } else {
-                        $journey = $ad->getResults()[0]->getResultDriver();
+                        if (!is_null($ad->getResults()[0]->getResultPassenger())) {
+                            $journey = $ad->getResults()[0]->getResultPassenger();
+                        } else {
+                            $journey = $ad->getResults()[0]->getResultDriver();
+                        }
                     }
 
                     $origin = $journey->getOutward()->getOrigin()->getAddressLocality();
