@@ -8,15 +8,13 @@ import {
   ShowButton,
   FunctionField,
   DateField,
-  ReferenceInput,
-  AutocompleteInput,
   TextInput,
   Filter,
   useTranslate,
   ReferenceField,
 } from 'react-admin';
 
-import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
+import { solidaryJourneyRenderer } from '../../../../utils/renderers';
 import { isSuperAdmin } from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
@@ -38,7 +36,7 @@ const SubjectField = (props) => {
 
 const SolidaryFilter = (props) => (
   <Filter {...props}>
-    <TextInput label="Search" source="q" alwaysOn />
+    <TextInput label="Demandeur solidaire" source="q" alwaysOn />
   </Filter>
 );
 
