@@ -10,6 +10,7 @@ import {
   DateField,
   ReferenceInput,
   AutocompleteInput,
+  TextInput,
   Filter,
   useTranslate,
   ReferenceField,
@@ -37,18 +38,7 @@ const SubjectField = (props) => {
 
 const SolidaryFilter = (props) => (
   <Filter {...props}>
-    <ReferenceInput
-      alwaysOn
-      fullWidth
-      label="Demandeur solidaire"
-      source="solidaryUser"
-      reference="solidary_users"
-    >
-      <AutocompleteInput
-        allowEmpty
-        optionText={(record) => (record.user ? usernameRenderer({ record: record.user }) : '')}
-      />
-    </ReferenceInput>
+    <TextInput label="Search" source="q" alwaysOn />
   </Filter>
 );
 
