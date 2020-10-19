@@ -137,7 +137,6 @@
             :event-display="eventDisplay"
             :solidary-display="solidaryDisplay"
             :additional-text-display="additionalTextDisplay"
-            :url-mobile="mobileUrl"
           />
         </v-col>
       </v-row>
@@ -230,17 +229,12 @@ export default {
     rss: {
       type: Object,
       default: null
-    },
-    urlMobile: {
-      type: String,
-      default: null
-    },
+    }
   },
   data () {
     return {
       snackbar: true,
-      displayVerifiedMessage: false,
-      mobileUrl: this.urlMobile
+      displayVerifiedMessage: false
     }
   },
   mounted() {
