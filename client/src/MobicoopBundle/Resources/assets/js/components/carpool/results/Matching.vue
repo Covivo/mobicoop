@@ -57,9 +57,10 @@
                 text
                 color="success"
               >
-                {{ $t('search') }}
+                {{ loadingText }}
                 <v-progress-linear
                   indeterminate
+                  rounded
                 />
               </v-alert>
             </v-col>
@@ -391,6 +392,10 @@ export default {
       result: null,
       ptResults:null,
       loading : true,
+      loadingStep:-1,
+      loadingText:"",
+      loadingInterval: null,
+      loadingDelay: 3000,
       loadingExternal : false,
       lProposalId: this.proposalId ? this.proposalId : null,
       lExternalId: this.externalId ? this.externalId : null,
@@ -458,6 +463,7 @@ export default {
   },
   created() {
     if(this.proposalId) this.displayNewSearch = false;
+    this.setLoadingStep();
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
@@ -478,16 +484,23 @@ export default {
       this.page = page;
       this.search();
     },
-    login() {
-      
-    },
-    register() {
-      
+    setLoadingStep() {
+      this.loadingStep++;
+      if (this.loadingStep>2) this.loadingStep = 0;
+      switch (this.loadingStep) {
+      case 1 : this.loadingText = this.$t("search2");
+        break;
+      case 2 : this.loadingText = this.$t("search3");
+        break;
+      default : this.loadingText = this.$t("search");
+        break;
+      }
     },
     search(){
       // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
+        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
             "page": this.page
@@ -505,16 +518,21 @@ export default {
             }
           })
           .then((response) => {
-            this.loading = false;
             this.results = response.data.results;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            this.loading = false;
+            clearInterval(this.loadingInterval);
+            this.loadingStep = -1;
           });
       } else if (this.lExternalId) {
         // if an externalId is provided, we load the corresponding proposal results
         this.loading = true;
+        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
             "page": this.page
@@ -532,20 +550,24 @@ export default {
             }
           })
           .then((response) => {
-            this.loading = false;
             this.results = response.data.results;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
-            }
-            
+            }            
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            this.loading = false;
+            clearInterval(this.loadingInterval);
+            this.loadingStep = -1;
           });
       } else {
       // otherwise we send a proposal search
         this.loading = true;
+        this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
             "page": this.page
@@ -564,7 +586,6 @@ export default {
           "filters": this.filters,
           "role": this.role
         };
-        var start = new Date();
         axios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
@@ -572,7 +593,6 @@ export default {
             }
           })
           .then((response) => {
-            this.loading = false;
             this.results = response.data.results;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
@@ -581,6 +601,11 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+          })
+          .finally(() => {
+            this.loading = false;
+            clearInterval(this.loadingInterval);
+            this.loadingStep = -1;
           });
       }
 
