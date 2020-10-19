@@ -100,21 +100,36 @@ class ContactSubscriber implements EventSubscriberInterface
 
         $email = new Email();
 
+        // we check if we have also CC and BCC contact emails if yes we set them
+        $contactRecipients=json_decode($this->contactEmailAddress, true);
+        $contactEmail = null;
+        $contactEmailBcc = [];
+        $contactEmailCc = [];
+        foreach ($contactRecipients as $key => $value) {
+            if ($key == Contact::SEND_TO) {
+                $contactEmail = $value;
+            } elseif ($key == Contact::SEND_CC) {
+                $contactEmailCc = $value;
+            } elseif ($key == Contact::SEND_BCC) {
+                $contactEmailBcc = $value;
+            }
+        }
+
         // We set the recipient mail according the type
         $type = $contact->getType();
         
         // Determine the right email according the type
-        if (is_null($type)) {
-            $email->setRecipientEmail($this->contactEmailAddress);
-            $email->setObject($this->contactEmailObject);
-        } elseif ($type===0) {
+        if (is_null($type===0)) {
             $email->setRecipientEmail($this->supportEmailAddress);
             $email->setObject($this->supportEmailObject);
-        } elseif ($type===1) {
-            $email->setRecipientEmail($this->contactEmailAddress);
-            $email->setObject($this->contactEmailObject);
         } else {
-            $email->setRecipientEmail($this->contactEmailAddress);
+            $email->setRecipientEmail($contactEmail);
+            if (count($contactEmailCc) > 0) {
+                $email->setRecipientEmailCc($contactEmailCc);
+            }
+            if (count($contactEmailBcc) > 0) {
+                $email->setRecipientEmailBcc($contactEmailBcc);
+            }
             $email->setObject($this->contactEmailObject);
         }
 

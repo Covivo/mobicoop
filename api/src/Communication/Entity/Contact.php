@@ -59,6 +59,10 @@ class Contact
     const SUPPORT_CONTACT = 0;
     const SIMPLE_CONTACT = 1;
 
+    const SEND_TO = 'To';
+    const SEND_CC = 'Cc';
+    const SEND_BCC = 'Bcc';
+
     /**
      * @var int The id of this contact.
      * @ApiProperty(identifier=true)
