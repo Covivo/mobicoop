@@ -61,7 +61,7 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
 
         if (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post' && $this->communityManager->canJoin($data)) {
             $data = $this->communityManager->saveCommunityUser($data);
-        } 
+        }
         return $data;
     }
 
