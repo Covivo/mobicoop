@@ -463,7 +463,6 @@ export default {
   },
   created() {
     if(this.proposalId) this.displayNewSearch = false;
-    this.setLoadingStep();
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
@@ -500,6 +499,7 @@ export default {
       // if a proposalId is provided, we load the proposal results
       if (this.lProposalId) {
         this.loading = true;
+        this.setLoadingStep();
         this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
@@ -532,6 +532,7 @@ export default {
       } else if (this.lExternalId) {
         // if an externalId is provided, we load the corresponding proposal results
         this.loading = true;
+        this.setLoadingStep();
         this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
@@ -567,6 +568,7 @@ export default {
       } else {
       // otherwise we send a proposal search
         this.loading = true;
+        this.setLoadingStep();
         this.loadingInterval = setInterval(this.setLoadingStep,this.loadingDelay);
         if (this.filters === null) {
           this.filters = {
