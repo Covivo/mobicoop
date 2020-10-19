@@ -195,9 +195,10 @@ services:
     
     App\Carpool\Service\CarpoolExportManager:
         arguments:
-            $carpoolExportUri: '%env(CARPOOL_EXPORT_URI)%'
-            $carpoolExportPath: '%env(CARPOOL_EXPORT_FILE_PATH)%'
-            $carpoolExportPlatformName: '%env(CARPOOL_EXPORT_APP_NAME)%'       
+            $carpoolExportUri: '%env(string:CARPOOL_EXPORT_URI)%'
+            $carpoolExportPath: '%env(string:CARPOOL_EXPORT_FILE_PATH)%'
+            $carpoolExportPlatformName: '%env(string:CARPOOL_EXPORT_APP_NAME)%'
+            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
 
     # Communication
     App\Communication\Controller\: 
