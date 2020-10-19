@@ -533,6 +533,10 @@ services:
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
             $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
     
+    App\User\Service\SsoManager:
+        arguments:
+            $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:
             $params:

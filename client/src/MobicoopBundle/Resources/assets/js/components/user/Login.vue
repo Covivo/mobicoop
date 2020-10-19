@@ -99,6 +99,11 @@
         />
       </v-col>
     </v-row>
+    <v-row v-if="ssoLogin">
+      <v-col class="col-4">
+        <SsoLogin />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -106,6 +111,7 @@ import { merge } from "lodash";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
 import MFacebookAuth from '@components/user/MFacebookAuth';
+import SsoLogin from '@components/user/SsoLogin';
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
@@ -114,7 +120,8 @@ export default {
   },
   name: "Login",
   components : {
-    MFacebookAuth
+    MFacebookAuth,
+    SsoLogin
   },
   props: {
     errormessage: {
@@ -153,7 +160,8 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
-      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
+      ssoLogin:false
     };
   },
   mounted() {

@@ -133,6 +133,8 @@ class UserController extends AbstractController
             $request->getSession()->getFlashBag()->clear();
         }
         
+        // Check if
+
         return $this->render('@Mobicoop/user/login.html.twig', [
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
@@ -1135,7 +1137,7 @@ class UserController extends AbstractController
     public function userReturnConnectSSOform(Request $request)
     {
         // Check if the user already exist
-        
+
 
         return new JsonResponse(["error"=>false,"message"=>"SSO Login"]);
     }

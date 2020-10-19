@@ -1,0 +1,7 @@
+{
+    "service":{
+        "baseUri":"https://serviceBaseUri/"
+        "clientId":"clientId",
+        "clientSecret":"clientSecret",
+    }
+}
