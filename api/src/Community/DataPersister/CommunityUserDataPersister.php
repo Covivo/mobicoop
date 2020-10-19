@@ -49,10 +49,7 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
     public function supports($data, array $context = []): bool
     {
         // We want to join a community, check if user have the fight before save
-        return $data instanceof CommunityUser
-         && isset($context['collection_operation_name'])
-         && $context['collection_operation_name'] == 'post'
-         && $this->communityManager->canJoin($data);
+        return $data instanceof CommunityUser;
     }
 
     public function persist($data, array $context = [])
@@ -61,12 +58,15 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community user id is provided"));
         }
-        $this->communityManager->saveCommunityUser($data);
+
+        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post' && $this->communityManager->canJoin($data)) {
+            $data = $this->communityManager->saveCommunityUser($data);
+        } 
         return $data;
     }
 
     public function remove($data, array $context = [])
     {
-        // call your persistence layer to delete $data
+        return $this->communityManager->deleteCommunityUser($data, json_decode($this->request->getContent(), true));
     }
 }
