@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A SSO Connection
  */
-class SsoConnection
+class SsoConnection implements \JsonSerializable
 {
     /**
      * @var string The SSO service
@@ -80,5 +80,15 @@ class SsoConnection
         $this->buttonIcon = $buttonIcon;
         
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return [
+            'service'               => $this->getService(),
+            'uri'                   => $this->getUri(),
+            'buttonIcon'            => $this->getButtonIcon()
+        ];
     }
 }

@@ -107,6 +107,7 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
@@ -166,6 +167,7 @@ export default {
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
+    this.getSso();
   },
   methods: {
     validate() {
@@ -179,7 +181,13 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
-    },  
+    },
+    getSso(){
+      axios.post(this.$t("urlGetSsoServices"))
+        .then(response => {
+          console.log(response.data);
+        });      
+    }
   }
 };
 </script>

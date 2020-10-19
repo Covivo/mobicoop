@@ -35,14 +35,16 @@ use App\DataProvider\Entity\GlConnectSsoProvider;
 class SsoManager
 {
     private $ssoServices;
+    private $ssoServicesActive;
 
     private const SUPPORTED_PROVIDERS = [
         "GLConnect" => GlConnectSsoProvider::class
     ];
 
-    public function __construct(array $ssoServices)
+    public function __construct(array $ssoServices, bool $ssoServicesActive)
     {
         $this->ssoServices = $ssoServices;
+        $this->ssoServicesActive = $ssoServicesActive;
     }
 
     
@@ -53,7 +55,7 @@ class SsoManager
      */
     private function getSsoProvider(string $serviceName, array $params)
     {
-        if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
+        if ($this->ssoServicesActive && isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
             return new $providerClass($params['baseUri'], $params['clientId'], $params['clientSecret'], SsoConnection::RETURN_URL);
         }

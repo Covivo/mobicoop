@@ -535,6 +535,7 @@ services:
     
     App\User\Service\SsoManager:
         arguments:
+            $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:

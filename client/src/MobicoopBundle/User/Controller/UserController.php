@@ -1149,4 +1149,17 @@ class UserController extends AbstractController
     {
         return new JsonResponse(["error"=>false,"message"=>"SSO Logout"]);
     }
+
+    /**
+     * Return the Sso connection services of the platform
+     *
+     * AJAX
+     */
+    public function getSsoServices(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getSsoServices());
+        }
+        return new JsonResponse();
+    }
 }
