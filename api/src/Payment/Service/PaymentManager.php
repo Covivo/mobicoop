@@ -40,6 +40,8 @@ use DateTime;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
+use App\Payment\Event\PayAfterCarpoolEvent;
+use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Event\SignalDeptEvent;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
@@ -870,6 +872,24 @@ class PaymentManager
             }
         }
         $this->entityManager->flush();
+
+        $askIds = [];
+        // we execute event to ask passenger to pay for the carpool
+        // case punctual
+        if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
+            $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
+        // case regular
+        } elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            // We send only one email for the all week
+            if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
+                $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
+                $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+                // we put in array the ask and the ask linked
+                $askIds[] = $carpoolItem->getAsk()->getId();
+                $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+            }
+        }
     }
 
     /**
