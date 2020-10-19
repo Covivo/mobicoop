@@ -1128,4 +1128,23 @@ class UserController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userReturnConnectSSOform(Request $request)
+    {
+        // Check if the user already exist
+        
+
+        return new JsonResponse(["error"=>false,"message"=>"SSO Login"]);
+    }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userReturnLogoutSSOform(Request $request)
+    {
+        return new JsonResponse(["error"=>false,"message"=>"SSO Logout"]);
+    }
 }
