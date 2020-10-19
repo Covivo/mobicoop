@@ -53,6 +53,7 @@ class PaymentDataProvider
     private $validationDocsPath;
     private $platformName;
     private $baseUri;
+    private $baseMobileUri;
 
     private $security;
     private $clientId;
@@ -74,13 +75,15 @@ class PaymentDataProvider
         string $platformName,
         string $defaultCurrency,
         string $validationDocsPath,
-        string $baseUri
+        string $baseUri,
+        string $baseMobileUri
     ) {
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->defaultCurrency = $defaultCurrency;
         $this->validationDocsPath = $validationDocsPath;
         $this->baseUri = $baseUri;
+        $this->baseMobileUri = $baseMobileUri;
         $this->platformName = $platformName;
         $this->paymentActive = $paymentActive;
 
@@ -105,6 +108,7 @@ class PaymentDataProvider
                 $this->defaultCurrency,
                 $this->validationDocsPath,
                 $this->baseUri,
+                $this->baseMobileUri,
                 $this->paymentProfileRepository
             );
         }
