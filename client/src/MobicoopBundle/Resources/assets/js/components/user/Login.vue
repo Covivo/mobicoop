@@ -15,95 +15,108 @@
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <v-row
-      justify="center"
-      align="center"
-      class="text-center pt-12 mt-12"
-    >
-      <v-col class="col-4">
-        <v-alert
-          v-if="errorDisplay!==''"
-          type="error"
-          class="text-left"
+    <div class="pt-12 mt-12">
+      <v-row
+        v-if="ssoConnections.length>0"
+        class="text-center justify-center"
+      >
+        <v-col
+          class="col-4"
         >
-          {{ errorDisplay }}
-        </v-alert>
-        <v-form
-          id="formLogin"
-          ref="form"
-          v-model="valid"
-          lazy-validation
-          :action="action"
-          method="POST"
-        >
-          <v-text-field
-            id="email"
-            v-model="email"
-            :rules="emailRules"
-            :label="$t('models.user.email.placeholder')"
-            name="email"
-            required
+          <SsoLogin
+            v-for="ssoConnection in ssoConnections"
+            :key="ssoConnection.service"
+            :url="ssoConnection.uri"
+            :button-icon="ssoConnection.buttonIcon"
+            :service="ssoConnection.service"
           />
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+        class="text-center"
+      >
+        <v-col class="col-4">
+          <v-alert
+            v-if="errorDisplay!==''"
+            type="error"
+            class="text-left"
+          >
+            {{ errorDisplay }}
+          </v-alert>
+          <v-form
+            id="formLogin"
+            ref="form"
+            v-model="valid"
+            lazy-validation
+            :action="action"
+            method="POST"
+          >
+            <v-text-field
+              id="email"
+              v-model="email"
+              :rules="emailRules"
+              :label="$t('models.user.email.placeholder')"
+              name="email"
+              required
+            />
 
-          <v-text-field
-            id="password"
-            v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="passwordRules"
-            :type="show1 ? 'text' : 'password'"
-            name="password"
-            :label="$t('models.user.password.placeholder')"
-            @click:append="show1 = !show1"
-          />
+            <v-text-field
+              id="password"
+              v-model="password"
+              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="passwordRules"
+              :type="show1 ? 'text' : 'password'"
+              name="password"
+              :label="$t('models.user.password.placeholder')"
+              @click:append="show1 = !show1"
+            />
 
-          <v-btn
-            :disabled="!valid"
-            :loading="loading"
-            color="secondary"
-            type="submit"
-            rounded
-            @click="validate"
+            <v-btn
+              :disabled="!valid"
+              :loading="loading"
+              color="secondary"
+              type="submit"
+              rounded
+              @click="validate"
+            >
+              {{ $t('ui.button.connection') }}
+            </v-btn>
+          </v-form>
+          <v-card-text>
+            <a
+              :href="$t('urlRecovery')"
+            >
+              {{ $t('textRecovery') }}
+            </a>
+          </v-card-text>
+          <v-card-text
+            v-if="signUpLinkInConnection"
           >
-            {{ $t('ui.button.connection') }}
-          </v-btn>
-        </v-form>
-        <v-card-text>
-          <a
-            :href="$t('urlRecovery')"
-          >
-            {{ $t('textRecovery') }}
-          </a>
-        </v-card-text>
-        <v-card-text
-          v-if="signUpLinkInConnection"
-        >
-          <a
-            :href="$t('urlSignUp')"
-            class="font-italic"
-          >
-            {{ $t('signUp') }}
-          </a>
-        </v-card-text>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="showFacebookLogin"
-      justify="center"
+            <a
+              :href="$t('urlSignUp')"
+              class="font-italic"
+            >
+              {{ $t('signUp') }}
+            </a>
+          </v-card-text>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="showFacebookLogin"
+        justify="center"
       
-      class="text-center align-start"
-    >
-      <v-col class="col-4">
-        <m-facebook-auth
-          :app-id="facebookLoginAppId"
-          @errorFacebookConnect="errorFB"
-        />
-      </v-col>
-    </v-row>
-    <v-row v-if="ssoLogin">
-      <v-col class="col-4">
-        <SsoLogin />
-      </v-col>
-    </v-row>
+        class="text-center align-start"
+      >
+        <v-col class="col-4">
+          <m-facebook-auth
+            :app-id="facebookLoginAppId"
+            @errorFacebookConnect="errorFB"
+          />
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 <script>
@@ -162,7 +175,7 @@ export default {
       ],
       errorDisplay: "",
       action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
-      ssoLogin:false
+      ssoConnections:[]
     };
   },
   mounted() {
@@ -185,7 +198,7 @@ export default {
     getSso(){
       axios.post(this.$t("urlGetSsoServices"))
         .then(response => {
-          console.log(response.data);
+          this.ssoConnections = response.data;
         });      
     }
   }
