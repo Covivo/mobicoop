@@ -3,22 +3,28 @@
     v-if="buttonIcon"
     :style="'max-width:'+maxWidth+'px;'"
   >
-    <v-img
-      id="buttonWithImage"
-      src="/images/sso/GLConnect-sso-login.png"
-      style="cursor:pointer"
-      @click="click"
-    />
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on, attrs }">
+        <v-img
+          id="buttonWithImage"
+          :src="buttonIcon"
+          style="cursor:pointer"
+          v-bind="attrs"
+          v-on="on"
+          @click="click"
+        />
+      </template>
+      <span>{{ $t('useSsoService', {'service':service}) }}</span>
+    </v-tooltip>
   </div>
-  <v-btn
-    v-else
-    @click="click"
-  >
-    {{ service }}
-  </v-btn>
 </template>
 <script>
+import Translations from "@translations/components/user/SsoLogin.json";
+
 export default {
+  i18n: {
+    messages: Translations,
+  },
   props:{
     url:{
       type: String,
@@ -35,11 +41,6 @@ export default {
     maxWidth:{
       type: Number,
       default:200
-    }
-  },
-  computed:{
-    urlButtonIcon(){
-      return '/'.this.buttonIcon;
     }
   },
   methods:{

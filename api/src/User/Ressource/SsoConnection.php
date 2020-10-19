@@ -57,7 +57,7 @@ class SsoConnection
     const DEFAULT_ID = 999999999999;
 
     const RETURN_URL = "/user/login/sso";
-    const LOGIN_BUTTON_ICON = "/images/sso/{serviceName}-sso-login.png";
+    const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
 
     /**
      * @var int The id of this Block
@@ -68,11 +68,17 @@ class SsoConnection
     private $id;
 
     /**
+     * @var string The Name of the SSO service
+     * @Groups({"readSSOConnection"})
+     */
+    private $name;
+    
+    /**
      * @var string The uri of the SSO login form
      * @Groups({"readSSOConnection"})
      */
     private $uri;
-    
+
     /**
      * @var string The client id
      */
@@ -100,17 +106,17 @@ class SsoConnection
      */
     private $buttonIcon;
     
-    public function __construct()
+    public function __construct(string $id=null)
     {
-        $this->id = self::DEFAULT_ID;
+        (is_null($id)) ? $this->id = self::DEFAULT_ID : $this->id = $id;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
         
@@ -179,7 +185,7 @@ class SsoConnection
 
     public function getButtonIcon(): ?string
     {
-        return str_replace('{serviceName}', $this->service, self::LOGIN_BUTTON_ICON);
+        return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_ICON);
     }
     
     public function setButtonIcon(?string $buttonIcon): self

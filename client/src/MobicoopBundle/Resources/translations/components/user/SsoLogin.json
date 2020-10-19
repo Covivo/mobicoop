@@ -1,0 +1,8 @@
+{
+    "fr":{
+        "useSsoService":"Connectez-vous avec {service}"
+    },
+    "en":{
+        "useSsoService":"Log in with {service}"
+    }
+}

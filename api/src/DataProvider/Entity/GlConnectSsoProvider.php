@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\User\Entity\User;
 use App\User\Interfaces\SsoProviderInterface;
 use App\User\Ressource\SsoConnection;
 
@@ -57,5 +58,15 @@ class GlConnectSsoProvider implements SsoProviderInterface
             $this->clientId,
             str_replace("{REDIRECT_URI}", $this->redirectUrl, self::AUTHORIZATION_URL)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserFromSso(): User
+    {
+        $user = new User();
+        
+        return $user;
     }
 }

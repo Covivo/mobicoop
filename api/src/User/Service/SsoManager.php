@@ -73,10 +73,10 @@ class SsoManager
         foreach ($this->ssoServices as $serviceName => $ssoService) {
             $provider = $this->getSsoProvider($serviceName, $ssoService);
             if (!is_null($provider)) {
-                $ssoConnection = new SsoConnection();
+                $ssoConnection = new SsoConnection($serviceName);
                 $ssoConnection->setUri($provider->getConnectFormUrl());
                 $ssoConnection->setClientId($ssoService['clientId']);
-                $ssoConnection->setService($serviceName);
+                $ssoConnection->setService($ssoService['name']);
                 $ssoServices[] = $ssoConnection;
             }
         }

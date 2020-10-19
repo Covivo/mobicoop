@@ -50,4 +50,11 @@ interface SsoProviderInterface
      * @return string The redirect Url to the form
      */
     public function getConnectFormUrl();
+
+    /**
+     * Get a User from SSO connection
+     *
+     * @return User
+     */
+    public function getUserFromSso(): User;
 }
