@@ -1004,6 +1004,14 @@ class User implements UserInterface, EquatableInterface
     private $facebookId;
 
     /**
+     * @var string|null External ID of the user for a SSO connection
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser","write"})
+     */
+    private $externalId;
+
+    /**
      * @var User|null Admin that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
@@ -2484,6 +2492,17 @@ class User implements UserInterface, EquatableInterface
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+        return $this;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
         return $this;
     }
 

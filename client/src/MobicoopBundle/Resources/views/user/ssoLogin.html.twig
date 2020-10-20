@@ -1,0 +1,14 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+  {% trans from 'ui' %}user.signup.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+{% block stylesheets %}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
+{% endblock %}
+{% block main %}
+
+    <sso-login-return :data="{{data}}"/>
+        
+
+{% endblock %}

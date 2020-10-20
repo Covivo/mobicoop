@@ -1136,10 +1136,14 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOform(Request $request)
     {
-        // Check if the user already exist
+        $data = json_encode([
+          "id" => "9999999"
+        ]);
 
-
-        return new JsonResponse(["error"=>false,"message"=>"SSO Login"]);
+        return $this->render(
+            '@Mobicoop/user/ssoLogin.html.twig',
+            ["data"=>$data]
+        );
     }
 
     /**
