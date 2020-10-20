@@ -56,6 +56,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Controller class for user related actions.
@@ -82,6 +84,10 @@ class UserController extends AbstractController
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
 
+
+    private $tokenStorage;
+    private $session;
+
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
@@ -100,7 +106,9 @@ class UserController extends AbstractController
         bool $paymentElectronicActive,
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
-        PaymentManager $paymentManager
+        PaymentManager $paymentManager,
+        TokenStorageInterface $tokenStorage,
+        SessionInterface $session
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -116,6 +124,9 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
+
+        $this->tokenStorage = $tokenStorage;
+        $this->session = $session;
     }
 
     /***********
@@ -1139,6 +1150,16 @@ class UserController extends AbstractController
         $data = json_encode([
           "id" => "9999999"
         ]);
+
+        $users = $this->userManager->handleUserBySSO("9999999");
+        if (is_array($users) && count($users)>0) {
+            // $token = new UsernamePasswordToken($users[0], null, 'main', $users[0]->getRoles());
+            // $this->get('security.token_storage')->setToken($token);
+            // $this->get('session')->set('_security_main', serialize($token));
+
+            // To do : Log user
+        }
+
 
         return $this->render(
             '@Mobicoop/user/ssoLogin.html.twig',

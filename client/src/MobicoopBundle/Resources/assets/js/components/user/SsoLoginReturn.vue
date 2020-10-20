@@ -13,6 +13,7 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 import Translations from "@translations/components/user/SsoLoginReturn.json";
 
 export default {
@@ -27,8 +28,22 @@ export default {
   },
   data () {
     return {
-      loading:true
+      loading:true,
+      userId:null
     }
   },
+  mounted(){
+    this.getUser();
+  },
+  methods:{
+    getUser(){
+      axios.post("/user/sso/login/treat", {'id':this.data['id']}).then((res) => {
+        console.log(res.data);
+        if(res.data.length>0){
+          //this.loginUser(res.data[0].id);
+        }
+      });          
+    }
+  }
 }
 </script>

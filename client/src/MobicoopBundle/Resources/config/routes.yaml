@@ -294,7 +294,7 @@ user_facebook_connect:
         en: /user/facebook/connect
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookConnect
 
-# community list (AJAX)
+# Get SSO services of the platform (AJAX)
 user_get_sso_services:
     methods: [POST]
     path:
