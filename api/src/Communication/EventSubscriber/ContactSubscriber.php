@@ -125,15 +125,6 @@ class ContactSubscriber implements EventSubscriberInterface
                 $email->setObject($this->supportEmailObject);
                 break;
             case Contact::SIMPLE_CONTACT:
-                $email->setRecipientEmail($contactEmail);
-                if (count($contactEmailCc) > 0) {
-                    $email->setRecipientEmailCc($contactEmailCc);
-                }
-                if (count($contactEmailBcc) > 0) {
-                    $email->setRecipientEmailBcc($contactEmailBcc);
-                }
-                $email->setObject($this->contactEmailObject);
-                break;
             default:
                 $email->setRecipientEmail($contactEmail);
                 if (count($contactEmailCc) > 0) {
