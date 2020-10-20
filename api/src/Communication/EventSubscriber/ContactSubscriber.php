@@ -55,7 +55,7 @@ class ContactSubscriber implements EventSubscriberInterface
      */
     private $emailTemplatePath;
     /**
-     * @var array
+     * @var mixed
      */
     private $contactEmailAddress;
     /**
@@ -71,7 +71,7 @@ class ContactSubscriber implements EventSubscriberInterface
      */
     private $supportEmailObject;
 
-    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, array $contactEmailAddress, string $supportEmailAddress, string $contactEmailObject, string $supportEmailObject)
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, $contactEmailAddress, string $supportEmailAddress, string $contactEmailObject, string $supportEmailObject)
     {
         $this->notificationManager = $notificationManager;
         $this->emailManager = $emailManager;
