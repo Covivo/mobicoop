@@ -390,7 +390,7 @@ class AdManager
                 // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
                 
                 if ($ad->getReturnTime()) {
-                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
