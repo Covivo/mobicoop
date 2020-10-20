@@ -23,6 +23,7 @@
 
 namespace App\Communication\Entity;
 
+use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -51,7 +52,7 @@ class Email
     private $senderFirstName;
 
     /**
-     * @var string recipient of the email
+     * @var mixed An array or string of recipient(s) of the email
      * @Assert\Email()
      * @Assert\NotBlank
      */
@@ -123,12 +124,19 @@ class Email
         return $this;
     }
 
-    public function getRecipientEmail(): string
+    /**
+     * @return mixed
+     */
+    public function getRecipientEmail()
     {
         return $this->recipientEmail;
     }
 
-    public function setRecipientEmail(string $recipientEmail): self
+    /**
+     * @param mixed $recipientEmail
+     * @return self
+     */
+    public function setRecipientEmail($recipientEmail): self
     {
         $this->recipientEmail = $recipientEmail;
 

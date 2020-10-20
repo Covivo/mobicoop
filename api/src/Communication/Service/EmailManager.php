@@ -123,10 +123,10 @@ class EmailManager
             );
         
         // We check if we have to send the email to Bcc or Cc recipients
-        if ($mail->getRecipientEmailBcc() && !is_null($mail->getRecipientEmailBcc())) {
+        if ($mail->getRecipientEmailBcc()) {
             $message->setBcc($mail->getRecipientEmailBcc());
         }
-        if ($mail->getRecipientEmailCc() && !is_null($mail->getRecipientEmailCc())) {
+        if ($mail->getRecipientEmailCc()) {
             $message->setBcc($mail->getRecipientEmailCc());
         }
     
