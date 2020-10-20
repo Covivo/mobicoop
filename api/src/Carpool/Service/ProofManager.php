@@ -542,10 +542,7 @@ class ProofManager
     {
         // first we search the accepted asks for the given period
         $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
-        // array_map(function($ask) {
-        //     echo "ask : " . $ask->getId() . "\n";
-        // },$asks);
-        // exit;
+
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
             // we first check if both carpooler have a phone number, as it's mandatory !
