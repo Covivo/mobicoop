@@ -23,7 +23,6 @@
 
 namespace App\Communication\Entity;
 
-use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -124,18 +123,11 @@ class Email
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRecipientEmail()
     {
         return $this->recipientEmail;
     }
 
-    /**
-     * @param mixed $recipientEmail
-     * @return self
-     */
     public function setRecipientEmail($recipientEmail): self
     {
         $this->recipientEmail = $recipientEmail;
