@@ -602,8 +602,8 @@ class ProofManager
                     $this->entityManager->persist($carpoolProof);
                 }
             } else {
-                // regular, we need to create a carpool proof for each day between fromDate and toDate
-                $curDate = clone $fromDate;
+                // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
+                $curDate = clone max($fromDate, $ask->getCriteria()->getFromDate());
                 $continue = true;
                 // we get some available information here outside the loop
                 $originWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($ask, Waypoint::ROLE_DRIVER);
@@ -613,17 +613,8 @@ class ProofManager
                 while ($continue) {
                     // we search if a carpool proof already exists for the date
                     if (!$this->carpoolProofRepository->findByAskAndDate($ask, $curDate)) {
-                        // no carpool for this date, we create it
-                        $carpoolProof = new CarpoolProof();
-                        $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                        $carpoolProof->setType($this->proofType);
-                        $carpoolProof->setAsk($ask);
-                        $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
-                        $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
-                        $carpoolProof->setOriginDriverAddress(clone $originWaypoint->getAddress());
-                        $carpoolProof->setDestinationDriverAddress(clone $destinationWaypoint->getAddress());
-                        $carpoolProof->setPickUpPassengerAddress(clone $pickUpWaypoint->getAddress());
-                        $carpoolProof->setDropOffPassengerAddress(clone $dropOffWaypoint->getAddress());
+                        // no carpool for this date, we create it if it's a carpool day
+                        $carpoolDay = false;
                         /**
                          * @var Datetime $startDate
                          */
@@ -642,6 +633,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getSunTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getSunTime()->format('H'), $ask->getCriteria()->getSunTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getSunTime()->format('H'), $ask->getCriteria()->getSunTime()->format('i'));
                                 }
@@ -653,6 +645,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getMonTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getMonTime()->format('H'), $ask->getCriteria()->getMonTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getMonTime()->format('H'), $ask->getCriteria()->getMonTime()->format('i'));
                                 }
@@ -664,6 +657,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getTueTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getTueTime()->format('H'), $ask->getCriteria()->getTueTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getTueTime()->format('H'), $ask->getCriteria()->getTueTime()->format('i'));
                                 }
@@ -675,6 +669,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getWedTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getWedTime()->format('H'), $ask->getCriteria()->getWedTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getWedTime()->format('H'), $ask->getCriteria()->getWedTime()->format('i'));
                                 }
@@ -686,6 +681,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getThuTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getThuTime()->format('H'), $ask->getCriteria()->getThuTime()->format('i'));
                                 }
@@ -697,6 +693,7 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getFriTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getFriTime()->format('H'), $ask->getCriteria()->getFriTime()->format('i'));
                                 }
@@ -708,32 +705,46 @@ class ProofManager
                                     if (is_null($ask->getCriteria()->getSatTime())) {
                                         continue;
                                     }
+                                    $carpoolDay = true;
                                     $startDate->setTime($ask->getCriteria()->getSatTime()->format('H'), $ask->getCriteria()->getSatTime()->format('i'));
                                     $pickUpDate->setTime($ask->getCriteria()->getSatTime()->format('H'), $ask->getCriteria()->getSatTime()->format('i'));
                                 }
                                 break;
                         }
-                        $carpoolProof->setStartDriverDate($startDate);
-                        /**
-                         * @var Datetime $endDate
-                         */
-                        // we init the end date with the start date
-                        $endDate = clone $startDate;
-                        // then we add the duration till the destination point
-                        $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
-                        $carpoolProof->setEndDriverDate($endDate);
-                        // we add the duration till the pickup point
-                        $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
-                        /**
-                         * @var Datetime $dropOffDate
-                         */
-                        // we init the dropoff date with the start date of the driver
-                        $dropOffDate = clone $startDate;
-                        // then we add the duration till the dropoff point
-                        $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
-                        $carpoolProof->setPickUpPassengerDate($pickUpDate);
-                        $carpoolProof->setDropOffPassengerDate($dropOffDate);
-                        $this->entityManager->persist($carpoolProof);
+                        if ($carpoolDay) {
+                            $carpoolProof = new CarpoolProof();
+                            $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+                            $carpoolProof->setType($this->proofType);
+                            $carpoolProof->setAsk($ask);
+                            $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
+                            $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
+                            $carpoolProof->setOriginDriverAddress(clone $originWaypoint->getAddress());
+                            $carpoolProof->setDestinationDriverAddress(clone $destinationWaypoint->getAddress());
+                            $carpoolProof->setPickUpPassengerAddress(clone $pickUpWaypoint->getAddress());
+                            $carpoolProof->setDropOffPassengerAddress(clone $dropOffWaypoint->getAddress());
+                            
+                            $carpoolProof->setStartDriverDate($startDate);
+                            /**
+                             * @var Datetime $endDate
+                             */
+                            // we init the end date with the start date
+                            $endDate = clone $startDate;
+                            // then we add the duration till the destination point
+                            $endDate->modify('+' . $destinationWaypoint->getDuration() . ' second');
+                            $carpoolProof->setEndDriverDate($endDate);
+                            // we add the duration till the pickup point
+                            $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
+                            /**
+                             * @var Datetime $dropOffDate
+                             */
+                            // we init the dropoff date with the start date of the driver
+                            $dropOffDate = clone $startDate;
+                            // then we add the duration till the dropoff point
+                            $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
+                            $carpoolProof->setPickUpPassengerDate($pickUpDate);
+                            $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                            $this->entityManager->persist($carpoolProof);
+                        }
                     }
 
                     if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
