@@ -33,19 +33,22 @@ use App\User\Ressource\SsoConnection;
  */
 class GlConnectSsoProvider implements SsoProviderInterface
 {
-    const AUTHORIZATION_URL = "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid&redirect_uri={REDIRECT_URI}";
+    const AUTHORIZATION_URL = "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&redirect_uri={REDIRECT_URI}";
 
     private $baseUri;
     private $clientId;
     private $clientSecret;
     private $redirectUrl;
-    
-    public function __construct(string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
+    private $private;
+    private $baseSiteUri;
+
+    public function __construct(string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
     {
         $this->baseUri = $baseUri;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUrl = $redirectUrl;
+        $this->baseSiteUri = $baseSiteUri;
     }
 
     /**
@@ -56,7 +59,7 @@ class GlConnectSsoProvider implements SsoProviderInterface
         return $this->baseUri."".str_replace(
             "{CLIENT_ID}",
             $this->clientId,
-            str_replace("{REDIRECT_URI}", $this->redirectUrl, self::AUTHORIZATION_URL)
+            str_replace("{REDIRECT_URI}", $this->baseSiteUri.$this->redirectUrl, self::AUTHORIZATION_URL)
         );
     }
 

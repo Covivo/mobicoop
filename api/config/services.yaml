@@ -537,6 +537,7 @@ services:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+            $baseSiteUri: "%env(string:BASE_URI)%"
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

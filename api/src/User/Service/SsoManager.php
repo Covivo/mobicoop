@@ -36,15 +36,17 @@ class SsoManager
 {
     private $ssoServices;
     private $ssoServicesActive;
+    private $baseSiteUri;
 
     private const SUPPORTED_PROVIDERS = [
         "GLConnect" => GlConnectSsoProvider::class
     ];
 
-    public function __construct(array $ssoServices, bool $ssoServicesActive)
+    public function __construct(array $ssoServices, bool $ssoServicesActive, string $baseSiteUri)
     {
         $this->ssoServices = $ssoServices;
         $this->ssoServicesActive = $ssoServicesActive;
+        $this->baseSiteUri = $baseSiteUri;
     }
 
     
@@ -57,7 +59,7 @@ class SsoManager
     {
         if ($this->ssoServicesActive && isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            return new $providerClass($params['baseUri'], $params['clientId'], $params['clientSecret'], SsoConnection::RETURN_URL);
+            return new $providerClass($this->baseSiteUri, $params['baseUri'], $params['clientId'], $params['clientSecret'], SsoConnection::RETURN_URL);
         }
         return null;
     }
