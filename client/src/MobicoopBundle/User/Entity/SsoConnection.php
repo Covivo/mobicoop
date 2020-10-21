@@ -37,6 +37,12 @@ class SsoConnection implements \JsonSerializable
     private $service;
 
     /**
+     * @var string The SSO provider internal name
+     * @Groups({"readSSOConnection"})
+     */
+    private $ssoProvider;
+
+    /**
      * @var string The uri of the SSO login form
      */
     private $uri;
@@ -58,6 +64,18 @@ class SsoConnection implements \JsonSerializable
         return $this;
     }
 
+    public function getSsoProvider(): ?string
+    {
+        return $this->ssoProvider;
+    }
+    
+    public function setSsoProvider(?string $ssoProvider): self
+    {
+        $this->ssoProvider = $ssoProvider;
+        
+        return $this;
+    }
+    
     public function getUri(): string
     {
         return $this->uri;
@@ -87,6 +105,7 @@ class SsoConnection implements \JsonSerializable
     {
         return [
             'service'               => $this->getService(),
+            'ssoProvider'           => $this->getSsoProvider(),
             'uri'                   => $this->getUri(),
             'buttonIcon'            => $this->getButtonIcon()
         ];

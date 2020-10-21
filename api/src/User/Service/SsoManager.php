@@ -79,6 +79,7 @@ class SsoManager
                 $ssoConnection->setUri($provider->getConnectFormUrl());
                 $ssoConnection->setClientId($ssoService['clientId']);
                 $ssoConnection->setService($ssoService['name']);
+                $ssoConnection->setSsoProvider($serviceName);
                 $ssoServices[] = $ssoConnection;
             }
         }

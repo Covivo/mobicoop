@@ -95,10 +95,16 @@ class SsoConnection
     private $returnUrl;
 
     /**
-     * @var string The SSO service
+     * @var string The SSO service name
      * @Groups({"readSSOConnection"})
      */
     private $service;
+
+    /**
+     * @var string The SSO provider internal name
+     * @Groups({"readSSOConnection"})
+     */
+    private $ssoProvider;
 
     /**
      * @var string|null The SSO service icon for the button
@@ -179,6 +185,18 @@ class SsoConnection
     public function setService(string $service): self
     {
         $this->service = $service;
+        
+        return $this;
+    }
+
+    public function getSsoProvider(): ?string
+    {
+        return $this->ssoProvider;
+    }
+    
+    public function setSsoProvider(?string $ssoProvider): self
+    {
+        $this->ssoProvider = $ssoProvider;
         
         return $this;
     }
