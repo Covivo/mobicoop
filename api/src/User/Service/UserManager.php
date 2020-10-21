@@ -74,6 +74,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
+use App\User\Entity\SsoUser;
 
 /**
  * User manager service.
@@ -1358,26 +1359,26 @@ class UserManager
         return implode($pass); //turn the array into a string
     }
 
+    
     /**
-     * Treat the return of a SSo Login
+     * Return a User from a SsoUser
+     * Existing user or a new one
      *
-     * @param string $id External id returned by the Sso Service
-     * @return array|null
+     * @param SsoUser $ssoUser
+     * @return User|null
      */
-    public function treatSsoLoginReturn(string $id): ?array
+    public function getUserFromSso(SsoUser $ssoUser): ?User
     {
-        // Check if a user with this id already exists
-        
-
-
-
-
-        if (is_null($users)) {
-            // Unknown user we need to create it
+        $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
+        if (is_null($user)) {
+            // Create a new one
+            $user = new User();
+            $user->setSsoId($ssoUser->getSub());
+            $user->setGivenName($ssoUser->getFirstname());
+            $user->setFamilyName($ssoUser->getLastname());
+            $user->setEmail($ssoUser->getEmail());
+            $user = $this->registerUser($user);
         }
-
-        // We log the User
-
-        return $users;
+        return $user;
     }
 }

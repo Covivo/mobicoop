@@ -21,39 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Interfaces;
-
-use App\DataProvider\Ressource\Hook;
-use App\Geography\Entity\Address;
-use App\Payment\Entity\CarpoolPayment;
-use App\User\Entity\User;
-use App\Payment\Ressource\BankAccount;
-use App\Payment\Entity\PaymentProfile;
-use App\Payment\Entity\Wallet;
-use App\Payment\Ressource\ElectronicPayment;
-use App\Payment\Ressource\ValidationDocument;
-use App\User\Entity\SsoUser;
-use App\User\Ressource\SsoConnection;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 /**
- * Sso Provider interface.
- *
- * A sso provider entity class must implement all these methods in order to perform all possible payment related actions
- *
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
+ * Sso management service.
  */
-interface SsoProviderInterface
+class SsoManager
 {
-    /**
-     * Get the login form url
-     *
-     * @return string The redirect Url to the form
-     */
-    public function getConnectFormUrl(): string;
 
     /**
-     * Get a User from SSO connection
+     * Guess and return the parameters for a SSO connection
+     *
+     * @param array $params
+     * @return array
      */
-    public function getUserProfile(string $code): SsoUser;
+    public function guessSsoParameters(array $params)
+    {
+        $return = [];
+        if (isset($params['state'])) {
+            switch ($params['state']) {
+                case "GLConnect":
+                    $return = ['ssoId'=>$params['code'], 'ssoProvider'=>$params['state']];
+                break;
+            }
+        }
+
+        return $return;
+    }
 }

@@ -1,6 +1,7 @@
 <?php namespace App\Security;
 
 use App\User\Entity\User;
+use App\User\Service\SsoManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +21,15 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     private $jwtTokenManagerInterface;
     private $refreshTokenManager;
     private $params;
+    private $ssoManager;
 
-    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, SsoManager $ssoManager)
     {
         $this->em = $em;
         $this->jwtTokenManagerInterface = $jwtTokenManagerInterface;
         $this->refreshTokenManager = $refreshTokenManager;
         $this->params = $params;
+        $this->ssoManager = $ssoManager;
     }
 
     /**
@@ -74,12 +77,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             return null;
         }
 
-        // check if user exists in SSO provider
-
-        // if a User is returned, checkCredentials() is called
-        $user = $this->em->getRepository(User::class)->findOneBy(['ssoId' => $credentials['ssoId'], 'ssoProvider' => $credentials['ssoProvider']]);
-
-        return $user;
+        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId']);
     }
 
     public function checkCredentials($credentials, UserInterface $user)

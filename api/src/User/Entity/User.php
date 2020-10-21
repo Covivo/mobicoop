@@ -263,11 +263,6 @@ use App\User\Controller\UserCanUseEmail;
  *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
  *              "method"="GET",
  *              "path"="/users/accesFromAdminReact",
- *          },
- *          "ssoLoginReturn"={
- *              "normalization_context"={"groups"={"readUser"}},
- *              "method"="GET",
- *              "path"="/users/sso/login/return",
  *          }
  *      },
  *      itemOperations={

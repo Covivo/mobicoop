@@ -753,21 +753,4 @@ class UserManager
         }
         return null;
     }
-
-    /**
-     * Get the User by it externalId
-     *
-     * @return User|null
-     */
-    public function handleUserBySSO(string $externalId)
-    {
-        $response = $this->dataProvider->getSpecialCollection("sso/login/return", ["id"=>$externalId]);
-        if ($response->getCode() == 200) {
-            if (!is_array($response->getValue()->getMember()) || count($response->getValue()->getMember())>1) {
-                return null;
-            }
-            return $response->getValue()->getMember();
-        }
-        return null;
-    }
 }

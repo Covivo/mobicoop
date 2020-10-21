@@ -53,11 +53,9 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 
 /**
  * Controller class for user related actions.
@@ -83,10 +81,7 @@ class UserController extends AbstractController
     private $userManager;
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
-
-
-    private $tokenStorage;
-    private $session;
+    private $ssoManager;
 
     /**
      * Constructor
@@ -106,9 +101,8 @@ class UserController extends AbstractController
         bool $paymentElectronicActive,
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
-        PaymentManager $paymentManager,
-        TokenStorageInterface $tokenStorage,
-        SessionInterface $session
+        SsoManager $ssoManager,
+        PaymentManager $paymentManager
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -125,8 +119,7 @@ class UserController extends AbstractController
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
 
-        $this->tokenStorage = $tokenStorage;
-        $this->session = $session;
+        $this->ssoManager = $ssoManager;
     }
 
     /***********
@@ -1145,38 +1138,25 @@ class UserController extends AbstractController
     /**
      * Return page after a SSO Login
      */
-    public function userReturnConnectSSOform(Request $request)
+    public function userReturnConnectSSO(Request $request)
     {
-        $ssoId = $request->get("sub");
+        $params = $this->ssoManager->guessSsoParameters($request->query->all());
         
-        return new JsonResponse();
-        // $data = [
-        //   "id" => "9999999"
-        // ];
-
-        // $ssoId = $data["id"];
-        // $ssoProvider = "GLConnect";
-
-        // // $users = $this->userManager->handleUserBySSO("9999999");
-        // // if (is_array($users) && count($users)>0) {
-        // //     // $token = new UsernamePasswordToken($users[0], null, 'main', $users[0]->getRoles());
-        // //     // $this->get('security.token_storage')->setToken($token);
-        // //     // $this->get('session')->set('_security_main', serialize($token));
-
-        // //     // To do : Log user
-        // // }
-
-
-        // return $this->render(
-        //     '@Mobicoop/user/ssoLogin.html.twig',
-        //     ["data"=>$data]
-        // );
+        return $this->redirectToRoute('user_login_sso', $params);
     }
 
     /**
      * Return page after a SSO Login
      */
-    public function userReturnLogoutSSOform(Request $request)
+    public function userLoginSso(Request $request)
+    {
+        return new JsonResponse();
+    }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userReturnLogoutSSO(Request $request)
     {
         return new JsonResponse(["error"=>false,"message"=>"SSO Logout"]);
     }

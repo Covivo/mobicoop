@@ -56,7 +56,7 @@ class SsoConnection
 {
     const DEFAULT_ID = 999999999999;
 
-    const RETURN_URL = "user/login/sso";
+    const RETURN_URL = "user/sso/login";
     const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
 
     /**

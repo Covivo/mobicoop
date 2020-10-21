@@ -26,6 +26,8 @@ namespace App\DataProvider\Entity;
 use App\User\Entity\User;
 use App\User\Interfaces\SsoProviderInterface;
 use App\User\Ressource\SsoConnection;
+use App\DataProvider\Service\DataProvider;
+use App\User\Entity\SsoUser;
 
 /**
  * Grand Lyon Connect SSO Provider
@@ -33,14 +35,20 @@ use App\User\Ressource\SsoConnection;
  */
 class GlConnectSsoProvider implements SsoProviderInterface
 {
-    const AUTHORIZATION_URL = "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&redirect_uri={REDIRECT_URI}";
+    const SSO_PROVIDER = 'GLConnect';
+    const AUTHORIZATION_URL = "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state=".self::SSO_PROVIDER."&redirect_uri={REDIRECT_URI}";
+    const TOKEN_URL = "idp/oidc/token/";
+    const USERINFOS_URL = "idp/oidc/user_info";
 
     private $baseUri;
     private $clientId;
     private $clientSecret;
     private $redirectUrl;
+    private $redirectUri;
     private $private;
     private $baseSiteUri;
+    
+    private $code;
 
     public function __construct(string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
     {
@@ -48,9 +56,16 @@ class GlConnectSsoProvider implements SsoProviderInterface
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUrl = $redirectUrl;
-        $this->baseSiteUri = $baseSiteUri;
+        // $this->baseSiteUri = $baseSiteUri;
+        $this->baseSiteUri = "https://test.grand-lyon.mobicoop.io/";
+        $this->redirectUri = $this->baseSiteUri.$this->redirectUrl;
     }
 
+    public function setCode(string $code)
+    {
+        $this->code = $code;
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -59,17 +74,55 @@ class GlConnectSsoProvider implements SsoProviderInterface
         return $this->baseUri."".str_replace(
             "{CLIENT_ID}",
             $this->clientId,
-            str_replace("{REDIRECT_URI}", $this->baseSiteUri.$this->redirectUrl, self::AUTHORIZATION_URL)
+            str_replace("{REDIRECT_URI}", $this->redirectUri, self::AUTHORIZATION_URL)
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUserFromSso(): User
+    public function getUserProfile(string $code): SsoUser
     {
-        $user = new User();
+        $token = $this->getToken($code);
+
+        $dataProvider = new DataProvider($this->baseUri, self::USERINFOS_URL);
+        $headers = [
+            "Authorization" => "Bearer ".$token
+        ];
         
-        return $user;
+        $response = $dataProvider->getCollection(null, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            $ssoUser = new SsoUser();
+            $ssoUser->setSub($data['sub']);
+            $ssoUser->setEmail($data['email']);
+            $ssoUser->setFirstname($data['first_name']);
+            $ssoUser->setLastname($data['last_name']);
+            $ssoUser->setProvider(self::SSO_PROVIDER);
+            return $ssoUser;
+        } else {
+            throw new \LogicException("Error get Token");
+        }
+    }
+
+    private function getToken($code)
+    {
+        $body = [
+            "grant_type" => "authorization_code",
+            "code" => $code,
+            "redirect_uri" => $this->redirectUri
+        ];
+
+        $dataProvider = new DataProvider($this->baseUri, self::TOKEN_URL);
+
+        $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId,$this->clientSecret]);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            return $data["access_token"];
+        } else {
+            throw new \LogicException("Error get Token");
+        }
     }
 }

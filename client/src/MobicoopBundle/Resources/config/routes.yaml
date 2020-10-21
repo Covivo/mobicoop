@@ -307,14 +307,20 @@ user_return_sso:
     path:
         fr: /user/sso/login
         en: /user/sso/login
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSOform
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSO
+
+user_login_sso:
+    path:
+        fr: /user/sso/login/autolog
+        en: /user/sso/login/autolog
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userLoginSso
 
 # Logout form SSO
-user_return_logout_sso_form:
+user_return_logout_sso:
     path:
         fr: /user/sso/logout
         en: /user/sso/logout
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnLogoutSSOform
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnLogoutSSO
 
 # Get all communities of a user (POST)
 user_communities:

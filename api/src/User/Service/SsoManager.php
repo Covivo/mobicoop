@@ -26,6 +26,8 @@ namespace App\User\Service;
 use App\User\Ressource\SsoConnection;
 use LogicException;
 use App\DataProvider\Entity\GlConnectSsoProvider;
+use App\User\Entity\User;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * SSO manager service.
@@ -34,6 +36,7 @@ use App\DataProvider\Entity\GlConnectSsoProvider;
  */
 class SsoManager
 {
+    private $userManager;
     private $ssoServices;
     private $ssoServicesActive;
     private $baseSiteUri;
@@ -42,8 +45,9 @@ class SsoManager
         "GLConnect" => GlConnectSsoProvider::class
     ];
 
-    public function __construct(array $ssoServices, bool $ssoServicesActive, string $baseSiteUri)
+    public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive, string $baseSiteUri)
     {
+        $this->userManager = $userManager;
         $this->ssoServices = $ssoServices;
         $this->ssoServicesActive = $ssoServicesActive;
         $this->baseSiteUri = $baseSiteUri;
@@ -55,11 +59,12 @@ class SsoManager
      * @var string $serviceName Name of the SSO Service
      * @var array $serviceName  Service parameters given by sso.json
      */
-    private function getSsoProvider(string $serviceName, array $params)
+    private function getSsoProvider(string $serviceName)
     {
-        if ($this->ssoServicesActive && isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
+        if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
+            $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            return new $providerClass($this->baseSiteUri, $params['baseUri'], $params['clientId'], $params['clientSecret'], SsoConnection::RETURN_URL);
+            return new $providerClass($this->baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
         }
         return null;
     }
@@ -72,21 +77,33 @@ class SsoManager
     public function getSsoConnectionServices(): array
     {
         $ssoServices = [];
-        foreach ($this->ssoServices as $serviceName => $ssoService) {
-            $provider = $this->getSsoProvider($serviceName, $ssoService);
-            if (!is_null($provider)) {
-                $ssoConnection = new SsoConnection($serviceName);
-                $ssoConnection->setUri($provider->getConnectFormUrl());
-                $ssoConnection->setClientId($ssoService['clientId']);
-                $ssoConnection->setService($ssoService['name']);
-                $ssoConnection->setSsoProvider($serviceName);
-                $ssoServices[] = $ssoConnection;
+        if ($this->ssoServicesActive) {
+            foreach ($this->ssoServices as $serviceName => $ssoService) {
+                $provider = $this->getSsoProvider($serviceName);
+                if (!is_null($provider)) {
+                    $ssoConnection = new SsoConnection($serviceName);
+                    $ssoConnection->setUri($provider->getConnectFormUrl());
+                    $ssoConnection->setClientId($ssoService['clientId']);
+                    $ssoConnection->setService($ssoService['name']);
+                    $ssoConnection->setSsoProvider($serviceName);
+                    $ssoServices[] = $ssoConnection;
+                }
             }
         }
         return $ssoServices;
     }
 
-    public function getUserProfile()
+    /**
+     * Get a User from an SSO connection (existing or new one)
+     *
+     * @param string $serviceName   Service name (key in sso.json)
+     * @param string $code          Authentification code from SSO service
+     * @return User
+     */
+    public function getUser(string $serviceName, string $code): User
     {
+        $provider = $this->getSsoProvider($serviceName);
+        $provider->setCode($code);
+        return $this->userManager->getUserFromSso($provider->getUserProfile($code));
     }
 }

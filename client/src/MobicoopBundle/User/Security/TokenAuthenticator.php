@@ -24,7 +24,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     const USER_LOGIN_RESULT_ROUTE = "user_login_result";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
     const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
-    const USER_LOGIN_SSO_ROUTE = "user_return_sso";
+    const USER_LOGIN_SSO_ROUTE = "user_login_sso";
 
     private $dataProvider;
     private $router;
