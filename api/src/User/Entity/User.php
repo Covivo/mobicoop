@@ -1013,7 +1013,14 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $externalId;
+    private $ssoId;
+
+    /**
+     * @var string|null External Provider for a SSO connection
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ssoProvider;
 
     /**
      * @var User|null Admin that create the user.
@@ -2499,14 +2506,25 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getExternalId(): ?string
+    public function getSsoId(): ?string
     {
-        return $this->externalId;
+        return $this->ssoId;
     }
 
-    public function setExternalId(?string $externalId): self
+    public function setSsoId(?string $ssoId): self
     {
-        $this->externalId = $externalId;
+        $this->ssoId = $ssoId;
+        return $this;
+    }
+
+    public function getSsoProvider(): ?string
+    {
+        return $this->ssoProvider;
+    }
+
+    public function setSsoProvider(?string $ssoProvider): self
+    {
+        $this->ssoProvider = $ssoProvider;
         return $this;
     }
 

@@ -23,7 +23,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     const USER_LOGIN_ROUTE = "user_login";
     const USER_LOGIN_RESULT_ROUTE = "user_login_result";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
-    const USER_SIGN_UP_VALIDATION = "user_sign_up_validation";
+    const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
+    const USER_LOGIN_SSO_ROUTE = "user_return_sso";
 
     private $dataProvider;
     private $router;
@@ -53,8 +54,43 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request)
     {
-        return ((in_array($request->get('_route'), [self::USER_LOGIN_ROUTE,self::USER_LOGIN_RESULT_ROUTE,self::USER_LOGIN_TOKEN_ROUTE]) && $request->isMethod('POST'))
-        || ($request->get('_route') == self::USER_SIGN_UP_VALIDATION  && ($request->attributes->get('email') != '' &&  $request->attributes->get('token') != ''))) ? true : false;
+        switch ($request->get('_route')) {
+            case self::USER_LOGIN_ROUTE:
+            case self::USER_LOGIN_RESULT_ROUTE:
+                if (
+                    $request->isMethod('POST') &&
+                    $request->get('email') != '' && $request->get('password') != ''
+                ) {
+                    $this->dataProvider->setPassword($request->get('password'));
+                    $this->dataProvider->setUsername($request->get('email'));
+                    return true;
+                }
+                // no break
+            case self::USER_LOGIN_TOKEN_ROUTE:
+                if (
+                    $request->isMethod('POST') &&
+                    $request->get('emailToken') != '' && $request->get('email') != ''
+                ) {
+                    $this->dataProvider->setUsername($request->get('email'));
+                    $this->dataProvider->setEmailToken($request->get('emailToken'));
+                    return true;
+                }
+                // no break
+            case self::USER_SIGN_UP_VALIDATION_ROUTE:
+                if (($request->attributes->get('email') != '' &&  $request->attributes->get('token') != '')) {
+                    $this->dataProvider->setUsername($request->attributes->get('email'));
+                    $this->dataProvider->setEmailToken($request->attributes->get('token'));
+                    return true;
+                }
+                // no break
+            case self::USER_LOGIN_SSO_ROUTE:
+                if (($request->get('ssoId') != '' &&  $request->get('ssoProvider') != '')) {
+                    $this->dataProvider->setSsoId($request->get('ssoId'));
+                    $this->dataProvider->setSsoProvider($request->get('ssoProvider'));
+                    return true;
+                }
+        }
+        return false;
     }
 
     /**
@@ -70,23 +106,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($request, UserProviderInterface $userProvider)
     {
-
-        // We want to login, we set the credentials for the dataProvider
-        if (
-            ($request->get('_route') == self::USER_LOGIN_ROUTE || $request->get('_route') == self::USER_LOGIN_RESULT_ROUTE) &&
-            $request->get('email') && $request->get('password')) {
-            $this->dataProvider->setUsername($request->get('email'));
-            $this->dataProvider->setPassword($request->get('password'));
-
-        // We want to login with the token from email, we set the credentials for the dataProvider
-        } elseif (($request->get('_route') == self::USER_LOGIN_TOKEN_ROUTE && $request->get('emailToken')) || $request->get('_route') == self::USER_SIGN_UP_VALIDATION) {
-            $email =  $request->get('_route') == self::USER_LOGIN_TOKEN_ROUTE ? $request->get('email') : $request->attributes->get('email');
-            $emailToken =  $request->get('_route') == self::USER_LOGIN_TOKEN_ROUTE ? $request->get('emailToken') : $request->attributes->get('token');
-
-            $this->dataProvider->setPassword(null);
-            $this->dataProvider->setUsername($email);
-            $this->dataProvider->setEmailToken($emailToken);
-        }
         // We set the dataProvider to private => will discard the current JWT token
         $this->dataProvider->setPrivate(true);
 
@@ -125,6 +144,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 if ($targetPath = $request->getSession()->get('_security.main.target_path')) {
                     return new RedirectResponse($targetPath);
                 }
+                return new RedirectResponse($this->router->generate('home'));
+            case self::USER_LOGIN_SSO_ROUTE:
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_RESULT_ROUTE:
                 return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));

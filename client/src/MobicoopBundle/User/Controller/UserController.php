@@ -1147,24 +1147,30 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOform(Request $request)
     {
-        $data = json_encode([
-          "id" => "9999999"
-        ]);
+        $ssoId = $request->get("sub");
+        
+        return new JsonResponse();
+        // $data = [
+        //   "id" => "9999999"
+        // ];
 
-        $users = $this->userManager->handleUserBySSO("9999999");
-        if (is_array($users) && count($users)>0) {
-            // $token = new UsernamePasswordToken($users[0], null, 'main', $users[0]->getRoles());
-            // $this->get('security.token_storage')->setToken($token);
-            // $this->get('session')->set('_security_main', serialize($token));
+        // $ssoId = $data["id"];
+        // $ssoProvider = "GLConnect";
 
-            // To do : Log user
-        }
+        // // $users = $this->userManager->handleUserBySSO("9999999");
+        // // if (is_array($users) && count($users)>0) {
+        // //     // $token = new UsernamePasswordToken($users[0], null, 'main', $users[0]->getRoles());
+        // //     // $this->get('security.token_storage')->setToken($token);
+        // //     // $this->get('session')->set('_security_main', serialize($token));
+
+        // //     // To do : Log user
+        // // }
 
 
-        return $this->render(
-            '@Mobicoop/user/ssoLogin.html.twig',
-            ["data"=>$data]
-        );
+        // return $this->render(
+        //     '@Mobicoop/user/ssoLogin.html.twig',
+        //     ["data"=>$data]
+        // );
     }
 
     /**

@@ -82,4 +82,8 @@ class SsoManager
         }
         return $ssoServices;
     }
+
+    public function getUserProfile()
+    {
+    }
 }

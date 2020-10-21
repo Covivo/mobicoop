@@ -303,7 +303,7 @@ user_get_sso_services:
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getSsoServices
 
 # Login form SSO
-user_return_connect_sso_form:
+user_return_sso:
     path:
         fr: /user/sso/login
         en: /user/sso/login

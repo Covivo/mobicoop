@@ -1367,7 +1367,10 @@ class UserManager
     public function treatSsoLoginReturn(string $id): ?array
     {
         // Check if a user with this id already exists
-        $users = $this->userRepository->findBy(['externalId'=>$id]);
+        
+
+
+
 
         if (is_null($users)) {
             // Unknown user we need to create it
