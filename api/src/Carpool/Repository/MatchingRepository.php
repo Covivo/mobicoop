@@ -33,10 +33,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class MatchingRepository
 {
     private $repository;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Matching::class);
+        $this->entityManager = $entityManager;
     }
 
     public function find(int $id): ?Matching
@@ -47,5 +49,55 @@ class MatchingRepository
     public function findOneBy(array $criteria, array $orderBy = null)
     {
         return $this->repository->findOneBy($criteria, $orderBy);
+    }
+
+    /**
+     * Link related matchings for a Proposal
+     * (link outward and return matchings)
+     *
+     * @param integer $proposalId   The proposal id
+     * @return void
+     */
+    public function linkRelatedMatchings(int $proposalId)
+    {
+        $conn = $this->entityManager->getConnection();
+        $sql = "
+            UPDATE matching AS MRA
+            INNER JOIN proposal AS POA ON POA.id = MRA.proposal_offer_id
+            INNER JOIN proposal AS PRA ON PRA.id = MRA.proposal_request_id
+            SET matching_linked_id = (
+                SELECT MRR.id FROM matching AS MRR
+                INNER JOIN proposal AS PRR ON PRR.id = MRR.proposal_request_id
+                INNER JOIN proposal AS POR ON POR.id = MRR.proposal_offer_id
+                WHERE 
+                    POR.id = POA.proposal_linked_id AND
+                    PRR.id = PRA.proposal_linked_id
+            ) 
+            WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = " . $proposalId . " OR MRA.proposal_request_id = " . $proposalId . ")";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    }
+
+    /**
+     * Link opposite matchings for a Proposal
+     * (link matchings as driver and passenger)
+     *
+     * @param integer $proposalId   The proposal id
+     * @return void
+     */
+    public function linkOppositeMatchings(int $proposalId)
+    {
+        $conn = $this->entityManager->getConnection();
+        $sql = "
+            UPDATE matching AS MR
+            INNER JOIN proposal AS PO ON PO.id = MR.proposal_offer_id
+            SET matching_opposite_id = (
+                SELECT MO.id FROM matching AS MO
+                INNER JOIN proposal AS PR ON PR.id = MO.proposal_request_id
+                WHERE PO.id = PR.id AND MR.proposal_request_id = MO.proposal_offer_id
+            )
+            WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = " . $proposalId . ")";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
     }
 }

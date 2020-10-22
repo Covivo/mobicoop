@@ -510,7 +510,6 @@ class DataProvider
         /*
          return $this->serializer->deserialize((string) $response->getBody(), $this->class, self::SERIALIZER_ENCODER);
          */
-
         try {
             if ($this->format == self::RETURN_ARRAY) {
                 $headers = $this->getHeaders();

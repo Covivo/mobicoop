@@ -114,7 +114,7 @@ class AdVoter extends Voter
             case self::AD_CREATE:
                 return $this->canCreateAd();
             case self::AD_READ:
-                $ad = $this->adManager->getAd($this->request->get('id'));
+                $ad = $this->adManager->getAd($this->request->get('id'), null, null, null, false);
                 return $this->canReadAd($ad);
             case self::AD_READ_EXTERNAL:
                 $ad = $this->adManager->getAdFromExternalId($this->request->get('id'));
@@ -139,7 +139,7 @@ class AdVoter extends Voter
             case self::AD_SEARCH_CREATE:
                 return $this->canCreateSearchAd();
             case self::AD_CLAIM:
-                $ad = $this->adManager->getAd($this->request->get('id'), null, null, false);
+                $ad = $this->adManager->getAd($this->request->get('id'), null, null, null, false);
                 return $this->canClaimAd($ad);
         }
 

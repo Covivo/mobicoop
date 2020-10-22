@@ -104,7 +104,6 @@ class ProposalMatcher
         $this->logger->info("ProposalMatcher : createMatchingsForProposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         set_time_limit(360);
-        $date = new \DateTime("UTC");
 
         // we search the matchings
         $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
@@ -254,7 +253,7 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
-        // echo count($proposalsFound);die;
+        //echo count($proposalsFound);die;
 
         $this->logger->info("ProposalMatcher : create proposals for " . count($proposalsFound) . " results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $proposals= [];
@@ -273,6 +272,7 @@ class ProposalMatcher
                     'dddistance'=>$proposalFound['dddistance'],
                     'addresses'=>[
                         [
+                            'id'=>$proposalFound['wid'],
                             'position'=>$proposalFound['position'],
                             'destination'=>$proposalFound['destination'],
                             'reached'=>$proposalFound['reached'],
@@ -297,6 +297,7 @@ class ProposalMatcher
                 ];
             } else {
                 $element = [
+                    'id'=>$proposalFound['wid'],
                     'position'=>$proposalFound['position'],
                     'destination'=>$proposalFound['destination'],
                     'reached'=>$proposalFound['reached'],
@@ -323,6 +324,7 @@ class ProposalMatcher
             }
         }
         ksort($proposals);
+        //var_dump($proposals);exit;
         // echo count($proposals);die;
         $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -459,7 +461,6 @@ class ProposalMatcher
         }
          
         $this->logger->info("ProposalMatcher : single Match " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
         if ($matches = $this->geoMatcher->singleMatch($pears)) {
             if (isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver'])>0) {
                 $this->logger->info("ProposalMatcher : single Match treat passengers " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -578,7 +579,6 @@ class ProposalMatcher
         ) {
             $matchings = $this->checkPickUp($matchings);
         }
-
         $this->logger->info("ProposalMatcher : completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // we complete the matchings with the waypoints and criteria
@@ -601,9 +601,9 @@ class ProposalMatcher
             // criteria
             $matchingCriteria = new Criteria();
             $matchingCriteria->setDriver(true);
-            $direction = $matching->getFilters()['direction'];
-            $direction->setSaveGeoJson(false);
-            $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+            // $direction = $matching->getFilters()['direction'];
+            // $direction->setSaveGeoJson(false);
+            // $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
             $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
             $matchingCriteria->setAnyRouteAsPassenger(true);
@@ -665,8 +665,6 @@ class ProposalMatcher
             // seats (set to 1 for now)
             $matchingCriteria->setSeatsDriver(1);
             $matchingCriteria->setSeatsPassenger(1);
-
-            
 
             // pickup times
             if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
@@ -785,7 +783,6 @@ class ProposalMatcher
             $matching->setDropOffDuration($dropOff);
         }
         $this->logger->info("ProposalMatcher : end completeMatchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
         return $matchings;
     }
 
@@ -1465,7 +1462,7 @@ class ProposalMatcher
         $destinationMatching->setPickUpDuration($sourceMatching->getPickUpDuration());
         $destinationMatching->setDropOffDuration($sourceMatching->getDropOffDuration());
 
-        // matching waypoints
+        // matching waypoints => we replace old waypoints with the new ones
         foreach ($destinationMatching->getWaypoints() as $waypoint) {
             $destinationMatching->removeWaypoint($waypoint);
         }
@@ -1489,7 +1486,7 @@ class ProposalMatcher
      * Find potential matchings for multiple proposals at once.
      * These potential proposals must be validated using the geomatcher.
      */
-    public function findPotentialMatchingsForProposals(array $proposalIds)
+    public function findPotentialMatchingsForProposals(array $proposalIds, bool $updateImport = true)
     {
         $this->print_mem(1);
 
@@ -1505,14 +1502,16 @@ class ProposalMatcher
                 $ids[] = $proposalId['id'];
             }
 
-            // update status to pending
-            $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyStartDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
-            ->setParameters([
-                'status'=>UserImport::STATUS_MATCHING_PENDING,
-                'treatmentDate'=>new \DateTime()
-            ]);
-            $q->execute();
+            if ($updateImport) {
+                // update status to pending
+                $q = $this->entityManager
+                ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyStartDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
+                ->setParameters([
+                    'status'=>UserImport::STATUS_MATCHING_PENDING,
+                    'treatmentDate'=>new \DateTime()
+                ]);
+                $q->execute();
+            }
 
             $this->print_mem(3);
 
@@ -1784,7 +1783,7 @@ class ProposalMatcher
                 // criteria
                 $matchingCriteria = new Criteria();
                 $matchingCriteria->setDriver(true);
-                $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+                // $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
                 $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
                 $matchingCriteria->setAnyRouteAsPassenger(true);
@@ -1949,14 +1948,16 @@ class ProposalMatcher
             unset($matchings);
             // gc_collect_cycles();
 
-            // update status to treated
-            $q = $this->entityManager
-            ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyEndDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
-            ->setParameters([
-                'status'=>UserImport::STATUS_MATCHING_TREATED,
-                'treatmentDate'=>new \DateTime()
-            ]);
-            $q->execute();
+            if ($updateImport) {
+                // update status to treated
+                $q = $this->entityManager
+                ->createQuery('UPDATE App\Import\Entity\UserImport i set i.status = :status, i.treatmentJourneyEndDate=:treatmentDate WHERE i.id IN (SELECT ui.id FROM App\Import\Entity\UserImport ui JOIN ui.user u JOIN u.proposals p WHERE p.id IN (' . implode(',', $ids) . '))')
+                ->setParameters([
+                    'status'=>UserImport::STATUS_MATCHING_TREATED,
+                    'treatmentDate'=>new \DateTime()
+                ]);
+                $q->execute();
+            }
 
             $ids = null;
             unset($ids);

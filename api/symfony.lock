@@ -164,6 +164,12 @@
     "jms/metadata": {
         "version": "1.7.0"
     },
+    "laminas/laminas-code": {
+        "version": "3.4.1"
+    },
+    "laminas/laminas-eventmanager": {
+        "version": "3.2.1"
+    },
     "knplabs/knp-snappy": {
         "version": "v1.2.1"
     },

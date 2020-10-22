@@ -3,18 +3,18 @@ controllers:
     type: annotation
 
 # used for test controller 
-carpool:
-    resource: 'Carpool/Controller/'
-    type: annotation
+# carpool:
+#     resource: 'Carpool/Controller/'
+#     type: annotation
 
-import:
-    resource: 'Import/Controller/'
-    type: annotation
+# import:
+#     resource: 'Import/Controller/'
+#     type: annotation
 
-geography:
-    resource: 'Geography/Controller/'
-    type: annotation
+# geography:
+#     resource: 'Geography/Controller/'
+#     type: annotation
 
-communication:
-    resource: 'Communication/Controller/'
-    type: annotation
+# communication:
+#     resource: 'Communication/Controller/'
+#     type: annotation

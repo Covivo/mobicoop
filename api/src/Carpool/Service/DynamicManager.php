@@ -425,7 +425,7 @@ class DynamicManager
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
-            $dynamic->getProposal()->getPosition()->getDirection()->setDetail($newDirection->getDetail());
+            //$dynamic->getProposal()->getPosition()->getDirection()->setDetail($newDirection->getDetail());
             $dynamic->getProposal()->getPosition()->getDirection()->setFormat($newDirection->getFormat());
             $dynamic->getProposal()->getPosition()->getDirection()->setSnapped($newDirection->getSnapped());
             $dynamic->getProposal()->getPosition()->getDirection()->setBearing($newDirection->getBearing());
@@ -1085,7 +1085,7 @@ class DynamicManager
             $carpoolProof->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
             $carpoolProof->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
             $carpoolProof->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
-            $carpoolProof->getDirection()->setDetail($newDirection->getDetail());
+            //$carpoolProof->getDirection()->setDetail($newDirection->getDetail());
             $carpoolProof->getDirection()->setFormat($newDirection->getFormat());
             $carpoolProof->getDirection()->setSnapped($newDirection->getSnapped());
             $carpoolProof->getDirection()->setBearing($newDirection->getBearing());
