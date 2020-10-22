@@ -394,7 +394,7 @@ class AdManager
                 // $returnCriteria->setFromTime($ad->getReturnTime() ? \DateTime::createFromFormat('H:i', $ad->getReturnTime()) : new \DateTime("now",new \DateTimeZone('Europe/Paris')));
                 
                 if ($ad->getReturnTime()) {
-                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
@@ -1692,7 +1692,6 @@ class AdManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
                 /** @var Ask $ask */
-                $generalPaymentStatus = null;
                 foreach ($matching->getAsks() as $ask) {
                     // We check if the ask is accepted if yes we put the ask in the tab
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {

@@ -123,7 +123,7 @@ export default {
         return ask.results[0];
       } else if (length > 1) {
         for (let i = 1; i < length; i ++) {
-          if (ask.results[i].acceptedAsk === true) {
+          if (ask.results[i].acceptedAsk === true && ask.results[i].askId === ask.askId) {
             return ask.results[i];
           }
         }

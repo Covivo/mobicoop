@@ -229,12 +229,12 @@ export default {
     rss: {
       type: Object,
       default: null
-    },
+    }
   },
   data () {
     return {
       snackbar: true,
-      displayVerifiedMessage: false,
+      displayVerifiedMessage: false
     }
   },
   mounted() {
