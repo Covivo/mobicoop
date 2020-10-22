@@ -55,7 +55,7 @@ class ContactSubscriber implements EventSubscriberInterface
      */
     private $emailTemplatePath;
     /**
-     * @var string
+     * @var array
      */
     private $contactEmailAddress;
     /**
@@ -71,7 +71,7 @@ class ContactSubscriber implements EventSubscriberInterface
      */
     private $supportEmailObject;
 
-    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, string $contactEmailAddress, string $supportEmailAddress, string $contactEmailObject, string $supportEmailObject)
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, array $contactEmailAddress, string $supportEmailAddress, string $contactEmailObject, string $supportEmailObject)
     {
         $this->notificationManager = $notificationManager;
         $this->emailManager = $emailManager;
@@ -100,24 +100,41 @@ class ContactSubscriber implements EventSubscriberInterface
 
         $email = new Email();
 
+        // we check if we have also CC and BCC contact emails if yes we set them
+        $contactRecipients=$this->contactEmailAddress;
+        $contactEmail = null;
+        $contactEmailBcc = [];
+        $contactEmailCc = [];
+        foreach ($contactRecipients as $key => $value) {
+            if ($key == Contact::SEND_TO) {
+                $contactEmail = $value;
+            } elseif ($key == Contact::SEND_CC) {
+                $contactEmailCc = $value;
+            } elseif ($key == Contact::SEND_BCC) {
+                $contactEmailBcc = $value;
+            }
+        }
+
         // We set the recipient mail according the type
         $type = $contact->getType();
         
         // Determine the right email according the type
-        if (is_null($type)) {
-            $email->setRecipientEmail($this->contactEmailAddress);
-            $email->setObject($this->contactEmailObject);
-        } elseif ($type===0) {
-            $email->setRecipientEmail($this->supportEmailAddress);
-            $email->setObject($this->supportEmailObject);
-        } elseif ($type===1) {
-            $email->setRecipientEmail($this->contactEmailAddress);
-            $email->setObject($this->contactEmailObject);
-        } else {
-            $email->setRecipientEmail($this->contactEmailAddress);
-            $email->setObject($this->contactEmailObject);
+        switch ($type) {
+            case Contact::SUPPORT_CONTACT:
+                $email->setRecipientEmail($this->supportEmailAddress);
+                $email->setObject($this->supportEmailObject);
+                break;
+            case Contact::SIMPLE_CONTACT:
+            default:
+                $email->setRecipientEmail($contactEmail);
+                if (count($contactEmailCc) > 0) {
+                    $email->setRecipientEmailCc($contactEmailCc);
+                }
+                if (count($contactEmailBcc) > 0) {
+                    $email->setRecipientEmailBcc($contactEmailBcc);
+                }
+                $email->setObject($this->contactEmailObject);
         }
-
         $email->setSenderEmail($contact->getEmail());
         $email->setReturnEmail($contact->getEmail());
         $email->setSenderFirstName($contact->getGivenName());
