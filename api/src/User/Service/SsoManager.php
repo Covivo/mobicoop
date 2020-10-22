@@ -57,7 +57,7 @@ class SsoManager
      * @var string $serviceName Name of the SSO Service
      * @param string $baseSiteUri   Url of the calling website
      */
-    private function getSsoProvider(string $serviceName,  string $baseSiteUri)
+    private function getSsoProvider(string $serviceName, string $baseSiteUri)
     {
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];

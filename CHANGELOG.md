@@ -1,3 +1,11 @@
+# Release 1.16.0
+
+## API
+* SSO Data Provider
+
+## CLIENT
+** Support of Grand Lyon Connect SSO
+
 # Release 1.14.0
 
 ## API

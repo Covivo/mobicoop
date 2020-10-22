@@ -30,7 +30,6 @@ namespace App\User\Entity;
  */
 class SsoUser
 {
-
     const GENDER_MALE = 'male';
     const GENDER_FEMALE = 'female';
 

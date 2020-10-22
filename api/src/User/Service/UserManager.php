@@ -1384,14 +1384,14 @@ class UserManager
             $user->setEmail($ssoUser->getEmail());
 
             // Gender
-            switch($ssoUser->getGender()){
+            switch ($ssoUser->getGender()) {
                 case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);break;
                 case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);break;
                 default: $user->setGender(User::GENDER_OTHER);
             }
 
-            if(trim($ssoUser->getBirthdate())!=""){
-                $user->setBirthDate(DateTime::createFromFormat("Y-m-d",$ssoUser->getBirthdate()));
+            if (trim($ssoUser->getBirthdate())!="") {
+                $user->setBirthDate(DateTime::createFromFormat("Y-m-d", $ssoUser->getBirthdate()));
             }
 
             $user = $this->registerUser($user);
