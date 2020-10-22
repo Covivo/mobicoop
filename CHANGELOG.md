@@ -2,9 +2,11 @@
 
 ## API
 * SSO Data Provider
+* Improvement of matching algorithm
 
 ## CLIENT
-** Support of Grand Lyon Connect SSO
+* Support of Grand Lyon Connect SSO
+* Results pagination
 
 # Release 1.14.0
 
