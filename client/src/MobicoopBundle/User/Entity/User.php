@@ -352,12 +352,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $facebookId;
 
     /**
-     * @var string|null Facebook ID of the user
-     * @Groups({"post"})
-     */
-    private $externalId;
-
-    /**
     * @var int|null Community choose by a user
     * @Groups({"post"})
     */
@@ -1042,17 +1036,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getExternalId(): ?string
-    {
-        return $this->externalId;
-    }
-
-    public function setExternalId(?string $externalId): self
-    {
-        $this->externalId = $externalId;
-        return $this;
-    }
-
     public function getCommunityId(): ?int
     {
         return $this->communityId;
@@ -1175,8 +1158,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
             'communityId'           => $this->getCommunityId(),
             'bankAccounts'          => $this->getBankAccounts(),
-            'carpoolExport'         => $this->getCarpoolExport(),
-            'externalId'         => $this->getExternalId()
+            'carpoolExport'         => $this->getCarpoolExport()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

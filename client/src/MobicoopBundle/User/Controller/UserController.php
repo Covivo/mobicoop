@@ -137,8 +137,6 @@ class UserController extends AbstractController
             $request->getSession()->getFlashBag()->clear();
         }
         
-        // Check if
-
         return $this->render('@Mobicoop/user/login.html.twig', [
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
@@ -1145,7 +1143,6 @@ class UserController extends AbstractController
         // We add the front url to the parameters
         (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST']  : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
 
-        //$params['baseSiteUri'] = "https://test.grand-lyon.mobicoop.io";
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
