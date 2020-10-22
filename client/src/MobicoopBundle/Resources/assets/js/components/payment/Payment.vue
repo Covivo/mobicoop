@@ -322,18 +322,35 @@
                       </v-row>
                       <!-- payment mode choice (if ePay enabled) -->
                       <v-row
-                        v-if="ePay && currentItem.electronicallyPayable && currentItem.canPayElectronically"
+                        v-if="ePay && currentItem.canPayElectronically"
                         justify="center"
                       >
                         <v-radio-group
                           v-model="currentItem.mode"
                           column
                         >
-                          <v-radio
-                            :label="$t('electronicPay')"
-                            :value="1"
-                            :disabled="disabledComponent"
-                          />
+                          <v-row>
+                            <v-col>
+                              <v-radio
+                                :label="$t('electronicPay')"
+                                :value="1"
+                                :disabled="!currentItem.electronicallyPayable"
+                              />
+                            </v-col>
+                            
+                            <v-tooltip
+                              v-if="!currentItem.electronicallyPayable"
+                              right
+                              color="info"
+                            >
+                              <template v-slot:activator="{ on }">
+                                <v-icon v-on="on">
+                                  mdi-help-circle-outline
+                                </v-icon>
+                              </template>
+                              <span>{{ $t('tooltip.message') }}</span>
+                            </v-tooltip>
+                          </v-row>
                           <v-radio
                             :label="$t('directPay')"
                             :value="2"
