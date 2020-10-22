@@ -105,7 +105,6 @@ class EmailManager
         $sessionLocale= $this->translator->getLocale();
         $this->translator->setLocale($lang);
        
-        
         $senderName = ($this->emailSenderNameDefault!=="") ? $this->emailSenderNameDefault : $senderEmail;
         $senderReplyToName = ($this->emailReplyToNameDefault!=="") ? $this->emailReplyToNameDefault : $replyToEmail;
         $message = (new \Swift_Message($mail->getObject()))
@@ -122,6 +121,15 @@ class EmailManager
                 ),
                 'text/html'
             );
+        
+        // We check if we have to send the email to Bcc or Cc recipients
+        if ($mail->getRecipientEmailBcc()) {
+            $message->setBcc($mail->getRecipientEmailBcc());
+        }
+        if ($mail->getRecipientEmailCc()) {
+            $message->setBcc($mail->getRecipientEmailCc());
+        }
+    
         // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
         if ($this->emailAdditionalHeaders && $mail->getRecipientEmail() == $this->emailSupport) {
             $headers = json_decode($this->emailAdditionalHeaders, true);

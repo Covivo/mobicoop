@@ -90,13 +90,17 @@ class DataProvider
     private $password;
     private $emailToken;
     private $passwordToken;
+    private $ssoId;
+    private $ssoProvider;
     private $authPath;
     private $loginPath;
     private $refreshPath;
     private $loginTokenPath;
+    private $loginSsoPath;
     private $tokenId;
     private $authLoginPath;
     private $session;
+    private $baseSiteUri;
 
     /**
      * @var JWTToken $jwtToken
@@ -124,11 +128,12 @@ class DataProvider
      * @param string $authPath              The api path for default authentication
      * @param string $loginPath             The api path for user authentication
      * @param string $loginTokenPath        The api path for user authentication with only validate token
+     * @param string $loginSsoPath          The api path for user authentication by sso
      * @param string $tokenId               The token id
      * @param Deserializer $deserializer    The deserializer
      * @param SessionInterface  $session    The session
      */
-    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $refreshPath, string $loginTokenPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
+    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
         $this->uri = $uri;
         $this->username = $username;
@@ -139,6 +144,7 @@ class DataProvider
         $this->loginPath = $loginPath;
         $this->refreshPath = $refreshPath;
         $this->loginTokenPath = $loginTokenPath;
+        $this->loginSsoPath = $loginSsoPath;
         $this->tokenId = $tokenId;
         $this->authLoginPath = $authPath;
         $this->session = $session;
@@ -234,6 +240,20 @@ class DataProvider
         $this->passwordToken = $passwordToken;
     }
 
+    public function setSsoId(string $ssoId)
+    {
+        $this->ssoId = $ssoId;
+    }
+
+    public function setSsoProvider(string $ssoProvider)
+    {
+        $this->ssoProvider = $ssoProvider;
+    }
+
+    public function setBaseSiteUri(string $baseSiteUri)
+    {
+        $this->baseSiteUri = $baseSiteUri;
+    }
 
     /**
      * Set the password (for user authentication)
@@ -258,6 +278,8 @@ class DataProvider
         if ($private) {
             if ($this->emailToken || $this->passwordToken) {
                 $this->authLoginPath = $this->loginTokenPath;
+            } elseif ($this->ssoId && $this->ssoProvider) {
+                $this->authLoginPath = $this->loginSsoPath;
             } else {
                 $this->authLoginPath = $this->loginPath;
             }
@@ -387,6 +409,26 @@ class DataProvider
                                 'headers' => ['accept' => 'application/json'],
                                 RequestOptions::JSON => [
                                     "passwordToken" => $this->passwordToken
+                                ]
+                        ]);
+                    $value = json_decode((string) $clientResponse->getBody(), true);
+                } catch (ServerException $e) {
+                    throw new ApiTokenException("Unable to get an API token.");
+                } catch (ClientException $e) {
+                    //Wrong credentials
+                    if ($e->getCode() == '401') {
+                        return new JsonResponse('bad-credentials-api');
+                    }
+                    throw new ApiTokenException("Unable to get an API token.");
+                }
+            } elseif (!is_null($this->ssoId) && !is_null($this->ssoProvider)) {
+                try {
+                    $clientResponse = $this->client->post($this->authLoginPath, [
+                                'headers' => ['accept' => 'application/json'],
+                                RequestOptions::JSON => [
+                                    "ssoId" => $this->ssoId,
+                                    "ssoProvider" => $this->ssoProvider,
+                                    "baseSiteUri" => $this->baseSiteUri
                                 ]
                         ]);
                     $value = json_decode((string) $clientResponse->getBody(), true);

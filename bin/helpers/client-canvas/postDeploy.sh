@@ -47,6 +47,12 @@ then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/domains.json
     fi
 
+    # check sso file
+    SSO_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/sso.json
+    if [ ! -f "$SSO_FILE" ]; then
+        echo "{}" >> /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/user/sso.json
+    fi
+
     # check Modules files
     MODULES_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
     if [ ! -f "$DOMAINS_FILE" ]; then

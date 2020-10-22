@@ -375,3 +375,6 @@ $RECYCLE.BIN/
 
 # Modules available
 /config/params/modules.json
+
+# SSO Services
+/config/user/sso.json
