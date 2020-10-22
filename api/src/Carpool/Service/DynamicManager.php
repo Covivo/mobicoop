@@ -518,6 +518,7 @@ class DynamicManager
                             'id' => $ask->getUser()->getId(),
                             'givenName' => $ask->getUser()->getGivenName(),
                             'shortFamilyName' => $ask->getUser()->getShortFamilyName(),
+                            'telephone' => $status == DynamicAsk::STATUS_ACCEPTED ? $ask->getUser()->getTelephone() : null,
                             'position' => $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress()
                         ],
                         'result' => $this->getResult($matching, $dynamic->getResults()),
@@ -578,6 +579,7 @@ class DynamicManager
                             'id' => $ask->getUserRelated()->getId(),
                             'givenName' => $ask->getUserRelated()->getGivenName(),
                             'shortFamilyName' => $ask->getUserRelated()->getShortFamilyName(),
+                            'telephone' => $status == DynamicAsk::STATUS_ACCEPTED ? $ask->getUserRelated()->getTelephone() : null,
                             'position' => $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress()
                         ],
                         'result' => $this->getResult($matching, $dynamic->getResults()),
