@@ -1660,7 +1660,6 @@ class AdManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
                 /** @var Ask $ask */
-                $generalPaymentStatus = null;
                 foreach ($matching->getAsks() as $ask) {
                     // We check if the ask is accepted if yes we put the ask in the tab
                     if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
