@@ -28,6 +28,7 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Ressource\SsoConnection;
 use App\User\Service\SsoManager;
 use LogicException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -37,11 +38,13 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
 {
     private $security;
     private $ssoManager;
+    private $request;
     
-    public function __construct(Security $security, SsoManager $ssoManager)
+    public function __construct(RequestStack $request, Security $security, SsoManager $ssoManager)
     {
         $this->security = $security;
         $this->ssoManager = $ssoManager;
+        $this->request = $request->getCurrentRequest();
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -51,6 +54,10 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        return $this->ssoManager->getSsoConnectionServices();
+        if( $this->request->get('baseSiteUri')=="" ){
+            throw new \LogicException("Parameter missing : baseSiteUri");
+        }
+        
+        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'));
     }
 }

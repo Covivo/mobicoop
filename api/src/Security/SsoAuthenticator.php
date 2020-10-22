@@ -51,10 +51,12 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         $decodeRequest = json_decode($request->getContent());
         if (
             isset($decodeRequest->ssoId) && !empty($decodeRequest->ssoId) &&
-            isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider)
+            isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider) &&
+            isset($decodeRequest->baseSiteUri) && !empty($decodeRequest->baseSiteUri)
         ) {
             $credentials['ssoId'] =  $decodeRequest->ssoId;
             $credentials['ssoProvider'] =  $decodeRequest->ssoProvider;
+            $credentials['baseSiteUri'] =  $decodeRequest->baseSiteUri;
         } else {
             return false;
         }
@@ -76,8 +78,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             // Code 401 "Unauthorized"
             return null;
         }
-
-        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId']);
+        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri']);
     }
 
     public function checkCredentials($credentials, UserInterface $user)

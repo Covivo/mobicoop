@@ -100,6 +100,7 @@ class DataProvider
     private $tokenId;
     private $authLoginPath;
     private $session;
+    private $baseSiteUri;
 
     /**
      * @var JWTToken $jwtToken
@@ -247,6 +248,11 @@ class DataProvider
     public function setSsoProvider(string $ssoProvider)
     {
         $this->ssoProvider = $ssoProvider;
+    }
+
+    public function setBaseSiteUri(string $baseSiteUri)
+    {
+        $this->baseSiteUri = $baseSiteUri;
     }
 
     /**
@@ -421,7 +427,8 @@ class DataProvider
                                 'headers' => ['accept' => 'application/json'],
                                 RequestOptions::JSON => [
                                     "ssoId" => $this->ssoId,
-                                    "ssoProvider" => $this->ssoProvider
+                                    "ssoProvider" => $this->ssoProvider,
+                                    "baseSiteUri" => $this->baseSiteUri
                                 ]
                         ]);
                     $value = json_decode((string) $clientResponse->getBody(), true);

@@ -747,7 +747,11 @@ class UserManager
     public function getSsoServices()
     {
         $this->dataProvider->setClass(SsoConnection::class);
-        $response = $this->dataProvider->getCollection();
+
+        // We add the front url to the parameters
+        $baseSiteUri = (isset($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['HTTP_HOST']  : 'http://'.$_SERVER['HTTP_HOST'];
+        
+        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri]);
         if ($response->getCode() == 200) {
             return $response->getValue()->getMember();
         }

@@ -1371,12 +1371,29 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
         if (is_null($user)) {
+            // echo "new user\n";
+            // echo $ssoUser->getSub()."\n";
+            // echo $ssoUser->getProvider()."\n";
+            // echo $ssoUser->getGender()."\n";die;
             // Create a new one
             $user = new User();
             $user->setSsoId($ssoUser->getSub());
+            $user->setSsoProvider($ssoUser->getProvider());
             $user->setGivenName($ssoUser->getFirstname());
             $user->setFamilyName($ssoUser->getLastname());
             $user->setEmail($ssoUser->getEmail());
+
+            // Gender
+            switch($ssoUser->getGender()){
+                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);break;
+                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);break;
+                default: $user->setGender(User::GENDER_OTHER);
+            }
+
+            if(trim($ssoUser->getBirthdate())!=""){
+                $user->setBirthDate(DateTime::createFromFormat("Y-m-d",$ssoUser->getBirthdate()));
+            }
+
             $user = $this->registerUser($user);
         }
         return $user;

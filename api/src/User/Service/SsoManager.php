@@ -39,47 +39,45 @@ class SsoManager
     private $userManager;
     private $ssoServices;
     private $ssoServicesActive;
-    private $baseSiteUri;
 
     private const SUPPORTED_PROVIDERS = [
         "GLConnect" => GlConnectSsoProvider::class
     ];
 
-    public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive, string $baseSiteUri)
+    public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive)
     {
         $this->userManager = $userManager;
         $this->ssoServices = $ssoServices;
         $this->ssoServicesActive = $ssoServicesActive;
-        $this->baseSiteUri = $baseSiteUri;
     }
 
     
     /**
      * Return instanciated SSoProvider if supported
      * @var string $serviceName Name of the SSO Service
-     * @var array $serviceName  Service parameters given by sso.json
+     * @param string $baseSiteUri   Url of the calling website
      */
-    private function getSsoProvider(string $serviceName)
+    private function getSsoProvider(string $serviceName,  string $baseSiteUri)
     {
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            return new $providerClass($this->baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
+            return new $providerClass($baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
         }
         return null;
     }
     
     /**
      * Get all Sso connection services active on this instance
-     *
+     * @param string $baseSiteUri   Url of the calling website
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(): array
+    public function getSsoConnectionServices(string $baseSiteUri): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
             foreach ($this->ssoServices as $serviceName => $ssoService) {
-                $provider = $this->getSsoProvider($serviceName);
+                $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
                 if (!is_null($provider)) {
                     $ssoConnection = new SsoConnection($serviceName);
                     $ssoConnection->setUri($provider->getConnectFormUrl());
@@ -98,11 +96,12 @@ class SsoManager
      *
      * @param string $serviceName   Service name (key in sso.json)
      * @param string $code          Authentification code from SSO service
+     * @param string $baseSiteUri   Url of the calling website
      * @return User
      */
-    public function getUser(string $serviceName, string $code): User
+    public function getUser(string $serviceName, string $code, string $baseSiteUri): User
     {
-        $provider = $this->getSsoProvider($serviceName);
+        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
         $provider->setCode($code);
         return $this->userManager->getUserFromSso($provider->getUserProfile($code));
     }

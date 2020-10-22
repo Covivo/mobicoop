@@ -87,6 +87,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 if (($request->get('ssoId') != '' &&  $request->get('ssoProvider') != '')) {
                     $this->dataProvider->setSsoId($request->get('ssoId'));
                     $this->dataProvider->setSsoProvider($request->get('ssoProvider'));
+                    $this->dataProvider->setBaseSiteUri($request->get('baseSiteUri'));
                     return true;
                 }
         }

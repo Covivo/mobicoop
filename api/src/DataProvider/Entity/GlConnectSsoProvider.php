@@ -56,9 +56,8 @@ class GlConnectSsoProvider implements SsoProviderInterface
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUrl = $redirectUrl;
-        // $this->baseSiteUri = $baseSiteUri;
-        $this->baseSiteUri = "https://test.grand-lyon.mobicoop.io/";
-        $this->redirectUri = $this->baseSiteUri.$this->redirectUrl;
+        $this->baseSiteUri = $baseSiteUri;
+        $this->redirectUri = $this->baseSiteUri."/".$this->redirectUrl;
     }
 
     public function setCode(string $code)
@@ -100,6 +99,8 @@ class GlConnectSsoProvider implements SsoProviderInterface
             $ssoUser->setFirstname($data['first_name']);
             $ssoUser->setLastname($data['last_name']);
             $ssoUser->setProvider(self::SSO_PROVIDER);
+            $ssoUser->setGender($data['gender']);
+            $ssoUser->setBirthdate($data['birthdate']);
             return $ssoUser;
         } else {
             throw new \LogicException("Error get Token");

@@ -1141,7 +1141,11 @@ class UserController extends AbstractController
     public function userReturnConnectSSO(Request $request)
     {
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
-        
+
+        // We add the front url to the parameters
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST']  : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
+
+        //$params['baseSiteUri'] = "https://test.grand-lyon.mobicoop.io";
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
