@@ -332,7 +332,7 @@
                             </v-col>
                             
                             <v-tooltip
-                              v-show="currentItem.electronicallyPayable"
+                              v-if="!currentItem.electronicallyPayable"
                               right
                               color="info"
                             >
