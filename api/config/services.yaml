@@ -266,7 +266,7 @@ services:
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $contactEmailAddress: '%env(resolve:MAILER_CONTACT)%'
+            $contactEmailAddress: '%env(json:MAILER_CONTACT)%'
             $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
             $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
             $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
@@ -534,6 +534,11 @@ services:
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
             $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
     
+    App\User\Service\SsoManager:
+        arguments:
+            $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
+            $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:
             $params:

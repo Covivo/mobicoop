@@ -59,6 +59,14 @@ security:
                 authenticators:
                     - App\Security\TokenAuthenticator
 
+        # firewall for users authentication with sso validated token
+        login_user_sso:
+            pattern:  ^/login-sso
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\SsoAuthenticator
+
         # firewall for user to server authentication
         login_user:
             pattern:  ^/login

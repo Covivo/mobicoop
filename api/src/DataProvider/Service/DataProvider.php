@@ -40,6 +40,9 @@ use GuzzleHttp\RequestOptions;
  */
 class DataProvider
 {
+    const BODY_TYPE_JSON = RequestOptions::JSON;
+    const BODY_TYPE_FORM_PARAMS = RequestOptions::FORM_PARAMS;
+    
     /**
      * @var Client $client
      */
@@ -145,7 +148,7 @@ class DataProvider
      * @param mixed|null $params    An array or string of parameters
      * @return Response The response of the operation.
      */
-    public function postCollection($body=null, $headers=null, $params=null): Response
+    public function postCollection($body=null, $headers=null, $params=null, $bodyType=null, array $auth=null): Response
     {
         try {
             $options=[];
@@ -156,9 +159,15 @@ class DataProvider
                 $options['headers']=$headers;
             }
             if ($body) {
-                $options[RequestOptions::JSON]=$body;
+                if (is_null($bodyType)) {
+                    $options[self::BODY_TYPE_JSON]=$body;
+                } else {
+                    $options[$bodyType]=$body;
+                }
             }
-            
+            if (!is_null($auth)) {
+                $options[RequestOptions::AUTH] = $auth;
+            }
             // echo json_encode($body);die;
             
             $clientResponse = $this->client->post($this->resource, $options);
