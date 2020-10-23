@@ -75,6 +75,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
 use App\User\Entity\SsoUser;
+use App\User\Ressource\ProfileSummary;
 
 /**
  * User manager service.
@@ -1397,5 +1398,22 @@ class UserManager
             $user = $this->registerUser($user);
         }
         return $user;
+    }
+
+    public function getProfileSummary(int $userId): ProfileSummary
+    {
+        $user = $this->getUser($userId);
+        if(is_null($user)){
+            throw new \LogicException("No user found");
+        }
+
+        $profileSummary = new ProfileSummary();
+        $profileSummary->setId($user->getId());
+        $profileSummary->setGivenName($user->getGivenName());
+        $profileSummary->setShortFamilyName($user->getShortFamilyName());
+
+        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+
+        return $profileSummary;
     }
 }
