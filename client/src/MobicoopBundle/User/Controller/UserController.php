@@ -1174,4 +1174,19 @@ class UserController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Return the user profile summary
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userProfileSummary(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->userManager->getProfileSummary($data['userId']));
+        }
+        return new JsonResponse();
+    }
 }

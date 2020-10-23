@@ -1420,6 +1420,13 @@ class UserManager
 
         $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
 
+        $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
+        if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
+            $profileSummary->setTelephone($user->getTelephone());
+        }
+        if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
+            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+        }
         return $profileSummary;
     }
 }

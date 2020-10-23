@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -83,10 +84,25 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
-            $this->logger->info('User | Is found');
             return $user;
         }
-        $this->logger->error('User | is Not found');
+        return null;
+    }
+
+    /**
+     * Get the profile summary of a user
+     *
+     * @param integer $userId   User id
+     * @return ProfileSummary|null
+     */
+    public function getProfileSummary(int $userId): ?ProfileSummary
+    {
+        $this->dataProvider->setClass(ProfileSummary::class);
+        $response = $this->dataProvider->getItem($userId);
+        if ($response->getCode() == 200) {
+            $profileSummary = $response->getValue();
+            return $profileSummary;
+        }
         return null;
     }
 

@@ -21,87 +21,51 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A ProfileSummary of a User
- *
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readProfileSummary"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={
- *          "get"={
- *              "security"="is_granted('reject',object)"
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *          }
- *      }
- * )
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * A User Profile Summary
  */
-class ProfileSummary
+class ProfileSummary implements ResourceInterface, \JsonSerializable
 {
     const PHONE_DISPLAY_RESTRICTED = 1;
     const PHONE_DISPLAY_ALL = 2;
     
     /**
      * @var int The id of the User
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups({"readProfileSummary"})
      */
     private $id;
 
     /**
      * @var string The given name of the User
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $givenName;
 
     /**
      * @var string The shorten family name of the User
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $shortFamilyName;
 
     /**
      * @var int The age of the User
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $age;
 
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $phoneDisplay;
 
     /**
      * @var string|null The telephone number of the user.
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $telephone;
 
     /**
      * @var string|null Avatar of the user.
-     *
-     * @Groups({"readProfileSummary"})
      */
     private $avatar;
 
@@ -187,5 +151,20 @@ class ProfileSummary
         $this->avatar = $avatar;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $userSerialized = [
+            'id'                        => $this->getId(),
+            'givenName'                 => $this->getGivenName(),
+            'shortFamilyName'           => $this->getShortFamilyName(),
+            'age'                       => $this->getAge(),
+            'phoneDisplay'              => $this->getPhoneDisplay(),
+            'telephone'                 => $this->getTelephone(),
+            'avatar'                    => $this->getAvatar()
+        ];
+
+        return $userSerialized;
     }
 }

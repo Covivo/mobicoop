@@ -129,39 +129,11 @@
                 cols="4"
               >
                 <v-card>
-                  <!-- Avatar -->
-                  <v-img
-                    aspect-ratio="2"
-                    :src="result.carpooler.avatars[result.carpooler.avatars.length-1]"
-                  />
-                  <v-card-title>
-                    <v-row
-                      dense
-                    >
-                      <v-col
-                        class="text-center"
-                      >
-                        {{ lResult.carpooler.givenName }} {{ lResult.carpooler.shortFamilyName }}
-                      </v-col>
-                    </v-row>
-                  </v-card-title>
+                  <ProfileSummary :user-id="result.carpooler.id" />
                   <v-card-text>
                     <v-row
                       dense
                     >
-                      <v-col
-                        cols="12"
-                        class="text-center"
-                      >
-                        {{ age }}
-                      </v-col>
-                      <v-col
-                        v-if="user && lResult.carpooler.phoneDisplay == 2"
-                        cols="12"
-                        class="text-center"
-                      >
-                        {{ lResult.carpooler.telephone }}
-                      </v-col>
                       <v-col  
                         cols="12"
                         class="text-center"
@@ -498,13 +470,15 @@ import TranslationsClient from "@clientTranslations/components/carpool/results/M
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
+import ProfileSummary from "@components/user/profile/ProfileSummary";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     VJourney,
     RegularDaysSummary,
-    RegularAsk
+    RegularAsk,
+    ProfileSummary
   },
   i18n: {
     messages: TranslationsMerged,

@@ -121,6 +121,14 @@ user_profile_update:
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
+# profile summary
+user_profile_summary:
+    methods: [POST]
+    path:
+        fr: /utilisateur/profil/resume
+        en: /user/profile/summary
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileSummary
+
 # list of payments and carpools
 list_payments_carpools:
     path:
