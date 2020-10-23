@@ -23,7 +23,6 @@
         <h2 class="font-weight-bold">
           {{ $t('subtitle') }}
         </h2>
-        <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
 
@@ -40,9 +39,15 @@
             cols="4"
           >
             <ToolBoxItem
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :calameo-link-subtitle="item.calameoLinkubtitle"
               :image="item.image"
-              :link="item.link"
-              :text-link="item.textLink"
+              :text="item.text"
+              :text-download="item.textDownload"
+              :link-download="item.downloadLink"
+              :personalized-text="item.personalizedText"
+              :personalized-text-link="item.personalizedTextLink"
             />
           </v-col>
         </v-row>

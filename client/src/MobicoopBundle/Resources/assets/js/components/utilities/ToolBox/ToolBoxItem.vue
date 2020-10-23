@@ -12,23 +12,63 @@
               size="125"
               tile
             >
-              <a
-                :href="link"
-                :title="textLink"
-              >
-                <v-img :src="image" />
-              </a>
+              <v-img :src="image" />
             </v-avatar>
           </v-col>
           <v-col
             cols="6"
             class="text-left"
           >
+            <h4
+              class="primary--text text-left font-weight-bold"
+            >
+              {{ title }}
+            </h4>
             <a
-              :href="link"
-              :title="textLink"
               style="text-decoration:none;"
-            >{{ textLink }}</a>
+              class="primary--text"
+
+              :href="downloadLink"
+              :title="textDownload"
+            >
+              {{ textDownload }}        
+            </a>
+
+            <a
+              class="primary--text"
+              style="text-decoration:none;"
+               
+              :href="calameoLink"
+              target="_blank"
+            >
+              {{ subtitle }}
+            </a>
+            <br>
+            <a
+              :href="personalizedText"
+              :title="personalizedTextLink"
+              style="text-decoration:none;"
+              class="accent--text"
+            >{{ personalizedTextLink }}</a>
+            
+            <a
+              :href="link1"
+              :title="textLink1"
+              style="text-decoration:none;"
+              class="accent--text"
+            >{{ textLogo1 }}</a>
+            <a
+              :href="link2"
+              :title="textLink2"
+              style="text-decoration:none;"
+              class="accent--text"
+            >{{ textLogo2 }}</a>
+            <a
+              :href="link3"
+              :title="textLink3"
+              style="text-decoration:none;"
+              class="accent--text"
+            >{{ textLogo3 }}</a>
           </v-col>
         </v-row>
       </div>
@@ -43,11 +83,59 @@ export default {
       type: String,
       default: null
     },
-    link:{
+    text:{
       type: String,
       default: null
     },
-    textLink:{
+    textDownload:{
+      type: String,
+      default: null
+    },
+    downloadLink:{
+      type: String,
+      default: null
+    },
+    personalizedText:{
+      type: String,
+      default: null
+    },
+    personalizedTextLink:{
+      type: String,
+      default: null
+    },
+    link1:{
+      type: String,
+      default: null
+    },
+    link2:{
+      type: String,
+      default: null
+    },
+    link3:{
+      type: String,
+      default: null
+    },
+    textLogo1:{
+      type: String,
+      default: null
+    },
+    textLogo2:{
+      type: String,
+      default: null
+    },  
+    textLogo3:{
+      type: String,
+      default: null
+    },
+    title:{
+      type: String,
+      default: null
+    },
+    subtitle:{
+      type: String,
+      default: null
+    },
+    LinkSubtitle:{
       type: String,
       default: null
     }
