@@ -1400,10 +1400,16 @@ class UserManager
         return $user;
     }
 
+    /**
+     * Get the profile summary of a User
+     *
+     * @param integer $userId   User id
+     * @return ProfileSummary
+     */
     public function getProfileSummary(int $userId): ProfileSummary
     {
         $user = $this->getUser($userId);
-        if(is_null($user)){
+        if (is_null($user)) {
             throw new \LogicException("No user found");
         }
 

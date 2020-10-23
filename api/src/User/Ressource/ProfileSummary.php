@@ -93,41 +93,39 @@ class ProfileSummary
         return $this;
     }
 
-    public function getGivenName(): ?string 
-    { 
- 		return $this->givenName; 
-	} 
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
 
     public function setGivenName(string $givenName): self
-    {  
+    {
         $this->givenName = $givenName;
         
         return $this;
     }
 
-    public function getShortFamilyName(): ?string 
-    { 
- 		return $this->shortFamilyName; 
-	} 
+    public function getShortFamilyName(): ?string
+    {
+        return $this->shortFamilyName;
+    }
 
     public function setShortFamilyName(string $shortFamilyName): self
-    {  
+    {
         $this->shortFamilyName = $shortFamilyName;
         
         return $this;
     }
 
-    public function getAge(): ?int 
-    { 
- 		return $this->age; 
-	} 
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
 
     public function setAge(int $age): self
-    {  
+    {
         $this->age = $age;
         
         return $this;
-	}        
-
+    }
 }
-

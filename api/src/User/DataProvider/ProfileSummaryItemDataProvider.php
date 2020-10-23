@@ -38,7 +38,7 @@ final class ProfileSummaryItemDataProvider implements ItemDataProviderInterface,
 
     public function __construct(UserManager $userManager)
     {
-        $this->userManager = $userManager;    
+        $this->userManager = $userManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
