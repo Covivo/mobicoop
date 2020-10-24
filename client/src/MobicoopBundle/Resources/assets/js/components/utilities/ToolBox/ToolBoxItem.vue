@@ -39,16 +39,18 @@
             >
               {{ subtitle }}
             </a>
-            <br>
-            <a
-              style="text-decoration:none;"
-              class="primary--text body-2"
-              :href="downloadLink"
-              :title="textDownload"
-            >
-              {{ textDownload }}        
-            </a>
-            <br>
+            <div v-if="textDownload">
+              <a
+                style="text-decoration:none;"
+                class="primary--text body-2"
+                :href="downloadLink"
+                :title="textDownload"
+                download
+              >
+                {{ textDownload }}        
+              </a>
+              <br>
+            </div>
             <a
               :href="personalizedTextLink"
               :title="personalizedText"
