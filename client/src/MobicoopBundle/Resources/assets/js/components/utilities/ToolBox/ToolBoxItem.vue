@@ -46,6 +46,7 @@
                 :href="downloadLink"
                 :title="textDownload"
                 download
+                target="_blank"
               >
                 {{ textDownload }}        
               </a>
