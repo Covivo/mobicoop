@@ -45,7 +45,6 @@
               :subtitle="item.subtitle"
               :link-subtitle="item.linkSubtitle"
               :image="item.image"
-              :text="item.text"
               :text-download="item.textDownload"
               :download-link="item.downloadLink"
               :personalized-text="item.personalizedText"

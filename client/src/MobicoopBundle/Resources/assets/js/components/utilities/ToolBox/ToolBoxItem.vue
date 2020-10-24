@@ -5,6 +5,8 @@
         <v-row align="center">
           <v-col
             cols="6"
+            md="8"
+            lg="6"
             class="text-left"
           >
             <v-avatar
@@ -12,7 +14,12 @@
               size="125"
               tile
             >
-              <v-img :src="image" />
+              <a
+                :href="downloadLink"
+                :title="textDownload"
+              >
+                <v-img :src="image" />
+              </a>
             </v-avatar>
           </v-col>
           <v-col
@@ -26,7 +33,7 @@
             </h4>
             <a
               class="primary--text body-2"
-              style="text-decoration:none;"
+              style="text-decoration:none; background-color: #ffff66;"
               :href="linkSubtitle"
               target="_blank"
             >
@@ -78,10 +85,6 @@
 export default {
   props: {
     image:{
-      type: String,
-      default: null
-    },
-    text:{
       type: String,
       default: null
     },
