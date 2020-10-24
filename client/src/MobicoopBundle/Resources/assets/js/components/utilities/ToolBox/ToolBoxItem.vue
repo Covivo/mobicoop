@@ -25,49 +25,47 @@
               {{ title }}
             </h4>
             <a
+              class="primary--text body-2"
               style="text-decoration:none;"
-              class="primary--text"
-
-              :href="downloadLink"
-              :title="textDownload"
-            >
-              {{ textDownload }}        
-            </a>
-
-            <a
-              class="primary--text"
-              style="text-decoration:none;"
-               
-              :href="calameoLink"
+              :href="linkSubtitle"
               target="_blank"
             >
               {{ subtitle }}
             </a>
             <br>
             <a
-              :href="personalizedText"
-              :title="personalizedTextLink"
               style="text-decoration:none;"
-              class="accent--text"
-            >{{ personalizedTextLink }}</a>
-            
+              class="primary--text body-2"
+              :href="downloadLink"
+              :title="textDownload"
+            >
+              {{ textDownload }}        
+            </a>
+            <br>
+            <a
+              :href="personalizedTextLink"
+              :title="personalizedText"
+              style="text-decoration:none;"
+              class="accent--text body-2"
+            >{{ personalizedText }}</a>
+            <br>
             <a
               :href="link1"
-              :title="textLink1"
+              :title="textLogo1"
               style="text-decoration:none;"
-              class="accent--text"
+              class="accent--text body-2"
             >{{ textLogo1 }}</a>
             <a
               :href="link2"
-              :title="textLink2"
+              :title="textLogo2"
               style="text-decoration:none;"
-              class="accent--text"
+              class="accent--text body-2"
             >{{ textLogo2 }}</a>
             <a
               :href="link3"
-              :title="textLink3"
+              :title="textLogo3"
               style="text-decoration:none;"
-              class="accent--text"
+              class="accent--text body-2"
             >{{ textLogo3 }}</a>
           </v-col>
         </v-row>
@@ -135,7 +133,7 @@ export default {
       type: String,
       default: null
     },
-    LinkSubtitle:{
+    linkSubtitle:{
       type: String,
       default: null
     }

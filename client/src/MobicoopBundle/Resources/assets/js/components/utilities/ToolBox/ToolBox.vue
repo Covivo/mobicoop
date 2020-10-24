@@ -37,17 +37,25 @@
             v-for="(item, i) in items"
             :key="i"
             cols="4"
+            lg="4"
+            md="8"
           >
             <ToolBoxItem
               :title="item.title"
               :subtitle="item.subtitle"
-              :calameo-link-subtitle="item.calameoLinkubtitle"
+              :link-subtitle="item.linkSubtitle"
               :image="item.image"
               :text="item.text"
               :text-download="item.textDownload"
-              :link-download="item.downloadLink"
+              :download-link="item.downloadLink"
               :personalized-text="item.personalizedText"
               :personalized-text-link="item.personalizedTextLink"
+              :link1="item.link1"
+              :link2="item.link2"
+              :link3="item.link3"
+              :text-logo1="item.textLogo1"  
+              :text-logo2="item.textLogo2"           
+              :text-logo3="item.textLogo3"            
             />
           </v-col>
         </v-row>
