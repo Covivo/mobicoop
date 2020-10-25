@@ -57,7 +57,9 @@
               :title="personalizedText"
               style="text-decoration:none;"
               class="accent--text body-2"
-            >{{ personalizedText }}</a>
+              download
+            >
+              {{ personalizedText }}</a>
             <br>
             <a
               :href="link1"
