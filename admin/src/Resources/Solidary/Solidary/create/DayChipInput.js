@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 import { useField } from 'react-final-form';
@@ -10,26 +10,42 @@ const useStyles = makeStyles({
   },
 });
 
-const DayChipInput = ({ label, source }) => {
+const DayChipInput = ({ label, source, onChange: onChangeInput, forcedValue }) => {
   const {
     input: { value, onChange },
   } = useField(source);
   const classes = useStyles();
   const color = value ? 'primary' : 'default';
 
+  useEffect(() => {
+    if (forcedValue !== undefined) {
+      onChange(forcedValue);
+    }
+  }, [forcedValue]);
+
   return (
     <Chip
       label={label}
       color={color}
-      onClick={() => onChange(!value)}
+      onClick={() => {
+        onChangeInput(!value);
+        return onChange(!value);
+      }}
       className={classes.spaceRight}
     />
   );
 };
 
+DayChipInput.defaultProps = {
+  onChange: () => {},
+  forcedValue: undefined,
+};
+
 DayChipInput.propTypes = {
   label: PropTypes.string.isRequired,
   source: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  forcedValue: PropTypes.bool,
 };
 
 export default DayChipInput;
