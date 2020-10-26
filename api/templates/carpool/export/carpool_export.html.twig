@@ -21,7 +21,7 @@
 				padding: 10px;
 			  }
 			</style>
-        	
+			
 	  </head>
   	<body>
         <div class="container container-pdf">
@@ -39,7 +39,7 @@
 						{{ dataToPdf.appName }}
 						<br>
 					</h1>
-					<h2 style="font-family:Roboto,sans-serif;text-align:right;">{{ dataToPdf.date }}</h2>
+					<h2 style="font-family:Roboto,sans-serif;text-align:right;">{{ dataToPdf.date|format_datetime('full', 'none', locale=locale) }}</h2>
         	</div>
         	
         	{# body #}
