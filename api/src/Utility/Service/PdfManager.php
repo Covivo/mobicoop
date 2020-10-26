@@ -25,6 +25,8 @@ namespace App\Utility\Service;
 
 use Knp\Snappy\Pdf;
 use Twig\Environment;
+use Twig\Extra\Intl\IntlExtension;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Version manager service.
@@ -35,11 +37,20 @@ class PdfManager
 {
     private $pdf;
     private $twig;
+    private $translator;
     
-    public function __construct(Pdf $pdf, Environment $twig)
+    /**
+     * PdfManager constructor
+     *
+     * @param Pdf $pdf
+     * @param Environment $twig
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(Pdf $pdf, Environment $twig, TranslatorInterface $translator)
     {
         $this->pdf = $pdf;
         $this->twig = $twig;
+        $this->translator = $translator;
     }
    
     /**
@@ -50,11 +61,16 @@ class PdfManager
      */
     public function generatePDF(array $dataToPdf)
     {
+        $sessionLocale= $this->translator->getLocale();
+        // add locale date translation on twig template
+        $this->twig->addExtension(new IntlExtension());
+
         $this->pdf->generateFromHtml(
             $this->twig->render(
                 $dataToPdf['twigPath'],
                 [
-                        'dataToPdf' => $dataToPdf
+                        'dataToPdf' => $dataToPdf,
+                        'locale' => $sessionLocale
                     ]
             ),
             $dataToPdf['filePath'].$dataToPdf['fileName'],
