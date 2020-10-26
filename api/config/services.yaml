@@ -537,6 +537,8 @@ services:
             $fakeFirstMail: '%env(string:FAKE_FIRST_MAIL)%'
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
             $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
+            $profile:
+                maxMessagesForAnswerRate: '%env(int:USER_MAX_MESSAGES_FOR_ANSWER_RATE)%'
     
     App\User\Service\SsoManager:
         arguments:

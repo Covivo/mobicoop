@@ -50,6 +50,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Communication\Service\InternalMessageManager;
 use App\Community\Entity\Community;
 use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
@@ -106,6 +107,7 @@ class UserManager
     private $security;
     private $paymentProvider;
     private $blockManager;
+    private $internalMessageManager;
 
     // Default carpool settings
     private $chat;
@@ -115,6 +117,7 @@ class UserManager
     private $fakeFirstMail;
     private $fakeFirstToken;
     private $domains;
+    private $profile;
 
     /**
         * Constructor.
@@ -149,7 +152,9 @@ class UserManager
         string $fakeFirstToken,
         PaymentDataProvider $paymentProvider,
         BlockManager $blockManager,
-        array $domains
+        InternalMessageManager $internalMessageManager,
+        array $domains,
+        array $profile
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -178,6 +183,8 @@ class UserManager
         $this->domains = $domains;
         $this->paymentProvider = $paymentProvider;
         $this->blockManager = $blockManager;
+        $this->internalMessageManager = $internalMessageManager;
+        $this->profile = $profile;
     }
 
     /**
@@ -1434,6 +1441,33 @@ class UserManager
         }
         $profileSummary->setCarpoolRealized($nbAsks);
 
+        // Get the first messages of every threads the user is involved in
+        $threads = $this->messageRepository->findThreads($user);
+        $nbMessageConsidered = 0;
+        $nbMessagesTotal = 0;
+        $nbMessagesAnswered = 0;
+        foreach($threads as $firstMessage){
+            // We keep only the XX last messages (.env variable)
+            if($nbMessageConsidered>=$this->profile['maxMessagesForAnswerRate']){
+                break;
+            }
+
+            // We keep only the messages where the user was recipient
+            if($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()){
+                $nbMessagesTotal++;
+                //We check if the User sent an anwser to this message
+                $completeThread = $this->internalMessageManager->getCompleteThread($firstMessage->getId());
+                foreach($completeThread as $message){
+                    if($message->getUser()->getid() == $user->getId()){
+                        $nbMessagesAnswered++;
+                        break;
+                    }
+                }
+            }
+
+            $nbMessageConsidered++;
+        }
+        $profileSummary->setAnswerPct(round(($nbMessagesAnswered/$nbMessagesTotal)*100));
         return $profileSummary;
     }
 }
