@@ -244,13 +244,26 @@ export default {
     urlMobile: {
       type: String,
       default: null
+    },
+    locale: {
+      type: String,
+      default: "fr"
     }
   },
   data () {
     return {
       snackbar: false,
       width: 0,
+      dlocale: this.locale
     }
+  },
+  watch: {
+    dlocale (val) {
+      this.$root.$i18n.locale = val
+    }
+  },
+  created() {
+    this.$root.$i18n.locale = this.locale
   }
 };
 </script>

@@ -57,7 +57,7 @@
               id="email"
               v-model="email"
               :rules="emailRules"
-              :label="$t('models.user.email.placeholder')"
+              :label="$t('email')"
               name="email"
               required
             />
@@ -69,7 +69,7 @@
               :rules="passwordRules"
               :type="show1 ? 'text' : 'password'"
               name="password"
-              :label="$t('models.user.password.placeholder')"
+              :label="$t('password')"
               @click:append="show1 = !show1"
             />
 
@@ -81,7 +81,7 @@
               rounded
               @click="validate"
             >
-              {{ $t('ui.button.connection') }}
+              {{ $t('connection') }}
             </v-btn>
           </v-form>
           <v-card-text>
@@ -165,13 +165,13 @@ export default {
       loading: false,
       email: "",
       emailRules: [
-        v => !!v || this.$t("models.user.email.errors.required"),
-        v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
+        v => !!v || this.$t("emailRequired"),
+        v => /.+@.+/.test(v) || this.$t("emailInvalid")
       ],
       show1: false,
       password: "",
       passwordRules: [
-        v => !!v || this.$t("models.user.password.errors.required")
+        v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
       action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),

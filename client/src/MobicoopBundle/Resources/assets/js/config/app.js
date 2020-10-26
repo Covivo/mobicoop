@@ -4,7 +4,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
 import CommonTranslations from "@translations/translations.js"
-import fr from 'vuetify/es5/locale/fr'
+import {fr, en} from 'vuetify/es5/locale'
 import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LPopup, LIcon, LPolyline} from 'vue2-leaflet'
 
@@ -70,7 +70,7 @@ const vuetify = new Vuetify({
   },
   theme: colorTheme,
   lang: {
-    locales: {fr},
+    locales: {fr, en},
     current: 'fr',
   },
 });

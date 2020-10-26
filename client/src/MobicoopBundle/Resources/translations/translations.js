@@ -173,7 +173,7 @@ export default {
         next: "",
         register: "",
         save: "",
-        connection: ""
+        connection: "Connection"
       },
       form: {
         errors: "",

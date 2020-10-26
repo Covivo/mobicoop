@@ -18,24 +18,5 @@
         "emailRequired": "L'adresse email est requise",
         "emailInvalid": "L'adresse email doit être valide",
         "passwordRequired": "Le mot de passe est requis"
-    },
-    "en": {
-        "title": "Connection",
-        "errorCredentials": "Bad username or password.",
-        "errorCredentialsFacebook": "Error in connection by Facebook",
-        "urlLogin":"/user/login",
-        "urlLoginResult":"/user/login/{id}",
-        "userFBNotFound": "This facebook user is not registered on the platform",
-        "urlRecovery": "/user/password/recovery",
-        "textRecovery": "Forgot password ?",
-        "signUp": "Not registered ?",
-        "urlSignUp": "/user/signup",
-        "urlGetSsoServices":"/user/getSsoServices",
-        "connection": "Connection",
-        "password": "Password",
-        "email": "Email",
-        "emailRequired": "Email is required",
-        "emailInvalid": "Invalid email",
-        "passwordRequired": "Password is required"
     }
 }
