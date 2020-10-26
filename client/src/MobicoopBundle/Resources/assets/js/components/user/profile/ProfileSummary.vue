@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-5">
     <div v-if="loading">
       <v-skeleton-loader
         class="mx-auto"
@@ -8,9 +8,9 @@
     </div>
     <div v-else-if="profileSummary">
       <!-- Avatar -->
-      <v-img
-        aspect-ratio="2"
-        :src="profileSummary.avatar"
+      <ProfileAvatar
+        :avatar="profileSummary.avatar"
+        :experienced="profileSummary.experienced"
       />
       <v-card-title>
         <v-row
@@ -53,10 +53,14 @@
 </template>
 <script>
 import axios from "axios";
+import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Translations from "@translations/components/user/profile/ProfileSummary.json";
 export default {
   i18n: {
     messages: Translations,
+  },
+  components:{
+    ProfileAvatar
   },
   props:{
     userId:{
@@ -67,7 +71,8 @@ export default {
   data(){
     return{
       profileSummary:null,
-      loading:true
+      loading:true,
+      experienced:false
     }
   },
   mounted(){

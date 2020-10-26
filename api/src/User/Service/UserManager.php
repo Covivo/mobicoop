@@ -1498,7 +1498,7 @@ class UserManager
 
             $nbMessageConsidered++;
         }
-        $publicProfile->setAnswerPct(round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+        $publicProfile->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
 
         // Preferences
         $publicProfile->setSmoke($user->getSmoke());
