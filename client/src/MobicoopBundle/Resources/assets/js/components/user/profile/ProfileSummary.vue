@@ -42,7 +42,11 @@
 </template>
 <script>
 import axios from "axios";
+import Translations from "@translations/components/user/profile/ProfileSummary.json";
 export default {
+  i18n: {
+    messages: Translations,
+  },
   props:{
     userId:{
       type:Number,
@@ -60,7 +64,7 @@ export default {
   },
   methods:{
     getProfileSummary(){
-      axios.post("/utilisateur/profil/resume",{'userId':this.userId})
+      axios.post(this.$t('getProfileSummaryUri'),{'userId':this.userId})
         .then(response => {
           //console.log(response.data);
           this.profileSummary = response.data;

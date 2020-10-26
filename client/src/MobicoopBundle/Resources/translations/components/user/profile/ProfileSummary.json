@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "getProfileSummaryUri":"/utilisateur/profil/resume"
+    },    
+    "en": {
+        "getProfileSummaryUri":"/user/profile/summary"
+    }    
+}
