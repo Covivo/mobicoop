@@ -1422,6 +1422,18 @@ class UserManager
         if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
             $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
         }
+
+        // Number of realized carpool (number of accepted Aks as driver or passenger)
+        $asks = $this->askRepository->findAcceptedAsksForUser($user);
+        // We count only one way and outward of a round trip
+        $nbAsks = 0;
+        foreach ($asks as $ask) {
+            if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+                $nbAsks++;
+            }
+        }
+        $profileSummary->setCarpoolRealized($nbAsks);
+
         return $profileSummary;
     }
 }
