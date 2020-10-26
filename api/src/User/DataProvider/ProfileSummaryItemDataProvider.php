@@ -48,6 +48,10 @@ final class ProfileSummaryItemDataProvider implements ItemDataProviderInterface,
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?ProfileSummary
     {
-        return $this->userManager->getProfileSummary($id);
+        $user = $this->userManager->getUser($id);
+        if (is_null($user)) {
+            throw new \LogicException("No user found");
+        }
+        return $this->userManager->getProfileSummary($user);
     }
 }

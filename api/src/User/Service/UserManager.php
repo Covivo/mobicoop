@@ -1403,16 +1403,11 @@ class UserManager
     /**
      * Get the profile summary of a User
      *
-     * @param integer $userId   User id
+     * @param User $user   The User
      * @return ProfileSummary
      */
-    public function getProfileSummary(int $userId): ProfileSummary
+    public function getProfileSummary(User $user): ProfileSummary
     {
-        $user = $this->getUser($userId);
-        if (is_null($user)) {
-            throw new \LogicException("No user found");
-        }
-
         $profileSummary = new ProfileSummary();
         $profileSummary->setId($user->getId());
         $profileSummary->setGivenName($user->getGivenName());

@@ -90,6 +90,7 @@
               </v-tab-item>              
             </v-tabs>
           </v-tab-item>
+          <div><ProfileSummary :user-id="user.id" /></div>
         </v-tabs>
       </v-col>
     </v-row>
@@ -102,6 +103,7 @@ import Carpools from "@components/user/profile/carpool/Carpools";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
+import ProfileSummary from "@components/user/profile/ProfileSummary";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
@@ -119,7 +121,8 @@ export default {
     Alerts,
     CarpoolSettings,
     Carpools,
-    BankAccount
+    BankAccount,
+    ProfileSummary
   },
   props: {
     user: {
