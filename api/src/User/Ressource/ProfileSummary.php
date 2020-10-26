@@ -105,6 +105,20 @@ class ProfileSummary
      */
     private $avatar;
 
+    /**
+     * @var int|null Nomber of carpool already done
+     *
+     * @Groups({"readProfileSummary"})
+     */
+    private $carpoolRealized;
+
+    /**
+     * @var int|null Answer rate in percent
+     *
+     * @Groups({"readProfileSummary"})
+     */
+    private $answerPct;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -186,6 +200,30 @@ class ProfileSummary
     {
         $this->avatar = $avatar;
 
+        return $this;
+    }
+
+    public function getCarpoolRealized(): ?int
+    {
+        return $this->carpoolRealized;
+    }
+
+    public function setCarpoolRealized(int $carpoolRealized): self
+    {
+        $this->carpoolRealized = $carpoolRealized;
+        
+        return $this;
+    }
+
+    public function getAnswerPct(): ?int
+    {
+        return $this->answerPct;
+    }
+
+    public function setAnswerPct(int $answerPct): self
+    {
+        $this->answerPct = $answerPct;
+        
         return $this;
     }
 }

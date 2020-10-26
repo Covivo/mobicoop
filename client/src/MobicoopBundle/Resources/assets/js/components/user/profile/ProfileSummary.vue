@@ -36,6 +36,17 @@
             <span v-if="profileSummary && profileSummary.phoneDisplay == 2">{{ profileSummary.telephone }}</span>
           </v-col>
         </v-row>
+        <v-row
+          dense
+        >
+          <v-col
+            cols="12"
+            class="text-left"
+          >
+            <v-icon>mdi-car</v-icon> {{ $t('infos.carpoolRealized') }} : {{ profileSummary.carpoolRealized }}<br>
+            <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%
+          </v-col>
+        </v-row>
       </v-card-text>
     </div>
   </div>

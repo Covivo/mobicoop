@@ -1,8 +1,16 @@
 {
     "fr": {
-        "getProfileSummaryUri":"/utilisateur/profil/resume"
+        "getProfileSummaryUri":"/utilisateur/profil/resume",
+        "infos":{
+            "carpoolRealized":"Covoiturages réalisés",
+            "answerPct":"Taux de réponse"
+        }
     },    
     "en": {
-        "getProfileSummaryUri":"/user/profile/summary"
+        "getProfileSummaryUri":"/user/profile/summary",
+        "infos":{
+            "carpoolRealized":"Carpool realized",
+            "answerPct":"Answering rates"
+        }
     }    
 }

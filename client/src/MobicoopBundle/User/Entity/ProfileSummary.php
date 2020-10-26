@@ -69,6 +69,16 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
      */
     private $avatar;
 
+    /**
+     * @var int|null Nomber of carpool already done
+     */
+    private $carpoolRealized;
+
+    /**
+     * @var int|null Answer rate in percent
+     */
+    private $answerPct;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -153,6 +163,30 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getCarpoolRealized(): ?int
+    {
+        return $this->carpoolRealized;
+    }
+
+    public function setCarpoolRealized(int $carpoolRealized): self
+    {
+        $this->carpoolRealized = $carpoolRealized;
+        
+        return $this;
+    }
+
+    public function getAnswerPct(): ?int
+    {
+        return $this->answerPct;
+    }
+
+    public function setAnswerPct(int $answerPct): self
+    {
+        $this->answerPct = $answerPct;
+        
+        return $this;
+    }
+    
     public function jsonSerialize()
     {
         $userSerialized = [
@@ -162,7 +196,9 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
             'age'                       => $this->getAge(),
             'phoneDisplay'              => $this->getPhoneDisplay(),
             'telephone'                 => $this->getTelephone(),
-            'avatar'                    => $this->getAvatar()
+            'avatar'                    => $this->getAvatar(),
+            'carpoolRealized'           => $this->getCarpoolRealized(),
+            'answerPct'                 => $this->getAnswerPct()
         ];
 
         return $userSerialized;
