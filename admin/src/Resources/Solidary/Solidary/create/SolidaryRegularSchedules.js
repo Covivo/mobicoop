@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
-import { Button, Card, Grid, TextField } from '@material-ui/core';
+import { Button, Card, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 const BoundedDateTimeField = (props) => {
   const {
     input: { value, name, onChange, ...rest },
-    meta: { touched, error },
   } = useField(props.source);
   const { forcedValue, onChange: onChangeInput } = props;
 
@@ -63,20 +62,8 @@ const BoundedDateTimeField = (props) => {
         onChangeInput(formatHour(val));
         return onChange(val);
       }}
-    />
-    /*  <DateTimeInput
-      name={name}
-      label={props.label}
-      type="time"
-      InputLabelProps={{ shrink: true }}
-      onChange={(event) => {
-        onChangeInput(event.target.value);
-        return onChange(event.target.value);
-      }}
-      error={!!(touched && error)}
-      helperText={touched && error}
       {...rest}
-    /> */
+    />
   );
 };
 
@@ -100,21 +87,11 @@ const Ask = ({
   returnTimes,
   setReturnTimes: setReturnTimesTemplate,
   id,
-  days: daysTemplate,
   setDays: setDaysTemplate,
   slot,
   slotsList,
   setSlotsList,
 }) => {
-  const [days, setDays] = useState({
-    mon: false,
-    tue: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false,
-    sun: false,
-  });
   const classes = useStyles();
 
   const updateSlotsDays = (index, day, value) => {
@@ -140,36 +117,38 @@ const Ask = ({
   };
 
   useEffect(() => {
-    if (returnTimes) {
+    if (slot.returnTimes) {
       setReturnTimes(slot.returnTimes);
     }
-    if (outwardTimes) {
+    if (slot.outwardTimes) {
       setOutwardTimes(slot.outwardTimes);
     }
-  }, [days]);
+  }, [slotsList]);
 
   const setReturnTimes = (value) => {
-    setReturnTimesTemplate({
-      mon: days.mon ? value : returnTimes.mon,
-      tue: days.tue ? value : returnTimes.tue,
-      wed: days.wed ? value : returnTimes.wed,
-      thu: days.thu ? value : returnTimes.thu,
-      fri: days.fri ? value : returnTimes.fri,
-      sat: days.sat ? value : returnTimes.sat,
-      sun: days.sun ? value : returnTimes.sun,
-    });
+    setReturnTimesTemplate((prevState) => ({
+      ...prevState,
+      mon: slot.days.mon ? value : returnTimes.mon,
+      tue: slot.days.tue ? value : returnTimes.tue,
+      wed: slot.days.wed ? value : returnTimes.wed,
+      thu: slot.days.thu ? value : returnTimes.thu,
+      fri: slot.days.fri ? value : returnTimes.fri,
+      sat: slot.days.sat ? value : returnTimes.sat,
+      sun: slot.days.sun ? value : returnTimes.sun,
+    }));
   };
 
   const setOutwardTimes = (value) => {
-    setOutwardTimesTemplate({
-      mon: days.mon ? value : outwardTimes.mon,
-      tue: days.tue ? value : outwardTimes.tue,
-      wed: days.wed ? value : outwardTimes.wed,
-      thu: days.thu ? value : outwardTimes.thu,
-      fri: days.fri ? value : outwardTimes.fri,
-      sat: days.sat ? value : outwardTimes.sat,
-      sun: days.sun ? value : outwardTimes.sun,
-    });
+    setOutwardTimesTemplate((prevState) => ({
+      ...prevState,
+      mon: slot.days.mon ? value : outwardTimes.mon,
+      tue: slot.days.tue ? value : outwardTimes.tue,
+      wed: slot.days.wed ? value : outwardTimes.wed,
+      thu: slot.days.thu ? value : outwardTimes.thu,
+      fri: slot.days.fri ? value : outwardTimes.fri,
+      sat: slot.days.sat ? value : outwardTimes.sat,
+      sun: slot.days.sun ? value : outwardTimes.sun,
+    }));
   };
 
   return (
@@ -180,7 +159,6 @@ const Ask = ({
             label="L"
             source={`day.mon${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, mon: value });
               updateSlotsDays(id, 'mon', value);
               checkDaysTemplate('mon', value);
             }}
@@ -189,7 +167,6 @@ const Ask = ({
             label="Ma"
             source={`day.tue${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, tue: value });
               updateSlotsDays(id, 'tue', value);
               checkDaysTemplate('tue', value);
             }}
@@ -198,7 +175,6 @@ const Ask = ({
             label="Me"
             source={`day.wed${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, wed: value });
               updateSlotsDays(id, 'wed', value);
               checkDaysTemplate('wed', value);
             }}
@@ -207,7 +183,6 @@ const Ask = ({
             label="J"
             source={`day.thu${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, thu: value });
               updateSlotsDays(id, 'thu', value);
               checkDaysTemplate('thu', value);
             }}
@@ -216,7 +191,6 @@ const Ask = ({
             label="V"
             source={`day.fri${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, fri: value });
               updateSlotsDays(id, 'fri', value);
               checkDaysTemplate('fri', value);
             }}
@@ -225,7 +199,6 @@ const Ask = ({
             label="S"
             source={`day.sat${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, sat: value });
               updateSlotsDays(id, 'sat', value);
               checkDaysTemplate('sat', value);
             }}
@@ -234,7 +207,6 @@ const Ask = ({
             label="D"
             source={`day.sun${slot.id}`}
             onChange={(value) => {
-              setDays({ ...days, sun: value });
               updateSlotsDays(id, 'sun', value);
               checkDaysTemplate('sun', value);
             }}
@@ -250,7 +222,6 @@ const Ask = ({
             const newArr = [...slotsList];
             newArr[id].outwardTimes = value;
             setSlotsList(newArr);
-            // slot.outwardTimes = value;
           }}
           required={id === 0}
         />
@@ -262,7 +233,6 @@ const Ask = ({
             const newArr = [...slotsList];
             newArr[id].returnTimes = value;
             setSlotsList(newArr);
-            // slot.returnTimes = value;
           }}
         />
       </div>
@@ -276,7 +246,6 @@ Ask.propTypes = {
   returnTimes: PropTypes.object.isRequired,
   setReturnTimes: PropTypes.func.isRequired,
   id: PropTypes.number.isRequired,
-  days: PropTypes.object.isRequired,
   setDays: PropTypes.func.isRequired,
   slot: PropTypes.object.isRequired,
   slotsList: PropTypes.array.isRequired,
@@ -483,7 +452,6 @@ const SolidaryRegularSchedules = () => {
       <div>
         {slotsList.map((slot, i) => {
           console.log('slot', slot);
-          console.log()
           return (
             <Card raised className={classes.card} key={`card-${slot.id}`}>
               <Ask
@@ -493,7 +461,6 @@ const SolidaryRegularSchedules = () => {
                 setReturnTimes={setReturnTimes}
                 id={i}
                 setDays={setDays}
-                days={days}
                 slotsList={slotsList}
                 setSlotsList={setSlotsList}
                 slot={slot}
