@@ -70,7 +70,7 @@
 							<th>{{ "dropOffLocality"|trans }}</th>
 							<th>{{ "amount"|trans }}</th>
 							{% if dataToPdf.paymentActive %}
-								<th>{{ "typeOfpaiement"|trans }}</th>
+								<th>{{ "typeOfpayment"|trans }}</th>
 							{% endif %}
 							<th>{{ "certified"|trans }}</th>
 						</tr>
@@ -78,7 +78,7 @@
 						{% for carpoolExport in dataToPdf.carpoolExports %}
 							<tr>
 								{# Date #}
-								<td>{{ carpoolExport.date|date("m/d/Y") }}</td>
+								<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
 								{# Role #}
 								{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
 									<td>{{ "driver"|trans }}</td>
@@ -95,16 +95,16 @@
 								{% if carpoolExport.Amount %}
 									<td>{{ carpoolExport.Amount }}€</td>
 								{% else %}
-									<td>{{ "paiementNotDone"|trans }}</td>		
+									<td></td>		
 								{% endif %}
 								{# type of payment #}
 								{% if dataToPdf.paymentActive %}
 									{% if (carpoolExport.mode == 1) %}
-										<td>{{ "onLinePaiement"|trans }}</td>
+										<td>{{ "onLinePayment"|trans }}</td>
 									{% elseif (carpoolExport.mode == 2) %}
-										<td>{{ "directPaiement"|trans }}</td>  
+										<td>{{ "directPayment"|trans }}</td>  
 									{% else %}
-										<td></td>	       
+										<td>{{ "paymentNotDone"|trans }}</td>	       
 									{% endif %}
                                 {% endif %}
                                 {# certification #}
