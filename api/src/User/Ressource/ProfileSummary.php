@@ -119,6 +119,20 @@ class ProfileSummary
      */
     private $answerPct;
 
+    /**
+     * @var \DateTimeInterface User created date
+     *
+     * @Groups({"readProfileSummary"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     *
+     * @Groups({"readProfileSummary"})
+     */
+    private $lastActivityDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -226,4 +240,28 @@ class ProfileSummary
         
         return $this;
     }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+    
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }    
 }

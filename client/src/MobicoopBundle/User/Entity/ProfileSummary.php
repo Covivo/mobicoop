@@ -75,9 +75,19 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     private $carpoolRealized;
 
     /**
-     * @var int|null Answer rate in percent
+     * @var \DateTimeInterface User created date
      */
     private $answerPct;
+
+    /**
+     * @var int|null Nomber of carpool already done
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Last user activity date
+     */
+    private $lastActivityDate;
 
     public function getId(): ?int
     {
@@ -187,6 +197,30 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+    
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }    
+
     public function jsonSerialize()
     {
         $userSerialized = [
@@ -198,7 +232,9 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
             'telephone'                 => $this->getTelephone(),
             'avatar'                    => $this->getAvatar(),
             'carpoolRealized'           => $this->getCarpoolRealized(),
-            'answerPct'                 => $this->getAnswerPct()
+            'answerPct'                 => $this->getAnswerPct(),
+            'lastActivityDate'          => $this->getLastActivityDate(),
+            'createdDate'               => $this->getCreatedDate()
         ];
 
         return $userSerialized;

@@ -1419,6 +1419,8 @@ class UserManager
         $profileSummary->setId($user->getId());
         $profileSummary->setGivenName($user->getGivenName());
         $profileSummary->setShortFamilyName($user->getShortFamilyName());
+        $profileSummary->setCreatedDate($user->getCreatedDate());
+        $profileSummary->setLastActivityDate($user->getLastActivityDate());
 
         $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
 
