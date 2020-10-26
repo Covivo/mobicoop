@@ -1446,19 +1446,19 @@ class UserManager
         $nbMessageConsidered = 0;
         $nbMessagesTotal = 0;
         $nbMessagesAnswered = 0;
-        foreach($threads as $firstMessage){
+        foreach ($threads as $firstMessage) {
             // We keep only the XX last messages (.env variable)
-            if($nbMessageConsidered>=$this->profile['maxMessagesForAnswerRate']){
+            if ($nbMessageConsidered>=$this->profile['maxMessagesForAnswerRate']) {
                 break;
             }
 
             // We keep only the messages where the user was recipient
-            if($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()){
+            if ($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()) {
                 $nbMessagesTotal++;
                 //We check if the User sent an anwser to this message
                 $completeThread = $this->internalMessageManager->getCompleteThread($firstMessage->getId());
-                foreach($completeThread as $message){
-                    if($message->getUser()->getid() == $user->getId()){
+                foreach ($completeThread as $message) {
+                    if ($message->getUser()->getid() == $user->getId()) {
                         $nbMessagesAnswered++;
                         break;
                     }
