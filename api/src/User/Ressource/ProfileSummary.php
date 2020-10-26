@@ -263,5 +263,5 @@ class ProfileSummary
         $this->lastActivityDate = $lastActivityDate;
 
         return $this;
-    }    
+    }
 }

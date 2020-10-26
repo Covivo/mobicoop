@@ -219,7 +219,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         $this->lastActivityDate = $lastActivityDate;
 
         return $this;
-    }    
+    }
 
     public function jsonSerialize()
     {
