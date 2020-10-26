@@ -77,6 +77,7 @@ use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
 use App\User\Entity\SsoUser;
 use App\User\Ressource\ProfileSummary;
+use App\User\Ressource\PublicProfile;
 
 /**
  * User manager service.
@@ -1415,21 +1416,49 @@ class UserManager
      */
     public function getProfileSummary(User $user): ProfileSummary
     {
-        $profileSummary = new ProfileSummary();
-        $profileSummary->setId($user->getId());
-        $profileSummary->setGivenName($user->getGivenName());
-        $profileSummary->setShortFamilyName($user->getShortFamilyName());
-        $profileSummary->setCreatedDate($user->getCreatedDate());
-        $profileSummary->setLastActivityDate($user->getLastActivityDate());
+        // We get the public profile
+        $publicProfile = $this->getPublicProfile($user);
 
-        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+        // We keep only the data we need for the Profile summary
+        $profileSummary = new ProfileSummary($user->getId());
+        $profileSummary->setGivenName($publicProfile->getGivenName());
+        $profileSummary->setShortFamilyName($publicProfile->getShortFamilyName());
+        $profileSummary->setCreatedDate($publicProfile->getCreatedDate());
+        $profileSummary->setLastActivityDate($publicProfile->getLastActivityDate());
+        $profileSummary->setAge($publicProfile->getAge());
+        $profileSummary->setPhoneDisplay($publicProfile->getPhoneDisplay());
+        $profileSummary->setTelephone($publicProfile->getTelephone());
+        $profileSummary->setAvatar($publicProfile->getAvatar());
+        $profileSummary->setCarpoolRealized($publicProfile->getCarpoolRealized());
+        $profileSummary->setAnswerPct($publicProfile->getAnswerPct());
+        $profileSummary->setCreatedDate($publicProfile->getCreatedDate());
+        $profileSummary->setLastActivityDate($publicProfile->getLastActivityDate());
 
-        $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
+        return $profileSummary;
+    }
+
+    /**
+     * Get the public profile of a User
+     *
+     * @param User $user   The User
+     * @return PublicProfile
+     */
+    public function getPublicProfile(User $user): PublicProfile
+    {
+        $publicProfile = new PublicProfile($user->getId());
+        $publicProfile->setGivenName($user->getGivenName());
+        $publicProfile->setShortFamilyName($user->getShortFamilyName());
+        $publicProfile->setCreatedDate($user->getCreatedDate());
+        $publicProfile->setLastActivityDate($user->getLastActivityDate());
+
+        $publicProfile->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+
+        $publicProfile->setPhoneDisplay($user->getPhoneDisplay());
         if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
-            $profileSummary->setTelephone($user->getTelephone());
+            $publicProfile->setTelephone($user->getTelephone());
         }
         if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
-            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+            $publicProfile->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
         }
 
         // Number of realized carpool (number of accepted Aks as driver or passenger)
@@ -1441,7 +1470,7 @@ class UserManager
                 $nbAsks++;
             }
         }
-        $profileSummary->setCarpoolRealized($nbAsks);
+        $publicProfile->setCarpoolRealized($nbAsks);
 
         // Get the first messages of every threads the user is involved in
         $threads = $this->messageRepository->findThreads($user);
@@ -1469,7 +1498,15 @@ class UserManager
 
             $nbMessageConsidered++;
         }
-        $profileSummary->setAnswerPct(round(($nbMessagesAnswered/$nbMessagesTotal)*100));
-        return $profileSummary;
+        $publicProfile->setAnswerPct(round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+
+        // Preferences
+        $publicProfile->setSmoke($user->getSmoke());
+        $publicProfile->setMusic($user->hasMusic());
+        $publicProfile->setMusicFavorites($user->getMusicFavorites());
+        $publicProfile->setChat($user->hasChat());
+        $publicProfile->setChatFavorites($user->getChatFavorites());
+        
+        return $publicProfile;
     }
 }

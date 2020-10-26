@@ -31,12 +31,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Entity\User;
 
 /**
- * A ProfileSummary of a User
+ * A public profile of a User
  *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readProfileSummary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readPublicProfile"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "get"={
@@ -50,94 +50,150 @@ use App\User\Entity\User;
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ProfileSummary
+class PublicProfile
 {
     const PHONE_DISPLAY_RESTRICTED = 1;
     const PHONE_DISPLAY_ALL = 2;
     
+    const SMOKE_NO = 0;
+    const SMOKE_NOT_IN_CAR = 1;
+    const SMOKE = 2;
+
     /**
      * @var int The id of the User
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $id;
 
     /**
      * @var string The given name of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $givenName;
 
     /**
      * @var string The shorten family name of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $shortFamilyName;
 
     /**
      * @var int The age of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $age;
 
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $phoneDisplay;
 
     /**
      * @var string|null The telephone number of the user.
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $telephone;
 
     /**
      * @var string|null Avatar of the user.
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $avatar;
 
     /**
      * @var int|null Nomber of carpool already done
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $carpoolRealized;
 
     /**
      * @var int|null Answer rate in percent
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $answerPct;
 
     /**
+     * @var int|null Smoking preferences.
+     * 0 = i don't smoke
+     * 1 = i don't smoke in car
+     * 2 = i smoke
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $smoke;
+
+    /**
+     * @var boolean|null Music preferences.
+     * 0 = no music
+     * 1 = i listen to music or radio
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $music;
+
+    /**
+     * @var string|null Music favorites.
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $musicFavorites;
+
+    /**
+     * @var boolean|null Chat preferences.
+     * 0 = no chat
+     * 1 = chat
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $chat;
+
+    /**
+     * @var string|null Chat favorite subjects.
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $chatFavorites;
+
+    /**
      * @var \DateTimeInterface User created date
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Last user activity date
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readPublicProfile"})
      */
     private $lastActivityDate;
 
+    /**
+     * @var array|null Reviews about this user
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $reviews;
+
+    
     public function __construct($id=null)
     {
         if (!is_null($id)) {
             $this->id = $id;
         }
+
+        $this->reviews = [];
     }
     
     public function getId(): ?int
@@ -248,6 +304,66 @@ class ProfileSummary
         return $this;
     }
 
+    public function getSmoke(): ?int
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?int $smoke): self
+    {
+        $this->smoke = $smoke;
+
+        return $this;
+    }
+
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    public function setMusic(?bool $music): self
+    {
+        $this->music = $music;
+
+        return $this;
+    }
+
+    public function getMusicFavorites(): ?string
+    {
+        return $this->musicFavorites;
+    }
+
+    public function setMusicFavorites(?string $musicFavorites): self
+    {
+        $this->musicFavorites = $musicFavorites;
+
+        return $this;
+    }
+
+    public function hasChat(): ?bool
+    {
+        return $this->chat;
+    }
+
+    public function setChat(?bool $chat): self
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChatFavorites(): ?string
+    {
+        return $this->chatFavorites;
+    }
+
+    public function setChatFavorites(?string $chatFavorites): self
+    {
+        $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -268,6 +384,18 @@ class ProfileSummary
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function getReviews(): ?array
+    {
+        return $this->reviews;
+    }
+
+    public function setReviews(?array $reviews): self
+    {
+        $this->reviews = $reviews;
 
         return $this;
     }
