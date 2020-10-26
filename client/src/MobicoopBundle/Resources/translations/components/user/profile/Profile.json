@@ -7,11 +7,11 @@
             "myProfile": "Profil",
             "password": "Mot de passe",
             "myAds": "Mes annonces",
-            "carpoolSettings": "Mes préférences",
-            "alerts": "Mes alertes",
-            "bankCoordinates": "Mes coordonnées bancaires",
+            "carpoolSettings": "Préférences",
+            "alerts": "Alertes",
+            "bankCoordinates": "Identité bancaires",
             "carpoolsAccepted": "Covoiturages acceptés",
-            "myAccount":"Mon compte"
+            "myAccount":"Compte"
         },
         "form":{
             "newPassword":"Nouveau mot de passe",
@@ -24,6 +24,11 @@
         "snackBar":{
             "passwordUpdated":"Mot de passe mis à jour",
             "textSnackError":"Erreur dans la mise à jour du mot de passe"
+        },
+        "publicProfile":{
+            "title":"Profil public",
+            "see":"Voir profil public",
+            "close":"Fermer"
         }
     },    
     "en": {
@@ -33,12 +38,12 @@
         "tabs": {
             "myProfile": "Profile",
             "password": "Password",
-            "myAds": "My proposals",
+            "myAds": "Proposals",
             "carpoolSettings": "My settings",
-            "alerts": "My alerts",
-            "bankCoordinates": "My bank coordinates",
+            "alerts": "Alerts",
+            "bankCoordinates": "Bank coordinates",
             "carpoolsAccepted": "Accepted carpools",
-            "myAccount":"My account"
+            "myAccount":"Account"
         },
         "form":{
             "newPassword":"New password",
@@ -51,6 +56,11 @@
         "snackBar":{
             "passwordUpdated":"Password updated",
             "textSnackError":"Password update has failed"
+        },
+        "publicProfile":{
+            "title":"Public profile",
+            "see":"See public profile",
+            "close":"Close"
         }
     }    
 }

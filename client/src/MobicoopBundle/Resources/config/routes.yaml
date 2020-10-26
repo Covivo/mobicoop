@@ -129,7 +129,15 @@ user_profile_summary:
         en: /user/profile/summary
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileSummary
 
-# list of payments and carpools
+# profile summary
+user_profile_public:
+    methods: [POST]
+    path:
+        fr: /utilisateur/profil/public
+        en: /user/profile/public
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfilePublic
+
+    # list of payments and carpools
 list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export

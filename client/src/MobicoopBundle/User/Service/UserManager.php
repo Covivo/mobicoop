@@ -39,6 +39,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -98,6 +99,23 @@ class UserManager
     public function getProfileSummary(int $userId): ?ProfileSummary
     {
         $this->dataProvider->setClass(ProfileSummary::class);
+        $response = $this->dataProvider->getItem($userId);
+        if ($response->getCode() == 200) {
+            $profileSummary = $response->getValue();
+            return $profileSummary;
+        }
+        return null;
+    }
+
+    /**
+     * Get the public profile of a user
+     *
+     * @param integer $userId   User id
+     * @return ProfileSummary|null
+     */
+    public function getProfilePublic(int $userId): ?PublicProfile
+    {
+        $this->dataProvider->setClass(PublicProfile::class);
         $response = $this->dataProvider->getItem($userId);
         if ($response->getCode() == 200) {
             $profileSummary = $response->getValue();

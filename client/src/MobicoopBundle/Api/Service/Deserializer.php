@@ -82,6 +82,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -220,6 +221,9 @@ class Deserializer
                 break;
             case ProfileSummary::class:
                 return $this->deserializeProfileSummary($data);
+                break;
+            case PublicProfile::class:
+                return $this->deserializePublicProfile($data);
                 break;
             default:
                 break;
@@ -930,6 +934,13 @@ class Deserializer
         $profileSummary = new ProfileSummary();
         $profileSummary = $this->autoSet($profileSummary, $data);
         return $profileSummary;
+    }
+
+    private function deserializePublicProfile(array $data): ?PublicProfile
+    {
+        $publicProfile = new PublicProfile();
+        $publicProfile = $this->autoSet($publicProfile, $data);
+        return $publicProfile;
     }
 
     private function autoSet($object, $data)

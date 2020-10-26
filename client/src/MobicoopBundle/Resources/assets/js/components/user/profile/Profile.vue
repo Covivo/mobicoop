@@ -52,6 +52,13 @@
                 {{ $t("tabs.myAccount") }}
               </v-tab>
               <v-tab-item>
+                <div>
+                  <v-btn
+                    @click="dialog = true"
+                  >
+                    {{ $t('publicProfile.see') }}
+                  </v-btn>
+                </div>
                 <UpdateProfile
                   :user="user"
                   :geo-search-url="geoSearchUrl"
@@ -94,6 +101,33 @@
         </v-tabs>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="dialog"
+      width="100%"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ $t('publicProfile.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          <PublicProfile :user-id="user.id" />
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            @click="dialog = false"
+          >
+            {{ $t('publicProfile.close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>      
+    </v-dialog>    
   </v-container>
 </template>
 <script>
@@ -104,6 +138,7 @@ import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
+import PublicProfile from "@components/user/profile/PublicProfile";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
@@ -122,7 +157,8 @@ export default {
     CarpoolSettings,
     Carpools,
     BankAccount,
-    ProfileSummary
+    ProfileSummary,
+    PublicProfile
   },
   props: {
     user: {
@@ -184,7 +220,8 @@ export default {
   },
   data(){
     return{
-      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds"
+      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds",
+      dialog:false
     }
   }
 }

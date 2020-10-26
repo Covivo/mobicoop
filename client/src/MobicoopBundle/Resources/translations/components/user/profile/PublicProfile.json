@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "getPublicProfileUri":"/utilisateur/profil/public"
+    },    
+    "en": {
+        "getPublicProfileUri":"/user/profile/public"
+    }    
+}
