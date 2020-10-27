@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-5">
+  <div class="mt-5 black--text">
     <div v-if="loading">
       <v-skeleton-loader
         class="mx-auto"
@@ -12,9 +12,19 @@
         :avatar="profileSummary.avatar"
         :experienced="profileSummary.experienced"
       />
-      <v-card-title>
+      <div
+        v-if="showLinkProfile"
+        class="text-center"
+      >
+        <a
+          href="#"
+          title=""
+        >Voir le profil</a>
+      </div>
+      <div>
         <v-row
-          dense
+          no-gutters
+          class="title"
         >
           <v-col
             cols="12"
@@ -23,19 +33,19 @@
             {{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}
           </v-col>
         </v-row>
-      </v-card-title>
-      <v-card-text>
         <v-row
-          dense
+          no-gutters
         >
           <v-col
             cols="12"
-            class="text-center"
+            class="text-center body-2"
           >
             {{ profileSummary.age }} {{ $t('yearsOld') }}<br>
             <span v-if="profileSummary && profileSummary.phoneDisplay == 2">{{ profileSummary.telephone }}</span>
           </v-col>
         </v-row>
+      </div>
+      <div class="body-2 pa-2">
         <v-row
           dense
         >
@@ -47,7 +57,7 @@
             <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%
           </v-col>
         </v-row>
-      </v-card-text>
+      </div>
     </div>
   </div>
 </template>
@@ -66,6 +76,10 @@ export default {
     userId:{
       type:Number,
       default: null
+    },
+    showLinkProfile:{
+      type: Boolean,
+      default: true
     }
   },
   data(){

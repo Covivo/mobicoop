@@ -100,7 +100,12 @@
               </v-tab-item>              
             </v-tabs>
           </v-tab-item>
-          <div><ProfileSummary :user-id="user.id" /></div>
+          <div>
+            <ProfileSummary
+              :user-id="user.id"
+              :show-link-profile="false"
+            />
+          </div>
         </v-tabs>
       </v-col>
     </v-row>
