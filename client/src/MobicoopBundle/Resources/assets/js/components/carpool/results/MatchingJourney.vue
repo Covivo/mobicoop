@@ -129,7 +129,10 @@
                 cols="4"
               >
                 <v-card>
-                  <ProfileSummary :user-id="result.carpooler.id" />
+                  <ProfileSummary
+                    :user-id="result.carpooler.id"
+                    @showProfile="step=4"
+                  />
                   <v-card-text>
                     <v-row
                       dense
@@ -321,6 +324,12 @@
             @change="changeReturn"
           />
         </v-stepper-content>
+
+        <v-stepper-content step="4">
+          <PublicProfile
+            :user-id="result.carpooler.id"
+          />
+        </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
 
@@ -419,8 +428,19 @@
       </v-row>
 
       <!-- Step 2 or 3 (previous) --> 
+      
+      <!-- Public profile -->
       <v-btn
-        v-if="step > 1"
+        v-if="step == 4"
+        color="secondary"
+        outlined
+        @click="step = 1"
+      >
+        {{ $t('previous') }}
+      </v-btn>
+      
+      <v-btn
+        v-else-if="step > 1"
         color="secondary"
         outlined
         @click="step--"
@@ -471,6 +491,7 @@ import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
+import PublicProfile from "@components/user/profile/PublicProfile";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -478,7 +499,8 @@ export default {
     VJourney,
     RegularDaysSummary,
     RegularAsk,
-    ProfileSummary
+    ProfileSummary,
+    PublicProfile
   },
   i18n: {
     messages: TranslationsMerged,

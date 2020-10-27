@@ -19,6 +19,7 @@
         <a
           href="#"
           title=""
+          @click="showProfile"
         >Voir le profil</a>
       </div>
       <div>
@@ -103,6 +104,9 @@ export default {
         .catch(function (error) {
           console.error(error);
         });
+    },
+    showProfile(){
+      this.$emit("showProfile",{'userId':this.userId});
     }
   }
 }
