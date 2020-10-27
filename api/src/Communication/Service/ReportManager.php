@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,37 +21,24 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\DataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+namespace App\Communication\Service;
+
 use App\Communication\Ressource\Report;
-use App\Communication\Service\ReportManager;
 
 /**
- * Post a report
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ReportDataPersister implements ContextAwareDataPersisterInterface
+class ReportManager
 {
-    private $reportManager;
-
-    public function __construct(ReportManager $reportManager)
+    /**
+     * Create a Report
+     *
+     * @param Report $report    The report to create
+     * @return Report
+     */
+    public function createReport(Report $report): Report
     {
-        $this->reportManager = $reportManager;
-    }
-
-    public function supports($data, array $context = []): bool
-    {
-        return $data instanceof Report && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
-    }
-
-    public function persist($data, array $context = [])
-    {
-        return $this->reportManager->createReport($data);
-    }
-
-    public function remove($data, array $context = [])
-    {
-        // call your persistence layer to delete $data
+        return $report;
     }
 }

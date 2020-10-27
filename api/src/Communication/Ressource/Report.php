@@ -43,10 +43,13 @@ use App\User\Entity\User;
  *          "get"={
  *              "security"="is_granted('reject',object)"
  *          },
- *          "post"={}
+ *          "post"={
+ *              "security_post_denormalize"="is_granted('report_create',object)"
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
+ *              "is_granted('reject',object)"
  *          }
  *      }
  * )
