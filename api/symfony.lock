@@ -547,6 +547,9 @@
     "symfony/yaml": {
         "version": "v4.2.3"
     },
+    "twig/intl-extra": {
+        "version": "v3.1.0"
+    },
     "twig/twig": {
         "version": "v2.6.2"
     },
