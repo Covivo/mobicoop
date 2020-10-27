@@ -75,12 +75,12 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     private $carpoolRealized;
 
     /**
-     * @var \DateTimeInterface User created date
+     * @var int User created date
      */
     private $answerPct;
 
     /**
-     * @var int|null Nomber of carpool already done
+     * @var \DateTimeInterface Nomber of carpool already done
      */
     private $createdDate;
 
@@ -88,6 +88,11 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
      * @var \DateTimeInterface Last user activity date
      */
     private $lastActivityDate;
+
+    /**
+     * @var boolean|null If the User is experienced
+     */
+    private $experienced;
 
     public function getId(): ?int
     {
@@ -221,6 +226,18 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function isExperienced(): ?bool
+    {
+        return $this->experienced;
+    }
+
+    public function setExperienced(?bool $experienced): self
+    {
+        $this->experienced = $experienced;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         $userSerialized = [
@@ -234,7 +251,8 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
             'carpoolRealized'           => $this->getCarpoolRealized(),
             'answerPct'                 => $this->getAnswerPct(),
             'lastActivityDate'          => $this->getLastActivityDate(),
-            'createdDate'               => $this->getCreatedDate()
+            'createdDate'               => $this->getCreatedDate(),
+            'experienced'               => $this->isExperienced()
         ];
 
         return $userSerialized;

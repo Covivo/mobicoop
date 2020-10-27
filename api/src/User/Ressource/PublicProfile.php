@@ -52,9 +52,6 @@ use App\User\Entity\User;
  */
 class PublicProfile
 {
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
-    
     const SMOKE_NO = 0;
     const SMOKE_NOT_IN_CAR = 1;
     const SMOKE = 2;

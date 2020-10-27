@@ -940,6 +940,11 @@ class Deserializer
     {
         $publicProfile = new PublicProfile();
         $publicProfile = $this->autoSet($publicProfile, $data);
+
+        if (isset($data["profileSummary"])) {
+            $publicProfile->setProfileSummary($this->deserializeProfileSummary($data['profileSummary']));
+        }
+
         return $publicProfile;
     }
 
