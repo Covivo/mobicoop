@@ -271,6 +271,12 @@ services:
             $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
             $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
 
+    App\Communication\Service\ReportManager:
+        arguments:
+            $supportEmailAddress: '%env(string:MAILER_SUPPORT)%'
+            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'

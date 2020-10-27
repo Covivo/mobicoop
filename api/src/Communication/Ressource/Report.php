@@ -77,6 +77,7 @@ class Report
 
     /**
      * @var string|null Text of the Report
+     * @Assert\NotBlank
      * @Groups({"readReport","writeReport"})
      */
     private $text;
