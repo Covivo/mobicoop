@@ -27,7 +27,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Event\Entity\Event;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Entity\User;
 
@@ -55,6 +54,8 @@ use App\User\Entity\User;
  */
 class Report
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of the Report
      *
@@ -65,6 +66,8 @@ class Report
 
     /**
      * @var string|null Email of the reporter
+     * @Assert\NotBlank
+     * @Assert\Email()
      * @Groups({"readReport","writeReport"})
      */
     private $reporterEmail;
@@ -87,6 +90,11 @@ class Report
      */
     private $event;
 
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -128,7 +136,7 @@ class Report
         return $this->reporterEmail;
     }
 
-    public function setReporterEmail(Event $reporterEmail): self
+    public function setReporterEmail(string $reporterEmail): self
     {
         $this->reporterEmail = $reporterEmail;
         
