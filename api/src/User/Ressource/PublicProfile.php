@@ -68,60 +68,10 @@ class PublicProfile
     private $id;
 
     /**
-     * @var string The given name of the User
-     *
+     * @var ProfileSummary Pofile Summary of the User
      * @Groups({"readPublicProfile"})
      */
-    private $givenName;
-
-    /**
-     * @var string The shorten family name of the User
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $shortFamilyName;
-
-    /**
-     * @var int The age of the User
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $age;
-
-    /**
-     * @var int phone display configuration (1 = restricted (default); 2 = all).
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $phoneDisplay;
-
-    /**
-     * @var string|null The telephone number of the user.
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $telephone;
-
-    /**
-     * @var string|null Avatar of the user.
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $avatar;
-
-    /**
-     * @var int|null Nomber of carpool already done
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $carpoolRealized;
-
-    /**
-     * @var int|null Answer rate in percent
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $answerPct;
+    private $profileSummary;
 
     /**
      * @var int|null Smoking preferences.
@@ -166,27 +116,12 @@ class PublicProfile
     private $chatFavorites;
 
     /**
-     * @var \DateTimeInterface User created date
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Last user activity date
-     *
-     * @Groups({"readPublicProfile"})
-     */
-    private $lastActivityDate;
-
-    /**
      * @var array|null Reviews about this user
      *
      * @Groups({"readPublicProfile"})
      */
     private $reviews;
 
-    
     public function __construct($id=null)
     {
         if (!is_null($id)) {
@@ -208,98 +143,14 @@ class PublicProfile
         return $this;
     }
 
-    public function getGivenName(): ?string
+    public function getProfileSummary(): ?ProfileSummary
     {
-        return $this->givenName;
+        return $this->profileSummary;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setProfileSummary(ProfileSummary $profileSummary): self
     {
-        $this->givenName = $givenName;
-        
-        return $this;
-    }
-
-    public function getShortFamilyName(): ?string
-    {
-        return $this->shortFamilyName;
-    }
-
-    public function setShortFamilyName(string $shortFamilyName): self
-    {
-        $this->shortFamilyName = $shortFamilyName;
-        
-        return $this;
-    }
-
-    public function getAge(): ?int
-    {
-        return $this->age;
-    }
-
-    public function setAge(int $age): self
-    {
-        $this->age = $age;
-        
-        return $this;
-    }
-
-    public function getPhoneDisplay(): ?int
-    {
-        return $this->phoneDisplay;
-    }
-
-    public function setPhoneDisplay(?int $phoneDisplay): self
-    {
-        $this->phoneDisplay = $phoneDisplay;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(?string $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
-
-    public function getAvatar(): ?string
-    {
-        return $this->avatar;
-    }
-
-    public function setAvatar(?string $avatar): self
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function getCarpoolRealized(): ?int
-    {
-        return $this->carpoolRealized;
-    }
-
-    public function setCarpoolRealized(int $carpoolRealized): self
-    {
-        $this->carpoolRealized = $carpoolRealized;
-        
-        return $this;
-    }
-
-    public function getAnswerPct(): ?int
-    {
-        return $this->answerPct;
-    }
-
-    public function setAnswerPct(int $answerPct): self
-    {
-        $this->answerPct = $answerPct;
+        $this->profileSummary = $profileSummary;
         
         return $this;
     }
@@ -360,30 +211,6 @@ class PublicProfile
     public function setChatFavorites(?string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
-
-        return $this;
-    }
-
-    public function getCreatedDate(): ?\DateTimeInterface
-    {
-        return $this->createdDate;
-    }
-
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
-    {
-        $this->createdDate = $createdDate;
-
-        return $this;
-    }
-    
-    public function getLastActivityDate(): ?\DateTimeInterface
-    {
-        return $this->lastActivityDate;
-    }
-
-    public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
-    {
-        $this->lastActivityDate = $lastActivityDate;
 
         return $this;
     }

@@ -1416,49 +1416,20 @@ class UserManager
      */
     public function getProfileSummary(User $user): ProfileSummary
     {
-        // We get the public profile
-        $publicProfile = $this->getPublicProfile($user);
-
-        // We keep only the data we need for the Profile summary
         $profileSummary = new ProfileSummary($user->getId());
-        $profileSummary->setGivenName($publicProfile->getGivenName());
-        $profileSummary->setShortFamilyName($publicProfile->getShortFamilyName());
-        $profileSummary->setCreatedDate($publicProfile->getCreatedDate());
-        $profileSummary->setLastActivityDate($publicProfile->getLastActivityDate());
-        $profileSummary->setAge($publicProfile->getAge());
-        $profileSummary->setPhoneDisplay($publicProfile->getPhoneDisplay());
-        $profileSummary->setTelephone($publicProfile->getTelephone());
-        $profileSummary->setAvatar($publicProfile->getAvatar());
-        $profileSummary->setCarpoolRealized($publicProfile->getCarpoolRealized());
-        $profileSummary->setAnswerPct($publicProfile->getAnswerPct());
-        $profileSummary->setCreatedDate($publicProfile->getCreatedDate());
-        $profileSummary->setLastActivityDate($publicProfile->getLastActivityDate());
+        $profileSummary->setGivenName($user->getGivenName());
+        $profileSummary->setShortFamilyName($user->getShortFamilyName());
+        $profileSummary->setCreatedDate($user->getCreatedDate());
+        $profileSummary->setLastActivityDate($user->getLastActivityDate());
 
-        return $profileSummary;
-    }
+        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
 
-    /**
-     * Get the public profile of a User
-     *
-     * @param User $user   The User
-     * @return PublicProfile
-     */
-    public function getPublicProfile(User $user): PublicProfile
-    {
-        $publicProfile = new PublicProfile($user->getId());
-        $publicProfile->setGivenName($user->getGivenName());
-        $publicProfile->setShortFamilyName($user->getShortFamilyName());
-        $publicProfile->setCreatedDate($user->getCreatedDate());
-        $publicProfile->setLastActivityDate($user->getLastActivityDate());
-
-        $publicProfile->setAge($user->getBirthDate()->diff(new \DateTime())->y);
-
-        $publicProfile->setPhoneDisplay($user->getPhoneDisplay());
+        $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
         if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
-            $publicProfile->setTelephone($user->getTelephone());
+            $profileSummary->setTelephone($user->getTelephone());
         }
         if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
-            $publicProfile->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
         }
 
         // Number of realized carpool (number of accepted Aks as driver or passenger)
@@ -1470,7 +1441,7 @@ class UserManager
                 $nbAsks++;
             }
         }
-        $publicProfile->setCarpoolRealized($nbAsks);
+        $profileSummary->setCarpoolRealized($nbAsks);
 
         // Get the first messages of every threads the user is involved in
         $threads = $this->messageRepository->findThreads($user);
@@ -1498,7 +1469,31 @@ class UserManager
 
             $nbMessageConsidered++;
         }
-        $publicProfile->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+
+        // Experienced user
+        $profileSummary->setExperienced(false);
+        if ($this->profile['experiencedTag']) {
+            if ($profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools']) {
+                $profileSummary->setExperienced(true);
+            }
+        }
+
+        return $profileSummary;
+    }
+
+    /**
+     * Get the public profile of a User
+     *
+     * @param User $user   The User
+     * @return PublicProfile
+     */
+    public function getPublicProfile(User $user): PublicProfile
+    {
+        $publicProfile = new PublicProfile($user->getId());
+
+        // Get the profile summary
+        $publicProfile->setProfileSummary($this->getProfileSummary($user));
 
         // Preferences
         $publicProfile->setSmoke($user->getSmoke());
@@ -1506,7 +1501,7 @@ class UserManager
         $publicProfile->setMusicFavorites($user->getMusicFavorites());
         $publicProfile->setChat($user->hasChat());
         $publicProfile->setChatFavorites($user->getChatFavorites());
-        
+
         return $publicProfile;
     }
 }

@@ -36,7 +36,7 @@ use App\User\Entity\User;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readProfileSummary"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readProfileSummary","readPublicProfile"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "get"={
@@ -59,79 +59,86 @@ class ProfileSummary
      * @var int The id of the User
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $id;
 
     /**
      * @var string The given name of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $givenName;
 
     /**
      * @var string The shorten family name of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $shortFamilyName;
 
     /**
      * @var int The age of the User
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $age;
 
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all).
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $phoneDisplay;
 
     /**
      * @var string|null The telephone number of the user.
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $telephone;
 
     /**
      * @var string|null Avatar of the user.
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $avatar;
 
     /**
      * @var int|null Nomber of carpool already done
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $carpoolRealized;
 
     /**
      * @var int|null Answer rate in percent
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $answerPct;
 
     /**
      * @var \DateTimeInterface User created date
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Last user activity date
      *
-     * @Groups({"readProfileSummary"})
+     * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $lastActivityDate;
+
+    /**
+     * @var boolean|null If the User is experienced
+     *
+     * @Groups({"readProfileSummary","readPublicProfile"})
+     */
+    private $experienced;
 
     public function __construct($id=null)
     {
@@ -268,6 +275,18 @@ class ProfileSummary
     public function setLastActivityDate(?\DateTimeInterface $lastActivityDate): self
     {
         $this->lastActivityDate = $lastActivityDate;
+
+        return $this;
+    }
+
+    public function isExperienced(): ?bool
+    {
+        return $this->experienced;
+    }
+
+    public function setExperienced(?bool $experienced): self
+    {
+        $this->experienced = $experienced;
 
         return $this;
     }
