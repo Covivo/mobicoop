@@ -54,16 +54,50 @@
       >
         <v-row>
           <v-col>
-            <v-icon>{{ smokingIcon }}</v-icon><v-icon v-if="smokingCarIcon">
-              {{ smokingCarIcon }}
-            </v-icon>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>{{ smokingIcon }}</v-icon><v-icon v-if="smokingCarIcon">
+                    {{ smokingCarIcon }}
+                  </v-icon>
+                </div>
+              </template>
+              <span>{{ smokingIconToolTip }}</span>
+            </v-tooltip>
           </v-col>
         </v-row>
         <v-row>
-          <v-col><v-icon>{{ chatIcon }}</v-icon></v-col>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ chatIcon }}
+                </v-icon>
+              </template>
+              <span>{{ chatIconToolTip }}</span>
+            </v-tooltip>
+          </v-col>
         </v-row>
         <v-row>
-          <v-col><v-icon>{{ musicIcon }}</v-icon></v-col>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ musicIcon }}
+                </v-icon>
+              </template>
+              <span>{{ musicIconToolTip }}</span>
+            </v-tooltip>
+          </v-col>
         </v-row>
       </v-col>
     </v-row>
@@ -116,8 +150,14 @@ export default {
     musicIcon(){
       return (this.publicProfile.music) ? 'mdi-music' : 'mdi-music-off';
     },
+    musicIconToolTip(){
+      return (this.publicProfile.chat) ? this.$t('params.music') : this.$t('params.noMusic');
+    },    
     chatIcon(){
       return (this.publicProfile.chat) ? 'mdi-account-voice' : 'mdi-voice-off';
+    },
+    chatIconToolTip(){
+      return (this.publicProfile.chat) ? this.$t('params.chat') : this.$t('params.noChat');
     },
     smokingIcon(){
       switch(this.publicProfile.smoke){
@@ -129,7 +169,15 @@ export default {
     },
     smokingCarIcon(){
       return (this.publicProfile.smoke==1) ? 'mdi-car' : '';
-    }    
+    },
+    smokingIconToolTip(){
+      switch(this.publicProfile.smoke){
+      case 0: return this.$t('params.noSmoke');
+      case 1: return this.$t('params.noSmokeInCar');
+      case 2: return this.$t('params.smoke');
+      }
+      return this.$t('params.noSmoke');
+    }
   },
   mounted(){
     moment.locale(this.locale)
