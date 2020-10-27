@@ -5,14 +5,8 @@ import PropTypes from 'prop-types';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import { useField } from 'react-final-form';
-import { required } from 'react-admin';
-import { TimeInput } from 'react-admin-date-inputs';
-import frLocale from 'date-fns/locale/fr';
-import DateFnsUtils from '@date-io/date-fns';
+import { DateInput, required } from 'react-admin';
 import DayChipInput from './DayChipInput';
-import { dateFormat } from '../../../../utils/date';
-
-const formatHour = (d) => dateFormat(d, 'HH:mm');
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -35,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '6rem',
   },
   none: {
-    // display: 'none',
+    display: 'none',
   },
 }));
 
@@ -52,15 +46,15 @@ const BoundedDateTimeField = (props) => {
   }, [forcedValue]);
 
   return (
-    <TimeInput
-      source={props.source}
+    <DateInput
+      name={name}
+      type="time"
+      InputLabelProps={{ shrink: true }}
       label={props.label}
       validate={props.required ? [required()] : []}
-      options={{ format: 'HH:mm', ampm: false, clearable: true, minutesStep: 5 }}
-      providerOptions={{ utils: DateFnsUtils, locale: frLocale }}
-      onChange={(val) => {
-        onChangeInput(formatHour(val));
-        return onChange(val);
+      onChange={(event) => {
+        onChangeInput(event.target.value);
+        return onChange(event.target.value);
       }}
       {...rest}
     />
@@ -314,6 +308,36 @@ const SolidaryRegularSchedules = () => {
     ]);
   };
 
+  const checkReturnTemplate = (day) => {
+    let value = null;
+    slotsList.forEach((s) => {
+      if (s.days[day]) {
+        if (s.returnTimes) {
+          value = s.returnTimes;
+        }
+      }
+    });
+    setReturnTimes((prevState) => ({
+      ...prevState,
+      [day]: value,
+    }));
+  };
+
+  const checkOutwardTemplate = (day) => {
+    let value = null;
+    slotsList.forEach((s) => {
+      if (s.days[day]) {
+        if (s.outwardTimes) {
+          value = s.outwardTimes;
+        }
+      }
+    });
+    setOutwardTimes((prevState) => ({
+      ...prevState,
+      [day]: value,
+    }));
+  };
+
   const checkDaysTemplate = (day) => {
     let value = false;
     slotsList.forEach((s) => {
@@ -331,6 +355,8 @@ const SolidaryRegularSchedules = () => {
     const iterator = Object.keys(days);
     for (const key of iterator) {
       checkDaysTemplate(key);
+      checkOutwardTemplate(key);
+      checkReturnTemplate(key);
     }
   }, [slotsList]);
 
@@ -451,7 +477,6 @@ const SolidaryRegularSchedules = () => {
       </div>
       <div>
         {slotsList.map((slot, i) => {
-          console.log('slot', slot);
           return (
             <Card raised className={classes.card} key={`card-${slot.id}`}>
               <Ask
