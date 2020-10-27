@@ -79,6 +79,7 @@ class MangoPayProvider implements PaymentProviderInterface
     private $paymentProfileRepository;
     private $validationDocsPath;
     private $baseUri;
+    private $baseMobileUri;
 
     public function __construct(
         ?User $user,
@@ -88,6 +89,7 @@ class MangoPayProvider implements PaymentProviderInterface
         string $currency,
         string $validationDocsPath,
         string $baseUri,
+        string $baseMobileUri,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
@@ -98,6 +100,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
         $this->baseUri = $baseUri;
+        $this->baseMobileUri = $baseMobileUri;
     }
     
     /**
@@ -381,11 +384,12 @@ class MangoPayProvider implements PaymentProviderInterface
         }
         
         
-        $returnUrl = self::LANDING_AFTER_PAYMENT;
+        
+        $returnUrl = $this->baseUri."".self::LANDING_AFTER_PAYMENT;
         if ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE) {
-            $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE;
+            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
         } elseif ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE) {
-            $returnUrl = self::LANDING_AFTER_PAYMENT_MOBILE_SITE;
+            $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
         }
 
         $body = [
@@ -399,7 +403,7 @@ class MangoPayProvider implements PaymentProviderInterface
                 "Amount" => 0
             ],
             "CreditedWalletId" => $wallet->getId(),
-            "ReturnURL" => $this->baseUri."".$returnUrl."?paymentPaymentId=".$carpoolPayment->getId(),
+            "ReturnURL" => $returnUrl."?paymentPaymentId=".$carpoolPayment->getId(),
             "CardType" => self::CARD_TYPE,
             "Culture" => self::LANGUAGE
         ];

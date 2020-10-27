@@ -101,7 +101,6 @@ class GeoMatcher
         $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
         $this->logger->info("GeoMatcher : end multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        
         // we treat the routes to check if they match
         foreach ($ownerRoutes as $ownerId=>$routes) {
             if ($variants[$ownerId]['role'] == 'driver') {
@@ -400,7 +399,6 @@ class GeoMatcher
             // we deserialize the direction if needed
             $direction = $routes[0];
             if (is_array($routes[0])) {
-                //$this->logger->info("GeoMatcher : deserialize direction " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($routes[0]);
             }
             
@@ -419,7 +417,7 @@ class GeoMatcher
                 'detourDuration' => $candidate1->getDirection() ? ($duration-$candidate1->getDirection()->getDuration()) : ($duration-$candidate1->getDuration()),
                 'detourDurationPercent' => $candidate1->getDirection() ? round($duration*100/$candidate1->getDirection()->getDuration()-100, 2) : round($duration*100/$candidate1->getDuration()-100, 2),
                 'commonDistance' => $candidate2->getDirection() ? $candidate2->getDirection()->getDistance() : $candidate2->getDistance(),
-                'direction' => $direction,
+                // 'direction' => $direction,
                 'candidate1' => $candidate1->getId(),
                 'candidate2' => $candidate2->getId()
             ];

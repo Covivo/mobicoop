@@ -372,4 +372,17 @@ class CommunityManager
         }
         return $mCommunities;
     }
+
+    /**
+    * Delete a community user
+    *
+    * @param CommunityUser $communityUser  The community user to delete
+    * @return void
+    */
+    public function deleteCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->remove($communityUser);
+        $this->entityManager->flush();
+        return $communityUser;
+    }
 }

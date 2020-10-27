@@ -10,7 +10,8 @@
         "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
         "textRecovery": "Mot de passe oublié ?",
         "signUp": "Vous n'êtes pas encore inscrit ?",
-        "urlSignUp": "/utilisateur/inscription"
+        "urlSignUp": "/utilisateur/inscription",
+        "urlGetSsoServices":"/user/getSsoServices"
         
     },
     "en": {
@@ -23,6 +24,7 @@
         "urlRecovery": "/user/password/recovery",
         "textRecovery": "Forgot password ?",
         "signUp": "Not registered ?",
-        "urlSignUp": "/user/signup"
+        "urlSignUp": "/user/signup",
+        "urlGetSsoServices":"/user/getSsoServices"
     }
 }

@@ -788,7 +788,7 @@ class PaymentManager
 
         // first we search the accepted asks for the given period and the given user
         $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate, $user);
-
+        
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**

@@ -39,7 +39,7 @@ use Psr\Log\LoggerInterface;
  */
 class GraphhopperProvider implements GeorouterInterface
 {
-    private const NAME = "GraphHopper";
+    private const NAME = "GH";
     private const DIRECTION_RESOURCE = "route";
     private const MODE_CAR = "CAR";
     private const PROFILE_NO_TOLL = "car_without_toll";
@@ -238,7 +238,7 @@ class GraphhopperProvider implements GeorouterInterface
                 // so after the requests we will be able to know who is the owner
                 $requestsOwner = [];
                 $i = 0;
-                self::print_mem(1);
+                $this->print_mem(1);
                 foreach ($multiPoints as $ownerId => $directionVariants) {
                     foreach ($directionVariants as $addresses) {
                         $rparams = $this->uri ."/" . self::DIRECTION_RESOURCE . "/?";
@@ -270,7 +270,7 @@ class GraphhopperProvider implements GeorouterInterface
                         unset($addresses);
                     }
                 }
-                self::print_mem(2);
+                // $this->print_mem(2);
 
                 // creation of the file that represent all the routes to get
                 $this->logger->debug('Multiple Async | Creation of the exchange file start for ' . $i . ' routes');
@@ -282,30 +282,31 @@ class GraphhopperProvider implements GeorouterInterface
                 $fp = null;
                 unset($urls);
                 unset($fp);
-                self::print_mem(3);
+                // $this->print_mem(3);
 
                 $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
                 // call external script
-                $this->logger->debug('Multiple Async | Call external script start : ' . $this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1');
+                $this->logger->debug('Multiple Async | Call external script start : ' . $this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1 | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $return = exec($this->batchScriptPath . $filename . $this->batchScriptArgs . ' 2>&1', $out, $err);
                 // $filenameReturn = $filename . ".log";
                 // $fpr = fopen($filenameReturn, 'w');
                 // fwrite($fpr, print_r($out, true));
                 // fwrite($fpr, 'status : ' . $err);
                 // fclose($fpr);
-                $this->logger->debug('Multiple Async | Call external script end');
+                $this->logger->debug('Multiple Async | Call external script end | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // treat the response
-                self::print_mem(4);
+                // $this->print_mem(4);
 
+                // note : we use JsonMachine as it's way more efficient than json_decode, but be careful the resulting object is an Iterable, not a Countable => only foreach possible !
                 $response = \JsonMachine\JsonMachine::fromFile($filename);
 
-                self::print_mem(5);
+                // $this->print_mem(5);
 
                 switch ($this->returnType) {
                     case self::RETURN_TYPE_OBJECT:
                     {
-                        $this->logger->debug('Multiple Async | Start deserialize routes');
+                        $this->logger->debug('Multiple Async | Start deserialize routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         foreach ($response as $key=>$paths) {
                             if (is_array($paths)) {
                                 foreach ($paths as $path) {
@@ -313,12 +314,12 @@ class GraphhopperProvider implements GeorouterInterface
                                 }
                             }
                         }
-                        $this->logger->debug('Multiple Async | End deserialize routes');
+                        $this->logger->debug('Multiple Async | End deserialize routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         break;
                     }
                     case self::RETURN_TYPE_ARRAY:
                     {
-                        $this->logger->debug('Multiple Async | Start treat array routes');
+                        $this->logger->debug('Multiple Async | Start treat array routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         foreach ($response as $key=>$paths) {
                             // we search the first and last elements for the bearing
                             reset($multiPoints[$requestsOwner[$key]][0]);
@@ -346,7 +347,7 @@ class GraphhopperProvider implements GeorouterInterface
                                 }
                             }
                         }
-                        $this->logger->debug('Multiple Async | End treat array routes');
+                        $this->logger->debug('Multiple Async | End treat array routes | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                         $paths = null;
                         unset($paths);
                         break;
@@ -364,7 +365,7 @@ class GraphhopperProvider implements GeorouterInterface
                     }
                 }
                 
-                self::print_mem(6);
+                // $this->print_mem(6);
                 foreach ($requestsOwner as $owner) {
                     $owner = null;
                     unset($owner);
@@ -380,8 +381,8 @@ class GraphhopperProvider implements GeorouterInterface
                 $response = null;
                 unset($response);
                 gc_collect_cycles();
-                self::print_mem(7);
-                $this->logger->debug('Multiple Async | Exchange file deletion');
+                $this->print_mem(7);
+                $this->logger->debug('Multiple Async | Exchange file deletion | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 unlink($filename);
                 break;
             }
@@ -487,7 +488,7 @@ class GraphhopperProvider implements GeorouterInterface
         if (isset($data["points"])) {
             // we keep the encoded AND the decoded points (all the points of the path returned by the SIG)
             // the decoded points are not stored in the database
-            $direction->setDetail($data["points"]);
+            //$direction->setDetail($data["points"]);
             if (!$this->pointsOnly) {
                 $direction->setPoints($this->deserializePoints($data['points']));
             } else {
@@ -640,12 +641,12 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * Deserializes geographical points to Addresses.
      *
-     * @param string $data      The data to deserialize
+     * @param mixed $data       The data to deserialize
      * @param bool $encoded     Data encoded
      * @param bool $is3D        Data has elevation information
      * @return Address[]        The deserialized Addresses
      */
-    private function deserializeGHPoints(string $data, bool $encoded, bool $is3D)
+    private function deserializeGHPoints($data, bool $encoded, bool $is3D)
     {
         $addresses = [];
         if ($encoded) {
@@ -761,7 +762,7 @@ class GraphhopperProvider implements GeorouterInterface
         
         /* Peak memory usage */
         $mem_peak = memory_get_peak_usage();
-        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.<br>');
-        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.<br><br>');
+        $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.');
+        $this->logger->debug($id . ' Peak usage: ' . round($mem_peak / 1024) . 'KB of memory.');
     }
 }

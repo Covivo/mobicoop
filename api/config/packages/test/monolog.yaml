@@ -48,8 +48,13 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/notification.log"
             channels: [notification]     
+        faker:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker] 
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]

@@ -298,6 +298,11 @@ class Ad implements ResourceInterface, \JsonSerializable
     private $results;
 
     /**
+     * @var int|null The number of results.
+     */
+    private $nbResults;
+
+    /**
      * @var array|null The carpool asks.
      */
     private $asks;
@@ -889,6 +894,18 @@ class Ad implements ResourceInterface, \JsonSerializable
     public function setResults(array $results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getNbResults(): ?int
+    {
+        return $this->nbResults;
+    }
+
+    public function setNbResults(?int $nbResults): self
+    {
+        $this->nbResults = $nbResults;
 
         return $this;
     }

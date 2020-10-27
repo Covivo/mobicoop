@@ -266,7 +266,7 @@ services:
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $contactEmailAddress: '%env(resolve:MAILER_CONTACT)%'
+            $contactEmailAddress: '%env(json:MAILER_CONTACT)%'
             $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
             $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
             $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
@@ -330,7 +330,7 @@ services:
             $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
             $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
-            - { name: monolog.logger, channel: georouter }
+            - { name: monolog.logger, channel: carpool }
 
     App\Geography\Service\GeoTools:
         arguments:
@@ -406,6 +406,10 @@ services:
             $sqlLog: '%env(bool:IMPORT_SQL_LOG)%'
             $directionsBatch: '%env(int:IMPORT_USERS_DIRECTIONS_BATCH_SIZE)%'
     
+    App\Import\Service\FakeManager:
+        tags:
+            - { name: monolog.logger, channel: faker }
+    
     # Mass Communication
     App\MassCommunication\Controller\:
         resource: '../src/MassCommunication/Controller'
@@ -426,7 +430,7 @@ services:
 
     App\Match\Service\GeoMatcher:
         tags:
-            - { name: monolog.logger, channel: geomatcher }
+            - { name: monolog.logger, channel: carpool }
 
     App\Match\Service\MassImportManager:
         arguments:
@@ -480,6 +484,7 @@ services:
             $platformName: '%env(string:PAYMENT_PLATFORM_NAME)%'
             $validationDocsPath: '%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%'
             $baseUri: '%env(string:BASE_URI)%'
+            $baseMobileUri: '%env(string:BASE_MOBILE_URI)%'
 
     App\Payment\Service\PaymentManager:
         arguments:
@@ -533,6 +538,11 @@ services:
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
             $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
     
+    App\User\Service\SsoManager:
+        arguments:
+            $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
+            $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:
             $params:

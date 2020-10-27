@@ -74,6 +74,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
+use App\User\Entity\SsoUser;
 
 /**
  * User manager service.
@@ -1357,5 +1358,45 @@ class UserManager
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string
+    }
+
+    
+    /**
+     * Return a User from a SsoUser
+     * Existing user or a new one
+     *
+     * @param SsoUser $ssoUser
+     * @return User|null
+     */
+    public function getUserFromSso(SsoUser $ssoUser): ?User
+    {
+        $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
+        if (is_null($user)) {
+            // echo "new user\n";
+            // echo $ssoUser->getSub()."\n";
+            // echo $ssoUser->getProvider()."\n";
+            // echo $ssoUser->getGender()."\n";die;
+            // Create a new one
+            $user = new User();
+            $user->setSsoId($ssoUser->getSub());
+            $user->setSsoProvider($ssoUser->getProvider());
+            $user->setGivenName($ssoUser->getFirstname());
+            $user->setFamilyName($ssoUser->getLastname());
+            $user->setEmail($ssoUser->getEmail());
+
+            // Gender
+            switch ($ssoUser->getGender()) {
+                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);break;
+                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);break;
+                default: $user->setGender(User::GENDER_OTHER);
+            }
+
+            if (trim($ssoUser->getBirthdate())!="") {
+                $user->setBirthDate(DateTime::createFromFormat("Y-m-d", $ssoUser->getBirthdate()));
+            }
+
+            $user = $this->registerUser($user);
+        }
+        return $user;
     }
 }

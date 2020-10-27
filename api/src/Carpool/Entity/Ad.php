@@ -410,6 +410,13 @@ class Ad
     private $results;
 
     /**
+     * @var int|null The number of results.
+     *
+     * @Groups("results")
+     */
+    private $nbResults;
+
+    /**
      * @var int|null The ad id for which the current ad is an ask.
      *
      * @Groups({"read","write"})
@@ -1015,6 +1022,18 @@ class Ad
     public function setResults(array $results)
     {
         $this->results = $results;
+
+        return $this;
+    }
+
+    public function getNbResults(): ?int
+    {
+        return $this->nbResults;
+    }
+
+    public function setNbResults(?int $nbResults): self
+    {
+        $this->nbResults = $nbResults;
 
         return $this;
     }
