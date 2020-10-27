@@ -11,13 +11,16 @@
     <v-row v-else>
       <v-col cols="4">
         <v-row>
-          <v-col cols="6">
+          <v-col cols="8">
             <ProfileAvatar
               :avatar="publicProfile.avatar"
               :experienced="publicProfile.experienced"
             />
           </v-col>
-          <v-col cols="6">
+          <v-col
+            cols="4"
+            class="text-right"
+          >
             {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
             {{ publicProfile.age }} {{ $t('yearsOld') }}
           </v-col>
@@ -27,7 +30,7 @@
         cols="3"
         class="text-center"
       >
-        <p>{{ $t('carpoolRealized') }}<br>{{ publicProfile.carpoolRealized }}</p>
+        <p>{{ $t('carpoolRealized') }}<br><span class="headline">{{ publicProfile.carpoolRealized }}</span></p>
         <p>{{ $t('lastConnection') }}<br>{{ lastConnection }}</p>
       </v-col>
       <v-col
@@ -37,14 +40,14 @@
         <p>
           {{ $t('answerRate') }}<br>
           <v-progress-linear
-            v-model="publicProfile.answerPct"
             :color="answerRateColor"
             height="25"
+            :value="publicProfile.answerPct"
           >
             <template v-slot:default="{ value }">
               <strong>{{ Math.ceil(value) }}%</strong>
             </template>
-          </v-progress-linear>          
+          </v-progress-linear>
         </p>
         <p>{{ $t('subscribedOn') }}<br>{{ subscribedOn }}</p>
       </v-col>
