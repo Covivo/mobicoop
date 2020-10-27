@@ -32,7 +32,7 @@
             cols="12"
             class="text-center"
           >
-            {{ profileSummary.age }} ans<br>
+            {{ profileSummary.age }} {{ $t('yearsOld') }}<br>
             <span v-if="profileSummary && profileSummary.phoneDisplay == 2">{{ profileSummary.telephone }}</span>
           </v-col>
         </v-row>

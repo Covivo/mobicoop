@@ -1,14 +1,86 @@
 <template>
-  <div>
-    public !
-  </div>
+  <v-container fluid>
+    <v-row v-if="loading">
+      <v-col cols="12">
+        <v-skeleton-loader
+          class="mx-auto"
+          type="card"
+        />        
+      </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col cols="4">
+        <v-row>
+          <v-col cols="6">
+            <ProfileAvatar
+              :avatar="publicProfile.avatar"
+              :experienced="publicProfile.experienced"
+            />
+          </v-col>
+          <v-col cols="6">
+            {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
+            {{ publicProfile.age }} {{ $t('yearsOld') }}
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col
+        cols="3"
+        class="text-center"
+      >
+        <p>{{ $t('carpoolRealized') }}<br>{{ publicProfile.carpoolRealized }}</p>
+        <p>{{ $t('lastConnection') }}<br>{{ lastConnection }}</p>
+      </v-col>
+      <v-col
+        cols="3"
+        class="text-center"
+      >
+        <p>
+          {{ $t('answerRate') }}<br>
+          <v-progress-linear
+            v-model="publicProfile.answerPct"
+            :color="answerRateColor"
+            height="25"
+          >
+            <template v-slot:default="{ value }">
+              <strong>{{ Math.ceil(value) }}%</strong>
+            </template>
+          </v-progress-linear>          
+        </p>
+        <p>{{ $t('subscribedOn') }}<br>{{ subscribedOn }}</p>
+      </v-col>
+      <v-col
+        cols="2"
+        class="text-center"
+      >
+        <v-row>
+          <v-col>
+            <v-icon>{{ smokingIcon }}</v-icon><v-icon v-if="smokingCarIcon">
+              {{ smokingCarIcon }}
+            </v-icon>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col><v-icon>{{ chatIcon }}</v-icon></v-col>
+        </v-row>
+        <v-row>
+          <v-col><v-icon>{{ musicIcon }}</v-icon></v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 import Translations from "@translations/components/user/profile/PublicProfile.json";
+import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+
 export default {
   i18n: {
     messages: Translations,
+  },
+  components: {
+    ProfileAvatar
   },
   props:{
     userId:{
@@ -19,17 +91,55 @@ export default {
   data(){
     return{
       publicProfile:null,
-      loading:true
+      loading:true,
+      locale: this.$i18n.locale
     }
   },
+  computed:{
+    lastConnection(){
+      return moment(this.publicProfile.lastActivityDate.date).format('DD/MM/YYYY');
+    },
+    subscribedOn(){
+      return moment(this.publicProfile.createdDate.date).format('DD/MM/YYYY');
+    },
+    answerRateColor(){
+      if(this.publicProfile.answerPct < 33){
+        return 'error'
+      }
+      else if(this.publicProfile.answerPct < 66){
+        return 'warning'
+      }
+      else{
+        return 'success'
+      }
+    },
+    musicIcon(){
+      return (this.publicProfile.music) ? 'mdi-music' : 'mdi-music-off';
+    },
+    chatIcon(){
+      return (this.publicProfile.chat) ? 'mdi-account-voice' : 'mdi-voice-off';
+    },
+    smokingIcon(){
+      switch(this.publicProfile.smoke){
+      case 0:
+      case 1: return 'mdi-smoking-off';
+      case 2: return 'mdi-smoking';
+      }
+      return 'mdi-smoking-off';
+    },
+    smokingCarIcon(){
+      return (this.publicProfile.smoke==1) ? 'mdi-car' : '';
+    }    
+  },
   mounted(){
+    moment.locale(this.locale)
     this.getPublicProfile()
   },
   methods:{
     getPublicProfile(){
       axios.post(this.$t('getPublicProfileUri'),{'userId':this.userId})
         .then(response => {
-          console.log(response.data);
+          //console.log(response.data);
           this.publicProfile = response.data;
           this.loading = false;
         })

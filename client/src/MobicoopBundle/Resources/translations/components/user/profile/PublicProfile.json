@@ -1,8 +1,18 @@
 {
     "fr": {
-        "getPublicProfileUri":"/utilisateur/profil/public"
+        "getPublicProfileUri":"/utilisateur/profil/public",
+        "yearsOld":"ans",
+        "carpoolRealized":"Covoiturages réalisés",
+        "lastConnection":"Dernière connexion le",
+        "answerRate":"Taux de réponse",
+        "subscribedOn":"Inscrit le"
     },    
     "en": {
-        "getPublicProfileUri":"/user/profile/public"
+        "getPublicProfileUri":"/user/profile/public",
+        "yearsOld":"years old",
+        "carpoolRealized":"Carpool realized",
+        "lastConnection":"Last connection",
+        "answerRate":"Answering rate",
+        "subscribedOn":"Subscribed on"
     }    
 }

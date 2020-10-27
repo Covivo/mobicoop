@@ -188,11 +188,21 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     {
         $userSerialized = [
             'id'                        => $this->getId(),
+            'givenName'                 => $this->getProfileSummary()->getGivenName(),
+            'shortFamilyName'           => $this->getProfileSummary()->getShortFamilyName(),
+            'age'                       => $this->getProfileSummary()->getAge(),
+            'phoneDisplay'              => $this->getProfileSummary()->getPhoneDisplay(),
+            'telephone'                 => $this->getProfileSummary()->getTelephone(),
+            'avatar'                    => $this->getProfileSummary()->getAvatar(),
+            'carpoolRealized'           => $this->getProfileSummary()->getCarpoolRealized(),
+            'answerPct'                 => $this->getProfileSummary()->getAnswerPct(),
             'smoke'                     => $this->getSmoke(),
             'music'                     => $this->hasMusic(),
             'musicFavorites'            => $this->getMusicFavorites(),
             'chat'                      => $this->hasChat(),
             'chatFavorites'             => $this->getChatFavorites(),
+            'lastActivityDate'          => $this->getProfileSummary()->getLastActivityDate(),
+            'createdDate'               => $this->getProfileSummary()->getCreatedDate(),
             'reviews'                   => $this->getReviews()
         ];
 

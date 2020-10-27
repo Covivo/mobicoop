@@ -1,5 +1,6 @@
 {
     "fr": {
+        "yearsOld":"ans",
         "getProfileSummaryUri":"/utilisateur/profil/resume",
         "infos":{
             "carpoolRealized":"Covoiturages réalisés",
@@ -7,6 +8,7 @@
         }
     },    
     "en": {
+        "yearsOld":"years old",
         "getProfileSummaryUri":"/user/profile/summary",
         "infos":{
             "carpoolRealized":"Carpool realized",
