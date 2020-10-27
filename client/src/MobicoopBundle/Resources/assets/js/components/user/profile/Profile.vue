@@ -52,8 +52,11 @@
                 {{ $t("tabs.myAccount") }}
               </v-tab>
               <v-tab-item>
-                <div>
+                <div class="text-right">
                   <v-btn
+                    class="mt-4"
+                    color="primary"
+                    rounded
                     @click="dialog = true"
                   >
                     {{ $t('publicProfile.see') }}
