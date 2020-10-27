@@ -110,10 +110,9 @@ for file in files:
     copyfile(file, newFile)
     # print("Nouveau fichier : "+newFile)
     # print("Composant : "+component_name)
-    index_file_object = open(filePath+"/index.js", 'a')
 
     # Open the file in append & read mode ('a+')
-    with open(file, "a+") as file_object:
+    with open(filePath+"/index.js", "a+") as file_object:
         # Move read cursor to the start of file.
         file_object.seek(0)
         # If file is not empty then append '\n'
