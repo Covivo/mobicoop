@@ -39,14 +39,21 @@
 </template>
 <script>
 
-import Translations from "@translations/components/utilities/PlatformWidget.json";
+import { merge } from "lodash";
+import {messages_fr, messages_en} from "@translations/components/utilities/PlatformWidget/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/utilities/PlatformWidget/";
 
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props:{
     community:{

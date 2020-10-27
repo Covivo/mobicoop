@@ -104,14 +104,18 @@ import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
+import {messages_fr, messages_en} from "@translations/components/user/profile/Profile/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/Profile/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     UpdateProfile,

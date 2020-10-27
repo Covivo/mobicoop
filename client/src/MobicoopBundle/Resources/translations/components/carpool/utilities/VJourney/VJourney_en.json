@@ -1,0 +1,7 @@
+{
+    "driverOrigin": "Départ du conducteur",
+    "driverDestination": "Arrivée du conducteur",
+    "step": "Point de passage",
+    "pickUp": "Pris en charge",
+    "dropOff": "Dépose"
+}

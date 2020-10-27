@@ -90,12 +90,20 @@
 </template>
 
 <script>
+import {merge} from "lodash";
 import moment from 'moment';
-import Translations from "@translations/components/user/profile/ad/Schedules.js";
+import {messages_fr, messages_en} from "@translations/components/user/profile/ad/Schedules/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/ad/Schedules/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     // for multiple computed times eg my ads

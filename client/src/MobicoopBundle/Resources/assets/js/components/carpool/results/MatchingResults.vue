@@ -69,15 +69,24 @@
   </div>
 </template>
 <script>
+
+import { merge } from "lodash";
 import MatchingResult from "@components/carpool/results/MatchingResult";
-import Translations from "@translations/components/carpool/results/MatchingResults.json";
+import {messages_fr, messages_en} from "@translations/components/carpool/results/MatchingResults/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/MatchingResults/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
     MatchingResult,
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props:{
     externalRdexJourneys:{

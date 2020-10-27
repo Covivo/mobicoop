@@ -1,0 +1,33 @@
+{
+    "ui": {
+        "buttons": {
+            "validate": {
+                "label": "Validate",
+                "route": "/solidary/ask"
+            },
+            "cancel": {
+                "label": "Cancel"
+            }
+        }
+    },
+    "yearOfBirth": {
+        "label": "Year of birth",
+        "placeholder": "Year of birth"
+    },
+    "hasRSA": {
+        "label": "",
+        "placeholder": ""
+    },
+    "subject": {
+        "label": "",
+        "placeholder": ""
+    },
+    "structure": {
+        "label": "",
+        "placeholder": ""
+    },
+    "other": {
+        "label": "Other",
+        "placeholder": "Other"
+    }
+}

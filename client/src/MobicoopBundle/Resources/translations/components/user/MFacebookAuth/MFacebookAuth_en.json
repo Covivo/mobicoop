@@ -1,0 +1,7 @@
+{
+    "urlFacebookConnect": "/utilisateur/facebook/connect",
+    "signup": "Sign up by facebook",
+    "connection": "Log in by facebook",
+    "fillPublicInfos": "The form has been filled by your public data from Facebook.",
+    "fillRemainingFields": "Please fill the remaining mandatory fields."
+}

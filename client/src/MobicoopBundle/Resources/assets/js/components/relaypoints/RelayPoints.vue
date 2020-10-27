@@ -62,15 +62,22 @@
 
 <script>
 import axios from "axios";
-import Translations from "@translations/components/relayPoints/RelayPoints.json";
+import {merge} from "lodash";
+import {messages_fr, messages_en} from "@translations/components/relayPoints/RelayPoints/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     Search, MMap

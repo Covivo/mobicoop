@@ -83,16 +83,20 @@
 import { merge } from "lodash";
 import moment from "moment";
 import EventReport from "@components/event/EventReport";
-import Translations from "@translations/components/event/EventListItem.json";
-import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_fr, messages_en} from "@translations/components/event/EventListItem/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/event/EventListItem/";
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components:{
     EventReport
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props:{
     item:{

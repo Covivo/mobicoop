@@ -35,12 +35,15 @@
   </v-container>
 </template>
 <script>
-import Translations from "@translations/components/utilities/social/MSocialFeeds.json";
+import {messages_fr, messages_en} from "@translations/components/utilities/social/MSocialFeeds/";
 import MSocialFeedsItem from "@components/utilities/social/MSocialFeedsItem";
 import axios from "axios";
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     MSocialFeedsItem

@@ -1,0 +1,14 @@
+{
+    "title": "Mailbox",
+    "headers": {
+        "messages": "Messages",
+        "context": "Ad"
+    },
+    "urlSend": "/user/messages/send",
+    "urlUpdateAsk": "/user/messages/updateAsk",
+    "headersCategories": {
+        "titleCarpool": "Carpool",
+        "titleLive": "Direct",
+        "titleSolidary": "Solidary"
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "page": {
+        "title": "Profile"
+    },
+    "tabs": {
+        "myProfile": "Profile",
+        "password": "Password",
+        "myAds": "My proposals",
+        "carpoolSettings": "My settings",
+        "alerts": "My alerts",
+        "bankCoordinates": "My bank coordinates",
+        "carpoolsAccepted": "Accepted carpools",
+        "myAccount": "My account"
+    },
+    "form": {
+        "newPassword": "New password",
+        "newPasswordRepeat": "New password (confirmation)",
+        "errors": {
+            "required": "Password is required",
+            "notIdentiquals": "Passwords are not identical"
+        }
+    },
+    "snackBar": {
+        "passwordUpdated": "Password updated",
+        "textSnackError": "Password update has failed"
+    }
+}

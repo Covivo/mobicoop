@@ -1,0 +1,14 @@
+{
+    "eventsAvailable": "Events available",
+    "eventsPassed": "Passed events",
+    "createEvent": "Create an event",
+    "search": "Search",
+    "all": "All",
+    "linePerPage": "Nomber of line per page",
+    "seeAds": "See the ads",
+    "noEvent": "No event",
+    "routes": {
+        "event": "/event/{id}",
+        "getList": "/events/getEventList"
+    }
+}

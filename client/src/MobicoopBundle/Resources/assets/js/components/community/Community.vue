@@ -360,8 +360,8 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/community/Community.json";
-import TranslationsClient from "@clientTranslations/components/community/Community.json";
+import {messages_fr, messages_en} from "@translations/components/community/Community/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
@@ -369,7 +369,8 @@ import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap";
 import L from "leaflet";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
@@ -380,7 +381,10 @@ export default {
     CommunityLastUsers,
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props: {
     user: {

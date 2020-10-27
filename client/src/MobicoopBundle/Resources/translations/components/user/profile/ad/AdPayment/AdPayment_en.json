@@ -1,0 +1,12 @@
+{
+    "driver": {
+        "paid": "Paid",
+        "pending": "Confirm payment"
+    },
+    "passenger": {
+        "paid": "Paid",
+        "pending": "Pay"
+    },
+    "link": "/payments/{id}/{frequency}/{type}/{week}",
+    "unpaid": "Unpaid"
+}

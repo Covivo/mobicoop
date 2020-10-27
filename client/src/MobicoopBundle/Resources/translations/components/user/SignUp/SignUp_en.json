@@ -1,0 +1,29 @@
+{
+    "title": "Sign Up",
+    "urlSignUp": "/user/signup",
+    "urlSignUpResult": "/user/signup/{id}",
+    "urlRedirectAfterSignUp": "/user/signup/validation/{email}",
+    "urlRedirectAfterSignUpResult": "/user/login/{id}",
+    "checkEmail": {
+        "url": "/user/check/email",
+        "error": "This email is already attached to an account"
+    },
+    "chart": {
+        "text": "I accept ",
+        "link": "the platform chart and its data protection policy",
+        "route": "/cgu"
+    },
+    "communities": {
+        "route": "/user/register/community-list"
+    },
+    "step": "Step",
+    "steps": {
+        "1": "Credentials",
+        "2": "Identity",
+        "3": "Gender",
+        "4": "Birthdate",
+        "5": "Home town"
+    },
+    "login": "Already have an account ? Login !",
+    "urlLogin": "/user/login/"
+}

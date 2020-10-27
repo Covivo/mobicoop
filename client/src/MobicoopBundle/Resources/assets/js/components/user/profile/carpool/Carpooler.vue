@@ -132,8 +132,9 @@
 </template>
 
 <script>
-import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
-
+import {merge} from "lodash";
+import {messages_fr, messages_en} from "@translations/components/user/profile/carpool/CarpoolFooter/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/carpool/CarpoolFooter/";
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
@@ -141,9 +142,15 @@ import CarpoolerContact from "@components/carpool/utilities/CarpoolerContact";
 import Schedules from '@components/user/profile/ad/Schedules.vue';
 import AdPayment from '@components/user/profile/ad/AdPayment.vue';
 
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     CarpoolerIdentity,

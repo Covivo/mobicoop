@@ -32,11 +32,19 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/profile/payment/PaymentPaid.json";
+import {merge} from "lodash";
+import {messages_fr, messages_en} from "@translations/components/user/profile/payment/PaymentPaid/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/payment/PaymentPaid/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     paymentPaymentId: {

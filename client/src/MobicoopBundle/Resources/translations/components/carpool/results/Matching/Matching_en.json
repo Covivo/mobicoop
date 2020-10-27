@@ -1,0 +1,32 @@
+{
+    "title": "Carpool results",
+    "proposalUrl": "/carpool/ad/{id}/detail",
+    "externalUrl": "/carpool/ad/{id}/external",
+    "matchingUrl": "/carpool/search/matching",
+    "carpoolUrl": "/carpool/ask",
+    "contactUrl": "/carpool/contact",
+    "mailboxUrl": "/user/messages/carpool/{askId}",
+    "externalJourneyUrl": "/carpool/rdexJourney",
+    "ptSearchUrl": "/public-transport/search",
+    "search": "Searching...",
+    "search2": "Patience, we found many potential carpoolers !",
+    "search3": "Almost there...",
+    "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
+    "includePassengers": "Show also passengers carpools",
+    "alsoIncludePassengers": "This research includes also passengers carpools",
+    "snackBar": {
+        "success": "Contact has been successfuly established",
+        "error": "Due to a technical difficuly, the contact hasn't been established"
+    },
+    "tabs": {
+        "carpools": "{platform} carpools",
+        "otherCarpools": "Other carpools",
+        "ptresults": "Public transports"
+    },
+    "loginOrRegisterTitle": "Connection or registering required",
+    "loginOrRegister": "You need to login or register to continue",
+    "login": "Login",
+    "register": "Register",
+    "loginUrl": "/user/login/{id}",
+    "registerUrl": "/user/register/{id}"
+}

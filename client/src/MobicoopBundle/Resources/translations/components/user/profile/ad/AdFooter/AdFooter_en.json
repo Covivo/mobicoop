@@ -1,0 +1,11 @@
+{
+    "seat": {
+        "singular": "seat",
+        "plural": "seats"
+    },
+    "potentialCarpooler": {
+        "singular": "potential carpooler",
+        "plural": "potentials carpoolers"
+    },
+    "urlResult": "/carpool/ad/{id}/results"
+}

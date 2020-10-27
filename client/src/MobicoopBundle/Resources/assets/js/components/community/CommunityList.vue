@@ -157,18 +157,22 @@
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityList.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
+import {messages_fr, messages_en} from "@translations/components/community/CommunityList/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/community/CommunityList/";
 import CommunityListItem from "@components/community/CommunityListItem";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components:{
     CommunityListItem
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props:{
     paths: {

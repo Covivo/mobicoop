@@ -22,7 +22,7 @@
           centered
           grow
         >
-          <v-tab>{{ $t('ads.ongoing') }}</v-tab>
+          <v-tab>{{ $t('ongoing') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.ongoing">
               <v-row
@@ -38,7 +38,7 @@
               </v-row>
             </v-container>
           </v-tab-item>
-          <v-tab>{{ $t('ads.archived') }}</v-tab>
+          <v-tab>{{ $t('archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
               <v-row
@@ -61,14 +61,21 @@
   </v-container>
 </template>
 <script>
-import { omit } from "lodash";
-import Translations from "@translations/components/user/profile/ad/MyAds.js";
 
+import { merge, omit } from "lodash";
+import {messages_fr, messages_en} from "@translations/components/user/profile/ad/Ads/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/ad/Ads/";
 import Ad from "@components/user/profile/ad/Ad.vue";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     Ad

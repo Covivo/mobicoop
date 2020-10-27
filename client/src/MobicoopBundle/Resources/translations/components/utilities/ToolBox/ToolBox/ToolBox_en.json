@@ -1,0 +1,12 @@
+{
+    "title": "Tool box",
+    "subtitle": "Communication tools",
+    "intro": "You can download thse communication tools",
+    "widget": {
+        "title": "The widget",
+        "textLink": "Go to this page",
+        "link": "/widget/get",
+        "text": "to download an embedable widget and learn the instructions to do it"
+    },
+    "items": []
+}

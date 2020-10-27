@@ -13,7 +13,7 @@
 home:
     path:
         fr: /
-        en: /
+        en: /en/
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
 
 home_logout:

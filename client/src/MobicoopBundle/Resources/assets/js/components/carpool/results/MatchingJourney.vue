@@ -493,13 +493,15 @@
 <script>
 import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/results/MatchingJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingJourney.json";
+import {messages_fr, messages_en} from "@translations/components/carpool/results/MatchingJourney/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   components: {
     VJourney,
@@ -507,7 +509,10 @@ export default {
     RegularAsk
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props: {
     result: {

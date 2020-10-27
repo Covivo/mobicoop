@@ -174,9 +174,9 @@
         <v-col cols="10">
           <IdentityValidation
             :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
-            :payment-profile-status="(this.bankCoordinates) ? this.bankCoordinates.status : 0"
-            :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
-            :validation-asked-date="(this.bankCoordinates) ? this.bankCoordinates.validationAskedDate : null"
+            :payment-profile-status="(bankCoordinates) ? bankCoordinates.status : 0"
+            :validation-status="(bankCoordinates) ? bankCoordinates.validationStatus : 0"
+            :validation-asked-date="(bankCoordinates) ? bankCoordinates.validationAskedDate : null"
             @identityDocumentSent="identityDocumentSent"
           />
         </v-col>
@@ -224,14 +224,22 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/user/profile/payment/BankAccount.json";
+import {merge} from "lodash";
+import {messages_fr, messages_en} from "@translations/components/user/profile/payment/BankAccount/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/payment/BankAccount/";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
 
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     GeoComplete,

@@ -1,0 +1,12 @@
+{
+    "mon": "L",
+    "tue": "M",
+    "wed": "Me",
+    "thu": "J",
+    "fri": "V",
+    "sat": "S",
+    "sun": "D",
+    "dateValid": "Valide jusqu'au",
+    "valid": "Validité :",
+    "dateValidUntil": "jusqu'au"
+}

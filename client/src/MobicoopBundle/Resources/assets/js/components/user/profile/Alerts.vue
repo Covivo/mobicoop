@@ -41,12 +41,16 @@
 import axios from "axios";
 import { merge } from "lodash";
 import Alert from "@components/user/profile/Alert";
-import Translations from "@translations/components/user/profile/Alerts.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/Alerts.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_fr, messages_en} from "@translations/components/user/profile/Alerts/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/Alerts/";
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components:{
     Alert

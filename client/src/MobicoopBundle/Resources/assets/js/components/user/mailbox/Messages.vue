@@ -195,7 +195,9 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/mailbox/Messages.json";
+import { merge } from "lodash";
+import {messages_fr, messages_en} from "@translations/components/user/mailbox/Messages/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -204,9 +206,15 @@ import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
 import TypeText from '@components/user/mailbox/TypeText'
 
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     MailBoxHeader,

@@ -1,0 +1,8 @@
+{
+    "startEvent": {
+        "label": "Start"
+    },
+    "endEvent": {
+        "label": "End"
+    }
+}

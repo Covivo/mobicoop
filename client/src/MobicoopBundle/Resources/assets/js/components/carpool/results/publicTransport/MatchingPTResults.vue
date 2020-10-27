@@ -51,14 +51,24 @@
   </div>
 </template>
 <script>
+
+import { merge } from "lodash";
 import MatchingPTResult from "@components/carpool/results/publicTransport/MatchingPTResult";
-import Translations from "@translations/components/carpool/results/publicTransport/MatchingPTResults.json";
+import {messages_fr, messages_en} from "@translations/components/carpool/results/publicTransport/MatchingPTResults/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/publicTransport/MatchingPTResults/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   components: {
     MatchingPTResult,
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props:{
     ptResults: {

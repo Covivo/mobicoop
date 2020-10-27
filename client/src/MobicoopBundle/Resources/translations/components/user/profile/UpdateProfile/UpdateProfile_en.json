@@ -1,0 +1,26 @@
+{
+    "titles": {
+        "personnalInfos": "Personnal Informations",
+        "password": "Password",
+        "deleteAccount": "Delete my account"
+    },
+    "snackBar": {
+        "profileUpdated": "Your profile has been updated",
+        "errorProfileUpdate": "Error, your profile hasn't been updated",
+        "phoneValidated": "Your phone number has been verified.",
+        "unknown": "Your validation code is incorrect."
+    },
+    "avatar": {
+        "label": "Avatar",
+        "size": "The size of your avatar exceeds the maximum limit",
+        "delete": {
+            "route": "/user/profile/avatar/delete"
+        }
+    },
+    "route": {
+        "update": "/user/profile/update"
+    },
+    "news": {
+        "label": "News of"
+    }
+}

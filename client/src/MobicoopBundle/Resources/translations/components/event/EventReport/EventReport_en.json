@@ -1,0 +1,33 @@
+{
+    "button": "Report event",
+    "snackbar": {
+        "thankyou": "",
+        "error": ""
+    },
+    "popup": {
+        "title": "Report event",
+        "content": "",
+        "form": {
+            "email": {
+                "label": "",
+                "errors": {
+                    "required": "",
+                    "valid": ""
+                }
+            },
+            "description": {
+                "label": "",
+                "errors": {
+                    "required": ""
+                }
+            }
+        },
+        "button": {
+            "report": "Report",
+            "cancel": "Cancel"
+        }
+    },
+    "routes": {
+        "report": "/event/{id}/report"
+    }
+}

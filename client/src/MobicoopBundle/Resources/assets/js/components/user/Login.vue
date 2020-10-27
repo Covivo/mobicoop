@@ -122,15 +122,20 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Login.json";
-import TranslationsClient from "@clientTranslations/components/user/Login.json";
+import {messages_fr, messages_en} from "@translations/components/user/Login/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/Login/";
 import MFacebookAuth from '@components/user/MFacebookAuth';
 import SsoLogin from '@components/user/SsoLogin';
-let TranslationsMerged = merge(Translations, TranslationsClient);
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   name: "Login",
   components : {
@@ -180,7 +185,8 @@ export default {
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
-    this.getSso();
+    //this.getSso();
+    //console.log(this.$i18n.messages)
   },
   methods: {
     validate() {

@@ -136,8 +136,8 @@
 <script>
 
 import { merge } from "lodash";
-import Translations from "@translations/components/event/Event.json";
-import TranslationsClient from "@clientTranslations/components/event/Event.json";
+import {messages_fr, messages_en} from "@translations/components/event/Event/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import EventReport from "@components/event/EventReport";
 import Search from "@components/carpool/search/Search";
@@ -145,14 +145,18 @@ import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 import moment from "moment";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
     EventReport, EventInfos, Search, MMap
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props:{
     user: {

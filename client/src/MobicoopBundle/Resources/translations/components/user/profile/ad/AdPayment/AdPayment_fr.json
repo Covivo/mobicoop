@@ -1,0 +1,12 @@
+{
+    "driver": {
+        "paid": "Déjà payé",
+        "pending": "Valider le paiement"
+    },
+    "passenger": {
+        "paid": "Déjà payé",
+        "pending": "Payer"
+    },
+    "link": "/payments/{id}/{frequency}/{type}/{week}",
+    "unpaid": "Impayé"
+}

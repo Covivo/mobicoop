@@ -1,0 +1,8 @@
+{
+    "buttons": {
+        "contact": {
+            "route": "/contact",
+            "label": "Nous contacter"
+        }
+    }
+}

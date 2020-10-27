@@ -1,0 +1,59 @@
+{
+    "leaveCommunity": {
+        "button": "Leave community",
+        "route": "/community/{id}/leave"
+    },
+    "buttons": {
+        "publish": {
+            "label": "Publish an ad",
+            "route": "carpool/search/post"
+        },
+        "search": {
+            "label": "Search",
+            "route": ""
+        },
+        "join": {
+            "label": "Join the community",
+            "route": "/community/{id}/join"
+        },
+        "contact": {
+            "route": "/user/messages/new"
+        }
+    },
+    "tooltips": {
+        "connected": "You have to be connected",
+        "validation": "Pending validation",
+        "domain": "You email address must be in the domain:"
+    },
+    "snackbar": {
+        "joinCommunity": {
+            "textOk": "Your application has been send to the community manager. You will be notified by email.",
+            "textError": "We reached a technical difficulty. Please try again."
+        },
+        "leaveCommunity": {
+            "textOk": "",
+            "textError": "We reached a technical difficulty. Please try again."
+        }
+    },
+    "title": {
+        "searchCarpool": "Search a journey in the community"
+    },
+    "map": {
+        "findMatchings": "Find the matchings ads",
+        "origin": "Origin",
+        "destination": "Destination",
+        "regular": "Regular journey"
+    },
+    "urlCommunityUser": "/community-user",
+    "widget": {
+        "label": "See Widget",
+        "route": "/community/widget/get/{id}",
+        "externalRoute": "/community/widget/{id}",
+        "textDetails": {
+            "title": "Intégrer le widget",
+            "p1": "Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br />Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.",
+            "p2": "&lt;iframe src=\"{url}\" width=\"<strong>100%</strong>\" height=\"<strong>440px</strong>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p3": "<strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame."
+        }
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "lastName": {
+        "label": "Votre nom",
+        "placeholder": "Votre nom"
+    },
+    "firstName": {
+        "label": "Votre prénom",
+        "placeholder": "Votre prénom"
+    },
+    "email": {
+        "label": "Votre email",
+        "placeholder": "Votre email",
+        "errors": {
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide."
+        }
+    },
+    "demand": {
+        "label": "Votre demande",
+        "placeholder": "Votre demande",
+        "items": {
+            "infos": "Renseignement",
+            "technicalIssues": "Problème technique",
+            "partnership": "Partenariat",
+            "community": "Création communauté"
+        }
+    },
+    "message": {
+        "label": "Votre message",
+        "placeholder": "Votre message",
+        "errors": {
+            "required": "Le message est requis."
+        }
+    },
+    "buttons": {
+        "send": {
+            "label": "Envoyer",
+            "route": "contact/send"
+        }
+    },
+    "consent": {
+        "label": "Données personnelles",
+        "placeholder": "Données personnelles",
+        "text": "En cochant cette case et en soumettant ce formulaire, j'accepte que mes données personnelles soient utilisées pour me recontacter dans le cadre de ma demande indiquée dans ce formulaire. Aucun autre traitement ne sera effectué avec mes informations.",
+        "errors": {
+            "required": "Votre consentement est requis."
+        }
+    },
+    "dataPolicy": {
+        "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
+        "link": "notre politique de protection des données",
+        "route": "/protection-donnees"
+    },
+    "success": "Votre message a été envoyé avec succès.",
+    "error": "Une erreur est survenue."
+}

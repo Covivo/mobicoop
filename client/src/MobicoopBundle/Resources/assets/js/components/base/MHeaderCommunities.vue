@@ -39,13 +39,17 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/base/MHeaderCommunities.json";
-import TranslationsClient from "@clientTranslations/components/base/MHeaderCommunities.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_fr, messages_en} from "@translations/components/base/MHeaderCommunities/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/base/MHeaderCommunities/";
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props:{
     userId:{

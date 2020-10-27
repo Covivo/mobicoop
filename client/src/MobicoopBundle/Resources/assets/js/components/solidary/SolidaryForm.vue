@@ -265,15 +265,19 @@
 import {merge, find} from "lodash";
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/solidary/SolidaryForm.js";
-import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
+import {messages_fr, messages_en} from "@translations/components/solidary/SolidaryForm/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/solidary/SolidaryForm/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     SearchJourney

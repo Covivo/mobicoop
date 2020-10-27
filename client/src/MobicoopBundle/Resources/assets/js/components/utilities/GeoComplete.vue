@@ -60,10 +60,11 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import merge from "lodash/merge";
 
-import Translations from "@translations/components/utilities/GeoComplete.json";
-import TranslationsClient from "@clientTranslations/components/utilities/GeoComplete.json";
+import {messages_fr, messages_en} from "@translations/components/utilities/GeoComplete/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/utilities/GeoComplete/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 const defaultString = {
   type: String,
@@ -71,7 +72,10 @@ const defaultString = {
 };
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     url: defaultString,

@@ -8,15 +8,19 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/utilities/Accessibility.json";
-import TranslationsClient from "@clientTranslations/components/utilities/Accessibility.json";
+import {messages_fr, messages_en} from "@translations/components/utilities/Accessibility/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/utilities/Accessibility/";
 import '@css/page/home/accessconfig.scss';
 import '@js/config/accessconfig.js';
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
   }

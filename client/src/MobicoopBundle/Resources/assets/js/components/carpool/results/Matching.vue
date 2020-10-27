@@ -286,8 +286,8 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/carpool/results/Matching.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
+import {messages_fr, messages_en} from "@translations/components/carpool/results/Matching/";
+import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
@@ -295,7 +295,9 @@ import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+
 export default {
   components: {
     MatchingHeader,
@@ -306,7 +308,10 @@ export default {
     MatchingPTResults
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props: {
     // proposal Id if Matching results after an ad post
