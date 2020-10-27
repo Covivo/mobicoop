@@ -897,7 +897,7 @@ export default {
       var sum = 0;
       if (this.ePayItems.length>0) {
         this.ePayItems.forEach((item, key) => {
-          sum += this.getAmount(item);
+          sum += parseFloat(this.getAmount(item));
         });
       }
       return sum;
