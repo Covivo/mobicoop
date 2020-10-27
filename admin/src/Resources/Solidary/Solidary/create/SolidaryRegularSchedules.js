@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import { Button, Card, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
@@ -38,7 +38,7 @@ const BoundedDateTimeField = (props) => {
   const {
     input: { value, name, onChange, ...rest },
   } = useField(props.source);
-  const { forcedValue, onChange: onChangeInput } = props;
+  const { forcedValue, onChange: onChangeInput, initialValue } = props;
 
   useEffect(() => {
     if (forcedValue !== undefined) {
@@ -46,10 +46,16 @@ const BoundedDateTimeField = (props) => {
     }
   }, [forcedValue]);
 
+  useEffect(() => {
+    console.log('[EDITION] InitialValue Time', initialValue);
+  }, [initialValue])
+
   return (
     <DateInput
       name={name}
       type="time"
+      value={initialValue}
+      source={props.source}
       InputLabelProps={{ shrink: true }}
       label={props.label}
       validate={props.required ? [required()] : []}
@@ -65,6 +71,7 @@ const BoundedDateTimeField = (props) => {
 BoundedDateTimeField.defaultProps = {
   onChange: () => {},
   forcedValue: undefined,
+  initialValue: undefined,
   required: false,
 };
 
@@ -74,6 +81,7 @@ BoundedDateTimeField.propTypes = {
   source: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   required: PropTypes.bool,
+  initialValue: PropTypes.bool,
 };
 
 const Ask = ({
@@ -166,6 +174,7 @@ const Ask = ({
               updateSlotsDays(id, 'mon', value);
               checkDaysTemplate('mon', value);
             }}
+            initialValue={slot.days.mon}
           />
           <DayChipInput
             label="Ma"
@@ -174,6 +183,7 @@ const Ask = ({
               updateSlotsDays(id, 'tue', value);
               checkDaysTemplate('tue', value);
             }}
+            initialValue={slot.days.tue}
           />
           <DayChipInput
             label="Me"
@@ -182,6 +192,7 @@ const Ask = ({
               updateSlotsDays(id, 'wed', value);
               checkDaysTemplate('wed', value);
             }}
+            initialValue={slot.days.wed}
           />
           <DayChipInput
             label="J"
@@ -190,6 +201,7 @@ const Ask = ({
               updateSlotsDays(id, 'thu', value);
               checkDaysTemplate('thu', value);
             }}
+            initialValue={slot.days.thu}
           />
           <DayChipInput
             label="V"
@@ -198,6 +210,7 @@ const Ask = ({
               updateSlotsDays(id, 'fri', value);
               checkDaysTemplate('fri', value);
             }}
+            initialValue={slot.days.fri}
           />
           <DayChipInput
             label="S"
@@ -206,6 +219,7 @@ const Ask = ({
               updateSlotsDays(id, 'sat', value);
               checkDaysTemplate('sat', value);
             }}
+            initialValue={slot.days.sat}
           />
           <DayChipInput
             label="D"
@@ -214,6 +228,7 @@ const Ask = ({
               updateSlotsDays(id, 'sun', value);
               checkDaysTemplate('sun', value);
             }}
+            initialValue={slot.days.sun}
           />
         </Box>
       </div>
@@ -228,6 +243,7 @@ const Ask = ({
             setSlotsList(newArr);
           }}
           required={id === 0}
+          initialValue={slot.outwardTimes}
         />
         <BoundedDateTimeField
           source={`returnTimes${slot.id}`}
@@ -238,6 +254,7 @@ const Ask = ({
             newArr[id].returnTimes = value;
             setSlotsList(newArr);
           }}
+          initialValue={slot.returnTimes}
         />
       </div>
     </>
@@ -259,7 +276,12 @@ Ask.propTypes = {
   choices: PropTypes.array.isRequired,
 };
 
-const SolidaryRegularSchedules = ({ choices, initialChoice }) => {
+const SolidaryRegularSchedules = (props) => {
+  const {
+    isEditing = false,
+    choices,
+    initialChoice,
+  } = props;
   const [choice, setChoice] = useState(choices[initialChoice]);
   const [selectedDateTime, setSelectedDateTime] = useState(null);
   const [days, setDays] = useState({
@@ -310,6 +332,96 @@ const SolidaryRegularSchedules = ({ choices, initialChoice }) => {
   const classes = useStyles();
 
   const [id, setId] = useState(1);
+  const [loading, setLoading] = useState({days: true, owt: true, rt: true});
+
+  const daysField = useField('days');
+  const outwardsField = useField('outwardTimes');
+  const returnsField = useField('returnTimes');
+
+  const updateSlotsDays = (index, days) => {
+    const newArr = [...slotsList];
+    newArr[index].days = days;
+
+    setSlotsList(newArr);
+  };
+
+  const updateSlotsOWT = (index, owt) => {
+    const newArr = [...slotsList];
+    newArr[index].outwardTimes = owt;
+
+    setSlotsList(newArr);
+  };
+
+  const updateSlotsRT = (index, rt) => {
+    const newArr = [...slotsList];
+    newArr[index].returnTimes = rt;
+
+    setSlotsList(newArr);
+  };
+
+  useEffect(() => {
+    if (loading.days) {
+      const initialDays = { ...daysField.meta.initial };
+      console.log('[EDITION] Set Initial Days From Given Values: ', initialDays);
+      setDays(initialDays);
+      updateSlotsDays(0, initialDays);
+      setLoading({...loading, days: false});
+    }
+  }, [daysField.meta.initial, loading]);
+
+  useEffect(() => {
+    if (loading.owt) {
+      const initialOwt = { ...outwardsField.meta.initial };
+      console.log('[EDITION] Set Initial Outward Times From Given Values: ', initialOwt);
+      setOutwardTimes(initialOwt);
+      updateSlotsOWT(0, initialOwt.mon)
+      setLoading({...loading, owt: false});
+    }
+  }, [outwardsField.meta.initial]);
+
+  useEffect(() => {
+    if (loading.rt) {
+      const initialRt = { ...returnsField.meta.initial };
+      console.log('[EDITION] RTF META: ', returnsField.meta);
+      console.log('[EDITION] Set Initial Return Times From Given Values: ', initialRt);
+      setReturnTimes(initialRt);
+      updateSlotsRT(0, initialRt.mon)
+      setLoading({...loading, rt: false});
+    }
+  }, [returnsField.meta.initial]);
+
+  useEffect(() => {
+    if (!loading.rt && !loading.days && !loading.owt) {
+      console.log('[EDITION]RETURN', returnTimes);
+      let newSlots = [];
+
+      for (const [key, value] of Object.entries(days)) {
+        if (value) {
+          let found = false;
+          for (let i = 0; i < newSlots.length; i += 1) {
+            if (outwardTimes[key] === newSlots[i].outwardTimes
+              && returnTimes[key] === newSlots[i].returnTimes) {
+              newSlots[i].days[key] = value;
+              found = true;
+            }
+          }
+          if (!found) {
+            newSlots.push({
+              id: newSlots.length,
+              days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false, [key]: value },
+              outwardTimes: outwardTimes[key],
+              returnTimes: returnTimes[key],
+            })
+          }
+        }
+      }
+      console.log('[EDITION] RESULTAT FINALS SLOTS: ', newSlots);
+    }
+  }, [loading])
+
+  useEffect(() => {
+    console.log('Days template:', days);
+  }, [days]);
 
   const onAddBtnClick = () => {
     setId((prevState) => prevState + 1);
@@ -424,10 +536,12 @@ const SolidaryRegularSchedules = ({ choices, initialChoice }) => {
     }
   };
 
+  if (isEditing && (loading.owt || loading.days || loading.rt)) return <p>loading...</p>;
+
   return (
     <>
       <div className={classes.none}>
-        <DayChipInput source="days.mon" label="L" forcedValue={days.mon} />
+        <DayChipInput source="days.mon" label="L" forcedValue={days.mon}  />
         <DayChipInput source="days.tue" label="Ma" forcedValue={days.tue} />
         <DayChipInput source="days.wed" label="Me" forcedValue={days.wed} />
         <DayChipInput source="days.thu" label="J" forcedValue={days.thu} />

@@ -11,6 +11,9 @@ export const SolidaryNeedsQuestion = ({ label }) => {
     { field: 'id', order: 'ASC' }
   );
 
+  console.log('data Need:', data);
+  console.log('loading Need:', loading);
+
   const needs = Object.values(data) || [];
   const choices = needs.map((n) => ({ id: n.id, name: n.label }));
 
