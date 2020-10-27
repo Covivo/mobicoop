@@ -121,7 +121,6 @@ for file in files:
         if len(data) > 0:
             file_object.write("\n")
         # Append text at the end of file
-        file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json'
-                          )
+        file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json'")
 
 # directory_spider("../client/src/MobicoopBundle/Resources/translations","",".json$")
