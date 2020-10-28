@@ -57,6 +57,8 @@ client_ui_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/UI/")
 client_route_file = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/config/routes.yaml")
+api_translations_path = os.path.abspath(
+    script_absolute_path+"/../api/translations/")
 
 lang = ""
 
@@ -138,9 +140,12 @@ def path_leaf(path):
 # copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
 
 # 4 - create client routes
-with open(client_route_file, 'r+') as f:
-        file_source = f.read()
-        file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
-        f.truncate(0)
-        f.seek(0)
-        f.write(file_source)
+# with open(client_route_file, 'r+') as f:
+#         file_source = f.read()
+#         file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
+#         f.truncate(0)
+#         f.seek(0)
+#         f.write(file_source)
+
+# 5 - create api translation files
+copyfile(api_translations_path+"/messages+intl-icu.en.yaml", api_translations_path+"/messages+intl-icu."+lang+".yaml")
