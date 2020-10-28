@@ -70,7 +70,7 @@
         <div
           class="mt-5"
         >
-          <EventReport
+          <Report
             :event="item"
           />
         </div>
@@ -82,14 +82,14 @@
 
 import { merge } from "lodash";
 import moment from "moment";
-import EventReport from "@components/event/EventReport";
+import Report from "@components/utilities/Report";
 import Translations from "@translations/components/event/EventListItem.json";
 import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components:{
-    EventReport
+    Report
   },
   i18n: {
     messages: TranslationsMerged,

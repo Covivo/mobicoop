@@ -43,7 +43,6 @@ import EventCreate from "@components/event/EventCreate";
 import Event from "@components/event/Event";
 import EventWidget from "@components/event/EventWidget";
 import EventGetWidget from "@components/event/EventGetWidget";
-import EventReport from "@components/event/EventReport";
 
 // ARTICLE
 import MArticle from "@components/article/MArticle";
@@ -93,7 +92,6 @@ export default {
   Event,
   EventWidget,
   EventGetWidget,
-  EventReport,
   MArticle,
   PlatformWidget,
   PlatformGetWidget,

@@ -1,0 +1,82 @@
+{
+  "fr": {
+    "button": "Signaler",
+    "snackbar": {
+      "thankyou": "Merci pour ce signalement",
+      "error": "Une erreur s'est produite durant le signalement"
+    },
+    "popup": {
+      "event":{
+        "title": "Signalement d'événement",
+        "content": "Vous avez constaté du contenu inapproprié sur l'événement \"<strong>{eventName}</strong>\" ?<br/>Signalez-le à notre équipe qui prendra les mesures nécessaires.<br/><br/>Merci de préciser ce qui vous paraît inapproprié :"
+      },
+      "user":{
+        "title": "Signalement d'un utilisateur",
+        "content": "Vous souhaitez signaler le comportement inapproprié de \"<strong>{userName}</strong>\" ? "
+      },
+      "form": {
+        "email": {
+          "label": "Merci de renseigner votre email",
+          "errors": {
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide."
+          }
+        },
+        "text": {
+          "label": "Explication",
+          "errors": {
+            "required": "Une explication est nécessaire"
+          }
+        }
+      },
+      "button": {
+        "report": "Signaler",
+        "cancel": "Annuler"
+      }
+    },
+    "routes": {
+      "eventReport": "/evenement/{id}/signaler",
+      "userReport": "/utilisateur/{id}/signaler"
+    }
+  },
+  "en": {
+    "button": "Signaler",
+    "snackbar": {
+      "thankyou": "Merci pour ce signalement",
+      "error": "Une erreur s'est produite durant le signalement"
+    },
+    "popup": {
+      "event":{
+        "title": "Signalement d'événement",
+        "content": "Vous avez constaté du contenu inapproprié sur l'événement \"<strong>{eventName}</strong>\" ?<br/>Signalez-le à notre équipe qui prendra les mesures nécessaires.<br/><br/>Merci de préciser ce qui vous paraît inapproprié :"
+      },
+      "user":{
+        "title": "Signalement d'un utilisateur",
+        "content": "Vous souhaitez signaler le comportement inapproprié de \"<strong>{userName}</strong>\" ? "
+      },
+      "form": {
+        "email": {
+          "label": "Merci de renseigner votre email",
+          "errors": {
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide."
+          }
+        },
+        "text": {
+          "label": "Explication",
+          "errors": {
+            "required": "Une explication est nécessaire"
+          }
+        }
+      },
+      "button": {
+        "report": "Signaler",
+        "cancel": "Annuler"
+      }
+    },
+    "routes": {
+      "eventReport": "/event/{id}/report",
+      "userReport": "/user/{id}/report"
+    }
+  }
+}
