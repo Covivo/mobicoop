@@ -136,6 +136,10 @@ export default {
     showReportButton: {
       type: Boolean,
       default: true
+    },
+    refresh:{
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -195,6 +199,13 @@ export default {
       return this.$t('params.noSmoke');
     }
   },
+  watch:{
+    refresh(){
+      if(this.refresh){
+        this.getPublicProfile();
+      }
+    }
+  },
   mounted(){
     moment.locale(this.locale)
     this.getPublicProfile()
@@ -206,6 +217,7 @@ export default {
           //console.log(response.data);
           this.publicProfile = response.data;
           this.loading = false;
+          this.$emit('publicProfileRefresh',{'user':this.user});
         })
         .catch(function (error) {
           console.error(error);

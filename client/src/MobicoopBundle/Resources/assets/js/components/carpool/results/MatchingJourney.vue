@@ -328,6 +328,8 @@
         <v-stepper-content step="4">
           <PublicProfile
             :user="result.carpooler"
+            :refresh="refreshPublicProfile"
+            @publicProfileRefresh="publicProfileRefresh"
           />
         </v-stepper-content>
       </v-stepper-items>
@@ -625,7 +627,8 @@ export default {
       returnSatTime: this.defaultReturnSatTime,
       returnSunTime: this.defaultReturnSunTime,
       outwardTrip: this.defaultOutwardTrip,
-      returnTrip: this.defaultReturnTrip
+      returnTrip: this.defaultReturnTrip,
+      refreshPublicProfile: false
     }
   },
   computed: {
@@ -713,6 +716,11 @@ export default {
       if(this.resetStep){
         this.step = 1;
         this.$emit('resetStepMatchingJourney');
+      }
+    },
+    step(){
+      if(this.step==4){
+        this.refreshPublicProfile = true;
       }
     }
   },
@@ -867,6 +875,9 @@ export default {
         }
       });      
       return found;
+    },
+    publicProfileRefresh(data){
+      this.refreshPublicProfile = false;
     }
   }
 };
