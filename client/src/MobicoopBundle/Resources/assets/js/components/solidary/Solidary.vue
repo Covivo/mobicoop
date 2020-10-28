@@ -36,8 +36,8 @@
 
 <script>
 import {merge} from "lodash";
-import {messages_fr, messages_en} from "@translations/components/solidary/Solidary/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/solidary/Solidary/";
+import {messages_en, messages_fr} from "@translations/components/solidary/Solidary/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/solidary/Solidary/";
 import SolidaryForm from './SolidaryForm'
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

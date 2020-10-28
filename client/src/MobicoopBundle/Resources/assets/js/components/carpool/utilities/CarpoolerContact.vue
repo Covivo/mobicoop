@@ -51,8 +51,8 @@
 
 <script>
 import {merge} from "lodash";
-import {messages_fr, messages_en} from "@translations/components/carpool/utilities/CarpoolerSummary/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/utilities/CarpoolerSummary/";
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/CarpoolerSummary/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/utilities/CarpoolerSummary/";
 import formData from "../../../utils/request";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

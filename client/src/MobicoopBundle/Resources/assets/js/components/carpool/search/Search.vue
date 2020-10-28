@@ -108,8 +108,8 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import {messages_fr, messages_en} from "@translations/components/carpool/search/Search/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/search/Search/";
+import {messages_en, messages_fr} from "@translations/components/carpool/search/Search/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/search/Search/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

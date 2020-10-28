@@ -40,8 +40,8 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/community/Community/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/community/Community/";
+import {messages_en, messages_fr} from "@translations/components/community/Community/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/community/Community/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

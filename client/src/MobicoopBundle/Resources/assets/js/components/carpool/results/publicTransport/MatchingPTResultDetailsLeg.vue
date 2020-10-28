@@ -35,8 +35,8 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg/";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

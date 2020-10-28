@@ -148,8 +148,8 @@
 <script>
 import {merge} from "lodash";
 import Cookies from "@components/utilities/Cookies";
-import {messages_fr, messages_en} from "@translations/components/home/Home/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/home/Home/";
+import {messages_en, messages_fr} from "@translations/components/home/Home/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
 

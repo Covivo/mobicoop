@@ -35,7 +35,7 @@
   </v-container>
 </template>
 <script>
-import {messages_fr, messages_en} from "@translations/components/utilities/social/MSocialFeeds/";
+import {messages_en, messages_fr} from "@translations/components/utilities/social/MSocialFeeds/";
 import MSocialFeedsItem from "@components/utilities/social/MSocialFeedsItem";
 import axios from "axios";
 export default {

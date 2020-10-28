@@ -199,8 +199,8 @@
 <script>
 import { merge } from "lodash";
 import axios from "axios";
-import {messages_fr, messages_en} from "@translations/components/carpool/publish/AdRoute/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/publish/AdRoute/";
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdRoute/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/publish/AdRoute/";
 
 import GeoComplete from "@components/utilities/GeoComplete";
 

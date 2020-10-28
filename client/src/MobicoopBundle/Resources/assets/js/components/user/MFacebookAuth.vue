@@ -22,8 +22,8 @@
 
 import { merge } from "lodash";
 import axios from "axios";
-import {messages_fr, messages_en} from "@translations/components/user/MFacebookAuth/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/MFacebookAuth/";
+import {messages_en, messages_fr} from "@translations/components/user/MFacebookAuth/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/MFacebookAuth/";
 import facebookLogin from 'facebook-login-vuejs';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

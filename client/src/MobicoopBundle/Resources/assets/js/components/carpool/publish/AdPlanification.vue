@@ -486,8 +486,8 @@
 <script>
 import moment from "moment";
 import { merge, isEmpty, remove, clone } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/carpool/publish/AdPlanification/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/publish/AdPlanification/";
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdPlanification/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/publish/AdPlanification/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

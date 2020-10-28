@@ -15,8 +15,8 @@
 <script>
 import {merge} from "lodash";
 import CookieLaw from 'vue-cookie-law';
-import {messages_fr, messages_en} from "@translations/components/utilities/Cookies/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/utilities/Cookies/";
+import {messages_en, messages_fr} from "@translations/components/utilities/Cookies/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/Cookies/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

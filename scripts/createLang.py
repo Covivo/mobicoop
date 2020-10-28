@@ -30,8 +30,8 @@ It does the following :
 
     1. create client components translation files 
     2. update client components with the new language
-    2. create client ui translation files
-    3. create api translation files
+    3. create client ui translation files
+    4. create api translation files
 
 Parameters
 ----------
@@ -50,6 +50,8 @@ from shutil import copyfile
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 client_components_translation_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/components/")
+client_components_path = os.path.abspath(
+    script_absolute_path+"/../client/src/MobicoopBundle/Resources/assets/js/components/")
 lang = ""
 
 if len(sys.argv) < 3:
@@ -71,8 +73,6 @@ if lang == "":
     exit()
 
 # useful functions
-
-
 def directory_spider(input_dir, path_pattern="", file_pattern=""):
     file_paths = []
     if not os.path.exists(input_dir):
@@ -85,12 +85,6 @@ def directory_spider(input_dir, path_pattern="", file_pattern=""):
                               for item in file_list]
             file_paths += file_path_list
     return file_paths
-    # for file in file_path_list:
-    #     fileWithoutExtension = os.path.splitext(file)[0]
-    #     filePath = os.path.dirname(file)
-    #     copyfile(file, fileWithoutExtension+"_fr.json")
-    #     copyfile(file, fileWithoutExtension+"_en.json")
-
 
 def path_leaf(path):
     head, tail = ntpath.split(path)
@@ -99,27 +93,37 @@ def path_leaf(path):
 # 0 - check that language does not exist yet !
 
 
-# 1 - create client components files
+# 1 - create client components translation files 
 files = directory_spider(client_components_translation_path, "", "_en.json$")
+
+# for file in files:
+#     filePath = os.path.dirname(file)
+#     fileWithoutExtension = os.path.splitext(file)[0]
+#     component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
+#     newFile = file.replace("_en.json", "_"+lang+".json")
+#     copyfile(file, newFile)
+
+#     # Open the file in append & read mode ('a+')
+#     with open(filePath+"/index.js", "a+") as file_object:
+#         # Move read cursor to the start of file.
+#         file_object.seek(0)
+#         # If file is not empty then append '\n'
+#         data = file_object.read(100)
+#         if len(data) > 0:
+#             file_object.write("\n")
+#         # Append text at the end of file
+#         file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json';")
+
+# 2 - update client components with the new language
+files = directory_spider(client_components_path, "", ".vue$")
 
 for file in files:
     filePath = os.path.dirname(file)
-    fileWithoutExtension = os.path.splitext(file)[0]
-    component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
-    newFile = file.replace("_en.json", "_"+lang+".json")
-    copyfile(file, newFile)
-    # print("Nouveau fichier : "+newFile)
-    # print("Composant : "+component_name)
-
-    # Open the file in append & read mode ('a+')
-    with open(filePath+"/index.js", "a+") as file_object:
-        # Move read cursor to the start of file.
-        file_object.seek(0)
-        # If file is not empty then append '\n'
-        data = file_object.read(100)
-        if len(data) > 0:
-            file_object.write("\n")
-        # Append text at the end of file
-        file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json'")
-
-# directory_spider("../client/src/MobicoopBundle/Resources/translations","",".json$")
+    print(filePath)
+    with open(file, 'r+') as f:
+        file_source = f.read()
+        file_source = re.sub('(import {messages_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_'+lang+'\g<3>\g<4>\n', file_source)
+        file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
+        file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
+        file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
+        write_file = f.write(file_source)

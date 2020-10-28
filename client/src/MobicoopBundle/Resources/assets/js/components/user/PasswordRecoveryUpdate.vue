@@ -69,8 +69,8 @@
 
 import { merge } from "lodash";
 import axios from "axios";
-import {messages_fr, messages_en} from "@translations/components/user/PasswordRecoveryUpdate/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/PasswordRecoveryUpdate/";
+import {messages_en, messages_fr} from "@translations/components/user/PasswordRecoveryUpdate/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/PasswordRecoveryUpdate/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

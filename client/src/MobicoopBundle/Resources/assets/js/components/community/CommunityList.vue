@@ -157,8 +157,8 @@
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/community/CommunityList/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/community/CommunityList/";
+import {messages_en, messages_fr} from "@translations/components/community/CommunityList/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/community/CommunityList/";
 import CommunityListItem from "@components/community/CommunityListItem";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

@@ -196,8 +196,8 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/user/mailbox/Messages/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/mailbox/Messages/";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/Messages/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'

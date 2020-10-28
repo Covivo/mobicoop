@@ -80,8 +80,8 @@
 
 <script>
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/base/MFooter/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/base/MFooter/";
+import {messages_en, messages_fr} from "@translations/components/base/MFooter/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MFooter/";
 import Package from '@root/package.json'
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

@@ -360,8 +360,8 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/community/Community/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/community/Community/";
+import {messages_en, messages_fr} from "@translations/components/community/Community/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";

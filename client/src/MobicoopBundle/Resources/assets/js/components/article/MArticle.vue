@@ -47,8 +47,8 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/article/MArticle/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/article/MArticle/";
+import {messages_en, messages_fr} from "@translations/components/article/MArticle/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/article/MArticle/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

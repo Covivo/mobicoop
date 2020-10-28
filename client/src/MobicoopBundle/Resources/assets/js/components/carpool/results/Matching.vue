@@ -286,8 +286,8 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/carpool/results/Matching/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/carpool/results/Matching/";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/Matching/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";

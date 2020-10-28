@@ -60,8 +60,8 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import merge from "lodash/merge";
 
-import {messages_fr, messages_en} from "@translations/components/utilities/GeoComplete/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/utilities/GeoComplete/";
+import {messages_en, messages_fr} from "@translations/components/utilities/GeoComplete/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/GeoComplete/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);

@@ -63,8 +63,8 @@
 <script>
 import axios from "axios";
 import {merge} from "lodash";
-import {messages_fr, messages_en} from "@translations/components/relayPoints/RelayPoints/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/relayPoints/RelayPoints/";
+import {messages_en, messages_fr} from "@translations/components/relayPoints/RelayPoints/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";

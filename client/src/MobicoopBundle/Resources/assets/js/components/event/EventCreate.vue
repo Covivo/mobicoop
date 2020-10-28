@@ -329,8 +329,8 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_fr, messages_en} from "@translations/components/event/EventCreate/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/event/EventCreate/";
+import {messages_en, messages_fr} from "@translations/components/event/EventCreate/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/event/EventCreate/";
 import GeoComplete from "@components/utilities/GeoComplete";
 import moment from "moment";
 import axios from "axios";

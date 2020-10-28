@@ -133,8 +133,8 @@
 
 <script>
 import {merge} from "lodash";
-import {messages_fr, messages_en} from "@translations/components/user/profile/carpool/CarpoolFooter/";
-import {messages_client_fr, messages_client_en} from "@clientTranslations/components/user/profile/carpool/CarpoolFooter/";
+import {messages_en, messages_fr} from "@translations/components/user/profile/carpool/CarpoolFooter/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/carpool/CarpoolFooter/";
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
