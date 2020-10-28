@@ -1,8 +1,13 @@
 import * as React from 'react';
-import { FC } from 'react';
 import { Card, CardHeader, CardContent } from '@material-ui/core';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { useTranslate } from 'react-admin';
+
+const addDays = (startDate, days) => {
+  const date = new Date(startDate.valueOf());
+  date.setDate(date.getDate() + days);
+  return date.valueOf();
+};
 
 const lastMonthDays = (users) => {
   const today = new Date(new Date().toDateString()).getTime();
@@ -10,10 +15,13 @@ const lastMonthDays = (users) => {
     users && users.length
       ? new Date(users[users.length - 1].createdDate.slice(0, 10)).getTime()
       : today;
-  const oneDay = 24 * 60 * 60 * 1000;
-  const length = Math.max(30, Math.ceil((today - lastDay) / oneDay));
 
-  return Array.from({ length }, (_, i) => today - i * oneDay).reverse();
+  const returnedArray = [];
+  for (let currentDay = lastDay; currentDay <= today; currentDay = addDays(currentDay, 1)) {
+    returnedArray.push(currentDay);
+  }
+
+  return returnedArray.slice(-40);
 };
 
 const aMonthAgo = new Date();
@@ -22,23 +30,27 @@ aMonthAgo.setDate(aMonthAgo.getDate() - 30);
 
 const dateFormatter = (date) => new Date(date).toLocaleDateString();
 
-const aggregateByDay = (users) =>
-  users
+const isSameDate = (date1, date2) => {
+  const date1ToDate = new Date(date1);
+  const date2ToDate = new Date(date2);
+  return (
+    date1ToDate.getDate() === date2ToDate.getDate() &&
+    date1ToDate.getMonth() === date2ToDate.getMonth() &&
+    date1ToDate.getFullYear() === date2ToDate.getFullYear()
+  );
+};
+
+const findNbUsersByDate = (users, matchingDate) => {
+  const matchingUsers = users
     .filter((user) => !user.unsubscribeDate)
-    .reduce((acc, curr) => {
-      const day = new Date(new Date(curr.createdDate.slice(0, 10)).toDateString()).getTime();
-      if (!acc[day]) {
-        acc[day] = 0;
-      }
-      acc[day] += 1;
-      return acc;
-    }, {});
+    .filter((user) => isSameDate(user.createdDate.slice(0, 10), matchingDate));
+  return matchingUsers.length;
+};
 
 const getUsersByDay = (users) => {
-  const daysWithUsers = aggregateByDay(users);
   return lastMonthDays(users).map((date) => ({
     date,
-    total: daysWithUsers[date] || 0,
+    total: findNbUsersByDate(users, date),
   }));
 };
 
@@ -59,7 +71,7 @@ const UsersChart = ({ users }) => {
 
   return (
     <Card>
-      <CardHeader title="Historique des dernières inscriptions" />
+      <CardHeader title="Historique des inscriptions récentes" />
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
