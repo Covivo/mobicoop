@@ -327,7 +327,7 @@
 
         <v-stepper-content step="4">
           <PublicProfile
-            :user-id="result.carpooler.id"
+            :user="result.carpooler"
           />
         </v-stepper-content>
       </v-stepper-items>

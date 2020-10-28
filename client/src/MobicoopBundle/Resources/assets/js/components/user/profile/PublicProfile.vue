@@ -104,6 +104,13 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col class="text-right">
+        <Report
+          :user="user"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -111,16 +118,18 @@ import axios from "axios";
 import moment from "moment";
 import Translations from "@translations/components/user/profile/PublicProfile.json";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import Report from "@components/utilities/Report";
 
 export default {
   i18n: {
     messages: Translations,
   },
   components: {
-    ProfileAvatar
+    ProfileAvatar,
+    Report
   },
   props:{
-    userId:{
+    user:{
       type:Number,
       default: null
     }
@@ -188,7 +197,7 @@ export default {
   },
   methods:{
     getPublicProfile(){
-      axios.post(this.$t('getPublicProfileUri'),{'userId':this.userId})
+      axios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
         .then(response => {
           //console.log(response.data);
           this.publicProfile = response.data;

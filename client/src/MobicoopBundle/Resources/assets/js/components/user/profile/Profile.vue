@@ -119,7 +119,7 @@
         </v-card-title>
 
         <v-card-text>
-          <PublicProfile :user-id="user.id" />
+          <PublicProfile :user="user" />
         </v-card-text>
 
         <v-divider />
