@@ -293,13 +293,6 @@ services:
         resource: '../src/Event/Controller'
         tags: ['controller.service_arguments']
 
-    App\Event\Controller\ReportAction:
-        arguments:
-            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
-            $senderEmail: '%env(resolve:MAILER_SENDER)%'
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-        tags: ['controller.service_arguments']
-
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:
         arguments:

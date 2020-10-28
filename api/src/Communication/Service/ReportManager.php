@@ -60,6 +60,7 @@ class ReportManager
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
 
         $this->lang = self::LANG;
+        $this->translator->setLocale($this->lang);
     }
     
     /**
@@ -88,8 +89,6 @@ class ReportManager
      */
     private function reportUser(Report $report): Report
     {
-        $this->translator->setLocale($this->lang);
-
         $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $report->getUser()];
 
         $this->sendEmailReport("reportUser", "reportUser", [], $bodyContext);
@@ -105,6 +104,10 @@ class ReportManager
      */
     private function reportEvent(Report $report): Report
     {
+        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'eventName' => $report->getEvent()->getName()];
+
+        $this->sendEmailReport("reportEvent", "reportEvent", [], $bodyContext);
+
         return $report;
     }
 
