@@ -900,7 +900,6 @@ export default {
           sum += parseFloat(this.getAmount(item));
         });
       }
-      console.log(sum);
       return sum;
     }
   },
