@@ -118,12 +118,12 @@ for file in files:
 files = directory_spider(client_components_path, "", ".vue$")
 
 for file in files:
-    filePath = os.path.dirname(file)
-    print(filePath)
     with open(file, 'r+') as f:
         file_source = f.read()
         file_source = re.sub('(import {messages_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_'+lang+'\g<3>\g<4>\n', file_source)
         file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
         file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
         file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
-        write_file = f.write(file_source)
+        f.truncate(0)
+        f.seek(0)
+        f.write(file_source)
