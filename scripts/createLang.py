@@ -96,23 +96,23 @@ def path_leaf(path):
 # 1 - create client components translation files 
 files = directory_spider(client_components_translation_path, "", "_en.json$")
 
-# for file in files:
-#     filePath = os.path.dirname(file)
-#     fileWithoutExtension = os.path.splitext(file)[0]
-#     component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
-#     newFile = file.replace("_en.json", "_"+lang+".json")
-#     copyfile(file, newFile)
+for file in files:
+    filePath = os.path.dirname(file)
+    fileWithoutExtension = os.path.splitext(file)[0]
+    component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
+    newFile = file.replace("_en.json", "_"+lang+".json")
+    copyfile(file, newFile)
 
-#     # Open the file in append & read mode ('a+')
-#     with open(filePath+"/index.js", "a+") as file_object:
-#         # Move read cursor to the start of file.
-#         file_object.seek(0)
-#         # If file is not empty then append '\n'
-#         data = file_object.read(100)
-#         if len(data) > 0:
-#             file_object.write("\n")
-#         # Append text at the end of file
-#         file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json';")
+    # Open the file in append & read mode ('a+')
+    with open(filePath+"/index.js", "a+") as file_object:
+        # Move read cursor to the start of file.
+        file_object.seek(0)
+        # If file is not empty then append '\n'
+        data = file_object.read(100)
+        if len(data) > 0:
+            file_object.write("\n")
+        # Append text at the end of file
+        file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json';")
 
 # 2 - update client components with the new language
 files = directory_spider(client_components_path, "", ".vue$")
