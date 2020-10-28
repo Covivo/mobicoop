@@ -1,11 +1,17 @@
 {
     "lastName": {
         "label": "Your last name",
-        "placeholder": "Your last name"
+        "placeholder": "Your last name",
+        "errors": {
+            "required": "Last name is required"
+        }
     },
     "firstName": {
         "label": "Your first name",
-        "placeholder": "Your first name"
+        "placeholder": "Your first name",
+        "errors": {
+            "required": "First name is required"
+        }
     },
     "email": {
         "label": "Your email",

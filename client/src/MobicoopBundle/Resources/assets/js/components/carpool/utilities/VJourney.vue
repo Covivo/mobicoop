@@ -119,7 +119,7 @@ export default {
       }
     }, 
     formatTime(time) {
-      if(time) return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
+      if(time) return moment.utc(time).format(this.$t("hourMinute")); 
     }
   }
 };

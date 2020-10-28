@@ -262,7 +262,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(time).isValid() ? moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")) : time;
+      return moment(time).isValid() ? moment.utc(time).format(this.$t("hourMinute")) : time;
     }
   }
 };

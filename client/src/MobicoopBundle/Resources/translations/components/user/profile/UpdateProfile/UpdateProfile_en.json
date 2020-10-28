@@ -22,5 +22,35 @@
     },
     "news": {
         "label": "News of"
-    }
+    },
+    "email": {
+        "label": "Email"
+    },
+    "givenName": {
+        "label": "Prénom"
+    },
+    "familyName": {
+        "label": "Nom"
+    },
+    "gender": {
+        "label": "Civilité",
+        "values": {
+            "male": "Monsieur",
+            "female": "Madame",
+            "other": "Autre"
+        }
+    },
+    "birthDay": {
+        "label": "Date de naissance",
+        "errors": {
+            "required": "La date de naissance est requise",
+            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+        }
+    },
+    "homeTown": {
+        "label": "Commune de résidence"
+    },
+    "save": "Enregistrer",
+    "yes": "oui",
+    "no": "non"
 }

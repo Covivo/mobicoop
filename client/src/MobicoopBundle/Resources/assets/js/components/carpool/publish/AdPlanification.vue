@@ -313,7 +313,7 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
-                      :hint="item.id > 0 ? $t('ui.form.optional') : ''"
+                      :hint="item.id > 0 ? $t('optional') : ''"
                       persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
@@ -379,7 +379,7 @@
                     <v-text-field
                       v-model="item.returnTime"
                       :label="$t('regularReturnTime.label')"
-                      :hint="$t('ui.form.optional')"
+                      :hint="$t('optional')"
                       clearable
                       persistent-hint
                       prepend-icon=""
@@ -564,12 +564,12 @@ export default {
   computed: {
     computedOutwardDateFormat() {
       return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.outwardDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.returnDate
-        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.returnDate).format(this.$t("fullDate"))
         : "";
     },
     activeSchedules() {

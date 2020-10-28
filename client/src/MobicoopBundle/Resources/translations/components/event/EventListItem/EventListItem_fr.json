@@ -9,5 +9,7 @@
         "to": "Au",
         "at": "à",
         "the": "Le"
-    }
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
 }

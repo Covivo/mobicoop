@@ -417,12 +417,12 @@ export default {
   computed :{
     computedOutwardDateFormat() {
       return this.startDate
-        ? moment(this.startDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.startDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.endDate
-        ? moment(this.endDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
     },
   },

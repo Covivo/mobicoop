@@ -80,5 +80,7 @@
             "p2": "&lt;iframe src=\"{url}\" width=\"<strong>100%</strong>\" height=\"<strong>440px</strong>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p3": "<strong>Attention</strong> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame."
         }
-    }
+    },
+    "yes": "oui",
+    "no": "non"
 }

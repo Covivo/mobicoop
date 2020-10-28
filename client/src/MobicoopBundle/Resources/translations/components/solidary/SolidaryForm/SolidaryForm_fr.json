@@ -1,4 +1,41 @@
 {
+    "gender": {
+        "placeholder": "Civilité",
+        "values": {
+            "male": "Monsieur",
+            "female": "Madame",
+            "other": "Autre"
+        },
+        "errors": {
+            "required": "La civilité est requise"
+        }
+    },
+    "familyName": {
+        "placeholder": "Nom",
+        "errors": {
+            "required": "Le nom est requis"
+        }
+    },
+    "givenName": {
+        "placeholder": "Prénom",
+        "errors": {
+            "required": "Le prénom est requis"
+        }
+    },
+    "email": {
+        "placeholder": "Email",
+        "errors": {
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide"
+        }
+    },
+    "phone": {
+        "placeholder": "Téléphone portable",
+        "errors": {
+            "required": "Le numéro de téléphone est requis",
+            "valid": "Le numéro de téléphone doit être valide"
+        }
+    },
     "ui": {
         "buttons": {
             "validate": {

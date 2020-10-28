@@ -8,5 +8,6 @@
     "sun": "Su",
     "dateValid": "Valid until the",
     "valid": "Validity :",
-    "dateValidUntil": "until the"
+    "dateValidUntil": "until the",
+    "shortCompleteDate": "DD/MM/YYYY"
 }

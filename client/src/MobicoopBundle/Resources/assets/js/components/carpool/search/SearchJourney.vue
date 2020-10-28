@@ -315,7 +315,7 @@ export default {
   computed: {
     computedDateFormat() {
       return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.date).format(this.$t("fullDate"))
         : null;
     },
     checkOutwardDate() {

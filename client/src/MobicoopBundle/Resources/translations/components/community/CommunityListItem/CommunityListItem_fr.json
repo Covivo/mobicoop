@@ -22,5 +22,7 @@
     },
     "communityDetails": "Voir la communauté",
     "join": "Rejoindre la communauté",
-    "protected": "Cette communauté n'est visible que par ses membres"
+    "protected": "Cette communauté n'est visible que par ses membres",
+    "yes": "oui",
+    "no": "non"
 }

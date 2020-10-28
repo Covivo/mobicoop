@@ -220,7 +220,7 @@ export default {
     },
     dateFormated() {
       return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.urlDate"))
+        ? moment(this.date).format(this.$t("urlDate"))
         : null;
     },
   },

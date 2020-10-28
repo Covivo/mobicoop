@@ -140,13 +140,13 @@ export default {
   computed: {
     computedTime() {
       if (this.time) {
-        return moment.utc(this.time).format(this.$t("ui.i18n.time.format.hourMinute"));  
+        return moment.utc(this.time).format(this.$t("hourMinute"));  
       }
       return null;  
     },
     computedDate() {
       if (this.date) {
-        return moment.utc(this.date).format(this.$t("ui.i18n.date.format.shortDate"));
+        return moment.utc(this.date).format(this.$t("shortDate"));
       }
       return null;
     }

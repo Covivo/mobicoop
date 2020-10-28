@@ -4,43 +4,43 @@
       small
       :color="monActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.mon') }} 
+      {{ $t('mon') }} 
     </v-chip>
     <v-chip
       small
       :color="tueActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.tue') }}
+      {{ $t('tue') }}
     </v-chip>
     <v-chip
       small
       :color="wedActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.wed') }} 
+      {{ $t('wed') }} 
     </v-chip>
     <v-chip
       small
       :color="thuActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.thu') }}
+      {{ $t('thu') }}
     </v-chip>
     <v-chip
       small
       :color="friActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.fri') }} 
+      {{ $t('fri') }} 
     </v-chip>
     <v-chip
       small
       :color="satActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.sat') }}
+      {{ $t('sat') }}
     </v-chip>
     <v-chip
       small
       :color="sunActive ? 'primary' : null"
     >
-      {{ $t('ui.abbr.day.sun') }}
+      {{ $t('sun') }}
     </v-chip>
     <p
       v-if="dateStartOfValidity && dateEndOfValidity"
@@ -119,12 +119,12 @@ export default {
   computed: {
     formattedDateEndOfValidity () {
       return this.dateEndOfValidity
-        ? moment(this.dateEndOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
+        ? moment(this.dateEndOfValidity).format(this.$t("shortCompleteDate"))
         : "";
     },
     formattedDateStartOfValidity () {
       return this.dateStartOfValidity
-        ? moment(this.dateStartOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
+        ? moment(this.dateStartOfValidity).format(this.$t("shortCompleteDate"))
         : "";
     }
   },

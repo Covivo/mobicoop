@@ -140,7 +140,7 @@ export default {
     },
     dateTimeFormat: {
       type: String,
-      default: "ui.i18n.time.format.hourMinute"
+      default: "hourMinute"
     },
     // if we want refined display of data for punctual carpools
     isRefined: {

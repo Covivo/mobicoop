@@ -4,5 +4,7 @@
     },
     "endEvent": {
         "label": "End"
-    }
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
 }

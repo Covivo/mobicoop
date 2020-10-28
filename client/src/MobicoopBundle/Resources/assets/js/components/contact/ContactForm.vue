@@ -193,11 +193,11 @@ export default {
         ],
         familyName: this.user && this.user.familyName ? this.user.familyName : null,
         familyNameRules: [
-          v => !!v || this.$t("models.user.familyName.errors.required"),
+          v => !!v || this.$t("lastName.errors.required"),
         ],
         givenName: this.user && this.user.givenName ? this.user.givenName : null,
         givenNameRules: [
-          v => !!v || this.$t("models.user.givenName.errors.required"),
+          v => !!v || this.$t("firstName.errors.required"),
         ],
 
         demand: null,

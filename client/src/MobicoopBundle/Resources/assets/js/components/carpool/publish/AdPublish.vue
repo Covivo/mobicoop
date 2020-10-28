@@ -672,13 +672,13 @@
               outlined
               @click="dialog = false"
             >
-              {{ $t('ui.common.no') }}
+              {{ $t('no') }}
             </v-btn>
             <v-btn
               color="secondary"
               @click="updateAd"
             >
-              {{ $t('ui.common.yes') }}
+              {{ $t('yes') }}
             </v-btn>
           </v-card-actions>
         </v-card>

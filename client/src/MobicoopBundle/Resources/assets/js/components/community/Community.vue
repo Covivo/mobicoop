@@ -303,7 +303,7 @@
               text
               @click="leaveCommunityDialog = false"
             >
-              {{ $t("ui.common.no") }}
+              {{ $t("no") }}
             </v-btn>
             <v-btn
               color="secondary darken-1"
@@ -313,7 +313,7 @@
                 postLeavingRequest();
               "
             >
-              {{ $t("ui.common.yes") }}
+              {{ $t("yes") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -339,7 +339,7 @@
               text
               @click="joinCommunityDialog = false"
             >
-              {{ $t("ui.common.no") }}
+              {{ $t("no") }}
             </v-btn>
             <v-btn
               color="secondary darken-1"
@@ -349,7 +349,7 @@
                 joinCommunity();
               "
             >
-              {{ $t("ui.common.yes") }}
+              {{ $t("yes") }}
             </v-btn>
           </v-card-actions>
         </v-card>

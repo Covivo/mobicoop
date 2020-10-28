@@ -3,5 +3,6 @@
     "driverDestination": "Arrivée du conducteur",
     "step": "Point de passage",
     "pickUp": "Pris en charge",
-    "dropOff": "Dépose"
+    "dropOff": "Dépose",
+    "hourMinute": "HH[h]mm"
 }

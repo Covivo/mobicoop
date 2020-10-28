@@ -27,5 +27,6 @@
     },
     "tooltips": {
         "needConnection": "Veuillez vous connecter ou vous inscrire pour publier une annonce"
-    }
+    },
+    "urlDate": "YMMDD"
 }

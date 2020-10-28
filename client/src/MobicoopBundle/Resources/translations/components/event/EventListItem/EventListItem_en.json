@@ -9,5 +9,7 @@
         "to": "To",
         "at": "at",
         "the": "The"
-    }
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
 }

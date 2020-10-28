@@ -18,5 +18,6 @@
     "popup": {
         "title": "Information",
         "content": ""
-    }
+    },
+    "ok": "OK"
 }

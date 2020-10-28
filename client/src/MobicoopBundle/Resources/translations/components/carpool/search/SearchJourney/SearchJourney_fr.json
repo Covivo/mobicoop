@@ -41,5 +41,6 @@
         "search": {
             "label": "Rechercher"
         }
-    }
+    },
+    "fullDate": "ddd Do MMMM YYYY"
 }

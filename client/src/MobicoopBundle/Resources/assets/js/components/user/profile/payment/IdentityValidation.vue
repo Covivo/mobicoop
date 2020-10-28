@@ -140,9 +140,6 @@ export default {
   data () {
     return {
       document:null,
-      documentRules: [
-        (v) => !!v || this.$t("models.user.givenName.errors.required"),
-      ],
       loading:false
     }
   },

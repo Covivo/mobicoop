@@ -56,7 +56,7 @@
             text
             @click="dialog=false"
           >
-            {{ $t('ui.common.ok') }}
+            {{ $t('ok') }}
           </v-btn>
         </v-card-actions>
       </v-card>

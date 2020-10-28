@@ -42,6 +42,10 @@
         }
     },
     "phone": {
+        "label": "Téléphone portable",
+        "errors": {
+            "valid": "Le numéro de téléphone doit être valide"
+        },
         "tooltips": {
             "verified": "Votre numéro de portable est vérifié",
             "notVerified": "Votre numéro de portable n'est pas vérifié"
@@ -105,5 +109,35 @@
     },
     "events": {
         "route": "/user/events/created"
-    }
+    },
+    "email": {
+        "label": "Email"
+    },
+    "givenName": {
+        "label": "Prénom"
+    },
+    "familyName": {
+        "label": "Nom"
+    },
+    "gender": {
+        "label": "Civilité",
+        "values": {
+            "male": "Monsieur",
+            "female": "Madame",
+            "other": "Autre"
+        }
+    },
+    "birthDay": {
+        "label": "Date de naissance",
+        "errors": {
+            "required": "La date de naissance est requise",
+            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+        }
+    },
+    "homeTown": {
+        "label": "Commune de résidence"
+    },
+    "save": "Enregistrer",
+    "yes": "oui",
+    "no": "non"
 }

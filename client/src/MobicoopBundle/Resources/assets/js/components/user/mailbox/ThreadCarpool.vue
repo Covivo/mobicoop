@@ -52,7 +52,7 @@
                 <span
                   v-if="criteria.frequency==1"
                   class="font-italic"
-                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span></span>
+                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("at") }} {{ formateFromTime }}</span></span>
                 <span
                   v-else
                   class="font-italic"

@@ -104,5 +104,7 @@
         "update": "covoiturage/annonce/{id}/modifier",
         "myAds": "/utilisateur/profil/modifier/mes-annonces",
         "roundPrice": "/prix/arrondir"
-    }
+    },
+    "yes": "yes",
+    "no": "no"
 }

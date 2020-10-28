@@ -23,5 +23,6 @@
             "label": "Search",
             "route": "carpool/search"
         }
-    }
+    },
+    "urlDate": "YMMDD"
 }
