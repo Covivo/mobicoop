@@ -140,7 +140,7 @@ def path_leaf(path):
 # 4 - create client routes
 with open(client_route_file, 'r+') as f:
         file_source = f.read()
-        file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\n\g<1>"+lang+": \g<3>\n", file_source)
+        file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
         f.truncate(0)
         f.seek(0)
         f.write(file_source)
