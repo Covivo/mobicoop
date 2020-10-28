@@ -138,6 +138,12 @@ class CarpoolPayment
      */
     private $origin;
 
+    /**
+    * @var float The amountOnline to be paid. Not persisted.
+    *
+    */
+    private $amountOnline;
+
     public function __construct()
     {
         $this->carpoolItems = new ArrayCollection();
@@ -157,6 +163,16 @@ class CarpoolPayment
     public function setAmount(?string $amount)
     {
         $this->amount = $amount;
+    }
+
+    public function getAmountOnline(): ?string
+    {
+        return $this->amountOnline;
+    }
+    
+    public function setAmountOnline(?string $amountOnline)
+    {
+        $this->amountOnline = $amountOnline;
     }
 
     public function getStatus(): ?int
