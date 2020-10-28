@@ -98,19 +98,23 @@ class PaymentDataProvider
      */
     public function checkPaymentConfiguration()
     {
-        if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
-            $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
-            $this->providerInstance = new $providerClass(
-                $this->security->getUser(),
-                $this->clientId,
-                $this->apikey,
-                $this->sandBoxMode,
-                $this->defaultCurrency,
-                $this->validationDocsPath,
-                $this->baseUri,
-                $this->baseMobileUri,
-                $this->paymentProfileRepository
-            );
+        if ($this->paymentProvider!=="") {
+            if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
+                $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
+                $this->providerInstance = new $providerClass(
+                    $this->security->getUser(),
+                    $this->clientId,
+                    $this->apikey,
+                    $this->sandBoxMode,
+                    $this->defaultCurrency,
+                    $this->validationDocsPath,
+                    $this->baseUri,
+                    $this->baseMobileUri,
+                    $this->paymentProfileRepository
+                );
+            }
+        } else {
+            return;
         }
 
         if (!$this->paymentActive) {
