@@ -385,7 +385,17 @@ user_block:
         en: /user/block
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
-##################
+# user resport
+user_report:
+    methods: [POST]
+    path:
+        fr: /utilisateur/{id}/signaler
+        en: /user/{id}/report
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReport
+    requirements:
+        id: '\d+'
+
+    ##################
 # carpool routes #
 ##################
 
@@ -1038,6 +1048,7 @@ event_get_widget:
 
 # report event
 event_report:
+    methods: [POST]
     path:
         fr: /evenement/{id}/signaler
         en: /event/{id}/report

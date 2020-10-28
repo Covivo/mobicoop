@@ -119,7 +119,10 @@
         </v-card-title>
 
         <v-card-text>
-          <PublicProfile :user="user" />
+          <PublicProfile
+            :user="user"
+            :show-report-button="false"
+          />
         </v-card-text>
 
         <v-divider />

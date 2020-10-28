@@ -104,7 +104,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="showReportButton">
       <v-col class="text-right">
         <Report
           :user="user"
@@ -132,6 +132,10 @@ export default {
     user:{
       type:Number,
       default: null
+    },
+    showReportButton: {
+      type: Boolean,
+      default: true
     }
   },
   data(){
