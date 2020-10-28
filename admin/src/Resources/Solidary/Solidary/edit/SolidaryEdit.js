@@ -25,13 +25,13 @@ const required = (value) => (value ? '' : 'Champs obligatoire');
 
 const CustomToolbar = (props) => (
   <Toolbar {...props}>
-    <SaveButton />
+    <SaveButton label="Recréer demande solidaire" />
   </Toolbar>
 );
 
 export const SolidaryEdit = (props) => {
   console.log('PROPS:', props);
-  return (<Edit {...props} title="Demande Solidaire > éditer">
+  return (<Edit {...props} title="Éditer demande solidaire">
     <TabbedForm toolbar={<CustomToolbar />}>
       <FormTab label="Trajet">
         <SolidaryQuestion question="Que voulez-vous faire ?">

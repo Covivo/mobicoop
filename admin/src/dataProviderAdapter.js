@@ -397,6 +397,8 @@ export const dataProviderAdapter = (originalProvider) => ({
 
     if (resource === 'solidaries') {
       newParams = fixSolidaryData(newParams);
+      console.log('Solidaries NewParans: ', newParams);
+      return originalProvider.create(resource, newParams);
     }
 
     return originalProvider.update(resource, newParams);
