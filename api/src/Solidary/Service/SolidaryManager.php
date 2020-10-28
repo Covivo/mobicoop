@@ -717,6 +717,9 @@ class SolidaryManager
             $ad->setOneWay(false);
         }
 
+        // we set the ad as a solidary ad
+        $ad->setSolidary(true);
+        
         // Frequency
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         // We set the date and time of the demand

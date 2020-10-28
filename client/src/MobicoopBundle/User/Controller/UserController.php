@@ -400,6 +400,24 @@ class UserController extends AbstractController
     }
 
     /**
+     * Export list carpools for a user
+     * AJAX post
+     */
+    public function getExport(Request $request)
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return $this->redirectToRoute("user_login");
+        }
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getCarpoolExport($user)->getCarpoolExport());
+        }
+        return null;
+    }
+
+    /**
      * User avatar delete.
      * Ajax
      */

@@ -542,6 +542,7 @@ class PaymentManager
             $carpoolPayment = new CarpoolPayment();
             $carpoolPayment->setUser($user);
             $carpoolPayment->setStatus(CarpoolPayment::STATUS_INITIATED);
+            $carpoolPayment->setOrigin($payment->getOrigin());
 
             // for a payment, we need to compute the total amount
             $amountDirect = 0;
@@ -654,6 +655,7 @@ class PaymentManager
                                     $carpoolPayment->setUser($carpoolItem->getDebtorUser());
                                     $carpoolPayment->setAmount(0);
                                     $carpoolPayments[$carpoolItem->getDebtorUser()->getId()] = $carpoolPayment;
+                                    $carpoolPayment->setOrigin($payment->getOrigin());
                                 }
 
                                 $carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->setAmount($carpoolPayments[$carpoolItem->getDebtorUser()->getId()]->getAmount()+$carpoolItem->getAmount());
@@ -736,7 +738,7 @@ class PaymentManager
 
         // first we search the accepted asks for the given period and the given user
         $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate, $user);
-
+        
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**

@@ -19,8 +19,8 @@ import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
 const EventFilter = ({ translate, ...rest }) => (
   <Filter {...rest}>
     <TextInput label={translate('custom.label.event.name')} source="name" alwaysOn />
-    <DateInput source="fromDate" label={translate('custom.label.event.dateStart')} />
-    <DateInput source="toDate" label={translate('custom.label.event.dateFin')} />
+    <DateInput source="fromDate[after]" label={translate('custom.label.event.dateStart')} />
+    <DateInput source="toDate[strictly_before]" label={translate('custom.label.event.dateFin')} />
   </Filter>
 );
 

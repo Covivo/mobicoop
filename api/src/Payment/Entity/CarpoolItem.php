@@ -26,6 +26,8 @@ namespace App\Payment\Entity;
 use App\Carpool\Entity\Ask;
 use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -58,6 +60,8 @@ class CarpoolItem
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"readExport"})
+     * @MaxDepth(1)
      */
     private $id;
 
@@ -88,6 +92,7 @@ class CarpoolItem
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
+     * @Groups({"readExport"})
      */
     private $itemDate;
 
@@ -96,6 +101,7 @@ class CarpoolItem
     *
     * @Assert\NotBlank
     * @ORM\Column(type="decimal", precision=6, scale=2)
+    * @Groups({"readExport"})
     */
     private $amount;
 
@@ -106,6 +112,7 @@ class CarpoolItem
      * 2 : payment done manually
      *
      * @ORM\Column(type="smallint")
+     * @Groups({"readExport"})
      */
     private $debtorStatus;
 
@@ -116,6 +123,7 @@ class CarpoolItem
      * 2 : payment receveid manually
      *
      * @ORM\Column(type="smallint")
+     * @Groups({"readExport"})
      */
     private $creditorStatus;
 
@@ -123,6 +131,8 @@ class CarpoolItem
      * @var Ask The ask related to the item.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
+     * @Groups({"readExport"})
+     * @MaxDepth(1)
      */
     private $ask;
 
@@ -130,6 +140,8 @@ class CarpoolItem
      * @var User Debtor user (the user that pays)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @Groups({"readExport"})
+     * @MaxDepth(1)
      */
     private $debtorUser;
 
@@ -137,6 +149,8 @@ class CarpoolItem
      * @var User Creditor user (the user paid)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @Groups({"readExport"})
+     * @MaxDepth(1)
      */
     private $creditorUser;
 
@@ -144,6 +158,7 @@ class CarpoolItem
      * @var ArrayCollection|null Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
      *
      * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolPayment", mappedBy="carpoolItems")
+     * @MaxDepth(1)
      */
     private $carpoolPayments;
 
@@ -165,6 +180,7 @@ class CarpoolItem
      * @var \DateTimeInterface Unpaid notify date.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readExport"})
      */
     private $unpaidDate;
 

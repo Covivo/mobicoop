@@ -99,9 +99,10 @@ class CarpoolItemRepository
 
         if ($type == PaymentItem::TYPE_PAY) {
             $query->andWhere('ci.debtorUser = :user')
-            ->andWhere('ci.debtorStatus = :debtorStatusWaiting')
+            ->andWhere('ci.debtorStatus = :debtorStatusWaiting or ci.debtorStatus = :debtorStatusPendingOnline')
             ->setParameter('user', $user)
-            ->setParameter('debtorStatusWaiting', 0);
+            ->setParameter('debtorStatusWaiting', 0)
+            ->setParameter('debtorStatusPendingOnline', 1);
         } else {
             $query->andWhere('ci.creditorUser = :user')
             ->andWhere('ci.creditorStatus = :creditorStatusWaiting')
@@ -109,6 +110,21 @@ class CarpoolItemRepository
             ->setParameter('creditorStatusWaiting', 0);
         }
 
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpoolItems for a user as creditor or deptor
+     *
+     * @param User $user
+     * @return array
+     */
+    public function findByUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+        ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
+        ->setParameter('user', $user);
+        
         return $query->getQuery()->getResult();
     }
 }

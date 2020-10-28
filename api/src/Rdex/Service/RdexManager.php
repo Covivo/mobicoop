@@ -466,7 +466,7 @@ class RdexManager
     private function computeMinMaxTime(\DateTime $time, int $margin)
     {
         $mintime = clone($time);
-
+        
         // No margin on mintime because we use margin to handle mintime and maxtime from RDEX request.
         // exemple :
         // Mintime : 08:00

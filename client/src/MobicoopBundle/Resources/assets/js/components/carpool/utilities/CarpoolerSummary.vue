@@ -12,7 +12,7 @@
           :carpooler="carpooler"
         />
       </v-col>
-
+  
       <!-- Carpooler rate -->
       <v-col
         v-if="carpoolerRate"
@@ -60,6 +60,7 @@
         />
       </v-col>
 
+
       <!-- Carpool button -->
       <v-col
         v-if="!externalRdexJourneys"
@@ -99,7 +100,50 @@
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
         </v-card-text>
-      </v-col>      
+      </v-col>  
+    </v-row>
+
+    <!-- Community -->
+    <v-row 
+      v-if="communities" 
+      no-gutters
+    >
+      <v-col cols="4" />
+      <v-col
+        align="left"
+        cols="5"
+      >
+        <v-tooltip
+          v-for="community in communities"
+          :key="community.id"
+          color="info"
+          right
+        >
+          <template v-slot:activator="{ on }">
+            <v-list-item-avatar
+              class="grey lighten-2 ml-1 mr-1"
+              contain
+              :size="avatarSize" 
+              v-on="on"
+            >
+              <v-img
+                v-if="community.image[0]"
+                :src="community.image[0]['versions']['square_100']"
+                alt="avatar"
+              />
+              <v-img
+                v-else
+                class="grey lighten-2"
+                src="/images/avatarsDefault/avatar.svg"
+                alt="avatar"
+              />
+            </v-list-item-avatar>
+          </template>
+          <span>
+            {{ community.name }}</span> 
+        </v-tooltip>
+      </v-col>
+      <v-col cols="3" />
     </v-row>
   </div>
 </template>
@@ -149,12 +193,34 @@ export default {
     externalOrigin: {
       type: String,
       default: null
-    }, 
+    },
+    communities: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
       connected: this.user !== null,
     };
+  },
+  computed: {
+    avatarSize() {
+      switch (this.$vuetify.breakpoint.name) {
+      case "xs":
+        return '20';
+      case "sm":
+        return '20';
+      case "md":
+        return '20';
+      case "lg":
+        return '35';
+      case "xl":
+        return '35';
+      default:
+        return '20';
+      } 
+    }
   },
   methods: {
     buttonAlert(msg, e) {
