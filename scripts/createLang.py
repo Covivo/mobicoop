@@ -133,4 +133,4 @@ for file in files:
         f.write(file_source)
 
 # 3 - create client ui translation files
-copyfile(client_ui_path+"ui.en.yaml", client_ui_path+"ui."+lang+".yaml")
+copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
