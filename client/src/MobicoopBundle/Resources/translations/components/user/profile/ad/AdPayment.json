@@ -8,7 +8,7 @@
             "paid":"Déjà payé",
             "pending":"Payer"
         },
-        "link":"/payments/{id}/{frequency}/{type}/{week}",
+        "link":"/paiements/{id}/{frequency}/{type}/{week}",
         "unpaid":"Impayé"
     },    
     "en": {
