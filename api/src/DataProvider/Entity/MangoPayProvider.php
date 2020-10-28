@@ -396,7 +396,7 @@ class MangoPayProvider implements PaymentProviderInterface
             "AuthorId" => $identifier,
             "DebitedFunds" => [
                 "Currency" => $this->currency,
-                "Amount" => (int)($carpoolPayment->getAmount()*100)
+                "Amount" => (int)($carpoolPayment->getAmountOnline()*100)
             ],
             "Fees" => [
                 "Currency" => $this->currency,

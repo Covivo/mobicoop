@@ -101,7 +101,7 @@
             <v-card
               v-if="previousItem"
               raised
-              height="850"
+              height="950"
               class="mx-auto"
             >
               <v-row
@@ -141,7 +141,7 @@
               v-if="currentItem"
               raised
               class="mx-auto"
-              height="850"
+              height="950"
             >
               <!-- avatar -->
               <v-row
@@ -582,7 +582,7 @@
             <v-card
               v-if="nextItem"
               raised
-              height="850"
+              height="950"
               class="mx-auto"
             >
               <v-row
@@ -662,6 +662,7 @@
           </v-col>
           <v-col
             align="left"
+            cols="12"
           >
             <v-list shaped>
               <v-list-item
