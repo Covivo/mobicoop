@@ -31,7 +31,8 @@ It does the following :
     1. create client components translation files 
     2. update client components with the new language
     3. create client ui translation files
-    4. create api translation files
+    4. create client routes
+    5. create api translation files
 
 Parameters
 ----------
@@ -52,6 +53,9 @@ client_components_translation_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/components/")
 client_components_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/assets/js/components/")
+client_ui_path = os.path.abspath(
+    script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/UI/")
+
 lang = ""
 
 if len(sys.argv) < 3:
@@ -127,3 +131,6 @@ for file in files:
         f.truncate(0)
         f.seek(0)
         f.write(file_source)
+
+# 3 - create client ui translation files
+copyfile(client_ui_path+"ui.en.yaml", client_ui_path+"ui."+lang+".yaml")
