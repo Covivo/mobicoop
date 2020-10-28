@@ -90,7 +90,7 @@ class ReportManager
     {
         $this->translator->setLocale($this->lang);
 
-        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail()];
+        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $report->getUser()];
 
         $this->sendEmailReport("reportUser", "reportUser", [], $bodyContext);
 

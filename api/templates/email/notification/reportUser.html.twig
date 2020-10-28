@@ -1,4 +1,8 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>Un Usager a été signalé</p>
+    <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30px" >{{ "userReport"|trans }}</p>
+    <p>{{ "theReportedUser"|trans({'%givenName%' : context.user.givenName, '%familyName%' : context.user.familyName, '%email%' : context.user.email}) }}</p>
+    <p>{{ "theReporterUser"|trans({'%emailReporter%' : context.reporterEmail}) }}</p>
+    <p>{{ "detailsTextUserReport"|trans }}</p>
+    <p>{{ context.text }}</p>
 {% endblock %}
