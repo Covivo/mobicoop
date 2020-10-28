@@ -48,7 +48,7 @@ const SimplifiedDashboard = () => {
       <Grid item xs={6}>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <CardWithIcon to="/users" icon={UserIcon} title="Inscrits" subtitle={usersTotal} />
+            <CardWithIcon to="/users" icon={UserIcon} title="Utilisateurs" subtitle={usersTotal} />
           </Grid>
           <Grid item xs={6}>
             <CardWithIcon
@@ -64,12 +64,7 @@ const SimplifiedDashboard = () => {
         </Grid>
       </Grid>
       <Grid item xs={3}>
-        <CardWithIcon
-          to="/users"
-          icon={CustomerIcon}
-          title="Derniers inscrits"
-          subtitle={users ? users.length : 0}
-        >
+        <CardWithIcon to="/users" icon={CustomerIcon} title="Nouveaux utilisateurs">
           <List>
             {users
               ? topTenUsers.map((record) => (
@@ -88,12 +83,7 @@ const SimplifiedDashboard = () => {
         </CardWithIcon>
       </Grid>
       <Grid item xs={3}>
-        <CardWithIcon
-          to="/communities"
-          icon={CustomerIcon}
-          title="Dernières communautés"
-          subtitle={communities ? communities.length : 0}
-        >
+        <CardWithIcon to="/communities" icon={CustomerIcon} title="Communautés récentes">
           <List>
             {communities
               ? communities.map((record) => (
