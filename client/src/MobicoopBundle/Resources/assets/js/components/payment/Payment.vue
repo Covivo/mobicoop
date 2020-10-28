@@ -662,6 +662,7 @@
           </v-col>
           <v-col
             align="left"
+            cols="12"
           >
             <v-list shaped>
               <v-list-item
