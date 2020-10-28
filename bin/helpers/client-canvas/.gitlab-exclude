@@ -72,6 +72,7 @@ mobicoop-platform/api/public/upload/mass/files/*.csv
 mobicoop-platform/api/public/upload/mass/files/*.xml
 mobicoop-platform/api/public/upload/mass/files/*.zip
 mobicoop-platform/api/public/upload/mass/files/*.json
+mobicoop-platform/api/public/export/carpool/*.pdf
 mobicoop-platform/api/public/import/
 mobicoop-platform/api/public/import/*.*
 mobicoop-platform/api/public/import/Avatar/*.*
@@ -89,5 +90,6 @@ mobicoop-platform/client/public/robots.txt
 mobicoop-platform/client/public/mobile_app_repository.json
 mobicoop-platform/admin/.env
 mobicoop-platform/admin/public/logo.png
+mobicoop-platform/admin/public/logo.svg
 mobicoop-platform/admin/public/robots.txt
 public/maintenance.enable

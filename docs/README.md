@@ -58,6 +58,10 @@ To have a functional search you need to install a dep.
 Execute `make go-platform` you'll be in the container. Then execute `npm install -g request-dispatcher`. 
 When it's done you can exit the container by using `exit`.
 
+Package wkhtmltopdf to get a PDF export of carpools.
+Execute `make go-platform`. Add this repository `sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner"`. And execute `sudo apt-get update`. Now get wkhtmltopdf package to install it `wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb`. Then install the package `sudo dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb`.   
+ 
+
 
 ### 🐳 Access apps
 

@@ -548,7 +548,10 @@ class ResultManager
 
             // communities
             foreach ($matching['request']->getProposalRequest()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getName();
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
             }
             
             // outward
@@ -1100,9 +1103,11 @@ class ResultManager
 
             // communities
             foreach ($matching['offer']->getProposalOffer()->getCommunities() as $community) {
-                $communities[$community->getId()] = $community->getName();
+                $communities[$community->getId()] = [
+                    'name'=> $community->getName(),
+                    'image'=> $community->getImages()
+                ];
             }
-            
             // outward
             $item = new ResultItem();
             // we set the proposalId
@@ -1606,14 +1611,14 @@ class ResultManager
     {
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day==7) {
-            $day=0;
+        if ($day == 7) {
+            $day = 0;
         }
         $rdate = new \DateTime();
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
         $nbLoop++;
-        if ($nbLoop>7) {
+        if ($nbLoop > 7) {
             return null;
         } // safeguard to avoid infinite loop
 

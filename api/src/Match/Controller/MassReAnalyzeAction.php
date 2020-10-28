@@ -44,6 +44,7 @@ final class MassReAnalyzeAction
         }
         $statusAuthorized = [
             Mass::STATUS_VALID,
+            Mass::STATUS_ANALYZING,
             Mass::STATUS_ANALYZED,
             Mass::STATUS_MATCHED
         ];

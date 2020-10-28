@@ -46,13 +46,23 @@ class MassComputeManager
     private $geoTools;
     private $massPersonRepository;
     private $roundTripCompute;
+    private $aberrantCoefficient;
+    private $kilometerPrice;
 
-    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository, bool $roundTripCompute)
-    {
+    public function __construct(
+        FormatDataManager $formatDataManager,
+        GeoTools $geoTools,
+        MassPersonRepository $massPersonRepository,
+        bool $roundTripCompute,
+        int $aberrantCoefficient,
+        float $kilometerPrice
+    ) {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
         $this->massPersonRepository = $massPersonRepository;
         $this->roundTripCompute = $roundTripCompute;
+        $this->aberrantCoefficient = $aberrantCoefficient;
+        $this->kilometerPrice = $kilometerPrice;
     }
 
     /**
@@ -82,7 +92,8 @@ class MassComputeManager
             "humanTotalTravelDuration" => "",
             "humanTotalTravelDurationPerYear" => "",
             "humanAverageTravelDuration" => "",
-            "humanAverageTravelDurationPerYear" => ""
+            "humanAverageTravelDurationPerYear" => "",
+            "kilometerPrice" => $this->kilometerPrice
         ];
 
         $persons = $mass->getPersons();
@@ -178,7 +189,8 @@ class MassComputeManager
                 "nbCarpoolersAsDrivers",
                 "nbCarpoolersAsPassengers",
                 "nbCarpoolersAsBoth",
-                "nbCarpoolersTotal"
+                "nbCarpoolersTotal",
+                "kilometerPrice"
             ];
 
             foreach ($computedData as $key => $data) {
@@ -217,6 +229,7 @@ class MassComputeManager
                 $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
             }
             $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
+            $matrix->setSavedMoney(round(($matrix->getSavedDistance()/1000)*$this->kilometerPrice));
             $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
             $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
             $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
@@ -224,6 +237,9 @@ class MassComputeManager
             $mass->setMassMatrix($matrix);
         }
 
+        // check for aberrant addresses
+        $mass->setAberrantAddresses($this->checkAberrantAddresses($persons));
+        
         return $mass;
     }
 
@@ -309,5 +325,47 @@ class MassComputeManager
         $workingPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
 
         return $workingPlaces;
+    }
+
+
+    private function checkAberrantAddresses(array $massPersons): array
+    {
+        $aberrantAddresses = [];
+
+        // Compute the average distance
+        $totalDistance = 0;
+        foreach ($massPersons as $massPerson) {
+            /**
+             * @var MassPerson $massPerson
+             */
+            $totalDistance += $massPerson->getDistance();
+        }
+        $averageDistance = $totalDistance / count($massPersons);
+
+        foreach ($massPersons as $massPerson) {
+            /**
+             * @var MassPerson $massPerson
+             */
+            if ($massPerson->getDistance() > ($averageDistance*$this->aberrantCoefficient)) {
+                $origin = trim(
+                    $massPerson->getPersonalAddress()->getHouseNumber() . " " .
+                    $massPerson->getPersonalAddress()->getStreet() . " " .
+                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                    $massPerson->getPersonalAddress()->getAddressCountry()
+                );
+                $destination = trim(
+                    $massPerson->getWorkAddress()->getHouseNumber() . " " .
+                    $massPerson->getWorkAddress()->getStreet() . " " .
+                    $massPerson->getWorkAddress()->getPostalCode() . " " .
+                    $massPerson->getWorkAddress()->getAddressLocality() . " " .
+                    $massPerson->getWorkAddress()->getAddressCountry()
+                );
+
+                $aberrantAddresses[] = '<' . $origin . '> => <' . $destination . '>, Distance : '.round($massPerson->getDistance()/1000, 1).' kms, id #' . $massPerson->getGivenId();
+            }
+        }
+
+        return $aberrantAddresses;
     }
 }

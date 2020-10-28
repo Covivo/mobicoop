@@ -4,6 +4,40 @@
   >
     <v-row justify="center">
       <v-col>
+        <v-row>
+          <v-col
+            cols="8"
+            class="font-weight-bold text-h5"
+          >
+            {{ $t('needCarpoolProofs') }}
+          </v-col>
+          <v-col                   
+            cols="8"
+            class="font-italic text-caption"
+          >
+            {{ $t('clickAndGetFile') }}
+          </v-col>
+          <v-tooltip
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <div
+                v-on="disableExportButton && on"
+              >
+                <v-btn
+                  color="secondary"
+                  rounded
+                  :disabled="disableExportButton" 
+                  width="175px"
+                  @click="getExport()"
+                >
+                  {{ $t('export') }}
+                </v-btn>
+              </div>
+            </template>
+            <span>{{ $t('tooltip') }}</span>
+          </v-tooltip>
+        </v-row>
         <v-tabs
           centered
           grow
@@ -47,8 +81,8 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 import Translations from "@translations/components/user/profile/carpool/AcceptedCarpools.js";
-
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
 
 export default {
@@ -72,6 +106,31 @@ export default {
     return {
       localAds: this.acceptedCarpools
     }
+  },
+  computed: {
+    disableExportButton() {
+      let testOngoing = this.acceptedCarpools.ongoing.length == 0 || Object.keys(this.acceptedCarpools.ongoing).length == 0 ? true : false;
+      let testArchived = this.acceptedCarpools.archived.length == 0 || Object.keys(this.acceptedCarpools.archived).length == 0 ? true : false;
+      return testOngoing && testArchived;
+    }
+  },
+  methods:{
+    getExport(){
+      axios.post(this.$t("exportUrl"))
+        .then(res => {
+          this.openFileDownload(res);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    },
+    openFileDownload(response){
+      const link = document.createElement('a');
+      link.href = response.data;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+    },
   }
 }
 </script>
