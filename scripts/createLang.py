@@ -55,6 +55,8 @@ client_components_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/assets/js/components/")
 client_ui_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/UI/")
+client_route_file = os.path.abspath(
+    script_absolute_path+"/../client/src/MobicoopBundle/Resources/config/routes.yaml")
 
 lang = ""
 
@@ -134,3 +136,11 @@ for file in files:
 
 # 3 - create client ui translation files
 copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
+
+# 4 - create client routes
+with open(client_route_file, 'r+') as f:
+        file_source = f.read()
+        file_source = re.sub('(\t\ten: )(.*)(\n\tController)(.*)(\n)', r"\g<1>\g<2>\n\t\t"+lang+": \g<2>\n\g<3>\g<4>\n", file_source)
+        f.truncate(0)
+        f.seek(0)
+        f.write(file_source)
