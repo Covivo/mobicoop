@@ -32,7 +32,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 
 /**
- * User manager service.
+ * Block manager service.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
