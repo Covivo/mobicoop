@@ -1,17 +1,26 @@
 <template>
-  <div style="position:relative;">
-    <v-img
-      aspect-ratio="2"
-      :src="avatar"
-    />
+  <div
+    style="position:relative;"
+    class="text-center"
+  >
+    <v-avatar
+      color="grey lighten-3"
+      width="70%"
+      height="auto"
+    >
+      <v-img
+        :src="avatar"
+        class="align-self-center"
+      />
+    </v-avatar>
     <v-btn
-      v-if="experienced"
+      v-if="!experienced"
       color="yellow"
       class="white--text"
       dark
       fab
       small
-      style="position:absolute;top:10px;right:10px"
+      style="position:absolute;top:5%;right:5%px"
     >
       <v-icon class="display-1">
         mdi-star
