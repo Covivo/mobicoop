@@ -28,11 +28,12 @@ This script create all necessary files to handle a new translation language of M
 It must be launched from the root directory of the instance. It uses the english files as model.
 It does the following : 
 
-    1. create client components translation files 
-    2. update client components with the new language
-    3. create client ui translation files
-    4. create client routes
-    5. create api translation files
+    1. create client components translation files
+    2. create client components translation files for instances
+    3. update client components with the new language
+    4. create client ui translation files
+    5. create client routes
+    6. create api translation files
 
 Parameters
 ----------
@@ -51,6 +52,8 @@ from shutil import copyfile
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 client_components_translation_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/translations/components/")
+client_components_instance_translation_path = os.path.abspath(
+    script_absolute_path+"/../client/translations/components/")
 client_components_path = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/assets/js/components/")
 client_ui_path = os.path.abspath(
@@ -102,7 +105,7 @@ if os.path.isfile(api_translations_path+"/messages+intl-icu."+lang+".yaml"):
     print("Language already exists !")
     exit()
 
-1 - create client components translation files 
+# 1 - create client components translation files 
 files = directory_spider(client_components_translation_path, "", "_en.json$")
 for file in files:
     filePath = os.path.dirname(file)
@@ -122,23 +125,48 @@ for file in files:
         # Append text at the end of file
         file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json';")
 
-# 2 - update client components with the new language
+# 2 - create client components translation files for instances
+files = directory_spider(client_components_instance_translation_path, "", "_en.json$")
+for file in files:
+    filePath = os.path.dirname(file)
+    fileWithoutExtension = os.path.splitext(file)[0]
+    component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
+    newFile = file.replace("_en.json", "_"+lang+".json")
+    copyfile(file, newFile)
+
+    # Open the file in append & read mode ('a+')
+    with open(filePath+"/index.js", "a+") as file_object:
+        # Move read cursor to the start of file.
+        file_object.seek(0)
+        # If file is not empty then append '\n'
+        data = file_object.read(100)
+        if len(data) > 0:
+            file_object.write("\n")
+        # Append text at the end of file
+        file_object.write("export {default as messages_"+lang+"} from './"+component_name+"_"+lang +".json';")
+
+# 3 - update client components with the new language
 files = directory_spider(client_components_path, "", ".vue$")
 for file in files:
     with open(file, 'r+') as f:
         file_source = f.read()
+        # add messages for the new language
         file_source = re.sub('(import {messages_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_'+lang+'\g<3>\g<4>\n', file_source)
-        file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
-        file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
-        file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
+        # check for possible client override
+        if re.search('import {messages_client_en',file_source):
+            file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
+            file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
+            file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
+        else:
+            file_source = re.sub('(.*)(\'en\': messages_en,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': messages_'+lang.capitalize()+',\n', file_source)
         f.truncate(0)
         f.seek(0)
         f.write(file_source)
 
-# 3 - create client ui translation files
+# 4 - create client ui translation files
 copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
 
-# 4 - create client routes
+# 5 - create client routes
 with open(client_route_file, 'r+') as f:
         file_source = f.read()
         file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
@@ -146,5 +174,5 @@ with open(client_route_file, 'r+') as f:
         f.seek(0)
         f.write(file_source)
 
-# 5 - create api translation files
+# 6 - create api translation files
 copyfile(api_translations_path+"/messages+intl-icu.en.yaml", api_translations_path+"/messages+intl-icu."+lang+".yaml")
