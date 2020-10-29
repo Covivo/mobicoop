@@ -491,16 +491,11 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
 import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingJourney/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
@@ -510,8 +505,8 @@ export default {
   },
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     },
   },
   props: {

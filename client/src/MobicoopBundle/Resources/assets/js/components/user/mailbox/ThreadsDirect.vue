@@ -26,21 +26,16 @@
 </template>
 <script>
 
-import { merge } from "lodash";
 import axios from "axios";
 import moment from "moment";
 import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadsDirect/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/mailbox/ThreadsDirect/";
 import ThreadDirect from '@components/user/mailbox/ThreadDirect'
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components:{

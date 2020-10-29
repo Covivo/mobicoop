@@ -150,29 +150,31 @@ files = directory_spider(client_components_path, "", ".vue$")
 for file in files:
     with open(file, 'r+') as f:
         file_source = f.read()
-        # add messages for the new language
-        file_source = re.sub('(import {messages_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_'+lang+'\g<3>\g<4>\n', file_source)
-        # check for possible client override
-        if re.search('import {messages_client_en',file_source):
-            file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
-            file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
-            file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
-        else:
-            file_source = re.sub('(.*)(\'en\': messages_en,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': messages_'+lang.capitalize()+',\n', file_source)
-        f.truncate(0)
-        f.seek(0)
-        f.write(file_source)
+        # check if component uses translations
+        if re.search('import {messages_en',file_source):
+            # add messages for the new language
+            file_source = re.sub('(import {messages_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_'+lang+'\g<3>\g<4>\n', file_source)
+            # check for possible client override
+            if re.search('import {messages_client_en',file_source):
+                file_source = re.sub('(import {messages_client_en,)(.*)(})(.*)\n', r'\g<1>\g<2>, messages_client_'+lang+'\g<3>\g<4>\n', file_source)
+                file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
+                file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
+            else:
+                file_source = re.sub('(.*)(\'en\': messages_en,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': messages_'+lang.capitalize()+',\n', file_source)
+            f.truncate(0)
+            f.seek(0)
+            f.write(file_source)
 
 # 4 - create client ui translation files
 copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
 
 # 5 - create client routes
 with open(client_route_file, 'r+') as f:
-        file_source = f.read()
-        file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
-        f.truncate(0)
-        f.seek(0)
-        f.write(file_source)
+    file_source = f.read()
+    file_source = re.sub('(\s+)(en: )(.*)\n', r"\g<1>\g<2>\g<3>\g<1>"+lang+": \g<3>\n", file_source)
+    f.truncate(0)
+    f.seek(0)
+    f.write(file_source)
 
 # 6 - create api translation files
 copyfile(api_translations_path+"/messages+intl-icu.en.yaml", api_translations_path+"/messages+intl-icu."+lang+".yaml")

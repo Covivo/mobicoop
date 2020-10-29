@@ -220,9 +220,7 @@
 </template>
 <script>
 
-import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadActions/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/mailbox/ThreadActions/";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
 import VJourney from '@components/carpool/utilities/VJourney'
@@ -230,14 +228,11 @@ import MatchingJourney from '@components/carpool/results/MatchingJourney'
 import axios from "axios";
 import moment from "moment";
 
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
-
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components:{

@@ -262,21 +262,17 @@
 </template>
 
 <script>
-import {merge, find} from "lodash";
+import {find} from "lodash";
 import axios from "axios";
 import moment from "moment";
 import {messages_en, messages_fr} from "@translations/components/solidary/SolidaryForm/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/solidary/SolidaryForm/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components: {

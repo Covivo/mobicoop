@@ -285,18 +285,13 @@
 <script>
 
 import axios from "axios";
-import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/carpool/results/Matching/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
@@ -309,8 +304,8 @@ export default {
   },
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     },
   },
   props: {

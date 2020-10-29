@@ -70,19 +70,15 @@
 </template>
 
 <script>
-import {merge, isEmpty} from "lodash";
+import {isEmpty} from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/profile/carpool/CarpoolFooter/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/carpool/CarpoolFooter/";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components: {

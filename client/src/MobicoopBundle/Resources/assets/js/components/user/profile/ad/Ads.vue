@@ -62,19 +62,15 @@
 </template>
 <script>
 
-import { merge, omit } from "lodash";
+import { omit } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/profile/ad/Ads/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/ad/Ads/";
 import Ad from "@components/user/profile/ad/Ad.vue";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components: {

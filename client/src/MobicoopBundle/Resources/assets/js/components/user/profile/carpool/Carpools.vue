@@ -82,20 +82,15 @@
 </template>
 <script>
 
-import { merge } from "lodash";
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/user/profile/carpool/AcceptedCarpools/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/carpool/AcceptedCarpools/";
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components: {

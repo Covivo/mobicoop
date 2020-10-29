@@ -60,12 +60,7 @@
 </template>
 <script>
 
-import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/utilities/DayListChips/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/DayListChips/";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {

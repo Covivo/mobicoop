@@ -326,19 +326,14 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
 import {messages_en, messages_fr} from "@translations/components/carpool/utilities/RegularAsk/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/utilities/RegularAsk/";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   props: {
