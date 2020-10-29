@@ -62,7 +62,7 @@
                 >
                   {{ $t('buttons.widget.label') }}
                 </v-btn>
-                <EventReport
+                <Report
                   class="mt-3"
                   :event="event"
                 />
@@ -137,7 +137,7 @@
 
 import {messages_en, messages_fr} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
-import EventReport from "@components/event/EventReport";
+import Report from "@components/utilities/Report";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -145,7 +145,7 @@ import moment from "moment";
 
 export default {
   components: {
-    EventReport, EventInfos, Search, MMap
+    Report, EventInfos, Search, MMap
   },
   i18n: {
     messages: {

@@ -70,7 +70,7 @@
         <div
           class="mt-5"
         >
-          <EventReport
+          <Report
             :event="item"
           />
         </div>
@@ -81,12 +81,12 @@
 <script>
 
 import moment from "moment";
-import EventReport from "@components/event/EventReport";
 import {messages_en, messages_fr} from "@translations/components/event/EventListItem/";
+import Report from "@components/utilities/Report";
 
 export default {
   components:{
-    EventReport
+    Report
   },
   i18n: {
     messages: {

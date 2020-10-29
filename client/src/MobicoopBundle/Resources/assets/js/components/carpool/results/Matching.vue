@@ -219,10 +219,12 @@
         :result="result"
         :user="user"
         :reset-step="resetStepMatchingJourney"
+        :profile-summary-refresh="profileSummaryRefresh"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
+        @profileSummaryRefresh="refreshProfileSummary"
       />
     </v-dialog>
     
@@ -415,6 +417,7 @@ export default {
       lCommunityId: this.communityId,
       lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false,
+      profileSummaryRefresh: false,
       page:1
     };
   },
@@ -473,6 +476,7 @@ export default {
       // open the dialog
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
+      this.profileSummaryRefresh = true;
     },
     loginOrRegister(carpool) {
       this.result = carpool;
@@ -722,6 +726,9 @@ export default {
     },
     startNewSearch() {
       this.newSearch = true;
+    },
+    refreshProfileSummary(){
+      this.profileSummaryRefresh = false;
     }
   }
 };

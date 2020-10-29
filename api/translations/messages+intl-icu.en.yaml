@@ -153,9 +153,19 @@ eventDescription: "Description: "
 
 # EVENT REPORT
 
+eventReportTitle: "Signalement d'un événement"
+eventReport: "Un événement a été signalé"
 theUser: "L'utilisateur"
 reportThatEvent: "à signaler l'événement"
-explanationOfTheReport: "Explication du signalement"
+detailsTextEventReport: "Les détails sur le signalement :"
+
+# USER REPORT
+
+userReportTitle: "Signalement d'un usager"
+userReport: "Un Usager a été signalé"
+theReportedUser: "Il s'agit de {givenName} {familyName} ({email})"
+theReporterUser: "L'email de l'usager ayant fait le signalement est {emailReporter}"
+detailsTextUserReport: "Les détails sur le signalement :"
 
 ######      SMS      ######
 
