@@ -87,16 +87,12 @@
 </template>
 
 <script>
-import {merge} from "lodash";
 import axios from "axios";
 import Translations from "@translations/components/user/profile/CarpoolSettings/CarpoolSettings.js";
-import ClientTranslations from "@clientTranslations/components/user/profile/CarpoolSettings/CarpoolSettings.js";
-
-let MergedTranslations = merge(Translations, ClientTranslations);
 
 export default {
   i18n: {
-    messages: MergedTranslations
+    messages: Translations
   },
   props: {
     user: {

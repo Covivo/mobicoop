@@ -1,3 +1,9 @@
+# Release 1.17.0
+
+## CLIENT
+
+* New i18n file format for Vue components (monolingual json)
+
 # Release 1.16.0
 
 ## API
