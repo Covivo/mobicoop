@@ -16,7 +16,7 @@
           rounded
           :outlined="outlined"
           :disabled="disabled"
-          :href="$t('link', {'id':paymentItemId,'frequency':frequency,'type':type})"
+          :href="$t('route', {'id':paymentItemId,'frequency':frequency,'type':type})"
         >
           {{ displayPaymentStatus }}
         </v-btn>

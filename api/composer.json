@@ -40,6 +40,7 @@
         "symfony/translation": "^4.0",
         "symfony/web-server-bundle": "*",
         "symfony/yaml": "*",
+        "twig/intl-extra": "^3.1",
         "vich/uploader-bundle": "^1.8",
         "willdurand/geocoder-bundle": "^5.3"
     },

@@ -42,9 +42,9 @@
         "getFirstWeek": "/getFirstWeek"
     },
     "tooltip": {
-        "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires"
+        "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires."
     },
-    "regularInfo": "Si vous n'avez pas été conduit par {driver} , veuillez décocher les jours où vous n'avez pas été son passager.",
+    "regularInfo": "Si vous n'avez pas covoituré avec {driver} certains jours, vous pouvez les décocher ci-dessous.",
     "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
     "from": "du ",
     "to": " au ",

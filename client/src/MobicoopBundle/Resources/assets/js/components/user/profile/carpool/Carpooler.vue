@@ -77,6 +77,7 @@
     >
       <v-col
         :cols="ask.paymentStatus !== null ? 4 : 7"
+        :class="{'ml-n13': $vuetify.breakpoint.mdAndDown}"
       >
         <carpooler-identity
           :carpooler="result.carpooler"

@@ -7,6 +7,6 @@
         "paid": "Déjà payé",
         "pending": "Payer"
     },
-    "link": "/payments/{id}/{frequency}/{type}/{week}",
+    "route": "/paiements/{id}/{frequency}/{type}/{week}",
     "unpaid": "Impayé"
 }

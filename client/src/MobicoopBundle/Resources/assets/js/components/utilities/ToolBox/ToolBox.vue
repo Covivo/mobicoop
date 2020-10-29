@@ -23,7 +23,6 @@
         <h2 class="font-weight-bold">
           {{ $t('subtitle') }}
         </h2>
-        <p>{{ $t('intro') }}</p>
       </v-col>
     </v-row>
 
@@ -38,11 +37,24 @@
             v-for="(item, i) in items"
             :key="i"
             cols="4"
+            lg="4"
+            md="8"
           >
             <ToolBoxItem
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :link-subtitle="item.linkSubtitle"
               :image="item.image"
-              :link="item.link"
-              :text-link="item.textLink"
+              :text-download="item.textDownload"
+              :download-link="item.downloadLink"
+              :personalized-text="item.personalizedText"
+              :personalized-text-link="item.personalizedTextLink"
+              :link1="item.link1"
+              :link2="item.link2"
+              :link3="item.link3"
+              :text-logo1="item.textLogo1"  
+              :text-logo2="item.textLogo2"           
+              :text-logo3="item.textLogo3"            
             />
           </v-col>
         </v-row>
