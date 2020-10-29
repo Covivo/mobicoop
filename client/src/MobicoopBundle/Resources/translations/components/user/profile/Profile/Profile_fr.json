@@ -6,11 +6,11 @@
         "myProfile": "Profil",
         "password": "Mot de passe",
         "myAds": "Mes annonces",
-        "carpoolSettings": "Mes préférences",
-        "alerts": "Mes alertes",
-        "bankCoordinates": "Mes coordonnées bancaires",
+        "carpoolSettings": "Préférences",
+        "alerts": "Alertes",
+        "bankCoordinates": "Identité bancaires",
         "carpoolsAccepted": "Covoiturages acceptés",
-        "myAccount": "Mon compte"
+        "myAccount":"Compte"
     },
     "form": {
         "newPassword": "Nouveau mot de passe",
@@ -23,6 +23,11 @@
     "snackBar": {
         "passwordUpdated": "Mot de passe mis à jour",
         "textSnackError": "Erreur dans la mise à jour du mot de passe"
+    },    
+    "publicProfile":{
+        "title":"Profil public",
+        "see":"Voir profil public",
+        "close":"Fermer"
     },
     "errors": {
         "required": "Le mot de passe est requis",
