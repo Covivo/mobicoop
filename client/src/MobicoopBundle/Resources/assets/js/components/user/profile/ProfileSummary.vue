@@ -81,6 +81,10 @@ export default {
     showLinkProfile:{
       type: Boolean,
       default: true
+    },
+    refresh:{
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -90,16 +94,25 @@ export default {
       experienced:false
     }
   },
+  watch:{
+    refresh(){
+      if(this.refresh){
+        this.getProfileSummary();
+      }
+    }
+  },
   mounted(){
     this.getProfileSummary()
   },
   methods:{
     getProfileSummary(){
+      this.loading = true;
       axios.post(this.$t('getProfileSummaryUri'),{'userId':this.userId})
         .then(response => {
           //console.log(response.data);
           this.profileSummary = response.data;
           this.loading = false;
+          this.$emit('profileSummaryRefresh',{'userId':this.userId});
         })
         .catch(function (error) {
           console.error(error);

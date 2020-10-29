@@ -14,13 +14,13 @@
       />
     </v-avatar>
     <v-btn
-      v-if="!experienced"
+      v-if="experienced"
       color="yellow"
       class="white--text"
       dark
       fab
       small
-      style="position:absolute;top:5%;right:5%px"
+      style="position:absolute;top:10%;right:15%"
     >
       <v-icon class="display-1">
         mdi-star

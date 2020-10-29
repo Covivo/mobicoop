@@ -131,7 +131,9 @@
                 <v-card>
                   <ProfileSummary
                     :user-id="result.carpooler.id"
+                    :refresh="profileSummaryRefresh"
                     @showProfile="step=4"
+                    @profileSummaryRefresh="refreshProfileSummary"
                   />
                   <v-card-text>
                     <v-row
@@ -595,6 +597,10 @@ export default {
     resetStep: {
       type: Boolean,
       default: false
+    },
+    profileSummaryRefresh: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -878,6 +884,9 @@ export default {
     },
     publicProfileRefresh(data){
       this.refreshPublicProfile = false;
+    },
+    refreshProfileSummary(data){
+      this.$emit("profileSummaryRefresh",data);
     }
   }
 };
