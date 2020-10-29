@@ -1,0 +1,18 @@
+{
+    "fr": {
+        "yearsOld":"ans",
+        "getProfileSummaryUri":"/utilisateur/profil/resume",
+        "infos":{
+            "carpoolRealized":"Covoiturages réalisés",
+            "answerPct":"Taux de réponse"
+        }
+    },    
+    "en": {
+        "yearsOld":"years old",
+        "getProfileSummaryUri":"/user/profile/summary",
+        "infos":{
+            "carpoolRealized":"Carpool realized",
+            "answerPct":"Answering rates"
+        }
+    }    
+}

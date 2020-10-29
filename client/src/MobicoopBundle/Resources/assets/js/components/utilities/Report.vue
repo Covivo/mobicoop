@@ -33,10 +33,10 @@
       >
         <v-card>
           <v-card-title class="text-h5">
-            {{ $t('popup.title') }}
+            {{ cardTitle }}
           </v-card-title>
           <v-card-text
-            v-html="$t('popup.content', {eventName: event.name})"
+            v-html="cardContent"
           />
           <v-card-text>
             <v-form
@@ -52,10 +52,10 @@
                 required
               />
               <v-textarea
-                ref="description"
-                v-model="description"
-                :label="$t('popup.form.description.label')"
-                :rules="descriptionRules"
+                ref="text"
+                v-model="text"
+                :label="$t('popup.form.text.label')"
+                :rules="textRules"
                 required
               />
             </v-form>
@@ -87,8 +87,8 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/event/EventReport/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/event/EventReport/";
+import {messages_en, messages_fr} from "@translations/components/utilities/Report/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/Report/";
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
@@ -101,6 +101,10 @@ export default {
   },
   props:{
     event:{
+      type: Object,
+      default: null
+    },
+    user:{
       type: Object,
       default: null
     }
@@ -118,28 +122,55 @@ export default {
         v => !!v || this.$t("popup.form.email.errors.required"),
         v => /.+@.+/.test(v) || this.$t("popup.form.email.errors.valid")
       ],
-      description: null,
-      descriptionRules: [
-        v => !!v || this.$t("popup.form.description.errors.required")
+      text: null,
+      textRules: [
+        v => !!v || this.$t("popup.form.text.errors.required")
       ]
     }
   },
   computed : {
     isDisable () {
-      if(!this.email || !this.description) return true;
+      if(!this.email || !this.text) return true;
       return false;
-    }
+    },
+    cardTitle(){
+      if(this.event){
+        return this.$t('popup.event.title');
+      }
+      else if(this.user){
+        return this.$t('popup.user.title');
+      }
+      return "";
+    },
+    cardContent(){
+      if(this.event){
+        return this.$t('popup.event.content', {eventName: this.event.name});
+      }
+      else if(this.user){
+        return this.$t('popup.user.content', {userName: this.user.givenName+' '+this.user.shortFamilyName});
+      }
+      return "";
+    }    
   },
   methods:{
     report() {
       this.isLoading = true;
 
-      let url = `${this.$t("routes.report", {id: this.event.id})}`;
+      let url = '';
+      if(this.event){
+        url = this.$t("routes.eventReport", {id: this.event.id});
+      }
+      else if(this.user){
+        url = this.$t("routes.userReport", {id: this.user.id});
+      }
+      else{
+        return;
+      }
 
-      // LOAD INPUT
-      let params = new FormData();
-      params.append("email", this.email);
-      params.append("description", this.description);
+      let params = {
+        "email": this.email,
+        "text": this.text
+      }
 
       axios
         .post(url, params)

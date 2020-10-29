@@ -192,6 +192,26 @@ class AskRepository
         return $query->getQuery()->getResult();
     }
 
+
+    /**
+     * Find accepted asks for a given user
+     *
+     * @param User|null $user   The user
+     * @return Ask[]|null       The asks if found
+     */
+    public function findAcceptedAsksForUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('a')
+        ->join('a.criteria', 'c')
+        ->where('(a.status = :accepted_driver and a.user = :user) or (a.status = :accepted_passenger and a.userRelated = :user)')
+        ->setParameter('accepted_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+        ->setParameter('accepted_passenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+        ->setParameter('user', $user)
+        ;
+                
+        return $query->getQuery()->getResult();
+    }
+
     /**
      * Find accepted regular asks for a given user as a driver
      *

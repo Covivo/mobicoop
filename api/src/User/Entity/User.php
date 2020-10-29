@@ -436,6 +436,10 @@ class User implements UserInterface, EquatableInterface
 
     const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
+    const SMOKE_NO = 0;
+    const SMOKE_NOT_IN_CAR = 1;
+    const SMOKE = 2;
+
     /**
      * @var int The id of this user.
      *
