@@ -1,0 +1,28 @@
+{
+    "title": "Mobicoop",
+    "subtitle": "Explanation in english",
+    "origin": "Departure location",
+    "destination": "Arrival location",
+    "swap": {
+        "alt": "Swap origin and destination addresses",
+        "help": "Click to swap origin and destination addresses"
+    },
+    "switch": {
+        "label": "Regular ride",
+        "help": "Switch to indicate a regular ride"
+    },
+    "datePicker": {
+        "label": "Departure date"
+    },
+    "buttons": {
+        "publish": {
+            "label": "Publish",
+            "route": "/carpool/search/publish"
+        },
+        "search": {
+            "label": "Search",
+            "route": "carpool/search"
+        }
+    },
+    "urlDate": "YMMDD"
+}

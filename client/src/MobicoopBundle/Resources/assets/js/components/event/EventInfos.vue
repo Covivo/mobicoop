@@ -64,11 +64,7 @@
 </template>
 <script>
 import moment from "moment";
-import { merge } from "lodash";
-import Translations from "@translations/components/event/EventInfos.json";
-import TranslationsClient from "@clientTranslations/components/event/EventInfos.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/event/EventInfos/";
 
 export default {
   props:{
@@ -94,7 +90,10 @@ export default {
     }
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   data() {
     return {
@@ -121,7 +120,7 @@ export default {
   },
   methods: {
     computedDateFormat(date) {
-      return moment(date).format(this.$t("ui.i18n.date.format.shortCompleteDate") + (this.event.useTime ? (" " + this.$t("ui.i18n.time.format.hourMinute")) : ""));
+      return moment(date).format(this.$t("shortCompleteDate") + (this.event.useTime ? (" " + this.$t("hourMinute")) : ""));
     }
   },
 }

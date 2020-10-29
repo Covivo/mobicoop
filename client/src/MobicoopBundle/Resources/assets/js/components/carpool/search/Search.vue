@@ -108,15 +108,19 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import Translations from "@translations/components/carpool/search/Search.json";
-import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/search/Search/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/search/Search/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     SearchJourney
@@ -216,7 +220,7 @@ export default {
     },
     dateFormated() {
       return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.urlDate"))
+        ? moment(this.date).format(this.$t("urlDate"))
         : null;
     },
   },

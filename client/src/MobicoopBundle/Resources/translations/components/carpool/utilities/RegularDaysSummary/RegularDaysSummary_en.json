@@ -1,0 +1,13 @@
+{
+    "mon": "M",
+    "tue": "Tu",
+    "wed": "W",
+    "thu": "T",
+    "fri": "F",
+    "sat": "S",
+    "sun": "Su",
+    "dateValid": "Valid until the",
+    "valid": "Validity :",
+    "dateValidUntil": "until the",
+    "shortCompleteDate": "DD/MM/YYYY"
+}

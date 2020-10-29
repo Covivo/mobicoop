@@ -51,14 +51,10 @@
 </template>
 <script>
 
-import { merge } from "lodash";
-import Translations from "@translations/components/community/Community.json";
-import TranslationsClient from "@clientTranslations/components/community/Community.json";
+import {messages_en, messages_fr} from "@translations/components/community/Community/";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
@@ -66,7 +62,10 @@ export default {
     Search,
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     user: {

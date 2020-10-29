@@ -1,0 +1,5 @@
+{
+    "title": "Carte des aires de covoiturage",
+    "search": "Chercher un trajet",
+    "relayPointList": "/points-relais/getRelayPointList"
+}

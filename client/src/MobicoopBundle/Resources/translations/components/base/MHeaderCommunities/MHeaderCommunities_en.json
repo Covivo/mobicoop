@@ -1,0 +1,7 @@
+{
+    "title": "My communities",
+    "getCommunities": "/user/communities",
+    "availableCommunities": "Available communities",
+    "urlCommunityList": "/community",
+    "urlCommunityDetails": "/communaute/{id}"
+}

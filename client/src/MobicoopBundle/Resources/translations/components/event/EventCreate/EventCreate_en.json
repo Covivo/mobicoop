@@ -1,0 +1,6 @@
+{
+    "redirect": {
+        "route": "/events"
+    },
+    "fullDate": "ddd Do MMMM YYYY"
+}

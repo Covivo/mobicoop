@@ -91,11 +91,14 @@
 
 <script>
 import moment from 'moment';
-import Translations from "@translations/components/user/profile/ad/Schedules.js";
+import {messages_en, messages_fr} from "@translations/components/user/profile/ad/Schedules/";
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     // for multiple computed times eg my ads
@@ -132,7 +135,7 @@ export default {
     },
     dateTimeFormat: {
       type: String,
-      default: "ui.i18n.time.format.hourMinute"
+      default: "hourMinute"
     },
     // if we want refined display of data for punctual carpools
     isRefined: {

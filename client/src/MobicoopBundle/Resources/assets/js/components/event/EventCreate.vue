@@ -328,18 +328,17 @@
 </template>
 <script>
 
-import { merge } from "lodash";
-import Translations from "@translations/components/event/EventCreate.json";
-import TranslationsClient from "@clientTranslations/components/event/EventCreate.json";
+import {messages_en, messages_fr} from "@translations/components/event/EventCreate/";
 import GeoComplete from "@components/utilities/GeoComplete";
 import moment from "moment";
 import axios from "axios";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
-
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   components: {
     GeoComplete
@@ -413,12 +412,12 @@ export default {
   computed :{
     computedOutwardDateFormat() {
       return this.startDate
-        ? moment(this.startDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.startDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.endDate
-        ? moment(this.endDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
     },
   },

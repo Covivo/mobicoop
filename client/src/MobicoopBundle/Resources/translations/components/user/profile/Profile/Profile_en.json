@@ -1,0 +1,35 @@
+{
+    "page": {
+        "title": "Profile"
+    },
+    "tabs": {
+        "myProfile": "Profile",
+        "password": "Password",
+        "myAds": "My proposals",
+        "carpoolSettings": "My settings",
+        "alerts": "My alerts",
+        "bankCoordinates": "My bank coordinates",
+        "carpoolsAccepted": "Accepted carpools",
+        "myAccount": "My account"
+    },
+    "form": {
+        "newPassword": "New password",
+        "newPasswordRepeat": "New password (confirmation)",
+        "errors": {
+            "required": "Password is required",
+            "notIdentiquals": "Passwords are not identical"
+        }
+    },
+    "snackBar": {
+        "passwordUpdated": "Password updated",
+        "textSnackError": "Password update has failed"
+    },
+    "errors": {
+        "required": "Le mot de passe est requis",
+        "min": "Le mot de passe doit comprendre 8 caractères min.",
+        "upper": "Le mot de passe doit comprendre 1 majuscule.",
+        "lower": "Le mot de passe doit comprendre 1 minuscule.",
+        "number": "Le mot de passe doit comprendre 1 chiffre."
+    },
+    "save": "Enregistrer"
+}

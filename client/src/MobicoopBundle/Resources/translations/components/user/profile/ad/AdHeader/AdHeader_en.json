@@ -1,0 +1,14 @@
+{
+    "ads": {
+        "ongoing": "On going proposals",
+        "archived": "Archived proposals"
+    },
+    "delete": {
+        "route": "/carpool/ad/delete",
+        "success": "Your ad had been deleted with success.",
+        "error": "An error happened."
+    },
+    "update": {
+        "route": "/carpool/ad/{id}/update"
+    }
+}

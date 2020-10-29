@@ -19,13 +19,17 @@
   </div>
 </template>
 <script>
+
 import axios from "axios";
-import Translations from "@translations/components/user/MFacebookAuth.json";
+import {messages_en, messages_fr} from "@translations/components/user/MFacebookAuth/";
 import facebookLogin from 'facebook-login-vuejs';
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   name: "MFacebookAuth",
   components : {

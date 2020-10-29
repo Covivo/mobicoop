@@ -1,0 +1,13 @@
+{
+    "title": "Rejoindre une communauté sécurisée",
+    "titleWithName": "Rejoindre la communauté",
+    "credential1": "1er identifiant",
+    "credential2": "2nd identifiant",
+    "urlSignIn": "/communaute/{id}/securisee/inscription",
+    "join": "Rejoindre la communauté",
+    "errors": {
+        "required": "Ce champs est obligatoire",
+        "badCredentials": "Identifiants incorrects",
+        "notLogged": "Vous devez être connecté"
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "routes": {
+        "event": "/event/{id}"
+    },
+    "eventDetails": "Event details",
+    "join": "Join the event",
+    "date": {
+        "from": "From",
+        "to": "To",
+        "at": "at",
+        "the": "The"
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
+}

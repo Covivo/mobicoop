@@ -98,7 +98,7 @@
           <!--Email-->
           <v-text-field
             v-model="email"
-            :label="$t('models.user.email.label')"
+            :label="$t('email.label')"
             type="email"
             class="email"
           />
@@ -111,7 +111,7 @@
             <v-col cols="3" md="4" sm="5" xl="2">
               <v-text-field
                 v-model="telephone"
-                :label="$t('models.user.phone.label')"
+                :label="$t('phone.label')"
                 class="telephone"
                 :rules="telephoneRules"
               />
@@ -211,21 +211,21 @@
           <!--GivenName-->
           <v-text-field
             v-model="givenName"
-            :label="$t('models.user.givenName.label')"
+            :label="$t('givenName.label')"
             class="givenName"
           />
 
           <!--FamilyName-->
           <v-text-field
             v-model="familyName"
-            :label="$t('models.user.familyName.label')"
+            :label="$t('familyName.label')"
             class="familyName"
           />
 
           <!--Gender-->
           <v-select
             v-model="gender"
-            :label="$t('models.user.gender.label')"
+            :label="$t('gender.label')"
             :items="genders"
             item-text="gender"
             item-value="value"
@@ -242,7 +242,7 @@
             <template v-slot:activator="{ on }">
               <v-text-field
               :value ="computedBirthdateFormat"
-              :label="$t('models.user.birthDay.label')"
+              :label="$t('birthDay.label')"
               :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
               readonly
               v-on="on"
@@ -292,8 +292,8 @@
               <v-card-text v-html="$t('news.confirmation.content')"></v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('ui.common.no') }}</v-btn>
-                <v-btn color="secondary darken-1" text @click="dialog=false">{{ $t('ui.common.yes') }}</v-btn>
+                <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('no') }}</v-btn>
+                <v-btn color="secondary darken-1" text @click="dialog=false">{{ $t('yes') }}</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -306,10 +306,10 @@
             :disabled="!valid"
             :loading="loading"
             type="button"
-            :value="$t('ui.button.save')"
+            :value="$t('save')"
             @click="validate"
           >
-            {{ $t('ui.button.save') }}
+            {{ $t('save') }}
           </v-btn>
         </v-form>
       </v-col>
@@ -320,7 +320,7 @@
         <!--GeoComplete-->
         <GeoComplete
           :url="geoSearchUrl"
-          :label="$t('models.user.homeTown.label')"
+          :label="$t('homeTown.label')"
           :token="user ? user.geoToken : ''"
           :init-address="homeAddress"
           :display-name-in-selected="false"
@@ -374,7 +374,7 @@
                   :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
                   :loading="loading"
                   type="button"
-                  :value="$t('ui.button.save')"
+                  :value="$t('save')"
           >
             {{ $t('buttons.supprimerAccount') }}
           </v-btn>
@@ -420,7 +420,7 @@
               text
               @click="dialogDelete = false; newsSubscription = true"
             >
-              {{ $t('ui.common.no') }}
+              {{ $t('no') }}
             </v-btn>
             <v-btn
               color="primary"
@@ -447,14 +447,18 @@ import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/UpdateProfile.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/UpdateProfile.json";
+import {messages_en, messages_fr} from "@translations/components/user/profile/UpdateProfile/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/UpdateProfile/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   components: {
     GeoComplete,
@@ -512,9 +516,9 @@ export default {
 
 
       genders:[
-        { value: 1, gender: this.$t('models.user.gender.values.female')},
-        { value: 2, gender: this.$t('models.user.gender.values.male')},
-        { value: 3, gender: this.$t('models.user.gender.values.other')},
+        { value: 1, gender: this.$t('gender.values.female')},
+        { value: 2, gender: this.$t('gender.values.male')},
+        { value: 3, gender: this.$t('gender.values.other')},
       ],
       phoneDisplay: {
         value: this.user.phoneDisplay
@@ -531,10 +535,10 @@ export default {
          v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
       ],
       telephoneRules: [
-          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
       ],
       birthdayRules : {
-        required:  v => !!v || this.$t("models.user.birthDay.errors.required"),
+        required:  v => !!v || this.$t("birthDay.errors.required"),
         checkIfAdult : value =>{
           var d1 = new Date();
           var d2 = new Date(value);
@@ -543,7 +547,7 @@ export default {
           diff /= (60 * 60 * 24);
 
           var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
-          return diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
+          return diffYears >= 16 || this.$t("birthDay.errors.notadult")
         }
       },
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,

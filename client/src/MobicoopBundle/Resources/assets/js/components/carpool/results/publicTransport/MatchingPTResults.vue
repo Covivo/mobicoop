@@ -51,14 +51,19 @@
   </div>
 </template>
 <script>
+
 import MatchingPTResult from "@components/carpool/results/publicTransport/MatchingPTResult";
-import Translations from "@translations/components/carpool/results/publicTransport/MatchingPTResults.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResults/";
+
 export default {
   components: {
     MatchingPTResult,
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     ptResults: {

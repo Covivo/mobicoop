@@ -135,9 +135,7 @@
 </template>
 <script>
 
-import { merge } from "lodash";
-import Translations from "@translations/components/event/Event.json";
-import TranslationsClient from "@clientTranslations/components/event/Event.json";
+import {messages_en, messages_fr} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import EventReport from "@components/event/EventReport";
 import Search from "@components/carpool/search/Search";
@@ -145,14 +143,15 @@ import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 import moment from "moment";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
-
 export default {
   components: {
     EventReport, EventInfos, Search, MMap
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     user: {

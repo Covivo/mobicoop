@@ -46,14 +46,14 @@
   </v-menu>
 </template>
 <script>
-import { merge } from "lodash";
-import Translations from "@translations/components/base/MHeaderProfile.json";
-import TranslationsClient from "@clientTranslations/components/base/MHeaderProfile.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/base/MHeaderProfile/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     avatar:{
