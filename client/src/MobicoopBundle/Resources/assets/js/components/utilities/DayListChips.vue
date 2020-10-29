@@ -65,8 +65,8 @@ import {messages_en, messages_fr} from "@translations/components/utilities/DayLi
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   props: {

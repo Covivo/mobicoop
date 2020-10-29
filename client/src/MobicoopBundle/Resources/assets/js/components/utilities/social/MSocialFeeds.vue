@@ -41,8 +41,8 @@ import axios from "axios";
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   components: {
