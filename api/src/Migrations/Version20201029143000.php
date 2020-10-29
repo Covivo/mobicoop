@@ -13,8 +13,9 @@ final class Version20201029143000 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // Add review
+        $this->addSql("INSERT INTO `auth_rule` (`id`, `name`) VALUES ('29', 'ReviewAuthor')");
 
-        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (246, NULL, 1, 'review_create', 'Create (leave) a Review on someone')");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (246, 29, 1, 'review_create', 'Create (leave) a Review on someone')");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (247, NULL, 1, 'review_read', 'Read a review of someone')");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (248, NULL, 1, 'review_update', 'Update a review')");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (249, NULL, 1, 'review_delete', 'Delete a review')");

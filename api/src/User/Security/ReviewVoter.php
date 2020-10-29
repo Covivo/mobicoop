@@ -75,7 +75,7 @@ class ReviewVoter extends Voter
     {
         switch ($attribute) {
             case self::REVIEW_CREATE:
-                return $this->canCreateReview();
+                return $this->canCreateReview($subject);
             case self::REVIEW_READ:
                 return $this->canReadReview();
             case self::REVIEW_UPDATE:
@@ -89,9 +89,9 @@ class ReviewVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canCreateReview()
+    private function canCreateReview(Review $review)
     {
-        return $this->authManager->isAuthorized(self::REVIEW_CREATE);
+        return $this->authManager->isAuthorized(self::REVIEW_CREATE, ['review'=>$review]);
     }
 
     private function canReadReview()
