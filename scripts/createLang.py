@@ -160,7 +160,7 @@ for file in files:
                 file_source = re.sub('(let MessagesMergedEn = merge\(messages_en, messages_client_en\);)\n', r'\g<1>\nlet MessagesMerged'+lang.capitalize()+' = merge(messages_'+lang+', messages_client_'+lang+');\n', file_source)
                 file_source = re.sub('(.*)(\'en\': MessagesMergedEn,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': MessagesMerged'+lang.capitalize()+',\n', file_source)
             else:
-                file_source = re.sub('(.*)(\'en\': messages_en,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': messages_'+lang.capitalize()+',\n', file_source)
+                file_source = re.sub('(.*)(\'en\': messages_en,)\n', r"\g<1>\g<2>\n\g<1>'"+lang+'\': messages_'+lang+',\n', file_source)
             f.truncate(0)
             f.seek(0)
             f.write(file_source)
