@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use App\Solidary\Entity\SolidaryUser;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\User\Ressource\Review;
+use App\User\Ressource\ReviewsDashboard;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ReviewVoter extends Voter

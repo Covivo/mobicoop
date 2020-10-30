@@ -30,6 +30,7 @@ use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\User\Repository\ReviewRepository;
+use App\User\Ressource\ReviewsDashboard;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -60,7 +61,7 @@ class ReviewManager
      * @param boolean $isLeft               true : the review has already been left
      * @return Review
      */
-    public function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = null): Review
+    public function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = true): Review
     {
         $review = new Review($reviewEntity->getId());
 
@@ -239,5 +240,33 @@ class ReviewManager
             }
         }
         return $reviews;
+    }
+
+    /**
+     * Return the reviews Dashboard of a User
+     *
+     * @param User $user
+     * @return ReviewsDashboard
+     */
+    public function getReviewDashboard(User $user): ReviewsDashboard
+    {
+        $reviewDashboard = new ReviewsDashboard();
+        
+        // Get all reviews involving the User
+        $reviews = $this->getReviews($user);
+        foreach ($reviews as $review) {
+            if (!$review->isLeft()) {
+                // It's a review to give
+                $reviewDashboard->addReviewsToGive($review);
+            } else {
+                if ($review->getReviewer()->getId() == $user->getId()) {
+                    $reviewDashboard->addGivenReviews($review);
+                } elseif ($review->getReviewed()->getId() == $user->getId()) {
+                    $reviewDashboard->addReceivedReviews($review);
+                }
+            }
+        }
+
+        return $reviewDashboard;
     }
 }
