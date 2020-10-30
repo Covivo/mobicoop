@@ -24,6 +24,7 @@
 namespace App\User\Repository;
 
 use App\User\Entity\Review;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -82,5 +83,20 @@ class ReviewRepository
     public function findOneBy(array $criteria): ?Review
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Find all reviews involving a User (as reviewer or reviewed)
+     *
+     * @param User $user
+     * @return array|null
+     */
+    public function findReviewsInvolvingUser(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('r')
+        ->where('r.reviewer = :user or r.reviewed = :user')
+        ->setParameter('user', $user)
+        ;
+        return $query->getQuery()->getResult();
     }
 }

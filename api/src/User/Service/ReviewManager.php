@@ -23,8 +23,11 @@
 
 namespace App\User\Service;
 
+use App\Carpool\Repository\AskRepository;
 use App\User\Ressource\Review;
 use App\User\Entity\Review as ReviewEntity;
+use App\User\Entity\User;
+use App\Carpool\Entity\Ask;
 use App\User\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -37,11 +40,16 @@ class ReviewManager
 {
     private $entityManager;
     private $reviewRepository;
+    private $askRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, ReviewRepository $reviewRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ReviewRepository $reviewRepository,
+        AskRepository $askRepository
+    ) {
         $this->entityManager = $entityManager;
         $this->reviewRepository = $reviewRepository;
+        $this->askRepository = $askRepository;
     }
 
     /**
@@ -50,7 +58,7 @@ class ReviewManager
      * @param ReviewEntity $reviewEntity    The review Entity
      * @return Review
      */
-    public function buildReviewFromEntity(ReviewEntity $reviewEntity): Review
+    public function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = null): Review
     {
         $review = new Review($reviewEntity->getId());
 
@@ -59,6 +67,7 @@ class ReviewManager
         $review->setContent($reviewEntity->getContent());
         $review->setCreatedDate($reviewEntity->getCreatedDate());
         $review->getUpdatedDate($reviewEntity->getUpdatedDate());
+        $review->setLeft($isLeft);
 
         return $review;
     }
@@ -108,5 +117,39 @@ class ReviewManager
             return $this->buildReviewFromEntity($reviewEntity);
         }
         return null;
+    }
+
+    /**
+     * Return all reviews concerning a User
+     * Those who he's the reviewer, the reviewed or those he can still leave on someone.
+     *
+     * @param User $user
+     * @return Review[]
+     */
+    public function getReviews(User $user): array
+    {
+        $reviews = [];
+
+        // We get the reviews involving the User as reviewer or reviewd
+        $reviewEntities = $this->reviewRepository->findReviewsInvolvingUser($user);
+        foreach ($reviewEntities as $reviewEntity) {
+            $reviews[] = $this->buildReviewFromEntity($reviewEntity, true);
+        }
+
+        // We get the accepted Ask involving the User
+        $asks = $this->askRepository->findAcceptedAsksForUser($user);
+        foreach ($asks as $ask) {
+            // We keep only oneway or outward
+            if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+                
+                // We create a Review to leave from the Ask
+                $reviewToLeave = new Review();
+                $reviewToLeave->setReviewer($user);
+                $reviewToLeave->setReviewed(($ask->getUser()->getId()==$user->getId()) ? $ask->getUserRelated() : $ask->getUser());
+                $reviewToLeave->setLeft(false);
+                $reviews[] = $reviewToLeave;
+            }
+        }
+        return $reviews;
     }
 }
