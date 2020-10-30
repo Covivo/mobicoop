@@ -28,6 +28,7 @@ use App\User\Ressource\Review;
 use App\User\Entity\Review as ReviewEntity;
 use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Criteria;
 use App\User\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -141,13 +142,41 @@ class ReviewManager
         foreach ($asks as $ask) {
             // We keep only oneway or outward
             if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+
+                // We will check if the review is already available to be left
+                $reviewAvailable = false;
                 
-                // We create a Review to leave from the Ask
-                $reviewToLeave = new Review();
-                $reviewToLeave->setReviewer($user);
-                $reviewToLeave->setReviewed(($ask->getUser()->getId()==$user->getId()) ? $ask->getUserRelated() : $ask->getUser());
-                $reviewToLeave->setLeft(false);
-                $reviews[] = $reviewToLeave;
+                $now = new \DateTime();
+                // $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", $now->format("d/m/Y")." 00:00:00");
+                $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", "03/11/2020 00:00:00");
+                $fromDate = clone $ask->getCriteria()->getFromDate();
+
+                if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+
+                    // If the ask is punctual, the carpool must be passed
+                    if ($nowDate>$fromDate) {
+                        $reviewAvailable = true;
+                    }
+                } else {
+
+                    // The Ask is regular, the first week has to be passed
+                    $day = $fromDate->format('w');
+                    $diffToTheEndOfFirstWeek = ($day==0) ? 0 : 7 - $day;
+                    
+                    $endOfFirstWeekDate = $fromDate->modify('+'.$diffToTheEndOfFirstWeek.'day');
+                    if ($nowDate>$endOfFirstWeekDate) {
+                        $reviewAvailable = true;
+                    }
+                }
+
+                if ($reviewAvailable) {
+                    // We create a Review to leave from the Ask
+                    $reviewToLeave = new Review();
+                    $reviewToLeave->setReviewer($user);
+                    $reviewToLeave->setReviewed(($ask->getUser()->getId()==$user->getId()) ? $ask->getUserRelated() : $ask->getUser());
+                    $reviewToLeave->setLeft(false);
+                    $reviews[] = $reviewToLeave;
+                }
             }
         }
         return $reviews;
