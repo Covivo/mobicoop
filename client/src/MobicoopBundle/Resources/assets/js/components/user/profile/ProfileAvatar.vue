@@ -14,7 +14,7 @@
       />
     </v-avatar>
     <v-btn
-      v-if="!experienced"
+      v-if="experienced"
       color="yellow"
       class="white--text"
       dark
