@@ -51,10 +51,10 @@ use App\User\Entity\User;
  *              "security"="is_granted('review_read',object)"
  *          },
  *          "put"={
- *              "security"="is_granted('review_update',object)"
+ *              "security"="is_granted('reject',object)"
  *          },
  *          "delete"={
- *              "security"="is_granted('review_delete',object)"
+ *              "security"="is_granted('reject',object)"
  *          }
  *      }
  * )
