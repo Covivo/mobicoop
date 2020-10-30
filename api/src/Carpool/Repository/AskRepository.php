@@ -27,15 +27,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\User\Entity\Review;
 use App\User\Entity\User;
 use DateTime;
 
 class AskRepository
 {
     private $repository;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Ask::class);
     }
 

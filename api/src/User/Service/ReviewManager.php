@@ -57,6 +57,7 @@ class ReviewManager
      * Build a Review (Ressource) from en Review (Entity)
      *
      * @param ReviewEntity $reviewEntity    The review Entity
+     * @param boolean $isLeft               true : the review has already been left
      * @return Review
      */
     public function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = null): Review
@@ -71,6 +72,23 @@ class ReviewManager
         $review->setLeft($isLeft);
 
         return $review;
+    }
+
+    
+    /**
+     * Build an array of Review (Ressources) from an array of Review (Entities)
+     *
+     * @param ReviewEntity[] $reviewEntities    The array of Review entities
+     * @param boolean $isLeft                   true : the review has already been left
+     * @return Review[]
+     */
+    public function buildReviewsFromEntities(array $reviewEntities, bool $isLeft = true): array
+    {
+        $reviews = [];
+        foreach ($reviewEntities as $reviewEntity) {
+            $reviews[] = $this->buildReviewFromEntity($reviewEntity, $isLeft);
+        }
+        return $reviews;
     }
 
     /**
@@ -120,6 +138,24 @@ class ReviewManager
         return null;
     }
 
+    
+    /**
+     * Get reviews with specific reviewer and/or specific reviewed
+     *
+     * @param User $reviewer The reviewer
+     * @param User $reviewed The reviewed
+     * @return Review[]
+     */
+    public function getSpecificReviews(User $reviewer=null, User $reviewed=null)
+    {
+        $reviewEntities = $this->reviewRepository->findSpecificReviews($reviewer, $reviewed);
+        if (!is_null($reviewEntities)) {
+            return $this->buildReviewsFromEntities($reviewEntities);
+        }
+        return [];
+    }
+    
+    
     /**
      * Return all reviews concerning a User
      * Those who he's the reviewer, the reviewed or those he can still leave on someone.
@@ -134,9 +170,18 @@ class ReviewManager
         // We get the reviews involving the User as reviewer or reviewd
         $reviewEntities = $this->reviewRepository->findReviewsInvolvingUser($user);
         foreach ($reviewEntities as $reviewEntity) {
-            $reviews[] = $this->buildReviewFromEntity($reviewEntity, true);
+            $reviews[] = $this->buildReviewFromEntity($reviewEntity);
         }
 
+        // We get the list of the Users already reviewed
+        $userLeftReviews = $this->getSpecificReviews($user);
+        $userIdAlreadyReviewed = [];
+        foreach ($userLeftReviews as $userLeftReview) {
+            if (!in_array($userLeftReview->getReviewed()->getId(), $userIdAlreadyReviewed)) {
+                $userIdAlreadyReviewed[] = $userLeftReview->getReviewed()->getId();
+            }
+        }
+        
         // We get the accepted Ask involving the User
         $asks = $this->askRepository->findAcceptedAsksForUser($user);
         foreach ($asks as $ask) {
@@ -146,9 +191,23 @@ class ReviewManager
                 // We will check if the review is already available to be left
                 $reviewAvailable = false;
                 
+                // Determine the reviewed
+                if ($ask->getUser()->getId()==$user->getId()) {
+                    $reviewed = $ask->getUserRelated();
+                } else {
+                    $reviewed = $ask->getUser();
+                }
+                
+
+                // We check if the User has already reviewed the other user
+                if (in_array($reviewed->getId(), $userIdAlreadyReviewed)) {
+                    // Already reviewed this user. We break the loop
+                    break;
+                }
+
                 $now = new \DateTime();
-                // $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", $now->format("d/m/Y")." 00:00:00");
-                $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", "03/11/2020 00:00:00");
+                $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", $now->format("d/m/Y")." 00:00:00");
+                // $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", "03/11/2020 00:00:00");
                 $fromDate = clone $ask->getCriteria()->getFromDate();
 
                 if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
@@ -173,7 +232,7 @@ class ReviewManager
                     // We create a Review to leave from the Ask
                     $reviewToLeave = new Review();
                     $reviewToLeave->setReviewer($user);
-                    $reviewToLeave->setReviewed(($ask->getUser()->getId()==$user->getId()) ? $ask->getUserRelated() : $ask->getUser());
+                    $reviewToLeave->setReviewed($reviewed);
                     $reviewToLeave->setLeft(false);
                     $reviews[] = $reviewToLeave;
                 }

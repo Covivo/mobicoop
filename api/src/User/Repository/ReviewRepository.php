@@ -99,4 +99,27 @@ class ReviewRepository
         ;
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find all reviews with specific reviewer and/or specific reviewed
+     *
+     * @param User $reviewer The reviewer
+     * @param User $reviewed The reviewed
+     * @return array|null
+     */
+    public function findSpecificReviews(User $reviewer=null, User $reviewed=null): ?array
+    {
+        $query = $this->repository->createQueryBuilder('r');
+
+        if (!is_null($reviewer)) {
+            $query->andWhere('r.reviewer = :reviewer');
+            $query->setParameter('reviewer', $reviewer);
+        }
+        if (!is_null($reviewed)) {
+            $query->andWhere('r.reviewed = :reviewed');
+            $query->setParameter('reviewed', $reviewed);
+        }
+
+        return $query->getQuery()->getResult();
+    }
 }
