@@ -332,7 +332,9 @@ const SolidaryRegularSchedules = (props) => {
   const classes = useStyles();
 
   const [id, setId] = useState(1);
-  const [loading, setLoading] = useState({days: true, owt: true, rt: true});
+  const [loadingDays, setLoadingDays] = useState(true);
+  const [loadingOwt, setLoadingOwt] = useState(true);
+  const [loadingRt, setLoadingRt] = useState(true);
 
   const daysField = useField('days');
   const outwardsField = useField('outwardTimes');
@@ -360,38 +362,35 @@ const SolidaryRegularSchedules = (props) => {
   };
 
   useEffect(() => {
-    if (loading.days) {
+    if (loadingDays) {
       const initialDays = { ...daysField.meta.initial };
       console.log('[EDITION] Set Initial Days From Given Values: ', initialDays);
       setDays(initialDays);
-      updateSlotsDays(0, initialDays);
-      setLoading({...loading, days: false});
+      setLoadingDays(false);
     }
-  }, [daysField.meta.initial, loading]);
+  }, [daysField.meta.initial, loadingDays]);
 
   useEffect(() => {
-    if (loading.owt) {
+    if (loadingOwt) {
       const initialOwt = { ...outwardsField.meta.initial };
       console.log('[EDITION] Set Initial Outward Times From Given Values: ', initialOwt);
       setOutwardTimes(initialOwt);
-      updateSlotsOWT(0, initialOwt.mon)
-      setLoading({...loading, owt: false});
+      setLoadingOwt(false);
     }
-  }, [outwardsField.meta.initial]);
+  }, [outwardsField.meta.initial, loadingOwt]);
 
   useEffect(() => {
-    if (loading.rt) {
+    if (loadingRt) {
       const initialRt = { ...returnsField.meta.initial };
       console.log('[EDITION] RTF META: ', returnsField.meta);
       console.log('[EDITION] Set Initial Return Times From Given Values: ', initialRt);
       setReturnTimes(initialRt);
-      updateSlotsRT(0, initialRt.mon)
-      setLoading({...loading, rt: false});
+      setLoadingRt(false);
     }
-  }, [returnsField.meta.initial]);
+  }, [returnsField.meta.initial, loadingRt]);
 
   useEffect(() => {
-    if (!loading.rt && !loading.days && !loading.owt) {
+    if (!loadingRt && !loadingDays && !loadingOwt) {
       console.log('[EDITION]RETURN', returnTimes);
       let newSlots = [];
 
@@ -407,7 +406,7 @@ const SolidaryRegularSchedules = (props) => {
           }
           if (!found) {
             newSlots.push({
-              id: newSlots.length,
+              id: `${newSlots.length}:${outwardTimes[key]}`,
               days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false, [key]: value },
               outwardTimes: outwardTimes[key],
               returnTimes: returnTimes[key],
@@ -416,8 +415,9 @@ const SolidaryRegularSchedules = (props) => {
         }
       }
       console.log('[EDITION] RESULTAT FINALS SLOTS: ', newSlots);
+      setSlotsList(newSlots);
     }
-  }, [loading])
+  }, [loadingRt, loadingDays, loadingOwt])
 
   useEffect(() => {
     console.log('Days template:', days);
@@ -536,7 +536,8 @@ const SolidaryRegularSchedules = (props) => {
     }
   };
 
-  if (isEditing && (loading.owt || loading.days || loading.rt)) return <p>loading...</p>;
+  console.log(`[EDITION]Is Edition: ${isEditing} LoadOwt: ${loadingOwt} LoadDays: ${loadingDays} LoadRt: ${loadingRt}`)
+  if (isEditing && (loadingOwt || loadingDays || loadingRt)) return <p>loading...</p>;
 
   return (
     <>
@@ -623,7 +624,7 @@ const SolidaryRegularSchedules = (props) => {
       <div>
         {slotsList.map((slot, i) => {
           return (
-            <Card raised className={classes.card} key={`card-${slot.id}`}>
+            <Card raised className={classes.card} key={`${slot.id}`}>
               <Ask
                 outwardTimes={outwardTimes}
                 setOutwardTimes={setOutwardTimes}
@@ -661,5 +662,10 @@ const SolidaryRegularSchedules = (props) => {
 SolidaryRegularSchedules.propTypes = {
   choices: PropTypes.array.isRequired,
   initialChoice: PropTypes.number.isRequired,
+  isEditing: PropTypes.bool,
+};
+
+SolidaryRegularSchedules.defaultProps = {
+  isEditing: false,
 };
 export default SolidaryRegularSchedules;

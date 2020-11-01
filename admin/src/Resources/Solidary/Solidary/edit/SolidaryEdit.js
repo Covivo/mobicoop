@@ -20,13 +20,19 @@ import SolidaryRegularAsk from '../create/SolidaryRegularAsk';
 import SolidaryPunctualAsk from '../create/SolidaryPunctualAsk';
 import { addressRenderer } from '../../../../utils/renderers';
 import { SolidaryPunctualAskSummary } from '../create/SolidaryPunctualAskSummary';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const required = (value) => (value ? '' : 'Champs obligatoire');
 
 const CustomToolbar = (props) => (
-  <Toolbar {...props}>
-    <SaveButton label="Recréer demande solidaire" />
-  </Toolbar>
+  <>
+    <Toolbar {...props}>
+      <p>Votre modification de la demande solidaire '{props.record.id}' va recréer une nouvelle demande solidaire avec les modifications attendues et clôturer l'existante</p>
+    </Toolbar>
+    <Toolbar {...props}>
+      <SaveButton label="Recréer demande solidaire" />
+    </Toolbar>
+  </>
 );
 
 export const SolidaryEdit = (props) => {
