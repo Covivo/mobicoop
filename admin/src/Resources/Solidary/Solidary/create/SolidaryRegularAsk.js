@@ -70,6 +70,15 @@ export const regularToTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
+export const regularTimeChoices = [
+  {
+    id: 0,
+    returnDatetime: ({ outwardDatetime, selectedDateTime }) =>
+      setTimeFromString(outwardDatetime, selectedDateTime),
+  },
+  { id: 1, returnDatetime: () => null },
+];
+
 const castDate = (date) => (typeof date === 'string' ? new Date(date) : date);
 
 const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
@@ -103,7 +112,7 @@ const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
     <Box display="flex">
       <Box flex={3} mr="1em">
         <SolidaryQuestion question="Quels jours devez-vous voyager ?">
-          <SolidaryRegularSchedules />
+          <SolidaryRegularSchedules choices={regularTimeChoices} initialChoice={1} />
         </SolidaryQuestion>
         <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
           <DateIntervalSelector

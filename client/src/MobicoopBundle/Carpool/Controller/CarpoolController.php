@@ -297,7 +297,10 @@ class CarpoolController extends AbstractController
         }
         if ($ad = $adManager->getAd($id, $filters)) {
             //$this->denyAccessUnlessGranted('results_ad', $ad);
-            return $this->json($ad->getResults());
+            return $this->json([
+                "results"=>$ad->getResults(),
+                "nb"=>$ad->getNbResults()
+            ]);
         }
         return $this->json([]);
     }
@@ -459,7 +462,10 @@ class CarpoolController extends AbstractController
             $communityId,
             $filters
         )) {
-            $result = $ad->getResults();
+            $result = [
+                "results"=>$ad->getResults(),
+                "nb"=>$ad->getNbResults()
+            ];
         }
 
         return $this->json($result);

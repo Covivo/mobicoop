@@ -30,16 +30,16 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/geography.log"
             channels: [geography]
-        geomatcher:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/geomatcher.log"
-            channels: [geomatcher]
-        georouter:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/georouter.log"
-            channels: [georouter]              
+        # geomatcher:
+        #     type: stream
+        #     level: debug
+        #     path: "%kernel.logs_dir%/geomatcher.log"
+        #     channels: [geomatcher]
+        # georouter:
+        #     type: stream
+        #     level: debug
+        #     path: "%kernel.logs_dir%/georouter.log"
+        #     channels: [georouter]              
         mass:
             type: stream
             level: debug
@@ -49,12 +49,17 @@ monolog:
             type: stream
             level: debug
             path: "%kernel.logs_dir%/notification.log"
-            channels: [notification]          
+            channels: [notification]    
+        faker:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker]       
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]
    
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
@@ -67,4 +72,4 @@ monolog:
         console:
             type: console
             process_psr_3_messages: false
-            channels: ["!event", "!doctrine", "!console", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification"]
+            channels: ["!event", "!doctrine", "!console", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]

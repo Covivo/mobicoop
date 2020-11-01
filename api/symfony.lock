@@ -164,6 +164,12 @@
     "jms/metadata": {
         "version": "1.7.0"
     },
+    "laminas/laminas-code": {
+        "version": "3.4.1"
+    },
+    "laminas/laminas-eventmanager": {
+        "version": "3.2.1"
+    },
     "knplabs/knp-snappy": {
         "version": "v1.2.1"
     },
@@ -546,6 +552,9 @@
     },
     "symfony/yaml": {
         "version": "v4.2.3"
+    },
+    "twig/intl-extra": {
+        "version": "v3.1.0"
     },
     "twig/twig": {
         "version": "v2.6.2"

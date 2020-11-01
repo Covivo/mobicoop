@@ -73,8 +73,8 @@ export const NeedsAndStructure = ({ record }) => {
                   <DayChip key={`Me${slot.id}`} label="Me" condition={slot.days.wed} />
                   <DayChip key={`J${slot.id}`} label="J" condition={slot.days.thu} />
                   <DayChip key={`V${slot.id}`} label="V" condition={slot.days.fri} />
-                  <DayChip key={`S${slot.id}`} label="S" condition={slot.days.sun} />
-                  <DayChip key={`D${slot.id}`} label="D" condition={slot.days.sat} />
+                  <DayChip key={`S${slot.id}`} label="S" condition={slot.days.sat} />
+                  <DayChip key={`D${slot.id}`} label="D" condition={slot.days.sun} />
                 </Grid>
                 <Grid item>
                   <Grid container direction="row" justify="space-between">

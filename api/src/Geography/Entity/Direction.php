@@ -152,15 +152,13 @@ class Direction
     private $bearing;
 
     /**
-     * @var string The textual encoded detail of the direction.
-     * @ORM\Column(type="text")
+     * @var string|null The textual encoded detail of the direction.
      * @Groups({"read","write"})
      */
     private $detail;
 
     /**
      * @var string The geoJson linestring detail of the direction.
-     * @ORM\Column(type="linestring", nullable=true)
      * Note : the detail should be a MULTIPOINT, but we can't use it as it's not supported by the version of doctrine2 spatial package for mysql 5.7 (?)
      * Todo : try to create a multipoint custom type for doctrine 2 spatial ?
      * @Groups({"read","write"})
@@ -177,7 +175,6 @@ class Direction
 
     /**
      * @var string The textual encoded snapped waypoints of the direction.
-     * @ORM\Column(type="text")
      * @Groups({"read","write"})
      */
     private $snapped;
@@ -188,13 +185,6 @@ class Direction
      * @Groups({"read","write"})
      */
     private $format;
-
-    /**
-     * @var ArrayCollection The geographical zones crossed by the direction.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
-     */
-    private $zones;
 
     /**
      * @var int|null The CO2 emission for this direction.
@@ -279,7 +269,6 @@ class Direction
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
-        $this->zones = new ArrayCollection();
         $this->territories = new ArrayCollection();
         $this->criteriaDrivers = new ArrayCollection();
         $this->criteriaPassengers = new ArrayCollection();
@@ -418,7 +407,7 @@ class Direction
         return $this;
     }
 
-    public function getDetail(): string
+    public function getDetail(): ?string
     {
         return $this->detail;
     }
@@ -474,34 +463,6 @@ class Direction
     public function setFormat(string $format): self
     {
         $this->format = $format;
-        
-        return $this;
-    }
-    
-    public function getZones()
-    {
-        return $this->zones->getValues();
-    }
-    
-    public function addZone(Zone $zone): self
-    {
-        if (!$this->zones->contains($zone)) {
-            $this->zones[] = $zone;
-            $zone->setDirection($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeZone(Zone $zone): self
-    {
-        if ($this->zones->contains($zone)) {
-            $this->zones->removeElement($zone);
-            // set the owning side to null (unless already changed)
-            if ($zone->getDirection() === $this) {
-                $zone->setDirection(null);
-            }
-        }
         
         return $this;
     }
@@ -692,29 +653,6 @@ class Direction
         return $this;
     }
 
-    public function getDirectionString(string $delimiter=";")
-    {
-        return
-            $this->getId() . $delimiter .
-            $this->getDistance() . $delimiter .
-            $this->getDuration() . $delimiter .
-            $this->getAscend() . $delimiter .
-            $this->getDescend() . $delimiter .
-            $this->getBboxMinLon() . $delimiter .
-            $this->getBboxMinLat() . $delimiter .
-            $this->getBboxMaxLon() . $delimiter .
-            $this->getBboxMaxLat() . $delimiter .
-            $this->getDetail() . "'" . $delimiter .
-            $this->getFormat() . "'" . $delimiter .
-            $this->getSnapped() . "'" . $delimiter .
-            $this->getBearing() . $delimiter .
-            "POLYGON(" . $this->getGeoJsonBbox() . ")" . $delimiter .
-            "LINESTRING(" . $this->getGeoJsonDetail() . ")" . $delimiter .
-            $this->getCreatedDate()->format('Y-m-d H:i:s') . $delimiter .
-            "0000-00-00'" . $delimiter .
-            "LINESTRING(" . $this->getGeoJsonSimplified() . ")" . $delimiter;
-    }
-
     // DOCTRINE EVENTS
     
     /**
@@ -775,11 +713,11 @@ class Direction
             return;
         }
         if (!is_null($this->getPoints())) {
-            $arrayPoints = [];
-            foreach ($this->getPoints() as $address) {
-                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
-            }
-            $this->setGeoJsonDetail(new LineString($arrayPoints));
+            // $arrayPoints = [];
+            // foreach ($this->getPoints() as $address) {
+            //     $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
+            // }
+            // $this->setGeoJsonDetail(new LineString($arrayPoints));
             $arrayPoints = [];
             $geoTools = new GeoTools();
             $simplifiedPoints = $geoTools->getSimplifiedPoints($this->getPoints());

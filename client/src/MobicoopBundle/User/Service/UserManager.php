@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
  * User management service.
@@ -734,6 +735,25 @@ class UserManager
         $response = $this->dataProvider->getSpecialItem($user->getId(), "carpool_export");
         if ($response->getCode() == 200) {
             return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get the Sso connection services of the platform
+     *
+     * @return void
+     */
+    public function getSsoServices()
+    {
+        $this->dataProvider->setClass(SsoConnection::class);
+
+        // We add the front url to the parameters
+        $baseSiteUri = (isset($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['HTTP_HOST']  : 'http://'.$_SERVER['HTTP_HOST'];
+        
+        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri]);
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
         }
         return null;
     }
