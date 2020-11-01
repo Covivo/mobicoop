@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useField } from 'react-final-form';
 import { DateInput, required } from 'react-admin';
 import DayChipInput from './DayChipInput';
+import {DateTimeSelector} from "./DateTimeSelector";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -85,6 +86,9 @@ const Ask = ({
   slot,
   slotsList,
   setSlotsList,
+  choices,
+  setChoice,
+  setSelectedDateTime,
 }) => {
   const classes = useStyles();
 
@@ -120,6 +124,12 @@ const Ask = ({
   }, [slotsList]);
 
   const setReturnTimes = (value) => {
+    if (value) {
+      setChoice(choices[0]);
+      setSelectedDateTime(value);
+    } else {
+      setChoice(choices[1]);
+    }
     setReturnTimesTemplate((prevState) => ({
       ...prevState,
       mon: slot.days.mon ? value : returnTimes.mon,
@@ -244,9 +254,14 @@ Ask.propTypes = {
   slot: PropTypes.object.isRequired,
   slotsList: PropTypes.array.isRequired,
   setSlotsList: PropTypes.func.isRequired,
+  setChoice: PropTypes.func.isRequired,
+  setSelectedDateTime: PropTypes.func.isRequired,
+  choices: PropTypes.array.isRequired,
 };
 
-const SolidaryRegularSchedules = () => {
+const SolidaryRegularSchedules = ({ choices, initialChoice }) => {
+  const [choice, setChoice] = useState(choices[initialChoice]);
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
   const [days, setDays] = useState({
     mon: false,
     tue: false,
@@ -283,6 +298,15 @@ const SolidaryRegularSchedules = () => {
       returnTimes: null,
     },
   ]);
+
+  const {
+    input: { onChange: onChangeReturnDateTime },
+  } = useField('returnDatetime');
+
+  const {
+    input: { value: outwardDatetime },
+  } = useField('outwardDatetime');
+
   const classes = useStyles();
 
   const [id, setId] = useState(1);
@@ -359,6 +383,13 @@ const SolidaryRegularSchedules = () => {
       checkReturnTemplate(key);
     }
   }, [slotsList]);
+
+  useEffect(() => {
+    if (choice.returnDatetime) {
+      onChangeReturnDateTime(choice.returnDatetime({ outwardDatetime, selectedDateTime }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [choice, selectedDateTime && selectedDateTime.toString()]);
 
   const checkTimesTemplate = (day, slots) => {
     let newOutward = null;
@@ -489,6 +520,9 @@ const SolidaryRegularSchedules = () => {
                 slotsList={slotsList}
                 setSlotsList={setSlotsList}
                 slot={slot}
+                setChoice={setChoice}
+                setSelectedDateTime={setSelectedDateTime}
+                choices={choices}
               />
               {slotsList.length > 1 && (
                 <Grid item xs={2}>
@@ -510,4 +544,8 @@ const SolidaryRegularSchedules = () => {
   );
 };
 
+SolidaryRegularSchedules.propTypes = {
+  choices: PropTypes.array.isRequired,
+  initialChoice: PropTypes.number.isRequired,
+};
 export default SolidaryRegularSchedules;
