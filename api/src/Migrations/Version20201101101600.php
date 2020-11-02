@@ -18,13 +18,13 @@ final class Version20201101101600 extends AbstractMigration
 
         $this->addSql("
         INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES 
-        ('246', NULL, '1', 'relay_point_map_list','View the list of relay point maps');
+        ('252', NULL, '1', 'relay_point_map_list','View the list of relay point maps');
         ");
 
 
         $this->addSql("
         INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES 
-        ('5', '246');
+        ('5', '252');
         ");
     }
 
