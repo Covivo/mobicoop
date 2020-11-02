@@ -883,14 +883,18 @@ class PaymentManager
 
 
             $paymentProfile = $this->createPaymentProfile($user, $identifier);
+            // we set it by default at false since the identity is not confirmed yet
+            $paymentProfile->setElectronicallyPayable(false);
         } else {
             $paymentProfile = $paymentProfiles[0];
+            if ($paymentProfile->getValidationStatus() === PaymentProfile::VALIDATION_VALIDATED) {
+                $paymentProfile->setElectronicallyPayable(true);
+            }
         }
 
         $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
 
         // Update the payment profile
-        $paymentProfile->setElectronicallyPayable(false);
         $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
