@@ -275,6 +275,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $avatars;
 
     /**
+     * @var Array|null The images of the user.
+     */
+    private $avatar;
+
+    /**
     * @var array|null User notification alert preferences.
     * @Groups({"put"})
     */
@@ -823,6 +828,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setAvatars(?array $avatars): self
     {
         $this->avatars = $avatars;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }

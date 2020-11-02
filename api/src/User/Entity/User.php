@@ -464,7 +464,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
      */
     private $givenName;
 
@@ -479,7 +479,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $shortFamilyName;
 
@@ -980,6 +980,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
+
+    /**
+     * @var string|null Default avatar of the user
+     * @Groups({"readUser","readPublicProfile","readReview"})
+     */
+    private $avatar;
 
     /**
      * @var array|null The threads of the user
@@ -2492,6 +2498,24 @@ class User implements UserInterface, EquatableInterface
             unset($this->avatars[$key]);
         }
         return $this->avatars;
+    }
+
+    public function getAvatar(): ?string
+    {
+        // By default, return the last avatar
+        $avatar = "";
+        if (is_array($this->getAvatars()) && count($this->getAvatars())>0) {
+            return $this->getAvatars()[count($this->getAvatars())-1];
+        }
+        
+        return $avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 
     public function getFacebookId(): ?string

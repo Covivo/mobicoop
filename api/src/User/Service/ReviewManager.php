@@ -31,7 +31,6 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\User\Repository\ReviewRepository;
 use App\User\Ressource\ReviewsDashboard;
-use App\User\Ressource\ReviewUser;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -66,8 +65,8 @@ class ReviewManager
     {
         $review = new Review($reviewEntity->getId());
         
-        $review->setReviewer($this->buildReviewUser($reviewEntity->getReviewer()));
-        $review->setReviewed($this->buildReviewUser($reviewEntity->getReviewed()));
+        $review->setReviewer($reviewEntity->getReviewer());
+        $review->setReviewed($reviewEntity->getReviewed());
 
         $review->setContent($reviewEntity->getContent());
 
@@ -111,26 +110,6 @@ class ReviewManager
         return $reviewEntity;
     }
 
-    
-    /**
-     * Build a ReviewUser from a User
-     *
-     * @param User $user
-     * @return ReviewUser
-     */
-    private function buildReviewUser(User $user): ReviewUser
-    {
-        $reviewUser = new ReviewUser($user->getId());
-        $reviewUser->setGivenName($user->getGivenName());
-        $reviewUser->setShortFamilyName($user->getShortFamilyName());
-
-        $reviewUser->setAvatar('');
-        if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
-            $reviewUser->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
-        }
-        return $reviewUser;
-    }
-    
     /**
      * Create a Review
      *
@@ -254,8 +233,8 @@ class ReviewManager
                 if ($reviewAvailable) {
                     // We create a Review to leave from the Ask
                     $reviewToLeave = new Review();
-                    $reviewToLeave->setReviewer($this->buildReviewUser($user));
-                    $reviewToLeave->setReviewed($this->buildReviewUser($reviewed));
+                    $reviewToLeave->setReviewer($user);
+                    $reviewToLeave->setReviewed($reviewed);
                     $reviewToLeave->setLeft(false);
                     $reviews[] = $reviewToLeave;
                 }
