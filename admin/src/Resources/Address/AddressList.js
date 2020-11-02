@@ -13,7 +13,7 @@ import {
   Filter,
 } from 'react-admin';
 
-import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized from '../../auth/permissions';
 
 const UserFilter = (props) => (
   <Filter {...props}>
@@ -38,7 +38,7 @@ export const AddressList = (props) => (
     title="Adresses > liste"
     perPage={25}
     filters={<UserFilter />}
-    exporter={isSuperAdmin()}
+    exporter={isAuthorized('export') ? undefined : false}
     sort={{ field: 'id', order: 'ASC' }}
   >
     <Datagrid rowClick="show">

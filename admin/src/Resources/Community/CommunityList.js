@@ -16,7 +16,7 @@ import {
 
 import FullNameField from '../User/FullNameField';
 import { hasCommunityEditRight } from './hasCommunityEditRight';
-import { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized, { isAdmin } from '../../auth/permissions';
 
 const CommunityFilter = (props) => (
   <Filter {...props}>
@@ -37,7 +37,7 @@ export const CommunityList = (props) => {
       title="Communautés > liste"
       perPage={25}
       filters={<CommunityFilter />}
-      exporter={isSuperAdmin()}
+      exporter={isAuthorized('export') ? undefined : false}
       sort={{ field: 'originId', order: 'DESC' }}
     >
       <Datagrid expand={<CommunityPanel />}>

@@ -20,7 +20,7 @@ import {
 
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
-import isAuthorized, { isAdmin, isSuperAdmin } from '../../auth/permissions';
+import isAuthorized from '../../auth/permissions';
 import FiltersTraject from './FiltersTraject';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
@@ -175,7 +175,7 @@ const UserList = (props) => {
       filters={<UserFilter />}
       sort={{ field: 'id', order: 'ASC' }}
       bulkActionButtons={<UserBulkActionButtons />}
-      exporter={isSuperAdmin()}
+      exporter={isAuthorized('export') ? undefined : false}
       hasCreate={isAuthorized('user_create')}
     >
       <MyDatagridUser rowClick="show">
