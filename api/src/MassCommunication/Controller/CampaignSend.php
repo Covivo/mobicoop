@@ -47,6 +47,7 @@ class CampaignSend
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad campaign id is provided"));
         }
+        // var_dump($data);exit;
         return $this->campaignManager->send($data);
     }
 }

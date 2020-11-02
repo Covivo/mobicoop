@@ -46,7 +46,6 @@ class CampaignManager
     private $communityRepository;
     private $entityManager;
     private $massEmailProvider;
-    private $massEmailApi;
     private $massSmsProvider;
     private $mailTemplate;
     private $campaignRepository;
