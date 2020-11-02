@@ -24,8 +24,8 @@
   </v-container>
 </template>
 <script>
-import {messages_en, messages_fr} from "@translations/components/user/profile/Reviews/";
-import Review from "@components/utilities/Review";
+import {messages_en, messages_fr} from "@translations/components/utilities/Reviews/Reviews/";
+import Review from "@components/utilities/Reviews/Review";
 export default {
   i18n: {
     messages: {

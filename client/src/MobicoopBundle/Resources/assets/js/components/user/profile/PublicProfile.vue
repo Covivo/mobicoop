@@ -127,7 +127,7 @@
 import axios from "axios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
-import Reviews from "@components/user/profile/Reviews";
+import Reviews from "@components/utilities/Reviews/Reviews";
 import Report from "@components/utilities/Report";
 import {messages_en, messages_fr} from "@translations/components/user/profile/PublicProfile/";
 export default {

@@ -4,6 +4,12 @@
     justify="end"
     class="min-width-no-flex mr-1"
   >
+    <div>
+      <PopUpReview
+        :reviewed="carpooler"
+        :reviewer="user"
+      />
+    </div>
     <div v-if="user && carpooler.telephone">
       <v-btn
         v-show="!phoneButtonToggled"
@@ -50,6 +56,7 @@
 </template>
 
 <script>
+import PopUpReview from "@js/components/utilities/Reviews/PopUpReview";
 import {messages_en, messages_fr} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 import formData from "../../../utils/request";
 
@@ -59,6 +66,9 @@ export default {
       'en': messages_en,
       'fr': messages_fr
     }
+  },
+  components:{
+    PopUpReview
   },
   props: {
     carpooler: {
@@ -96,7 +106,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

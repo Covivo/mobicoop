@@ -42,7 +42,6 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
 
     /**
      * @var ProfileSummary Pofile Summary of the User
-     * @Groups({"readPublicProfile"})
      */
     private $profileSummary;
 
