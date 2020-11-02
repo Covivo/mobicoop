@@ -1,5 +1,11 @@
 <template>
   <v-container fluid>
+    <v-alert
+      v-if="alertFail"
+      type="error"
+    >
+      {{ $t('fail') }}
+    </v-alert>       
     <v-row class="align-center">
       <v-col
         cols="2"
@@ -7,14 +13,12 @@
         <ProfileAvatar :avatar="avatar" />
       </v-col>
       <v-col cols="8">
-        <v-form v-model="valid">
-          <v-textarea
-            v-model="content"
-            :label="labelTxt"
-            :rows="rows"
-            required
-          />
-        </v-form>
+        <v-textarea
+          v-model="content"
+          :label="labelTxt"
+          :rows="rows"
+          required
+        />
       </v-col>
       <v-col
         cols="2"
@@ -23,14 +27,18 @@
         <v-btn
           color="primary"
           rounded
+          :disabled="!content"
+          :loading="loading"
+          @click="leaveReview"
         >
-          Valider
+          {{ $t("validate") }}
         </v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
+import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/utilities/Reviews/WriteReview";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 export default {
@@ -64,7 +72,9 @@ export default {
   data(){
     return{
       content:null,
-      valid:false
+      valid:false,
+      loading:false,
+      alertFail:false
     }
   },
   computed:{
@@ -78,6 +88,33 @@ export default {
       else{
         return this.$t('label');
       }
+    }
+  },
+  mounted(){
+    this.snackbarSuccess = true;
+  },
+  methods:{
+    leaveReview(){
+      this.loading = true;
+      let reviewData = {
+        "reviewerId": this.reviewer.id,
+        "reviewedId": this.reviewed.id,
+        "content":this.content
+      };
+      axios.post(this.$t("leaveReviewUri"), reviewData)
+        .then(response => {
+          // console.error(response.data);
+          this.loading = false;
+          if(response.data.success){
+            this.$emit("reviewLeft",{'success':response.data});
+          }
+          else{
+            this.alertFail = true;
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });    
     }
   }
 }

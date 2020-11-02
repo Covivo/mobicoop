@@ -56,6 +56,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\ReviewManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 
 /**
@@ -1239,5 +1240,26 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse(['success' => $success]);
+    }
+
+    /**
+     * Write a review about a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userReviewWrite(Request $request, ReviewManager $reviewManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (
+                isset($data['reviewerId']) && isset($data['reviewedId']) && isset($data['content']) &&
+                $data['reviewerId']!=="" && $data['reviewedId']!=="" && $data['content']!==""
+            ) {
+                return new JsonResponse(["success"=>$reviewManager->createReview($data['reviewerId'], $data['reviewedId'], $data['content'])]);
+            }
+        }
+        return new JsonResponse(["success"=>false]);
     }
 }

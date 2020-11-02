@@ -395,7 +395,14 @@ user_report:
     requirements:
         id: '\d+'
 
-    ##################
+user_review_write:
+    methods: [POST]
+    path:
+        fr: /utilisateur/avis/ecrire
+        en: /user/review/write
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewWrite
+
+##################
 # carpool routes #
 ##################
 

@@ -22,7 +22,7 @@
   
     <v-dialog
       v-model="dialog"
-      width="50%"
+      width="80%"
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
@@ -36,6 +36,7 @@
         <WriteReview
           :reviewed="reviewed"
           :reviewer="reviewer"
+          @reviewLeft="reviewLeft"
         />
       </v-card>
     </v-dialog> 
@@ -84,6 +85,11 @@ export default {
     },
     reviewedName(){
       return this.reviewed.givenName+" "+this.reviewed.shortFamilyName;
+    }
+  },
+  methods:{
+    reviewLeft(){
+      this.dialog = false;
     }
   }
 }
