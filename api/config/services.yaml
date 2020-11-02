@@ -287,6 +287,10 @@ services:
             $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
         tags:
             - { name: monolog.logger, channel: community }
+    
+    App\Community\Service\RelayPointMapManager:
+        tags:
+            - { name: monolog.logger, channel: community }      
 
     # Event
     App\Event\Controller\:

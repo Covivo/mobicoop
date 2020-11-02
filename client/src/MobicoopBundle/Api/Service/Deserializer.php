@@ -64,6 +64,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\RelayPointMap;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
@@ -224,6 +225,9 @@ class Deserializer
                 break;
             case PublicProfile::class:
                 return $this->deserializePublicProfile($data);
+                break;
+            case RelayPointMap::class:
+                return $this->deserializeRelayPointMap($data) ;
                 break;
             default:
                 break;
@@ -948,6 +952,21 @@ class Deserializer
         return $publicProfile;
     }
 
+    private function deserializeRelayPointMap(array $data): ?RelayPointMap
+    {
+        $relayPointMap = new RelayPointMap();
+        $relayPointMap = $this->autoSet($relayPointMap, $data);
+
+        if (isset($data["address"])) {
+            $relayPointMap->setAddress($this->deserializeAddress($data['address']));
+        }
+       
+        if (isset($data["relayPointType"])) {
+            $relayPointMap->setRelayPointType($this->deserializeRelayPointType($data['relayPointType']));
+        }
+
+        return $relayPointMap;
+    }
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();

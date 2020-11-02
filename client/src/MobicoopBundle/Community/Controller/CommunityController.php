@@ -32,6 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\RelayPointMapManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -504,6 +505,22 @@ class CommunityController extends AbstractController
             return new JsonResponse($communityManager->getCommunityListForRegistration());
         } else {
             return new JsonResponse("bad method");
+        }
+    }
+
+    /**
+    * Retrieve the communityId.
+    */
+    public function getRelayPointMap(CommunityManager $communityManager, Request $request)
+    {
+        // We get the current community
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['communityId'])) {
+                return new JsonResponse($communityManager->getRelayPointsMap($data['communityId']));
+            }
+            return [] ;
         }
     }
 }

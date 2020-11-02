@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\RelayPointMap;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -411,6 +412,16 @@ class CommunityManager
     {
         $this->dataProvider->setClass(MCommunity::class);
         $response = $this->dataProvider->getCollection();
+        return $response->getValue()->getMember();
+    }
+
+    /**
+    * Get all relay points map for the community
+    */
+    public function getRelayPointsMap(int $communityId)
+    {
+        $this->dataProvider->setClass(RelayPointMap::class);
+        $response = $this->dataProvider->getCollection(['communityId' => $communityId]);
         return $response->getValue()->getMember();
     }
 }
