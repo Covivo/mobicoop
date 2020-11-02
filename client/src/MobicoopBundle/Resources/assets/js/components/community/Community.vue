@@ -303,7 +303,7 @@
               text
               @click="leaveCommunityDialog = false"
             >
-              {{ $t("ui.common.no") }}
+              {{ $t("no") }}
             </v-btn>
             <v-btn
               color="secondary darken-1"
@@ -313,7 +313,7 @@
                 postLeavingRequest();
               "
             >
-              {{ $t("ui.common.yes") }}
+              {{ $t("yes") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -339,7 +339,7 @@
               text
               @click="joinCommunityDialog = false"
             >
-              {{ $t("ui.common.no") }}
+              {{ $t("no") }}
             </v-btn>
             <v-btn
               color="secondary darken-1"
@@ -349,7 +349,7 @@
                 joinCommunity();
               "
             >
-              {{ $t("ui.common.yes") }}
+              {{ $t("yes") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -359,17 +359,13 @@
 </template>
 <script>
 import axios from "axios";
-import { merge } from "lodash";
-import Translations from "@translations/components/community/Community.json";
-import TranslationsClient from "@clientTranslations/components/community/Community.json";
+import {messages_en, messages_fr} from "@translations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap";
 import L from "leaflet";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
@@ -380,7 +376,10 @@ export default {
     CommunityLastUsers,
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     user: {

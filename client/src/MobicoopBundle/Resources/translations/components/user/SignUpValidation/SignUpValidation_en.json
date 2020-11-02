@@ -1,0 +1,14 @@
+{
+    "title": "Email validation",
+    "token": "Your validation code",
+    "urlPost": "/user/signup/validation/{email}/{token}",
+    "tokenRequired": "Your validation code is required",
+    "errorCredentials": "Unrecognized token",
+    "validate": "Sign up validation",
+    "alreadyValidated": "Your account has already been validated",
+    "updateError": "This validation code does't match any registered account",
+    "unknown": "This code is unknown",
+    "almostDone": "The sign up is almost done",
+    "validationMailSend": "A validation email has been sent",
+    "canValid": "You can <strong>click on the validation link</strong> inside the email or<strong>paste the code directly</strong> below."
+}

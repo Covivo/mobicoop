@@ -174,9 +174,9 @@
         <v-col cols="10">
           <IdentityValidation
             :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
-            :payment-profile-status="(this.bankCoordinates) ? this.bankCoordinates.status : 0"
-            :validation-status="(this.bankCoordinates) ? this.bankCoordinates.validationStatus : 0"
-            :validation-asked-date="(this.bankCoordinates) ? this.bankCoordinates.validationAskedDate : null"
+            :payment-profile-status="(bankCoordinates) ? bankCoordinates.status : 0"
+            :validation-status="(bankCoordinates) ? bankCoordinates.validationStatus : 0"
+            :validation-asked-date="(bankCoordinates) ? bankCoordinates.validationAskedDate : null"
             @identityDocumentSent="identityDocumentSent"
           />
         </v-col>
@@ -224,14 +224,17 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/user/profile/payment/BankAccount.json";
+import {messages_en, messages_fr} from "@translations/components/user/profile/payment/BankAccount/";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     GeoComplete,

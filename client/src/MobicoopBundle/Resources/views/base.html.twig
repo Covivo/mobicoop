@@ -26,12 +26,17 @@
             <v-app>
                 {% if app.user %}
                     <m-header 
-                    :user="{{app.user|json_encode}}"
-                    :url-mobile="{{urlMobile|json_encode}}"                    
-                    :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"></m-header>
+                        :user="{{app.user|json_encode}}"
+                        :url-mobile="{{urlMobile|json_encode}}"                    
+                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}" 
+                        locale="{{ app.request.locale }}"
+                    ></m-header>
                 {% else %}
-                    <m-header :url-mobile="{{urlMobile|json_encode}}"
-                    :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"></m-header>
+                    <m-header 
+                        :url-mobile="{{urlMobile|json_encode}}"
+                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
+                        locale="{{ app.request.locale }}"
+                    ></m-header>
             {% endif %}
 
                 {% block content %}                    

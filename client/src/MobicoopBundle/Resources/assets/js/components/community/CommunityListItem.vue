@@ -112,14 +112,14 @@
             text
             @click="leaveCommunityDialog=false"
           >
-            {{ $t('ui.common.no') }}
+            {{ $t('no') }}
           </v-btn>
           <v-btn
             color="secondary darken-1"
             text
             @click="leaveCommunityDialog=false; postLeavingRequest()"
           >
-            {{ $t('ui.common.yes') }}
+            {{ $t('yes') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -129,14 +129,14 @@
 <script>
 
 import axios from "axios";
-import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityListItem.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/community/CommunityListItem/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     item:{

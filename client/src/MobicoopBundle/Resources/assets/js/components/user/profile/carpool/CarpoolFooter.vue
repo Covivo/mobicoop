@@ -70,13 +70,16 @@
 </template>
 
 <script>
-import Translations from "@translations/components/user/profile/carpool/CarpoolFooter.js";
+import {isEmpty} from "lodash";
+import {messages_en, messages_fr} from "@translations/components/user/profile/carpool/CarpoolFooter/";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
-import {isEmpty} from 'lodash';
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     Carpooler

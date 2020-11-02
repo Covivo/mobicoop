@@ -55,15 +55,14 @@
 
 <script>
 import moment from "moment";
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/utilities/VJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/utilities/VJourney.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/VJourney/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   components: {
   },
@@ -115,7 +114,7 @@ export default {
       }
     }, 
     formatTime(time) {
-      if(time) return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
+      if(time) return moment.utc(time).format(this.$t("hourMinute")); 
     }
   }
 };

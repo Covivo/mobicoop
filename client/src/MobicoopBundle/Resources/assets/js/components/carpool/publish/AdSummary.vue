@@ -35,37 +35,37 @@
               <v-chip
                 :color="activeDays.mon ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.mon') }}
+                {{ $t('mon') }}
               </v-chip>
               <v-chip
                 :color="activeDays.tue ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.tue') }}
+                {{ $t('tue') }}
               </v-chip>
               <v-chip
                 :color="activeDays.wed ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.wed') }}
+                {{ $t('wed') }}
               </v-chip>
               <v-chip
                 :color="activeDays.thu ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.thu') }}
+                {{ $t('thu') }}
               </v-chip>
               <v-chip
                 :color="activeDays.fri ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.fri') }}
+                {{ $t('fri') }}
               </v-chip>
               <v-chip
                 :color="activeDays.sat ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.sat') }}
+                {{ $t('sat') }}
               </v-chip>
               <v-chip
                 :color="activeDays.sun ? 'success' : 'default'"
               >
-                {{ $t('ui.abbr.day.sun') }}
+                {{ $t('sun') }}
               </v-chip>
             </h2>
           </v-col>
@@ -341,43 +341,43 @@
                       small
                       :color="schedule.mon ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.mon') }}
+                      {{ $t('mon') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.tue ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.tue') }}
+                      {{ $t('tue') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.wed ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.wed') }}
+                      {{ $t('wed') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.thu ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.thu') }}
+                      {{ $t('thu') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.fri ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.fri') }}
+                      {{ $t('fri') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.sat ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.sat') }}
+                      {{ $t('sat') }}
                     </v-chip>
                     <v-chip
                       small
                       :color="schedule.sun ? 'success' : 'default'"
                     >
-                      {{ $t('ui.abbr.day.sun') }}
+                      {{ $t('sun') }}
                     </v-chip>
                   </v-col>
 
@@ -590,15 +590,14 @@
 
 <script>
 import moment from "moment";
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/publish/AdSummary.json";
-import TranslationsClient from "@clientTranslations/components/carpool/publish/AdSummary.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdSummary/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   components: {
   },
@@ -686,41 +685,41 @@ export default {
   computed: {
     computedOutwardDateFormat() {
       return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.outwardDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.returnDate
-        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.returnDate).format(this.$t("fullDate"))
         : "";
     },
     computedOutwardTimeFormat() {
       return (this.outwardDate && this.outwardTime)
         ? moment(this.outwardDate+' '+this.outwardTime).isValid()
-          ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
-          : moment(this.outwardTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          ? moment(this.outwardDate+' '+this.outwardTime).format(this.$t("hourMinute"))
+          : moment(this.outwardTime).format(this.$t("hourMinute"))
         : null;
     },
     computedDestinationTime() {
       if (this.route && this.route.direction && this.outwardDate && this.outwardTime) {
         return moment(this.outwardDate+' '+this.outwardTime).isValid()
-          ? moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"))
-          : moment(this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute")) ;
+          ? moment(this.outwardDate+' '+this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
+          : moment(this.outwardTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute")) ;
       }
       return null;
     },
     computedReturnOutwardTimeFormat() {
       return (this.hasReturn)
         ? moment(this.returnDate+' '+this.returnTime).isValid()
-          ? moment(this.returnDate+' '+this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
-          : moment(this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          ? moment(this.returnDate+' '+this.returnTime).format(this.$t("hourMinute"))
+          : moment(this.returnTime).format(this.$t("hourMinute"))
         : null;
     },
     computedReturnDestinationTime() {
       if (this.route && this.route.direction && this.hasReturn) {
         return moment(this.returnDate+' '+this.returnTime).isValid()
-          ? moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"))
-          : moment(this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+          ? moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"))
+          : moment(this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("hourMinute"));
       }
       return null;
     },
@@ -775,7 +774,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("hourMinute"));
     },
     reversedArray(array) {
       // slice to make a copy of array, then reverse the copy

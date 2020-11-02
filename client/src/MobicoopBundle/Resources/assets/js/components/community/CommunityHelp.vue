@@ -66,12 +66,18 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityHelp.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityHelp.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);  
+import {messages_en, messages_fr} from "@translations/components/community/CommunityHelp/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/community/CommunityHelp/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);  
+
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     displayTitleCommunity: {

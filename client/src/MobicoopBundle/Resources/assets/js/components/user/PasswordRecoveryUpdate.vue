@@ -66,12 +66,16 @@
   </div>
 </template>
 <script>
+
 import axios from "axios";
-import Translations from "@translations/components/user/PasswordRecoveryUpdate.json";
+import {messages_en, messages_fr} from "@translations/components/user/PasswordRecoveryUpdate/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     token: {
@@ -85,21 +89,21 @@ export default {
       loading:false,
       pwd:null,
       pwdRules: {
-        required:  v => !!v || this.$t("models.user.password.errors.required"),
-        min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
+        required:  v => !!v || this.$t("errors.required"),
+        min: v => (v && v.length >= 8 ) || this.$t("errors.min"),
         checkUpper : value => {
           const pattern = /^(?=.*[A-Z]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.upper")
+          return pattern.test(value) || this.$t("errors.upper")
 
         },
         checkLower : value => {
           const pattern = /^(?=.*[a-z]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.lower")
+          return pattern.test(value) || this.$t("errors.lower")
 
         },
         checkNumber : value => {
           const pattern = /^(?=.*[0-9]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.number")
+          return pattern.test(value) || this.$t("errors.number")
 
         },
       },

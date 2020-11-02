@@ -13,7 +13,7 @@
 home:
     path:
         fr: /
-        en: /
+        en: /en/
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
 
 home_logout:
@@ -121,7 +121,23 @@ user_profile_update:
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
-# list of payments and carpools
+# profile summary
+user_profile_summary:
+    methods: [POST]
+    path:
+        fr: /utilisateur/profil/resume
+        en: /user/profile/summary
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileSummary
+
+# profile summary
+user_profile_public:
+    methods: [POST]
+    path:
+        fr: /utilisateur/profil/public
+        en: /user/profile/public
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfilePublic
+
+    # list of payments and carpools
 list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
@@ -369,7 +385,17 @@ user_block:
         en: /user/block
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
-##################
+# user resport
+user_report:
+    methods: [POST]
+    path:
+        fr: /utilisateur/{id}/signaler
+        en: /user/{id}/report
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReport
+    requirements:
+        id: '\d+'
+
+    ##################
 # carpool routes #
 ##################
 
@@ -1022,6 +1048,7 @@ event_get_widget:
 
 # report event
 event_report:
+    methods: [POST]
     path:
         fr: /evenement/{id}/signaler
         en: /event/{id}/report

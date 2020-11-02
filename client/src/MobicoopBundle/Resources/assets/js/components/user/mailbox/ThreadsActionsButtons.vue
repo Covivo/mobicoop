@@ -107,10 +107,15 @@
   </v-main>
 </template>
 <script>
-import Translations from "@translations/components/user/mailbox/ThreadsActionsButtons.json";
+
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadsActionsButtons/";
+
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     status:{

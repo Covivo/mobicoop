@@ -39,17 +39,16 @@
 </template>
 <script>
 
-import { merge } from "lodash";
-import Translations from "@translations/components/community/Community.json";
-import TranslationsClient from "@clientTranslations/components/community/Community.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/community/Community/";
 
 export default {
   components: {
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     community:{

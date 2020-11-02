@@ -19,11 +19,15 @@
   </div>
 </template>
 <script>
-import Translations from "@translations/components/user/SsoLogin.json";
+
+import {messages_en, messages_fr} from "@translations/components/user/SsoLogin/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     url:{

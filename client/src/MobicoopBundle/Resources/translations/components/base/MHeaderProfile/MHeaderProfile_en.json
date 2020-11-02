@@ -1,0 +1,18 @@
+{
+    "myAds": {
+        "label": "My proposals",
+        "route": "/user/profil/update/my-proposals"
+    },
+    "myAcceptedCarpools": {
+        "label": "Accepted carpools",
+        "route": "#"
+    },
+    "myProfile": {
+        "label": "Profile",
+        "route": "/user/profile/update"
+    },
+    "logOut": {
+        "label": "Logout",
+        "route": "/user/logout"
+    }
+}

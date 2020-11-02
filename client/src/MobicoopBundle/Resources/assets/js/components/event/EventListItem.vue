@@ -70,7 +70,7 @@
         <div
           class="mt-5"
         >
-          <EventReport
+          <Report
             :event="item"
           />
         </div>
@@ -80,19 +80,19 @@
 </template>
 <script>
 
-import { merge } from "lodash";
 import moment from "moment";
-import EventReport from "@components/event/EventReport";
-import Translations from "@translations/components/event/EventListItem.json";
-import TranslationsClient from "@clientTranslations/components/event/EventListItem.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/event/EventListItem/";
+import Report from "@components/utilities/Report";
 
 export default {
   components:{
-    EventReport
+    Report
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     item:{
@@ -116,15 +116,15 @@ export default {
       return this.$t('routes.event', {id:item.id});
     },
     computeEventDate(){
-      let fromDate = moment(this.item.fromDate.date).format(this.$t("ui.i18n.date.format.shortCompleteDate"));
-      let toDate = moment(this.item.toDate.date).format(this.$t("ui.i18n.date.format.shortCompleteDate"));
+      let fromDate = moment(this.item.fromDate.date).format(this.$t("shortCompleteDate"));
+      let toDate = moment(this.item.toDate.date).format(this.$t("shortCompleteDate"));
       
       if(fromDate === toDate){
-        this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
+        this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
       }
       else{
-        this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
-        this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("ui.i18n.time.format.hourMinute"));
+        this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
+        this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("hourMinute"));
       }
     }
   }

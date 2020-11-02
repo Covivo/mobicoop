@@ -81,6 +81,8 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -216,6 +218,12 @@ class Deserializer
                 break;
             case SsoConnection::class:
                 return $this->deserializeSsoConnection($data);
+                break;
+            case ProfileSummary::class:
+                return $this->deserializeProfileSummary($data);
+                break;
+            case PublicProfile::class:
+                return $this->deserializePublicProfile($data);
                 break;
             default:
                 break;
@@ -919,6 +927,25 @@ class Deserializer
         $ssoconnection = new SsoConnection();
         $ssoconnection = $this->autoSet($ssoconnection, $data);
         return $ssoconnection;
+    }
+
+    private function deserializeProfileSummary(array $data): ?ProfileSummary
+    {
+        $profileSummary = new ProfileSummary();
+        $profileSummary = $this->autoSet($profileSummary, $data);
+        return $profileSummary;
+    }
+
+    private function deserializePublicProfile(array $data): ?PublicProfile
+    {
+        $publicProfile = new PublicProfile();
+        $publicProfile = $this->autoSet($publicProfile, $data);
+
+        if (isset($data["profileSummary"])) {
+            $publicProfile->setProfileSummary($this->deserializeProfileSummary($data['profileSummary']));
+        }
+
+        return $publicProfile;
     }
 
     private function autoSet($object, $data)

@@ -1,0 +1,28 @@
+{
+    "buttons": {
+        "signup": {
+            "label": "Sign up",
+            "route": "/user/signup"
+        },
+        "logIn": {
+            "label": "Login",
+            "route": "/user/login"
+        },
+        "shareAnAd": {
+            "label": "Share an ad",
+            "route": "/carpool/ad/share"
+        },
+        "messages": {
+            "label": "Messages",
+            "route": "/user/messages"
+        },
+        "myProfile": {
+            "label": "My profile",
+            "route": "/user/profile/update"
+        },
+        "logOut": {
+            "label": "Logout",
+            "route": "/user/logout"
+        }
+    }
+}

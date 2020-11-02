@@ -1,0 +1,62 @@
+{
+    "lastName": {
+        "label": "Your last name",
+        "placeholder": "Your last name",
+        "errors": {
+            "required": "Last name is required"
+        }
+    },
+    "firstName": {
+        "label": "Your first name",
+        "placeholder": "Your first name",
+        "errors": {
+            "required": "First name is required"
+        }
+    },
+    "email": {
+        "label": "Your email",
+        "placeholder": "Your email",
+        "errors": {
+            "required": "Email is required",
+            "valid": "Email must be valid"
+        }
+    },
+    "demand": {
+        "label": "Your demand",
+        "placeholder": "Your demand",
+        "items": {
+            "infos": "Information",
+            "technicalIssues": "Technical issue",
+            "partnership": "Partnership",
+            "community": "Community creation"
+        }
+    },
+    "message": {
+        "label": "Your message",
+        "placeholder": "Your message",
+        "errors": {
+            "required": "Message is required."
+        }
+    },
+    "buttons": {
+        "send": {
+            "label": "send",
+            "route": "contact/send"
+        }
+    },
+    "consent": {
+        "label": "Personal data",
+        "placeholder": "Personal data",
+        "text": "En cochant cette case et en soumettant ce formulaire, j'accepte que mes données personnelles soient utilisées pour me recontacter dans le cadre de ma demande indiquée dans ce formulaire. Aucun autre traitement ne sera effectué avec mes informations.",
+        "errors": {
+            "required": "Your consent is required."
+        }
+    },
+    "dataPolicy": {
+        "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
+        "link": "notre politique de protection des données",
+        "route": "/data-policy"
+    },
+    "success": "Your message has been sent successfully",
+    "error": "An error happened"
+}
