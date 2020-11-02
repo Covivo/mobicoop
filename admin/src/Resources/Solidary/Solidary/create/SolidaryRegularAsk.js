@@ -81,7 +81,7 @@ export const regularTimeChoices = [
 
 const castDate = (date) => (typeof date === 'string' ? new Date(date) : date);
 
-const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
+const SolidaryRegularAsk = ({ includeNeeds = true, summary = null, edit = false }) => {
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
@@ -112,7 +112,7 @@ const SolidaryRegularAsk = ({ includeNeeds = true, summary = null }) => {
     <Box display="flex">
       <Box flex={3} mr="1em">
         <SolidaryQuestion question="Quels jours devez-vous voyager ?">
-          <SolidaryRegularSchedules choices={regularTimeChoices} initialChoice={1} />
+          <SolidaryRegularSchedules isEdition={edit} choices={regularTimeChoices} initialChoice={1} />
         </SolidaryQuestion>
         <SolidaryQuestion question="Pendant combien de temps devez-vous faire ce trajet ?">
           <DateIntervalSelector

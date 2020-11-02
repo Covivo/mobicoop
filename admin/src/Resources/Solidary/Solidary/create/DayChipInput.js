@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Chip from '@material-ui/core/Chip';
 import { useField } from 'react-final-form';
@@ -10,12 +10,13 @@ const useStyles = makeStyles({
   },
 });
 
-const DayChipInput = ({ label, source, onChange: onChangeInput, forcedValue }) => {
+const DayChipInput = ({ label, source, onChange: onChangeInput, forcedValue, initialValue }) => {
   const {
     input: { value, onChange },
   } = useField(source);
   const classes = useStyles();
   const color = value ? 'primary' : 'default';
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (forcedValue !== undefined) {
@@ -23,22 +24,34 @@ const DayChipInput = ({ label, source, onChange: onChangeInput, forcedValue }) =
     }
   }, [forcedValue]);
 
+  useEffect(() => {
+    if (loading) {
+      console.log('[EDITION] Setting inital Valie:', initialValue);
+      if (initialValue) onChange(initialValue);
+      setLoading(false);
+    }
+  }, [initialValue]);
+
   return (
-    <Chip
-      label={label}
-      color={color}
-      onClick={() => {
-        onChangeInput(!value);
-        return onChange(!value);
-      }}
-      className={classes.spaceRight}
-    />
+    <>
+      {!loading
+      && <Chip
+        label={label}
+        color={color}
+        onClick={() => {
+          onChangeInput(!value);
+          return onChange(!value);
+        }}
+        className={classes.spaceRight}
+      /> }
+    </>
   );
 };
 
 DayChipInput.defaultProps = {
   onChange: () => {},
   forcedValue: undefined,
+  initialValue: undefined,
 };
 
 DayChipInput.propTypes = {
@@ -46,6 +59,7 @@ DayChipInput.propTypes = {
   source: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   forcedValue: PropTypes.bool,
+  initialValue: PropTypes.bool,
 };
 
 export default DayChipInput;
