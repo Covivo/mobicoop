@@ -116,13 +116,15 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/user/profile/PublicProfile.json";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Report from "@components/utilities/Report";
-
+import {messages_en, messages_fr} from "@translations/components/user/profile/PublicProfile/";
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     ProfileAvatar,
