@@ -68,8 +68,7 @@ class ReviewManager
         $review->setReviewer($reviewEntity->getReviewer());
         $review->setReviewed($reviewEntity->getReviewed());
         $review->setContent($reviewEntity->getContent());
-        $review->setCreatedDate($reviewEntity->getCreatedDate());
-        $review->getUpdatedDate($reviewEntity->getUpdatedDate());
+        $review->setDate((!is_null($reviewEntity->getUpdatedDate())) ? $reviewEntity->getUpdatedDate() : $reviewEntity->getCreatedDate());
         $review->setLeft($isLeft);
 
         return $review;

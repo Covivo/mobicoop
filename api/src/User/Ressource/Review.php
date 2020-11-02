@@ -76,7 +76,7 @@ class Review
      * @var User The User who left this Review
      *
      * @Assert\NotBlank
-     * @Groups({"readReview","writeReview"})
+     * @Groups({"readReview","writeReview","readPublicProfile"})
      */
     private $reviewer;
 
@@ -92,7 +92,7 @@ class Review
      * @var string The content text of the review
      *
      * @Assert\NotBlank
-     * @Groups({"readReview","writeReview"})
+     * @Groups({"readReview","writeReview","readPublicProfile"})
      */
     private $content;
 
@@ -105,16 +105,9 @@ class Review
 
     /**
      * @var \DateTimeInterface Creation date.
-     * @Groups({"readReview"})
+     * @Groups({"readReview","readPublicProfile"})
      */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date.
-     * @Groups({"readReview"})
-     */
-    private $updatedDate;
-
+    private $date;
 
     public function __construct(int $id = null)
     {
@@ -184,26 +177,14 @@ class Review
         return $this;
     }
 
-    public function getCreatedDate(): ?\DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
-        return $this->createdDate;
+        return $this->date;
     }
 
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    public function setDate(\DateTimeInterface $date): self
     {
-        $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getUpdatedDate(): ?\DateTimeInterface
-    {
-        return $this->updatedDate;
-    }
-
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
+        $this->date = $date;
 
         return $this;
     }
