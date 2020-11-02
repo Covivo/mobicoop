@@ -9,7 +9,7 @@
       </v-col>
       <v-col>
         <v-row><v-col>{{ review.reviewer.givenName }} {{ review.reviewer.shortFamilyName }}<br>{{ reviewDate }}</v-col></v-row>
-        <v-row><v-col>{{ review.content }}</v-col></v-row>
+        <v-row><v-col><div v-html="review.content" /></v-col></v-row>
       </v-col>
     </v-row>
   </v-container>
