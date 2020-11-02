@@ -27,7 +27,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
  * A Review made by a User on another User
@@ -68,12 +67,12 @@ class Review
      * @var int $id The id of this Review.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readReview"})
+     * @Groups({"readReview","readPublicProfile"})
      */
     private $id;
    
     /**
-     * @var User The User who left this Review
+     * @var ReviewUser The User who left this Review
      *
      * @Assert\NotBlank
      * @Groups({"readReview","writeReview","readPublicProfile"})
@@ -81,7 +80,7 @@ class Review
     private $reviewer;
 
     /**
-     * @var User The User targeted by this Review
+     * @var ReviewUser The User targeted by this Review
      *
      * @Assert\NotBlank
      * @Groups({"readReview","writeReview"})
@@ -129,24 +128,24 @@ class Review
         return $this;
     }
 
-    public function getReviewer(): ?User
+    public function getReviewer(): ?ReviewUser
     {
         return $this->reviewer;
     }
 
-    public function setReviewer(?User $reviewer): self
+    public function setReviewer(?ReviewUser $reviewer): self
     {
         $this->reviewer = $reviewer;
         
         return $this;
     }
 
-    public function getReviewed(): ?User
+    public function getReviewed(): ?ReviewUser
     {
         return $this->reviewed;
     }
 
-    public function setReviewed(?User $reviewed): self
+    public function setReviewed(?ReviewUser $reviewed): self
     {
         $this->reviewed = $reviewed;
         

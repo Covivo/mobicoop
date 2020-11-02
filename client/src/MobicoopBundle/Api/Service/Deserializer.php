@@ -226,9 +226,6 @@ class Deserializer
             case PublicProfile::class:
                 return $this->deserializePublicProfile($data);
                 break;
-            case Review::class:
-                return $this->deserializeReview($data);
-                break;
             default:
                 break;
         }
@@ -950,21 +947,6 @@ class Deserializer
         }
 
         return $publicProfile;
-    }
-
-    private function deserializeReview(array $data): ?Review
-    {
-        $review = new Review();
-        $review = $this->autoSet($review, $data);
-
-        if (isset($data["reviewer"])) {
-            $review->setReviewer($this->deserializeUser($data['reviewer']));
-        }
-        if (isset($data["reviewed"])) {
-            $review->setReviewed($this->deserializeUser($data['reviewed']));
-        }
-
-        return $review;
     }
 
     private function autoSet($object, $data)

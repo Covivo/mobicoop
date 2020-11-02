@@ -31,6 +31,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\User\Repository\ReviewRepository;
 use App\User\Ressource\ReviewsDashboard;
+use App\User\Ressource\ReviewUser;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -61,13 +62,15 @@ class ReviewManager
      * @param boolean $isLeft               true : the review has already been left
      * @return Review
      */
-    public function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = true): Review
+    private function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = true): Review
     {
         $review = new Review($reviewEntity->getId());
+        
+        $review->setReviewer($this->buildReviewUser($reviewEntity->getReviewer()));
+        $review->setReviewed($this->buildReviewUser($reviewEntity->getReviewed()));
 
-        $review->setReviewer($reviewEntity->getReviewer());
-        $review->setReviewed($reviewEntity->getReviewed());
         $review->setContent($reviewEntity->getContent());
+
         $review->setDate((!is_null($reviewEntity->getUpdatedDate())) ? $reviewEntity->getUpdatedDate() : $reviewEntity->getCreatedDate());
         $review->setLeft($isLeft);
 
@@ -82,7 +85,7 @@ class ReviewManager
      * @param boolean $isLeft                   true : the review has already been left
      * @return Review[]
      */
-    public function buildReviewsFromEntities(array $reviewEntities, bool $isLeft = true): array
+    private function buildReviewsFromEntities(array $reviewEntities, bool $isLeft = true): array
     {
         $reviews = [];
         foreach ($reviewEntities as $reviewEntity) {
@@ -97,7 +100,7 @@ class ReviewManager
      * @param Review $review    The review Entity
      * @return ReviewEntity
      */
-    public function buildReviewFromRessource(Review $review): ReviewEntity
+    private function buildReviewFromRessource(Review $review): ReviewEntity
     {
         $reviewEntity = new ReviewEntity();
 
@@ -108,6 +111,26 @@ class ReviewManager
         return $reviewEntity;
     }
 
+    
+    /**
+     * Build a ReviewUser from a User
+     *
+     * @param User $user
+     * @return ReviewUser
+     */
+    private function buildReviewUser(User $user): ReviewUser
+    {
+        $reviewUser = new ReviewUser($user->getId());
+        $reviewUser->setGivenName($user->getGivenName());
+        $reviewUser->setShortFamilyName($user->getShortFamilyName());
+
+        $reviewUser->setAvatar('');
+        if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
+            $reviewUser->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+        }
+        return $reviewUser;
+    }
+    
     /**
      * Create a Review
      *
@@ -231,8 +254,8 @@ class ReviewManager
                 if ($reviewAvailable) {
                     // We create a Review to leave from the Ask
                     $reviewToLeave = new Review();
-                    $reviewToLeave->setReviewer($user);
-                    $reviewToLeave->setReviewed($reviewed);
+                    $reviewToLeave->setReviewer($this->buildReviewUser($user));
+                    $reviewToLeave->setReviewed($this->buildReviewUser($reviewed));
                     $reviewToLeave->setLeft(false);
                     $reviews[] = $reviewToLeave;
                 }
