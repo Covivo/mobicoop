@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
 import { useField } from 'react-final-form';
 import { differenceInSeconds, addSeconds } from 'date-fns';
 
-import { DateTimeSelector, setHours, addHours, setTimeFromString } from './DateTimeSelector';
+import { setHours, addHours, setTimeFromString } from './DateTimeSelector';
 import SolidaryQuestion from './SolidaryQuestion';
-import DayChipInput from './DayChipInput';
 import DateIntervalSelector from './DateIntervalSelector';
 import { SolidaryNeedsQuestion } from './SolidaryNeedsQuestion';
 import SolidaryRegularSchedules from './SolidaryRegularSchedules';

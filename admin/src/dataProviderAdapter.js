@@ -406,9 +406,8 @@ export const dataProviderAdapter = (originalProvider) => ({
       newParams.data.already_registered_user = newParams.data.solidaryUser.user["@id"];
       newParams.data.familyName = newParams.data.solidaryUser.user.familyName;
       newParams.data.givenName = newParams.data.solidaryUser.user.givenName;
-      console.log('Solidaries NewParans: ', newParams);
       const data = {
-        actionName: 'solidary_ask_drop',
+        actionName: 'solidary_update',
         solidary: newParams.id,
       };
 
@@ -416,7 +415,6 @@ export const dataProviderAdapter = (originalProvider) => ({
         data.user = `/users/${newParams.data.solidaryUser.user.id}`;
       }
 
-      console.log('JOURNAL SUIVI DATA: ', data);
 
       originalProvider.create('solidary_animations', { data });
 

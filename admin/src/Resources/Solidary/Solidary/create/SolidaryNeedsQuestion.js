@@ -13,14 +13,10 @@ export const SolidaryNeedsQuestion = ({ label }) => {
   );
   const needsField = useField('needs');
 
-  console.log('[EDITION][NEED]data Need:', data);
-  console.log('[EDITION][NEED]Need field:', needsField.meta.initial);
-  console.log('loading Need:', loading);
 
   const needs = Object.values(data) || [];
   const choices = needs.map((n) => ({ id: n.id, name: n.label, checked: true }));
 
-  console.log(`[EDITION][NEED] choices: `, choices);
 
   if (loading) {
     return <LinearProgress />;

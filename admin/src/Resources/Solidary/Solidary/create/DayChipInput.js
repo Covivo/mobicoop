@@ -26,7 +26,6 @@ const DayChipInput = ({ label, source, onChange: onChangeInput, forcedValue, ini
 
   useEffect(() => {
     if (loading) {
-      console.log('[EDITION] Setting inital Valie:', initialValue);
       if (initialValue) onChange(initialValue);
       setLoading(false);
     }

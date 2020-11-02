@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import { Button, Card, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useField } from 'react-final-form';
 import { DateInput, required } from 'react-admin';
 import DayChipInput from './DayChipInput';
-import {DateTimeSelector} from "./DateTimeSelector";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -45,10 +44,6 @@ const BoundedDateTimeField = (props) => {
       onChange(forcedValue);
     }
   }, [forcedValue]);
-
-  useEffect(() => {
-    console.log('[EDITION] InitialValue Time', initialValue);
-  }, [initialValue])
 
   return (
     <DateInput
@@ -312,14 +307,7 @@ const SolidaryRegularSchedules = (props) => {
     sun: null,
   });
 
-  const [slotsList, setSlotsList] = useState([
-    {
-      id: 0,
-      days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
-      outwardTimes: null,
-      returnTimes: null,
-    },
-  ]);
+  const [slotsList, setSlotsList] = useState([]);
 
   const {
     input: { onChange: onChangeReturnDateTime },
@@ -332,75 +320,52 @@ const SolidaryRegularSchedules = (props) => {
   const classes = useStyles();
 
   const [id, setId] = useState(1);
-  const [loadingDays, setLoadingDays] = useState(true);
-  const [loadingOwt, setLoadingOwt] = useState(true);
-  const [loadingRt, setLoadingRt] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const daysField = useField('days');
   const outwardsField = useField('outwardTimes');
   const returnsField = useField('returnTimes');
 
-  const updateSlotsDays = (index, days) => {
-    const newArr = [...slotsList];
-    newArr[index].days = days;
-
-    setSlotsList(newArr);
-  };
-
-  const updateSlotsOWT = (index, owt) => {
-    const newArr = [...slotsList];
-    newArr[index].outwardTimes = owt;
-
-    setSlotsList(newArr);
-  };
-
-  const updateSlotsRT = (index, rt) => {
-    const newArr = [...slotsList];
-    newArr[index].returnTimes = rt;
-
-    setSlotsList(newArr);
-  };
+  useEffect(() => {
+    const initialDays = { ...daysField.meta.initial };
+    setDays(initialDays);
+  }, [daysField.meta.initial]);
 
   useEffect(() => {
-    if (loadingDays) {
-      const initialDays = { ...daysField.meta.initial };
-      console.log('[EDITION] Set Initial Days From Given Values: ', initialDays);
-      setDays(initialDays);
-      setLoadingDays(false);
-    }
-  }, [daysField.meta.initial, loadingDays]);
-
-  useEffect(() => {
-    if (loadingOwt) {
       const initialOwt = { ...outwardsField.meta.initial };
-      console.log('[EDITION] Set Initial Outward Times From Given Values: ', initialOwt);
       setOutwardTimes(initialOwt);
-      setLoadingOwt(false);
-    }
-  }, [outwardsField.meta.initial, loadingOwt]);
+  }, [outwardsField.meta.initial]);
 
   useEffect(() => {
-    if (loadingRt) {
-      const initialRt = { ...returnsField.meta.initial };
-      console.log('[EDITION] RTF META: ', returnsField.meta);
-      console.log('[EDITION] Set Initial Return Times From Given Values: ', initialRt);
-      setReturnTimes(initialRt);
-      setLoadingRt(false);
-    }
-  }, [returnsField.meta.initial, loadingRt]);
+    const initialRt = { ...returnsField.meta.initial };
+    setReturnTimes({...initialRt});
+  }, [returnsField.meta.initial]);
+
+  const isObjectEqual = (v1, v2) => {
+    return (v1.mon === v2.mon
+      && v1.tue === v2.tue
+      && v1.wed === v2.wed
+      && v1.thu === v2.thu
+      && v1.fri === v2.fri
+      && v1.sat === v2.sat
+      && v1.sun === v2.sun
+    )
+  };
 
   useEffect(() => {
-    if (!loadingRt && !loadingDays && !loadingOwt) {
-      console.log('[EDITION]RETURN', returnTimes);
-      let newSlots = [];
+    let newSlots = [];
+    if (isObjectEqual(days, {mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false})
+      && isObjectEqual(outwardTimes, {mon: null, tue: null, wed: null, thu: null, fri: null, sat: null, sun: null})
+      && isObjectEqual(returnTimes, {mon: null, tue: null, wed: null, thu: null, fri: null, sat: null, sun: null})
+    )
+      return;
 
+    if (loading) {
       for (const [key, value] of Object.entries(days)) {
         if (value) {
           let found = false;
           for (let i = 0; i < newSlots.length; i += 1) {
-            if (outwardTimes[key] === newSlots[i].outwardTimes
-              && returnTimes[key] === newSlots[i].returnTimes) {
-              newSlots[i].days[key] = value;
+            if (outwardTimes[key] === newSlots[i].outwardTimes && returnTimes[key] === newSlots[i].returnTimes) { newSlots[i].days[key] = value;
               found = true;
             }
           }
@@ -414,14 +379,10 @@ const SolidaryRegularSchedules = (props) => {
           }
         }
       }
-      console.log('[EDITION] RESULTAT FINALS SLOTS: ', newSlots);
       setSlotsList(newSlots);
+      setLoading(false);
     }
-  }, [loadingRt, loadingDays, loadingOwt])
-
-  useEffect(() => {
-    console.log('Days template:', days);
-  }, [days]);
+  }, [returnTimes, outwardTimes, days, loading])
 
   const onAddBtnClick = () => {
     setId((prevState) => prevState + 1);
@@ -536,8 +497,7 @@ const SolidaryRegularSchedules = (props) => {
     }
   };
 
-  console.log(`[EDITION]Is Edition: ${isEditing} LoadOwt: ${loadingOwt} LoadDays: ${loadingDays} LoadRt: ${loadingRt}`)
-  if (isEditing && (loadingOwt || loadingDays || loadingRt)) return <p>loading...</p>;
+  if (isEditing && loading) return <p>loading...</p>;
 
   return (
     <>

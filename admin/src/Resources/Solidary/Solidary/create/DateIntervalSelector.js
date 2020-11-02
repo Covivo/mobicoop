@@ -52,13 +52,15 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
   const [defaultStart, setDefaultStart] = useState(formatDate(initialStart || valueStart));
   const [defaultEnd, setDefaultEnd] = useState(formatDate(initialEnd || valueEnd));
 
-  console.log('[EDITION][INTERVAL] start init: ', initialStart);
-  console.log('[EDITION][INTERVAL] End init: ', initialEnd);
 
   useEffect(() => {
     onChangeStart(initialStart);
     onChangeEnd('2020-11-10');
   }, [initialEnd, initialStart]);
+
+  useEffect(() => {
+    onChangeStart(valueStart);
+  }, [valueStart])
 
   const handleChange = (value) => {
     const now = valueStart ? new Date(valueStart) : new Date();
@@ -97,7 +99,6 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
       }
 
       onChangeEnd(newEndDate);
-      console.log('[EDITION][INTERVALE] New End Date', newEndDate);
       setDefaultEnd(formatDate(newEndDate));
     }
   }, [valueStart && valueStart.toString()]);
@@ -107,6 +108,7 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
       <DateInput
         label="A partir du "
         parse={handleStartFieldParse}
+        initialValue={defaultStart}
         source={fieldnameStart}
         validate={[required()]}
         value={defaultStart}

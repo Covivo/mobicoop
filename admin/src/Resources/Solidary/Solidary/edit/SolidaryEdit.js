@@ -20,7 +20,6 @@ import SolidaryRegularAsk from '../create/SolidaryRegularAsk';
 import SolidaryPunctualAsk from '../create/SolidaryPunctualAsk';
 import { addressRenderer } from '../../../../utils/renderers';
 import { SolidaryPunctualAskSummary } from '../create/SolidaryPunctualAskSummary';
-import Tooltip from '@material-ui/core/Tooltip';
 
 const required = (value) => (value ? '' : 'Champs obligatoire');
 
@@ -36,7 +35,6 @@ const CustomToolbar = (props) => (
 );
 
 export const SolidaryEdit = (props) => {
-  console.log('PROPS:', props);
   return (<Edit {...props} title="Éditer demande solidaire">
     <TabbedForm toolbar={<CustomToolbar />}>
       <FormTab label="Trajet">
