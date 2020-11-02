@@ -11,6 +11,3 @@ export const toUTC = (date) => {
 
 export const utcDateFormat = (dateString, pattern = "dd'/'MM'/'yyyy HH':'mm':'ss", ...rest) =>
   format(+toUTC(new Date(dateString)), pattern, ...rest);
-
-export const dateFormat = (dateString, pattern = "dd'/'MM'/'yyyy HH':'mm':'ss", ...rest) =>
-  format(new Date(dateString), pattern, ...rest);
