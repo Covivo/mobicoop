@@ -55,7 +55,7 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
 
   useEffect(() => {
     onChangeStart(initialStart);
-    onChangeEnd('2020-11-10');
+    onChangeEnd(initialEnd);
   }, [initialEnd, initialStart]);
 
   useEffect(() => {
