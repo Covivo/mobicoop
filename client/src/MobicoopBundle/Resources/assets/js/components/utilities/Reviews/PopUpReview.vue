@@ -88,7 +88,8 @@ export default {
     }
   },
   methods:{
-    reviewLeft(){
+    reviewLeft(data){
+      this.$emit('reviewLeft',data);
       this.dialog = false;
     }
   }
