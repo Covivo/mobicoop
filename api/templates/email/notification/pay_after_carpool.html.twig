@@ -1,5 +1,5 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "yourCarpoolWith" |trans}} {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} {{"from"|trans}} {{context.origin}} {{"at"|trans}} {{context.destination}} {{"isDone|trans"}}</p>
-    <p>{{"clickOnLinkToPay"|trans}} <a>cliquer ici</a></p>
+    <p>{{ "yourCarpoolWith" |trans}} {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} {{"from"|trans}} {{context.origin}} {{"at"|trans}} {{context.destination}} {{"isDone"|trans}}</p>
+    <p>{{"clickOnLinkToPay"|trans}} <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "linkValidatePaymentRoute"|trans }}">{{"click"|trans}}</a></p>
 {% endblock %}

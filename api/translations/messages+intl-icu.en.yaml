@@ -352,6 +352,7 @@ goToAcceptedCarpools: "Rendez-vous dans « Covoiturages acceptés » pour le m
 #PAY_AFTER_CARPOOL_REGULAR
 haveYouPayedYourDriverForTheWeek: "Avez-vous payé les covoiturages de la semaine passée ?"
 yourWeekOfCarpool: "Votre semaine de covoiturage régulier, avec "
+click: "Cliquez ici."
 
 #SIGNAL_DEPT
 haveYouForgotToPayTheDriver: "Avez-vous oublié d’indemniser votre covoitureur ?"

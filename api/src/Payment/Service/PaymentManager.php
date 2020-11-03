@@ -789,6 +789,9 @@ class PaymentManager
         // first we search the accepted asks for the given period and the given user
         $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate, $user);
         
+        // we initiate empty array of askIds
+        $askIds = [];
+
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
@@ -806,6 +809,10 @@ class PaymentManager
                     $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                     $carpoolItem->setItemDate($ask->getCriteria()->getFromDate());
                     $this->entityManager->persist($carpoolItem);
+
+                    // we execute event to inform passenger to pay for the carpool
+                    $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
+                    $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
                 }
             } else {
                 // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
@@ -863,6 +870,18 @@ class PaymentManager
                         $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                         $carpoolItem->setItemDate(clone $curDate);
                         $this->entityManager->persist($carpoolItem);
+
+                        // We send only one email for the all week
+                        // We check in array if we already send an email for the ask
+                        if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
+                            $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
+                            $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+                            // we put in array the askId and the askid linked
+                            $askIds[] = $carpoolItem->getAsk()->getId();
+                            if ($carpoolItem->getAsk()->getAskLinked()) {
+                                $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                            }
+                        }
                     }
 
                     if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
@@ -875,23 +894,24 @@ class PaymentManager
         }
         $this->entityManager->flush();
 
-        $askIds = [];
-        // we execute event to ask passenger to pay for the carpool
-        // case punctual
-        if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-            $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
-            $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
-        // case regular
-        } elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-            // We send only one email for the all week
-            if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
-                $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
-                $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
-                // we put in array the ask and the ask linked
-                $askIds[] = $carpoolItem->getAsk()->getId();
-                $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
-            }
-        }
+        // $askIds = [];
+        // // we execute event to inform passenger to pay for the carpool
+        // // case punctual
+        // if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+        //     $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
+        //     $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
+        // // case regular
+        // }
+        // elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        //     // We send only one email for the all week
+        //     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
+        //         $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
+        //         $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+        //
+        //         $askIds[] = $carpoolItem->getAsk()->getId();
+        //         $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+        //     }
+        // }
     }
 
     /**
