@@ -815,7 +815,8 @@ class PaymentManager
                         $this->entityManager->persist($carpoolItem);
                     }
 
-                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
+                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || $curDate->format('Y-m-d') == $ask->getCriteria()->getToDate()->format('Y-m-d')) {
+                        // we reached the end of the period
                         $continue = false;
                     } else {
                         $curDate->modify('+1 day');
