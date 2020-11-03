@@ -8,107 +8,117 @@
         />        
       </v-col>
     </v-row>
+
     <v-row v-else>
-      <v-col cols="4">
+      <v-col cols="12">
         <v-row>
-          <v-col cols="8">
-            <ProfileAvatar
-              :avatar="publicProfile.avatar"
-              :experienced="publicProfile.experienced"
-            />
+          <v-col cols="4">
+            <v-row>
+              <v-col cols="8">
+                <ProfileAvatar
+                  :avatar="publicProfile.avatar"
+                  :experienced="publicProfile.experienced"
+                />
+              </v-col>
+              <v-col
+                cols="4"
+                class="text-right"
+              >
+                {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
+                {{ publicProfile.age }} {{ $t('yearsOld') }}
+              </v-col>
+            </v-row>
           </v-col>
           <v-col
-            cols="4"
-            class="text-right"
+            cols="3"
+            class="text-center"
           >
-            {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
-            {{ publicProfile.age }} {{ $t('yearsOld') }}
+            <p>{{ $t('carpoolRealized') }}<br><span class="headline">{{ publicProfile.carpoolRealized }}</span></p>
+            <p>{{ $t('lastConnection') }}<br>{{ lastConnection }}</p>
           </v-col>
-        </v-row>
-      </v-col>
-      <v-col
-        cols="3"
-        class="text-center"
-      >
-        <p>{{ $t('carpoolRealized') }}<br><span class="headline">{{ publicProfile.carpoolRealized }}</span></p>
-        <p>{{ $t('lastConnection') }}<br>{{ lastConnection }}</p>
-      </v-col>
-      <v-col
-        cols="3"
-        class="text-center"
-      >
-        <p>
-          {{ $t('answerRate') }}<br>
-          <v-progress-linear
-            :color="answerRateColor"
-            height="25"
-            :value="publicProfile.answerPct"
+          <v-col
+            cols="3"
+            class="text-center"
           >
-            <template v-slot:default="{ value }">
-              <strong>{{ Math.ceil(value) }}%</strong>
-            </template>
-          </v-progress-linear>
-        </p>
-        <p>{{ $t('subscribedOn') }}<br>{{ subscribedOn }}</p>
-      </v-col>
-      <v-col
-        cols="2"
-        class="text-center"
-      >
-        <v-row>
-          <v-col>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <div
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>{{ smokingIcon }}</v-icon><v-icon v-if="smokingCarIcon">
-                    {{ smokingCarIcon }}
-                  </v-icon>
-                </div>
-              </template>
-              <span>{{ smokingIconToolTip }}</span>
-            </v-tooltip>
+            <p>
+              {{ $t('answerRate') }}<br>
+              <v-progress-linear
+                :color="answerRateColor"
+                height="25"
+                :value="publicProfile.answerPct"
+              >
+                <template v-slot:default="{ value }">
+                  <strong>{{ Math.ceil(value) }}%</strong>
+                </template>
+              </v-progress-linear>
+            </p>
+            <p>{{ $t('subscribedOn') }}<br>{{ subscribedOn }}</p>
+          </v-col>
+          <v-col
+            cols="2"
+            class="text-center"
+          >
+            <v-row>
+              <v-col>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-icon>{{ smokingIcon }}</v-icon><v-icon v-if="smokingCarIcon">
+                        {{ smokingCarIcon }}
+                      </v-icon>
+                    </div>
+                  </template>
+                  <span>{{ smokingIconToolTip }}</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      {{ chatIcon }}
+                    </v-icon>
+                  </template>
+                  <span>{{ chatIconToolTip }}</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      {{ musicIcon }}
+                    </v-icon>
+                  </template>
+                  <span>{{ musicIconToolTip }}</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ chatIcon }}
-                </v-icon>
-              </template>
-              <span>{{ chatIconToolTip }}</span>
-            </v-tooltip>
+        <v-row v-if="showReportButton">
+          <v-col class="text-right">
+            <Report
+              :user="user"
+            />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ musicIcon }}
-                </v-icon>
-              </template>
-              <span>{{ musicIconToolTip }}</span>
-            </v-tooltip>
+        <v-row v-if="publicProfile && publicProfile.reviewActive">
+          <v-col cols="12">
+            <Reviews :reviews="publicProfile.reviews" />
           </v-col>
         </v-row>
-      </v-col>
-    </v-row>
-    <v-row v-if="showReportButton">
-      <v-col class="text-right">
-        <Report
-          :user="user"
-        />
       </v-col>
     </v-row>
   </v-container>
@@ -116,21 +126,25 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/user/profile/PublicProfile.json";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import Reviews from "@components/utilities/Reviews/Reviews";
 import Report from "@components/utilities/Report";
-
+import {messages_en, messages_fr} from "@translations/components/user/profile/PublicProfile/";
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     ProfileAvatar,
-    Report
+    Report,
+    Reviews
   },
   props:{
     user:{
-      type:Number,
+      type:Object,
       default: null
     },
     showReportButton: {

@@ -200,6 +200,10 @@ services:
             $carpoolExportPlatformName: '%env(string:CARPOOL_EXPORT_APP_NAME)%'
             $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
 
+    App\Carpool\Service\ResultManager:
+        arguments:
+            $userReview: '%env(bool:USER_REVIEW)%'
+
     # Communication
     App\Communication\Controller\: 
         resource: '../src/Communication/Controller'
@@ -540,7 +544,12 @@ services:
                 maxMessagesForAnswerRate: '%env(int:USER_MAX_MESSAGES_FOR_ANSWER_RATE)%'
                 experiencedTag: '%env(bool:USER_EXPERIENCED_TAG)%'
                 experiencedTagMinCarpools : '%env(int:USER_EXPERIENCED_TAG_MIN_CARPOOLS)%'
+                userReview: '%env(bool:USER_REVIEW)%'
     
+    App\User\Service\ReviewManager:
+        arguments:
+            $userReview: '%env(bool:USER_REVIEW)%'
+
     App\User\Service\SsoManager:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"

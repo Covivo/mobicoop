@@ -35,7 +35,9 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
+use App\User\Repository\ReviewRepository;
 use App\User\Service\BlockManager;
+use App\User\Service\ReviewManager;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
 
@@ -54,6 +56,9 @@ class ResultManager
     private $params;
     private $security;
     private $blockManager;
+    private $reviewRepository;
+    private $reviewManager;
+    private $userReview;
 
     /**
      * Constructor.
@@ -69,7 +74,10 @@ class ResultManager
         MatchingRepository $matchingRepository,
         AskRepository $askRepository,
         Security $security,
-        BlockManager $blockManager
+        BlockManager $blockManager,
+        ReviewRepository $reviewRepository,
+        ReviewManager $reviewManager,
+        bool $userReview
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -77,6 +85,9 @@ class ResultManager
         $this->askRepository = $askRepository;
         $this->security = $security;
         $this->blockManager = $blockManager;
+        $this->reviewRepository = $reviewRepository;
+        $this->reviewManager = $reviewManager;
+        $this->userReview = $userReview;
     }
 
     // set the params
@@ -2183,7 +2194,17 @@ class ResultManager
         $result->setResultPassenger($resultPassenger);
 
         // create the global result
-        $result->setCarpooler($ask->getUser()->getId() == $userId ? $ask->getUserRelated() : $ask->getUser());
+        if ($ask->getUser()->getId() == $userId) {
+            $carpooler = $ask->getUserRelated();
+            $currentUser = $ask->getUser();
+        } else {
+            $carpooler = $ask->getUser();
+            $currentUser = $ask->getUserRelated();
+        }
+
+        $carpooler = $this->canReceiveReview($currentUser, $carpooler);
+
+        $result->setCarpooler($carpooler);
         $result->setFrequency($ask->getCriteria()->getFrequency());
         $result->setFrequencyResult($ask->getCriteria()->getFrequency());
         $result = $this->createGlobalResult($result, $ask->getWaypoints());
@@ -2545,12 +2566,44 @@ class ResultManager
         $result->setResultPassenger($resultPassenger);
         
         // create the global result
-        $result->setCarpooler($ask->getUser()->getId() == $userId ? $ask->getUserRelated() : $ask->getUser());
+        if ($ask->getUser()->getId() == $userId) {
+            $carpooler = $ask->getUserRelated();
+            $currentUser = $ask->getUser();
+        } else {
+            $carpooler = $ask->getUser();
+            $currentUser = $ask->getUserRelated();
+        }
+
+        $carpooler = $this->canReceiveReview($currentUser, $carpooler);
+        $result->setCarpooler($carpooler);
         $result->setFrequency($ask->getCriteria()->getFrequency());
         $result->setFrequencyResult($ask->getCriteria()->getFrequency());
         $result = $this->createGlobalResult($result, $ask->getWaypoints());
 
         // return the result
         return $result;
+    }
+
+    /**
+     * Determine if the $user can get a review from the current User
+     *
+     * @param User $reviewer    The reviewer
+     * @param User $reviewed    The reviewed
+     * @return User The reviewed with "canReceiveReview" setted
+     */
+    private function canReceiveReview(User $reviewer, User $reviewed): User
+    {
+        
+        // Using the dashboard of the currentUser but specifically with the user possibly to review
+        // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
+        $reviews = $this->reviewManager->getReviewDashboard($reviewer, $reviewed);
+        $reviewed->setCanReceiveReview(false);
+        if (!$this->userReview) {
+            // Review system disable.
+            return $reviewed;
+        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+            $reviewed->setCanReceiveReview(true);
+        }
+        return $reviewed;
     }
 }

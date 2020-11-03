@@ -109,6 +109,7 @@ class UserManager
     private $paymentProvider;
     private $blockManager;
     private $internalMessageManager;
+    private $reviewManager;
 
     // Default carpool settings
     private $chat;
@@ -154,6 +155,7 @@ class UserManager
         PaymentDataProvider $paymentProvider,
         BlockManager $blockManager,
         InternalMessageManager $internalMessageManager,
+        ReviewManager $reviewManager,
         array $domains,
         array $profile
     ) {
@@ -185,6 +187,7 @@ class UserManager
         $this->paymentProvider = $paymentProvider;
         $this->blockManager = $blockManager;
         $this->internalMessageManager = $internalMessageManager;
+        $this->reviewManager = $reviewManager;
         $this->profile = $profile;
     }
 
@@ -1492,7 +1495,6 @@ class UserManager
     public function getPublicProfile(User $user): PublicProfile
     {
         $publicProfile = new PublicProfile($user->getId());
-
         // Get the profile summary
         $publicProfile->setProfileSummary($this->getProfileSummary($user));
 
@@ -1502,6 +1504,10 @@ class UserManager
         $publicProfile->setMusicFavorites($user->getMusicFavorites());
         $publicProfile->setChat($user->hasChat());
         $publicProfile->setChatFavorites($user->getChatFavorites());
+
+        // Get the reviews about this user
+        $publicProfile->setReviewActive($this->profile['userReview']);
+        $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
 
         return $publicProfile;
     }

@@ -1,0 +1,8 @@
+{
+    "yearsOld":"years old",
+    "getProfileSummaryUri":"/user/profile/summary",
+    "infos":{
+        "carpoolRealized":"Carpool realized",
+        "answerPct":"Answering rates"
+    }
+}

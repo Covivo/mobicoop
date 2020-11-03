@@ -23,7 +23,7 @@
 
 namespace App\User\Repository;
 
-use App\User\Entity\Block;
+use App\User\Entity\Review;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -31,7 +31,7 @@ use Doctrine\ORM\EntityRepository;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BlockRepository
+class ReviewRepository
 {
     /**
      * @var EntityRepository
@@ -42,23 +42,23 @@ class BlockRepository
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(Block::class);
+        $this->repository = $entityManager->getRepository(Review::class);
     }
 
     /**
-     * Find one Blocks by its id
+     * Find one Review by its id
      *
-     * @return Block|null
+     * @return Review|null
      */
-    public function find(int $id): ?Block
+    public function find(int $id): ?Review
     {
         return $this->repository->find($id);
     }
 
     /**
-     * Find All the Blocks
+     * Find All the Review
      *
-     * @return Block[]
+     * @return Review[]
      */
     public function findAll(): ?array
     {
@@ -66,9 +66,9 @@ class BlockRepository
     }
 
     /**
-     * Find All the Blocks by criteria
+     * Find All the Review by criteria
      *
-     * @return Block[]
+     * @return Review[]
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
@@ -76,29 +76,50 @@ class BlockRepository
     }
 
     /**
-     * Find one Blocks by criteria
+     * Find one Review by criteria
      *
-     * @return Block|null
+     * @return Review|null
      */
-    public function findOneBy(array $criteria): ?Block
+    public function findOneBy(array $criteria): ?Review
     {
         return $this->repository->findOneBy($criteria);
     }
 
     /**
-     * Find all the blocks involving $user1 and $user2
+     * Find all reviews involving a User (as reviewer or reviewed)
      *
-     * @param User $user1
-     * @param User $user2
-     * @return array
+     * @param User $user
+     * @return array|null
      */
-    public function findAllByUsersInvolved(User $user1, User $user2): array
+    public function findReviewsInvolvingUser(User $user): ?array
     {
-        $query = $this->repository->createQueryBuilder('b')
-        ->where('(b.user = :user1 and b.blockedUser = :user2) or (b.user = :user2 and b.blockedUser = :user1)')
-        ->setParameter('user1', $user1)
-        ->setParameter('user2', $user2)
+        $query = $this->repository->createQueryBuilder('r')
+        ->where('r.reviewer = :user or r.reviewed = :user')
+        ->setParameter('user', $user)
         ;
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find all reviews with specific reviewer and/or specific reviewed
+     *
+     * @param User $reviewer The reviewer
+     * @param User $reviewed The reviewed
+     * @return array|null
+     */
+    public function findSpecificReviews(User $reviewer=null, User $reviewed=null): ?array
+    {
+        $query = $this->repository->createQueryBuilder('r');
+
+        if (!is_null($reviewer)) {
+            $query->andWhere('r.reviewer = :reviewer');
+            $query->setParameter('reviewer', $reviewer);
+        }
+        if (!is_null($reviewed)) {
+            $query->andWhere('r.reviewed = :reviewed');
+            $query->setParameter('reviewed', $reviewed);
+        }
+
         return $query->getQuery()->getResult();
     }
 }

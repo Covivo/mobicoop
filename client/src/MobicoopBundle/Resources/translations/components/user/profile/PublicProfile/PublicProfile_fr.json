@@ -1,0 +1,17 @@
+{
+    "getPublicProfileUri":"/utilisateur/profil/public",
+    "yearsOld":"ans",
+    "carpoolRealized":"Covoiturages réalisés",
+    "lastConnection":"Dernière connexion le",
+    "answerRate":"Taux de réponse",
+    "subscribedOn":"Inscrit le",
+    "params":{
+        "chat":"Je discute",
+        "noChat":"Je ne suis pas bavard",
+        "music":"J'écoute la radio ou de la musique",
+        "noMusic":"Je préfére rouler sans fond sonore",
+        "smoke":"Je fume",
+        "noSmoke":"Je ne fume pas",
+        "noSmokeInCar":"Je ne fume pas en voiture"
+    }
+}
