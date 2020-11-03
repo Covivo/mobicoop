@@ -113,6 +113,12 @@ class PublicProfile
     private $chatFavorites;
 
     /**
+     * @var bool|null True if the review system is enabled
+     * @Groups({"readPublicProfile"})
+     */
+    private $reviewActive;
+    
+    /**
      * @var array|null Reviews about this user
      *
      * @Groups({"readPublicProfile"})
@@ -136,6 +142,18 @@ class PublicProfile
     public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function isReviewActive(): ?bool
+    {
+        return $this->reviewActive;
+    }
+
+    public function setReviewActive(?bool $reviewActive): self
+    {
+        $this->reviewActive = $reviewActive;
         
         return $this;
     }

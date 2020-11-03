@@ -58,6 +58,7 @@ class ResultManager
     private $blockManager;
     private $reviewRepository;
     private $reviewManager;
+    private $userReview;
 
     /**
      * Constructor.
@@ -75,7 +76,8 @@ class ResultManager
         Security $security,
         BlockManager $blockManager,
         ReviewRepository $reviewRepository,
-        ReviewManager $reviewManager
+        ReviewManager $reviewManager,
+        bool $userReview
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -85,6 +87,7 @@ class ResultManager
         $this->blockManager = $blockManager;
         $this->reviewRepository = $reviewRepository;
         $this->reviewManager = $reviewManager;
+        $this->userReview = $userReview;
     }
 
     // set the params
@@ -2590,11 +2593,16 @@ class ResultManager
      */
     private function canReceiveReview(User $reviewer, User $reviewed): User
     {
+        
         // Using the dashboard of the currentUser but specifically with the user possibly to review
         // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
         $reviews = $this->reviewManager->getReviewDashboard($reviewer, $reviewed);
         $reviewed->setCanReceiveReview(false);
-        if (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+        if(!$this->userReview){
+            // Review system disable.
+            return $reviewed;
+        }
+        elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
             $reviewed->setCanReceiveReview(true);
         }
         return $reviewed;

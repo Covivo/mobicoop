@@ -43,15 +43,18 @@ class ReviewManager
     private $entityManager;
     private $reviewRepository;
     private $askRepository;
+    private $userReview;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ReviewRepository $reviewRepository,
-        AskRepository $askRepository
+        AskRepository $askRepository,
+        bool $userReview
     ) {
         $this->entityManager = $entityManager;
         $this->reviewRepository = $reviewRepository;
         $this->askRepository = $askRepository;
+        $this->userReview = $userReview;
     }
 
     /**
@@ -118,6 +121,10 @@ class ReviewManager
      */
     public function createReview(Review $review): Review
     {
+        if(!$this->userReview){
+            throw new \LogicException('Review system is disable');
+        }
+
         $reviewEntity = $this->buildReviewFromRessource($review);
         $this->entityManager->persist($reviewEntity);
         $this->entityManager->flush();
@@ -133,6 +140,11 @@ class ReviewManager
      */
     public function getReview(int $id): ?Review
     {
+        if(!$this->userReview){
+            // Review system is disable
+            return null;
+        }
+
         $reviewEntity = $this->reviewRepository->find($id);
         if (!is_null($reviewEntity)) {
             return $this->buildReviewFromEntity($reviewEntity);
@@ -150,6 +162,12 @@ class ReviewManager
      */
     public function getSpecificReviews(User $reviewer=null, User $reviewed=null)
     {
+        $reviews = [];
+        if(!$this->userReview){
+            // Review system is disable
+            return $reviews;
+        }
+
         $reviewEntities = $this->reviewRepository->findSpecificReviews($reviewer, $reviewed);
         if (!is_null($reviewEntities)) {
             return $this->buildReviewsFromEntities($reviewEntities);
@@ -169,6 +187,10 @@ class ReviewManager
     public function getReviews(User $reviewer, User $reviewed=null): array
     {
         $reviews = [];
+        if(!$this->userReview){
+            // Review system is disable
+            return $reviews;
+        }
 
         // We get the reviews involving the User as reviewer or reviewd
         $reviewEntities = $this->reviewRepository->findReviewsInvolvingUser($reviewer);
@@ -251,7 +273,7 @@ class ReviewManager
     public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewsDashboard
     {
         $reviewDashboard = new ReviewsDashboard();
-        
+        $reviewDashboard->setReviewActive($this->userReview);
         // Get all reviews involving the User
         $reviews = $this->getReviews($reviewer, $reviewed);
         foreach ($reviews as $review) {

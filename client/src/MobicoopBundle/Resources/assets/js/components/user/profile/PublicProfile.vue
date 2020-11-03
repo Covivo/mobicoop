@@ -114,7 +114,7 @@
             />
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="publicProfile && publicProfile.reviewActive">
           <v-col cols="12">
             <Reviews :reviews="publicProfile.reviews" />
           </v-col>

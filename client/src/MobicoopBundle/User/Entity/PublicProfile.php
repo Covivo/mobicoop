@@ -83,6 +83,11 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     private $chatFavorites;
 
     /**
+     * @var bool|null True if the review system is enabled
+     */
+    private $reviewActive;
+
+    /**
      * @var array|null Reviews about this user
      */
     private $reviews;
@@ -95,6 +100,18 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function isReviewActive(): ?bool
+    {
+        return $this->reviewActive;
+    }
+
+    public function setReviewActive(?bool $reviewActive): self
+    {
+        $this->reviewActive = $reviewActive;
         
         return $this;
     }
@@ -202,6 +219,7 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
             'chatFavorites'             => $this->getChatFavorites(),
             'lastActivityDate'          => $this->getProfileSummary()->getLastActivityDate(),
             'createdDate'               => $this->getProfileSummary()->getCreatedDate(),
+            'reviewActive'              => $this->isReviewActive(),
             'reviews'                   => $this->getReviews()
         ];
 

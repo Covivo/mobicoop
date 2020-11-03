@@ -1494,7 +1494,6 @@ class UserManager
     public function getPublicProfile(User $user): PublicProfile
     {
         $publicProfile = new PublicProfile($user->getId());
-
         // Get the profile summary
         $publicProfile->setProfileSummary($this->getProfileSummary($user));
 
@@ -1506,6 +1505,7 @@ class UserManager
         $publicProfile->setChatFavorites($user->getChatFavorites());
 
         // Get the reviews about this user
+        $publicProfile->setReviewActive($this->profile['userReview']);
         $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
 
         return $publicProfile;

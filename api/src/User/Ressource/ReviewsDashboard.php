@@ -64,6 +64,12 @@ class ReviewsDashboard
     private $id;
 
     /**
+     * @var bool True if the review system is enabled
+     * @Groups({"readReview"})
+     */
+    private $reviewActive;
+    
+    /**
      * @var Reviews[] Given reviews
      *
      * @Groups({"readReview"})
@@ -104,6 +110,18 @@ class ReviewsDashboard
     public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function isReviewActive(): bool
+    {
+        return $this->reviewActive;
+    }
+
+    public function setReviewActive(bool $reviewActive): self
+    {
+        $this->reviewActive = $reviewActive;
         
         return $this;
     }
