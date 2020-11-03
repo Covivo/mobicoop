@@ -21,12 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\DataProvider;
+namespace App\RelayPoint\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Community\Resource\RelayPointMap;
-use App\Community\Service\RelayPointMapManager;
+use App\RelayPoint\Resource\RelayPointMap;
+use App\RelayPoint\Service\RelayPointMapManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**

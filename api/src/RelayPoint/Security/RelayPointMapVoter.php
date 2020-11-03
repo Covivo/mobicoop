@@ -21,14 +21,15 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\Security;
+namespace App\RelayPoint\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
+use App\RelayPoint\Resource\RelayPointMap;
+use App\RelayPoint\Service\RelayPointMapManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Community\Resource\RelayPointMap;
-use App\Community\Service\RelayPointMapManager;
+
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RelayPointMapVoter extends Voter
@@ -57,7 +58,7 @@ class RelayPointMapVoter extends Voter
         // only vote on RelayPointMap objects inside this voter
         if (!in_array($attribute, [
             self::RELAYPOINTMAP_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointMap)) {
+            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointmAP)) {
             return false;
         }
         return true;

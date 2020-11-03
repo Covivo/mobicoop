@@ -31,7 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
-use Mobicoop\Bundle\MobicoopBundle\Community\Entity\RelayPointMap;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointMap;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**

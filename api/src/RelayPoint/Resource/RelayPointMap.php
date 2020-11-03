@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\Resource;
+namespace App\RelayPoint\Resource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;

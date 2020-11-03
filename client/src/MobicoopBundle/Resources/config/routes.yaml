@@ -719,7 +719,7 @@ community_relay_point_map:
     path:
         fr: /communaute/point-relais/carte/
         en: /community/relay-point/map/
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getRelayPointMap
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getRelayPointsMap
 
 ##########################
 # editorial pages routes #

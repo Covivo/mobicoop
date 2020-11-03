@@ -288,9 +288,9 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
     
-    App\Community\Service\RelayPointMapManager:
+    App\RelayPoint\Service\RelayPointMapManager:
         tags:
-            - { name: monolog.logger, channel: community }      
+            - { name: monolog.logger, channel: relayPoint }      
 
     # Event
     App\Event\Controller\:

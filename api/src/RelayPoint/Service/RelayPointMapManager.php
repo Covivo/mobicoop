@@ -21,14 +21,15 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\Service;
+namespace App\RelayPoint\Service;
 
-use App\Community\Resource\RelayPointMap;
+use App\Community\Service\CommunityManager;
+use App\RelayPoint\Resource\RelayPointMap;
 
 /**
  * RelayPointMap manager service.
  *
- * @author Remi Wortemann <remi.wortemann@covivo.eu>
+ * @author Céline Jacquet <celine.jacquet@mobicoop.org>
  */
 class RelayPointMapManager
 {
@@ -48,7 +49,7 @@ class RelayPointMapManager
     }
 
     /**
-     * Method to get all RelayPointMaps for a community
+     * Method to get all RelayPointsMap for a community
      * @var int $id Id of the community
      * @return array
      */
