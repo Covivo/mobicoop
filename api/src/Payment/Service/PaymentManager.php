@@ -893,25 +893,6 @@ class PaymentManager
             }
         }
         $this->entityManager->flush();
-
-        // $askIds = [];
-        // // we execute event to inform passenger to pay for the carpool
-        // // case punctual
-        // if ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-        //     $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
-        //     $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
-        // // case regular
-        // }
-        // elseif ($carpoolItem->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-        //     // We send only one email for the all week
-        //     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
-        //         $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
-        //         $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
-        //
-        //         $askIds[] = $carpoolItem->getAsk()->getId();
-        //         $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
-        //     }
-        // }
     }
 
     /**
