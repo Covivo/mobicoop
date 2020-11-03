@@ -28,12 +28,13 @@ import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
 import SolidaryAnimationResource from './Resources/Solidary/SolidaryAnimation';
 import SolidarySearchResource from './Resources/Solidary/SolidarySearch';
 import StructureResource from './Resources/Solidary/Structure';
+import LoginPageProvider from './Resources/Login/Login';
 
 // Temporary disabled resources (Don't known why ?)
 // import TerritoryResource from './Resources/Territory';
 // import AddressResource from './Resources/Address';
 
-const LoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
+const LoginPage = () => <LoginPageProvider theme={theme} />;
 export default () => (
   <Admin
     dataProvider={dataProvider}
