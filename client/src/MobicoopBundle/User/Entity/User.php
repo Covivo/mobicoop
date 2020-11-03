@@ -388,6 +388,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $carpoolExport;
 
+    /**
+     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     */
+    private $canReceiveReview;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1145,6 +1150,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getCanReceiveReview(): ?bool
+    {
+        return $this->canReceiveReview;
+    }
+
+    public function setCanReceiveReview(?bool $canReceiveReview): self
+    {
+        $this->canReceiveReview = $canReceiveReview;
+
+        return $this;
+    }
+    
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1175,7 +1192,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
             'communityId'           => $this->getCommunityId(),
             'bankAccounts'          => $this->getBankAccounts(),
-            'carpoolExport'         => $this->getCarpoolExport()
+            'carpoolExport'         => $this->getCarpoolExport(),
+            'canReceiveReview'      => $this->getCanReceiveReview()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

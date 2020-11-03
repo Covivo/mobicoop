@@ -1177,6 +1177,13 @@ class User implements UserInterface, EquatableInterface
     */
     private $carpoolExport;
 
+    /**
+     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     *
+    * @Groups({"results"})
+     */
+    private $canReceiveReview;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2782,6 +2789,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCanReceiveReview(): ?bool
+    {
+        return $this->canReceiveReview;
+    }
+
+    public function setCanReceiveReview(?bool $canReceiveReview): self
+    {
+        $this->canReceiveReview = $canReceiveReview;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**

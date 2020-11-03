@@ -162,21 +162,22 @@ class ReviewManager
      * Return all reviews concerning a User
      * Those who he's the reviewer, the reviewed or those he can still leave on someone.
      *
-     * @param User $user
+     * @param User $reviewer The reviewer
+     * @param User $reviewed A specifiec reviewed
      * @return Review[]
      */
-    public function getReviews(User $user): array
+    public function getReviews(User $reviewer, User $reviewed=null): array
     {
         $reviews = [];
 
         // We get the reviews involving the User as reviewer or reviewd
-        $reviewEntities = $this->reviewRepository->findReviewsInvolvingUser($user);
+        $reviewEntities = $this->reviewRepository->findReviewsInvolvingUser($reviewer);
         foreach ($reviewEntities as $reviewEntity) {
             $reviews[] = $this->buildReviewFromEntity($reviewEntity);
         }
 
         // We get the list of the Users already reviewed
-        $userLeftReviews = $this->getSpecificReviews($user);
+        $userLeftReviews = $this->getSpecificReviews($reviewer, $reviewed);
         $userIdAlreadyReviewed = [];
         foreach ($userLeftReviews as $userLeftReview) {
             if (!in_array($userLeftReview->getReviewed()->getId(), $userIdAlreadyReviewed)) {
@@ -185,7 +186,7 @@ class ReviewManager
         }
         
         // We get the accepted Ask involving the User
-        $asks = $this->askRepository->findAcceptedAsksForUser($user);
+        $asks = $this->askRepository->findAcceptedAsksForUser($reviewer);
         foreach ($asks as $ask) {
             // We keep only oneway or outward
             if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
@@ -194,7 +195,7 @@ class ReviewManager
                 $reviewAvailable = false;
                 
                 // Determine the reviewed
-                if ($ask->getUser()->getId()==$user->getId()) {
+                if ($ask->getUser()->getId()==$reviewer->getId()) {
                     $reviewed = $ask->getUserRelated();
                 } else {
                     $reviewed = $ask->getUser();
@@ -213,13 +214,11 @@ class ReviewManager
                 $fromDate = clone $ask->getCriteria()->getFromDate();
 
                 if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-
                     // If the ask is punctual, the carpool must be passed
                     if ($nowDate>$fromDate) {
                         $reviewAvailable = true;
                     }
                 } else {
-
                     // The Ask is regular, the first week has to be passed
                     $day = $fromDate->format('w');
                     $diffToTheEndOfFirstWeek = ($day==0) ? 0 : 7 - $day;
@@ -233,7 +232,7 @@ class ReviewManager
                 if ($reviewAvailable) {
                     // We create a Review to leave from the Ask
                     $reviewToLeave = new Review();
-                    $reviewToLeave->setReviewer($user);
+                    $reviewToLeave->setReviewer($reviewer);
                     $reviewToLeave->setReviewed($reviewed);
                     $reviewToLeave->setLeft(false);
                     $reviews[] = $reviewToLeave;
@@ -249,20 +248,20 @@ class ReviewManager
      * @param User $user
      * @return ReviewsDashboard
      */
-    public function getReviewDashboard(User $user): ReviewsDashboard
+    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewsDashboard
     {
         $reviewDashboard = new ReviewsDashboard();
         
         // Get all reviews involving the User
-        $reviews = $this->getReviews($user);
+        $reviews = $this->getReviews($reviewer, $reviewed);
         foreach ($reviews as $review) {
             if (!$review->isLeft()) {
                 // It's a review to give
                 $reviewDashboard->addReviewsToGive($review);
             } else {
-                if ($review->getReviewer()->getId() == $user->getId()) {
+                if ($review->getReviewer()->getId() == $reviewer->getId()) {
                     $reviewDashboard->addGivenReviews($review);
-                } elseif ($review->getReviewed()->getId() == $user->getId()) {
+                } elseif ($review->getReviewed()->getId() == $reviewer->getId()) {
                     $reviewDashboard->addReceivedReviews($review);
                 }
             }

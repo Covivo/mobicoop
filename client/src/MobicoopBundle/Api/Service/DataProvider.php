@@ -623,6 +623,7 @@ class DataProvider
                 $headers = $this->getHeaders(['json']);
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => $headers]);
             } else {
+                // var_dump($this->resource.'/'.$operation, ['query'=>$params]);
                 $headers = $this->getHeaders();
                 if ($headers == "bad-credentials-api") {
                     return new Response(401, 'bad-credentials-api');

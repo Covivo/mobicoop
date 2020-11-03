@@ -4,7 +4,7 @@
     justify="end"
     class="min-width-no-flex mr-1"
   >
-    <div>
+    <div v-if="carpooler.canReceiveReview">
       <PopUpReview
         :reviewed="carpooler"
         :reviewer="user"
