@@ -24,13 +24,18 @@ import { SolidaryPunctualAskSummary } from '../create/SolidaryPunctualAskSummary
 const required = (value) => (value ? '' : 'Champs obligatoire');
 
 const CustomToolbar = (props) => (
-  <Toolbar {...props}>
-    <SaveButton />
-  </Toolbar>
+  <>
+    <Toolbar {...props}>
+      <p>Votre modification de la demande solidaire '{props.record.id}' va recréer une nouvelle demande solidaire avec les modifications attendues et clôturer l'existante</p>
+    </Toolbar>
+    <Toolbar {...props}>
+      <SaveButton label="Recréer demande solidaire" />
+    </Toolbar>
+  </>
 );
 
-export const SolidaryEdit = (props) => (
-  <Edit {...props} title="Demande Solidaire > éditer">
+export const SolidaryEdit = (props) => {
+  return (<Edit {...props} title="Éditer demande solidaire">
     <TabbedForm toolbar={<CustomToolbar />}>
       <FormTab label="Trajet">
         <SolidaryQuestion question="Que voulez-vous faire ?">
@@ -74,14 +79,15 @@ export const SolidaryEdit = (props) => (
         </SolidaryQuestion>
         <Condition when="frequency" is={2 /* 2 === regular */} fallback={null}>
           <SolidaryRegularAsk
+            edit
             includeNeeds={false}
             summary={<SolidaryPunctualAskSummary regularMode />}
           />
         </Condition>
         <Condition when="frequency" is={1 /* 2 === punctual */} fallback={null}>
-          <SolidaryPunctualAsk includeNeeds={false} summary={<SolidaryPunctualAskSummary />} />
+          <SolidaryPunctualAsk edit includeNeeds={false} summary={<SolidaryPunctualAskSummary />} />
         </Condition>
       </FormTab>
     </TabbedForm>
-  </Edit>
-);
+  </Edit>);
+};

@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { FormControlLabel, RadioGroup, Radio, Box, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useField } from 'react-final-form';
+import { utcDateFormat } from '../../../../utils/date';
+
+const formatDate = (d) => utcDateFormat(d, "yyyy'-'MM'-'dd");
+const formatHour = (d) => utcDateFormat(d, 'HH:mm');
 
 const useStyles = makeStyles({
   invisible: { display: 'none' },
@@ -85,6 +89,7 @@ const DateTimeSelector = ({
   initialValue,
   dependencies,
   type = 'date',
+  edit,
 }) => {
   const classes = useStyles();
   const [choice, setChoice] = useState(choices[initialChoice]);
@@ -159,7 +164,13 @@ const DateTimeSelector = ({
             InputLabelProps={{ shrink: true }}
             onChange={(e) => setSelectedDateTime(e.target.value)}
             className={classes.dateControlWitdh}
-            defaultValue={initialValue}
+            defaultValue={
+              edit && initialValue
+                ? type === 'date'
+                  ? formatDate(initialValue)
+                  : formatHour(initialValue)
+                : null
+            }
           />
         </div>
       </Box>
@@ -174,12 +185,14 @@ DateTimeSelector.propTypes = {
   initialChoice: PropTypes.number,
   type: PropTypes.string,
   dependencies: PropTypes.array,
+  edit: PropTypes.bool,
 };
 
 DateTimeSelector.defaultProps = {
   initialChoice: 0,
   type: DateTimeSelector.type.date,
   dependencies: [],
+  edit: false,
 };
 
 export {

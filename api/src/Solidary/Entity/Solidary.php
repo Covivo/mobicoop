@@ -470,7 +470,7 @@ class Solidary
         return $this->deadlineDate;
     }
 
-    public function setDeadlineDate(\DateTimeInterface $deadlineDate): self
+    public function setDeadlineDate(?\DateTimeInterface $deadlineDate): self
     {
         $this->deadlineDate = $deadlineDate;
 
