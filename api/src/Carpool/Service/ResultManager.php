@@ -2598,11 +2598,10 @@ class ResultManager
         // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
         $reviews = $this->reviewManager->getReviewDashboard($reviewer, $reviewed);
         $reviewed->setCanReceiveReview(false);
-        if(!$this->userReview){
+        if (!$this->userReview) {
             // Review system disable.
             return $reviewed;
-        }
-        elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
             $reviewed->setCanReceiveReview(true);
         }
         return $reviewed;

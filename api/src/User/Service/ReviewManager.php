@@ -121,7 +121,7 @@ class ReviewManager
      */
     public function createReview(Review $review): Review
     {
-        if(!$this->userReview){
+        if (!$this->userReview) {
             throw new \LogicException('Review system is disable');
         }
 
@@ -140,7 +140,7 @@ class ReviewManager
      */
     public function getReview(int $id): ?Review
     {
-        if(!$this->userReview){
+        if (!$this->userReview) {
             // Review system is disable
             return null;
         }
@@ -163,7 +163,7 @@ class ReviewManager
     public function getSpecificReviews(User $reviewer=null, User $reviewed=null)
     {
         $reviews = [];
-        if(!$this->userReview){
+        if (!$this->userReview) {
             // Review system is disable
             return $reviews;
         }
@@ -187,7 +187,7 @@ class ReviewManager
     public function getReviews(User $reviewer, User $reviewed=null): array
     {
         $reviews = [];
-        if(!$this->userReview){
+        if (!$this->userReview) {
             // Review system is disable
             return $reviews;
         }
