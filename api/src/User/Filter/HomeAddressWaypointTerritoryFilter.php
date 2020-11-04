@@ -54,7 +54,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('((ta.id = %s) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
+            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

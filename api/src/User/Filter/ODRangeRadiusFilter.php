@@ -40,6 +40,7 @@ final class ODRangeRadiusFilter extends AbstractContextAwareFilter
             return;
         }
        
+        // ?? unfinished ??
         //We check if we already define the range parameters and if so, we can set the right value from
         if ($queryBuilder->getParameter('range')) {
             $queryBuilder->setParameter('range', $value);
