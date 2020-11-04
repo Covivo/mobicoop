@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
-import { Button, Card, Grid } from '@material-ui/core';
+import { Button, Card, Grid, TextField } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import { useField } from 'react-final-form';
-import { DateInput, required } from 'react-admin';
 import DayChipInput from './DayChipInput';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,14 +45,14 @@ const BoundedDateTimeField = (props) => {
   }, [forcedValue]);
 
   return (
-    <DateInput
+    <TextField
       name={name}
       type="time"
-      value={initialValue}
+      defaultValue={initialValue}
       source={props.source}
       InputLabelProps={{ shrink: true }}
       label={props.label}
-      validate={props.required ? [required()] : []}
+      required={props.required}
       onChange={(event) => {
         onChangeInput(event.target.value);
         return onChange(event.target.value);
@@ -272,11 +271,7 @@ Ask.propTypes = {
 };
 
 const SolidaryRegularSchedules = (props) => {
-  const {
-    isEditing = false,
-    choices,
-    initialChoice,
-  } = props;
+  const { isEditing = false, choices, initialChoice } = props;
   const [choice, setChoice] = useState(choices[initialChoice]);
   const [selectedDateTime, setSelectedDateTime] = useState(null);
   const [days, setDays] = useState({
@@ -307,7 +302,22 @@ const SolidaryRegularSchedules = (props) => {
     sun: null,
   });
 
-  const [slotsList, setSlotsList] = useState([]);
+  const [slotsList, setSlotsList] = useState([
+    {
+      id: '0:first',
+      days: {
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
+        sat: false,
+        sun: false,
+      },
+      outwardTimes: null,
+      returnTimes: null,
+    },
+  ]);
 
   const {
     input: { onChange: onChangeReturnDateTime },
@@ -332,31 +342,57 @@ const SolidaryRegularSchedules = (props) => {
   }, [daysField.meta.initial]);
 
   useEffect(() => {
-      const initialOwt = { ...outwardsField.meta.initial };
-      setOutwardTimes(initialOwt);
+    const initialOwt = { ...outwardsField.meta.initial };
+    setOutwardTimes(initialOwt);
   }, [outwardsField.meta.initial]);
 
   useEffect(() => {
     const initialRt = { ...returnsField.meta.initial };
-    setReturnTimes({...initialRt});
+    setReturnTimes({ ...initialRt });
   }, [returnsField.meta.initial]);
 
   const isObjectEqual = (v1, v2) => {
-    return (v1.mon === v2.mon
-      && v1.tue === v2.tue
-      && v1.wed === v2.wed
-      && v1.thu === v2.thu
-      && v1.fri === v2.fri
-      && v1.sat === v2.sat
-      && v1.sun === v2.sun
-    )
+    return (
+      v1.mon === v2.mon &&
+      v1.tue === v2.tue &&
+      v1.wed === v2.wed &&
+      v1.thu === v2.thu &&
+      v1.fri === v2.fri &&
+      v1.sat === v2.sat &&
+      v1.sun === v2.sun
+    );
   };
 
   useEffect(() => {
-    let newSlots = [];
-    if (isObjectEqual(days, {mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false})
-      && isObjectEqual(outwardTimes, {mon: null, tue: null, wed: null, thu: null, fri: null, sat: null, sun: null})
-      && isObjectEqual(returnTimes, {mon: null, tue: null, wed: null, thu: null, fri: null, sat: null, sun: null})
+    const newSlots = [];
+    if (
+      isObjectEqual(days, {
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
+        sat: false,
+        sun: false,
+      }) &&
+      isObjectEqual(outwardTimes, {
+        mon: null,
+        tue: null,
+        wed: null,
+        thu: null,
+        fri: null,
+        sat: null,
+        sun: null,
+      }) &&
+      isObjectEqual(returnTimes, {
+        mon: null,
+        tue: null,
+        wed: null,
+        thu: null,
+        fri: null,
+        sat: null,
+        sun: null,
+      })
     )
       return;
 
@@ -365,24 +401,37 @@ const SolidaryRegularSchedules = (props) => {
         if (value) {
           let found = false;
           for (let i = 0; i < newSlots.length; i += 1) {
-            if (outwardTimes[key] === newSlots[i].outwardTimes && returnTimes[key] === newSlots[i].returnTimes) { newSlots[i].days[key] = value;
+            if (
+              outwardTimes[key] === newSlots[i].outwardTimes &&
+              returnTimes[key] === newSlots[i].returnTimes
+            ) {
+              newSlots[i].days[key] = value;
               found = true;
             }
           }
           if (!found) {
             newSlots.push({
               id: `${newSlots.length}:${outwardTimes[key]}`,
-              days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false, [key]: value },
+              days: {
+                mon: false,
+                tue: false,
+                wed: false,
+                thu: false,
+                fri: false,
+                sat: false,
+                sun: false,
+                [key]: value,
+              },
               outwardTimes: outwardTimes[key],
               returnTimes: returnTimes[key],
-            })
+            });
           }
         }
       }
       setSlotsList(newSlots);
       setLoading(false);
     }
-  }, [returnTimes, outwardTimes, days, loading])
+  }, [returnTimes, outwardTimes, days, loading]);
 
   const onAddBtnClick = () => {
     setId((prevState) => prevState + 1);
@@ -502,7 +551,7 @@ const SolidaryRegularSchedules = (props) => {
   return (
     <>
       <div className={classes.none}>
-        <DayChipInput source="days.mon" label="L" forcedValue={days.mon}  />
+        <DayChipInput source="days.mon" label="L" forcedValue={days.mon} />
         <DayChipInput source="days.tue" label="Ma" forcedValue={days.tue} />
         <DayChipInput source="days.wed" label="Me" forcedValue={days.wed} />
         <DayChipInput source="days.thu" label="J" forcedValue={days.thu} />
