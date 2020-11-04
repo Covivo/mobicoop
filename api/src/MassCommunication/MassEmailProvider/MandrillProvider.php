@@ -107,6 +107,7 @@ class MandrillProvider implements MassEmailProviderInterface
             $async = true;
             $ip_pool = 'Main Pool';
             $send_at = new \DateTime();
+            
             $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
 
             //Format des données retournées

@@ -5,7 +5,7 @@ import { Grid } from '@material-ui/core';
 import DayChip from './DayChip';
 import { utcDateFormat } from '../../../../utils/date';
 
-const formatDate = (d) => utcDateFormat(d, "dd'/'MM'/'yyyy");
+export const formatDate = (d) => utcDateFormat(d, "dd'/'MM'/'yyyy");
 const formatDateTime = (d) => utcDateFormat(d);
 const formatHour = (d) => utcDateFormat(d, "HH'h'mm");
 

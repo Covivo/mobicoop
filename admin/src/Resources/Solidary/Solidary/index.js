@@ -13,6 +13,5 @@ export default {
   show: SolidaryShow,
   create: SolidaryCreate,
   icon: Solidary,
-  // @UNCOMMENT (22149)
-  // edit: SolidaryEdit,
+  edit: SolidaryEdit,
 };

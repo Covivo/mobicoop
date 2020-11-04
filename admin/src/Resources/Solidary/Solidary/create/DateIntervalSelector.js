@@ -29,16 +29,38 @@ const computeChoiceOffsets = (choice, date) => {
   return date;
 };
 
+const formatDate = (date) => {
+  try {
+    return (new Date(date)).toISOString().split('T')[0]
+  } catch (e) {
+    return date;
+  }
+};
+
 const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialChoice, type }) => {
   const {
-    input: { value: valueStart },
+    input: { value: valueStart, onChange: onChangeStart },
+    meta: { initial: initialStart }
   } = useField(fieldnameStart);
 
   const {
     input: { value: valueEnd, onChange: onChangeEnd },
+    meta: { initial: initialEnd }
   } = useField(fieldnameEnd);
 
   const [choice, setChoice] = useState(choices[initialChoice]);
+  const [defaultStart, setDefaultStart] = useState(formatDate(initialStart || valueStart));
+  const [defaultEnd, setDefaultEnd] = useState(formatDate(initialEnd || valueEnd));
+
+
+  useEffect(() => {
+    onChangeStart(initialStart);
+    onChangeEnd(initialEnd);
+  }, [initialEnd, initialStart]);
+
+  useEffect(() => {
+    onChangeStart(valueStart);
+  }, [valueStart])
 
   const handleChange = (value) => {
     const now = valueStart ? new Date(valueStart) : new Date();
@@ -52,6 +74,7 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
 
     if (value < choices.length) {
       onChangeEnd(computeChoiceOffsets(choices[value], endDate));
+      setDefaultEnd(formatDate(computeChoiceOffsets(choices[value], endDate)));
       setChoice(choices[value]);
     }
   };
@@ -70,12 +93,13 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
   useEffect(() => {
     // Keep outwardDatetime in sync with the outwardDeadline one
     if (valueStart && valueEnd) {
-      const newEndDate = new Date(valueStart.toString());
+      const newEndDate = new Date(initialEnd || valueStart.toString());
       if (choice.offsetDays || choice.offsetMonth) {
         computeChoiceOffsets(choice, newEndDate);
       }
 
       onChangeEnd(newEndDate);
+      setDefaultEnd(formatDate(newEndDate));
     }
   }, [valueStart && valueStart.toString()]);
 
@@ -84,15 +108,24 @@ const DateIntervalSelector = ({ fieldnameStart, fieldnameEnd, choices, initialCh
       <DateInput
         label="A partir du "
         parse={handleStartFieldParse}
+        initialValue={defaultStart}
         source={fieldnameStart}
         validate={[required()]}
+        value={defaultStart}
+        onChange={(e) => {
+          setDefaultStart(e.target.value);
+        }}
       />
       <RadioGroup value={choice.id} onChange={(e) => handleChange(e.target.value)}>
         {choices.map((c) => (
           <FormControlLabel key={c.id} value={c.id} control={<Radio />} label={c.label} />
         ))}
       </RadioGroup>
-      <DateInput label="Jusqu'au " source={fieldnameEnd} validate={[required()]} />
+      <DateInput value={defaultEnd} label="Jusqu'au " source={fieldnameEnd} validate={[required()]}
+                 onChange={(e) => {
+                   setDefaultEnd(e.target.value);
+                 }}
+      />
     </Box>
   );
 };

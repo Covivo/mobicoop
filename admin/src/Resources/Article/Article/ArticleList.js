@@ -4,7 +4,7 @@ import { List, Datagrid, ShowButton, TextField, SelectField, useTranslate } from
 
 import SectionsField from './SectionsField';
 
-import { isSuperAdmin } from '../../../auth/permissions';
+import isAuthorized from '../../../auth/permissions';
 
 export const ArticleList = (props) => {
   const translate = useTranslate();
@@ -16,7 +16,7 @@ export const ArticleList = (props) => {
     <List
       {...props}
       title={translate('custom.label.article.title.list')}
-      exporter={isSuperAdmin()}
+      exporter={isAuthorized('export') ? undefined : false}
       perPage={25}
       sort={{ field: 'originId', order: 'ASC' }}
     >

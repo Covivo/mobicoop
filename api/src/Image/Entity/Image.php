@@ -285,7 +285,7 @@ class Image
 
     /**
      * @var File|null
-     * @Vich\UploadableField(mapping="relaypoint", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     * @Vich\UploadableField(mapping="relayPoint", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $relayPointFile;
     
@@ -304,7 +304,7 @@ class Image
 
     /**
      * @var File|null
-     * @Vich\UploadableField(mapping="relaypointtype", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     * @Vich\UploadableField(mapping="relayPointType", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $relayPointTypeFile;
     

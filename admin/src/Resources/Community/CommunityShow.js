@@ -175,7 +175,7 @@ export const CommunityShow = (props) => {
     return (
       <>
         <EmailComposeButton
-          canSend={isAuthorized('mass_create') && count === 0}
+          canSend={isAuthorized('campaign_create') && count === 0}
           comeFrom={1}
           label="Email"
           {...props}

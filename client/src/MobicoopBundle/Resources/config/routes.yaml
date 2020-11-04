@@ -943,6 +943,13 @@ MobileApp:
         en: /mobile-app
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobileApp
 
+# display accessibility page
+Accessibility:
+    path:
+        fr: /accessibilite
+        en: /accessibility
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAccessibility
+
 # Get the last external articles (AJAX)
 LastExternalArticles:
     methods: [POST]

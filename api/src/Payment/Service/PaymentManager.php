@@ -884,7 +884,8 @@ class PaymentManager
                         }
                     }
 
-                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
+                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || $curDate->format('Y-m-d') == $ask->getCriteria()->getToDate()->format('Y-m-d')) {
+                        // we reached the end of the period
                         $continue = false;
                     } else {
                         $curDate->modify('+1 day');
@@ -952,14 +953,18 @@ class PaymentManager
 
 
             $paymentProfile = $this->createPaymentProfile($user, $identifier);
+            // we set it by default at false since the identity is not confirmed yet
+            $paymentProfile->setElectronicallyPayable(false);
         } else {
             $paymentProfile = $paymentProfiles[0];
+            if ($paymentProfile->getValidationStatus() === PaymentProfile::VALIDATION_VALIDATED) {
+                $paymentProfile->setElectronicallyPayable(true);
+            }
         }
 
         $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
 
         // Update the payment profile
-        $paymentProfile->setElectronicallyPayable(false);
         $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();

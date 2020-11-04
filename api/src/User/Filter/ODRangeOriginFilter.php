@@ -50,7 +50,7 @@ final class ODRangeOriginFilter extends AbstractContextAwareFilter
             ->leftJoin('u.proposals', 'pori')
             ->leftJoin('pori.waypoints', 'wori')
             ->leftJoin('wori.address', 'aori')
-            ->andWhere('wori.position = 0 AND acos(sin(aori.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 
+            ->andWhere('pori.private <> 1 AND wori.position = 0 AND acos(sin(aori.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 
                 + cos(aori.latitude * 0.0175) * cos('.$value->lat.' * 0.0175) *    
                 cos(('.$value->lgt.' * 0.0175) - (aori.longitude * 0.0175))
             ) * 6371 <= :range')// Origin of proposal;

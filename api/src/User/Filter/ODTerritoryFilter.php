@@ -51,7 +51,7 @@ final class ODTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('(ta.id = %s AND (w.position=0 OR w.destination=true))', $value));
+            ->andWhere(sprintf('(ta.id = %s AND p.private <> 1 AND (w.position=0 OR w.destination=1))', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
