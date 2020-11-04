@@ -74,11 +74,6 @@ class RelayPointMap
      */
     private $address;
 
-    /**
-    * @var Community|null The community of the relay point map
-    */
-    private $community;
-   
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -129,19 +124,6 @@ class RelayPointMap
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-
-    public function getCommunity(): ?Community
-    {
-        return $this->community;
-    }
-
-    public function setCommunity(?Community $community): self
-    {
-        $this->community = $community;
 
         return $this;
     }

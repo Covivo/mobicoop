@@ -68,7 +68,6 @@ class RelayPointMapManager
             $relayPointMap->setId($relayPoint->getId());
             $relayPointMap->setName($relayPoint->getName());
             $relayPointMap->setRelayPointType($relayPoint->getRelayPointType());
-            $relayPointMap->setCommunity($relayPoint->getCommunity());
             $relayPointMap->setAddress($relayPoint->getAddress());
 
             $relayPointsMap[] = $relayPointMap;
