@@ -50,7 +50,7 @@ final class ODRangeDestinationFilter extends AbstractContextAwareFilter
             ->leftJoin('u.proposals', 'pdest')
             ->leftJoin('pdest.waypoints', 'wdest')
             ->leftJoin('wdest.address', 'adest')
-            ->andWHere('wdest.destination = true AND acos(sin(adest.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 
+            ->andWHere('pdest.private <> 1 AND wdest.destination = 1 AND acos(sin(adest.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 
                 + cos(adest.latitude * 0.0175) * cos('.$value->lat.' * 0.0175) *    
                 cos(('.$value->lgt.' * 0.0175) - (adest.longitude * 0.0175))
             ) * 6371 <= :range')// Destination of proposal

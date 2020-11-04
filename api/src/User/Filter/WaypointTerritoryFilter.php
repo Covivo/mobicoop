@@ -51,7 +51,7 @@ final class WaypointTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('(ta.id = %s)', $value));
+            ->andWhere(sprintf('(ta.id = %s AND p.private <> 1)', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
