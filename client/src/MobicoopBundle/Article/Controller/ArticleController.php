@@ -67,6 +67,8 @@ class ArticleController extends AbstractController
     const MEDIAS = 27;
     const USEFUL_LINKS = 28;
     const MOBILE_APP = 29;
+    const ACCESSIBILITY = 30;
+
 
     /**
      * Display of the project page
@@ -329,6 +331,15 @@ class ArticleController extends AbstractController
     public function showMobileApp(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::MOBILE_APP));
+    }
+
+     /**
+    * Display of the ACCESSIBILITY page
+    *
+    */
+    public function showAccessibility(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::ACCESSIBILITY));
     }
 
     /**
