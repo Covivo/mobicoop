@@ -41,7 +41,6 @@ use App\Event\Controller\ValidateCreateEventController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Event\Controller\ReportAction;
 use App\Event\Filter\TerritoryFilter;
 
 /**
@@ -62,32 +61,6 @@ use App\Event\Filter\TerritoryFilter;
  *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('event_create',object)"
- *          },
- *          "report"={
- *              "method"="POST",
- *              "path"="/events/{id}/report",
- *              "requirements"={"id"="\d+"},
- *              "controller"=ReportAction::class,
- *              "swagger_context" = {
- *                  "summary" = "Report an Event",
- *                  "parameters" = {
- *                      {
- *                          "name" = "email",
- *                          "in" = "body",
- *                          "type" = "string",
- *                          "required" = "true",
- *                          "description" = "Reporter's email"
- *                      },
- *                      {
- *                          "name" = "description",
- *                          "in" = "body",
- *                          "type" = "string",
- *                          "required" = "true",
- *                          "description" = "Description"
- *                      }
- *                  }
- *              },
- *              "security"="is_granted('event_report',object)"
  *          },
  *          "created"={
  *              "method"="GET",

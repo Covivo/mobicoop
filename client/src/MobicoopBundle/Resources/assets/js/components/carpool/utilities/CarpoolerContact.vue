@@ -4,6 +4,13 @@
     justify="end"
     class="min-width-no-flex mr-1"
   >
+    <div v-if="carpooler.canReceiveReview && showReviewButton">
+      <PopUpReview
+        :reviewed="carpooler"
+        :reviewer="user"
+        @reviewLeft="reviewLeft"
+      />
+    </div>
     <div v-if="user && carpooler.telephone">
       <v-btn
         v-show="!phoneButtonToggled"
@@ -50,13 +57,19 @@
 </template>
 
 <script>
-import Translations from "@translations/components/carpool/utilities/CarpoolerSummary.json";
-
+import PopUpReview from "@js/components/utilities/Reviews/PopUpReview";
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 import formData from "../../../utils/request";
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
+  },
+  components:{
+    PopUpReview
   },
   props: {
     carpooler: {
@@ -79,6 +92,7 @@ export default {
   data () {
     return {
       phoneButtonToggled: false,
+      showReviewButton:true
     }
   },
   methods: {
@@ -90,11 +104,10 @@ export default {
         idAsk: this.askId
       };
       formData(this.$t('route.user.message'), lParams);
+    },
+    reviewLeft(){
+      this.showReviewButton = false;
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -200,6 +200,10 @@ services:
             $carpoolExportPlatformName: '%env(string:CARPOOL_EXPORT_APP_NAME)%'
             $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
 
+    App\Carpool\Service\ResultManager:
+        arguments:
+            $userReview: '%env(bool:USER_REVIEW)%'
+
     # Communication
     App\Communication\Controller\: 
         resource: '../src/Communication/Controller'
@@ -271,6 +275,12 @@ services:
             $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
             $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
 
+    App\Communication\Service\ReportManager:
+        arguments:
+            $supportEmailAddress: '%env(string:MAILER_SUPPORT)%'
+            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -285,13 +295,6 @@ services:
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'
-        tags: ['controller.service_arguments']
-
-    App\Event\Controller\ReportAction:
-        arguments:
-            $supportEmail: '%env(resolve:MAILER_SUPPORT)%'
-            $senderEmail: '%env(resolve:MAILER_SENDER)%'
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
         tags: ['controller.service_arguments']
 
     # External Journey
@@ -537,7 +540,16 @@ services:
             $fakeFirstMail: '%env(string:FAKE_FIRST_MAIL)%'
             $fakeFirstToken: '%env(string:FAKE_FIRST_TOKEN)%'
             $domains: "%env(json:file:resolve:REGISTER_DOMAIN)%"
+            $profile:
+                maxMessagesForAnswerRate: '%env(int:USER_MAX_MESSAGES_FOR_ANSWER_RATE)%'
+                experiencedTag: '%env(bool:USER_EXPERIENCED_TAG)%'
+                experiencedTagMinCarpools : '%env(int:USER_EXPERIENCED_TAG_MIN_CARPOOLS)%'
+                userReview: '%env(bool:USER_REVIEW)%'
     
+    App\User\Service\ReviewManager:
+        arguments:
+            $userReview: '%env(bool:USER_REVIEW)%'
+
     App\User\Service\SsoManager:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"

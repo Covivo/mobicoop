@@ -1,0 +1,13 @@
+{
+    "onlyAskUser": "Seul l'initiateur du contact peut proposer un covoiturage",
+    "askPending": "Une demande formelle a été envoyée",
+    "askAccepted": "Le covoiturage a été accepté",
+    "askRefused": "Le covoiturage a été refusé",
+    "button": {
+        "askCarpool": "Demander un covoiturage",
+        "askCarpoolAsDriver": "Demander un covoiturage comme conducteur",
+        "askCarpoolAsPassenger": "Demander un covoiturage comme passager",
+        "accept": "Accepter",
+        "refuse": "Refuser"
+    }
+}

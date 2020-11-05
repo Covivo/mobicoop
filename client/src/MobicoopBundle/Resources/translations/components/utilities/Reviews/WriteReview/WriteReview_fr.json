@@ -1,0 +1,6 @@
+{
+    "label":"Vous pouvez écrire votre commentaire",
+    "leaveReviewUri":"/utilisateur/avis/ecrire",
+    "validate":"Valider",
+    "fail":"Erreur dans le dépot de l'avis"
+}

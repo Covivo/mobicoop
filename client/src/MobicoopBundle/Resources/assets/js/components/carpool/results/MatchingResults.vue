@@ -69,15 +69,19 @@
   </div>
 </template>
 <script>
+
 import MatchingResult from "@components/carpool/results/MatchingResult";
-import Translations from "@translations/components/carpool/results/MatchingResults.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingResults/";
 
 export default {
   components: {
     MatchingResult,
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     externalRdexJourneys:{

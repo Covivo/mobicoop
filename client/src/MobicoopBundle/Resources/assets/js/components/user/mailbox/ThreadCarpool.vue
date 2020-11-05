@@ -52,7 +52,7 @@
                 <span
                   v-if="criteria.frequency==1"
                   class="font-italic"
-                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span></span>
+                >{{ formateFromDate }} <span v-if="formateFromTime">{{ $t("at") }} {{ formateFromTime }}</span></span>
                 <span
                   v-else
                   class="font-italic"
@@ -67,11 +67,14 @@
 </template>
 <script>
 import moment from "moment";
-import Translations from "@translations/components/user/mailbox/ThreadCarpool.json";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadCarpool/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     avatar: {

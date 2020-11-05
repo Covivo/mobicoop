@@ -195,7 +195,7 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/mailbox/Messages.json";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -206,7 +206,10 @@ import TypeText from '@components/user/mailbox/TypeText'
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     MailBoxHeader,

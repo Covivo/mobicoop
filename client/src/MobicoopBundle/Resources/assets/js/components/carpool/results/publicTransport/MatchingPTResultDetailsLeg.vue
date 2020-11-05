@@ -33,7 +33,9 @@
   </div>
 </template>
 <script>
-import Translations from "@translations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg.json";
+
+import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResultDetailsLeg/";
+
 export default {
   props:{
     ptLeg: {
@@ -46,7 +48,10 @@ export default {
     }
   },  
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   data(){
     return {

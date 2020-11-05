@@ -2,7 +2,7 @@
   <v-container class="py-0">
     <v-row>
       <schedules
-        date-time-format="ui.i18n.date.format.shortDate"
+        date-time-format="shortDate"
         :outward-time="ad.outwardDate"
         :is-refined="isRefined"
       />
@@ -26,7 +26,7 @@
       <schedules
         :is-return="true"
         :is-outward="false"
-        date-time-format="ui.i18n.date.format.shortDate"
+        date-time-format="shortDate"
         :return-times="[ad.returnDate]"
       />
     </v-row>

@@ -219,17 +219,21 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/base/MHeader.json";
-import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
+import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     //Accessibility,
@@ -244,13 +248,26 @@ export default {
     urlMobile: {
       type: String,
       default: null
+    },
+    locale: {
+      type: String,
+      default: "fr"
     }
   },
   data () {
     return {
       snackbar: false,
       width: 0,
+      dlocale: this.locale
     }
+  },
+  watch: {
+    dlocale (val) {
+      this.$root.$i18n.locale = val
+    }
+  },
+  created() {
+    this.$root.$i18n.locale = this.locale
   }
 };
 </script>

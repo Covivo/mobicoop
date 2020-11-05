@@ -196,11 +196,14 @@
 import axios from "axios";
 import formData from "../../../../utils/request";
 import AdPayment from '@components/user/profile/ad/AdPayment.vue';
-import Translations from "@translations/components/user/profile/ad/MyAds.js";
+import {messages_en, messages_fr} from "@translations/components/user/profile/ad/AdHeader/";
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     AdPayment

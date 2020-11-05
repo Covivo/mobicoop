@@ -27,15 +27,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\User\Entity\Review;
 use App\User\Entity\User;
 use DateTime;
 
 class AskRepository
 {
     private $repository;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Ask::class);
     }
 
@@ -188,6 +191,27 @@ class AskRepository
             $query->andWhere('(a.user = :user or a.userRelated = :user)')
             ->setParameter('user', $user);
         }
+                
+        return $query->getQuery()->getResult();
+    }
+
+
+    /**
+     * Find accepted asks for a given user
+     *
+     * @param User|null $user   The user
+     * @return Ask[]|null       The asks if found
+     */
+    public function findAcceptedAsksForUser(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('a')
+        ->join('a.criteria', 'c')
+        ->where('a.user = :user or a.userRelated = :user')
+        ->andWhere('a.status = :accepted_driver or a.status = :accepted_passenger')
+        ->setParameter('accepted_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+        ->setParameter('accepted_passenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+        ->setParameter('user', $user)
+        ;
                 
         return $query->getQuery()->getResult();
     }

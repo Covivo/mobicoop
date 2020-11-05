@@ -1,0 +1,16 @@
+{
+    "title": "Liste des membres",
+    "table": {
+        "search": "Rechercher",
+        "lineNumber": "Nombre de lignes par page",
+        "all": "Tous",
+        "colTitle": {
+            "familyName": "Nom",
+            "givenName": "Prénom",
+            "actions": "Actions"
+        }
+    },
+    "hidden": "La liste n'est visible que par les membres de la communauté",
+    "urlMembersList": "/community/memberList",
+    "referrer": "Référent"
+}

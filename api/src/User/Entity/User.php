@@ -436,6 +436,10 @@ class User implements UserInterface, EquatableInterface
 
     const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
+    const SMOKE_NO = 0;
+    const SMOKE_NOT_IN_CAR = 1;
+    const SMOKE = 2;
+
     /**
      * @var int The id of this user.
      *
@@ -460,7 +464,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport"})
+     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
      */
     private $givenName;
 
@@ -475,7 +479,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $shortFamilyName;
 
@@ -978,6 +982,12 @@ class User implements UserInterface, EquatableInterface
     private $avatars;
 
     /**
+     * @var string|null Default avatar of the user
+     * @Groups({"readUser","readPublicProfile","readReview"})
+     */
+    private $avatar;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
@@ -1166,6 +1176,13 @@ class User implements UserInterface, EquatableInterface
     * @MaxDepth(1)
     */
     private $carpoolExport;
+
+    /**
+     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     *
+    * @Groups({"results"})
+     */
+    private $canReceiveReview;
 
     public function __construct($status = null)
     {
@@ -2490,6 +2507,24 @@ class User implements UserInterface, EquatableInterface
         return $this->avatars;
     }
 
+    public function getAvatar(): ?string
+    {
+        // By default, return the last avatar
+        $avatar = "";
+        if (is_array($this->getAvatars()) && count($this->getAvatars())>0) {
+            return $this->getAvatars()[count($this->getAvatars())-1];
+        }
+        
+        return $avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
     public function getFacebookId(): ?string
     {
         return $this->facebookId;
@@ -2754,6 +2789,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCanReceiveReview(): ?bool
+    {
+        return $this->canReceiveReview;
+    }
+
+    public function setCanReceiveReview(?bool $canReceiveReview): self
+    {
+        $this->canReceiveReview = $canReceiveReview;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**

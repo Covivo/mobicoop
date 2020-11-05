@@ -13,15 +13,15 @@
 </template>
  
 <script>
-import {merge} from "lodash";
 import CookieLaw from 'vue-cookie-law';
-import Translations from "@translations/components/utilities/Cookies.json";
-
-let TranslationsMerged = merge(Translations);
+import {messages_en, messages_fr} from "@translations/components/utilities/Cookies/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: { 
     CookieLaw

@@ -141,16 +141,15 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/RouteSummary/";
 
-import Translations from "@translations/components/carpool/utilities/RouteSummary.json";
-import TranslationsClient from "@clientTranslations/components/carpool/utilities/RouteSummary.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     origin: {
@@ -257,7 +256,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(time).isValid() ? moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")) : time;
+      return moment(time).isValid() ? moment.utc(time).format(this.$t("hourMinute")) : time;
     }
   }
 };

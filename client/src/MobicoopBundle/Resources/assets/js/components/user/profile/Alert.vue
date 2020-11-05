@@ -56,7 +56,7 @@
             text
             @click="dialog=false"
           >
-            {{ $t('ui.common.ok') }}
+            {{ $t('ok') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -65,13 +65,17 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/Alert.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/Alert.json";
+import {messages_en, messages_fr} from "@translations/components/user/profile/Alert/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/Alert/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     alert:{
@@ -79,7 +83,7 @@ export default {
       default:null
     },
     medium:{
-      type: Array,
+      type: Object,
       default:null
     }
   },

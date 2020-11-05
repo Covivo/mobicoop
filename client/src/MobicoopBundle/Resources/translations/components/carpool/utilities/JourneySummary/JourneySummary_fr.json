@@ -1,0 +1,7 @@
+{
+    "priceTooltip": "Tarif indicatif",
+    "priceTooltipSolidaryExclusive": "Annonce solidaire exclusive",
+    "places": "{seats} place | {seats} places",
+    "shortDate": "ddd DD/MM",
+    "hourMinute": "HH[h]mm"
+}

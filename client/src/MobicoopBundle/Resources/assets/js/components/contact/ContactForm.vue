@@ -156,14 +156,14 @@
 
 <script>
 import axios from "axios";
-import {merge} from "lodash";
-import Translations from "@translations/components/contact/ContactForm.json";
-import TranslationsClient from "@clientTranslations/components/contact/ContactForm.json";
+import {messages_en, messages_fr} from "@translations/components/contact/ContactForm/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     user: {
@@ -189,11 +189,11 @@ export default {
         ],
         familyName: this.user && this.user.familyName ? this.user.familyName : null,
         familyNameRules: [
-          v => !!v || this.$t("models.user.familyName.errors.required"),
+          v => !!v || this.$t("lastName.errors.required"),
         ],
         givenName: this.user && this.user.givenName ? this.user.givenName : null,
         givenNameRules: [
-          v => !!v || this.$t("models.user.givenName.errors.required"),
+          v => !!v || this.$t("firstName.errors.required"),
         ],
 
         demand: null,

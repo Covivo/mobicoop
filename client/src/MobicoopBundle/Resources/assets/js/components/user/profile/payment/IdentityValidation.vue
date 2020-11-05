@@ -101,10 +101,14 @@
 </template>
 <script>
 import axios from "axios";
-import Translations from "@translations/components/user/profile/payment/IdentityValidation.json";
+import {messages_en, messages_fr} from "@translations/components/user/profile/payment/IdentityValidation/";
+
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     canBePaid:{
@@ -131,9 +135,6 @@ export default {
   data () {
     return {
       document:null,
-      documentRules: [
-        (v) => !!v || this.$t("models.user.givenName.errors.required"),
-      ],
       loading:false
     }
   },

@@ -85,14 +85,11 @@
 </template>
 
 <script>
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/results/MatchingResult.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingResult.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingResult/";
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
 import JourneySummary from "@components/carpool/utilities/JourneySummary"
 import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     RegularPlanningSummary,
@@ -100,7 +97,10 @@ export default {
     CarpoolerSummary
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     result: {

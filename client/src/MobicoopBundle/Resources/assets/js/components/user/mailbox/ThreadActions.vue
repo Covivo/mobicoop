@@ -219,7 +219,8 @@
   </v-main>
 </template>
 <script>
-import Translations from "@translations/components/user/mailbox/ThreadActions.json";
+
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadActions/";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
 import VJourney from '@components/carpool/utilities/VJourney'
@@ -229,7 +230,10 @@ import moment from "moment";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components:{
     ThreadsActionsButtons,

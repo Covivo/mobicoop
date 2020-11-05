@@ -1,0 +1,41 @@
+{
+    "days": {
+        "list": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri",
+            "sat",
+            "sun"
+        ],
+        "mon": {
+            "shortName": "M",
+            "longName": "Monday"
+        },
+        "tue": {
+            "shortName": "Tu",
+            "longName": "Tuesday"
+        },
+        "wed": {
+            "shortName": "W",
+            "longName": "Wednesday"
+        },
+        "thu": {
+            "shortName": "Th",
+            "longName": "Thurday"
+        },
+        "fri": {
+            "shortName": "F",
+            "longName": "Friday"
+        },
+        "sat": {
+            "shortName": "Sa",
+            "longName": "Saturday"
+        },
+        "sun": {
+            "shortName": "Su",
+            "longName": "Sunday"
+        }
+    }
+}

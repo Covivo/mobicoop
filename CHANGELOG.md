@@ -1,3 +1,19 @@
+# Release 1.17.0
+
+## API
+
+* Review system : entities and API Ressources
+* Public Profile and Profile Summary
+* Report a User
+* Rework the Event Report system to match the User report system
+
+## CLIENT
+
+* New i18n file format for Vue components (monolingual json)
+* Display reviews
+* Show profile summary and public profile of a user
+* Report a user in public profile
+
 # Release 1.16.0
 
 ## API

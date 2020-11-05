@@ -39,14 +39,16 @@
 </template>
 <script>
 
-import Translations from "@translations/components/utilities/PlatformWidget.json";
-
+import {messages_en, messages_fr} from "@translations/components/utilities/PlatformWidget/";
 
 export default {
   components: {
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     community:{

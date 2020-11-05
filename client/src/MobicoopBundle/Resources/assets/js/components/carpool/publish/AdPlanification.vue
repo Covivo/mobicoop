@@ -313,7 +313,7 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
-                      :hint="item.id > 0 ? $t('ui.form.optional') : ''"
+                      :hint="item.id > 0 ? $t('optional') : ''"
                       persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
@@ -379,7 +379,7 @@
                     <v-text-field
                       v-model="item.returnTime"
                       :label="$t('regularReturnTime.label')"
-                      :hint="$t('ui.form.optional')"
+                      :hint="$t('optional')"
                       clearable
                       persistent-hint
                       prepend-icon=""
@@ -485,15 +485,15 @@
 
 <script>
 import moment from "moment";
-import { merge, isEmpty, remove, clone } from "lodash";
-import Translations from "@translations/components/carpool/publish/AdPlanification.json";
-import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPlanification.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import { isEmpty, remove, clone } from "lodash";
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdPlanification/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_en
+    },
   },
   components: {
   },
@@ -560,12 +560,12 @@ export default {
   computed: {
     computedOutwardDateFormat() {
       return this.outwardDate
-        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.outwardDate).format(this.$t("fullDate"))
         : "";
     },
     computedReturnDateFormat() {
       return this.returnDate
-        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.returnDate).format(this.$t("fullDate"))
         : "";
     },
     activeSchedules() {

@@ -44,6 +44,7 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -55,6 +56,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\ReviewManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 
 /**
@@ -1173,5 +1175,91 @@ class UserController extends AbstractController
             return new JsonResponse($this->userManager->getSsoServices());
         }
         return new JsonResponse();
+    }
+
+    /**
+     * Return the user profile summary
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userProfileSummary(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->userManager->getProfileSummary($data['userId']));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Return the user public profile
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userProfilePublic(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($this->userManager->getProfilePublic($data['userId']));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Report a User
+     */
+    public function userReport($id, DataProvider $dataProvider, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $success = false;
+
+            // Get the User
+            $user = $this->userManager->getUser($id);
+
+            // Post the Report
+            if (
+                isset($data['email']) && isset($data['text']) &&
+                $data['email'] !== '' && $data['text'] !== ''
+            ) {
+                $dataProvider->setClass(Report::class);
+
+                $report = new Report();
+                $report->setUser($user);
+                $report->setReporterEmail($data['email']);
+                $report->setText($data['text']);
+
+                $response = $dataProvider->post($report);
+
+                if (201 === $response->getCode()) {
+                    $success = true;
+                }
+            }
+        }
+        return new JsonResponse(['success' => $success]);
+    }
+
+    /**
+     * Write a review about a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userReviewWrite(Request $request, ReviewManager $reviewManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (
+                isset($data['reviewerId']) && isset($data['reviewedId']) && isset($data['content']) &&
+                $data['reviewerId']!=="" && $data['reviewedId']!=="" && $data['content']!==""
+            ) {
+                return new JsonResponse(["success"=>$reviewManager->createReview($data['reviewerId'], $data['reviewedId'], $data['content'])]);
+            }
+        }
+        return new JsonResponse(["success"=>false]);
     }
 }

@@ -1,0 +1,18 @@
+{
+    "events": "Les événements",
+    "eventsAvailable": "Événements disponibles",
+    "eventsPassed": "Événements passés",
+    "createEvent": "Créer un événement",
+    "search": "Rechercher",
+    "linePerPage": "Nombre de lignes par page",
+    "seeAds": "Voir les annonces",
+    "all": "Tous",
+    "startEvent": "Début",
+    "endEvent": "Fin",
+    "noEvent": "Aucun événement",
+    "routes": {
+        "event": "/evenement/{id}",
+        "getList": "/evenements/getEventList",
+        "login": "/utilisateur/connexion"
+    }
+}
