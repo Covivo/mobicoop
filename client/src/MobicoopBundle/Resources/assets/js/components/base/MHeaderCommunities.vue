@@ -37,14 +37,19 @@
   </v-menu>
 </template>
 <script>
+import { merge } from "lodash";
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/base/MHeaderCommunities/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeaderCommunities/"
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'fr': messages_fr
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
     }
   },
   props:{
