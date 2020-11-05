@@ -58,7 +58,6 @@
               :result="getResults(ask)"
               :ask="ask"
               :user="user"
-              :is-inverted="!empty(ask.results[1])"
             />
             <v-divider
               v-if="index < ad.asks.length - 1"
