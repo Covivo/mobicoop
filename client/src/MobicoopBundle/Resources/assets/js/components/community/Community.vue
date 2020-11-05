@@ -199,6 +199,9 @@
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
                 class="pa-4 mt-5"
+                :relay-points="true"
+                @SelectedAsDestination="selectedAsDestination"
+                @SelectedAsOrigin="selectedAsOrigin"
               />
             </v-col>
           </v-row>
@@ -271,11 +274,12 @@
       </v-row>
       <v-row justify="center">
         <search
+          :default-origin="selectedOrigin"
+          :default-destination="selectedDestination"
           :geo-search-url="geodata.geocompleteuri"
           :user="user"
           :params="params"
           :punctual-date-optional="punctualDateOptional"
-          :regular="regular"
         />
       </v-row>
 
@@ -390,6 +394,10 @@ export default {
       type: Object,
       default: null,
     },
+    geoSearchUrl: {
+      type: String,
+      default: ""
+    },
     community: {
       type: Object,
       default: null,
@@ -484,6 +492,8 @@ export default {
       params: { communityId: this.community.id },
       users: [],
       isCreator: false,
+      selectedDestination: null,
+      selectedOrigin: null
     };
   },
   mounted() {
@@ -501,6 +511,7 @@ export default {
     this.checkIfUserLogged();
     this.showCommunityProposals();
     this.checkDomain();
+    this.getRelayPointsMap(); 
   },
   methods: {
     post: function(path, params, method = "post") {
@@ -519,6 +530,37 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
+    },
+    getRelayPointsMap() {
+      let params = {
+        'communityId': this.community.id
+      };
+      axios
+        .post("/community/relay-point/map/",params)
+        .then(res => {
+          this.relayPointsMap = res.data;
+          // console.log(res.data);
+          this.showRelayPointsMap();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    showRelayPointsMap() {
+      this.pointsToMap.length >= 0;
+      // add relay point address to display on the map
+      if (this.relayPointsMap.length > 0) {
+        this.relayPointsMap.forEach(relayPoint => {
+          let icon = null;
+          if(relayPoint.relayPointType){
+            if(relayPoint.relayPointType.icon && relayPoint.relayPointType.icon.url !== ""){
+              icon = relayPoint.relayPointType.icon.url;
+            }
+          }
+          this.pointsToMap.push(this.buildRelayPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));
+        });
+      }
+      this.$refs.mmap.redrawMap();
     },
     getCommunityUser() {
       if (this.user) {
@@ -750,6 +792,34 @@ export default {
         };
       }
       return point;
+    },
+    buildRelayPoint: function(
+      lat,lng,title="",
+      address="",
+      icon=null
+    ) {
+      let point = {
+        title:title,
+        latLng:L.latLng(lat, lng),
+        icon: {},
+        address:address
+      };
+
+      if(icon){
+        point.icon = {
+          size:[36,42],
+          url:icon
+        }
+      }
+      return point;
+    },
+    selectedAsDestination(destination) {
+      console.error(destination);
+      this.selectedDestination = destination;
+    },
+    selectedAsOrigin(origin) {
+      console.error(origin);
+      this.selectedOrigin = origin;
     },
     contact: function(data) {
       const form = document.createElement("form");

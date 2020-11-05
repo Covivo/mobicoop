@@ -80,6 +80,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointMap;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
@@ -225,6 +226,9 @@ class Deserializer
                 break;
             case PublicProfile::class:
                 return $this->deserializePublicProfile($data);
+                break;
+            case RelayPointMap::class:
+                return $this->deserializeRelayPointMap($data) ;
                 break;
             default:
                 break;
@@ -949,6 +953,21 @@ class Deserializer
         return $publicProfile;
     }
 
+    private function deserializeRelayPointMap(array $data): ?RelayPointMap
+    {
+        $relayPointMap = new RelayPointMap();
+        $relayPointMap = $this->autoSet($relayPointMap, $data);
+
+        if (isset($data["address"])) {
+            $relayPointMap->setAddress($this->deserializeAddress($data['address']));
+        }
+       
+        if (isset($data["relayPointType"])) {
+            $relayPointMap->setRelayPointType($this->deserializeRelayPointType($data['relayPointType']));
+        }
+
+        return $relayPointMap;
+    }
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();

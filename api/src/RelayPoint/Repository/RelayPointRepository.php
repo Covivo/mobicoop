@@ -31,6 +31,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use App\Community\Entity\Community;
 
 /**
  * @method RelayPoint|null find($id, $lockMode = null, $lockVersion = null)

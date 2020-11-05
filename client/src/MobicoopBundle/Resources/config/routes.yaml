@@ -720,6 +720,14 @@ community_get_widget:
     requirements:
         id: '\d+'        
 
+# community relay point map (AJAX)
+community_relay_point_map:
+    methods: [POST]
+    path:
+        fr: /communaute/point-relais/carte/
+        en: /community/relay-point/map/
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getRelayPointsMap
+
 ##########################
 # editorial pages routes #
 ##########################

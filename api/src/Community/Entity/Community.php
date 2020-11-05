@@ -322,7 +322,6 @@ class Community
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $relayPoints;
 
