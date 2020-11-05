@@ -333,7 +333,7 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::MOBILE_APP));
     }
 
-     /**
+    /**
     * Display of the ACCESSIBILITY page
     *
     */

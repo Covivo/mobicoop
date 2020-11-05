@@ -165,7 +165,7 @@
                   :disabled="!step1"
                   @click="nextStep(1)"
                 >
-                  {{ $t("next") }}
+                  {{ $t("button.next") }}
                 </v-btn>
                 <v-card-text
                   v-if="loginLinkInConnection"
@@ -256,7 +256,7 @@
                     color="secondary"
                     @click="previousStep(2)"
                   >
-                    {{ $t("previous") }}
+                    {{ $t("button.previous") }}
                   </v-btn>
                   <v-btn
                     id="buttonNext2"
@@ -268,7 +268,7 @@
                     :disabled="!step2"
                     @click="nextStep(2)"
                   >
-                    {{ $t("next") }}
+                    {{ $t("button.next") }}
                   </v-btn>
                 </v-row>
               </v-form>
@@ -370,7 +370,7 @@
                     color="secondary"
                     @click="--step"
                   >
-                    {{ $t("previous") }}
+                    {{ $t("button.previous") }}
                   </v-btn>
                   <v-btn
                     color="secondary"
@@ -382,7 +382,7 @@
                     "
                     @click="validate"
                   >
-                    {{ $t("register") }}
+                    {{ $t("button.register") }}
                   </v-btn>
                 </v-row>
               </v-form>
