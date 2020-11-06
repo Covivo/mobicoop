@@ -194,7 +194,7 @@ class CitywayProvider implements ProviderInterface
             "ArrivalLatitude" => $params["destination_latitude"],
             "ArrivalLongitude" => $params["destination_longitude"],
             "UserId" => $params["UserId"],
-            "UserResquestRef" => $params["UserId"]
+            "UserRequestRef" => $params["UserId"]
         ];
         $response = $dataProvider->getCollection($getParams);
         if ($response->getCode() == 200) {
