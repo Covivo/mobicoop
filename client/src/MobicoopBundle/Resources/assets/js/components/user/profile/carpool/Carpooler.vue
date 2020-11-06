@@ -200,11 +200,11 @@ export default {
     },
     getResults () {
       if (this.ask.role === 2 && !this.isInverted) {
-        return this.result.resultPassenger;
+        return (this.result.resultPassenger) ? this.result.resultPassenger : this.result.resultDriver;
       } else if (this.ask.role === 2 && this.isInverted) {
-        return this.result.resultDriver;
+        return (this.result.resultDriver) ? this.result.resultDriver : this.result.resultPassenger;
       } else if (this.ask.role !== 2 && !this.isInverted) {
-        return this.result.resultDriver;
+        return (this.result.resultDriver) ? this.result.resultDriver : this.result.resultPassenger;
       } else {
         return this.result.resultPassenger;
       }
