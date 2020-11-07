@@ -408,6 +408,7 @@ export const dataProviderAdapter = (originalProvider) => ({
       newParams.data.givenName = newParams.data.solidaryUser.user.givenName;
       const data = {
         actionName: 'solidary_update',
+        progression: 100,
         solidary: newParams.id,
       };
 
