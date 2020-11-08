@@ -14,7 +14,7 @@ import {
   BooleanInput,
   useTranslate,
   useDataProvider,
-  useNotify,
+  useNotify, regex,
 } from 'react-admin';
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
@@ -100,6 +100,14 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
 
+  const requiredPhone = (message = translate('custom.alert.invalidPhone')) => (value) =>
+    value && value.length === 10 && !isNaN(value) ? undefined : message;
+
+  const phoneNumber = regex(
+    /^(0)[1-9](\d{2}){4}$/,
+    translate('custom.label.user.errors.phoneNumber')
+  );
+
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
     { id: 2, name: translate('custom.label.user.choices.men') },
@@ -107,6 +115,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
   ];
 
   const validateRequired = [required()];
+  const validatePhone = [required(), requiredPhone(), phoneNumber];
   const emailRules = [email()];
 
   if (loading) {
@@ -175,7 +184,7 @@ const SolidaryUserBeneficiaryCreateFields = ({ form }) => {
         required
         source="telephone"
         label={translate('custom.label.user.telephone')}
-        validate={validateRequired}
+        validate={validatePhone}
         className={classes.spacedHalfwidth}
       />
       <TextField
