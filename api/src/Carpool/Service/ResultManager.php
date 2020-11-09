@@ -1656,7 +1656,8 @@ class ResultManager
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
                     } elseif (
-                        !$useTime
+                        !$useTime &&
+                        $time <= $proposal->getCriteria()->getTueMaxTime()
                     ) {
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
                     }
