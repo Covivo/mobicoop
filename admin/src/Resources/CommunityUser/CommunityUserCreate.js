@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { parse } from 'query-string';
 
@@ -9,14 +9,70 @@ import {
   ReferenceInput,
   SelectInput,
   AutocompleteInput,
+  Toolbar,
+  SaveButton,
+  useCreate,
+  useRedirect,
+  useNotify,
 } from 'react-admin';
 
+import PropTypes from 'prop-types';
 import { statusChoices } from '../Community/communityChoices';
 
 const useStyles = makeStyles({
   halfwidth: { width: '50%', marginBottom: '1rem' },
   title: { fontSize: '1.5rem', fontWeight: 'bold', width: '100%', marginBottom: '1rem' },
 });
+
+const SaveWithNoteButton = (props) => {
+  const [create] = useCreate('community_users');
+  const redirectTo = useRedirect();
+  const notify = useNotify();
+  const { basePath, userEmail, communityDomain } = props;
+
+  const handleSave = useCallback(
+    (values, redirect) => {
+      let shouldTriggerAlert = false;
+      let value = false;
+
+      if (communityDomain && userEmail) {
+        const slug = userEmail.split('@').pop();
+        if (slug !== communityDomain) {
+          shouldTriggerAlert = true;
+        }
+      }
+      if (shouldTriggerAlert || !userEmail) {
+        value = window.confirm(
+          "Attention, vous êtes en train d'ajouter un membre dans la communauté qui ne satisfait pas aux conditions de restriction de nom de domaine prévue!"
+        );
+      }
+      if (!shouldTriggerAlert || (shouldTriggerAlert && value)) {
+        create(
+          {
+            payload: { data: { ...values } },
+          }
+        );
+        notify('Utilisateur ajoute avec succès', 'success');
+        redirectTo(redirect, basePath);
+      }
+    },
+    [create, notify, redirectTo, basePath, communityDomain, userEmail]
+  );
+  // set onSave props instead of handleSubmitWithRedirect
+  return <SaveButton {...props} onSuccess={handleSave} />;
+};
+
+SaveWithNoteButton.propTypes = {
+  userEmail: PropTypes.string.isRequired,
+  communityDomain: PropTypes.string.isRequired,
+  basePath: PropTypes.string.isRequired,
+};
+
+const CustomToolbar = (props) => (
+  <Toolbar {...props} classes={useStyles()}>
+    <SaveWithNoteButton {...props} />
+  </Toolbar>
+);
 
 export const CommunityUserCreate = (props) => {
   const classes = useStyles();
@@ -26,12 +82,28 @@ export const CommunityUserCreate = (props) => {
   const community_uri = encodeURIComponent(community);
   const redirect = community_uri ? `/communities/${community_uri}` : 'show';
 
-  const inputText = (user) =>
-    user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
+  const [email, setEmail] = useState(null);
+  const [com, setCom] = useState(null);
+
+  const [currentCom, setCurrentCom] = useState(community);
+
+  const inputText = useCallback((user) => {
+    setEmail(user.email);
+    return user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
+  }, []);
+
+  const inputCommunityText = useCallback((commu) => {
+    if (currentCom === commu.id) setCom(commu.domain);
+    return commu ? commu.name : '';
+  }, [currentCom]);
 
   return (
     <Create {...props} title="Communautés > ajouter un membre">
-      <SimpleForm defaultValue={{ community }} redirect={redirect}>
+      <SimpleForm
+        defaultValue={{ community }}
+        redirect={redirect}
+        toolbar={<CustomToolbar redirect={redirect} userEmail={email} communityDomain={com}/>}
+      >
         <ReferenceInput
           fullWidth
           label="Communauté"
@@ -39,8 +111,13 @@ export const CommunityUserCreate = (props) => {
           reference="communities"
           validate={required()}
           formClassName={classes.title}
+          inputProps={{
+            onChange: (e) => {
+              setCurrentCom(e.target.value);
+            },
+          }}
         >
-          <SelectInput optionText="name" />
+          <SelectInput optionText={inputCommunityText} />
         </ReferenceInput>
 
         <ReferenceInput
@@ -51,10 +128,10 @@ export const CommunityUserCreate = (props) => {
           formClassName={classes.halfwidth}
           filterToQuery={(searchText) => ({ familyName: [searchText] })}
         >
-          {/* Should be like that : 
+          {/* Should be like that :
               <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
               But https://github.com/marmelab/react-admin/pull/4367
-              So waiting for the next release of react-admin 
+              So waiting for the next release of react-admin
           */}
           <AutocompleteInput optionText={inputText} allowEmpty={false} />
         </ReferenceInput>
