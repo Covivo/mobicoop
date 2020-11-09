@@ -256,7 +256,7 @@
         "alert": {
             "clearSelected": "Réinitialiser la séléction",
             "fieldMandatory": "Ce champ est obligatoire",
-            "valueSaved": "Modification éffectuée",
+            "valueSaved": "Modification effectuée",
             "invalidPhone": "Numéro de téléphone invalide"
         },
         "label": {
@@ -389,7 +389,7 @@
                     "numberPassword": "Au minimum 1 chiffre",
                     "minPassword": "Au minimum 8 caractères",
                     "phoneDisplayMandatory": "Préférence du numéro de téléphone obligatoire",
-                    "rolesMandatory": "Vous devez sélectionner au moins 1 rôles",
+                    "rolesMandatory": "Vous devez sélectionner au moins 1 rôle",
                     "phoneNumber": "Numéro de téléphone mal formaté"
                 },
                 "phoneDisplay": {
