@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { parse } from 'query-string';
 
@@ -29,18 +29,19 @@ const SaveWithNoteButton = (props) => {
   const redirectTo = useRedirect();
   const notify = useNotify();
   const { basePath, userEmail, communityDomain } = props;
-  let shouldTriggerAlert = false;
-  let value = false;
 
   const handleSave = useCallback(
     (values, redirect) => {
-      if (communityDomain) {
+      let shouldTriggerAlert = false;
+      let value = false;
+
+      if (communityDomain && userEmail) {
         const slug = userEmail.split('@').pop();
         if (slug !== communityDomain) {
           shouldTriggerAlert = true;
         }
       }
-      if (shouldTriggerAlert) {
+      if (shouldTriggerAlert || !userEmail) {
         value = window.confirm(
           "Attention, vous êtes en train d'ajouter un membre dans la communauté qui ne satisfait pas aux conditions de restriction de nom de domaine prévue!"
         );
@@ -49,19 +50,13 @@ const SaveWithNoteButton = (props) => {
         create(
           {
             payload: { data: { ...values } },
-          },
-          {
-            onSuccess: ({ data: newRecord }) => {
-              notify('ra.notification.created', 'info', {
-                smart_count: 1,
-              });
-              redirectTo(redirect, basePath, newRecord.id, newRecord);
-            },
           }
         );
+        notify('Utilisateur ajoute avec succès', 'success');
+        redirectTo(redirect, basePath);
       }
     },
-    [create, notify, redirectTo, basePath]
+    [create, notify, redirectTo, basePath, communityDomain, userEmail]
   );
   // set onSave props instead of handleSubmitWithRedirect
   return <SaveButton {...props} onSuccess={handleSave} />;
@@ -90,22 +85,24 @@ export const CommunityUserCreate = (props) => {
   const [email, setEmail] = useState(null);
   const [com, setCom] = useState(null);
 
-  const inputText = (user) => {
+  const [currentCom, setCurrentCom] = useState(community);
+
+  const inputText = useCallback((user) => {
     setEmail(user.email);
     return user ? `${user.givenName} ${user.familyName || user.shortFamilyName}` : '';
-  };
+  }, []);
 
-  const inputCommunityText = (commu) => {
-    setCom(commu.domain);
+  const inputCommunityText = useCallback((commu) => {
+    if (currentCom === commu.id) setCom(commu.domain);
     return commu ? commu.name : '';
-  };
+  }, [currentCom]);
 
   return (
     <Create {...props} title="Communautés > ajouter un membre">
       <SimpleForm
         defaultValue={{ community }}
         redirect={redirect}
-        toolbar={<CustomToolbar userEmail={email} communityDomain={com} />}
+        toolbar={<CustomToolbar redirect={redirect} userEmail={email} communityDomain={com}/>}
       >
         <ReferenceInput
           fullWidth
@@ -114,6 +111,11 @@ export const CommunityUserCreate = (props) => {
           reference="communities"
           validate={required()}
           formClassName={classes.title}
+          inputProps={{
+            onChange: (e) => {
+              setCurrentCom(e.target.value);
+            },
+          }}
         >
           <SelectInput optionText={inputCommunityText} />
         </ReferenceInput>
@@ -126,10 +128,10 @@ export const CommunityUserCreate = (props) => {
           formClassName={classes.halfwidth}
           filterToQuery={(searchText) => ({ familyName: [searchText] })}
         >
-          {/* Should be like that : 
+          {/* Should be like that :
               <AutocompleteInput inputText={inputText} optionValue="id" optionText={<FullNameField />} matchSuggestion={(filterValue, suggestion) => true} allowEmpty={false}/>
               But https://github.com/marmelab/react-admin/pull/4367
-              So waiting for the next release of react-admin 
+              So waiting for the next release of react-admin
           */}
           <AutocompleteInput optionText={inputText} allowEmpty={false} />
         </ReferenceInput>
