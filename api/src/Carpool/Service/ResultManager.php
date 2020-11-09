@@ -1633,6 +1633,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
                     }
                 }
+                break;
             }
             case 1: {
                 if ($proposal->getCriteria()->isMonCheck()
@@ -1652,6 +1653,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
                     }
                 }
+                break;
             }
             case 2: {
                 if ($proposal->getCriteria()->isTueCheck()
@@ -1671,6 +1673,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
                     }
                 }
+                break;
             }
             case 3: {
                 if ($proposal->getCriteria()->isWedCheck()
@@ -1690,6 +1693,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
                     }
                 }
+                break;
             }
             case 4: {
                 if ($proposal->getCriteria()->isThuCheck()
@@ -1709,6 +1713,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
                     }
                 }
+                break;
             }
             case 5: {
                 if ($proposal->getCriteria()->isFriCheck()
@@ -1728,6 +1733,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
                     }
                 }
+                break;
             }
             case 6: {
                 if ($proposal->getCriteria()->isSatCheck()
@@ -1747,6 +1753,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
                     }
                 }
+                break;
             }
         }
 
@@ -1776,6 +1783,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSunTime()];
                     }
                 }
+                break;
             }
             case 1: {
                 if ($proposal->getCriteria()->isMonCheck()
@@ -1788,6 +1796,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getMonTime()];
                     }
                 }
+                break;
             }
             case 2: {
                 if ($proposal->getCriteria()->isTueCheck()
@@ -1800,6 +1809,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getTueTime()];
                     }
                 }
+                break;
             }
             case 3: {
                 if ($proposal->getCriteria()->isWedCheck()
@@ -1812,6 +1822,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getWedTime()];
                     }
                 }
+                break;
             }
             case 4: {
                 if ($proposal->getCriteria()->isThuCheck()
@@ -1824,6 +1835,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getThuTime()];
                     }
                 }
+                break;
             }
             case 5: {
                 if ($proposal->getCriteria()->isFriCheck()
@@ -1836,6 +1848,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getFriTime()];
                     }
                 }
+                break;
             }
             case 6: {
                 if ($proposal->getCriteria()->isSatCheck()
@@ -1848,6 +1861,7 @@ class ResultManager
                         return ["numday"=>$day,"time"=>$proposal->getCriteria()->getSatTime()];
                     }
                 }
+                break;
             }
         }
 
