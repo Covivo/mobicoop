@@ -1574,10 +1574,11 @@ class ResultManager
      */
     private function getFirstCarpooledRegularDay(Proposal $searchProposal, Proposal $matchingProposal, string $role='request', int $nbLoop = 0): ?array
     {
+        $today = (new \DateTime())->format('w');
         $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
         $day = $nbLoop+$pday;
-        if ($day == 7) {
-            $day = 0;
+        if ($day >= 7) {
+            $day = $day - 7;
         }
         $rdate = new \DateTime();
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
@@ -1588,11 +1589,10 @@ class ResultManager
         } // safeguard to avoid infinite loop
 
         if ($role=="request") {
-            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), ($nbLoop==1 && $today == $pday) ? $searchProposal->getCriteria()->getFromTime() : null);
         } else {
-            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1) ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1 && $today == $pday) ? $searchProposal->getCriteria()->getFromTime() : null);
         }
-
         if (!is_array($result)) {
             $result = $this->getFirstCarpooledRegularDay($searchProposal, $matchingProposal, $role, $nbLoop);
         } else {
