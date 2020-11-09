@@ -56,20 +56,20 @@ export const punctualFromTimeChoices = [
   {
     id: 1,
     label: 'Entre 8h et 13h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 8),
-    marginDuration: () => 5 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 11, 30),
+    marginDuration: () => 2.5 * 3600,
   },
   {
     id: 2,
     label: 'Entre 13h et 18h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 13),
-    marginDuration: () => 5 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 15, 30),
+    marginDuration: () => 2.5 * 3600,
   },
   {
     id: 3,
     label: 'Entre 18h et 21h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 18),
-    marginDuration: () => 3 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 19, 30),
+    marginDuration: () => 1.5 * 3600,
   },
 ];
 
