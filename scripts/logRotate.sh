@@ -26,51 +26,54 @@ logRegexOther="[a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$"
 
 # Gz log files for api
 if [ -d "$API_PATH" ]; then
-for entry in "$API_PATH"/*
-  do
-    if [[ $entry =~ $logRegexToday ]]
-    then
-      # Don't gz today's log 
-      continue
-    elif [[ $entry =~ $logRegexOther ]]
-    then
-      # Gz log
-      gzip -9 "$entry"
-    fi
-  done
+  for entry in "$API_PATH"/*
+    do
+      if [[ $entry =~ $logRegexToday ]]
+      then
+        # Don't gz today's log 
+        continue
+      elif [[ $entry =~ $logRegexOther ]]
+      then
+        # Gz log
+        gzip -9 "$entry"
+      fi
+    done
+  # Delete old files
+  find $API_PATH/*.log.gz -mtime +$RETENTION -delete
 fi
 
 # Gz log files for bundle
 if [ -d "$BUNDLE_PATH" ]; then
-for entry in "$BUNDLE_PATH"/*
-  do
-    if [[ $entry =~ $logRegexToday ]]
-    then
-      # Don't gz today's log 
-      continue
-    elif [[ $entry =~ $logRegexOther ]]
-    then
-      # Gz log
-      gzip -9 "$entry"
-    fi
-  done
+  for entry in "$BUNDLE_PATH"/*
+    do
+      if [[ $entry =~ $logRegexToday ]]
+      then
+        # Don't gz today's log 
+        continue
+      elif [[ $entry =~ $logRegexOther ]]
+      then
+        # Gz log
+        gzip -9 "$entry"
+      fi
+    done
+  # Delete old files
+  find $BUNDLE_PATH/*.log.gz -mtime +$RETENTION -delete
 fi
 
 # Gz log files for client
 if [ -d "$CLIENT_PATH" ]; then
-for entry in "$CLIENT_PATH"/*
-  do
-    if [[ $entry =~ $logRegexToday ]]
-    then
-      # Don't gz today's log 
-      continue
-    elif [[ $entry =~ $logRegexOther ]]
-    then
-      # Gz log
-      gzip -9 "$entry"
-    fi
-  done
+  for entry in "$CLIENT_PATH"/*
+    do
+      if [[ $entry =~ $logRegexToday ]]
+      then
+        # Don't gz today's log 
+        continue
+      elif [[ $entry =~ $logRegexOther ]]
+      then
+        # Gz log
+        gzip -9 "$entry"
+      fi
+    done
+  # Delete old files
+  find $CLIENT_PATH/*.log.gz -mtime +$RETENTION -delete
 fi
-
-# Delete old files
-find $API_PATH/*.log.gz -mtime +$RETENTION -delete
