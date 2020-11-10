@@ -18,6 +18,9 @@ CLIENT_PATH="$SCRIPT_PATH/../../var/log"
 # Date and time
 DATE=$(date +"%Y-%m-%d")
 
+# Retention days (files older than retention days are removed)
+RETENTION=30
+
 logRegexToday="[a-z]*-$DATE.log$"
 logRegexOther="[a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$"
 
@@ -68,3 +71,6 @@ for entry in "$CLIENT_PATH"/*
     fi
   done
 fi
+
+# Delete old files
+find $API_PATH/*.log.gz -mtime +$RETENTION -delete
