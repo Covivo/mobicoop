@@ -77,7 +77,7 @@
     >
       <v-col
         :cols="ask.paymentStatus !== null ? 4 : 7"
-        :class="{'ml-n13': $vuetify.breakpoint.mdAndDown}"
+        :class="{'ml-n11': $vuetify.breakpoint.lgAndDown}"
       >
         <carpooler-identity
           :carpooler="result.carpooler"
@@ -112,6 +112,7 @@
         v-if="isPassenger"
         cols="2"
         class="font-weight-bold primary--text text-h5 text-right"
+        :class="{'text-h6 ml-n6': $vuetify.breakpoint.mdAndDown}"
       >
         {{ result.roundedPrice }}€
       </v-col>
