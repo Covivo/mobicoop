@@ -406,19 +406,19 @@ export const dataProviderAdapter = (originalProvider) => ({
       newParams.data.already_registered_user = newParams.data.solidaryUser.user["@id"];
       newParams.data.familyName = newParams.data.solidaryUser.user.familyName;
       newParams.data.givenName = newParams.data.solidaryUser.user.givenName;
-      const data = {
-        actionName: 'solidary_update',
-        progression: 100,
-        solidary: newParams.id,
-      };
+      originalProvider.getOne('actions', {id: 'actions/85'}).then((action) => {
+        const data = {
+          actionName: action.data.name,
+          progression: parseInt(action.data.progression),
+          solidary: newParams.id,
+        };
 
-      if (newParams && newParams.data.solidaryUser && newParams.data.solidaryUser.user) {
-        data.user = `/users/${newParams.data.solidaryUser.user.id}`;
-      }
+        if (newParams && newParams.data.solidaryUser && newParams.data.solidaryUser.user) {
+          data.user = `/users/${newParams.data.solidaryUser.user.id}`;
+        }
 
-
-      originalProvider.create('solidary_animations', { data });
-
+        originalProvider.create('solidary_animations', { data });
+      });
       return originalProvider.create(resource, newParams);
     }
 
