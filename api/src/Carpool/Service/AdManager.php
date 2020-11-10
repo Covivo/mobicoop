@@ -675,7 +675,7 @@ class AdManager
             $ad->setFilters($aFilters);
             $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $results = $this->resultManager->filterResults(
-                $this->resultManager->createAdResults($proposal,$withSolidaries),
+                $this->resultManager->createAdResults($proposal, $withSolidaries),
                 $ad->getFilters()
             );
             $ad->setNbResults(count($results));
@@ -963,7 +963,7 @@ class AdManager
             }
         }
         $ad->setSchedule($schedule);
-        $results = $this->resultManager->createAdResults($proposal,$withSolidaries);
+        $results = $this->resultManager->createAdResults($proposal, $withSolidaries);
         $ad->setPotentialCarpoolers(count($results));
 
         if (!$hasAsks) {
