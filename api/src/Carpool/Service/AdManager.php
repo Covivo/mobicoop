@@ -119,7 +119,7 @@ class AdManager
      *
      * @param Ad $ad                    The ad to create
      * @param bool $doPrepare           When we prepare the Proposal
-     * @param bool $withSolidaries      Return also the matching solidary asks
+     * @param bool $withSolidaries      Return also the matching solidary ads
      * @return Ad
      * @throws \Exception
      */
@@ -632,9 +632,10 @@ class AdManager
      * @param array|null $order     The order to apply to the results
      * @param int|null $page        The result page
      * @param bool $createResults   Create the formatted results
+     * @param bool $withSolidaries  Return also the solidary ads
      * @return Ad
      */
-    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page=1, ?bool $createResults = true)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page=1, ?bool $createResults = true, bool $withSolidaries = false)
     {
         if (is_null($page)) {
             $page = 1;
@@ -674,7 +675,7 @@ class AdManager
             $ad->setFilters($aFilters);
             $this->logger->info("AdManager : start set results " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $results = $this->resultManager->filterResults(
-                $this->resultManager->createAdResults($proposal),
+                $this->resultManager->createAdResults($proposal,$withSolidaries),
                 $ad->getFilters()
             );
             $ad->setNbResults(count($results));
@@ -884,9 +885,10 @@ class AdManager
      * @param bool $hasAsks - if the ad has ask we do not return results since we return the ask with the ad
      * @param Ad $askLinked - the linked ask if proposal is private and get the correct data for Ad (like time and day checks)
      * @param Matching $matching - the corresponding Matching
+     * @param bool $withSolidaries  Return also the solidary ads
      * @return Ad
      */
-    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
+    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null, bool $withSolidaries = false)
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -961,7 +963,7 @@ class AdManager
             }
         }
         $ad->setSchedule($schedule);
-        $results = $this->resultManager->createAdResults($proposal);
+        $results = $this->resultManager->createAdResults($proposal,$withSolidaries);
         $ad->setPotentialCarpoolers(count($results));
 
         if (!$hasAsks) {
@@ -1136,7 +1138,7 @@ class AdManager
      *  /!\ Only minor data can be updated
      * Otherwise we delete and create new Ad
      * @param Ad $ad                The ad to update
-     * @param bool $withSolidaries  Return also the solidary asks
+     * @param bool $withSolidaries  Return also the solidary ads
      * @return Ad
      * @throws \Exception
      */

@@ -512,7 +512,7 @@ class SolidaryManager
             $proposal->addWaypoint(clone $newDestination);
         }
 
-        $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId());
+        $ad = $this->adManager->makeAd($proposal, $proposal->getUser()->getId(),false,null,null,true);
         // echo count($ad->getResults());die;
         // We need to build and persist all the new results as SolidaryMatching.
         $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchingsForCarpool($solidarySearch->getSolidary(), $ad->getResults());
