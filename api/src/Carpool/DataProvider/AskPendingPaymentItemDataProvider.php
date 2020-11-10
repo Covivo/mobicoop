@@ -30,6 +30,7 @@ use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
 use App\Payment\Exception\PaymentException;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Item DataProvider to check the status of an Ask
@@ -39,12 +40,14 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
     protected $askManager;
     protected $askRepository;
     protected $request;
+    protected $security;
 
-    public function __construct(AskManager $askManager, AskRepository $askRepository, RequestStack $requestStack)
+    public function __construct(AskManager $askManager, AskRepository $askRepository, RequestStack $requestStack, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->askManager = $askManager;
         $this->askRepository = $askRepository;
+        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -58,6 +61,6 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
         if (is_null($ask)) {
             throw new PaymentException(PaymentException::NO_ASK_FOUND);
         }
-        return $this->askManager->getNonValidatedWeeks($ask);
+        return $this->askManager->getNonValidatedWeeks($ask, $this->security->getUser());
     }
 }
