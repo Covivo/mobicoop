@@ -393,6 +393,9 @@ class UserController extends AbstractController
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
         }
+        if ($tabDefault == 'avis') {
+            $tabDefault = 'reviews';
+        }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
@@ -1259,6 +1262,20 @@ class UserController extends AbstractController
             ) {
                 return new JsonResponse(["success"=>$reviewManager->createReview($data['reviewerId'], $data['reviewedId'], $data['content'])]);
             }
+        }
+        return new JsonResponse(["success"=>false]);
+    }
+
+    /**
+     * Get the Review Dashboard of a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userReviewDashboard(Request $request, ReviewManager $reviewManager)
+    {
+        if ($request->isMethod('POST')) {
+            //$data = json_decode($request->getContent(), true);
         }
         return new JsonResponse(["success"=>false]);
     }

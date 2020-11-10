@@ -10,7 +10,8 @@
         "alerts": "Alerts",
         "bankCoordinates": "Bank coordinates",
         "carpoolsAccepted": "Accepted carpools",
-        "myAccount":"Account"
+        "myAccount":"Account",
+        "reviews":"Reviews"
     },
     "form": {
         "newPassword": "New password",

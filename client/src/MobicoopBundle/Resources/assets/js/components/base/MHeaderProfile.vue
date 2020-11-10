@@ -84,6 +84,7 @@ export default {
         { title: this.$t('myAds.label'), url: this.$t('myAds.route') },
         { title: this.$t('myAcceptedCarpools.label'), url: this.$t('myAcceptedCarpools.route') },
         { title: this.$t('myProfile.label'), url: this.$t('myProfile.route') },
+        { title: this.$t('reviews.label'), url: this.$t('reviews.route') },
         {},
         { title: this.$t('logOut.label'), url: this.$t('logOut.route') }
       ],

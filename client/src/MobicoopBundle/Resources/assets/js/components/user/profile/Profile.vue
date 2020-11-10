@@ -100,6 +100,15 @@
               </v-tab-item>              
             </v-tabs>
           </v-tab-item>
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 text-h6"
+            href="#reviews"
+          >
+            {{ $t("tabs.reviews") }}
+          </v-tab>
+          <v-tab-item value="reviews">
+            <ReviewDashboard />
+          </v-tab-item>          
           <div>
             <ProfileSummary
               :user-id="user.id"
@@ -150,6 +159,7 @@ import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
 
 import {messages_en, messages_fr} from "@translations/components/user/profile/Profile/";
 
@@ -168,7 +178,8 @@ export default {
     Carpools,
     BankAccount,
     ProfileSummary,
-    PublicProfile
+    PublicProfile,
+    ReviewDashboard
   },
   props: {
     user: {

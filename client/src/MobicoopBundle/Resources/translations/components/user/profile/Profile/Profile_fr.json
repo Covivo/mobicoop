@@ -10,7 +10,8 @@
         "alerts": "Alertes",
         "bankCoordinates": "Identité bancaires",
         "carpoolsAccepted": "Covoiturages acceptés",
-        "myAccount":"Compte"
+        "myAccount":"Compte",
+        "reviews":"Avis"
     },
     "form": {
         "newPassword": "Nouveau mot de passe",

@@ -1,0 +1,8 @@
+{
+    "tabs":{
+        "givenReviews":"Avis reçu(s)",
+        "receivedReviews":"Avis donné(s)",
+        "reviewsToGive":"Avis à donner"
+    },
+    "getDashboardUri":"/utilisateur/avis/tableau-de-bord"
+}
