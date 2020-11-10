@@ -84,4 +84,20 @@ class StructureRepository
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * Find structures by GPS points
+     *
+     * @param float $longitude
+     * @param float $latitude
+     * @return Structure[]
+     */
+    public function findByPoint(float $longitude, float $latitude)
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->join('s.territories', 't')
+        ->where('ST_INTERSECTS(t.geoJsonDetail,ST_GEOMFROMTEXT(\'POINT('.$longitude.' '.$latitude.')\'))=1');
+
+        return $query->getQuery()->getResult();
+    }
 }
