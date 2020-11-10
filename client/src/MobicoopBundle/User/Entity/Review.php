@@ -139,7 +139,7 @@ class Review implements ResourceInterface, \JsonSerializable
 
     public function jsonSerialize()
     {
-        $userSerialized = [
+        return [
             'id'                        => $this->getId(),
             'reviewer'                  => $this->getReviewer(),
             'reviewed'                  => $this->getReviewed(),
@@ -147,7 +147,5 @@ class Review implements ResourceInterface, \JsonSerializable
             'left'                      => $this->isLeft(),
             'date'                      => $this->getdate()
         ];
-
-        return $userSerialized;
     }
 }

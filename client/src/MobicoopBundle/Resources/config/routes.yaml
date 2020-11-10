@@ -395,12 +395,12 @@ user_report:
     requirements:
         id: '\d+'
 
-user_review_dashboard:
+user_reviews_dashboard:
     methods: [POST]
     path:
         fr: /utilisateur/avis/tableau-de-bord
         en: /user/review/dashboard
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewDashboard
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewsDashboard
 
 user_review_write:
     methods: [POST]
