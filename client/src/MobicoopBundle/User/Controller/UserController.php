@@ -73,6 +73,7 @@ class UserController extends AbstractController
     private $facebook_show;
     private $facebook_appid;
     private $required_home_address;
+    private $required_community;
     private $news_subscription;
     private $communityShow;
     private $userProvider;
@@ -94,6 +95,7 @@ class UserController extends AbstractController
         $facebook_show,
         $facebook_appid,
         $required_home_address,
+        $required_community,
         $news_subscription,
         $community_show,
         UserProvider $userProvider,
@@ -110,6 +112,7 @@ class UserController extends AbstractController
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
         $this->required_home_address = $required_home_address;
+        $this->required_community = $required_community;
         $this->news_subscription = $news_subscription;
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
@@ -222,7 +225,8 @@ class UserController extends AbstractController
                 "facebook_appid"=>$this->facebook_appid,
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
                 "community_show"=>($this->community_show==="true") ? true : false,
-                "loginLinkInConnection"=>$this->loginLinkInConnection
+                "loginLinkInConnection"=>$this->loginLinkInConnection,
+                "required_community"=>($this->required_community==="true") ? true : false
         ]);
     }
 
