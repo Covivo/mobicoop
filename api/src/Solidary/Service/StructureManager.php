@@ -97,9 +97,39 @@ class StructureManager
      */
     public function getGeolocalisedStructures(float $lat, float $lon): ?array
     {
-        // First, we retreive the territories containing $lat/$lon point
-        $territories = $this->territoryRepository->findPointTerritories($lat, $lon);
+        // This array will contain the valid structures
+        $validStructures = [];
 
-        return $this->structureRepository->findByTerritories($territories);
+        // First, we retreive the territories containing $lat/$lon point
+        $geolocTerritories = $this->territoryRepository->findPointTerritories($lat, $lon);
+        // foreach($geolocTerritories as $geolocTerritory){
+        // Usefull to show the found territories
+        //     echo $geolocTerritory->getId()." ".$geolocTerritory->getName()."\n";
+
+        // }
+
+        // Get all structures
+        $structures = $this->structureRepository->findAll();
+
+        // Check if the structure is in at least one appropriate territory
+        foreach ($structures as $structure) {
+            $structureValid = false;
+            foreach ($structure->getTerritories() as $structureTerritory) {
+                foreach ($geolocTerritories as $geolocTerritory) {
+                    if ($geolocTerritory->getId() == $structureTerritory->getId()) {
+                        $structureValid = true;
+                        break;
+                    }
+                }
+                if ($structureValid) {
+                    break;
+                }
+            }
+            if ($structureValid) {
+                $validStructures[] = $structure;
+            }
+        }
+
+        return $validStructures;
     }
 }
