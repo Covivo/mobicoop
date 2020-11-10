@@ -23,12 +23,14 @@
 
 namespace App\Carpool\Repository;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
+use App\User\Entity\User;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -1013,5 +1015,119 @@ class ProposalRepository
         ->where('d.distance>0 and mr.id is null and mo.id is null')
         ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)');
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find accepted proposals for a given user
+     *
+     * @param User $user    The user
+     * @return array        The proposals found
+     */
+    public function findAcceptedProposals(User $user)
+    {
+        // first we search the accepted proposals as driver
+        $query = $this->repository->createQueryBuilder('p')
+        ->join('p.user', 'u')
+        ->join('p.matchingRequests', 'mr')
+        ->join('mr.asks', 'a')
+        ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
+        ->setParameter('user', $user)
+        ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+        ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+        ;
+        $proposalsDriver = $query->getQuery()->getResult();
+
+        // then we search the accepted proposals as passenger
+        $query = $this->repository->createQueryBuilder('p')
+        ->join('p.user', 'u')
+        ->join('p.matchingOffers', 'mo')
+        ->join('mo.asks', 'a')
+        ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
+        ->setParameter('user', $user)
+        ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+        ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+        ;
+        $proposalsPassenger = $query->getQuery()->getResult();
+
+        // we create the results (we can't simply merge the results, we have to keep only outward for return trips if both outward and return are carpooled)
+        $proposals = [];
+        // we start with the proposals as driver
+        foreach ($proposalsDriver as $proposalDriver) {
+            // we have to check for an existing outward for a return proposal => we keep only outward
+            if ($proposalDriver->getType() == Proposal::TYPE_RETURN) {
+                $foundOutward = false;
+                foreach ($proposalsDriver as $proposal) {
+                    if ($proposal->getId() == $proposalDriver->getProposalLinked()->getId()) {
+                        $foundOutward = true;
+                        break;
+                    }
+                }
+                if (!$foundOutward) {
+                    // only return trip, we check that the proposal doesn't exist yet
+                    $found = false;
+                    foreach ($proposals as $proposal) {
+                        if ($proposal->getId() == $proposalDriver->getId()) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $proposals[] = $proposalDriver;
+                    }
+                }
+            } else {
+                // outward or oneway, we check that the proposal doesn't exist yet
+                $found = false;
+                foreach ($proposals as $proposal) {
+                    if ($proposal->getId() == $proposalDriver->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposals[] = $proposalDriver;
+                }
+            }
+        }
+        // we merge the proposals as passenger
+        foreach ($proposalsPassenger as $proposalPassenger) {
+            // we have to check for an existing outward for a return proposal => we keep only outward
+            if ($proposalPassenger->getType() == Proposal::TYPE_RETURN) {
+                $foundOutward = false;
+                foreach ($proposalsPassenger as $proposal) {
+                    if ($proposal->getId() == $proposalPassenger->getProposalLinked()->getId()) {
+                        $foundOutward = true;
+                        break;
+                    }
+                }
+                if (!$foundOutward) {
+                    // only return trip, we check that the proposal doesn't exist yet
+                    $found = false;
+                    foreach ($proposals as $proposal) {
+                        if ($proposal->getId() == $proposalPassenger->getId()) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $proposals[] = $proposalPassenger;
+                    }
+                }
+            } else {
+                // outward or oneway, we check that the proposal doesn't exist yet
+                $found = false;
+                foreach ($proposals as $proposal) {
+                    if ($proposal->getId() == $proposalPassenger->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $proposals[] = $proposalPassenger;
+                }
+            }
+        }
+
+        return $proposals;
     }
 }
