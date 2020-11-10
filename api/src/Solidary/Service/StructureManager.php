@@ -97,9 +97,6 @@ class StructureManager
      */
     public function getGeolocalisedStructures(float $lat, float $lon): ?array
     {
-        // First, we retreive the territories containing $lat/$lon point
-        $territories = $this->territoryRepository->findPointTerritories($lat, $lon);
-
-        return $this->structureRepository->findByTerritories($territories);
+        return $this->structureRepository->findByPoint($lon, $lat);
     }
 }
