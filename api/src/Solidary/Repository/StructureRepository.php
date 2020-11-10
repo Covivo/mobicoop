@@ -85,6 +85,13 @@ class StructureRepository
         return $this->repository->findAll();
     }
 
+    /**
+     * Find structures by GPS points
+     *
+     * @param float $longitude
+     * @param float $latitude
+     * @return Structure[]
+     */
     public function findByPoint(float $longitude, float $latitude)
     {
         $query = $this->repository->createQueryBuilder('s')
