@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <v-row no-gutters>
+    <v-row
+      v-if="showTitle"
+      no-gutters
+    >
       <v-col
         cols="12"
         class="text-left title"
@@ -41,6 +44,10 @@ export default {
       type:Array,
       default: null
     },
+    showTitle:{
+      type: Boolean,
+      default: true
+    }
   }
 }
 </script>
