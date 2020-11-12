@@ -72,14 +72,15 @@ class ReviewManager
     /**
      * Get the Review Dashboard of a User
      *
-     * @return ReviewsDashboard|null
+     * @return array|null
      */
-    public function reviewsDashboard(): ?ReviewsDashboard
+    public function reviewsDashboard(): ?array
     {
         $this->dataProvider->setClass(ReviewsDashboard::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
-            return $response->getValue()->getMember();
+            return $response->getValue();
         }
         return null;
     }
