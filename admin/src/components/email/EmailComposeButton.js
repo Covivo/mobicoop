@@ -157,7 +157,10 @@ const EmailComposeButton = ({
           isOpen={open}
           sendAll={sendAll}
           selectedIds={comeFrom == 1 ? selectedIdsFormat : selectedIds}
-          onClose={() => setOpen(false)}
+          onClose={() => {
+            setOpen(false);
+            setSendAll(null);
+          }}
           shouldFetch={shouldFetch}
           resource={resource}
           basePath={basePath}
