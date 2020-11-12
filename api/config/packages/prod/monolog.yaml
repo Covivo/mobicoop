@@ -21,58 +21,69 @@ monolog:
         #     formatter:  monolog.formatter.html
         #     content_type: text/html
         carpool:        
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
         carpool_dynamic:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/carpool_dynamic.log"
             channels: [carpool_dynamic]
         carpool_proof:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/carpool_proof.log"
             channels: [carpool_proof]
         communication:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/communication.log"
             channels: [communication]
         community:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
         geography:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/geography.log"
             channels: [geography]
         geomatcher:
-            type: stream
+            type: rotating_file
             level: info
+            max_files: 30
             path: "%kernel.logs_dir%/geomatcher.log"
             channels: [geomatcher]       
         georouter:
-            type: stream
+            type: rotating_file
             level: info
+            max_files: 30
             path: "%kernel.logs_dir%/georouter.log"
             channels: [georouter]
         mass:
-            type: stream
+            type: rotating_file
             level: info
+            max_files: 30
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
         notification:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/notification.log"
             channels: [notification]     
         faker:
             type: stream
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/faker.log"
             channels: [faker]
         console:
@@ -80,7 +91,8 @@ monolog:
             process_psr_3_messages: false
             channels: ["!event", "!doctrine"]
         deprecation:
-            type: stream
+            type: rotating_file
+            max_files: 30
             path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
         deprecation_filter:
             type: filter
