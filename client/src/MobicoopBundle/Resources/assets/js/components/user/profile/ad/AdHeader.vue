@@ -132,20 +132,19 @@
         </v-btn>
       </v-col>
       <v-col
-        v-else-if="paymentItemId!==null"
+        v-else-if="paymentStatus!==null && paymentItemId !== null"
         class="text-right"
       >
         <AdPayment
           :is-driver="isDriver"
           :is-passenger="isPassenger"
           :payment-status="paymentStatus"
-          :frequency="adFrequency"
           :payment-item-id="paymentItemId"
           :week="paymentWeek"
           :unpaid-date="unpaidDate"
           outlined
           show-unpaid
-          hide-button
+          @activePanel="activePanel()"
         />
       </v-col>
     </v-row>
@@ -378,6 +377,9 @@ export default {
         textarea: true
       };
       this.dialogActive = true;
+    },
+    activePanel() {
+      this.$emit('activePanel');
     }
   }
 }

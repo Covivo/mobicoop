@@ -14,6 +14,7 @@
       :payment-status="ad.paymentStatus"
       :payment-week="ad.paymentItemWeek"
       :unpaid-date="ad.unpaidDate"
+      @activePanel="activePanel()"
     />
 
     <v-card-text v-if="isRegular">
@@ -37,6 +38,7 @@
         :id-message="lastMessageId"
         :ad="ad"
         :user="user"
+        :show-carpooler="showCarpooler"
       />
     </v-card-actions>
   </v-card>
@@ -74,7 +76,8 @@ export default {
     return {
       hasAtLeastOneAsk: false,
       hasAtLeastOneAcceptedAsk: false,
-      lastMessageId: null
+      lastMessageId: null,
+      showCarpooler: false
     }
   },
   computed: {
@@ -104,6 +107,9 @@ export default {
           this.hasAtLeastOneAcceptedAsk = true;
         }
       });
+    },
+    activePanel() {
+      this.showCarpooler = true;
     }
   }
 }

@@ -24,6 +24,12 @@
     <div
       v-if="results.length>0"
     >
+      <v-pagination
+        v-if="nbResults>perPage"
+        v-model="lPage"
+        :length="Math.ceil(nbResults/perPage)"
+        @input="paginate(lPage)"
+      />
       <v-row 
         v-for="(result,index) in results"
         :key="index"
@@ -45,6 +51,12 @@
           />
         </v-col>
       </v-row>
+      <v-pagination
+        v-if="nbResults>perPage"
+        v-model="lPage"
+        :length="Math.ceil(nbResults/perPage)"
+        @input="paginate(lPage)"
+      />
     </div>
     <div v-else>
       <v-col
@@ -80,6 +92,14 @@ export default {
       type:Array,
       default:null
     },
+    nbResults:{
+      type:Number,
+      default:0
+    },
+    page:{
+      type:Number,
+      default:1
+    },
     distinguishRegular: {
       type: Boolean,
       default: false
@@ -91,14 +111,22 @@ export default {
     loadingProp: {
       type: Boolean,
       default: false
+    },
+    perPage: {
+      type: Number,
+      default:10
     }
   },
   data(){
     return {
-      loading:this.loadingProp
+      loading:this.loadingProp,
+      lPage:this.page
     }
   },
   watch:{
+    page(){
+      this.lPage = this.page;
+    },
     loadingProp(){
       this.loading = this.loadingProp
     }
@@ -109,6 +137,9 @@ export default {
     },
     loginOrRegister(carpool){
       this.$emit("loginOrRegister", carpool);
+    },
+    paginate(page){
+      this.$emit("paginate", page)
     }
   }
 }

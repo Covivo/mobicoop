@@ -57,7 +57,7 @@ final class HomeAddressDirectionTerritoryFilter extends AbstractContextAwareFilt
             ->leftJoin('c.directionPassenger', 'dp')
             ->leftJoin('dd.territories', 'td')
             ->leftJoin('dp.territories', 'tp')
-            ->andWhere(sprintf('((td.id = %s OR tp.id = %s) OR (t.id = %s AND homeAddress.home=1))', $value, $value, $value));
+            ->andWhere(sprintf('((p.private <> 1 AND (td.id = %s OR tp.id = %s)) OR (t.id = %s AND homeAddress.home=1))', $value, $value, $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

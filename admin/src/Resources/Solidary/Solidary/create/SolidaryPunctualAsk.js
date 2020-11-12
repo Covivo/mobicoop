@@ -56,20 +56,20 @@ export const punctualFromTimeChoices = [
   {
     id: 1,
     label: 'Entre 8h et 13h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 8),
-    marginDuration: () => 5 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 11, 30),
+    marginDuration: () => 2.5 * 3600,
   },
   {
     id: 2,
     label: 'Entre 13h et 18h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 13),
-    marginDuration: () => 5 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 15, 30),
+    marginDuration: () => 2.5 * 3600,
   },
   {
     id: 3,
     label: 'Entre 18h et 21h',
-    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 18),
-    marginDuration: () => 3 * 3600,
+    outwardDatetime: ({ outwardDatetime }) => setHours(outwardDatetime, 19, 30),
+    marginDuration: () => 1.5 * 3600,
   },
 ];
 
@@ -98,26 +98,44 @@ export const punctualToTimeChoices = [
   { id: 4, label: "Pas besoin qu'on me ramène", returnDatetime: () => null },
 ];
 
-const SolidaryPunctualAsk = ({ includeNeeds, summary = null }) => {
+const SolidaryPunctualAsk = ({ includeNeeds, summary = null, edit }) => {
   const {
     input: { value: outwardDatetime },
   } = useField('outwardDatetime');
+
+  const {
+    input: { value: returnDatetime },
+  } = useField('returnDatetime');
 
   return (
     <Box display="flex">
       <Box flex={3} mr="1em">
         <SolidaryQuestion question="A quelle date souhaitez-vous partir ?">
-          <DateTimeSelector type="date" choices={punctualFromDateChoices} initialChoice={0} />
+          <DateTimeSelector
+            type="date"
+            choices={punctualFromDateChoices}
+            initialChoice={0}
+            initialValue={outwardDatetime}
+            edit
+          />
         </SolidaryQuestion>
         <SolidaryQuestion question="A quelle heure souhaitez-vous partir ?">
-          <DateTimeSelector type="time" choices={punctualFromTimeChoices} initialChoice={0} />
+          <DateTimeSelector
+            type="time"
+            choices={punctualFromTimeChoices}
+            initialChoice={0}
+            initialValue={outwardDatetime}
+            edit
+          />
         </SolidaryQuestion>
         <SolidaryQuestion question="Quand souhaitez-vous revenir ?">
           <DateTimeSelector
             type="time"
             choices={punctualToTimeChoices}
-            initialChoice={4}
+            initialChoice={edit && returnDatetime ? 0 : 4}
             dependencies={[outwardDatetime]}
+            initialValue={returnDatetime}
+            edit
           />
         </SolidaryQuestion>
         {includeNeeds && <SolidaryNeedsQuestion label="Autres informations" />}

@@ -28,7 +28,9 @@
       :flat="true"
     >
       <v-expansion-panel>
-        <v-expansion-panel-header class="text-uppercase text-right">
+        <v-expansion-panel-header
+          class="text-uppercase text-right"
+        >
           <v-row no-gutters>
             <v-col class="text-right font-weight-bold secondary--text">
               {{ panelActive === 0 ? hideMessage : showMessage }}
@@ -56,7 +58,6 @@
               :result="getResults(ask)"
               :ask="ask"
               :user="user"
-              :is-inverted="!empty(ask.results[1])"
             />
             <v-divider
               v-if="index < ad.asks.length - 1"
@@ -89,6 +90,10 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    showCarpooler: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -98,19 +103,24 @@ export default {
   },
   computed: {
     bookedSeats() {
-      return this.ad.asks.length
+      return this.ad.asks.length;
     },
     seats() {
-      return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger
+      return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger;
     },
     isDriver() {
-      return this.ad.role === 1 || this.ad.role === 3
+      return this.ad.role === 1 || this.ad.role === 3;
     },
     hideMessage() {
       return this.isDriver ? this.$t('passengers.hide') : this.$t('driver.hide');
     },
     showMessage() {
       return this.isDriver ? this.$t('passengers.show') : this.$t('driver.show');
+    }
+  },
+  watch: {
+    showCarpooler () {
+      this.panelActive = this.showCarpooler == true ? 0 : false;
     }
   },
   methods: {

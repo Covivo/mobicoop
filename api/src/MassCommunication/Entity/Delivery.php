@@ -74,7 +74,7 @@ class Delivery
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
     private $campaign;
@@ -84,7 +84,7 @@ class Delivery
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="deliveries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
     private $user;

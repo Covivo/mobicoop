@@ -170,7 +170,6 @@ class PaymentManager
             $fromDate->setTime(0, 0, 0);
             $toDate->setTime(23, 59, 59);
         }
-        
         // we create the carpool items in case they don't exist yet
         $this->createCarpoolItems($fromDate, $toDate, $user);
 
@@ -298,6 +297,7 @@ class PaymentManager
             
             // default value
             $paymentItem->setElectronicallyPayable(false);
+            $paymentItem->setCanPayElectronically(false);
 
             if ($this->paymentActive && $this->provider !== "") {
                 $paymentProfile = $this->paymentProvider->getPaymentProfiles($carpoolItem->getCreditorUser(), false);
@@ -308,21 +308,21 @@ class PaymentManager
                         $paymentItem->setElectronicallyPayable(true);
                     }
                 }
-            }
-
-            // Determine if the user can pay electronically
-            // Complete address or an already existing user profile validated
-            $userPaymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
-            if (is_null($userPaymentProfiles) || count($userPaymentProfiles)==0) {
-                // No payment profile. It means that in case of electronic payment, we will register the user to the provider.
-                $paymentItem->setCanPayElectronically(false);
-                // Check if the User is valid for automatic registration
-                if ($this->checkValidForRegistrationToTheProvider($user)) {
+            
+                // Determine if the user can pay electronically
+                // Complete address or an already existing user profile validated
+                $userPaymentProfiles = $this->paymentProvider->getPaymentProfiles($user, false);
+                if (is_null($userPaymentProfiles) || count($userPaymentProfiles)==0) {
+                    // No payment profile. It means that in case of electronic payment, we will register the user to the provider.
+                    $paymentItem->setCanPayElectronically(false);
+                    // Check if the User is valid for automatic registration
+                    if ($this->checkValidForRegistrationToTheProvider($user)) {
+                        $paymentItem->setCanPayElectronically(true);
+                    }
+                } else {
+                    // The user has a payment profile. It means that he already has an account and a wallet to the provider
                     $paymentItem->setCanPayElectronically(true);
                 }
-            } else {
-                // The user has a payment profile. It means that he already has an account and a wallet to the provider
-                $paymentItem->setCanPayElectronically(true);
             }
 
             // If there is an Unpaid Date, we set the unpaid date of the PaymentItem
@@ -335,7 +335,6 @@ class PaymentManager
                 $treatedAsks[] = $carpoolItem->getAsk()->getId();
             }
         }
-
         // finally we return the array of PaymentItem
         return $items;
         // return [
@@ -593,6 +592,7 @@ class PaymentManager
 
             // if online amount is not zero, we pay online
             if ($amountOnline>0) {
+                $carpoolPayment->setAmountOnline($amountOnline);
                 $carpoolPayment = $this->paymentProvider->generateElectronicPaymentUrl($carpoolPayment);
                 if (!is_null($carpoolPayment->getCreateCarpoolProfileIdentifier())) {
                     // We need to persits the carpoolProfile
@@ -815,7 +815,8 @@ class PaymentManager
                         $this->entityManager->persist($carpoolItem);
                     }
 
-                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d')) {
+                    if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || $curDate->format('Y-m-d') == $ask->getCriteria()->getToDate()->format('Y-m-d')) {
+                        // we reached the end of the period
                         $continue = false;
                     } else {
                         $curDate->modify('+1 day');
@@ -883,14 +884,18 @@ class PaymentManager
 
 
             $paymentProfile = $this->createPaymentProfile($user, $identifier);
+            // we set it by default at false since the identity is not confirmed yet
+            $paymentProfile->setElectronicallyPayable(false);
         } else {
             $paymentProfile = $paymentProfiles[0];
+            if ($paymentProfile->getValidationStatus() === PaymentProfile::VALIDATION_VALIDATED) {
+                $paymentProfile->setElectronicallyPayable(true);
+            }
         }
 
         $bankAccount = $this->paymentProvider->addBankAccount($bankAccount);
 
         // Update the payment profile
-        $paymentProfile->setElectronicallyPayable(false);
         $paymentProfile->setStatus(PaymentProfile::STATUS_ACTIVE);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();

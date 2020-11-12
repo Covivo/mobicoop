@@ -51,7 +51,7 @@ class Email
     private $senderFirstName;
 
     /**
-     * @var string recipient of the email
+     * @var mixed An array or string of recipient(s) of the email
      * @Assert\Email()
      * @Assert\NotBlank
      */
@@ -123,12 +123,12 @@ class Email
         return $this;
     }
 
-    public function getRecipientEmail(): string
+    public function getRecipientEmail()
     {
         return $this->recipientEmail;
     }
 
-    public function setRecipientEmail(string $recipientEmail): self
+    public function setRecipientEmail($recipientEmail): self
     {
         $this->recipientEmail = $recipientEmail;
 

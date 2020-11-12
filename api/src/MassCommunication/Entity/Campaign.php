@@ -207,7 +207,7 @@ class Campaign
      * @var ArrayCollection|null The deliveries related to this campaign.
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read_campaign","write_campaign"})
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $deliveries;
 

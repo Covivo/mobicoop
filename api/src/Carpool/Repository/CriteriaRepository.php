@@ -78,6 +78,30 @@ class CriteriaRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findAllForDirectionsAndDefault()
+    {
+        $query = $this->repository->createQueryBuilder('c');
+
+        $selection = [
+            'c.id as cid',
+            'c.driver',
+            'c.passenger',
+            'w.position',
+            'w.destination',
+            'a.longitude',
+            'a.latitude'
+        ];
+        
+        $query->select($selection);
+        
+        $query->join('c.proposal', 'p')
+        ->join('p.waypoints', 'w')
+        ->join('w.address', 'a')
+        ->where('c.driver = 1 and c.directionDriver IS NULL')
+        ->orWhere('c.passenger = 1 and c.directionPassenger IS NULL');
+        return $query->getQuery()->getResult();
+    }
+
     public function findDrivers(): ?array
     {
         $query = $this->repository->createQueryBuilder('c')

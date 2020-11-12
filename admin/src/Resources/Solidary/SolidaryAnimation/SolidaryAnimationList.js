@@ -1,10 +1,10 @@
 import React from 'react';
 import { List, Datagrid, TextField } from 'react-admin';
 
-import { isAdmin, isSuperAdmin } from '../../../auth/permissions';
+import isAuthorized from '../../../auth/permissions';
 
 const SolidaryAnimationList = (props) => (
-  <List {...props} title="Actions > liste" exporter={isSuperAdmin()} perPage={25}>
+  <List {...props} title="Actions > liste" exporter={isAuthorized('export') ? undefined : false} perPage={25}>
     <Datagrid>
       <TextField source="email" />
       <TextField source="givenName" />
