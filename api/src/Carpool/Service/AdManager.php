@@ -1793,10 +1793,6 @@ class AdManager
      *  PROOF *
      **********/
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 1.16.0-next
     /**
      * Create a proof for an ask.
      *
