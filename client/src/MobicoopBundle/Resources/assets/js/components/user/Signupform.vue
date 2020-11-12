@@ -308,7 +308,7 @@
                   :items="communities"
                   outlined
                   chips
-                  :label="$t('communities.label')"
+                  :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
                   item-text="name"
                   item-value="id"
                   :required="requiredCommunity"
