@@ -397,6 +397,28 @@ export const dataProviderAdapter = (originalProvider) => ({
 
     if (resource === 'solidaries') {
       newParams = fixSolidaryData(newParams);
+
+      delete newParams.data.lastAction;
+      delete newParams.data.id;
+      delete newParams.data['@id'];
+      newParams.data.email = newParams.data.solidaryUser.user.email;
+      newParams.data.telephone = newParams.data.solidaryUser.user.telephone;
+      newParams.data.already_registered_user = newParams.data.solidaryUser.user["@id"];
+      newParams.data.familyName = newParams.data.solidaryUser.user.familyName;
+      newParams.data.givenName = newParams.data.solidaryUser.user.givenName;
+      const data = {
+        actionName: 'solidary_update',
+        solidary: newParams.id,
+      };
+
+      if (newParams && newParams.data.solidaryUser && newParams.data.solidaryUser.user) {
+        data.user = `/users/${newParams.data.solidaryUser.user.id}`;
+      }
+
+
+      originalProvider.create('solidary_animations', { data });
+
+      return originalProvider.create(resource, newParams);
     }
 
     return originalProvider.update(resource, newParams);

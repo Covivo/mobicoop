@@ -13,10 +13,11 @@ import {
   Filter,
   useTranslate,
   ReferenceField,
+  EditButton,
 } from 'react-admin';
 
 import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
-import { isSuperAdmin } from '../../../../auth/permissions';
+import isAuthorized from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
   const translate = useTranslate();
@@ -61,7 +62,7 @@ export const SolidaryList = (props) => (
     filters={<SolidaryFilter />}
     title="Demandes solidaires > liste"
     perPage={25}
-    exporter={isSuperAdmin()}
+    exporter={isAuthorized('export') ? undefined : false}
   >
     <Datagrid>
       <TextField source="originId" label="ID" />
@@ -74,8 +75,7 @@ export const SolidaryList = (props) => (
       <ActionField source="lastAction" />
       <DateField source="createdDate" />
       <ShowButton />
-      {/* @UNCOMMENT (22149) */}
-      {/* <EditButton /> */}
+      <EditButton />
     </Datagrid>
   </List>
 );

@@ -314,7 +314,7 @@ class RdexManager
             $parameters["from"]["latitude"],
             $parameters["to"]["longitude"],
             $parameters["to"]["latitude"],
-            isset($parameters["frequency"]) ? $parameters["frequency"] : null,
+            isset($parameters["frequency"]) ? $parameters["frequency"] : "punctual",
             isset($parameters["days"]) ? $parameters["days"] : null,
             isset($parameters["outward"]) ? $parameters["outward"] : null
         );

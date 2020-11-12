@@ -81,6 +81,7 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
  * Custom deserializer service.
@@ -212,6 +213,9 @@ class Deserializer
                 break;
             case ValidationDocument::class:
                 return $this->deserializeValidationDocument($data);
+                break;
+            case SsoConnection::class:
+                return $this->deserializeSsoConnection($data);
                 break;
             default:
                 break;
@@ -908,6 +912,13 @@ class Deserializer
         $validationDocument = new ValidationDocument();
         $validationDocument = $this->autoSet($validationDocument, $data);
         return $validationDocument;
+    }
+
+    private function deserializeSsoConnection(array $data): ?SsoConnection
+    {
+        $ssoconnection = new SsoConnection();
+        $ssoconnection = $this->autoSet($ssoconnection, $data);
+        return $ssoconnection;
     }
 
     private function autoSet($object, $data)

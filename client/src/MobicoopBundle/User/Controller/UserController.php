@@ -53,9 +53,9 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 
 /**
  * Controller class for user related actions.
@@ -81,6 +81,7 @@ class UserController extends AbstractController
     private $userManager;
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
+    private $ssoManager;
 
     /**
      * Constructor
@@ -100,6 +101,7 @@ class UserController extends AbstractController
         bool $paymentElectronicActive,
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
+        SsoManager $ssoManager,
         PaymentManager $paymentManager
     ) {
         $this->encoder = $encoder;
@@ -116,6 +118,8 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
+
+        $this->ssoManager = $ssoManager;
     }
 
     /***********
@@ -1125,6 +1129,48 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             return new JsonResponse($this->userManager->blockUser($data['blockedUserId']));
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userReturnConnectSSO(Request $request)
+    {
+        $params = $this->ssoManager->guessSsoParameters($request->query->all());
+
+        // We add the front url to the parameters
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST']  : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
+
+        return $this->redirectToRoute('user_login_sso', $params);
+    }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userLoginSso(Request $request)
+    {
+        return new JsonResponse();
+    }
+
+    /**
+     * Return page after a SSO Login
+     */
+    public function userReturnLogoutSSO(Request $request)
+    {
+        return new JsonResponse(["error"=>false,"message"=>"SSO Logout"]);
+    }
+
+    /**
+     * Return the Sso connection services of the platform
+     *
+     * AJAX
+     */
+    public function getSsoServices(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->userManager->getSsoServices());
         }
         return new JsonResponse();
     }

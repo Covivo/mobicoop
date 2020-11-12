@@ -16,7 +16,7 @@
           rounded
           :outlined="outlined"
           :disabled="disabled"
-          :href="$t('link', {'id':paymentItemId,'frequency':frequency,'type':type})"
+          @click="action()"
         >
           {{ displayPaymentStatus }}
         </v-btn>
@@ -67,7 +67,7 @@ export default {
     },
     frequency: {
       type: Number,
-      default: 1
+      default: null
     }
   },
   data(){
@@ -95,6 +95,13 @@ export default {
         // Paid
         this.disabled = true;
         return "paid";
+      }
+    },
+    action() {
+      if (this.paymentItemId && this.frequency) {
+        window.location.href = this.$t('route', {'id':this.paymentItemId,'frequency':this.frequency,'type':this.type});
+      } else {
+        this.$emit('activePanel');
       }
     }
   }

@@ -1,28 +1,12 @@
 <template>
   <v-container>
-    <!-- TITLE -->
-    <v-row justify="center">
+    <v-row align="center">
+      <!-- BACK BUTTON -->
       <v-col
-        align="center"
+        class="mt-0 mb-0 mr-0 ml-3 pa-0"
+        cols="1"
+        justify="left"
       >
-        <!-- Driver : confirmation -->
-        <h1 v-if="!isPayment">
-          {{ $t('titleConfirmation') }}
-        </h1>
-        <!-- Passenger : regular payment -->
-        <h1 v-else-if="regular">
-          {{ $t('titleRegular') }}
-        </h1>
-        <!-- Passenger : punctual payment -->
-        <h1 v-else>
-          {{ $t('titlePunctual') }}
-        </h1>
-      </v-col>  
-    </v-row>
-
-    <!-- BACK BUTTON -->
-    <v-row>
-      <v-col>
         <v-btn
           rounded
           color="secondary"
@@ -34,6 +18,35 @@
           {{ $t('buttons.back.label') }}
         </v-btn>
       </v-col>
+
+      <!-- TITLE -->
+      <v-col
+        align="center"
+        cols="8"
+        class="pl-12 ml-12"
+      >
+        <!-- Driver : confirmation -->
+        <h1
+          v-if="!isPayment"
+          class="pl-12 ml-12"
+        >
+          {{ $t('titleConfirmation') }}
+        </h1>
+        <!-- Passenger : regular payment -->
+        <h1
+          v-else-if="regular"
+          class="pl-12 ml-12"
+        >
+          {{ $t('titleRegular') }}
+        </h1>
+        <!-- Passenger : punctual payment -->
+        <h1
+          v-else
+          class="pl-12 ml-12"
+        >
+          {{ $t('titlePunctual') }}
+        </h1>
+      </v-col>  
     </v-row>
 
     <!-- WEEK SELECTION (regular only) -->
@@ -45,7 +58,7 @@
       <v-col
         align="center"
         cols="2"
-        class="mt-4 mr-n6 text-h4 primary--text "
+        class=" mr-n6 text-h4 primary--text "
       >
         <p>
           {{ $t('select.label') }}
@@ -92,6 +105,7 @@
       <v-col
         cols="8"
         align="center"
+        class="mt-n8"
       >
         <v-row>
           <!-- PREVIOUS JOURNEY -->
@@ -101,12 +115,11 @@
             <v-card
               v-if="previousItem"
               raised
-              height="850"
               class="mx-auto"
             >
               <v-row
                 justify="center"
-                class="pt-5"
+                class="pt-2"
               >
                 <v-avatar size="75">
                   <img
@@ -141,14 +154,13 @@
               v-if="currentItem"
               raised
               class="mx-auto"
-              height="850"
             >
               <!-- avatar -->
               <v-row
                 justify="center"
-                class="pt-5"
+                class="pt-2"
               >
-                <v-avatar size="125">
+                <v-avatar size="90">
                   <img
                     src="/images/avatarsDefault/square_250.svg"
                   >
@@ -157,8 +169,8 @@
 
               <!-- carpooler name -->
               <v-row justify="center">
-                <v-card-title>
-                  <p>
+                <v-card-title class="ma-0 pa-0">
+                  <p class="mb-0">
                     {{ currentItem.givenName }} {{ currentItem.shortFamilyName }}
                   </p>
                 </v-card-title>
@@ -166,7 +178,7 @@
 
               <!-- departure & arrival -->
               <v-row justify="center">
-                <v-card-text>
+                <v-card-text class="pa-0 ma-0">
                   <!-- date -->
                   <v-row justify="center">
                     <p class="font-weight-bold">
@@ -176,16 +188,17 @@
                   <!-- origin & destination -->
                   <v-row
                     justify="center"
+                    class="ma-0 pa-0"
                   >
                     <v-col>
-                      <p class="font-weight-bold">
+                      <p class="font-weight-bold ml-2">
                         {{ currentItem.origin.addressLocality }}
                       </p>
                       <p>
                         {{ currentItem.origin.street }}
                       </p>
                     </v-col>
-                    <v-col>
+                    <v-col class="ma-0 pa-0">
                       <v-icon
                         size="60"
                         color="accent"
@@ -194,7 +207,7 @@
                       </v-icon>
                     </v-col>
                     <v-col>
-                      <p class="font-weight-bold">
+                      <p class="font-weight-bold mr-2">
                         {{ currentItem.destination.addressLocality }}
                       </p>
                       <p>
@@ -207,10 +220,16 @@
                     <v-row
                       v-if="isPayment"
                       justify="center"
-                      class="mt-6"
+                      class="mt-n2"
                     >
-                      <v-col>
-                        <p v-html="$t('regularInfo', {driver: currentItem.givenName +' '+ currentItem.shortFamilyName})" />
+                      <v-col
+                        cols="10"
+                        class="ma-0 pa-0"
+                      >
+                        <p
+                          class="ma-0 pa-0"
+                          v-html="$t('regularInfo', {driver: currentItem.givenName +' '+ currentItem.shortFamilyName})"
+                        />
                       </v-col>
                     </v-row>
                     <v-row
@@ -219,7 +238,7 @@
                       <!-- outward -->
                       <v-col
                         cols="3"
-                        class="accent--text mt-3"
+                        class="accent--text pa-0 ma-0"
                       >
                         {{ $t('outward') }}
                         <v-icon color="accent">
@@ -229,6 +248,7 @@
                       <v-col
                         justify="center"
                         cols="12"
+                        class="pa-0 ma-0"
                       >
                         <day-list-chips 
                           :disabled="currentItem.mode !== null || disabledComponent"
@@ -259,7 +279,7 @@
                     >
                       <v-col
                         cols="3"
-                        class="accent--text mt-3"
+                        class="accent--text ma-0 pa-0"
                       >
                         {{ $t('return') }}
                         <v-icon color="accent">
@@ -269,6 +289,7 @@
                       <v-col
                         justify="center"
                         cols="12"
+                        class="pa-0 ma-0"
                       >
                         <day-list-chips
                           :is-outward="false"
@@ -299,7 +320,7 @@
                       <!-- price -->
                       <v-row
                         justify="center"
-                        class="mt-4 mb-n8"
+                        class="mt-n4 mb-0 pa-0"
                       >
                         <v-col>
                           <p>
@@ -329,7 +350,7 @@
                           v-model="currentItem.mode"
                           column
                         >
-                          <v-row>
+                          <v-row class="mt-n12"> 
                             <v-col>
                               <v-radio
                                 :label="$t('electronicPay')"
@@ -380,7 +401,10 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col cols="12">
+                            <v-col
+                              cols="12"
+                              class="mt-n12"
+                            >
                               <!-- Item already confirmed -->
                               <v-btn
                                 v-if="currentItem.mode !== null"
@@ -538,7 +562,7 @@
                   class="mt-sm-n12 mt-md-n10"
                 >
                   <!-- previous button -->
-                  <v-col>
+                  <v-col class="pa-1">
                     <v-btn
                       v-if="previousItem"
                       rounded
@@ -554,7 +578,7 @@
                     </v-btn>
                   </v-col>
                   <!-- next button -->
-                  <v-col>
+                  <v-col class="pa-1">
                     <v-btn
                       v-if="nextItem"
                       rounded
@@ -582,12 +606,11 @@
             <v-card
               v-if="nextItem"
               raised
-              height="850"
               class="mx-auto"
             >
               <v-row
                 justify="center"
-                class="pt-5"
+                class="pt-2"
               >
                 <v-avatar size="75">
                   <img
@@ -662,6 +685,7 @@
           </v-col>
           <v-col
             align="left"
+            cols="12"
           >
             <v-list shaped>
               <v-list-item

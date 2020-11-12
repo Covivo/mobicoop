@@ -112,6 +112,14 @@ class Structure
     private $email;
 
     /**
+     * @var string|null The telephone number of the structure.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readSolidary","writeSolidary","readUser"})
+     */
+    private $telephone;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -519,6 +527,17 @@ class Structure
         return $this;
     }
 
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
 
     public function getCreatedDate(): ?\DateTimeInterface
     {

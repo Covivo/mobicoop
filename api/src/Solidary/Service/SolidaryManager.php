@@ -179,11 +179,11 @@ class SolidaryManager
         // we set the margin duration
         $solidary->setMarginDuration($solidary->getProposal()->getCriteria()->getMarginDuration());
         // we do the same if we have a return
+        $returnTimes = ['mon'=>null,'tue'=>null,'wed'=>null,'thu'=>null,"fri"=>null,"sat"=>null,"sun"=>null];
         if ($solidary->getProposal()->getProposalLinked() !== null) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
             $returnHours = null;
             $returnMinutes = null;
-            $returnTimes = ['mon'=>null,'tue'=>null,'wed'=>null,'thu'=>null,"fri"=>null,"sat"=>null,"sun"=>null];
             if ($solidary->getProposal()->getProposalLinked()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                 if ($solidary->getProposal()->getProposalLinked()->getCriteria()->isMonCheck()) {
                     $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('H');
@@ -233,7 +233,11 @@ class SolidaryManager
             date_time_set($returnDatetime, $returnHours, $returnMinutes);
             // we get the return date and time
             $solidary->setReturnDatetime($returnDatetime);
+        } else {
+            // We juste set the returnTime array at null if there is no return
+            $solidary->setReturnTimes($returnTimes);
         }
+
         $days = ['mon' => false, 'tue' => false,'wed' => false,'thu' => false,'fri' => false, 'sat' => false, 'sun' => false];
         $criteria = $solidary->getProposal()->getCriteria();
         if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
@@ -719,7 +723,6 @@ class SolidaryManager
 
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
-        
         // Frequency
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         // We set the date and time of the demand

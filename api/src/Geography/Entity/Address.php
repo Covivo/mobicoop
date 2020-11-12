@@ -269,7 +269,7 @@ class Address implements \JsonSerializable
     private $elevation;
 
     /**
-     * @var string The geoJson point of the address.
+     * @var string|null The geoJson point of the address.
      * @ORM\Column(type="point", nullable=true)
      * @Groups({"read","write","writeRelayPoint","readEvent"})
      */

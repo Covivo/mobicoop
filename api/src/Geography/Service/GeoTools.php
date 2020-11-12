@@ -37,7 +37,8 @@ class InvalidParameterException extends \Exception
 class GeoTools
 {
     const METERS_BY_DEGREE = 111319;
-    const RDP_EPSILON = 0.005;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
+    const RDP_EPSILON = 20;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
+    const RDP_DELTA = 10000;            // Ramer-Douglas-Peucker Epsilon delta (used to convert the epsilon in the coordinates system used, here the gps coordinates system)
 
     private $params;
 
@@ -305,7 +306,7 @@ class GeoTools
                 $address->getLatitude()
             ];
         }
-        return $this->RamerDouglasPeucker2d($line, SELF::RDP_EPSILON);
+        return $this->RamerDouglasPeucker2d($line, self::RDP_EPSILON/self::RDP_DELTA);
     }
 
     /**

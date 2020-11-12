@@ -58,3 +58,19 @@ vich_uploader:
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
+        
+        # mapping for relay points images
+        relayPoint:
+            uri_prefix: /upload/relaypoints/images/
+            upload_destination: '%kernel.project_dir%/public/upload/relaypoints/images/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}
+
+        # mapping for relay point types images
+        relayPointType:
+            uri_prefix: /upload/relaypointtypes/images/
+            upload_destination: '%kernel.project_dir%/public/upload/relaypointtypes/images/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}
