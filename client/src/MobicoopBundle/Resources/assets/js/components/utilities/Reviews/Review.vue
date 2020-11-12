@@ -5,10 +5,10 @@
         cols="2"
         lg="3"
       >
-        <ProfileAvatar :avatar="review.reviewer.avatar" />
+        <ProfileAvatar :avatar="avatar" />
       </v-col>
       <v-col>
-        <v-row><v-col>{{ review.reviewer.givenName }} {{ review.reviewer.shortFamilyName }}<br>{{ reviewDate }}</v-col></v-row>
+        <v-row><v-col>{{ givenName }} {{ shortFamilyName }}<br>{{ reviewDate }}</v-col></v-row>
         <v-row><v-col><div v-html="review.content" /></v-col></v-row>
       </v-col>
     </v-row>
@@ -27,6 +27,10 @@ export default {
       type: Object,
       default: null
     },
+    showReviewedInfos:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -36,6 +40,15 @@ export default {
   computed:{
     reviewDate(){
       return moment(this.review.date.moment).format('DD/MM/YYYY');
+    },
+    givenName(){
+      return (this.showReviewedInfos) ? this.review.reviewed.givenName : this.review.reviewer.givenName;
+    },
+    shortFamilyName(){
+      return (this.showReviewedInfos) ? this.review.reviewed.shortFamilyName : this.review.reviewer.shortFamilyName;
+    },
+    avatar(){
+      return (this.showReviewedInfos) ? this.review.reviewed.avatar : this.review.reviewer.avatar;
     }
   }
 }

@@ -79,7 +79,12 @@ export default {
   },
   computed:{
     avatar(){
-      return this.reviewed.avatars[this.reviewed.avatars.length-1];
+      if(this.reviewed.avatars){
+        return this.reviewed.avatars[this.reviewed.avatars.length-1];
+      }
+      else{
+        return this.reviewed.avatar;
+      }
     },
     labelTxt(){
       if(this.label){

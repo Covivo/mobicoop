@@ -21,7 +21,10 @@
         lg="6"
         class="text-left"
       >
-        <Review :review="review" />
+        <Review
+          :review="review"
+          :show-reviewed-infos="showReviewedInfos"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -47,6 +50,10 @@ export default {
     showTitle:{
       type: Boolean,
       default: true
+    },
+    showReviewedInfos:{
+      type: Boolean,
+      default: false
     }
   }
 }

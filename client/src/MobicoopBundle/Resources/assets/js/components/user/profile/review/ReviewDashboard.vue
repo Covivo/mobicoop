@@ -9,10 +9,13 @@
     <v-tab href="#givenReviews">
       {{ $t('tabs.givenReviews') }}
     </v-tab>
-    <v-tab-item value="givenReviews">
-      <Reviews
-        :reviews="givenReviews"
-        :show-title="false"
+    <v-tab-item value="reviewsToGive">
+      <WriteReview
+        v-for="(reviewToGive,index) in reviewsToGive"
+        :key="index"
+        :reviewed="reviewToGive.reviewed"
+        :reviewer="reviewToGive.reviewer"
+        @reviewLeft="reviewLeft"
       />
     </v-tab-item>
     <v-tab-item value="receivedReviews">
@@ -21,8 +24,12 @@
         :show-title="false"
       />
     </v-tab-item>
-    <v-tab-item value="reviewsToGive">
-      reviewsToGive
+    <v-tab-item value="givenReviews">
+      <Reviews
+        :reviews="givenReviews"
+        :show-title="false"
+        :show-reviewed-infos="true"
+      />
     </v-tab-item>
   </v-tabs>
 </template>
@@ -30,6 +37,7 @@
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/user/profile/review/ReviewDashboard/";
 import Reviews from "@components/utilities/Reviews/Reviews";
+import WriteReview from "@components/utilities/Reviews/WriteReview"
 export default {
   i18n: {
     messages: {
@@ -38,7 +46,8 @@ export default {
     }
   },
   components:{
-    Reviews
+    Reviews,
+    WriteReview
   },
   data(){
     return{
@@ -59,6 +68,9 @@ export default {
           this.receivedReviews = res.data.receivedReviews;
           this.reviewsToGive = res.data.reviewsToGive;
         });        
+    },
+    reviewLeft(data){
+      console.log("reviewleft");
     }
   }
 }
