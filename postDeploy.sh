@@ -47,12 +47,24 @@ then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/domains.json
     fi
 
+    # check Modules files
+    MODULES_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
+    if [ ! -f "$MODULES_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
+    fi
+
     # check SSO files
     SSO_FILE=/var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     if [ ! -f "$SSO_FILE" ]; then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     fi
     
+    # check Modules files
+    MODULES_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+    if [ ! -f "$MODULES_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+    fi
+
     # Migrations
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
