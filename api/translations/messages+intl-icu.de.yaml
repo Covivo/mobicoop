@@ -1,1 +1,224 @@
-{}
+youReceivedExternalContactOrigin: '{origin}'
+youReceivedExternalContact: 'Sie haben eine Nachricht von einem Fahrgemeinschaftsanbieter
+  erhalten: auf'
+rdexMessage: Seine/ihre Nachricht
+header3Data: senderName
+yourValidationToken: Ihr Bestätigungscode
+updatedSefl: Änderung Ihres Profils
+yourInscription: Ihre Registrierung
+passwordChanged: Bestätigung der Passwortrücksetzung
+newPassword: IHR NEUES PASSWORT WURDE GESPEICHERT!
+renewPassword: ANTRAG AUF PASSWORTZURÜCKSETZUNG.
+askPassword: Antrag auf Passwortrücksetzung
+contactYou: '{givenName} kontaktiert Sie'
+passengerAskLinkedAdDeletedUrgent: Dringend – Eine Anzeige, bei der Sie Mitfahr/in
+  waren, wurde gelöscht
+passengerAskLinkedAdDeleted: Eine Anzeige, bei der Sie Mitfahrer/in waren, wurde gelöscht
+driverAskLinkedAdDeletedUrgent: Dringend – Eine Anzeige, für die Sie als Fahrer tätig
+  waren, wurde gelöscht
+driverAskLinkedAdDeleted: Eine Anzeige, für die Sie als Fahrer tätig waren, wurde
+  gelöscht
+askLinkedAdDeleted: Eine Anzeige, auf die Sie sich beworben haben, wurde gelöscht
+accountDeleted: hat sein/ihr Konto gelöscht und kann keine Fahrgemeinschaft mit Ihnen
+  bilden am
+carpoolDeleted: hat seine/ihre Fahrt abgesagt und kann keine Fahrgemeinschaft mit
+  Ihnen bilden am
+newAd: 'Neue Anzeige(n) auf '
+newCarpoolAd: Neue Fahrgemeinschaftsanzeige(n)
+carpoolWaitingForValidation: Fahrgemeinschaft wartet auf Bestätigung
+askRefused: Fahrgemeinschaftsvorschlag abgelehnt
+carpoolAsk: Fahrgemeinschaftsanfrage
+carpoolRecap: Zusammenfassung von Fahrgemeinschaften
+renewYourAd: Vergessen Sie nicht, Ihre Anzeige zu erneuern
+lookYourMessaging: 'Gehen Sie zu „Meine Nachrichten“ auf '
+newMessage: Sie haben eine neue Nachricht erhalten von
+newMatching: Eine neue Anzeige für ihre Fahrt wurde veröffentlicht
+clickHereToValidate: Klicken Sie hier, um auf diese Fahrgemeinschaftsanfrage über
+  ihrem Postfach zu antworten
+askYouCarpool: schlägt Sie eine Fahrgemeinschaft vor
+findTheProposalIn: 'Annehmen Sie oder ablehen Sie den Antrag unter „Meine Nachrichten“
+  auf '
+askYouCarpoolRegular: 'schlägt Sie regelmäßige Fahrgemeinschaften vor, aus '
+carpoolAskAccepted: 'Fahrgemeinschaft bestätigt mit '
+seeTheAd: 'Die Anzeige ansehen '
+at: 'um '
+from: 'aus dem '
+the: 'am '
+and: 'und '
+between: 'zwischen '
+carpoolAskAcceptedRegular: 'Regelmäßige Fahrgemeinschaften bestätigt mit '
+renewYourAdsOn: Erneuern Sie Ihre Anzeige auf
+inFewDays: In einigen Tagen werden Ihre Fahrgemeinschaftsanzeigen nicht mehr gültig
+  sein
+explanationOfTheReport: Erläuterung zur Meldung
+reportThatEvent: hat das Ereignis gemeldet
+theUser: Der/die Benutzer/in
+eventDescription: 'Beschreibung: '
+eventLocation: 'Adresse: '
+eventName: 'Name: '
+eventDetail: 'Hier sind die Details Ihres Ereignis:'
+event: IHR EREIGNIS WURDE GESPEICHERT!
+eventCreated: Ihr Ereignis wurde gespeichert!
+noPenaltyApplied: Es gibt keine Strafe für die Absage dieser Fahrgemeinschaft. Um
+  die Zuverlässigkeit der Anzeigen zu gewährleisten und die Fahrgemeinschaften vor
+  zu vielen Stornierungen zu schützen, behalten wir uns jedoch das Recht vor, die
+  Möglichkeit zur Veröffentlichung von Anzeigen auszusetzen, wenn ein/e Mitfahrer/in
+  zu oft die Fahrgemeinschaften storniert.
+clickOnLinkToSearchAgain: Klicken Sie auf diesen Link, um Ihre Suche neu zu starten
+hasDeletedTheAssociateAd: seine/ihre Anzeige gelöscht hat.
+isCanceledBecause: wurde abgesagt, weil
+with: mit
+withTheDriver: mit dem/der Fahrer/in
+withThePassenger: mit dem/der Mitfahrer/in
+yourAskCarpoolBetween: Ihre Anfrage für Fahrgemeinschaften zwischen
+yourCarpoolBetween: Ihre Fahrgemeinschaft zwischen
+CheckoutForAnyURLMisspellingOr: Nachrichten
+urlMailBox: /Benutzer/Nachrichten
+profilUpdate: AKTUALISIERUNG IHRES PROFILS BESTÄTIGT!
+theModificationIsConfirmed: Die Änderung Ihres Profils wurde bestätigt
+yourPasswordHasBeenSendBySms: Ihr passwort wurde Ihnen per SMS gesendet.
+yourPasswordIs: Ihr Passwort ist
+urlMobileEmailValidation: /#/confirm-registration/
+urlEmailValidation: /Benutzer/Registrierung/Validierung/
+orUseTheValidationCode: Oder verwenden Sie den Validierungscode direkt auf der Website
+clickHereToConfirm: Bitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen
+wellTakenIntoAccount: wurde bestätigt
+yourInscriptionAt: Ihre Registrierung beim Service
+yourInscriptionAtByTiers: Ihre Registrierung beim Service „{instanceName}“ durch eine
+  dritte Partei
+inscriptionAt: IHRE REGISTRIERUNG WURDE BESTÄTIGT!
+thanksForUse: Vielen Dank für die Nutzung von
+successfullyChanged: wurde geändert
+yourPassword: Ihr Passwort
+urlUpdatePassword: /Benutzer/Passwort/zurücksetzen/
+linkChangePassword: Link zur Passwortänderung
+clickHereToChangePassword: Bitte klicken Sie auf diesen Link, um Ihr Passwort zu ändern
+askNewPassword: Sie haben ein neues Passwort angefordert
+askNewPasswordTitle: Neues Passwort
+partnership: Partnerschaftsanfrage
+technicalIssues: Technische Probleme
+infos: Informationen
+notMentioned: Keine Information
+thankYou: Danke
+message: Nachricht
+ask: Anfrage
+email: E-Mail-Adresse
+name: Nachname
+firstname: Vorname
+newContactAsk: Hallo, Sie haben eine neue Kontaktanfrage
+mailBox: Ihr Postfach
+getProblem: Wenn diese E-Mail eine Nachricht enthält, die nicht der Charta entspricht,
+  zögern Sie nicht, uns zu kontaktieren
+clickHere: indem Sie hier klicken
+canAnswerViaEmailFrom: Sie können auf diese Nachricht antworten – über das Nachrichtensystem
+  von
+youHaveAMessage: 'Sie haben eine neue Nachricht erhalten:'
+clickNewSearch: Sie können auf diesen Link klicken, um Ihre Suche erneut zu starten
+ownerMessage: 'Hier ist die Nachricht vom Anzeigenbesitzer:'
+cancelledCarpool: Fahrgemeinschaft abgesagt
+hasUpdatedHisAd: hat seine/ihre Anzeige geändert.
+hasBeenCancelledBecause: wurde abgesagt, weil
+no: Nein
+yes: Ja
+new: Neu
+comment: Kommentar
+seatsDriver: Verfügbare Sitze
+luggage: Großes Gepäck
+backSeats: 2 auf dem Rücksitz
+bike: Fahrrad
+updateFieldsListTitle: 'Hier ist das Detail der geänderten Informationen:'
+hasBeenUpdated: wurde geändert
+updatedCarpool: Fahrgemeinschaft geändert
+carpoolProposalUpdated: Die Anzeige im Zusammenhang mit Ihrer Anfrage wurde geändert
+justPublished: wurde gerade veröffentlicht
+toConsultCorrespondingAdsAndMakeContact: um die entsprechenden Anzeigen einzusehen
+  und Kontakt aufzunehmen
+URLEmailsAlerts: Benutzer/Profil/bearbeiten/mein-Profil
+linkMyAds: /Benutzer/Profil/bearbeiten/meine-Anzeigen
+myAds: Meine Anzeigen
+seeYouIn: Termin in
+newCarpoolAdMatchingYourCommute: Eine neue Fahrgemeinschaftsanzeige, die Ihre Fahrt
+  entspricht, zwischen
+urlPublish: /Fahrgemeinschaft/Anzeige
+deletedAccountRegularCarpool: ' hat sein/ihr Konto gelöscht und kann keine Fahrgemeinschaft
+  mit Ihnen bilden am '
+deletedAccountOccasionalCarpool: ' hat sein/ihr Konto gelöscht und kann keine Fahrgemeinschaft
+  mit Ihnen bilden am '
+canceledRegularCarpool: '  hat seine/ihre regemäßige Fahrt abgesagt und kann keine
+  Fahrgemeinschaft mit Ihnen am '
+externalContact: Kontakt für Fahrgemeinschaften
+header2Data: senderEmail
+header1Data: jira-ouestgo
+header1Name: X-JEMH-assignee
+findNewCarpool: 'Finden Sie neue Fahrgemeinschaften oder schreiben Sie eine Anzeige
+  auf '
+appointmentIn: Gehen Sie zu „Meine Anzeige“ auf
+newAdPublished: Eine neue Anzeige entspricht Ihrer Fahrt
+goTotheSite: 'Finden Sie neue Fahrgemeinschaften oder schreiben Sie eine Anzeige auf '
+refusedAskReguar: 'hat die regelmäßige Fahrgemeinschaft nicht bestätigt von '
+refusedAsk: 'hat die Fahrgemeinschaft nicht bestätigt von '
+old: Alt
+field: Feld
+changePassword: Wir empfehlen Ihnen dringend, diese beim nächsten Anmeldung zu ändern
+temporaryPassword: '{password}'
+temporaryPasswordAttributed: Ihnen wurde ein temporäres Passwort zugewiesen
+massMigrated: Ihr Fahrgemeinschaftskonto
+journeyDetailTime: geplant am {journeyDate} um {journeyTime}.
+journeyDetailDestination: '{journeyDestination}'
+journeyDetailTo: nach
+journeyDetailOrigin: '{journeyOrigin}'
+journeyDetail: Diese Nachricht betrifft Ihre Fahrt aus
+useDirectContact: Sie können die Kontaktdaten, die er/sie Ihnen im Prinzip in seiner
+  Nachricht mitgeteilt hat, verwenden, um ihn/sie direkt zu kontaktieren.
+noDirectResponse: Da diese(r) Benutzer/in auf einer anderen Fahrgemeinschaftsplattform
+  registriert ist, können Sie ihm/ihr nicht über {instanceName} antworten.
+canceledOccasionalCarpool: ' hat seine/ihre Fahrt abgesagt und kann keine Fahrgemeinschaft
+  mit Ihnen bilden am '
+canceledCarpool: IHRE FAHRGEMEINSCHAFT WURDE ABGESAGT.
+noPanic: Keine Sorge, Sie können nach einer neue Fahrt suchen oder eine Anzeige veröffentlichen.
+refusedRegularCarpool: ' hat keine Fahrgemeinschaft für die regelmäßige Fahrt bestätigt
+  für den '
+refusedOccasionalCarpool: ' hat keine Fahrgemeinschaft für die Fahrt bestätigt für
+  den '
+refusedCarpool: IHRE FAHRGEMEINSCHAFT IST NICHT BESTÄTIGT.
+regularCarpoolAsk: 'Zusammenfassung des Antrags auf regelmäßige Fahrgemeinschaften
+  aus dem '
+occasionalCarpoolAsk: 'Zusammenfassung des Antrags auf gelegentliche Bildung von Fahrgemeinschaften
+  am '
+askForCarpool: bittet Sie um eine Fahrgemeinschaft.
+newCarpoolAsk: SIE HABEN EINE FAHRGEMEINSCHAFTSANFRAGE!
+indicativePrice: 'Richtpreis: '
+seatsSelected: 'Reservierte(r) Sitz(e): '
+dropOff: 'Setzt ab in '
+pickUp: 'Übernahme in '
+multipleShedules: Mehrere Zeitpläne
+return: RÜCKFAHRT
+outward: HINFAHRT
+to: zu
+regularCarpool: Zusammenfassung Ihrer regelmäßigen Fahrt aus dem
+occasionalCarpool: Zusammenfassung Ihrer gelegentlichen Fahrt aus dem
+isConfirmed: ist bestätigt!
+yourCarpoolWith: Ihre Fahrgemeinschaft mit
+acceptedCarpool: IHRE FAHRGEMEINSCHAFT IST BESTÄTIGT!
+toUseTheService: den Service zu nutzen! Teilen Sie Ihre Fahrten und finden Sie Ihre
+  perfekte Mitfahrgelegenheit
+nowYouAreMore: Sie sind jetzt mehr als
+beCarefulFewDaysAnnouncementNotValid: Bitte beachten Sie, dass Ihre gespeicherten
+  Fahrten in einigen Tagen in Ihrem Profil nicht mehr gültig sind und daher für andere
+  Mitfahrer nicht mehr sichtbar sind
+signature: 'Bis bald '
+FollowUs: Folgen Sie uns
+Download: Herunterladen Sie die <b>Android</b>- oder <b>iOS</b>-Anwendung
+EmailsAlerts: Ihre E-Mail-Benachrichtigungen verwalten
+FAQ: Häufig gestellte Fragen
+AQuestion: Eine Frage?
+hello: Hallo
+solidaryContact: Ein solidarischer Verwalter kontaktiert Sie
+unsubscribeEmailAlertFront: Sie sind in der Tat vom {instanceName}-Nachrichten-Service
+  abgemeldet. Um sich später erneut zu registrieren, können Sie zu Profil > Mein Konto
+  gehen.
+unsubscribeEmail: Klicken Sie hier, um sich von {instanceName}-Nachrichten-Service
+  abzumelden
+urlUnsubscribeEmail: /benutzer/unsubscribe
+header3Name: X-JEMH-Name und Vorname der Ansprechpartner
+header2Name: X-JEMH-E-Mail-Adresse des Ansprechpartner
