@@ -78,7 +78,7 @@ profilUpdate: AKTUALISIERUNG IHRES PROFILS BESTÄTIGT!
 theModificationIsConfirmed: Die Änderung Ihres Profils wurde bestätigt
 yourPasswordHasBeenSendBySms: Ihr passwort wurde Ihnen per SMS gesendet.
 yourPasswordIs: Ihr Passwort ist
-urlMobileEmailValidation: /#/confirm-registration/
+urlMobileEmailValidation: /#/registrierung-bestaetigen/
 urlEmailValidation: /Benutzer/Registrierung/Validierung/
 orUseTheValidationCode: Oder verwenden Sie den Validierungscode direkt auf der Website
 clickHereToConfirm: Bitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen
@@ -112,7 +112,7 @@ getProblem: Wenn diese E-Mail eine Nachricht enthält, die nicht der Charta ents
 clickHere: indem Sie hier klicken
 canAnswerViaEmailFrom: Sie können auf diese Nachricht antworten – über das Nachrichtensystem
   von
-youHaveAMessage: 'Sie haben eine neue Nachricht erhalten:'
+youHaveAMessage: 'Sie haben eine neue Nachricht erhalten'
 clickNewSearch: Sie können auf diesen Link klicken, um Ihre Suche erneut zu starten
 ownerMessage: 'Hier ist die Nachricht vom Anzeigenbesitzer:'
 cancelledCarpool: Fahrgemeinschaft abgesagt
@@ -222,3 +222,9 @@ unsubscribeEmail: Klicken Sie hier, um sich von {instanceName}-Nachrichten-Servi
 urlUnsubscribeEmail: /benutzer/unsubscribe
 header3Name: X-JEMH-Name und Vorname der Ansprechpartner
 header2Name: X-JEMH-E-Mail-Adresse des Ansprechpartner
+detailsTextEventReport: 'Details der Meldung:'
+eventReport: Ein Ereignis wurde gemeldet
+eventReportTitle: Meldung eines Ereignisses
+changeYourPassword: Ändern Sie Ihr Passwort
+updatedCarpoolDetails: Einzelheiten Ihrer Fahrgemeinschaft aus {origin} zu {destination}
+  wurden geändert von
