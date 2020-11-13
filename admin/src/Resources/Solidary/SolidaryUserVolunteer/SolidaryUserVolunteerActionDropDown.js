@@ -34,25 +34,27 @@ const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary
     return matchingSolution.id;
   }
 
-  const { data: matchings } = await dataProvider.getList('solidary_searches', {
-    pagination: { page: 1, perPage: 50 },
-    sort: {},
-    filter: {
-      way: 'outward',
-      solidary: `/solidaries/${solidary.originId}`,
-      type: 'carpool',
-    },
-  });
+  const getSolidaryMatching = async (type) => {
+    const { data } = await dataProvider.getList('solidary_searches', {
+      pagination: {},
+      sort: {},
+      filter: {
+        way: 'outward',
+        solidary: `/solidaries/${solidary.originId}`,
+        type,
+      },
+    });
+    return data;
+  };
 
   // Attempt to find a matching solution and create it
-
-  // @TODO: Will work when authorId is available on the API
-  // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
-  const matching = matchings.find((m) => m.solidaryResultCarpool.authorId === userId);
+  let matchings = await getSolidaryMatching('carpool');
+  // Moreover, shouldn't we retrieve the corresponding solution matching instead of checking user ?
+  let matching = matchings.find((m) => !!m.solidaryMatching);
   if (!matching) {
-    throw new Error("Can't find matching solution");
+    matchings = await getSolidaryMatching('transport');
   }
-
+  matching = matchings.find((m) => !!m.solidaryMatching);
   return dataProvider
     .create('solidary_solutions', {
       data: { solidaryMatching: matching.solidaryMatching.id },
