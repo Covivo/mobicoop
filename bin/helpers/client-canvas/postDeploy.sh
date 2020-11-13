@@ -108,7 +108,7 @@ else
 
     # check PT files
     PT_PROVIDERS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json
-    if [ ! -f "$RDEX_CLIENTS_FILE" ]; then
+    if [ ! -f "$PT_PROVIDERS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/publicTransport/providers.json
     fi
 
@@ -126,7 +126,7 @@ else
 
     # check Modules files
     MODULES_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
-    if [ ! -f "$DOMAINS_FILE" ]; then
+    if [ ! -f "$MODULES_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
     fi
 

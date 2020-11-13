@@ -53,10 +53,6 @@ then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     fi
     
-    # check env files
-    python3 /var/www/$VERSION/$INSTANCE/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
-
-
     # Migrations
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -104,9 +100,6 @@ else
     if [ ! -f "$SSO_FILE" ]; then
         echo "{}" >> /var/www/$INSTANCE/$VERSION/api/config/user/sso.json
     fi
-
-    # check env files
-    python3 /var/www/$INSTANCE/$VERSION/scripts/checkClientEnv.py -path /var/www/$INSTANCE/$VERSION/mobicoop-platform -env $VERSION_MIGRATE
 
     # Migrations
     cd /var/www/$INSTANCE/$VERSION/api;
