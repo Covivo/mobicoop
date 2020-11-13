@@ -18,6 +18,9 @@ case $i in
 esac
 done
 
+if [ $VERSION == "dev" ] || [ $VERSION == "test" ] || [ $VERSION == "prod_test"]
+then
+
 # Migrations
 cd /var/www/$VERSION/$INSTANCE/api;
 php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -27,6 +30,22 @@ python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRA
 
 #Admin build
 cd /var/www/$VERSION/$INSTANCE/admin;
+rm -Rf node_modules;
+rm package-lock.json;
+npm install;
+npm run build;
+
+else
+
+# Migrations
+cd /var/www/$INSTANCE/$VERSION/api;
+php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
+
+# Crontab update
+python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+
+#Admin build
+cd /var/www/$INSTANCE/$VERSION/admin;
 rm -Rf node_modules;
 rm package-lock.json;
 npm install;
