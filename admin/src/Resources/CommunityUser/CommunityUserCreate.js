@@ -133,7 +133,11 @@ export const CommunityUserCreate = (props) => {
               But https://github.com/marmelab/react-admin/pull/4367
               So waiting for the next release of react-admin
           */}
-          <AutocompleteInput optionText={inputText} allowEmpty={false} />
+          <AutocompleteInput
+            optionText={inputText}
+            allowEmpty={false}
+            shouldRenderSuggestions={(value) => value.length >= 2}
+          />
         </ReferenceInput>
 
         <SelectInput
