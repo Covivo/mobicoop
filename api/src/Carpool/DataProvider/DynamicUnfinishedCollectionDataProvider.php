@@ -25,7 +25,7 @@ namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Dynamic;
+use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Service\DynamicManager;
 use Symfony\Component\Security\Core\Security;
 

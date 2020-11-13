@@ -24,7 +24,7 @@
 namespace App\Carpool\Security;
 
 use App\Auth\Service\AuthManager;
-use App\Carpool\Entity\DynamicAsk;
+use App\Carpool\Ressource\DynamicAsk;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Service\DynamicManager;

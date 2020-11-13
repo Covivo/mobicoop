@@ -24,7 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Dynamic;
+use App\Carpool\Ressource\Dynamic;
 
 /**
  *  Check that the requester is the author of the related dynamic ad

@@ -23,7 +23,7 @@
 
 namespace App\Communication\Service;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Waypoint;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Event\Entity\Event;

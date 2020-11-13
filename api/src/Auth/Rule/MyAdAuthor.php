@@ -21,36 +21,28 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Auth\Rule;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Ressource\MyAd;
-use App\Carpool\Service\MyAdManager;
-use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for MyAds.
- *
+ *  Check that the requester is the author of the related MyAd
  */
-final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+class MyAdAuthor implements AuthRuleInterface
 {
-    protected $myAdManager;
-    protected $security;
-    
-    public function __construct(MyAdManager $myAdManager, Security $security)
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($requester, $item, $params)
     {
-        $this->myAdManager = $myAdManager;
-        $this->security = $security;
-    }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return MyAd::class === $resourceClass && $operationName === "get";
-    }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
-    {
-        return $this->myAdManager->getMyAds($this->security->getUser());
+        if (!isset($params['myAd'])) {
+            return false;
+        }
+        /**
+         * @var MyAd $myAd
+         */
+        $myAd = $params['myAd'];
+        return is_null($myAd->getAuthor()) || $myAd->getAuthor()->getId() == $requester->getId();
     }
 }

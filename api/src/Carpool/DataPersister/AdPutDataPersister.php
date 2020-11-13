@@ -24,7 +24,7 @@
 namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 
 final class AdPutDataPersister implements ContextAwareDataPersisterInterface

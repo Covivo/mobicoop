@@ -21,10 +21,11 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\Carpool\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Carpool\Entity\Proposal;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;

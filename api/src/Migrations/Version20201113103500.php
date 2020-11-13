@@ -1,0 +1,29 @@
+<?php declare(strict_types=1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * MyAd authorization
+ */
+final class Version20201113103500 extends AbstractMigration
+{
+    public function up(Schema $schema) : void
+    {
+        $this->addSql("INSERT INTO `auth_rule` (`id`, `name`) VALUES ('30', 'MyAdAuthor')");
+
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (253, 30, 1, 'my_ad_read_self', 'View its own MyAd');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (254, NULL, 1, 'my_ad_list_self', 'View the list of its own MyAd');");
+
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 253)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 254)');
+    }
+
+    public function down(Schema $schema) : void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+    }
+}

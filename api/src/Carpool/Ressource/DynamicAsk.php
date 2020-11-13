@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\Carpool\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;

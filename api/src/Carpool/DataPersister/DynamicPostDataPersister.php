@@ -24,7 +24,7 @@
  namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Entity\Dynamic;
+use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Exception\DynamicException;
 use App\Carpool\Service\DynamicManager;
 use App\User\Entity\User;
