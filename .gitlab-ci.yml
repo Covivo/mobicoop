@@ -237,8 +237,8 @@ prod_test_deploy:
 #
 # Deployment for master branch on production server
 #
-prod_deploy:
-  stage: staging_deploy
+staging_deploy:
+  stage: prod_deploy
   only:     # job executed only on master branch
     - master
   # variables:
