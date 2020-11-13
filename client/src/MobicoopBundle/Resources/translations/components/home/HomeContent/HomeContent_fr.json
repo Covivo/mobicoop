@@ -20,7 +20,7 @@
         "text": "S'entraider pour l'accès à l'emploi",
         "button": {
             "label": "Besoin d'un coup de pouce ?",
-            "route": "/solidarite"
+            "route": "/#/carpools/solidary/home/request"
         },
         "button2": {
             "label": "Donner un coup de pouce",

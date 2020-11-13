@@ -44,6 +44,9 @@ const UserCreate = (props) => {
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
 
+  const requiredPhone = (message = translate('custom.alert.invalidPhone')) => (value) =>
+    value && value.length === 10 ? undefined : message;
+
   const minPassword = (message = translate('custom.label.user.errors.minPassword')) => (value) =>
     value && value.length >= 8 ? undefined : message;
 
@@ -59,6 +62,12 @@ const UserCreate = (props) => {
     /^(?=.*[0-9]).*$/,
     translate('custom.label.user.errors.numberPassword')
   );
+
+  const phoneNumber = regex(
+    /^(0)[1-9](\d{2}){4}$/,
+    translate('custom.label.user.errors.phoneNumber')
+  );
+
   const verifPhoneDisplaycountRules = (
     message = translate('custom.label.user.errors.phoneDisplayMandatory')
   ) => () => (verifPhoneDisplaycount > 0 ? undefined : message);
@@ -92,6 +101,7 @@ const UserCreate = (props) => {
   };
 
   const validateRequired = [required()];
+  const validatePhone = [required(), requiredPhone(), phoneNumber];
   const passwordRules = [required(), minPassword(), upperPassword, lowerPassword, numberPassword];
   const phoneRules = [verifPhoneDisplaycountRules()];
   const emailRules = [required(), email()];
@@ -205,7 +215,7 @@ const UserCreate = (props) => {
             required
             source="telephone"
             label={translate('custom.label.user.telephone')}
-            validate={validateRequired}
+            validate={validatePhone}
             formClassName={classes.spacedHalfwidth}
           />
 

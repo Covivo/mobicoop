@@ -44,7 +44,7 @@
         :card-text-button="this.$t('solidary.button.label')"
         card-text-color-button="secondary--text"
         card-color-button="white"
-        :href-button="this.$t('solidary.button.route')"
+        :href-button="mobileUrl+this.$t('solidary.button.route')"
         :card-text-button-two="this.$t('solidary.button2.label')"
         card-text-color-button-two="secondary--text"
         card-color-button-two="white"
@@ -85,7 +85,16 @@ export default {
     communityDisplay: {
       type: Boolean,
       default: false
+    },
+    urlMobile: {
+      type: String,
+      default: null
     }
-  }
+  },
+  data () {
+    return {
+      mobileUrl: this.urlMobile
+    }
+  },
 }
 </script>

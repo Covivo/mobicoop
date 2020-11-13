@@ -4,7 +4,7 @@ monolog:
             type:               fingers_crossed
             action_level:       info
             handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]
+            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!mass", "!notification", "!faker"]
         grouped:
             type:               group
             members:            [streamed]
@@ -56,18 +56,6 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/geography.log"
             channels: [geography]
-        geomatcher:
-            type: rotating_file
-            level: info
-            max_files: 30
-            path: "%kernel.logs_dir%/geomatcher.log"
-            channels: [geomatcher]       
-        georouter:
-            type: rotating_file
-            level: info
-            max_files: 30
-            path: "%kernel.logs_dir%/georouter.log"
-            channels: [georouter]
         mass:
             type: rotating_file
             level: info

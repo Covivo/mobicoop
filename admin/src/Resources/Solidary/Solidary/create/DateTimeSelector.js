@@ -55,10 +55,10 @@ const addHours = (originDate, hours) => {
   return alteredDate;
 };
 
-const setHours = (originDate, hours) => {
+const setHours = (originDate, hours, minutes) => {
   const alteredDate = new Date(originDate);
   alteredDate.setHours(hours || 0);
-  alteredDate.setMinutes(0);
+  alteredDate.setMinutes(minutes || 0);
   return alteredDate;
 };
 
