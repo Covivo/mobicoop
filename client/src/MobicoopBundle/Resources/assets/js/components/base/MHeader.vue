@@ -59,6 +59,7 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+     
       <div @click="snackbar = true">
         <v-btn
           v-if="!user"
@@ -69,9 +70,14 @@
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
       </div>
+      <MHeaderLanguage
+        @languageSelected="updateLanguage"
+      />
+     
       <v-snackbar
         v-if="!user"
         v-model="snackbar"
+        top
         color="info"
       >
         {{ $t('snackbar.needConnection') }}
@@ -224,6 +230,8 @@ import {messages_client_en, messages_client_fr} from "@clientTranslations/compon
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
+import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
+
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -238,7 +246,8 @@ export default {
   components: {
     //Accessibility,
     MHeaderProfile,
-    MHeaderCommunities
+    MHeaderCommunities,
+    MHeaderLanguage
   },
   props: {
     user: {
@@ -268,6 +277,11 @@ export default {
   },
   created() {
     this.$root.$i18n.locale = this.locale
+  },
+  methods:{
+    updateLanguage(language) {
+      this.$root.$i18n.locale = language
+    },
   }
 };
 </script>

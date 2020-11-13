@@ -30,7 +30,7 @@ import Vuetify, {
   VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
   // header
-  VToolbar, VAppBar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg,
+  VToolbar, VAppBar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg, VOverflowBtn,
   // footer
   VFooter, VCardText,
 } from 'vuetify/lib'
@@ -42,9 +42,9 @@ Vue.use(Vuetify, {
     VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
     VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
-    VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
+    VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination, 
     // header
-    VToolbar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg, VAppBar,
+    VToolbar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg, VAppBar, VOverflowBtn,
     // footer
     VFooter, VCardText,
     //Vue2Leaflet
