@@ -18,7 +18,7 @@ case $i in
 esac
 done
 
-if [ $VERSION == "dev" ] || [ $VERSION == "test" ] || [ $VERSION == "prod_test"]
+if [ $VERSION == "dev" ] || [ $VERSION == "test" ] || [ $VERSION == "prod_test" ]
 then
 
     # check RDEX files
@@ -58,7 +58,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    #python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
     #Admin build
     cd /var/www/$VERSION/$INSTANCE/admin;
@@ -106,7 +106,7 @@ else
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    #python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;
