@@ -8,15 +8,14 @@ import {
   ShowButton,
   FunctionField,
   DateField,
-  ReferenceInput,
-  AutocompleteInput,
+  TextInput,
   Filter,
   useTranslate,
   ReferenceField,
   EditButton,
 } from 'react-admin';
 
-import { usernameRenderer, solidaryJourneyRenderer } from '../../../../utils/renderers';
+import { solidaryJourneyRenderer } from '../../../../utils/renderers';
 import isAuthorized from '../../../../auth/permissions';
 
 const ActionField = ({ source, record = {} }) => {
@@ -38,18 +37,7 @@ const SubjectField = (props) => {
 
 const SolidaryFilter = (props) => (
   <Filter {...props}>
-    <ReferenceInput
-      alwaysOn
-      fullWidth
-      label="Demandeur solidaire"
-      source="solidaryUser"
-      reference="solidary_users"
-    >
-      <AutocompleteInput
-        allowEmpty
-        optionText={(record) => (record.user ? usernameRenderer({ record: record.user }) : '')}
-      />
-    </ReferenceInput>
+    <TextInput label="Demandeur solidaire" source="q" alwaysOn />
   </Filter>
 );
 
