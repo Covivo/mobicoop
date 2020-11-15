@@ -76,12 +76,15 @@ const createActionPropsResolver = (dataProvider) => {
   };
 };
 
-const AddSolidaryNotification = () => {
+const AddSolidaryNotification = ({ type }) => {
   const notify = useNotify();
 
   useEffect(() => {
-    notify('Bénévole ajouté comme conducteur potentiel', 'success');
-  }, []);
+    notify(
+      `${type === 'transport' ? 'Bénévole' : 'Covoitureur'} ajouté comme conducteur potentiel`,
+      'success'
+    );
+  }, [notify, type]);
 
   return null;
 };
@@ -91,6 +94,7 @@ export const SolidaryUserVolunteerActionDropDown = ({
   solidary,
   omittedOptions,
   onActionFinished,
+  type,
 }) => {
   const [action, setAction] = useState(null);
   const [actionProps, setActionProps] = useState({});
@@ -130,7 +134,7 @@ export const SolidaryUserVolunteerActionDropDown = ({
         options={omit(resolveOptions(solidary), omittedOptions)}
         onSelect={handleSetAction}
       />
-      {!loading && action === ADDPOTENTIAL_OPTION && <AddSolidaryNotification />}
+      {!loading && action === ADDPOTENTIAL_OPTION && <AddSolidaryNotification type={type} />}
       {!loading && action === MESSAGE_CONTACT_OPTION && (
         <SolidaryMessagesModal {...actionProps} onClose={handleCloseModal} />
       )}
