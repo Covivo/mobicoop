@@ -23,7 +23,7 @@ const resolveOptions = (solidary) => ({
   [SMS_CONTACT_OPTION]: 'Envoyer directement un SMS',
 });
 
-const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary) => {
+const createSolidarySolutionResolver = (dataProvider, type) => async (userId, solidary) => {
   // Search an existing solution with this user in solidary
 
   const matchingSolution = ((solidary && solidary.solutions) || []).find((solution) => {
@@ -34,7 +34,7 @@ const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary
     return matchingSolution.id;
   }
 
-  const getSolidaryMatching = async (type) => {
+  const getSolidaryMatching = async () => {
     const { data } = await dataProvider.getList('solidary_searches', {
       pagination: {},
       sort: {},
@@ -48,13 +48,13 @@ const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary
   };
 
   // Attempt to find a matching solution and create it
-  let matchings = await getSolidaryMatching('carpool');
+  const matchings = await getSolidaryMatching();
   // Moreover, shouldn't we retrieve the corresponding solution matching instead of checking user ?
-  let matching = matchings.find((m) => !!m.solidaryMatching);
+  const matching = matchings.find((m) => !!m.solidaryMatching);
   if (!matching) {
-    matchings = await getSolidaryMatching('transport');
+    throw new Error("Can't find matching solution");
   }
-  matching = matchings.find((m) => !!m.solidaryMatching);
+
   return dataProvider
     .create('solidary_solutions', {
       data: { solidaryMatching: matching.solidaryMatching.id },
@@ -62,8 +62,8 @@ const createSolidarySolutionResolver = (dataProvider) => async (userId, solidary
     .then((response) => (response ? response.data.originId : null));
 };
 
-const createActionPropsResolver = (dataProvider) => {
-  const ensureSolidarySolutionId = createSolidarySolutionResolver(dataProvider);
+const createActionPropsResolver = (dataProvider, type) => {
+  const ensureSolidarySolutionId = createSolidarySolutionResolver(dataProvider, type);
 
   return async (action, { userId, solidary }) => {
     if ([MESSAGE_CONTACT_OPTION, SMS_CONTACT_OPTION, ADDPOTENTIAL_OPTION].includes(action)) {
@@ -93,6 +93,7 @@ export const SolidaryUserVolunteerActionDropDown = ({
   solidary,
   omittedOptions,
   onActionFinished,
+  type,
 }) => {
   const [action, setAction] = useState(null);
   const [actionProps, setActionProps] = useState({});
@@ -100,7 +101,7 @@ export const SolidaryUserVolunteerActionDropDown = ({
   const notify = useNotify();
 
   const dataProvider = useDataProvider();
-  const actionPropsResolver = createActionPropsResolver(dataProvider);
+  const actionPropsResolver = createActionPropsResolver(dataProvider, type);
 
   const handleCloseModal = () => {
     setAction(null);

@@ -78,6 +78,7 @@ const ActionsDropDown = ({ record, onRefresh, ...props }) => {
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
       userId={record.solidaryResultCarpool.authorId}
       onActionFinished={onRefresh}
+      type="carpool"
     />
   );
 };
