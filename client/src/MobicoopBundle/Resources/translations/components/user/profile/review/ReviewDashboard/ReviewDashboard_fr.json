@@ -4,5 +4,8 @@
         "receivedReviews":"Avis reçu(s)",
         "reviewsToGive":"Avis à donner"
     },
-    "getDashboardUri":"/utilisateur/avis/tableau-de-bord"
+    "getDashboardUri":"/utilisateur/avis/tableau-de-bord",
+    "noReviewToGive":"Aucun avis à donner",
+    "noReceivedReviews":"Aucun avis reçu",
+    "noGivenReviews":"Aucun avis donné"
 }

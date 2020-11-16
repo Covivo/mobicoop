@@ -10,27 +10,57 @@
       {{ $t('tabs.givenReviews') }}
     </v-tab>
     <v-tab-item value="reviewsToGive">
-      <WriteReview
-        v-for="(reviewToGive,index) in reviewsToGive"
-        :key="index"
-        :reviewed="reviewToGive.reviewed"
-        :reviewer="reviewToGive.reviewer"
-        :show-reviewed="true"
-        @reviewLeft="reviewLeft"
-      />
+      <div v-if="reviewsToGive && reviewsToGive.length>0">
+        <WriteReview
+          v-for="(reviewToGive,index) in reviewsToGive"
+          :key="index"
+          :reviewed="reviewToGive.reviewed"
+          :reviewer="reviewToGive.reviewer"
+          :show-reviewed="true"
+          @reviewLeft="reviewLeft"
+        />
+      </div>
+      <div
+        v-else
+        class="mt-4"
+      >
+        <v-alert type="info">
+          {{ $t('noReviewToGive') }}
+        </v-alert>
+      </div>
     </v-tab-item>
     <v-tab-item value="receivedReviews">
-      <Reviews
-        :reviews="receivedReviews"
-        :show-title="false"
-      />
+      <div v-if="receivedReviews && receivedReviews.length>0">
+        <Reviews
+          :reviews="receivedReviews"
+          :show-title="false"
+        />
+      </div>
+      <div
+        v-else
+        class="mt-4"
+      >
+        <v-alert type="info">
+          {{ $t('noReceivedReviews') }}
+        </v-alert>
+      </div>
     </v-tab-item>
     <v-tab-item value="givenReviews">
-      <Reviews
-        :reviews="givenReviews"
-        :show-title="false"
-        :show-reviewed-infos="true"
-      />
+      <div v-if="givenReviews && givenReviews.length>0">
+        <Reviews
+          :reviews="givenReviews"
+          :show-title="false"
+          :show-reviewed-infos="true"
+        />
+      </div>
+      <div
+        v-else
+        class="mt-4"
+      >
+        <v-alert type="info">
+          {{ $t('noGivenReviews') }}
+        </v-alert>
+      </div>
     </v-tab-item>
   </v-tabs>
 </template>
