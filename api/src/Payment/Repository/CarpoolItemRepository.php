@@ -99,10 +99,11 @@ class CarpoolItemRepository
 
         if ($type == PaymentItem::TYPE_PAY) {
             $query->andWhere('ci.debtorUser = :user')
-            ->andWhere('ci.debtorStatus = :debtorStatusWaiting or ci.debtorStatus = :debtorStatusPendingOnline')
+            ->andWhere('ci.debtorStatus = :debtorStatusWaiting or ci.debtorStatus = :debtorStatusPendingOnline or ci.debtorStatus = :debtorStatusPendingDirect')
             ->setParameter('user', $user)
             ->setParameter('debtorStatusWaiting', 0)
-            ->setParameter('debtorStatusPendingOnline', 1);
+            ->setParameter('debtorStatusPendingOnline', 1)
+            ->setParameter('debtorStatusPendingDirect', 2);
         } else {
             $query->andWhere('ci.creditorUser = :user')
             ->andWhere('ci.creditorStatus = :creditorStatusWaiting')
