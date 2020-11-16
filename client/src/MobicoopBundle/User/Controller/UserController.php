@@ -1272,10 +1272,10 @@ class UserController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function userReviewsDashboard(Request $request, ReviewManager $reviewManager)
+    public function userReviewDashboard(Request $request, ReviewManager $reviewManager)
     {
         if ($request->isMethod('POST')) {
-            return new JsonResponse($reviewManager->reviewsDashboard());
+            return new JsonResponse($reviewManager->reviewDashboard());
         }
         return new JsonResponse();
     }

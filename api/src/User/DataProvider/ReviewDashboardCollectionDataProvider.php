@@ -26,14 +26,14 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
-use App\User\Ressource\ReviewsDashboard;
+use App\User\Ressource\ReviewDashboard;
 use App\User\Service\ReviewManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ReviewsDashboardCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class ReviewDashboardCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $security;
     private $reviewManager;
@@ -46,7 +46,7 @@ final class ReviewsDashboardCollectionDataProvider implements CollectionDataProv
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ReviewsDashboard::class === $resourceClass && $operationName === "get";
+        return ReviewDashboard::class === $resourceClass && $operationName === "get";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)

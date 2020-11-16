@@ -21,86 +21,40 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Ressource\Review;
 
 /**
- * A Reviews Dashboard with Given reviews, Received reviews and reviews to give
- *
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","readReview"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeReview"}}
- *      },
- *      collectionOperations={
- *          "get"={
- *              "security"="is_granted('review_list',object)"
- *          }
- *      },
- *      itemOperations={
- *          "get"={
- *              "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * A Review Dashboard
  */
-class ReviewsDashboard
+class ReviewDashboard implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
-
     /**
-     * @var int The id of this Review.
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups({"read","readReview"})
+     * @var int $id The id of this Review.
      */
     private $id;
-
+   
     /**
      * @var bool True if the review system is enabled
-     * @Groups({"read","readReview"})
      */
     private $reviewActive;
     
     /**
-     * @var Reviews[] Given reviews
-     *
-     * @Groups({"readReview"})
+     * @var array Given reviews
      */
     private $givenReviews;
 
     /**
-     * @var Reviews[] Received reviews
-     *
-     * @Groups({"readReview"})
+     * @var array Received reviews
      */
     private $receivedReviews;
 
     /**
-     * @var Reviews[] Reviews to give
-     *
-     * @Groups({"readReview"})
+     * @var array Reviews to give
      */
     private $reviewsToGive;
-   
-    public function __construct(int $id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if (!is_null($id)) {
-            $this->id = $id;
-        }
-
-        $this->givenReviews = [];
-        $this->receivedReviews = [];
-        $this->reviewsToGive = [];
-    }
 
     public function getId(): int
     {
@@ -181,5 +135,16 @@ class ReviewsDashboard
         $this->reviewsToGive[] = $reviewToGive;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id'                        => $this->getId(),
+            'reviewActive'              => $this->isReviewActive(),
+            'givenReviews'              => $this->getGivenReviews(),
+            'receivedReviews'           => $this->getReceivedReviews(),
+            'reviewsToGive'             => $this->getReviewsToGive(),
+        ];
     }
 }

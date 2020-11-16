@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewsDashboard;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -74,9 +74,9 @@ class ReviewManager
      *
      * @return array|null
      */
-    public function reviewsDashboard(): ?array
+    public function reviewDashboard(): ?array
     {
-        $this->dataProvider->setClass(ReviewsDashboard::class);
+        $this->dataProvider->setClass(ReviewDashboard::class);
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
