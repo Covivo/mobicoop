@@ -24,7 +24,6 @@ final class Version20201116163000 extends AbstractMigration
         $this->addSql("INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_title`, `active`, `template_body`, `created_date`, `updated_date`, `user_active_default`, `user_editable`, `position`) VALUES (125, '87', '2', NULL, '1', NULL, '2020-11-16 16:30:00', NULL, '1', '0', '1')");
         $this->addSql("INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_title`, `active`, `template_body`, `created_date`, `updated_date`, `user_active_default`, `user_editable`, `position`) VALUES (126, '87', '3', NULL, '1', NULL, '2020-11-16 16:30:00', NULL, '1', '0', '2')");
         $this->addSql("INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_title`, `active`, `template_body`, `created_date`, `updated_date`, `user_active_default`, `user_editable`, `position`) VALUES (127, '87', '4', NULL, '1', NULL, '2020-11-16 16:30:00', NULL, '1', '0', '3')");
-   
     }
 
     public function down(Schema $schema) : void

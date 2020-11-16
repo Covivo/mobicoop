@@ -1,0 +1,5 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>{{ "reviewReceived" |trans({'%givenName%' : context.givenName, '%shortFamilyName%' : context.shortFamilyName}) }}</p>
+    <p>{{ "seeReview" |trans|raw }}.</p>
+{% endblock %}
