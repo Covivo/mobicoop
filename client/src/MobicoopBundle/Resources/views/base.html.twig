@@ -31,6 +31,7 @@
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}" 
                         locale="{{ app.request.locale }}"
                         :languages-list="{{languagesList|json_encode}}"
+                        :session-language="{{app.session.get('language')|json_encode}}"
                     ></m-header>
                 {% else %}
                     <m-header 
@@ -38,6 +39,7 @@
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
                         locale="{{ app.request.locale }}"
                         :languages-list="{{languagesList|json_encode}}"
+                        :session-language="{{app.session.get('language')|json_encode}}"
                     ></m-header>
             {% endif %}
 

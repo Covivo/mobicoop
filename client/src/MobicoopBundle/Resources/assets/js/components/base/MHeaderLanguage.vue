@@ -27,6 +27,7 @@
   </v-menu>
 </template>
 <script>
+import axios from "axios";
 import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/base/MHeaderProfile/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeaderProfile/"
@@ -58,7 +59,8 @@ export default {
   },
   methods:{
     selectLanguage(item) {
-      this.$emit('languageSelected', item.locale)
+      this.$emit('languageSelected', item.locale);
+      axios.post('/setLanguage', item);
     },
   }
 }

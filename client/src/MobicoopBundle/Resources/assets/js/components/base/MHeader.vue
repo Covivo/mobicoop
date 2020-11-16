@@ -71,6 +71,7 @@
         </v-btn>
       </div>
       <MHeaderLanguage
+        v-if="languages"
         :languages="languages"
         @languageSelected="updateLanguage"
       />
@@ -263,6 +264,10 @@ export default {
       type: String,
       default: "fr"
     },
+    sessionLanguage: {
+      type: String,
+      default: null 
+    },
     languagesList: {
       type: Object,
       default: null
@@ -276,13 +281,8 @@ export default {
       languages: this.languagesList.languages
     }
   },
-  watch: {
-    dlocale (val) {
-      this.$root.$i18n.locale = val
-    }
-  },
   created() {
-    this.$root.$i18n.locale = this.locale
+    this.$root.$i18n.locale = this.sessionLanguage ? this.sessionLanguage : this.locale
   },
   methods:{
     updateLanguage(language) {
