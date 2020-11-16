@@ -9,7 +9,10 @@
     <v-tab href="#givenReviews">
       {{ $t('tabs.givenReviews') }}
     </v-tab>
-    <v-tab-item value="reviewsToGive">
+    <v-tab-item
+      v-if="!loading"
+      value="reviewsToGive"
+    >
       <div v-if="reviewsToGive && reviewsToGive.length>0">
         <WriteReview
           v-for="(reviewToGive,index) in reviewsToGive"
@@ -28,6 +31,14 @@
           {{ $t('noReviewToGive') }}
         </v-alert>
       </div>
+    </v-tab-item>
+    <v-tab-item
+      v-else
+      value="reviewsToGive"
+    >
+      <v-skeleton-loader
+        type="article"
+      />      
     </v-tab-item>
     <v-tab-item value="receivedReviews">
       <div v-if="receivedReviews && receivedReviews.length>0">
@@ -84,7 +95,8 @@ export default {
     return{
       givenReviews:null,
       receivedReviews:null,
-      reviewsToGive:null
+      reviewsToGive:null,
+      loading:false
     }
   },
   mounted(){
@@ -92,16 +104,20 @@ export default {
   },
   methods:{
     getDashboard(){
+      this.loading = true;
       axios
         .post(this.$t('getDashboardUri'))
         .then(res => {
           this.givenReviews = res.data.givenReviews;
           this.receivedReviews = res.data.receivedReviews;
           this.reviewsToGive = res.data.reviewsToGive;
+          this.loading = false;
         });        
     },
     reviewLeft(data){
-      console.log("reviewleft");
+      if(data.success){
+        this.getDashboard();
+      }
     }
   }
 }
