@@ -545,6 +545,7 @@ services:
                 maxMessagesForAnswerRate: '%env(int:USER_MAX_MESSAGES_FOR_ANSWER_RATE)%'
                 experiencedTag: '%env(bool:USER_EXPERIENCED_TAG)%'
                 experiencedTagMinCarpools : '%env(int:USER_EXPERIENCED_TAG_MIN_CARPOOLS)%'
+                experiencedTagMinAnswerPct : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT)%'
                 userReview: '%env(bool:USER_REVIEW)%'
     
     App\User\Service\ReviewManager:
