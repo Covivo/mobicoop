@@ -52,7 +52,7 @@ class CarpoolItemRepository
     }
 
     /**
-     * Find a carpool payment item by ask and date
+     * Find a carpool item by ask and date
      *
      * @param Ask $ask          The ask
      * @param DateTime $date    The date
@@ -60,23 +60,39 @@ class CarpoolItemRepository
      */
     public function findByAskAndDate(Ask $ask, DateTime $date)
     {
-        $startDate = clone $date;
-        $startDate->setTime(0, 0);
-        $endDate = clone $date;
-        $endDate->setTime(23, 59, 59, 999);
-
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.ask = :ask')
-        ->andWhere('ci.itemDate BETWEEN :startDate and :endDate')
+        ->andWhere('ci.itemDate = :date')
         ->setParameter('ask', $ask)
-        ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
-        ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
+        ->setParameter('date', $date->format('Y-m-d H:i:s'));
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * Find carpool payment items for payments
+     * Find all carpool items for a given ask in a given period.
+     * Results are ordered by item date asc.
+     *
+     * @param Ask $ask              The ask
+     * @param DateTime $fromDate    The start of the period
+     * @param DateTime $toDate      The end of the period
+     * @return CarpoolItem[]        The carpool items found
+     */
+    public function findByAskAndPeriod(Ask $ask, DateTime $fromDate, DateTime $toDate)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+        ->where('ci.ask = :ask')
+        ->andWhere('ci.itemDate BETWEEN :startDate and :endDate')
+        ->orderBy('ci.itemDate', 'ASC')
+        ->setParameter('ask', $ask)
+        ->setParameter('startDate', $fromDate->format('Y-m-d H:i:s'))
+        ->setParameter('endDate', $toDate->format('Y-m-d H:i:s'));
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpool items for payments
      *
      * @param integer $frequency    The frequency for the items
      * @param integer $type         The type of items (1 = to pay, 2 = to collect)
@@ -101,13 +117,13 @@ class CarpoolItemRepository
             $query->andWhere('ci.debtorUser = :user')
             ->andWhere('ci.debtorStatus = :debtorStatusWaiting or ci.debtorStatus = :debtorStatusPendingOnline')
             ->setParameter('user', $user)
-            ->setParameter('debtorStatusWaiting', 0)
-            ->setParameter('debtorStatusPendingOnline', 1);
+            ->setParameter('debtorStatusWaiting', CarpoolItem::DEBTOR_STATUS_PENDING)
+            ->setParameter('debtorStatusPendingOnline', CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE);
         } else {
             $query->andWhere('ci.creditorUser = :user')
             ->andWhere('ci.creditorStatus = :creditorStatusWaiting')
             ->setParameter('user', $user)
-            ->setParameter('creditorStatusWaiting', 0);
+            ->setParameter('creditorStatusWaiting', CarpoolItem::CREDITOR_STATUS_PENDING);
         }
 
         return $query->getQuery()->getResult();

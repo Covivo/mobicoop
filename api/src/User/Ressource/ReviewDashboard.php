@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Ressource\Review;
 
 /**
- * A Reviews Dashboard with Given reviews, Received reviews and reviews to give
+ * A Review Dashboard with Given reviews, Received reviews and reviews to give
  *
  * @ApiResource(
  *      attributes={
@@ -51,7 +51,7 @@ use App\User\Ressource\Review;
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ReviewsDashboard
+class ReviewDashboard
 {
     const DEFAULT_ID = 999999999999;
 
@@ -70,21 +70,21 @@ class ReviewsDashboard
     private $reviewActive;
     
     /**
-     * @var Reviews[] Given reviews
+     * @var Review[] Given reviews
      *
      * @Groups({"readReview"})
      */
     private $givenReviews;
 
     /**
-     * @var Reviews[] Received reviews
+     * @var Review[] Received reviews
      *
      * @Groups({"readReview"})
      */
     private $receivedReviews;
 
     /**
-     * @var Reviews[] Reviews to give
+     * @var Review[] Reviews to give
      *
      * @Groups({"readReview"})
      */

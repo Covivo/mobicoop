@@ -49,6 +49,7 @@ use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
 use App\User\Exception\BlockException;
 use App\User\Service\BlockManager;
+use DateTime;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -67,6 +68,7 @@ class AskManager
     private $security;
     private $carpoolItemRepository;
     private $paymentActive;
+    private $paymentActiveDate;
     private $blockManager;
 
     /**
@@ -84,7 +86,7 @@ class AskManager
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
         BlockManager $blockManager,
-        bool $paymentActive
+        string $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityManager = $entityManager;
@@ -94,7 +96,11 @@ class AskManager
         $this->logger = $logger;
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
-        $this->paymentActive = $paymentActive;
+        $this->paymentActive = false;
+        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+            $this->paymentActiveDate->setTime(0, 0);
+            $this->paymentActive = true;
+        }
         $this->blockManager = $blockManager;
     }
 
@@ -976,7 +982,7 @@ class AskManager
 
 
 
-
+    
     /************
     *   DYNAMIC *
     *************/

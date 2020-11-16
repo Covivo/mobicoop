@@ -57,6 +57,13 @@ class MyAd
 {
     const DEFAULT_ID = 999999999999;
 
+    const PAYMENT_STATUS_NULL = -1;     // no payment for this ad
+    const PAYMENT_STATUS_TODO = 1;      // there's a payment to validate (as a driver) or to pay (as a passenger)
+    const PAYMENT_STATUS_PAID = 2;      // all payments are received (as a driver) or paid (as a passenger)
+
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+
     /**
      * @var int The id of this ad.
      *
@@ -178,6 +185,13 @@ class MyAd
      * @Groups("readMyAd")
      */
     private $carpoolers;
+
+    /**
+     * @var int The overall payment status of this ad.
+     *
+     * @Groups("readMyAd")
+     */
+    private $paymentStatus;
 
     /**
      * @var User The author of the ad.
@@ -391,6 +405,18 @@ class MyAd
     public function setCarpoolers(int $carpoolers): self
     {
         $this->carpoolers = $carpoolers;
+
+        return $this;
+    }
+
+    public function getPaymentStatus(): int
+    {
+        return $this->paymentStatus;
+    }
+
+    public function setPaymentStatus(int $paymentStatus): self
+    {
+        $this->paymentStatus = $paymentStatus;
 
         return $this;
     }

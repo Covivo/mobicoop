@@ -110,6 +110,10 @@ class AdManager
         $this->authManager = $authManager;
         $this->proofManager = $proofManager;
         $this->subjectRepository = $subjectRepository;
+        if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
+            $this->params["paymentActiveDate"]->setTime(0, 0);
+            $this->params["paymentActive"] = true;
+        }
     }
 
     /**
