@@ -84,6 +84,7 @@ class UserController extends AbstractController
     private $paymentManager;
     private $validationDocsAuthorizedExtensions;
     private $ssoManager;
+    private $required_community;
 
     /**
      * Constructor
@@ -104,7 +105,8 @@ class UserController extends AbstractController
         string $validationDocsAuthorizedExtensions,
         UserManager $userManager,
         SsoManager $ssoManager,
-        PaymentManager $paymentManager
+        PaymentManager $paymentManager,
+        $required_community
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -120,6 +122,7 @@ class UserController extends AbstractController
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
+        $this->required_community = $required_community;
 
         $this->ssoManager = $ssoManager;
     }
@@ -222,7 +225,8 @@ class UserController extends AbstractController
                 "facebook_appid"=>$this->facebook_appid,
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
                 "community_show"=>($this->community_show==="true") ? true : false,
-                "loginLinkInConnection"=>$this->loginLinkInConnection
+                "loginLinkInConnection"=>$this->loginLinkInConnection,
+                "required_community"=>($this->required_community==="true") ? true : false
         ]);
     }
 
