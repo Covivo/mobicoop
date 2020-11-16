@@ -12,7 +12,13 @@
       >
         <ProfileAvatar :avatar="avatar" />
       </v-col>
-      <v-col cols="8">
+      <v-col
+        v-if="showReviewed"
+        cols="2"
+      >
+        {{ reviewedName }}
+      </v-col>
+      <v-col :cols="showReviewed ? 6 : 8">
         <v-textarea
           v-model="content"
           :label="labelTxt"
@@ -67,6 +73,10 @@ export default {
     rows:{
       type:Number,
       default:3
+    },
+    showReviewed:{
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -93,6 +103,9 @@ export default {
       else{
         return this.$t('label');
       }
+    },
+    reviewedName(){
+      return this.reviewed.givenName+' '+this.reviewed.shortFamilyName;
     }
   },
   mounted(){

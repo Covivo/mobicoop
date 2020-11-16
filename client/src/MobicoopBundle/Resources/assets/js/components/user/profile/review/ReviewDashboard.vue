@@ -15,6 +15,7 @@
         :key="index"
         :reviewed="reviewToGive.reviewed"
         :reviewer="reviewToGive.reviewer"
+        :show-reviewed="true"
         @reviewLeft="reviewLeft"
       />
     </v-tab-item>
