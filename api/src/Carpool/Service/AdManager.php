@@ -1571,6 +1571,8 @@ class AdManager
 
         if (!is_null($this->currentMargin)) {
             $ad->setMarginDuration($this->currentMargin);
+        } else {
+            $ad->setMarginDuration($this->params['defaultMarginDuration']);
         }
 
         return $this->createAd($ad);
@@ -1632,22 +1634,25 @@ class AdManager
         foreach ($days as $day => $value) {
             $shortDay = substr($day, 0, 3);
             if (isset($outward[$day]['mintime'])) {
-                $outward_mindate = $outward['mindate'];
 
+                // Determine outwardTime
                 if (isset($outward[$day]['mintime']) && isset($outward[$day]['maxtime'])) {
-                    (!isset($outward['maxdate'])) ? $outward_maxdate = $outward_mindate : $outward_maxdate = $outward['maxdate'];
-                
-                    // We compute the difference between mintime and maxtime to use it as a margin in the generated Ad
-                    $diff = $this->dateDiff($outward[$day]['mintime'], $outward[$day]['maxtime'], $outward_mindate, $outward_maxdate);
-                    if (
-                        !is_numeric($this->currentMargin) ||
-                        (is_numeric($this->currentMargin) && $diff > $this->currentMargin)
-                    ) {
-                        $this->currentMargin = $diff;
-                    }
+                    // If there is a minTime and a maxTime we take the middle and compute the corresponding margin
+                    // ex : minTime : 6h, maxTime : 10h => outwardTime = 8h, margin 2h
+                    $outwardMaxTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['maxtime'], new \DateTimeZone('UTC'));
+                    $outwardMinTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['mintime'], new \DateTimeZone('UTC'));
+                    $diff =  $outwardMaxTime->format('U') - $outwardMinTime->format('U');
+                    $this->currentMargin = ($diff/2);
+                    $outwardMiddleTime = clone $outwardMinTime;
+                    $outwardMiddleTime = clone $outwardMiddleTime->modify('+'.($diff/2)." second");
+                    $outwardTime = $outwardMiddleTime->format('H:i');
+                } elseif (isset($outward[$day]['mintime'])) {
+                    $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['mintime'], new \DateTimeZone('UTC'))->format('H:i');
+                } elseif (isset($outward[$day]['maxtime'])) {
+                    $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['maxtime'], new \DateTimeZone('UTC'))->format('H:i');
+                } else {
+                    throw new RdexError("No min or max time");
                 }
-
-                $outwardTime = \DateTime::createFromFormat('H:i:s', $outward[$day]['mintime'], new \DateTimeZone('UTC'))->format('H:i');
 
                 $previousKey = array_search($outwardTime, $refTimes);
 
@@ -1664,6 +1669,7 @@ class AdManager
         }
         return $schedules;
     }
+
 
     /**
     * Get ads with accepted asks of a user

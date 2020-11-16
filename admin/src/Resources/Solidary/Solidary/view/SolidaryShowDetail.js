@@ -32,7 +32,7 @@ const SolidaryShowDetail = ({ record }) => {
         </Grid>
         <Grid container direction="row" justify="space-between" alignItems="center" spacing={2}>
           <Grid item>
-            <NeedsAndStructure record={record} />
+            <NeedsAndStructure record={record} inDetails />
           </Grid>
         </Grid>
         <div style={{ height: 500, marginTop: 30, overflowY: 'scroll' }}>

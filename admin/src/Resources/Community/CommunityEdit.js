@@ -221,12 +221,13 @@ export const CommunityEdit = (props) => {
           */}
 
           <ReferenceInput
-            source="user.id"
+            source="user"
             label={translate('custom.label.community.createdBy')}
             reference="users"
             filterToQuery={(searchText) => ({ familyName: [searchText] })}
+            format={(u) => u['@id'] || u}
           >
-            <AutocompleteInput optionValue="id" optionText={inputText} allowEmpty={false} />
+            <AutocompleteInput optionText={inputText} allowEmpty={false} />
           </ReferenceInput>
         </FormTab>
         <FormTab label={translate('custom.label.community.members')}>
