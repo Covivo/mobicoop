@@ -404,7 +404,8 @@ class UserController extends AbstractController
             'ads' => $userManager->getAds(),
             'acceptedCarpools' => $userManager->getAds(true),
             'bankCoordinates' => $this->paymentElectronicActive,
-            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions
+            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
+            'showReviews' => $user->isUserReviewsActive()
         ]);
     }
 

@@ -393,6 +393,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $canReceiveReview;
 
+    /**
+     * @var bool|null If the Reviews are enable on this instance
+     */
+    private $userReviewsActive;
+    
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1162,6 +1167,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
     
+    public function isUserReviewsActive(): ?bool
+    {
+        return $this->userReviewsActive;
+    }
+
+    public function setUserReviewsActive(?bool $userReviewsActive): self
+    {
+        $this->userReviewsActive = $userReviewsActive;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1193,7 +1210,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'communityId'           => $this->getCommunityId(),
             'bankAccounts'          => $this->getBankAccounts(),
             'carpoolExport'         => $this->getCarpoolExport(),
-            'canReceiveReview'      => $this->getCanReceiveReview()
+            'canReceiveReview'      => $this->getCanReceiveReview(),
+            'userReviewsActive'     => $this->isUserReviewsActive()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

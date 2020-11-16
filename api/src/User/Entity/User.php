@@ -1184,6 +1184,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $canReceiveReview;
 
+    /**
+     * @var bool|null If the Reviews are enable on this instance
+     * @Groups({"readUser", "readReview"})
+     */
+    private $userReviewsActive;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2801,6 +2807,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
+    public function isUserReviewsActive(): ?bool
+    {
+        return $this->userReviewsActive;
+    }
+
+    public function setUserReviewsActive(?bool $userReviewsActive): self
+    {
+        $this->userReviewsActive = $userReviewsActive;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**

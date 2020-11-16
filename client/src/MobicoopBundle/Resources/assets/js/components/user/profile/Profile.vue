@@ -101,12 +101,16 @@
             </v-tabs>
           </v-tab-item>
           <v-tab
+            v-if="showReviews"
             class="text-left justify-start ml-2 mr-5 text-h6"
             href="#reviews"
           >
             {{ $t("tabs.reviews") }}
           </v-tab>
-          <v-tab-item value="reviews">
+          <v-tab-item
+            v-if="showReviews"
+            value="reviews"
+          >
             <ReviewDashboard />
           </v-tab-item>          
           <div>
@@ -237,7 +241,11 @@ export default {
     validationDocsAuthorizedExtensions: {
       type: String,
       default: null
-    }
+    },
+    showReviews: {
+      type: Boolean,
+      default: false
+    }    
   },
   data(){
     return{

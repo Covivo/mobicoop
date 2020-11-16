@@ -33,11 +33,13 @@ class UserLoadListener
 {
     private $avatarSizes;
     private $avatarDefaultFolder;
+    private $userReviewActive;
 
     public function __construct($params)
     {
         $this->avatarSizes=$params['avatarSizes'];
         $this->avatarDefaultFolder=$params['avatarDefaultFolder'];
+        $this->userReviewActive=$params['userReview'];
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -62,6 +64,7 @@ class UserLoadListener
                     }
                 }
             }
+            $user->setUserReviewsActive($this->userReviewActive);
         }
     }
 }
