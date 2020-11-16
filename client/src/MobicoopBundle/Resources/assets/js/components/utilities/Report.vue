@@ -107,6 +107,10 @@ export default {
     user:{
       type: Object,
       default: null
+    },
+    defaultEmail:{
+      type: String,
+      default:null
     }
   },
   data() {
@@ -117,7 +121,7 @@ export default {
       isSnackbarOpened: false,
       snackbarText: null,
       isSent: false,
-      email: null,
+      email: this.defaultEmail,
       emailRules: [
         v => !!v || this.$t("popup.form.email.errors.required"),
         v => /.+@.+/.test(v) || this.$t("popup.form.email.errors.valid")

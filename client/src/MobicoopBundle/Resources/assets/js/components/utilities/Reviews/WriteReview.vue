@@ -9,8 +9,14 @@
     <v-row class="align-center">
       <v-col
         cols="2"
+        class="text-center"
       >
         <ProfileAvatar :avatar="avatar" />
+        <Report
+          v-if="showReport"
+          :user="reviewed"
+          class="mt-2"
+        />
       </v-col>
       <v-col
         v-if="showReviewed"
@@ -47,6 +53,7 @@
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/utilities/Reviews/WriteReview";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import Report from "@components/utilities/Report";
 export default {
   i18n: {
     messages: {
@@ -55,7 +62,8 @@ export default {
     }
   },
   components:{
-    ProfileAvatar
+    ProfileAvatar,
+    Report
   },
   props:{
     reviewer:{
@@ -77,6 +85,10 @@ export default {
     showReviewed:{
       type: Boolean,
       default: false
+    },
+    showReport:{
+      type: Boolean,
+      default: true
     }
   },
   data(){
