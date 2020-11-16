@@ -71,6 +71,7 @@
         </v-btn>
       </div>
       <MHeaderLanguage
+        :languages="languages"
         @languageSelected="updateLanguage"
       />
      
@@ -261,13 +262,18 @@ export default {
     locale: {
       type: String,
       default: "fr"
+    },
+    languagesList: {
+      type: Object,
+      default: null
     }
   },
   data () {
     return {
       snackbar: false,
       width: 0,
-      dlocale: this.locale
+      dlocale: this.locale,
+      languages: this.languagesList.languages
     }
   },
   watch: {

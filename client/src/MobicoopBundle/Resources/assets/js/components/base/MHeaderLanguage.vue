@@ -1,7 +1,6 @@
 <template>
   <v-menu
     offset-y
-    open-on-hover
   >
     <template v-slot:activator="{ on }">
       <v-btn
@@ -9,19 +8,19 @@
         text
         v-on="on"
       >
-        <v-icon color="secondary">
-          mdi-flag
+        <v-icon>
+          mdi-translate
         </v-icon>
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
     <v-list>
       <v-list-item
-        v-for="(item, index) in items"
+        v-for="(item, index) in languagesList"
         :key="index"
       >
         <v-list-item-title @click="selectLanguage(item)">
-          {{ item.lang }} {{ item.text }}
+          {{ item.name }}
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -47,20 +46,19 @@ export default {
       type: String,
       default: "fr_FR"
     },
+    languages: {
+      type: Array,
+      default: null
+    }
   },
   data(){
     return {
-      items: [
-        { lang: "fr", text: "Français" },
-        { lang: "de", text: "Deutch" },
-        { lang: "ba", text: "Basque" },
-        { lang: "en", text: "English" },
-      ]
+      languagesList: this.languages,
     }
   },
   methods:{
     selectLanguage(item) {
-      this.$emit('languageSelected', item.lang)
+      this.$emit('languageSelected', item.locale)
     },
   }
 }

@@ -30,12 +30,14 @@
                         :url-mobile="{{urlMobile|json_encode}}"                    
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}" 
                         locale="{{ app.request.locale }}"
+                        :languages-list="{{languagesList|json_encode}}"
                     ></m-header>
                 {% else %}
                     <m-header 
                         :url-mobile="{{urlMobile|json_encode}}"
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
                         locale="{{ app.request.locale }}"
+                        :languages-list="{{languagesList|json_encode}}"
                     ></m-header>
             {% endif %}
 
