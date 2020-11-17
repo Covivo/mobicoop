@@ -74,9 +74,8 @@
         class="hidden-md-and-down"
       >
         <MHeaderLanguage
-          v-if="!noLanguage"
           :languages="languages"
-          :language="locale"
+          :language="dlocale"
           @languageSelected="updateLanguage"
         />
       </v-toolbar-items>
@@ -123,9 +122,8 @@
           <v-list-item>
             <v-list-item-title>
               <MHeaderLanguage
-                v-if="!noLanguage"
                 :languages="languages"
-                :language="locale"
+                :language="dlocale"
                 @languageSelected="updateLanguage"
               />
             </v-list-item-title>
@@ -240,7 +238,7 @@
 </template>
 
 <script>
-import { merge } from "lodash";
+import { merge, has } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
@@ -287,12 +285,19 @@ export default {
     return {
       snackbar: false,
       width: 0,
-      // we check if we get languages
-      noLanguage: Object.keys(this.languages).length === 0
+      defaultLocale: 'fr',
+      dlocale: this.locale
+    }
+  },
+  mounted() {
+    if (has(this.languages, this.locale)) {
+      this.dlocale = this.locale;
+    } else {
+      this.dlocale = this.defaultLocale;
     }
   },
   created() {
-    this.$root.$i18n.locale = this.locale
+    this.$root.$i18n.locale = this.dlocale
   },
   methods:{
     updateLanguage(language) {

@@ -23,8 +23,9 @@
         color="primary"
       >
         <v-list-item
-          v-for="(item, key, i) in languagesList"
-          :key="i"
+          v-for="(item, key) in languages"
+          :key="key"
+          :value="key"
         >
           <v-list-item-title
             @click="selectLanguage(item, key)"
@@ -49,18 +50,15 @@ export default {
   },
   props:{
     language: {
-      type: String,
-      default: "fr"
+      type: String
     },
     languages: {
-      type: Object,
-      default: () => {}
+      type: Object
     }
   },
   data(){
     return {
-      selectedLanguage: null,
-      languagesList: this.languages,
+      selectedLanguage: this.language
     }
   },
   methods:{
