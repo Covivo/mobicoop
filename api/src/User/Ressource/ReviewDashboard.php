@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Ressource\Review;
 
 /**
- * A Reviews Dashboard with Given reviews, Received reviews and reviews to give
+ * A Review Dashboard with Given reviews, Received reviews and reviews to give
  *
  * @ApiResource(
  *      attributes={

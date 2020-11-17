@@ -78,6 +78,7 @@ class PaymentManager
     private $paymentProfileRepository;
     private $userManager;
     private $paymentActive;
+    private $paymentActiveDate;
     private $securityToken;
     private $exportPath;
     private $carpoolPaymentRepository;
@@ -127,7 +128,11 @@ class PaymentManager
         $this->paymentProvider = $paymentProvider;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->userManager = $userManager;
-        $this->paymentActive = $paymentActive;
+        $this->paymentActive = false;
+        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+            $this->paymentActiveDate->setTime(0, 0);
+            $this->paymentActive = true;
+        }
         $this->securityToken = $securityToken;
         $this->validationDocsPath = $validationDocsPath;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
@@ -808,6 +813,11 @@ class PaymentManager
                     $carpoolItem->setDebtorUser($ask->getMatching()->getProposalRequest()->getUser());
                     $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                     $carpoolItem->setItemDate($ask->getCriteria()->getFromDate());
+                    // we check if the payment is active for the carpool date
+                    if ($carpoolItem->getItemDate()<$this->paymentActiveDate) {
+                        $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
+                        $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
+                    }
                     $this->entityManager->persist($carpoolItem);
 
                     // we execute event to inform passenger to pay for the carpool
@@ -869,6 +879,11 @@ class PaymentManager
                         $carpoolItem->setDebtorUser($ask->getMatching()->getProposalRequest()->getUser());
                         $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                         $carpoolItem->setItemDate(clone $curDate);
+                        // we check if the payment is active for the carpool date
+                        if ($carpoolItem->getItemDate()<$this->paymentActiveDate) {
+                            $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
+                            $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
+                        }
                         $this->entityManager->persist($carpoolItem);
 
                         // We send only one email for the all week

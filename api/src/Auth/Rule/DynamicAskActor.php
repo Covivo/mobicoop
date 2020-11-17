@@ -24,7 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\DynamicAsk;
+use App\Carpool\Ressource\DynamicAsk;
 
 /**
  *  Check that the requester is an actor of the related dynamic Ask

@@ -128,7 +128,7 @@ services:
 
     App\Carpool\Service\AskManager:
         arguments:
-            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 
@@ -140,9 +140,13 @@ services:
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
                 proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
-                paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+                paymentActive: '%env(string:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
+
+    App\Carpool\Service\MyAdManager:
+        arguments:
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
 
     App\Carpool\Service\ProofManager:
         arguments:
@@ -199,7 +203,7 @@ services:
             $carpoolExportUri: '%env(string:CARPOOL_EXPORT_URI)%'
             $carpoolExportPath: '%env(string:CARPOOL_EXPORT_FILE_PATH)%'
             $carpoolExportPlatformName: '%env(string:CARPOOL_EXPORT_APP_NAME)%'
-            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
 
     App\Carpool\Service\ResultManager:
         arguments:
@@ -479,7 +483,7 @@ services:
 
     App\Payment\Service\PaymentDataProvider:
         arguments:
-            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
             $paymentProvider: '%env(string:PAYMENT_PROVIDER)%'
             $clientId: '%env(string:PAYMENT_CLIENTID)%'
             $apikey: '%env(string:PAYMENT_APIKEY)%'
@@ -492,7 +496,7 @@ services:
 
     App\Payment\Service\PaymentManager:
         arguments:
-            $paymentActive: '%env(bool:PAYMENT_ACTIVE)%'
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
             $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
             $validationDocsPath: '%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%'

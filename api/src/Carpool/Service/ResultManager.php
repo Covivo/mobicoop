@@ -23,7 +23,7 @@
 
 namespace App\Carpool\Service;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;

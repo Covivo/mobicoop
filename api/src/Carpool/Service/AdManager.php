@@ -23,7 +23,7 @@
 
 namespace App\Carpool\Service;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
@@ -48,7 +48,7 @@ use App\Rdex\Entity\RdexError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
-use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\MatchingRepository;
 use App\Payment\Exception\PaymentException;
@@ -110,6 +110,10 @@ class AdManager
         $this->authManager = $authManager;
         $this->proofManager = $proofManager;
         $this->subjectRepository = $subjectRepository;
+        if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
+            $this->params["paymentActiveDate"]->setTime(0, 0);
+            $this->params["paymentActive"] = true;
+        }
     }
 
     /**
