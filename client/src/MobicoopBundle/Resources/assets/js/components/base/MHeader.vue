@@ -279,7 +279,7 @@ export default {
       default: "fr"
     },
     languages: {
-      type: String,
+      type: Object,
       default: () => {}
     }
   },
