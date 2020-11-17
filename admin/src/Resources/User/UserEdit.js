@@ -15,7 +15,7 @@ import {
   useTranslate,
   ReferenceArrayInput,
   SelectArrayInput,
-  FormDataConsumer,
+  FormDataConsumer, regex,
 } from 'react-admin';
 
 import hasPermission from '../../auth/permissions';
@@ -44,6 +44,14 @@ const UserEdit = (props) => {
   const required = (message = translate('custom.alert.fieldMandatory')) => (value) =>
     value ? undefined : message;
 
+  const requiredPhone = (message = translate('custom.alert.invalidPhone')) => (value) =>
+    value && value.length === 10 && !isNaN(value) ? undefined : message;
+
+  const phoneNumber = regex(
+    /^(0)[1-9](\d{2}){4}$/,
+    translate('custom.label.user.errors.phoneNumber')
+  );
+
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
     { id: 2, name: translate('custom.label.user.choices.men') },
@@ -69,6 +77,7 @@ const UserEdit = (props) => {
   ];
 
   const validateRequired = [required()];
+  const validatePhone = [required(), requiredPhone(), phoneNumber];
   const emailRules = [required(), email()];
 
   return (
@@ -121,6 +130,7 @@ const UserEdit = (props) => {
             source="telephone"
             label={translate('custom.label.user.telephone')}
             formClassName={classes.spacedHalfwidth}
+            validate={validatePhone}
           />
           <BooleanInput
             fullWidth

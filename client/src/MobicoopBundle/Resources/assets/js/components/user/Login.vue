@@ -185,7 +185,7 @@ export default {
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
-    //this.getSso();
+    this.getSso();
     //console.log(this.$i18n.messages)
   },
   methods: {

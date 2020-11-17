@@ -63,7 +63,7 @@ export const SolidaryPunctualAskSummary = ({ regularMode = false }) => {
           <p>{`Départ limite : ${formatDate(outwardDeadlineDatetime)} `}</p>
         ),
         returnDatetime && <p>{`Retour : ${formatDate(returnDatetime)} `}</p>,
-        returnDatetime && <p>{`Marge : ${Math.round(marginDuration / 3600)} heures`}</p>,
+        (marginDuration>0) && <p>{`Marge +/- : ${parseFloat((marginDuration / 3600).toFixed(2))} heures`}</p>,
       ].filter((x) => x)}
     </SolidaryQuestion>
   );
