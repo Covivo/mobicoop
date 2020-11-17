@@ -123,7 +123,7 @@
           <v-list-item>
             <v-list-item-title>
               <MHeaderLanguage
-                v-if="!isEmpty"
+                v-if="!noLanguage"
                 :languages="languagesList.languages"
                 :language="locale"
                 @languageSelected="updateLanguage"
@@ -287,7 +287,8 @@ export default {
     return {
       snackbar: false,
       width: 0,
-      isEmpty: Object.keys(this.languagesList).length === 0
+      // we check if we get languages
+      noLanguage: Object.keys(this.languagesList).length === 0
     }
   },
   created() {
