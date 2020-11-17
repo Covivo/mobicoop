@@ -101,34 +101,60 @@ class MyAd
     private $frequency;
 
     /**
-     * @var \DateTimeInterface The original date and time of the start of the outward (for punctual ads).
-     * Outward time could be different for an accepted carpool => depend on pickup time for a passenger
+     * @var string|null The original date of the outward (for punctual ads).
      *
      * @Groups("readMyAd")
      */
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface The original date and time of the start of the return (for punctual ads).
-     * Return time could be different for an accepted carpool => depend on pickup time for a passenger
+     * @var string|null The original time of the outward (for punctual ads).
+     *
+     * @Groups("readMyAd")
+     */
+    private $outwardTime;
+
+    /**
+     * @var string|null The original date of the return (for punctual ads).
      *
      * @Groups("readMyAd")
      */
     private $returnDate;
 
     /**
-     * @var \DateTimeInterface|null The date of the start of the ad (for regular ads).
+     * @var string|null The original time of the return (for punctual ads).
+     *
+     * @Groups("readMyAd")
+     */
+    private $returnTime;
+
+    /**
+     * @var string|null The date of the start of the ad (for regular ads).
      *
      * @Groups("readMyAd")
      */
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface|null The date of the end of the ad (for regular ads).
+     * @var string|null The date of the end of the ad (for regular ads).
      *
      * @Groups("readMyAd")
      */
     private $toDate;
+
+    /**
+     * @var string|null The date of the start of the return ad (for regular ads).
+     *
+     * @Groups("readMyAd")
+     */
+    private $returnFromDate;
+
+    /**
+     * @var string|null The date of the end of the return ad (for regular ads).
+     *
+     * @Groups("readMyAd")
+     */
+    private $returnToDate;
 
     /**
      * @var array The schedule for regular ads.
@@ -276,50 +302,98 @@ class MyAd
         return $this;
     }
 
-    public function getOutwardDate(): ?\DateTimeInterface
+    public function getOutwardDate(): ?string
     {
         return $this->outwardDate;
     }
 
-    public function setOutwardDate(\DateTimeInterface $outwardDate): self
+    public function setOutwardDate(string $outwardDate): self
     {
         $this->outwardDate = $outwardDate;
 
         return $this;
     }
 
-    public function getReturnDate(): ?\DateTimeInterface
+    public function getOutwardTime(): ?string
+    {
+        return $this->outwardTime;
+    }
+
+    public function setOutwardTime(string $outwardTime): self
+    {
+        $this->outwardTime = $outwardTime;
+
+        return $this;
+    }
+
+    public function getReturnDate(): ?string
     {
         return $this->returnDate;
     }
 
-    public function setReturnDate(\DateTimeInterface $returnDate): self
+    public function setReturnDate(string $returnDate): self
     {
         $this->returnDate = $returnDate;
 
         return $this;
     }
 
-    public function getFromDate(): ?\DateTimeInterface
+    public function getReturnTime(): ?string
+    {
+        return $this->returnTime;
+    }
+
+    public function setReturnTime(string $returnTime): self
+    {
+        $this->returnTime = $returnTime;
+
+        return $this;
+    }
+
+    public function getFromDate(): ?string
     {
         return $this->fromDate;
     }
 
-    public function setFromDate(?\DateTimeInterface $fromDate): self
+    public function setFromDate(?string $fromDate): self
     {
         $this->fromDate = $fromDate;
 
         return $this;
     }
 
-    public function getToDate(): ?\DateTimeInterface
+    public function getToDate(): ?string
     {
         return $this->toDate;
     }
 
-    public function setToDate(?\DateTimeInterface $toDate): self
+    public function setToDate(?string $toDate): self
     {
         $this->toDate = $toDate;
+
+        return $this;
+    }
+
+    public function getReturnFromDate(): ?string
+    {
+        return $this->returnFromDate;
+    }
+
+    public function setReturnFromDate(?string $returnFromDate): self
+    {
+        $this->returnFromDate = $returnFromDate;
+
+        return $this;
+    }
+
+    public function getReturnToDate(): ?string
+    {
+        return $this->returnToDate;
+    }
+
+    public function setReturnToDate(?string $returnToDate): self
+    {
+        $this->returnToDate = $returnToDate;
 
         return $this;
     }

@@ -108,7 +108,8 @@ class MyAdManager
                     $proposal->getCriteria()->getFromTime()->format('H'),
                     $proposal->getCriteria()->getFromTime()->format('i')
                 );
-                $myAd->setOutwardDate($fromDate);
+                $myAd->setOutwardDate($fromDate->format("Y-m-d"));
+                $myAd->setOutwardTime($fromDate->format("H:i"));
                 if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
                     // there's a return trip
                     /**
@@ -121,12 +122,18 @@ class MyAdManager
                             $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('i')
                         );
                     }
-                    $myAd->setReturnDate($returnDate);
+                    $myAd->setReturnDate($returnDate->format("Y-m-d"));
+                    $myAd->setReturnTime($returnDate->format("H:i"));
                 }
                 break;
             case Criteria::FREQUENCY_REGULAR:
-                $myAd->setFromDate($proposal->getCriteria()->getFromDate());
-                $myAd->setToDate($proposal->getCriteria()->getToDate());
+                $myAd->setFromDate($proposal->getCriteria()->getFromDate()->format("Y-m-d"));
+                $myAd->setToDate($proposal->getCriteria()->getToDate()->format("Y-m-d"));
+                if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+                    // there's a return trip
+                    $myAd->setReturnFromDate($proposal->getProposalLinked()->getCriteria()->getFromDate()->format("Y-m-d"));
+                    $myAd->setReturnToDate($proposal->getProposalLinked()->getCriteria()->getToDate()->format("Y-m-d"));
+                }
                 $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getType() != Proposal::TYPE_ONE_WAY ? $proposal->getProposalLinked()->getCriteria() : null));
                 break;
 
@@ -433,8 +440,8 @@ class MyAdManager
                 $driver['endTime'] = $endDate->format('H:i');
                 break;
             case Criteria::FREQUENCY_REGULAR:
-                $driver['fromDate'] = $ask->getCriteria()->getFromDate();
-                $driver['toDate'] = $ask->getCriteria()->getToDate();
+                $driver['fromDate'] = $ask->getCriteria()->getFromDate()->format("Y-m-d");
+                $driver['toDate'] = $ask->getCriteria()->getToDate()->format("Y-m-d");
                 $schedule['mon']['check'] = $schedule['tue']['check'] = $schedule['wed']['check'] = $schedule['thu']['check'] = $schedule['fri']['check'] = $schedule['sat']['check'] = $schedule['sun']['check'] = false;
                 $schedule['mon']['startTime'] = $schedule['tue']['startTime'] = $schedule['wed']['startTime'] = $schedule['thu']['startTime'] = $schedule['fri']['startTime'] = $schedule['sat']['startTime'] = $schedule['sun']['startTime'] = null;
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
@@ -595,8 +602,8 @@ class MyAdManager
                     $driver['returnEndTime'] = $endDate->format('H:i');
                     break;
                 case Criteria::FREQUENCY_REGULAR:
-                    $driver['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate();
-                    $driver['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate();
+                    $driver['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate()->format("Y-m-d");
+                    $driver['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate()->format("Y-m-d");
                     $schedule['mon']['returnStartTime'] = $schedule['tue']['returnStartTime'] = $schedule['wed']['returnStartTime'] = $schedule['thu']['returnStartTime'] = $schedule['fri']['returnStartTime'] = $schedule['sat']['returnStartTime'] = $schedule['sun']['returnStartTime'] = null;
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
@@ -705,7 +712,7 @@ class MyAdManager
                 if ($carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate())) {
                     if (!is_null($carpoolItem->getUnpaidDate())) {
                         $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
-                        $driver['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate();
+                        $driver['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate()->format("Y-m-d");
                         $driver['payment']['itemId'] = $carpoolItem->getId();
                     } else {
                         switch ($carpoolItem->getDebtorStatus()) {
@@ -964,8 +971,8 @@ class MyAdManager
                     $passenger['returnEndTime'] = $endDate->format('H:i');
                     break;
                 case Criteria::FREQUENCY_REGULAR:
-                    $passenger['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate();
-                    $passenger['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate();
+                    $passenger['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate()->format("Y-m-d");
+                    $passenger['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate()->format("Y-m-d");
                     $schedule['mon']['returnStartTime'] = $schedule['tue']['returnStartTime'] = $schedule['wed']['returnStartTime'] = $schedule['thu']['returnStartTime'] = $schedule['fri']['returnStartTime'] = $schedule['sat']['returnStartTime'] = $schedule['sun']['returnStartTime'] = null;
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
@@ -1074,7 +1081,7 @@ class MyAdManager
                 if ($carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate())) {
                     if (!is_null($carpoolItem->getUnpaidDate())) {
                         $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
-                        $passenger['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate();
+                        $passenger['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate()->format("Y-m-d");
                         $passenger['payment']['itemId'] = $carpoolItem->getId();
                     } else {
                         switch ($carpoolItem->getCreditorStatus()) {
@@ -1132,7 +1139,7 @@ class MyAdManager
                 // declared as unpaid
                 return [
                     'status' => MyAd::PAYMENT_STATUS_TODO,
-                    'unpaidDate' => $carpoolItem->getUnpaidDate(),
+                    'unpaidDate' => $carpoolItem->getUnpaidDate()->format("Y-m-d"),
                     'itemId' => $firstCarpoolItem->getId(),
                     'week' => $carpoolItem->getItemDate()->format('WY')
                 ];
@@ -1140,7 +1147,7 @@ class MyAdManager
                 // passenger has to pay
                 return [
                     'status' => MyAd::PAYMENT_STATUS_TODO,
-                    'unpaidDate' => $carpoolItem->getUnpaidDate(),
+                    'unpaidDate' => !is_null($carpoolItem->getUnpaidDate()) ? $carpoolItem->getUnpaidDate()->format("Y-m-d") : null,
                     'itemId' => $firstCarpoolItem->getId(),
                     'week' => $carpoolItem->getItemDate()->format('WY')
                 ];
@@ -1148,7 +1155,7 @@ class MyAdManager
                 // driver has to validate
                 return [
                     'status' => MyAd::PAYMENT_STATUS_TODO,
-                    'unpaidDate' => $carpoolItem->getUnpaidDate(),
+                    'unpaidDate' => !is_null($carpoolItem->getUnpaidDate()) ? $carpoolItem->getUnpaidDate()->format("Y-m-d") : null,
                     'itemId' => $firstCarpoolItem->getId(),
                     'week' => $carpoolItem->getItemDate()->format('WY')
                 ];
