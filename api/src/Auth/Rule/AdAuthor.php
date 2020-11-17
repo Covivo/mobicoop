@@ -24,7 +24,7 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 
 /**
  *  Check that the requester is the author of the related Ad

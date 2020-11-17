@@ -23,7 +23,7 @@
 
 namespace App\Import\Service;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Service\AdManager;

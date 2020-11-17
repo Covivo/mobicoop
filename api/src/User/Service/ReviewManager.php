@@ -30,7 +30,7 @@ use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\User\Repository\ReviewRepository;
-use App\User\Ressource\ReviewsDashboard;
+use App\User\Ressource\ReviewDashboard;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -268,11 +268,11 @@ class ReviewManager
      * Return the reviews Dashboard of a User
      *
      * @param User $user
-     * @return ReviewsDashboard
+     * @return ReviewDashboard
      */
-    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewsDashboard
+    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewDashboard
     {
-        $reviewDashboard = new ReviewsDashboard();
+        $reviewDashboard = new ReviewDashboard();
         $reviewDashboard->setReviewActive($this->userReview);
         // Get all reviews involving the User
         $reviews = $this->getReviews($reviewer, $reviewed);

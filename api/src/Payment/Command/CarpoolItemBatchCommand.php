@@ -50,11 +50,11 @@ class CarpoolItemBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:payment:item-batch')
+        ->setName('app:carpool:item-batch')
         ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
         ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
-        ->setDescription('Create the carpool payment items for the given period.')
-        ->setHelp('Create the carpool payment items from the accepted asks; the items concerns the given period (default : Westeros invasion date by the Andals).')
+        ->setDescription('Create the carpool items for the given period.')
+        ->setHelp('Create the carpool items from the accepted asks; the items concerns the given period (default : Westeros invasion date by the Andals).')
         ;
     }
 
