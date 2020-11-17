@@ -23,13 +23,13 @@
         color="primary"
       >
         <v-list-item
-          v-for="(item, i) in langaugesList"
+          v-for="(item, key, i) in languagesList"
           :key="i"
         >
           <v-list-item-title
-            @click="selectLanguage(item)"
+            @click="selectLanguage(item, key)"
           >
-            {{ item.name }}
+            {{ item }}
           </v-list-item-title>
         </v-list-item>
       </v-list-item-group>
@@ -53,29 +53,21 @@ export default {
       default: "fr"
     },
     languages: {
-      type: Array,
-      default: null
+      type: Object,
+      default: () => {}
     }
   },
   data(){
     return {
       selectedLanguage: null,
-      langaugesList: this.languages,
-    
+      languagesList: this.languages,
     }
   },
-  created() {
-    this.langaugesList.forEach((language, index) => {
-      if (this.language == language.locale) {
-        this.selectedLanguage = index
-      }
-    });
-  },
   methods:{
-    selectLanguage(item) {
+    selectLanguage(item, key) {
       this.selectedLanguage = item
-      this.$emit('languageSelected', item.locale);
-      axios.post(this.$t('urlToSelectLanguage'), item);
+      this.$emit('languageSelected', key);
+      axios.post(this.$t('urlToSelectLanguage'), {locale:key});
     },
   }
 }
