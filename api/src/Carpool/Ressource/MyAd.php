@@ -101,7 +101,7 @@ class MyAd
     private $frequency;
 
     /**
-     * @var \DateTimeInterface The original date and time of the start of the outward.
+     * @var \DateTimeInterface The original date and time of the start of the outward (for punctual ads).
      * Outward time could be different for an accepted carpool => depend on pickup time for a passenger
      *
      * @Groups("readMyAd")
@@ -109,12 +109,19 @@ class MyAd
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface The original date and time of the start of the return.
+     * @var \DateTimeInterface The original date and time of the start of the return (for punctual ads).
      * Return time could be different for an accepted carpool => depend on pickup time for a passenger
      *
      * @Groups("readMyAd")
      */
     private $returnDate;
+
+    /**
+     * @var \DateTimeInterface|null The date of the start of the ad (for regular ads).
+     *
+     * @Groups("readMyAd")
+     */
+    private $fromDate;
 
     /**
      * @var \DateTimeInterface|null The date of the end of the ad (for regular ads).
@@ -289,6 +296,18 @@ class MyAd
     public function setReturnDate(\DateTimeInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
+
+        return $this;
+    }
+
+    public function getFromDate(): ?\DateTimeInterface
+    {
+        return $this->fromDate;
+    }
+
+    public function setFromDate(?\DateTimeInterface $fromDate): self
+    {
+        $this->fromDate = $fromDate;
 
         return $this;
     }

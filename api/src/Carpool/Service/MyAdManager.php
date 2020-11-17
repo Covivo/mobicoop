@@ -98,16 +98,17 @@ class MyAdManager
         $myAd->setRoleDriver($proposal->getCriteria()->isDriver());
         $myAd->setRolePassenger($proposal->getCriteria()->isPassenger());
 
-        /**
-         * @var DateTime $outwardDate
-         */
-        $outwardDate = $proposal->getCriteria()->getFromDate();
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
-                $outwardDate->setTime(
+                 /**
+                 * @var DateTime $fromDate
+                 */
+                $fromDate = $proposal->getCriteria()->getFromDate();
+                $fromDate->setTime(
                     $proposal->getCriteria()->getFromTime()->format('H'),
                     $proposal->getCriteria()->getFromTime()->format('i')
                 );
+                $myAd->setOutwardDate($fromDate);
                 if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
                     // there's a return trip
                     /**
@@ -124,13 +125,13 @@ class MyAdManager
                 }
                 break;
             case Criteria::FREQUENCY_REGULAR:
+                $myAd->setFromDate($proposal->getCriteria()->getFromDate());
+                $myAd->setToDate($proposal->getCriteria()->getToDate());
                 $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getType() != Proposal::TYPE_ONE_WAY ? $proposal->getProposalLinked()->getCriteria() : null));
                 break;
 
         }
-        $myAd->setOutwardDate($outwardDate);
-        $myAd->setToDate($proposal->getCriteria()->getToDate());
-
+        
         // waypoints
         $waypoints = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
@@ -409,13 +410,13 @@ class MyAdManager
         ];
 
         // date and time
-        /**
-         * @var DateTime $startDate
-         */
-        $startDate = $ask->getCriteria()->getFromDate();
         $schedule = [];
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
+                /**
+                 * @var DateTime $startDate
+                 */
+                $startDate = $ask->getCriteria()->getFromDate();
                 $startDate->setTime(
                     $ask->getCriteria()->getFromTime()->format('H'),
                     $ask->getCriteria()->getFromTime()->format('i')
@@ -432,6 +433,8 @@ class MyAdManager
                 $driver['endTime'] = $endDate->format('H:i');
                 break;
             case Criteria::FREQUENCY_REGULAR:
+                $driver['fromDate'] = $ask->getCriteria()->getFromDate();
+                $driver['toDate'] = $ask->getCriteria()->getToDate();
                 $schedule['mon']['check'] = $schedule['tue']['check'] = $schedule['wed']['check'] = $schedule['thu']['check'] = $schedule['fri']['check'] = $schedule['sat']['check'] = $schedule['sun']['check'] = false;
                 $schedule['mon']['startTime'] = $schedule['tue']['startTime'] = $schedule['wed']['startTime'] = $schedule['thu']['startTime'] = $schedule['fri']['startTime'] = $schedule['sat']['startTime'] = $schedule['sun']['startTime'] = null;
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
@@ -570,12 +573,12 @@ class MyAdManager
                 }
             }
             $driver['returnWaypoints'] = $waypoints;
-            /**
-             * @var DateTime $startDate
-             */
-            $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
             switch ($ask->getAskLinked()->getCriteria()->getFrequency()) {
                 case Criteria::FREQUENCY_PUNCTUAL:
+                    /**
+                     * @var DateTime $startDate
+                     */
+                    $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
                     $startDate->setTime(
                         $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
                         $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
@@ -592,6 +595,8 @@ class MyAdManager
                     $driver['returnEndTime'] = $endDate->format('H:i');
                     break;
                 case Criteria::FREQUENCY_REGULAR:
+                    $driver['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate();
+                    $driver['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate();
                     $schedule['mon']['returnStartTime'] = $schedule['tue']['returnStartTime'] = $schedule['wed']['returnStartTime'] = $schedule['thu']['returnStartTime'] = $schedule['fri']['returnStartTime'] = $schedule['sat']['returnStartTime'] = $schedule['sun']['returnStartTime'] = null;
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
@@ -773,17 +778,17 @@ class MyAdManager
             'givenName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getGivenName() : $ask->getUser()->getGivenName(),
             'shortFamilyName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser()->getShortFamilyName(),
             'waypoints' => $waypoints,
-            'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice()
+            'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
         ];
 
         // date and time
-        /**
-         * @var DateTime $startDate
-         */
-        $startDate = $ask->getCriteria()->getFromDate();
         $schedule = [];
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
+                /**
+                 * @var DateTime $startDate
+                 */
+                $startDate = $ask->getCriteria()->getFromDate();
                 $startDate->setTime(
                     $ask->getCriteria()->getFromTime()->format('H'),
                     $ask->getCriteria()->getFromTime()->format('i')
@@ -800,6 +805,8 @@ class MyAdManager
                 $passenger['endTime'] = $endDate->format('H:i');
                 break;
             case Criteria::FREQUENCY_REGULAR:
+                $passenger['fromDate'] = $ask->getCriteria()->getFromDate();
+                $passenger['toDate'] = $ask->getCriteria()->getToDate();
                 $schedule['mon']['check'] = $schedule['tue']['check'] = $schedule['wed']['check'] = $schedule['thu']['check'] = $schedule['fri']['check'] = $schedule['sat']['check'] = $schedule['sun']['check'] = false;
                 $schedule['mon']['startTime'] = $schedule['tue']['startTime'] = $schedule['wed']['startTime'] = $schedule['thu']['startTime'] = $schedule['fri']['startTime'] = $schedule['sat']['startTime'] = $schedule['sun']['startTime'] = null;
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
@@ -935,12 +942,12 @@ class MyAdManager
                 }
             }
             $passenger['returnWaypoints'] = $waypoints;
-            /**
-             * @var DateTime $startDate
-             */
-            $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
             switch ($ask->getAskLinked()->getCriteria()->getFrequency()) {
                 case Criteria::FREQUENCY_PUNCTUAL:
+                    /**
+                     * @var DateTime $startDate
+                     */
+                    $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
                     $startDate->setTime(
                         $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
                         $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
@@ -957,6 +964,8 @@ class MyAdManager
                     $passenger['returnEndTime'] = $endDate->format('H:i');
                     break;
                 case Criteria::FREQUENCY_REGULAR:
+                    $passenger['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate();
+                    $passenger['returnToDate'] = $ask->getAskLinked()->getCriteria()->getToDate();
                     $schedule['mon']['returnStartTime'] = $schedule['tue']['returnStartTime'] = $schedule['wed']['returnStartTime'] = $schedule['thu']['returnStartTime'] = $schedule['fri']['returnStartTime'] = $schedule['sat']['returnStartTime'] = $schedule['sun']['returnStartTime'] = null;
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
