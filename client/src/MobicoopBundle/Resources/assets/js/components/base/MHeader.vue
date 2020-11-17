@@ -70,12 +70,16 @@
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
       </div>
-      <MHeaderLanguage
-        v-if="languages"
-        :languages="languages"
-        @languageSelected="updateLanguage"
-      />
-     
+      <v-toolbar-items
+        class="hidden-md-and-down"
+      >
+        <MHeaderLanguage
+          v-if="languagesList"
+          :languages="languagesList.languages"
+          :language="locale"
+          @languageSelected="updateLanguage"
+        />
+      </v-toolbar-items>
       <v-snackbar
         v-if="!user"
         v-model="snackbar"
@@ -116,6 +120,16 @@
         </template>
 
         <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <MHeaderLanguage
+                v-if="languagesList"
+                :languages="languagesList.languages"
+                :language="locale"
+                @languageSelected="updateLanguage"
+              />
+            </v-list-item-title>
+          </v-list-item>
           <v-list-item>
             <v-list-item-title>
               <MHeaderProfile
@@ -264,10 +278,6 @@ export default {
       type: String,
       default: "fr"
     },
-    sessionLanguage: {
-      type: String,
-      default: null 
-    },
     languagesList: {
       type: Object,
       default: null
@@ -276,13 +286,11 @@ export default {
   data () {
     return {
       snackbar: false,
-      width: 0,
-      dlocale: this.locale,
-      languages: this.languagesList.languages
+      width: 0
     }
   },
   created() {
-    this.$root.$i18n.locale = this.sessionLanguage ? this.sessionLanguage : this.locale
+    this.$root.$i18n.locale = this.locale
   },
   methods:{
     updateLanguage(language) {

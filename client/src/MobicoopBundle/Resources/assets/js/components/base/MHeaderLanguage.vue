@@ -1,6 +1,7 @@
 <template>
   <v-menu
     offset-y
+    open-on-hover
   >
     <template v-slot:activator="{ on }">
       <v-btn
@@ -14,38 +15,42 @@
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
-    <v-list>
-      <v-list-item
-        v-for="(item, index) in languagesList"
-        :key="index"
+    <v-list
+      rounded
+    >
+      <v-list-item-group
+        v-model="selectedLanguage"
+        color="primary"
       >
-        <v-list-item-title @click="selectLanguage(item)">
-          {{ item.name }}
-        </v-list-item-title>
-      </v-list-item>
+        <v-list-item
+          v-for="(item, i) in langaugesList"
+          :key="i"
+        >
+          <v-list-item-title
+            @click="selectLanguage(item)"
+          >
+            {{ item.name }}
+          </v-list-item-title>
+        </v-list-item>
+      </v-list-item-group>
     </v-list>
   </v-menu>
 </template>
 <script>
 import axios from "axios";
-import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/base/MHeaderProfile/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeaderProfile/"
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+import {messages_en, messages_fr} from "@translations/components/base/MHeaderLanguage/";
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'en': messages_en,
+      'fr': messages_fr
     }
   },
   props:{
-    userLanguage:{
+    language: {
       type: String,
-      default: "fr_FR"
+      default: "fr"
     },
     languages: {
       type: Array,
@@ -54,13 +59,23 @@ export default {
   },
   data(){
     return {
-      languagesList: this.languages,
+      selectedLanguage: null,
+      langaugesList: this.languages,
+    
     }
+  },
+  created() {
+    this.langaugesList.forEach((language, index) => {
+      if (this.language == language.locale) {
+        this.selectedLanguage = index
+      }
+    });
   },
   methods:{
     selectLanguage(item) {
+      this.selectedLanguage = item
       this.$emit('languageSelected', item.locale);
-      axios.post('/setLanguage', item);
+      axios.post(this.$t('urlToSelectLanguage'), item);
     },
   }
 }

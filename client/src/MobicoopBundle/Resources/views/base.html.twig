@@ -29,17 +29,15 @@
                         :user="{{app.user|json_encode}}"
                         :url-mobile="{{urlMobile|json_encode}}"                    
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}" 
-                        locale="{{ app.request.locale }}"
+                        :locale="{{ app.session.get('language') is null ? app.request.locale|json_encode : app.session.get('language')|json_encode }}"
                         :languages-list="{{languagesList|json_encode}}"
-                        :session-language="{{app.session.get('language')|json_encode}}"
                     ></m-header>
                 {% else %}
                     <m-header 
                         :url-mobile="{{urlMobile|json_encode}}"
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
-                        locale="{{ app.request.locale }}"
+                        :locale="{{ app.session.get('language') is null ? app.request.locale|json_encode : app.session.get('language')|json_encode }}"
                         :languages-list="{{languagesList|json_encode}}"
-                        :session-language="{{app.session.get('language')|json_encode}}"
                     ></m-header>
             {% endif %}
 
