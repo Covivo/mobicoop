@@ -25,19 +25,11 @@ namespace App\Carpool\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\User\Entity\User;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : an ad for the current api user.
  *
  * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"readMyAd"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeMyAd"}},
- *          "validation_groups"={"writeMyAd"}
- *      },
  *      collectionOperations={
  *          "get"={
  *             "security"="is_granted('my_ad_list_self',object)"
@@ -45,9 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *          "get"={
- *              "method"="GET",
- *              "read"=false,
- *              "security"="is_granted('my_ad_read_self',object)"
+ *              "security"="is_granted('reject',object)"
  *          }
  *      }
  * )
@@ -68,169 +58,118 @@ class MyAd
      * @var int The id of this ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readMyAd","updateMyAd"})
      */
     private $id;
 
     /**
      * @var boolean The ad is published.
-     *
-     * @Groups("readMyAd")
      */
     private $published;
 
     /**
      * @var boolean The user can be a driver.
-     *
-     * @Groups("readMyAd")
      */
     private $roleDriver;
 
     /**
      * @var boolean The user can be a passenger.
-     *
-     * @Groups("readMyAd")
      */
     private $rolePassenger;
 
     /**
      * @var int The ad frequency (1 = punctual; 2 = regular).
-     *
-     * @Groups("readMyAd")
      */
     private $frequency;
 
     /**
      * @var string|null The original date of the outward (for punctual ads).
-     *
-     * @Groups("readMyAd")
      */
     private $outwardDate;
 
     /**
      * @var string|null The original time of the outward (for punctual ads).
-     *
-     * @Groups("readMyAd")
      */
     private $outwardTime;
 
     /**
      * @var string|null The original date of the return (for punctual ads).
-     *
-     * @Groups("readMyAd")
      */
     private $returnDate;
 
     /**
      * @var string|null The original time of the return (for punctual ads).
-     *
-     * @Groups("readMyAd")
      */
     private $returnTime;
 
     /**
      * @var string|null The date of the start of the ad (for regular ads).
-     *
-     * @Groups("readMyAd")
      */
     private $fromDate;
 
     /**
      * @var string|null The date of the end of the ad (for regular ads).
-     *
-     * @Groups("readMyAd")
      */
     private $toDate;
 
     /**
      * @var string|null The date of the start of the return ad (for regular ads).
-     *
-     * @Groups("readMyAd")
      */
     private $returnFromDate;
 
     /**
      * @var string|null The date of the end of the return ad (for regular ads).
-     *
-     * @Groups("readMyAd")
      */
     private $returnToDate;
 
     /**
      * @var array The schedule for regular ads.
-     *
-     * @Groups("readMyAd")
      */
     private $schedule;
 
     /**
      * @var array The waypoints.
-     *
-     * @Groups("readMyAd")
      */
     private $waypoints;
 
     /**
     * @var string|null The price per km.
-    *
-    * @Groups("readMyAd")
     */
     private $priceKm;
 
     /**
     * @var string|null The total price selected by the user.
-    *
-    * @Groups("readMyAd")
     */
     private $price;
 
     /**
      * @var int|null The number of seats available/required.
-     *
-     * @Groups("readMyAd")
      */
     private $seats;
 
     /**
      * @var string|null A comment about the ad.
-     *
-     * @Groups("readMyAd")
      */
     private $comment;
 
     /**
      * @var array|null The details of the driver if the user is passenger and the ad has an accepted ask as passenger.
-     *
-     * @Groups("readMyAd")
      */
     private $driver;
 
     /**
      * @var array|null The details of the passengers if the user is driver and the ad has accepted asks as driver.
-     *
-     * @Groups("readMyAd")
      */
     private $passengers;
 
     /**
      * @var int The number of potential carpoolers of this ad.
-     *
-     * @Groups("readMyAd")
      */
     private $carpoolers;
 
     /**
      * @var int The overall payment status of this ad.
-     *
-     * @Groups("readMyAd")
      */
     private $paymentStatus;
-
-    /**
-     * @var User The author of the ad.
-     * Used for security check.
-     */
-    private $author;
 
     public function __construct()
     {
@@ -510,18 +449,6 @@ class MyAd
     public function setPaymentStatus(int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
-
-        return $this;
-    }
-
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): self
-    {
-        $this->author = $author;
 
         return $this;
     }

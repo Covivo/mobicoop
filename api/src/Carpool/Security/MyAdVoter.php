@@ -26,7 +26,6 @@ namespace App\Carpool\Security;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Carpool\Ressource\Ad;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Carpool\Ressource\MyAd;
 use App\Carpool\Service\MyAdManager;
@@ -34,7 +33,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MyAdVoter extends Voter
 {
-    const MY_AD_READ_SELF = 'my_ad_read_self';
     const MY_AD_LIST_SELF = 'my_ad_list_self';
     
     private $request;
@@ -52,7 +50,6 @@ class MyAdVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::MY_AD_READ_SELF,
             self::MY_AD_LIST_SELF
             ])) {
             return false;
@@ -60,7 +57,6 @@ class MyAdVoter extends Voter
 
         // only vote on Ad objects inside this voter
         if (!in_array($attribute, [
-            self::MY_AD_READ_SELF,
             self::MY_AD_LIST_SELF
             ]) && !($subject instanceof Paginator) && !($subject instanceof MyAd)) {
             return false;
@@ -73,19 +69,11 @@ class MyAdVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
-            case self::MY_AD_READ_SELF:
-                // $myAd = $this->myAdManager->getMyAd($this->request->get('id'));
-                // return $this->canReadMyAd($myAd);
             case self::MY_AD_LIST_SELF:
                 return $this->canListAd();
         }
 
         throw new \LogicException('This code should not be reached!');
-    }
-
-    private function canReadAd(MyAd $myAd)
-    {
-        return $this->authManager->isAuthorized(self::MY_AD_READ_SELF, ['myAd'=>$myAd]);
     }
 
     private function canListAd()
