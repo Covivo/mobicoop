@@ -7,6 +7,7 @@
       <v-btn
         rounded
         text
+        :class="textClass"
         v-on="on"
       >
         <v-icon>
@@ -54,6 +55,10 @@ export default {
     },
     languages: {
       type: Object
+    },
+    textClass: {
+      type: String,
+      default: null
     }
   },
   data(){
