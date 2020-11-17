@@ -280,7 +280,7 @@ export default {
     },
     languagesList: {
       type: Object,
-      default: null
+      default: {}
     }
   },
   data () {
