@@ -39,10 +39,6 @@ export default {
       type: Boolean,
       default: false
     },
-    isPassenger: {
-      type: Boolean,
-      default: false
-    },
     paymentStatus: {
       type: Number,
       default: null
@@ -59,13 +55,9 @@ export default {
       type: Boolean,
       default: false
     },
-    hideButton: {
-      type: Boolean,
-      default: false
-    },
     paymentItemId: {
       type: Number,
-      default: 1
+      default: null
     },
     frequency: {
       type: Number,
@@ -79,9 +71,17 @@ export default {
     }
   },
   computed: {
+    hideButton() {
+      return this.paymentStatus == -1;
+    },
+    status() {
+      switch (this.paymentStatus) {
+      case 1: return "pending";
+      default: return "paid";
+      }
+    },  
     displayPaymentStatus(){
-      let status = this.getStatus(this.paymentStatus);
-      return (this.isDriver) ? this.$t('driver.'+status) : this.$t('passenger.'+status);
+      return (this.isDriver) ? this.$t('driver.'+this.status) : this.$t('passenger.'+this.status);
     },
     type(){
       return (this.isDriver) ? 2 : 1;
@@ -89,11 +89,10 @@ export default {
   },
   methods:{
     getStatus(paymentStatus){
-      if(paymentStatus=="0" || paymentStatus=="3"){
-        // Pending or Unpaid
+      if(paymentStatus=="1"){
         return "pending";
       }
-      else if(paymentStatus=="1" || paymentStatus=="2" || paymentStatus=="4"){
+      else if(paymentStatus=="2"){
         // Paid
         this.disabled = true;
         return "paid";

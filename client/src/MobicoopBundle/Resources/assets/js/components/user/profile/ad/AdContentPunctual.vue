@@ -15,22 +15,22 @@
           :origin="origin"
           :destination="destination"
           :type="ad.frequency"
-          :time="ad.outwardTime"
+          :time="ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime"
           :compact="true"
           text-color-class="primary--text"
           icon-color="accent"
         />
       </v-col>
     </v-row>
-    <v-row v-if="hasReturn && !isRefined">
+    <v-row v-if="ad.returnDate !== null && !isRefined">
       <schedules
         :is-return="true"
         :is-outward="false"
         date-time-format="shortDate"
-        :return-times="[ad.returnDate]"
+        :return-time="ad.returnDate"
       />
     </v-row>
-    <v-row v-if="hasReturn && !isRefined">
+    <v-row v-if="ad.returnDate !== null && !isRefined">
       <v-col
         class="pa-0"
       >
@@ -70,13 +70,19 @@ export default {
   },
   computed: {
     hasReturn () {
-      return !this.ad.oneWay;
+      return this.ad.returnDate !== null;
     },
     origin () {
-      return this.ad.outwardWaypoints.find(el => el.position === 0)["address"];
+      return {
+        streetAddress: this.ad.waypoints.find(el => el.position === 0)['streetAddress'],
+        addressLocality: this.ad.waypoints.find(el => el.position === 0)['addressLocality']
+      }
     },
     destination () {
-      return this.ad.outwardWaypoints.find(el => el.destination === true)["address"];
+      return {
+        streetAddress: this.ad.waypoints.find(el => el.destination === true)['streetAddress'],
+        addressLocality: this.ad.waypoints.find(el => el.destination === true)['addressLocality']
+      }
     }
   }
 }

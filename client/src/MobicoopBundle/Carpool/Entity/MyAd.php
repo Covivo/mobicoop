@@ -21,36 +21,23 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
- * Carpooling : an ad for the current api user.
- *
- * @ApiResource(
- *      collectionOperations={
- *          "get"={
- *          "path"="/my_carpools",
- *             "security"="is_granted('my_ad_list_self',object)"
- *          }
- *      },
- *      itemOperations={
- *          "get"={
- *              "security"="is_granted('reject',object)"
- *          }
- *      }
- * )
- *
+ * Carpooling : an ad fo a user.
  */
-class MyAd
+class MyAd implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
+    const RESOURCE_NAME = "my_carpools";
 
     const PAYMENT_STATUS_NULL = -1;     // no payment for this ad
     const PAYMENT_STATUS_TODO = 1;      // there's a payment to validate (as a driver) or to pay (as a passenger)
     const PAYMENT_STATUS_PAID = 2;      // all payments are received (as a driver) or paid (as a passenger)
+
+    const FREQUENCY_PUNCTUAL = 1;
+    const FREQUENCY_REGULAR = 2;
 
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
@@ -182,9 +169,11 @@ class MyAd
      */
     private $paymentStatus;
 
-    public function __construct()
+    public function __construct($id=null)
     {
-        $this->id = self::DEFAULT_ID;
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
         $this->waypoints = [];
         $this->schedule = [];
         $this->driver = [];
@@ -486,5 +475,37 @@ class MyAd
         $this->paymentStatus = $paymentStatus;
 
         return $this;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'published' => $this->isPublished(),
+                'paused' => $this->isPaused(),
+                'roleDriver' => $this->hasRoleDriver(),
+                'rolePassenger' => $this->hasRolePassenger(),
+                'frequency' => $this->getFrequency(),
+                'outwardDate' => $this->getOutwardDate(),
+                'outwardTime' => $this->getOutwardTime(),
+                'returnDate' => $this->getReturnDate(),
+                'returnTime' => $this->getReturnTime(),
+                'fromDate' => $this->getFromDate(),
+                'toDate' => $this->getToDate(),
+                'returnFromDate' => $this->getReturnFromDate(),
+                'returnToDate' => $this->getReturnToDate(),
+                'schedule' => $this->getSchedule(),
+                'waypoints' => $this->getWaypoints(),
+                'priceKm' => $this->getPriceKm(),
+                'price' => $this->getPrice(),
+                'seats' => $this->getSeats(),
+                'comment' => $this->getComment(),
+                'asks' => $this->hasAsks(),
+                'driver' => $this->getDriver(),
+                'passengers' => $this->getPassengers(),
+                'carpoolers' => $this->getCarpoolers(),
+                'paymentStatus' => $this->getPaymentStatus(),
+            ];
     }
 }

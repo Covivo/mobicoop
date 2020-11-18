@@ -36,5 +36,6 @@
         "lower": "Le mot de passe doit comprendre 1 minuscule.",
         "number": "Le mot de passe doit comprendre 1 chiffre."
     },
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "getMyCarpools": "/getMyCarpools"
 }

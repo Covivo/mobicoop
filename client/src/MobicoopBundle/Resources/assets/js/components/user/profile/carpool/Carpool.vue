@@ -1,12 +1,12 @@
 <template>
   <v-card>
     <ad-header
-      :is-driver="isDriver"
-      :is-passenger="isPassenger"
-      :is-pausable="isRegular"
+      :is-driver="ad.roleDriver"
+      :is-passenger="ad.rolePassenger"
+      :is-pausable="ad.frequency === 2"
       :is-archived="isArchived"
-      :has-accepted-ask="hasAtLeastOneAcceptedAsk"
-      :has-ask="hasAtLeastOneAsk"
+      :has-accepted-ask="ad.driver.length>0 || ad.passengers.length>0"
+      :has-ask="ad.asks"
       :ad-id="ad.id"
       :payment-item-id="ad.paymentItemId"
       :ad-frequency="ad.frequency"
@@ -17,8 +17,11 @@
       @activePanel="activePanel()"
     />
 
-    <v-card-text v-if="isRegular">
-      <ad-content-regular :ad="ad" />
+    <v-card-text v-if="ad.frequency === 2">
+      <ad-content-regular 
+        :ad="ad" 
+        :is-carpool="true"
+      />
     </v-card-text>
 
     <v-card-text v-else>
@@ -33,8 +36,8 @@
     <v-card-actions class="py-0">
       <carpool-footer
         :id="ad.id"
-        :seats="(isDriver) ? ad.seatsDriver : ad.seatsPassenger"
-        :price="(isDriver) ? ad.outwardDriverPrice : ad.outwardPassengerPrice"
+        :seats="ad.seats"
+        :price="ad.price"
         :id-message="lastMessageId"
         :ad="ad"
         :user="user"
@@ -74,40 +77,11 @@ export default {
   },
   data() {
     return {
-      hasAtLeastOneAsk: false,
-      hasAtLeastOneAcceptedAsk: false,
       lastMessageId: null,
       showCarpooler: false
     }
   },
-  computed: {
-    isDriver() {
-      return this.ad.role === 1 || this.ad.role === 3
-    },
-    isPassenger() {
-      return (this.ad.role === 2 || this.ad.role === 3) && this.ad.solidaryExclusive !== 1
-    },
-    isRegular() {
-      return this.ad.frequency === 2;
-    },
-    hasReturn() {
-      return !this.ad.oneWay;
-    }
-  },
-  mounted() {
-    this.checkAsks();
-  },
   methods: {
-    checkAsks() {
-      this.ad.results.forEach(result => {
-        if (result.pendingAsk || result.initiatedAsk) {
-          this.hasAtLeastOneAsk = true;
-        }
-        if (result.acceptedAsk) {
-          this.hasAtLeastOneAcceptedAsk = true;
-        }
-      });
-    },
     activePanel() {
       this.showCarpooler = true;
     }

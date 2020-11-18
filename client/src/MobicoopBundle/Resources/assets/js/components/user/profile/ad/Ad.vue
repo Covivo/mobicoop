@@ -1,19 +1,19 @@
 <template>
   <v-card>
     <ad-header
-      :is-driver="isDriver"
-      :is-passenger="isPassenger"
-      :is-pausable="isRegular"
-      :is-paused="isPaused"
+      :is-driver="ad.roleDriver"
+      :is-passenger="ad.rolePassenger"
+      :is-pausable="ad.frequency === 2"
+      :is-paused="ad.paused"
       :is-archived="isArchived"
-      :has-accepted-ask="hasAtLeastOneAcceptedAsk"
-      :has-ask="hasAtLeastOneAsk"
+      :has-accepted-ask="ad.driver.length>0 || ad.passengers.length>0"
+      :has-ask="ad.asks"
       :ad-id="ad.id"
       @ad-deleted="adDeleted"
-      @pause-ad="pauseAd"
+      @pause-ad="ad.paused"
     />
     
-    <v-card-text v-if="isRegular">
+    <v-card-text v-if="ad.frequency === 2">
       <ad-content-regular :ad="ad" />
     </v-card-text>
       
@@ -25,12 +25,12 @@
       
     <v-card-actions>
       <ad-footer
-        v-if="!isPaused"
+        v-if="!ad.paused"
         :id="ad.id"
-        :seats="(isDriver && !isPassenger) ? ad.seatsDriver : null"
-        :price="(isDriver && !isPassenger) ? ad.outwardDriverPrice : null"
+        :seats="(ad.roleDriver && !ad.rolePassenger) ? ad.seats : null"
+        :price="(ad.roleDriver && !ad.rolePassenger) ? ad.price : null"
         :id-message="lastMessageId"
-        :nb-matchings="ad.potentialCarpoolers"
+        :nb-matchings="ad.carpoolers"
       />
     </v-card-actions>
   </v-card>
@@ -61,46 +61,12 @@ export default {
   },
   data () {
     return {
-      hasAtLeastOneAsk: false,
-      hasAtLeastOneAcceptedAsk: false,
-      lastMessageId: null,
-      isPaused: this.ad.paused
+      lastMessageId: null
     }
-  },
-  computed: {
-    isDriver () {
-      return this.ad.role === 1 || this.ad.role === 3
-    },
-    isPassenger () {
-      return (this.ad.role === 2 || this.ad.role === 3) && this.ad.solidaryExclusive !== 1
-    },
-    isRegular () {
-      return this.ad.frequency === 2;
-    },
-    hasReturn () {
-      return !this.ad.oneWay;
-    }
-  },
-  mounted () {
-    this.checkAsks();
   },
   methods: {
-    checkAsks () {
-      this.ad.results.forEach(result => {
-        if (result.pendingAsk || result.initiatedAsk) {
-          this.hasAtLeastOneAsk = true;
-        }
-        if (result.acceptedAsk) {
-          this.hasAtLeastOneAcceptedAsk = true;
-        } 
-      });
-    },
     adDeleted(isArchived, id, message) {
       this.$emit('ad-deleted', isArchived, id, message)
-    },
-    pauseAd(pauseAd) {
-      this.isPaused = pauseAd;
-     
     }
   }
 }

@@ -4,17 +4,17 @@
       <v-col
         class="pa-0"
       >
-        <v-container :class=" isRegular ? 'primary lighten-5 py-0' : 'py-0'">
+        <v-container :class="frequency == 2 ? 'primary lighten-5 py-0' : 'py-0'">
           <v-row class="py-0">
             <v-col
               class="py-0"
             >
               <route-summary
-                :origin="ask.role === 2 ? carpoolInfos.outward.originPassenger : carpoolInfos.outward.originDriver"
-                :destination="ask.role === 2 ? carpoolInfos.outward.destinationPassenger : carpoolInfos.outward.destinationDriver"
-                :type="result.frequency"
-                :time="!isRegular ? result.time : null"
-                :regular="isRegular"
+                :origin="origin"
+                :destination="destination"
+                :type="frequency"
+                :time="frequency == 1 ? (driver ? carpooler.startTime : carpooler.pickUpTime) : null"
+                :regular="frequency==2"
                 :compact="true"
                 text-color-class="primary--text"
                 icon-color="accent"
@@ -25,11 +25,11 @@
       </v-col>
     </v-row>
     <v-row
-      v-if="isRegular"
+      v-if="frequency == 2"
       align="center"
     >
       <v-col
-        v-for="(schedule, index) in schedules"
+        v-for="(schedule, index) in carpooler.schedules"
         :key="index"
         cols="12"
         class="pb-0 px-0"
@@ -50,8 +50,8 @@
               :fri-active="schedule.fri"
               :sat-active="schedule.sat"
               :sun-active="schedule.sun"
-              :date-start-of-validity="index === schedules.length -1 ? carpoolInfos.outward.fromDate : null"
-              :date-end-of-validity="index === schedules.length -1 ? carpoolInfos.outward.toDate : null"
+              :date-start-of-validity="carpooler.fromDate"
+              :date-end-of-validity="carpooler.toDate"
             />
           </v-col>
 
@@ -59,11 +59,9 @@
             class="pa-0"
           >
             <schedules
-              :outward-time="schedule.outwardTime"
-              :return-time="schedule.returnTime"
-              :is-return="scheduleHasReturn(schedule)"
-              :is-outward="scheduleHasOutward(schedule)"
-              :is-regular="isRegular"
+              :outward-time="driver ? schedule.startTime : schedule.pickUpTime"
+              :return-time="driver ? schedule.returnStartTime : schedule.returnPickUpTime"
+              :is-regular="frequency == 2"
               :no-gutters="true"
               :has-days="true"
             />
@@ -76,11 +74,11 @@
       align="center"
     >
       <v-col
-        :cols="ask.paymentStatus !== null ? 4 : 7"
+        :cols="carpooler.payment.status !== null ? 4 : 7"
         :class="{'ml-n11': $vuetify.breakpoint.lgAndDown}"
       >
         <carpooler-identity
-          :carpooler="result.carpooler"
+          :carpooler="carpooler"
         />
       </v-col>
       <v-col
@@ -88,45 +86,30 @@
       >
         <!--display phone is always true when ask is accepted-->
         <carpooler-contact
-          :carpooler="result.carpooler"
-          :ask-id="ask.askId"
+          :carpooler="carpooler"
+          :ask-id="carpooler.askId"
           :display-mail-box="true"
           :user="user"
         />
       </v-col>
-      <!--      <v-col-->
-      <!--        cols="2"-->
-      <!--        class="text-right"-->
-      <!--      >-->
-      <!--        <v-btn-->
-      <!--          rounded-->
-      <!--          depressed-->
-      <!--          color="secondary"-->
-      <!--          class="text-none"-->
-      <!--          height="40px"-->
-      <!--        >-->
-      <!--          {{ $t('ui.button.cancel') }}-->
-      <!--        </v-btn>-->
-      <!--      </v-col>-->
       <v-col
-        v-if="isPassenger"
+        v-if="passenger"
         cols="2"
         class="font-weight-bold primary--text text-h5 text-right"
         :class="{'text-h6 ml-n6': $vuetify.breakpoint.mdAndDown}"
       >
-        {{ result.roundedPrice }}€
+        {{ carpooler.price }}€
       </v-col>
       <v-col
-        v-if="ask.paymentItemId!==null || ask.paymentStatus == 4"
-        :cols="isPassenger ? 3 : 5"
+        v-if="carpooler.payment.itemId !== null || carpooler.payment.status == 4"
+        :cols="passenger ? 3 : 5"
         class="text-right"
       >
         <ad-payment
-          :is-driver="!isDriver"
-          :is-passenger="isPassenger"
-          :payment-status="ask.paymentStatus"
-          :frequency="ask.frequency"
-          :payment-item-id="ask.paymentItemId"
+          :is-driver="!driver"
+          :payment-status="carpooler.payment.status"
+          :frequency="frequency"
+          :payment-item-id="carpooler.payment.itemId"
         />        
       </v-col>
     </v-row>
@@ -158,11 +141,7 @@ export default {
     AdPayment
   },
   props: {
-    ask: {
-      type: Object,
-      required: true
-    },
-    result: {
+    carpooler: {
       type: Object,
       required: true
     },
@@ -170,131 +149,34 @@ export default {
       type: Object,
       default: null
     },
-    // when the ad is based on an ask and the results are based on the proposal, we need to invert where data are taken
-    isInverted: {
-      type: Boolean,
-      default: false
+    driver: {
+      type: Boolean
+    },
+    passenger: {
+      type: Boolean
+    },
+    frequency: {
+      type: Number,
+      default: 1
     }
   },
   data () {
     return {
-      carpoolInfos: null,
-      outwardTimes:[],
-      returnTimes:[],
-      hasReturn: null,
-      isRegular: null,
-      hasMonday: null,
-      hasTuesday: null,
-      hasWednesday: null,
-      hasThursday: null,
-      hasFriday: null,
-      hasSaturday: null,
-      hasSunday: null,
-      arrayDay: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
-      schedules: []
+      
     }
   },
   computed: {
-    isDriver() {
-      return this.ask.role === 1 || this.ask.role === 3
-    },
-    isPassenger() {
-      return this.ask.role === 2 || this.ask.role === 3
-    },
-    getResults () {
-      if (this.ask.role === 2 && !this.isInverted) {
-        return (this.result.resultPassenger) ? this.result.resultPassenger : this.result.resultDriver;
-      } else if (this.ask.role === 2 && this.isInverted) {
-        return (this.result.resultDriver) ? this.result.resultDriver : this.result.resultPassenger;
-      } else if (this.ask.role !== 2 && !this.isInverted) {
-        return (this.result.resultDriver) ? this.result.resultDriver : this.result.resultPassenger;
-      } else {
-        return this.result.resultPassenger;
+    origin () {
+      return {
+        streetAddress: this.carpooler.waypoints.find(el => el.origin === true)['streetAddress'],
+        addressLocality: this.carpooler.waypoints.find(el => el.origin === true)['addressLocality']
       }
-    }
-  },
-  created() {
-    this.setCarpoolInfo();
-  },
-  methods: {
-    setCarpoolInfo() {
-      this.carpoolInfos = this.getResults;
-      if (this.carpoolInfos !== null) {
-        this.outwardTimes.push(
-          this.carpoolInfos.outward.monTime,
-          this.carpoolInfos.outward.tueTime,
-          this.carpoolInfos.outward.wedTime,
-          this.carpoolInfos.outward.thuTime,
-          this.carpoolInfos.outward.friTime,
-          this.carpoolInfos.outward.satTime,
-          this.carpoolInfos.outward.sunTime
-        );
-        if (this.carpoolInfos.return !== null) {
-          this.returnTimes.push(
-            this.carpoolInfos.return.monTime,
-            this.carpoolInfos.return.tueTime,
-            this.carpoolInfos.return.wedTime,
-            this.carpoolInfos.return.thuTime,
-            this.carpoolInfos.return.friTime,
-            this.carpoolInfos.return.satTime,
-            this.carpoolInfos.return.sunTime
-          );
-        }
-
-        this.hasReturn = !!this.carpoolInfos.return;
-        this.hasMonday = this.carpoolInfos.outward.monCheck || this.carpoolInfos.return && this.carpoolInfos.return.monCheck;
-        this.hasTuesday = this.carpoolInfos.outward.tueCheck || this.carpoolInfos.return && this.carpoolInfos.return.tueCheck;
-        this.hasWednesday = this.carpoolInfos.outward.wedCheck || this.carpoolInfos.return && this.carpoolInfos.return.wedCheck;
-        this.hasThursday = this.carpoolInfos.outward.thuCheck || this.carpoolInfos.return && this.carpoolInfos.return.thuCheck;
-        this.hasFriday = this.carpoolInfos.outward.friCheck || this.carpoolInfos.return && this.carpoolInfos.return.friCheck;
-        this.hasSaturday = this.carpoolInfos.outward.satCheck || this.carpoolInfos.return && this.carpoolInfos.return.satCheck;
-        this.hasSunday = this.carpoolInfos.outward.sunCheck || this.carpoolInfos.return && this.carpoolInfos.return.sunCheck;
-
-        // let schedule = this.initSchedule;
-        let tempSchedules = [];
-
-        this.arrayDay.forEach(day => {
-          if (this.carpoolInfos.outward[day + "Check"] === true || this.carpoolInfos.return && this.carpoolInfos.return[day + "Check"] === true) {
-            tempSchedules.push({
-              day: day,
-              outwardTime: this.carpoolInfos.outward && this.carpoolInfos.outward[day + 'Check'] ? this.carpoolInfos.outward[day + 'Time'] : null,
-              returnTime: this.carpoolInfos.return && this.carpoolInfos.return[day + 'Check'] ? this.carpoolInfos.return[day + 'Time'] : null
-            });
-          }
-        });
-
-        let schedulesLength = tempSchedules.length;
-        let daysDone = [];
-        for (let i = 0; i < schedulesLength; i++) {
-          if (tempSchedules.length === 0) break;
-          if (daysDone.includes(tempSchedules[i].day)) continue;
-          let days = tempSchedules.filter(elem => {return elem.outwardTime === tempSchedules[i].outwardTime && elem.returnTime === tempSchedules[i].returnTime});
-
-          this.schedules.push({
-            mon: days.some(day => {return day.day === 'mon'}),
-            tue: days.some(day => {return day.day === 'tue'}),
-            wed: days.some(day => {return day.day === 'wed'}),
-            thu: days.some(day => {return day.day === 'thu'}),
-            fri: days.some(day => {return day.day === 'fri'}),
-            sat: days.some(day => {return day.day === 'sat'}),
-            sun: days.some(day => {return day.day === 'sun'}),
-            outwardTime: tempSchedules[i].outwardTime,
-            returnTime: tempSchedules[i].returnTime
-          });
-
-          days.forEach(day => {
-            daysDone.push(day.day)
-          })
-        }
+    },
+    destination () {
+      return {
+        streetAddress: this.carpooler.waypoints.find(el => el.destination === true)['streetAddress'],
+        addressLocality: this.carpooler.waypoints.find(el => el.destination === true)['addressLocality']
       }
-
-      this.isRegular = this.result.frequency === 2;
-    },
-    scheduleHasReturn (schedule) {
-      return schedule.returnTime !== null;
-    },
-    scheduleHasOutward (schedule) {
-      return schedule.outwardTime !== null;
     }
   }
 }

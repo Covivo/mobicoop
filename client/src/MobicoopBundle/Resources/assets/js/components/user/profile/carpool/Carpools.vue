@@ -42,11 +42,11 @@
           centered
           grow
         >
-          <v-tab>{{ $t('carpools.ongoing') }}</v-tab>
+          <v-tab>{{ $t('carpools.active') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="localAds.ongoing">
+            <v-container v-if="carpools.active">
               <v-row
-                v-for="ad in localAds.ongoing"
+                v-for="ad in carpools.active"
                 :key="ad.id"
               >
                 <v-col cols="12">
@@ -60,9 +60,9 @@
           </v-tab-item>
           <v-tab>{{ $t('carpools.archived') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="localAds.archived">
+            <v-container v-if="carpools.archived">
               <v-row
-                v-for="ad in localAds.archived"
+                v-for="ad in carpools.archived"
                 :key="ad.id"
               >
                 <v-col cols="12">
@@ -97,7 +97,7 @@ export default {
     Carpool
   },
   props: {
-    acceptedCarpools: {
+    carpools: {
       type: Object,
       default: () => {}
     },
@@ -108,14 +108,11 @@ export default {
   },
   data(){
     return {
-      localAds: this.acceptedCarpools
     }
   },
   computed: {
     disableExportButton() {
-      let testOngoing = this.acceptedCarpools.ongoing.length == 0 || Object.keys(this.acceptedCarpools.ongoing).length == 0 ? true : false;
-      let testArchived = this.acceptedCarpools.archived.length == 0 || Object.keys(this.acceptedCarpools.archived).length == 0 ? true : false;
-      return testOngoing && testArchived;
+      return !this.carpools.active && !this.carpools.archived;
     }
   },
   methods:{

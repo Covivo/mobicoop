@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 use DateTime;
 use DoctrineExtensions\Query\Mysql\Format;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAd;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
@@ -596,6 +597,68 @@ class UserManager
             $adsSanitized[$key][$ad->getId()] = $ad;
         }
         return $adsSanitized;
+    }
+
+    /**
+     * Get the ads of user
+     *
+     * @return array
+     */
+    public function getMyAds()
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_OBJECT);
+        $this->dataProvider->setClass(MyAd::class, MyAd::RESOURCE_NAME);
+        $response = $this->dataProvider->getCollection();
+
+        $myAds = $response->getValue()->getMember();
+
+        $ads = [
+            'published' => [
+                'active' => [],
+                'archived' => []
+            ],
+            'accepted' => [
+                'active' => [],
+                'archived' => []
+            ]
+        ];
+        /** @var MyAd $myAd */
+        foreach ($myAds as $myAd) {
+            // we check if the ad is still valid
+            $valid = true;
+            $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
+            if ($myAd->getFrequency() === MyAd::FREQUENCY_REGULAR) {
+                // regular
+                $date = \DateTime::createFromFormat('Y-m-d', $myAd->getToDate());
+                $date->setTime(0, 0);
+            } else {
+                // punctual
+                $date = \DateTime::createFromFormat(
+                    'Y-m-d H:i',
+                    (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
+                    $myAd->getReturnDate() . " " . $myAd->getReturnTime() :
+                    $myAd->getOutwardDate() . " " . $myAd->getOutwardTime()
+                );
+            }
+            if ($date >= $now) {
+                $valid = true;
+            }
+            if ($myAd->isPublished()) {
+                if ($valid) {
+                    $ads['published']['active'][] = $myAd;
+                } else {
+                    $ads['published']['archived'][] = $myAd;
+                }
+            }
+            if (count($myAd->getDriver())>0 || count($myAd->getPassengers())>0) {
+                if ($valid) {
+                    $ads['accepted']['active'][] = $myAd;
+                } else {
+                    $ads['accepted']['archived'][] = $myAd;
+                }
+            }
+        }
+        return $ads;
     }
 
 

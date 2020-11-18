@@ -10,15 +10,15 @@
         cols="3"
         class="primary--text"
       >
-        <span v-if="isDriver && seats && seats > 0">{{ bookedSeats }}/{{ seats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
-        <span v-else-if="!isDriver && seats && seats > 0">{{ bookedSeats }}&nbsp;{{ $tc('seat.booked', bookedSeats) }}</span>
+        <span v-if="ad.roleDriver && ad.seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
+        <span v-else-if="!ad.roleDriver && seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
       </v-col>
       <v-col
-        v-if="!isDriver && ad.asks[0].results[0].roundedPrice"
+        v-if="!ad.roleDriver"
         cols="2"
         class="font-weight-bold primary--text text-h5 text-right"
       >
-        {{ ad.asks[0].results[0].roundedPrice }}€
+        {{ ad.driver.price }}€
       </v-col>
     </v-row>
     <v-expansion-panels
@@ -50,18 +50,22 @@
             class="primary extra-divider"
           />
           <v-row
-            v-for="(ask, index) in ad.asks"
+            v-for="(carpooler, index) in carpoolers"
             :key="index"
             no-gutters
           >
+            <!-- ad.driver is an empty Array if the carpooler is passenger -->
+            <!-- ad.driver is an object if the carpooler is driver -->
+            <!-- ad.passengers is always an array -->
             <carpooler
-              :result="getResults(ask)"
-              :ask="ask"
+              :carpooler="carpooler"
+              :passenger="ad.passengers.length>0"
+              :driver="!Array.isArray(ad.driver)" 
+              :frequency="ad.frequency"
               :user="user"
-              :is-inverted="!empty(ask.results[1])"
             />
             <v-divider
-              v-if="index < ad.asks.length - 1"
+              v-if="index < carpoolers.length - 1"
               class="primary lighten-5 ma-1"
             />
           </v-row>
@@ -72,7 +76,6 @@
 </template>
 
 <script>
-import {isEmpty} from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/profile/carpool/CarpoolFooter/";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
 
@@ -107,42 +110,24 @@ export default {
   },
   computed: {
     bookedSeats() {
-      return this.ad.asks.length;
+      return this.ad.passengers.length;
     },
     seats() {
-      return this.isDriver ? this.ad.seatsDriver : this.ad.seatsPassenger;
-    },
-    isDriver() {
-      return this.ad.role === 1 || this.ad.role === 3;
+      return this.ad.seats;
     },
     hideMessage() {
-      return this.isDriver ? this.$t('passengers.hide') : this.$t('driver.hide');
+      return this.ad.roleDriver ? this.$tc('passengers.hide',this.ad.passengers.length) : this.$t('driver.hide');
     },
     showMessage() {
-      return this.isDriver ? this.$t('passengers.show') : this.$t('driver.show');
-    }
+      return this.ad.roleDriver ? this.$tc('passengers.show',this.ad.passengers.length) : this.$t('driver.show');
+    },
+    carpoolers() {
+      return this.ad.passengers.length > 0 ? this.ad.passengers : [this.ad.driver]
+    },
   },
   watch: {
     showCarpooler () {
       this.panelActive = this.showCarpooler == true ? 0 : false;
-    }
-  },
-  methods: {
-    empty(obj) {
-      return isEmpty(obj);
-    },
-    getResults (ask) {
-      let length = ask.results.length;
-      if (length === 1) {
-        return ask.results[0];
-      } else if (length > 1) {
-        for (let i = 1; i < length; i ++) {
-          if (ask.results[i].acceptedAsk === true && ask.results[i].askId === ask.askId) {
-            return ask.results[i];
-          }
-        }
-      }
-      return ask.results[0];
     }
   }
 }
