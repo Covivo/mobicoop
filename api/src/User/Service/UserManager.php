@@ -236,17 +236,17 @@ class UserManager
         return implode(", ", $this->domains);
     }
 
-    // /**
-    //  * Check if a password token exists
-    //  *
-    //  * @param string $pwdToken The password token to check
-    //  */
-    // public function checkPasswordToken(string $pwdToken )
-    // {
-    //     if ($this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){
-    //         return 'pwdToken';
-    //     }
-    // }
+    /**
+     * Check if a password token exists
+     *
+     * @param string $pwdToken The password token to check
+     */
+    public function checkPasswordToken(string $pwdToken )
+    {
+        if ($this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){
+            return 'pwdToken';
+        }
+    }
 
     /**
      * Get a user by security token.
