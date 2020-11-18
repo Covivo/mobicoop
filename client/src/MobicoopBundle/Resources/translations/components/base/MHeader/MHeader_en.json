@@ -10,7 +10,7 @@
         },
         "shareAnAd": {
             "label": "Share an ad",
-            "route": "/carpool/ad/share"
+            "route": "/carpool/ad/post/"
         },
         "messages": {
             "label": "Messages",
