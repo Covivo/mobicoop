@@ -58,9 +58,7 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
     
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        $locale = $this->request->getLocale();
-        $this->translator->setLocale($locale);
-        
+
         if ($this->request->get("pwdToken")!== null) {
             return $this->userManager->checkPasswordToken($this->request->get('pwdToken'));
         }
