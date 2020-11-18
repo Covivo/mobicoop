@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SelectInput, TextInput, BooleanInput, FileInput, FileField, required } from 'react-admin';
+import {
+  SelectInput,
+  TextInput,
+  BooleanInput,
+  FileInput,
+  FileField,
+  RadioButtonGroupInput,
+  required,
+} from 'react-admin';
 
 const SolidaryProofInput = ({ record, ...rest }) => {
   const validate = !!record.mandatory
@@ -44,6 +52,22 @@ const SolidaryProofInput = ({ record, ...rest }) => {
       >
         <FileField source="src" title="title" />
       </FileInput>
+    );
+  }
+
+  if (record.radio) {
+    const selectBoxLabels = (record.options || '').split(';');
+    return (
+      <RadioButtonGroupInput
+        source={source}
+        label={record.label}
+        choices={(record.acceptedValues || '')
+          .split(';')
+          .map((v, i) => ({ id: v, name: selectBoxLabels[i] }))}
+        {...rest}
+        validate={validate}
+        fullWidth
+      />
     );
   }
 
