@@ -598,7 +598,6 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
-                // var_dump($this->treatHydraCollection($clientResponse->getBody()));die;
                 return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody()));
             }
         } catch (ClientException|ServerException $e) {
