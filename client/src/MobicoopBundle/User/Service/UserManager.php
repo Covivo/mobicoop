@@ -704,6 +704,19 @@ class UserManager
         return $response->getValue();
     }
 
+      /**
+     * Check if password token exist
+     *
+     * @param string $pwdToken
+     * @return void
+     */
+    public function checkPasswordToken(string $pwdToken)
+    {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection('checkPasswordToken', ['pwdToken' => $pwdToken]);
+        return $response->getValue();
+    }
+
     /**
      * Get the bank coordinates of a User
      *

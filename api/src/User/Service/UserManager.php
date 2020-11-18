@@ -244,7 +244,7 @@ class UserManager
     public function checkPasswordToken(string $pwdToken )
     {
         if ($this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){
-            return 'pwdToken';
+            return $pwdToken;
         }
     }
 

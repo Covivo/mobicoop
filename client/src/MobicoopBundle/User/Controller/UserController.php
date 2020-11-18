@@ -523,9 +523,9 @@ class UserController extends AbstractController
      */
     public function userPasswordReset(UserManager $userManager, string $token)
     {
-        $user = $userManager->findByPwdToken($token);
+        $pwdToken = $userManager->checkPasswordToken($token);
 
-        if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
+        if (empty($pwdToken)) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
             return $this->render(

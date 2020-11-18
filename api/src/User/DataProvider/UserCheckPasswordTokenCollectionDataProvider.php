@@ -60,10 +60,9 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
     {
         $locale = $this->request->getLocale();
         $this->translator->setLocale($locale);
-        if ($state = $this->userManager->checkPasswordToken($this->request->get('pwdToken'))) {
-            if ($state == "pwdToken") {
-                return new JsonResponse(["pwdToken"=>$this->request->get('pwdToken')]);
-            }
+        
+        if ($this->request->get("pwdToken")!== null) {
+            return $this->userManager->checkPasswordToken($this->request->get('pwdToken'));
         }
 
         return null;
