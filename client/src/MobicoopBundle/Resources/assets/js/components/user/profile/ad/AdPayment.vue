@@ -86,11 +86,10 @@ export default {
   },
   methods:{
     getStatus(paymentStatus){
-      if(paymentStatus=="1"){
+      switch (this.paymentStatus) {
+      case 1: 
         return "pending";
-      }
-      else if(paymentStatus=="2"){
-        // Paid
+      default: 
         this.disabled = true;
         return "paid";
       }
