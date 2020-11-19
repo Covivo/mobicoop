@@ -33,6 +33,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
+use App\User\Service\ReviewManager;
 use DateTime;
 
 /**
@@ -44,8 +45,10 @@ class MyAdManager
 {
     private $proposalRepository;
     private $carpoolItemRepository;
+    private $reviewManager;
     private $paymentActive;
     private $paymentActiveDate;
+    private $userReviewActive;
 
     /**
      * Constructor.
@@ -54,15 +57,17 @@ class MyAdManager
      * @param CarpoolItemRepository $carpoolItemRepository  The carpool item repository
      * @param string $paymentActive                         The date of the payment activation, or false (as string!)
      */
-    public function __construct(ProposalRepository $proposalRepository, CarpoolItemRepository $carpoolItemRepository, string $paymentActive)
+    public function __construct(ProposalRepository $proposalRepository, CarpoolItemRepository $carpoolItemRepository, ReviewManager $reviewManager, string $paymentActive, bool $userReviewActive)
     {
         $this->proposalRepository = $proposalRepository;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->reviewManager = $reviewManager;
         $this->paymentActive = false;
         if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
+        $this->userReviewActive = $userReviewActive;
     }
 
     /**
@@ -196,6 +201,10 @@ class MyAdManager
                     // accepted ask
                     $myAd->setAsks(true);
                     $driver = $this->getDriverDetailsForUserAndAsk($proposal->getUser(), $ask);
+                    $driver['canReceiveReview'] = $this->canReceiveReview(
+                        $proposal->getUser(),
+                        $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
+                    );
                     // the overall payment status is the driver payment status
                     $myAd->setPaymentStatus($driver['payment']['status']);
                     // theorically, only one driver, if we found it we exit the loop
@@ -231,6 +240,10 @@ class MyAdManager
                     // accepted ask
                     $myAd->setAsks(true);
                     $passenger = $this->getPassengerDetailsForUserAndAsk($proposal->getUser(), $ask);
+                    $passenger['canReceiveReview'] = $this->canReceiveReview(
+                        $proposal->getUser(),
+                        $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
+                    );
                     if ($passenger['payment']['status'] == MyAd::PAYMENT_STATUS_TODO) {
                         $myAd->setPaymentStatus(MyAd::PAYMENT_STATUS_TODO);
                     } elseif ($myAd->getPaymentStatus() == MyAd::PAYMENT_STATUS_NULL) {
@@ -431,6 +444,7 @@ class MyAdManager
         }
 
         $driver = [
+            'id' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getId() : $ask->getUser()->getId(),
             'givenName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getGivenName() : $ask->getUser()->getGivenName(),
             'shortFamilyName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser()->getShortFamilyName(),
             'birthYear' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getBirthYear() : $ask->getUser()->getBirthYear(),
@@ -946,6 +960,7 @@ class MyAdManager
         }
         $waypoints = $cwaypoints;
         $passenger = [
+            'id' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getId() : $ask->getUser()->getId(),
             'givenName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getGivenName() : $ask->getUser()->getGivenName(),
             'shortFamilyName' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser()->getShortFamilyName(),
             'birthYear' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getBirthYear() : $ask->getUser()->getBirthYear(),
@@ -1427,7 +1442,7 @@ class MyAdManager
      * @param int $role The role for which we want the details
      * @return array    The details of the first pending week
      */
-    public function getPaymentDetailsForRegularAsk(Ask $ask, int $role)
+    private function getPaymentDetailsForRegularAsk(Ask $ask, int $role)
     {
         // we limit to the last day of the previous week
         $maxDate = new \DateTime();
@@ -1479,5 +1494,28 @@ class MyAdManager
         return [
             'status' => ($this->paymentActive && count($carpoolItems) > 0) ? MyAd::PAYMENT_STATUS_PAID : MyAd::PAYMENT_STATUS_NULL
         ];
+    }
+
+    /**
+     * Determine if a user can get a review from another user
+     *
+     * @param User $reviewer    The reviewer
+     * @param User $reviewed    The reviewed
+     * @return bool             The result
+     */
+    private function canReceiveReview(User $reviewer, User $reviewed): bool
+    {
+        
+        // Using the dashboard of the currentUser but specifically with the user possibly to review
+        // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
+        $reviews = $this->reviewManager->getReviewDashboard($reviewer, $reviewed);
+        $reviewed->setCanReceiveReview(false);
+        if (!$this->userReviewActive) {
+            // Review system disable.
+            return false;
+        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+            return true;
+        }
+        return false;
     }
 }
