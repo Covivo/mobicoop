@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    v-if="enabled"
     offset-y
     open-on-hover
   >
@@ -63,7 +64,9 @@ export default {
   },
   data(){
     return {
-      selectedLanguage: this.language
+      selectedLanguage: this.language,
+      // check if we have more than 1 language
+      enabled: Object.keys(this.languages).length > 1
     }
   },
   methods:{
