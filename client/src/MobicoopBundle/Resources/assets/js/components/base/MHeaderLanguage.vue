@@ -50,10 +50,12 @@ export default {
   },
   props:{
     language: {
-      type: String
+      type: String,
+      default: ''
     },
     languages: {
-      type: Object
+      type: Object,
+      default: () => {}
     },
     textClass: {
       type: String,
