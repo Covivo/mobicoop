@@ -157,7 +157,7 @@ class AdManager
         }
 
         // Init solidary exclusive
-        if (is_null($ad->isSolidaryExclusive())) {
+        if (!$ad->isSearch() && is_null($ad->isSolidaryExclusive())) {
             $ad->setSolidaryExclusive(false);
         }
 
