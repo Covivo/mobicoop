@@ -10,11 +10,14 @@
         cols="3"
         class="primary--text"
       >
-        <span v-if="ad.roleDriver && ad.seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
-        <span v-else-if="!ad.roleDriver && seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
+        <!-- ad.driver is an empty Array if the carpooler is passenger -->
+        <!-- ad.driver is an object if the carpooler is driver -->
+        <!-- ad.passengers is always an array -->
+        <span v-if="isDriver && ad.seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
+        <span v-else-if="!isDriver && seats > 0">{{ $tc('seat.booked', seats, { seats: seats, bookedSeats: bookedSeats}) }}</span>
       </v-col>
       <v-col
-        v-if="!ad.roleDriver"
+        v-if="!isDriver"
         cols="2"
         class="font-weight-bold primary--text text-h5 text-right"
       >
@@ -109,20 +112,23 @@ export default {
     }
   },
   computed: {
+    isDriver() {
+      return this.ad.passengers.length>0;
+    },
     bookedSeats() {
-      return this.ad.passengers.length;
+      return this.isDriver ? this.ad.passengers.length : 1;
     },
     seats() {
       return this.ad.seats;
     },
     hideMessage() {
-      return this.ad.roleDriver ? this.$tc('passengers.hide',this.ad.passengers.length) : this.$t('driver.hide');
+      return this.isDriver ? this.$tc('passengers.hide',this.ad.passengers.length) : this.$t('driver.hide');
     },
     showMessage() {
-      return this.ad.roleDriver ? this.$tc('passengers.show',this.ad.passengers.length) : this.$t('driver.show');
+      return this.isDriver ? this.$tc('passengers.show',this.ad.passengers.length) : this.$t('driver.show');
     },
     carpoolers() {
-      return this.ad.passengers.length > 0 ? this.ad.passengers : [this.ad.driver]
+      return this.isDriver ? this.ad.passengers : [this.ad.driver]
     },
   },
   watch: {

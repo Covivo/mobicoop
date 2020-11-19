@@ -9,6 +9,7 @@
 * Review Dashboard : See the given, left and ready to give reviews.
 * Report a User.
 * New 'star' icon for experienced users.
+* Language selection is now available
 
 # Release 1.17.0
 

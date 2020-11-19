@@ -3,7 +3,7 @@
     <v-row>
       <schedules
         date-time-format="shortDate"
-        :outward-time="ad.outwardDate"
+        :outward-time="isCarpool ? (ad.driver.fromDate ? ad.driver.fromDate : ad.passengers[0].fromDate) : ad.outwardDate"
         :is-refined="isRefined"
       />
     </v-row>
@@ -15,7 +15,7 @@
           :origin="origin"
           :destination="destination"
           :type="ad.frequency"
-          :time="ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime"
+          :time="isCarpool ? (ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime) : ad.outwardTime"
           :compact="true"
           text-color-class="primary--text"
           icon-color="accent"
@@ -27,7 +27,7 @@
         :is-return="true"
         :is-outward="false"
         date-time-format="shortDate"
-        :return-time="ad.returnDate"
+        :return-time="isCarpool ? (ad.driver.returnfromDate ? ad.driver.returnfromDate : ad.passengers[0].returnfromDate) : ad.returnDate"
       />
     </v-row>
     <v-row v-if="ad.returnDate !== null && !isRefined">
@@ -39,7 +39,7 @@
           :destination="origin"
           :type="ad.frequency"
           :compact="true"
-          :time="ad.returnTime"
+          :time="isCarpool ? (ad.driver.returnPickUpTime ? ad.driver.returnPickUpTime : ad.returnTime) : ad.returnTime"
           text-color-class="primary--text"
           icon-color="accent"
         />
@@ -64,6 +64,10 @@ export default {
     },
     // if we want more refined display of data
     isRefined: {
+      type: Boolean,
+      default: false
+    },
+    isCarpool: {
       type: Boolean,
       default: false
     }

@@ -625,7 +625,7 @@ class UserManager
         /** @var MyAd $myAd */
         foreach ($myAds as $myAd) {
             // we check if the ad is still valid
-            $valid = true;
+            $valid = false;
             $now = new \DateTime("now", new \DateTimeZone('Europe/Paris'));
             if ($myAd->getFrequency() === MyAd::FREQUENCY_REGULAR) {
                 // regular

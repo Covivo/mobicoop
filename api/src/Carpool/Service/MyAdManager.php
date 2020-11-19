@@ -459,6 +459,7 @@ class MyAdManager
                 $pickupDate->modify('+' . $pickUpDuration . ' second');
                 $dropOffDate->modify('+' . $dropOffDuration . ' second');
                 $endDate->modify('+' . $endDuration . ' second');
+                $driver['fromDate'] = $ask->getCriteria()->getFromDate()->format('Y-m-d');
                 $driver['startTime'] = $startDate->format('H:i');
                 $driver['pickUpTime'] = $pickupDate->format('H:i');
                 $driver['dropOffTime'] = $dropOffDate->format('H:i');
@@ -653,6 +654,7 @@ class MyAdManager
                     $pickupDate->modify('+' . $pickUpDuration . ' second');
                     $dropOffDate->modify('+' . $dropOffDuration . ' second');
                     $endDate->modify('+' . $endDuration . ' second');
+                    $driver['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate()->format('Y-m-d');
                     $driver['returnStartTime'] = $startDate->format('H:i');
                     $driver['returnPickUpTime'] = $pickupDate->format('H:i');
                     $driver['returnDropOffTime'] = $dropOffDate->format('H:i');
@@ -972,14 +974,15 @@ class MyAdManager
                 $pickupDate->modify('+' . $pickUpDuration . ' second');
                 $dropOffDate->modify('+' . $dropOffDuration . ' second');
                 $endDate->modify('+' . $endDuration . ' second');
+                $passenger['fromDate'] = $ask->getCriteria()->getFromDate()->format("Y-m-d");
                 $passenger['startTime'] = $startDate->format('H:i');
                 $passenger['pickUpTime'] = $pickupDate->format('H:i');
                 $passenger['dropOffTime'] = $dropOffDate->format('H:i');
                 $passenger['endTime'] = $endDate->format('H:i');
                 break;
             case Criteria::FREQUENCY_REGULAR:
-                $passenger['fromDate'] = $ask->getCriteria()->getFromDate();
-                $passenger['toDate'] = $ask->getCriteria()->getToDate();
+                $passenger['fromDate'] = $ask->getCriteria()->getFromDate()->format("Y-m-d");
+                $passenger['toDate'] = $ask->getCriteria()->getToDate()->format("Y-m-d");
                 $schedule['pickUpTime'] = null;
                 $schedule['mon']['check'] = $schedule['tue']['check'] = $schedule['wed']['check'] = $schedule['thu']['check'] = $schedule['fri']['check'] = $schedule['sat']['check'] = $schedule['sun']['check'] = false;
                 $schedule['mon']['startTime'] = $schedule['tue']['startTime'] = $schedule['wed']['startTime'] = $schedule['thu']['startTime'] = $schedule['fri']['startTime'] = $schedule['sat']['startTime'] = $schedule['sun']['startTime'] = null;
@@ -1163,6 +1166,7 @@ class MyAdManager
                     $pickupDate->modify('+' . $pickUpDuration . ' second');
                     $dropOffDate->modify('+' . $dropOffDuration . ' second');
                     $endDate->modify('+' . $endDuration . ' second');
+                    $passenger['returnFromDate'] = $ask->getAskLinked()->getCriteria()->getFromDate()->format("Y-m-d");
                     $passenger['returnStartTime'] = $startDate->format('H:i');
                     $passenger['returnPickUpTime'] = $pickupDate->format('H:i');
                     $passenger['returnDropOffTime'] = $dropOffDate->format('H:i');

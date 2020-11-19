@@ -1,12 +1,15 @@
 <template>
   <v-card>
+    <!-- ad.driver is an empty Array if the carpooler is passenger -->
+    <!-- ad.driver is an object if the carpooler is driver -->
+    <!-- ad.passengers is always an array -->
     <ad-header
       :is-driver="ad.roleDriver"
       :is-passenger="ad.rolePassenger"
       :is-pausable="ad.frequency === 2"
       :is-paused="ad.paused"
       :is-archived="isArchived"
-      :has-accepted-ask="ad.driver.length>0 || ad.passengers.length>0"
+      :has-accepted-ask="!Array.isArray(ad.driver) || ad.passengers.length>0"
       :has-ask="ad.asks"
       :ad-id="ad.id"
       @ad-deleted="adDeleted"
