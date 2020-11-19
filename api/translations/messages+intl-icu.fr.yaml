@@ -265,6 +265,7 @@ yourInscription: "Votre inscription"
 errors:
   wrongDomains: "Votre adresse email doit être dans un de ces domaines : {domains}"
   alreadyUsed: "Cette adresse e-mail est déjà utilisée"
+  
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
