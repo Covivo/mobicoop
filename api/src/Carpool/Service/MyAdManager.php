@@ -348,49 +348,51 @@ class MyAdManager
             }
         }
         $schedule['returnTime'] = null;
-        if ($returnCriteria->isMonCheck() && !is_null($returnCriteria->getMonTime())) {
-            $schedule['returnTime'] = $returnCriteria->getMonTime()->format('H:i');
-        }
-        if ($returnCriteria->isTueCheck() && !is_null($returnCriteria->getTueTime())) {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getTueTime()->format('H:i');
-            } elseif ($schedule['returnTime'] !== $returnCriteria->getTueTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+        if (!is_null($returnCriteria)) {
+            if ($returnCriteria->isMonCheck() && !is_null($returnCriteria->getMonTime())) {
+                $schedule['returnTime'] = $returnCriteria->getMonTime()->format('H:i');
             }
-        }
-        if ($returnCriteria->isWedCheck() && !is_null($returnCriteria->getWedTime()) && $schedule['returnTime'] !== "multiple") {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getWedTime()->format('H:i');
-            } elseif ($schedule['returnTime'] != $returnCriteria->getWedTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+            if ($returnCriteria->isTueCheck() && !is_null($returnCriteria->getTueTime())) {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getTueTime()->format('H:i');
+                } elseif ($schedule['returnTime'] !== $returnCriteria->getTueTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
             }
-        }
-        if ($returnCriteria->isThuCheck() && !is_null($returnCriteria->getThuTime()) && $schedule['returnTime'] !== "multiple") {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getThuTime()->format('H:i');
-            } elseif ($schedule['returnTime'] != $returnCriteria->getThuTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+            if ($returnCriteria->isWedCheck() && !is_null($returnCriteria->getWedTime()) && $schedule['returnTime'] !== "multiple") {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getWedTime()->format('H:i');
+                } elseif ($schedule['returnTime'] != $returnCriteria->getWedTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
             }
-        }
-        if ($returnCriteria->isFriCheck() && !is_null($returnCriteria->getFriTime()) && $schedule['returnTime'] !== "multiple") {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getFriTime()->format('H:i');
-            } elseif ($schedule['returnTime'] != $returnCriteria->getFriTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+            if ($returnCriteria->isThuCheck() && !is_null($returnCriteria->getThuTime()) && $schedule['returnTime'] !== "multiple") {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getThuTime()->format('H:i');
+                } elseif ($schedule['returnTime'] != $returnCriteria->getThuTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
             }
-        }
-        if ($returnCriteria->isSatCheck() && !is_null($returnCriteria->getSatTime()) && $schedule['returnTime'] !== "multiple") {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getSatTime()->format('H:i');
-            } elseif ($schedule['returnTime'] != $returnCriteria->getSatTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+            if ($returnCriteria->isFriCheck() && !is_null($returnCriteria->getFriTime()) && $schedule['returnTime'] !== "multiple") {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getFriTime()->format('H:i');
+                } elseif ($schedule['returnTime'] != $returnCriteria->getFriTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
             }
-        }
-        if ($returnCriteria->isSunCheck() && !is_null($returnCriteria->getSunTime()) && $schedule['returnTime'] !== "multiple") {
-            if (is_null($schedule['returnTime'])) {
-                $schedule['returnTime'] = $returnCriteria->getSunTime()->format('H:i');
-            } elseif ($schedule['returnTime'] != $returnCriteria->getsunTime()->format('H:i')) {
-                $schedule['returnTime'] = "multiple";
+            if ($returnCriteria->isSatCheck() && !is_null($returnCriteria->getSatTime()) && $schedule['returnTime'] !== "multiple") {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getSatTime()->format('H:i');
+                } elseif ($schedule['returnTime'] != $returnCriteria->getSatTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
+            }
+            if ($returnCriteria->isSunCheck() && !is_null($returnCriteria->getSunTime()) && $schedule['returnTime'] !== "multiple") {
+                if (is_null($schedule['returnTime'])) {
+                    $schedule['returnTime'] = $returnCriteria->getSunTime()->format('H:i');
+                } elseif ($schedule['returnTime'] != $returnCriteria->getsunTime()->format('H:i')) {
+                    $schedule['returnTime'] = "multiple";
+                }
             }
         }
         return $schedule;
@@ -488,7 +490,7 @@ class MyAdManager
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
                 $schedule['mon']['dropOffTime'] = $schedule['tue']['dropOffTime'] = $schedule['wed']['dropOffTime'] = $schedule['thu']['dropOffTime'] = $schedule['fri']['dropOffTime'] = $schedule['sat']['dropOffTime'] = $schedule['sun']['dropOffTime'] = null;
                 $schedule['mon']['endTime'] = $schedule['tue']['endTime'] = $schedule['wed']['endTime'] = $schedule['thu']['endTime'] = $schedule['fri']['endTime'] = $schedule['sat']['endTime'] = $schedule['sun']['endTime'] = null;
-                if ($ask->getCriteria()->isMonCheck()) {
+                if ($ask->getCriteria()->isMonCheck() && $ask->getCriteria()->getMonTime()) {
                     $schedule['mon']['check'] = true;
                     $schedule['mon']['startTime'] = $ask->getCriteria()->getMonTime()->format('H:i');
                     $schedule['mon']['pickUpTime'] = clone $ask->getCriteria()->getMonTime();
@@ -502,7 +504,7 @@ class MyAdManager
                     $schedule['mon']['endTime'] = $schedule['mon']['endTime']->format('H:i');
                     $schedule['pickUpTime'] = $schedule['mon']['pickUpTime'];
                 }
-                if ($ask->getCriteria()->isTueCheck()) {
+                if ($ask->getCriteria()->isTueCheck() && $ask->getCriteria()->getTueTime()) {
                     $schedule['tue']['check'] = true;
                     $schedule['tue']['startTime'] = $ask->getCriteria()->getTueTime()->format('H:i');
                     $schedule['tue']['pickUpTime'] = clone $ask->getCriteria()->getTueTime();
@@ -520,7 +522,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isWedCheck()) {
+                if ($ask->getCriteria()->isWedCheck() && $ask->getCriteria()->getWedTime()) {
                     $schedule['wed']['check'] = true;
                     $schedule['wed']['startTime'] = $ask->getCriteria()->getWedTime()->format('H:i');
                     $schedule['wed']['pickUpTime'] = clone $ask->getCriteria()->getWedTime();
@@ -538,7 +540,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isThuCheck()) {
+                if ($ask->getCriteria()->isThuCheck() && $ask->getCriteria()->getThuTime()) {
                     $schedule['thu']['check'] = true;
                     $schedule['thu']['startTime'] = $ask->getCriteria()->getThuTime()->format('H:i');
                     $schedule['thu']['pickUpTime'] = clone $ask->getCriteria()->getThuTime();
@@ -556,7 +558,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isFriCheck()) {
+                if ($ask->getCriteria()->isFriCheck() && $ask->getCriteria()->getFriTime()) {
                     $schedule['fri']['check'] = true;
                     $schedule['fri']['startTime'] = $ask->getCriteria()->getFriTime()->format('H:i');
                     $schedule['fri']['pickUpTime'] = clone $ask->getCriteria()->getFriTime();
@@ -574,7 +576,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isSatCheck()) {
+                if ($ask->getCriteria()->isSatCheck() && $ask->getCriteria()->getSatTime()) {
                     $schedule['sat']['check'] = true;
                     $schedule['sat']['startTime'] = $ask->getCriteria()->getSatTime()->format('H:i');
                     $schedule['sat']['pickUpTime'] = clone $ask->getCriteria()->getSatTime();
@@ -592,7 +594,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isSunCheck()) {
+                if ($ask->getCriteria()->isSunCheck() && $ask->getCriteria()->getSunTime()) {
                     $schedule['sun']['check'] = true;
                     $schedule['sun']['startTime'] = $ask->getCriteria()->getSunTime()->format('H:i');
                     $schedule['sun']['pickUpTime'] = clone $ask->getCriteria()->getSunTime();
@@ -682,7 +684,7 @@ class MyAdManager
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
                     $schedule['mon']['returnEndTime'] = $schedule['tue']['returnEndTime'] = $schedule['wed']['returnEndTime'] = $schedule['thu']['returnEndTime'] = $schedule['fri']['returnEndTime'] = $schedule['sat']['returnEndTime'] = $schedule['sun']['returnEndTime'] = null;
-                    if ($ask->getAskLinked()->getCriteria()->isMonCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isMonCheck() && $ask->getAskLinked()->getCriteria()->getMonTime()) {
                         $schedule['mon']['check'] = true;
                         $schedule['mon']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getMonTime()->format('H:i');
                         $schedule['mon']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getMonTime();
@@ -696,7 +698,7 @@ class MyAdManager
                         $schedule['mon']['returnEndTime'] = $schedule['mon']['returnEndTime']->format('H:i');
                         $schedule['returnPickUpTime'] = $schedule['mon']['returnPickUpTime'];
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isTueCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isTueCheck() && $ask->getAskLinked()->getCriteria()->getTueTime()) {
                         $schedule['tue']['check'] = true;
                         $schedule['tue']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getTueTime()->format('H:i');
                         $schedule['tue']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getTueTime();
@@ -714,7 +716,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isWedCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isWedCheck() && $ask->getAskLinked()->getCriteria()->getWedTime()) {
                         $schedule['wed']['check'] = true;
                         $schedule['wed']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getWedTime()->format('H:i');
                         $schedule['wed']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getWedTime();
@@ -732,7 +734,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isThuCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isThuCheck() && $ask->getAskLinked()->getCriteria()->getThuTime()) {
                         $schedule['thu']['check'] = true;
                         $schedule['thu']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getThuTime()->format('H:i');
                         $schedule['thu']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getThuTime();
@@ -750,7 +752,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isFriCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isFriCheck() && $ask->getAskLinked()->getCriteria()->getFriTime()) {
                         $schedule['fri']['check'] = true;
                         $schedule['fri']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getFriTime()->format('H:i');
                         $schedule['fri']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getFriTime();
@@ -768,7 +770,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isSatCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isSatCheck() && $ask->getAskLinked()->getCriteria()->getSatTime()) {
                         $schedule['sat']['check'] = true;
                         $schedule['sat']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getSatTime()->format('H:i');
                         $schedule['sat']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getSatTime();
@@ -786,7 +788,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isSunCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isSunCheck() && $ask->getAskLinked()->getCriteria()->getSunTime()) {
                         $schedule['sun']['check'] = true;
                         $schedule['sun']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getSunTime()->format('H:i');
                         $schedule['sun']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getSunTime();
@@ -1004,7 +1006,7 @@ class MyAdManager
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
                 $schedule['mon']['dropOffTime'] = $schedule['tue']['dropOffTime'] = $schedule['wed']['dropOffTime'] = $schedule['thu']['dropOffTime'] = $schedule['fri']['dropOffTime'] = $schedule['sat']['dropOffTime'] = $schedule['sun']['dropOffTime'] = null;
                 $schedule['mon']['endTime'] = $schedule['tue']['endTime'] = $schedule['wed']['endTime'] = $schedule['thu']['endTime'] = $schedule['fri']['endTime'] = $schedule['sat']['endTime'] = $schedule['sun']['endTime'] = null;
-                if ($ask->getCriteria()->isMonCheck()) {
+                if ($ask->getCriteria()->isMonCheck() && $ask->getCriteria()->getMonTime()) {
                     $schedule['mon']['check'] = true;
                     $schedule['mon']['startTime'] = $ask->getCriteria()->getMonTime()->format('H:i');
                     $schedule['mon']['pickUpTime'] = clone $ask->getCriteria()->getMonTime();
@@ -1018,7 +1020,7 @@ class MyAdManager
                     $schedule['mon']['endTime'] = $schedule['mon']['endTime']->format('H:i');
                     $schedule['pickUpTime'] = $schedule['mon']['pickUpTime'];
                 }
-                if ($ask->getCriteria()->isTueCheck()) {
+                if ($ask->getCriteria()->isTueCheck() && $ask->getCriteria()->getTueTime()) {
                     $schedule['tue']['check'] = true;
                     $schedule['tue']['startTime'] = $ask->getCriteria()->getTueTime()->format('H:i');
                     $schedule['tue']['pickUpTime'] = clone $ask->getCriteria()->getTueTime();
@@ -1036,7 +1038,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isWedCheck()) {
+                if ($ask->getCriteria()->isWedCheck() && $ask->getCriteria()->getWedTime()) {
                     $schedule['wed']['check'] = true;
                     $schedule['wed']['startTime'] = $ask->getCriteria()->getWedTime()->format('H:i');
                     $schedule['wed']['pickUpTime'] = clone $ask->getCriteria()->getWedTime();
@@ -1054,7 +1056,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isThuCheck()) {
+                if ($ask->getCriteria()->isThuCheck() && $ask->getCriteria()->getThuTime()) {
                     $schedule['thu']['check'] = true;
                     $schedule['thu']['startTime'] = $ask->getCriteria()->getThuTime()->format('H:i');
                     $schedule['thu']['pickUpTime'] = clone $ask->getCriteria()->getThuTime();
@@ -1072,7 +1074,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isFriCheck()) {
+                if ($ask->getCriteria()->isFriCheck() && $ask->getCriteria()->getFriTime()) {
                     $schedule['fri']['check'] = true;
                     $schedule['fri']['startTime'] = $ask->getCriteria()->getFriTime()->format('H:i');
                     $schedule['fri']['pickUpTime'] = clone $ask->getCriteria()->getFriTime();
@@ -1090,7 +1092,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isSatCheck()) {
+                if ($ask->getCriteria()->isSatCheck() && $ask->getCriteria()->getSatTime()) {
                     $schedule['sat']['check'] = true;
                     $schedule['sat']['startTime'] = $ask->getCriteria()->getSatTime()->format('H:i');
                     $schedule['sat']['pickUpTime'] = clone $ask->getCriteria()->getSatTime();
@@ -1108,7 +1110,7 @@ class MyAdManager
                         $schedule['pickUpTime'] = 'multiple';
                     }
                 }
-                if ($ask->getCriteria()->isSunCheck()) {
+                if ($ask->getCriteria()->isSunCheck() && $ask->getCriteria()->getSunTime()) {
                     $schedule['sun']['check'] = true;
                     $schedule['sun']['startTime'] = $ask->getCriteria()->getSunTime()->format('H:i');
                     $schedule['sun']['pickUpTime'] = clone $ask->getCriteria()->getSunTime();
@@ -1195,7 +1197,7 @@ class MyAdManager
                     $schedule['mon']['returnPickUpTime'] = $schedule['tue']['returnPickUpTime'] = $schedule['wed']['returnPickUpTime'] = $schedule['thu']['returnPickUpTime'] = $schedule['fri']['returnPickUpTime'] = $schedule['sat']['returnPickUpTime'] = $schedule['sun']['returnPickUpTime'] = null;
                     $schedule['mon']['returnDropOffTime'] = $schedule['tue']['returnDropOffTime'] = $schedule['wed']['returnDropOffTime'] = $schedule['thu']['returnDropOffTime'] = $schedule['fri']['returnDropOffTime'] = $schedule['sat']['returnDropOffTime'] = $schedule['sun']['returnDropOffTime'] = null;
                     $schedule['mon']['returnEndTime'] = $schedule['tue']['returnEndTime'] = $schedule['wed']['returnEndTime'] = $schedule['thu']['returnEndTime'] = $schedule['fri']['returnEndTime'] = $schedule['sat']['returnEndTime'] = $schedule['sun']['returnEndTime'] = null;
-                    if ($ask->getAskLinked()->getCriteria()->isMonCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isMonCheck() && $ask->getAskLinked()->getCriteria()->getMonTime()) {
                         $schedule['mon']['check'] = true;
                         $schedule['mon']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getMonTime()->format('H:i');
                         $schedule['mon']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getMonTime();
@@ -1209,7 +1211,7 @@ class MyAdManager
                         $schedule['mon']['returnEndTime'] = $schedule['mon']['returnEndTime']->format('H:i');
                         $schedule['returnPickUpTime'] = $schedule['mon']['returnPickUpTime'];
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isTueCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isTueCheck() && $ask->getAskLinked()->getCriteria()->getTueTime()) {
                         $schedule['tue']['check'] = true;
                         $schedule['tue']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getTueTime()->format('H:i');
                         $schedule['tue']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getTueTime();
@@ -1227,7 +1229,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isWedCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isWedCheck() && $ask->getAskLinked()->getCriteria()->getWedTime()) {
                         $schedule['wed']['check'] = true;
                         $schedule['wed']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getWedTime()->format('H:i');
                         $schedule['wed']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getWedTime();
@@ -1245,7 +1247,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isThuCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isThuCheck() && $ask->getAskLinked()->getCriteria()->getThuTime()) {
                         $schedule['thu']['check'] = true;
                         $schedule['thu']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getThuTime()->format('H:i');
                         $schedule['thu']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getThuTime();
@@ -1263,7 +1265,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isFriCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isFriCheck() && $ask->getAskLinked()->getCriteria()->getFriTime()) {
                         $schedule['fri']['check'] = true;
                         $schedule['fri']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getFriTime()->format('H:i');
                         $schedule['fri']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getFriTime();
@@ -1281,7 +1283,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isSatCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isSatCheck() && $ask->getAskLinked()->getCriteria()->getSatTime()) {
                         $schedule['sat']['check'] = true;
                         $schedule['sat']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getSatTime()->format('H:i');
                         $schedule['sat']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getSatTime();
@@ -1299,7 +1301,7 @@ class MyAdManager
                             $schedule['returnPickUpTime'] = 'multiple';
                         }
                     }
-                    if ($ask->getAskLinked()->getCriteria()->isSunCheck()) {
+                    if ($ask->getAskLinked()->getCriteria()->isSunCheck() && $ask->getAskLinked()->getCriteria()->getSunTime()) {
                         $schedule['sun']['check'] = true;
                         $schedule['sun']['returnStartTime'] = $ask->getAskLinked()->getCriteria()->getSunTime()->format('H:i');
                         $schedule['sun']['returnPickUpTime'] = clone $ask->getAskLinked()->getCriteria()->getSunTime();

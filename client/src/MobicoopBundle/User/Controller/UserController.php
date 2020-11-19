@@ -405,8 +405,6 @@ class UserController extends AbstractController
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'ads' => $userManager->getAds(),
-            'acceptedCarpools' => $userManager->getAds(true),
             'bankCoordinates' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive()
