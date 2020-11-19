@@ -201,7 +201,7 @@ class MyAdManager
                     // accepted ask
                     $myAd->setAsks(true);
                     $driver = $this->getDriverDetailsForUserAndAsk($proposal->getUser(), $ask);
-                    $driver['canReceiveReview'] = $this->canReceiveReview(
+                    $driver['canReceiveReview'] = $this->reviewManager->canReceiveReview(
                         $proposal->getUser(),
                         $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
                     );
@@ -240,7 +240,7 @@ class MyAdManager
                     // accepted ask
                     $myAd->setAsks(true);
                     $passenger = $this->getPassengerDetailsForUserAndAsk($proposal->getUser(), $ask);
-                    $passenger['canReceiveReview'] = $this->canReceiveReview(
+                    $passenger['canReceiveReview'] = $this->reviewManager->canReceiveReview(
                         $proposal->getUser(),
                         $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
                     );
@@ -1494,28 +1494,5 @@ class MyAdManager
         return [
             'status' => ($this->paymentActive && count($carpoolItems) > 0) ? MyAd::PAYMENT_STATUS_PAID : MyAd::PAYMENT_STATUS_NULL
         ];
-    }
-
-    /**
-     * Determine if a user can get a review from another user
-     *
-     * @param User $reviewer    The reviewer
-     * @param User $reviewed    The reviewed
-     * @return bool             The result
-     */
-    private function canReceiveReview(User $reviewer, User $reviewed): bool
-    {
-        
-        // Using the dashboard of the currentUser but specifically with the user possibly to review
-        // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
-        $reviews = $this->reviewManager->getReviewDashboard($reviewer, $reviewed);
-        $reviewed->setCanReceiveReview(false);
-        if (!$this->userReviewActive) {
-            // Review system disable.
-            return false;
-        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
-            return true;
-        }
-        return false;
     }
 }
