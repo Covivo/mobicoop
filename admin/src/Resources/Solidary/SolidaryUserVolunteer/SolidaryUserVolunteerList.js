@@ -57,6 +57,7 @@ const ActionsDropDown = ({ record, onRefresh, ...props }) => {
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
       userId={record.user.originId}
       onActionFinished={onRefresh}
+      type="transport"
     />
   );
 };

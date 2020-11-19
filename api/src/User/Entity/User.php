@@ -129,6 +129,11 @@ use App\User\Controller\UserCanUseEmail;
  *              "path"="/users/checkEmail",
  *              "security_post_denormalize"="is_granted('user_register',object)"
  *          },
+ *          "checkPasswordToken"={
+ *              "method"="GET",
+ *              "path"="/users/checkPasswordToken",
+ *              "security_post_denormalize"="is_granted('user_register',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",

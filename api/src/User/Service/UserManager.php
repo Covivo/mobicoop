@@ -120,6 +120,7 @@ class UserManager
     private $fakeFirstToken;
     private $domains;
     private $profile;
+    private $passwordTokenValidity;
 
     /**
         * Constructor.
@@ -157,7 +158,8 @@ class UserManager
         InternalMessageManager $internalMessageManager,
         ReviewManager $reviewManager,
         array $domains,
-        array $profile
+        array $profile,
+        $passwordTokenValidity
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -189,6 +191,7 @@ class UserManager
         $this->internalMessageManager = $internalMessageManager;
         $this->reviewManager = $reviewManager;
         $this->profile = $profile;
+        $this->passwordTokenValidity = $passwordTokenValidity;
     }
 
     /**
@@ -236,6 +239,22 @@ class UserManager
         return implode(", ", $this->domains);
     }
 
+    /**
+     * Check if a password token and password token date exist
+     *
+     * @param string $pwdToken The password token to check
+     * @return string|null The checked token or null if token invalid
+     */
+    public function checkPasswordToken(string $pwdToken)
+    {
+        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])) {
+            if ((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
+                return null;
+            }
+            return $pwdToken;
+        }
+        return null;
+    }
 
     /**
      * Get a user by security token.
@@ -1384,10 +1403,18 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
         if (is_null($user)) {
-            // echo "new user\n";
-            // echo $ssoUser->getSub()."\n";
-            // echo $ssoUser->getProvider()."\n";
-            // echo $ssoUser->getGender()."\n";die;
+
+            // check if a user with this email already exists
+            $user = $this->userRepository->findOneBy(['email'=>$ssoUser->getEmail()]);
+            if (!is_null($user)) {
+                // We update the user with ssoId and ssoProvider and return it
+                $user->setSsoId($ssoUser->getSub());
+                $user->setSsoProvider($ssoUser->getProvider());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+                return $user;
+            }
+
             // Create a new one
             $user = new User();
             $user->setSsoId($ssoUser->getSub());

@@ -308,9 +308,10 @@
                   :items="communities"
                   outlined
                   chips
-                  :label="$t('communities.label')"
+                  :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
                   item-text="name"
                   item-value="id"
+                  :required="requiredCommunity"
                   @change="emitEvent"
                 >
                   <template v-slot:selection="data">
@@ -444,6 +445,10 @@ export default {
       default: null,
     },
     requiredHomeAddress: {
+      type: Boolean,
+      default: false,
+    },
+    requiredCommunity: {
       type: Boolean,
       default: false,
     },
@@ -607,12 +612,15 @@ export default {
         container: this.container,
       };
     },
-    // disable validation if homeAddress is empty and required or email already taken
+    // disable validation if homeAddress and community is empty and required or email already taken
     isDisable() {
       if (this.requiredHomeAddress && !this.form.homeAddress) {
         return true;
       }
       if (this.emailAlreadyTaken) {
+        return true;
+      }
+      if (this.requiredCommunity && !this.selectedCommunity) {
         return true;
       }
       return false;
