@@ -484,7 +484,7 @@ class MyAdManager
             case Criteria::FREQUENCY_REGULAR:
                 $driver['fromDate'] = $ask->getCriteria()->getFromDate()->format("Y-m-d");
                 $driver['toDate'] = $ask->getCriteria()->getToDate()->format("Y-m-d");
-                $driver['pickUpTime'] = null;
+                $schedule['pickUpTime'] = null;
                 $schedule['mon']['check'] = $schedule['tue']['check'] = $schedule['wed']['check'] = $schedule['thu']['check'] = $schedule['fri']['check'] = $schedule['sat']['check'] = $schedule['sun']['check'] = false;
                 $schedule['mon']['startTime'] = $schedule['tue']['startTime'] = $schedule['wed']['startTime'] = $schedule['thu']['startTime'] = $schedule['fri']['startTime'] = $schedule['sat']['startTime'] = $schedule['sun']['startTime'] = null;
                 $schedule['mon']['pickUpTime'] = $schedule['tue']['pickUpTime'] = $schedule['wed']['pickUpTime'] = $schedule['thu']['pickUpTime'] = $schedule['fri']['pickUpTime'] = $schedule['sat']['pickUpTime'] = $schedule['sun']['pickUpTime'] = null;
