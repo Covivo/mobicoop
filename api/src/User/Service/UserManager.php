@@ -1384,10 +1384,18 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
         if (is_null($user)) {
-            // echo "new user\n";
-            // echo $ssoUser->getSub()."\n";
-            // echo $ssoUser->getProvider()."\n";
-            // echo $ssoUser->getGender()."\n";die;
+
+            // check if a user with this email already exists
+            $user = $this->userRepository->findOneBy(['email'=>$ssoUser->getEmail()]);
+            if (!is_null($user)) {
+                // We update the user with ssoId and ssoProvider and return it
+                $user->setSsoId($ssoUser->getSub());
+                $user->setSsoProvider($ssoUser->getProvider());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+                return $user;
+            }
+
             // Create a new one
             $user = new User();
             $user->setSsoId($ssoUser->getSub());
