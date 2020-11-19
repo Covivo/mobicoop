@@ -48,7 +48,6 @@ class MyAdManager
     private $reviewManager;
     private $paymentActive;
     private $paymentActiveDate;
-    private $userReviewActive;
 
     /**
      * Constructor.
@@ -57,7 +56,7 @@ class MyAdManager
      * @param CarpoolItemRepository $carpoolItemRepository  The carpool item repository
      * @param string $paymentActive                         The date of the payment activation, or false (as string!)
      */
-    public function __construct(ProposalRepository $proposalRepository, CarpoolItemRepository $carpoolItemRepository, ReviewManager $reviewManager, string $paymentActive, bool $userReviewActive)
+    public function __construct(ProposalRepository $proposalRepository, CarpoolItemRepository $carpoolItemRepository, ReviewManager $reviewManager, string $paymentActive)
     {
         $this->proposalRepository = $proposalRepository;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -67,7 +66,6 @@ class MyAdManager
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
-        $this->userReviewActive = $userReviewActive;
     }
 
     /**
