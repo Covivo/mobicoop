@@ -57,6 +57,7 @@ use App\Community\Entity\Community;
 use App\Match\Entity\Mass;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
+use App\User\Entity\Review;
 
 /**
  * Notification manager
@@ -410,6 +411,13 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = ['paymentProfile'=>$object];
                     break;
+                case Review::class:
+                    $titleContext = [];
+                    $bodyContext = [
+                        'givenName'=>$recipient->getGivenName(),
+                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                    ];
+                    break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
                         $outwardOrigin = null;
@@ -567,6 +575,12 @@ class NotificationManager
                     break;
                 case PaymentProfile::class:
                     $bodyContext = ['paymentProfile'=>$object];
+                    break;
+                case Review::class:
+                    $bodyContext = [
+                        'givenName'=>$recipient->getGivenName(),
+                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                    ];
                     break;
                 default:
                     if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
@@ -738,6 +752,13 @@ class NotificationManager
                 case PaymentProfile::class:
                     $titleContext = [];
                     $bodyContext = ['paymentProfile'=>$object];
+                    break;
+                case Review::class:
+                    $titleContext = [];
+                    $bodyContext = [
+                        'givenName'=>$recipient->getGivenName(),
+                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                    ];
                     break;
                 default:
                     $titleContext = [];

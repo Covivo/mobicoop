@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
@@ -105,5 +106,21 @@ class DefaultController extends AbstractController
     public function getPageNoLongerExists()
     {
         return $this->render('@Mobicoop/page-no-longer-exists.html.twig');
+    }
+
+    /**
+     * Store language selected by user in session
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function setSessionLanguage(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $session= $this->get('session');
+            $session->set('language', $data['locale']);
+        }
+        return new JsonResponse();
     }
 }

@@ -29,9 +29,11 @@ use App\User\Entity\Review as ReviewEntity;
 use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
+use App\User\Event\ReviewReceivedEvent;
 use App\User\Repository\ReviewRepository;
 use App\User\Ressource\ReviewDashboard;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Review manager service.
@@ -44,17 +46,20 @@ class ReviewManager
     private $reviewRepository;
     private $askRepository;
     private $userReview;
+    private $eventDispatcher;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ReviewRepository $reviewRepository,
         AskRepository $askRepository,
+        EventDispatcherInterface $dispatcher,
         bool $userReview
     ) {
         $this->entityManager = $entityManager;
         $this->reviewRepository = $reviewRepository;
         $this->askRepository = $askRepository;
         $this->userReview = $userReview;
+        $this->eventDispatcher = $dispatcher;
     }
 
     /**
@@ -128,6 +133,10 @@ class ReviewManager
         $reviewEntity = $this->buildReviewFromRessource($review);
         $this->entityManager->persist($reviewEntity);
         $this->entityManager->flush();
+
+        // Event
+        $event = new ReviewReceivedEvent($reviewEntity);
+        $this->eventDispatcher->dispatch(ReviewReceivedEvent::NAME, $event);
 
         return $this->buildReviewFromEntity($reviewEntity);
     }

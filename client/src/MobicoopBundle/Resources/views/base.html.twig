@@ -28,14 +28,17 @@
                     <m-header 
                         :user="{{app.user|json_encode}}"
                         :url-mobile="{{urlMobile|json_encode}}"                    
-                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}" 
-                        locale="{{ app.request.locale }}"
+                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
+                        :show-reviews="{{ app.user.userReviewsActive ? "true" : "false" }}"
+                        :locale="{{ app.session.get('language') is null ? app.request.locale|json_encode : app.session.get('language')|json_encode }}"
+                        :languages="{{languages|json_encode}}"
                     ></m-header>
                 {% else %}
                     <m-header 
                         :url-mobile="{{urlMobile|json_encode}}"
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
-                        locale="{{ app.request.locale }}"
+                        :locale="{{ app.session.get('language') is null ? app.request.locale|json_encode : app.session.get('language')|json_encode }}"
+                        :languages="{{languages|json_encode}}"
                     ></m-header>
             {% endif %}
 

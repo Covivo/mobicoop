@@ -86,6 +86,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -233,6 +234,9 @@ class Deserializer
                 break;
             case RelayPointMap::class:
                 return $this->deserializeRelayPointMap($data) ;
+                break;
+            case ReviewDashboard::class:
+                return $this->deserializeReviewDashboard($data) ;
                 break;
             default:
                 break;
@@ -979,6 +983,14 @@ class Deserializer
 
         return $relayPointMap;
     }
+
+    private function deserializeReviewDashboard(array $data): ?ReviewDashboard
+    {
+        $reviewDashboard = new ReviewDashboard();
+        $reviewDashboard = $this->autoSet($reviewDashboard, $data);
+        return $reviewDashboard;
+    }
+
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
