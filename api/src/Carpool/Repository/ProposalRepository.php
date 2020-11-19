@@ -1030,7 +1030,9 @@ class ProposalRepository
         // first we search the published outward proposals (returns will be included later)
         $query = $this->repository->createQueryBuilder('p')
         ->join('p.user', 'u')
+        ->join('p.criteria', 'c')
         ->where('p.user = :user and p.private <> 1 and p.type <> :return')
+        ->orderBy('c.fromDate', 'ASC')
         ->setParameter('user', $user)
         ->setParameter('return', Proposal::TYPE_RETURN)
         ;

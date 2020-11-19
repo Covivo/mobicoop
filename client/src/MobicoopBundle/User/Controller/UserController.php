@@ -410,6 +410,21 @@ class UserController extends AbstractController
     }
 
     /**
+     * Get user ads
+     * AJAX get
+     */
+    public function userAds(Request $request)
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return null;
+        }
+        return new JsonResponse($this->userManager->getMyAds());
+    }
+
+    /**
      * Export list carpools for a user
      * AJAX post
      */

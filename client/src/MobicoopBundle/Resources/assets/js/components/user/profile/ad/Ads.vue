@@ -2,6 +2,7 @@
   <v-container
     fluid     
   >
+    <!-- Alert message -->
     <v-snackbar
       v-model="snackbar"
       :color="(alert.type === 'error')?'error':'success'"
@@ -16,17 +17,20 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
+
+    <!-- Ad list -->
     <v-row justify="center">
       <v-col>
         <v-tabs
           centered
           grow
         >
-          <v-tab>{{ $t('ongoing') }}</v-tab>
+          <!-- Active ads -->
+          <v-tab>{{ $t('active') }}</v-tab>
           <v-tab-item>
-            <v-container v-if="localAds.ongoing">
+            <v-container v-if="localAds.active">
               <v-row
-                v-for="ad in localAds.ongoing"
+                v-for="ad in localAds.active"
                 :key="ad.id"
               >
                 <v-col cols="12">
@@ -38,6 +42,8 @@
               </v-row>
             </v-container>
           </v-tab-item>
+
+          <!-- Archived ads -->
           <v-tab>{{ $t('archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
@@ -92,9 +98,14 @@ export default {
       }
     }
   },
+  watch: {
+    ads() {
+      this.localAds = this.ads;
+    }
+  },
   methods: {
     deleteAd(isArchived, id, message) {
-      let type = isArchived ? "archived" : "ongoing";
+      let type = isArchived ? "archived" : "active";
       this.localAds[type] = omit(this.localAds[type], id);
       this.alert.message = message;
       this.snackbar = true;

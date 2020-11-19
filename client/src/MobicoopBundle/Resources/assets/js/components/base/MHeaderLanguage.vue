@@ -28,10 +28,9 @@
           v-for="(item, key) in languages"
           :key="key"
           :value="key"
+          @click="selectLanguage(item, key)"
         >
-          <v-list-item-title
-            @click="selectLanguage(item, key)"
-          >
+          <v-list-item-title>
             {{ item }}
           </v-list-item-title>
         </v-list-item>
@@ -52,10 +51,12 @@ export default {
   },
   props:{
     language: {
-      type: String
+      type: String,
+      default: ''
     },
     languages: {
-      type: Object
+      type: Object,
+      default: () => {}
     },
     textClass: {
       type: String,

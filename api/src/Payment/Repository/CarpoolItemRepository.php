@@ -64,7 +64,7 @@ class CarpoolItemRepository
         ->where('ci.ask = :ask')
         ->andWhere('ci.itemDate = :date')
         ->setParameter('ask', $ask)
-        ->setParameter('date', $date->format('Y-m-d H:i:s'));
+        ->setParameter('date', $date->format('Y-m-d'));
 
         return $query->getQuery()->getOneOrNullResult();
     }
@@ -85,8 +85,8 @@ class CarpoolItemRepository
         ->andWhere('ci.itemDate BETWEEN :startDate and :endDate')
         ->orderBy('ci.itemDate', 'ASC')
         ->setParameter('ask', $ask)
-        ->setParameter('startDate', $fromDate->format('Y-m-d H:i:s'))
-        ->setParameter('endDate', $toDate->format('Y-m-d H:i:s'));
+        ->setParameter('startDate', $fromDate->format('Y-m-d'))
+        ->setParameter('endDate', $toDate->format('Y-m-d'));
 
         return $query->getQuery()->getResult();
     }
@@ -109,8 +109,8 @@ class CarpoolItemRepository
         ->where('ci.itemDate BETWEEN :fromDate and :toDate')
         ->andWhere('c.frequency = :frequency')
         ->orderBy('a.type')
-        ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
-        ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
+        ->setParameter('fromDate', $fromDate->format('Y-m-d'))
+        ->setParameter('toDate', $toDate->format('Y-m-d'))
         ->setParameter('frequency', $frequency);
 
         if ($type == PaymentItem::TYPE_PAY) {

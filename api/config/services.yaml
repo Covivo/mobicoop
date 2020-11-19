@@ -147,6 +147,7 @@ services:
     App\Carpool\Service\MyAdManager:
         arguments:
             $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
+            $userReviewActive: '%env(bool:USER_REVIEW)%'
 
     App\Carpool\Service\ProofManager:
         arguments:

@@ -342,6 +342,9 @@ class AdManager
             $ad = new Ad();
         }
 
+        /**
+         * @var User $poster
+         */
         $poster = $this->security->getUser();
 
         if (!is_null($poster) && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
@@ -359,7 +362,7 @@ class AdManager
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
             $ad->setOneWay(false); // only for punctual journey
         } else {
-            if (!$data['regular']) {
+            if (!isset($data['regular']) || !$data['regular']) {
                 $ad->setOneWay(true); // only for punctual journey
             }
         }
@@ -391,9 +394,9 @@ class AdManager
         // role
         if (isset($data['driver']) || isset($data['passenger'])) {
             $ad->setRole(isset($data['driver']) && $data['driver']
-                ? isset($data['passenger']) && $data['passenger']
+                ? (isset($data['passenger']) && $data['passenger']
                     ? Ad::ROLE_DRIVER_OR_PASSENGER
-                    : Ad::ROLE_DRIVER
+                    : Ad::ROLE_DRIVER)
                 : Ad::ROLE_PASSENGER);
         }
 

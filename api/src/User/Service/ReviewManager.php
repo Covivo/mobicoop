@@ -300,4 +300,25 @@ class ReviewManager
 
         return $reviewDashboard;
     }
+
+    /**
+     * Determine if a user can get a review from another user
+     *
+     * @param User $reviewer    The reviewer
+     * @param User $reviewed    The reviewed
+     * @return bool             The result
+     */
+    public function canReceiveReview(User $reviewer, User $reviewed): bool
+    {
+        // Using the dashboard of the currentUser but specifically with the user possibly to review
+        // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
+        $reviews = $this->getReviewDashboard($reviewer, $reviewed);
+        if (!$this->userReview) {
+            // Review system disable.
+            return false;
+        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+            return true;
+        }
+        return false;
+    }
 }

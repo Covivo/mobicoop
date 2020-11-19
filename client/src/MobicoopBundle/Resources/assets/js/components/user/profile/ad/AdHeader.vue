@@ -132,7 +132,7 @@
         </v-btn>
       </v-col>
       <v-col
-        v-else-if="paymentStatus!==null && paymentItemId !== null"
+        v-else-if="paymentStatus!==null"
         class="text-right"
       >
         <AdPayment
@@ -296,7 +296,6 @@ export default {
         }
       })
         .then(function (response) {
-          console.log(response);
           self.$emit('ad-deleted', self.isArchived, self.adId, self.$t("delete.success"));
         })
         .catch(function (error) {
