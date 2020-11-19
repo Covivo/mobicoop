@@ -1476,9 +1476,15 @@ class UserManager
         $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
 
         // Experienced user
+        // To be experienced :
+        // The User has to have a number of realized carpools >= experiencedTagMinCarpools(.env)
+        // The User has to have a answer percentage >= experiencedTagMinAnswerPct(.env)
         $profileSummary->setExperienced(false);
         if ($this->profile['experiencedTag']) {
-            if ($profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools']) {
+            if (
+                $profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools'] &&
+                $profileSummary->getAnswerPct()>=$this->profile['experiencedTagMinAnswerPct']
+            ) {
                 $profileSummary->setExperienced(true);
             }
         }

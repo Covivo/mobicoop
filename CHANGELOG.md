@@ -1,3 +1,14 @@
+# Release 1.18.0
+
+## API
+* New common report system via the Report ressource.
+* Review Dashboard.
+
+## CLIENT
+* Review Dashboard : See the given, left and ready to give reviews.
+* Report a User.
+* New 'star' icon for experienced users.
+
 # Release 1.17.0
 
 ## API

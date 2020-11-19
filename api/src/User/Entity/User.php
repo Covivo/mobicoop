@@ -446,7 +446,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment","carpoolExport"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1183,6 +1183,12 @@ class User implements UserInterface, EquatableInterface
     * @Groups({"results"})
      */
     private $canReceiveReview;
+
+    /**
+     * @var bool|null If the Reviews are enable on this instance
+     * @Groups({"readUser", "readReview"})
+     */
+    private $userReviewsActive;
 
     public function __construct($status = null)
     {
@@ -2801,6 +2807,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
+    public function isUserReviewsActive(): ?bool
+    {
+        return $this->userReviewsActive;
+    }
+
+    public function setUserReviewsActive(?bool $userReviewsActive): self
+    {
+        $this->userReviewsActive = $userReviewsActive;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**

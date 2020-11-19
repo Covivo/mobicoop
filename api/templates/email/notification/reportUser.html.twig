@@ -1,3 +1,4 @@
+{# CAREFUL : Some client might need to replicate this template #}
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
     <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30px" >{{ "userReport"|trans }}</p>

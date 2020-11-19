@@ -35,7 +35,7 @@ use App\User\Ressource\Review;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readReview"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","readReview"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"writeReview"}}
  *      },
  *      collectionOperations={
@@ -59,13 +59,13 @@ class ReviewDashboard
      * @var int The id of this Review.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readReview"})
+     * @Groups({"read","readReview"})
      */
     private $id;
 
     /**
      * @var bool True if the review system is enabled
-     * @Groups({"readReview"})
+     * @Groups({"read","readReview"})
      */
     private $reviewActive;
     

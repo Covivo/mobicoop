@@ -1,6 +1,9 @@
 <template>
   <v-container fluid>
-    <v-row no-gutters>
+    <v-row
+      v-if="showTitle"
+      no-gutters
+    >
       <v-col
         cols="12"
         class="text-left title"
@@ -18,7 +21,10 @@
         lg="6"
         class="text-left"
       >
-        <Review :review="review" />
+        <Review
+          :review="review"
+          :show-reviewed-infos="showReviewedInfos"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -41,6 +47,14 @@ export default {
       type:Array,
       default: null
     },
+    showTitle:{
+      type: Boolean,
+      default: true
+    },
+    showReviewedInfos:{
+      type: Boolean,
+      default: false
+    }
   }
 }
 </script>

@@ -30,6 +30,7 @@
         <MHeaderProfile
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+          :show-reviews="showReviews"
         />
       </v-toolbar-items>
       <v-toolbar-items
@@ -133,6 +134,7 @@
               <MHeaderProfile
                 :avatar="user.avatars[0]"
                 :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+                :show-reviews="showReviews"
               />
             </v-list-item-title>
           </v-list-item>
@@ -275,6 +277,10 @@ export default {
     locale: {
       type: String,
       default: "fr"
+    },
+    showReviews: {
+      type: Boolean,
+      default: false
     },
     languages: {
       type: Object,
