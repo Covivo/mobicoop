@@ -42,6 +42,9 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     private $dataProvider;
     protected $request;
     
+    const DATETIME_FORMAT = \DateTime::ISO8601;
+
+    
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
@@ -73,7 +76,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
             $this->request->get("origin_longitude"),
             $this->request->get("destination_latitude"),
             $this->request->get("destination_longitude"),
-            \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
+            \DateTime::createFromFormat(self::DATETIME_FORMAT, $this->request->get("date")),
             !is_null($this->request->get("dateType")) ? $this->request->get("dateType") : null,
             !is_null($this->request->get("modes")) ? $this->request->get("modes") : null
         );

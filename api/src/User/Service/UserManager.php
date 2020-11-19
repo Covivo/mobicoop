@@ -120,6 +120,7 @@ class UserManager
     private $fakeFirstToken;
     private $domains;
     private $profile;
+    private $passwordTokenValidity;
 
     /**
         * Constructor.
@@ -157,7 +158,8 @@ class UserManager
         InternalMessageManager $internalMessageManager,
         ReviewManager $reviewManager,
         array $domains,
-        array $profile
+        array $profile,
+        $passwordTokenValidity
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -189,6 +191,7 @@ class UserManager
         $this->internalMessageManager = $internalMessageManager;
         $this->reviewManager = $reviewManager;
         $this->profile = $profile;
+        $this->passwordTokenValidity = $passwordTokenValidity;
     }
 
     /**
@@ -237,15 +240,20 @@ class UserManager
     }
 
     /**
-     * Check if a password token exists
+     * Check if a password token and password token date exist
      *
      * @param string $pwdToken The password token to check
+     * @return string|null The checked token or null if token invalid
      */
-    public function checkPasswordToken(string $pwdToken )
+    public function checkPasswordToken(string $pwdToken)
     {
-        if ($this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){
+        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){    
+            if((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity){
+                return null;
+            }
             return $pwdToken;
         }
+        return null;       
     }
 
     /**
