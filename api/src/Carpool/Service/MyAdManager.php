@@ -108,10 +108,13 @@ class MyAdManager
                  * @var DateTime $fromDate
                  */
                 $fromDate = $proposal->getCriteria()->getFromDate();
-                $fromDate->setTime(
-                    $proposal->getCriteria()->getFromTime()->format('H'),
-                    $proposal->getCriteria()->getFromTime()->format('i')
-                );
+                if (!is_null($proposal->getCriteria()->getFromTime())) {
+                    $fromDate->setTime(
+                        $proposal->getCriteria()->getFromTime()->format('H'),
+                        $proposal->getCriteria()->getFromTime()->format('i')
+                    );
+                }
+                
                 $myAd->setOutwardDate($fromDate->format("Y-m-d"));
                 $myAd->setOutwardTime($fromDate->format("H:i"));
                 if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
@@ -121,10 +124,12 @@ class MyAdManager
                      */
                     $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
                     if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                        $returnDate->setTime(
-                            $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H'),
-                            $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('i')
-                        );
+                        if (!is_null($proposal->getProposalLinked()->getCriteria()->getFromTime())) {
+                            $returnDate->setTime(
+                                $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H'),
+                                $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('i')
+                            );
+                        }
                     }
                     $myAd->setReturnDate($returnDate->format("Y-m-d"));
                     $myAd->setReturnTime($returnDate->format("H:i"));
@@ -463,10 +468,12 @@ class MyAdManager
                  * @var DateTime $startDate
                  */
                 $startDate = $ask->getCriteria()->getFromDate();
-                $startDate->setTime(
-                    $ask->getCriteria()->getFromTime()->format('H'),
-                    $ask->getCriteria()->getFromTime()->format('i')
-                );
+                if (!is_null($ask->getCriteria()->getFromTime())) {
+                    $startDate->setTime(
+                        $ask->getCriteria()->getFromTime()->format('H'),
+                        $ask->getCriteria()->getFromTime()->format('i')
+                    );
+                }
                 $pickupDate = clone $startDate;
                 $dropOffDate = clone $startDate;
                 $endDate = clone $startDate;
@@ -658,10 +665,12 @@ class MyAdManager
                      * @var DateTime $startDate
                      */
                     $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
-                    $startDate->setTime(
-                        $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
-                        $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
-                    );
+                    if (!is_null($ask->getAskLinked()->getCriteria()->getFromTime())) {
+                        $startDate->setTime(
+                            $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
+                            $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
+                        );
+                    }
                     $pickupDate = clone $startDate;
                     $dropOffDate = clone $startDate;
                     $endDate = clone $startDate;
@@ -979,10 +988,12 @@ class MyAdManager
                  * @var DateTime $startDate
                  */
                 $startDate = $ask->getCriteria()->getFromDate();
-                $startDate->setTime(
-                    $ask->getCriteria()->getFromTime()->format('H'),
-                    $ask->getCriteria()->getFromTime()->format('i')
-                );
+                if (!is_null($ask->getCriteria()->getFromTime())) {
+                    $startDate->setTime(
+                        $ask->getCriteria()->getFromTime()->format('H'),
+                        $ask->getCriteria()->getFromTime()->format('i')
+                    );
+                }
                 $pickupDate = clone $startDate;
                 $dropOffDate = clone $startDate;
                 $endDate = clone $startDate;
@@ -1171,10 +1182,12 @@ class MyAdManager
                      * @var DateTime $startDate
                      */
                     $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
-                    $startDate->setTime(
-                        $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
-                        $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
-                    );
+                    if (!is_null($ask->getAskLinked()->getCriteria()->getFromTime())) {
+                        $startDate->setTime(
+                            $ask->getAskLinked()->getCriteria()->getFromTime()->format('H'),
+                            $ask->getAskLinked()->getCriteria()->getFromTime()->format('i')
+                        );
+                    }
                     $pickupDate = clone $startDate;
                     $dropOffDate = clone $startDate;
                     $endDate = clone $startDate;
