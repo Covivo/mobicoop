@@ -217,7 +217,7 @@ class ReviewManager
         }
         
         // We get the accepted Ask involving the User
-        $asks = $this->askRepository->findAcceptedAsksForUser($reviewer);
+        $asks = $this->askRepository->findAcceptedAsksForUser($reviewer, $reviewed);
         foreach ($asks as $ask) {
             // We keep only oneway or outward
             if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
