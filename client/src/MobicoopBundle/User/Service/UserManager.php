@@ -704,7 +704,7 @@ class UserManager
         return $response->getValue();
     }
 
-      /**
+    /**
      * Check if password token exist
      *
      * @param string $pwdToken
