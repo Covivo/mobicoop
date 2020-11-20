@@ -200,17 +200,29 @@ class AskRepository
      * Find accepted asks for a given user
      *
      * @param User|null $user   The user
+     * @param User|null $user2   The second user if we want to check between two specific users
      * @return Ask[]|null       The asks if found
      */
-    public function findAcceptedAsksForUser(User $user)
+    public function findAcceptedAsksForUser(User $user, User $user2=null)
     {
         $query = $this->repository->createQueryBuilder('a')
         ->join('a.criteria', 'c')
-        ->where('a.user = :user or a.userRelated = :user')
-        ->andWhere('a.status = :accepted_driver or a.status = :accepted_passenger')
+        ->where('a.status = :accepted_driver or a.status = :accepted_passenger');
+
+        if (!is_null($user2)) {
+            $query
+            ->andWhere('(a.user = :user and a.userRelated = :user2) or (a.user = :user2 and a.userRelated = :user)')
+            ->setParameter('user', $user)
+            ->setParameter('user2', $user2);
+        } else {
+            $query
+            ->andWhere('a.user = :user or a.userRelated = :user')
+            ->setParameter('user', $user);
+        }
+
+        $query
         ->setParameter('accepted_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
         ->setParameter('accepted_passenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
-        ->setParameter('user', $user)
         ;
                 
         return $query->getQuery()->getResult();

@@ -247,13 +247,13 @@ class UserManager
      */
     public function checkPasswordToken(string $pwdToken)
     {
-        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])){    
-            if((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity){
+        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])) {
+            if ((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
                 return null;
             }
             return $pwdToken;
         }
-        return null;       
+        return null;
     }
 
     /**
