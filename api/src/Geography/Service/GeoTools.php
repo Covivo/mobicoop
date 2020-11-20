@@ -24,6 +24,7 @@
 namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InvalidParameterException extends \Exception
 {
@@ -40,13 +41,15 @@ class GeoTools
     const RDP_EPSILON = 20;             // Ramer-Douglas-Peucker Epsilon : maximum perpendicular distance for any point from the line between two adjacent points.
     const RDP_DELTA = 10000;            // Ramer-Douglas-Peucker Epsilon delta (used to convert the epsilon in the coordinates system used, here the gps coordinates system)
 
+    private $translator;
     private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(?array $params=null)
+    public function __construct(?TranslatorInterface $translator=null, ?array $params=null)
     {
+        $this->translator = $translator;
         $this->params = $params;
     }
 
@@ -224,7 +227,7 @@ class GeoTools
         // named address
         if (isset($this->params['displayNamed']) && trim($this->params['displayNamed'])==="true") {
             if (trim($address->getName())!=="") {
-                $displayLabelTab[0][] = $address->getName();
+                $displayLabelTab[0][] = !is_null($this->translator) ? $this->translator->trans($address->getName()) : $address->getName();
             }
         }
 

@@ -71,6 +71,7 @@
             <v-col cols="6">
               <GeoComplete 
                 :url="geoSearchUrl"
+                :token="user ? user.token : ''"
                 :label="$t('form.address.label')"
                 @address-selected="addressSelected"
               />

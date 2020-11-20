@@ -23,14 +23,13 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class UserProvider implements UserProviderInterface
 {
@@ -38,20 +37,17 @@ class UserProvider implements UserProviderInterface
     const USER_LOGIN_TOKEN_ROUTE = "user_sign_up_validation";
 
     private $dataProvider;
-    private $router;
-    private $translator;
     private $request;
-    private $user;
+    private $session;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, RouterInterface $router, TranslatorInterface $translator, RequestStack $requestStack)
+    public function __construct(DataProvider $dataProvider, RequestStack $requestStack, SessionInterface $session)
     {
-        $this->router = $router;
-        $this->translator = $translator;
+        $this->session = $session;
         $this->request = $requestStack->getCurrentRequest();
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
@@ -110,12 +106,17 @@ class UserProvider implements UserProviderInterface
     {
         $response = $this->dataProvider->getSpecialCollection("me");
 
-
         if ($response->getCode() == 200) {
             $userData = $response->getValue();
 
             if (is_array($userData->getMember()) && count($userData->getMember())==1) {
-                return $userData->getMember()[0];
+                $user = $userData->getMember()[0];
+                if ($apiToken = $this->session->get('apiToken')) {
+                    if ($apiToken->isValid()) {
+                        $user->setToken($apiToken->getToken());
+                    }
+                }
+                return $user;
             }
         }
 

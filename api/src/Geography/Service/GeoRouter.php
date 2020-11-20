@@ -26,6 +26,7 @@ namespace App\Geography\Service;
 use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\RouterProvider\GraphhopperProvider;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The routing service.
@@ -54,11 +55,11 @@ class GeoRouter
      *
      * @param string $uri
      */
-    public function __construct(string $uri, string $type, string $batchScriptPath, string $batchScriptArgs, string $batchTemp, LoggerInterface $logger)
+    public function __construct(string $uri, string $type, string $batchScriptPath, string $batchScriptArgs, string $batchTemp, LoggerInterface $logger, TranslatorInterface $translator)
     {
         switch ($type) {
             case 'graphhopper':
-                $this->router = new GraphhopperProvider($uri, $batchScriptPath, $batchScriptArgs, $batchTemp, $logger);
+                $this->router = new GraphhopperProvider($uri, $batchScriptPath, $batchScriptArgs, $batchTemp, $logger, $translator);
                 break;
         }
     }

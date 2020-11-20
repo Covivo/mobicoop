@@ -299,6 +299,25 @@ class DataProvider
      */
     private function getHeaders(array $headers=[])
     {
+        $this->createToken();
+
+        // automatically add the bearer token
+        $headers['Authorization'] = 'Bearer ' . $this->jwtToken->getToken();
+
+        // additional headers
+        foreach ($headers as $header) {
+            switch ($header) {
+                case 'json':
+                    $headers['accept'] = 'application/json';
+                    break;
+            }
+        }
+
+        return $headers;
+    }
+
+    public function createToken()
+    {
         if (is_null($this->jwtToken)) {
             $tokens = $this->getJwtToken();
             if (is_null($tokens) || !is_array($tokens)) {
@@ -338,20 +357,6 @@ class DataProvider
                 $this->cache->save($cachedRefreshToken);
             }
         }
-
-        // automatically add the bearer token
-        $headers['Authorization'] = 'Bearer ' . $this->jwtToken->getToken();
-
-        // additional headers
-        foreach ($headers as $header) {
-            switch ($header) {
-                case 'json':
-                    $headers['accept'] = 'application/json';
-                    break;
-            }
-        }
-
-        return $headers;
     }
 
     /**
@@ -1023,6 +1028,12 @@ class DataProvider
     private function pluralize(string $name): string
     {
         return $this->inflector->pluralize($this->inflector->tableize($name));
+    }
+
+    public function getToken()
+    {
+        $this->createToken();
+        return $this->jwtToken->getToken();
     }
 }
 

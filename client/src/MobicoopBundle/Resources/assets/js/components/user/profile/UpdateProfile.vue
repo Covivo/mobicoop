@@ -321,7 +321,7 @@
         <GeoComplete
           :url="geoSearchUrl"
           :label="$t('homeTown.label')"
-          :token="user ? user.geoToken : ''"
+          :token="user ? user.token : ''"
           :init-address="homeAddress"
           :display-name-in-selected="false"
           @address-selected="homeAddressSelected"

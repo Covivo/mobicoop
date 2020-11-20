@@ -30,6 +30,7 @@ use App\Geography\Entity\Direction;
 use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Service\GeoTools;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Graphhopper related service.
@@ -81,11 +82,21 @@ class GraphhopperProvider implements GeorouterInterface
      * @param boolean $avoidMotorway        Avoid motorways
      * @param boolean $avoidToll            Avoid tolls
      */
-    public function __construct(string $uri, string $batchScriptPath, string $batchScriptArgs, string $batchTemp, LoggerInterface $logger, bool $detailDuration=false, bool $pointsOnly=false, bool $avoidMotorway=false, bool $avoidToll=false)
-    {
+    public function __construct(
+        string $uri,
+        string $batchScriptPath,
+        string $batchScriptArgs,
+        string $batchTemp,
+        LoggerInterface $logger,
+        TranslatorInterface $translator,
+        bool $detailDuration=false,
+        bool $pointsOnly=false,
+        bool $avoidMotorway=false,
+        bool $avoidToll=false
+    ) {
         $this->uri = $uri;
         $this->dataProvider = new DataProvider($this->uri);
-        $this->geoTools = new GeoTools();
+        $this->geoTools = new GeoTools($translator);
         $this->directionResource = self::DIRECTION_RESOURCE;
         $this->detailDuration = $detailDuration;
         $this->pointsOnly = $pointsOnly;

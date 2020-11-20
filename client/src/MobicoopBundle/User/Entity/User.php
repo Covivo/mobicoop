@@ -319,10 +319,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $pwdTokenDate;
 
     /**
-     * @var string|null Token for geographic authorization.
+     * @var string|null Token for direct api auth.
      *  @Groups({"post","put"})
      */
-    private $geoToken;
+    private $token;
 
     /**
      * @var string|null Token for phone validation.
@@ -977,7 +977,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * Set the Token of password mofification.
      *
-     * @param string|null $token
+     * @param string|null $pwdtoken
      */
     public function setPwdToken(?string $pwdToken)
     {
@@ -1006,14 +1006,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getGeoToken()
+    public function getToken()
     {
-        return $this->geoToken;
+        return $this->token;
     }
 
-    public function setGeoToken(?string $geoToken)
+    public function setToken(?string $token)
     {
-        $this->geoToken = $geoToken;
+        $this->token = $token;
         return $this;
     }
 
@@ -1191,7 +1191,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'status'                => $this->getStatus(),
             'email'                 => $this->getEmail(),
             'telephone'             => $this->getTelephone(),
-            'geoToken'              => $this->getGeoToken(),
+            'token'                 => $this->getToken(),
             'birthYear'             => $this->getBirthYear(),
             'birthDate'             => $this->getBirthDate(),
             'homeAddress'           => $this->getHomeAddress(),

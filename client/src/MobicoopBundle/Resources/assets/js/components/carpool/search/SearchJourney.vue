@@ -59,7 +59,7 @@
             id="from"
             :url="geoSearchUrl"
             :label="labelOrigin"
-            :token="user ? user.geoToken : ''"
+            :token="user ? user.token : ''"
             required
             :show-required="showRequired"
             :required-error="requiredErrorOrigin"
@@ -105,7 +105,7 @@
             id="to"
             :url="geoSearchUrl"
             :label="labelDestination"
-            :token="user ? user.geoToken : ''"
+            :token="user ? user.token : ''"
             required
             :show-required="showRequired"
             :required-error="requiredErrorDestination"

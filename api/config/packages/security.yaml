@@ -99,13 +99,6 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
-
-        # firewall for geosearch
-        geosearch:
-            pattern:  ^/addresses/search
-            stateless: true
-            anonymous: true
-
         # firewall for reverse geocoding
         reverse:
             pattern:  ^/addresses/reverse
@@ -157,7 +150,6 @@ security:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }

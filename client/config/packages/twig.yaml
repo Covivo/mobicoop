@@ -6,6 +6,7 @@ twig:
     strict_variables: '%kernel.debug%'
     cache: false
     globals:
+        token: '@Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider'
         delete_profile: '%env(DELETE_PROFILE)%'
         app_name: '%env(APP_NAME)%'
         assets_prefix: '%env(ASSETS_PREFIX)%'

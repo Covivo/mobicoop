@@ -21,9 +21,13 @@ const fetchSuggestions = (input) => {
   const parameters = {
     q: `${input}`,
   };
+  const options = {
+    headers: new global.Headers({ Accept: 'application/json' }),
+  };
+  options.headers.set('Authorization', `Bearer ${global.localStorage.getItem('token')}`);
   const urlWithParameters = `${apiUrl}?${queryString.stringify(parameters)}`;
   return fetchUtils
-    .fetchJson(urlWithParameters)
+    .fetchJson(urlWithParameters,options)
     .then((response) => response.json)
     .catch((error) => {
       console.error(error);

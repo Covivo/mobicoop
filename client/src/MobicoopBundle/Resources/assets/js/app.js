@@ -12,5 +12,6 @@ new Vue({
   el: '#app',
   vuetify,
   i18n,
+  token: '',
   components: components
 })

@@ -285,6 +285,10 @@ export default {
     languages: {
       type: Object,
       default: () => {}
+    },
+    token: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -303,6 +307,7 @@ export default {
     }
   },
   created() {
+    this.$root.token = this.token;
     this.$root.$i18n.locale = this.dlocale
   },
   methods:{
