@@ -386,6 +386,20 @@ class CommunityManager
         return $communityUser;
     }
 
+    /**
+     * Update communityUser
+     *
+     * @param CommunityUser $communityUser
+     * @return void
+     */
+    public function updateCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
+        return $communityUser;
+    }
+
 
     /*************************
     *                        *
