@@ -1,6 +1,6 @@
 {
     "carpools": {
-        "active": "Covoiturages à venir",
+        "active": "Covoiturages en cours",
         "archived": "Covoiturages passés"
     },
     "needCarpoolProofs": "Besoin d’une preuve de covoiturage ?",
