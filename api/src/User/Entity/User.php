@@ -375,7 +375,7 @@ use App\User\Controller\UserCanUseEmail;
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
 
- * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "telephone" : "exact"})
 
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
@@ -731,14 +731,6 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
-
-    /**
-     * @var string|null Token for geographical search authorization.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $geoToken;
 
     /**
      * @var string|null Token for phone validation.
@@ -1576,17 +1568,6 @@ class User implements UserInterface, EquatableInterface
     public function setPwdTokenDate(?DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
-        return $this;
-    }
-
-    public function getGeoToken(): ?string
-    {
-        return $this->geoToken;
-    }
-
-    public function setGeoToken(?string $geoToken): self
-    {
-        $this->geoToken = $geoToken;
         return $this;
     }
 

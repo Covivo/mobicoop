@@ -91,6 +91,7 @@
             >
               <GeoComplete
                 :url="geoSearchUrl"
+                :token="user ? user.token : ''"
                 :label="$t('form.label.address')"
                 :display-name-in-selected="false"
                 @address-selected="addressSelected"

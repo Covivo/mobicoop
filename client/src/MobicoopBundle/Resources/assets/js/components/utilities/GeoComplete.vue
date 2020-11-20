@@ -111,6 +111,7 @@ export default {
       address: null,
       filter: null,
       cancelSource: null,
+      dtoken: this.token
     };
   },
   computed: {
@@ -146,7 +147,7 @@ export default {
           if (this.address.home) {
             this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           } else if (this.address.name) {
-            this.address.selectedDisplayedLabel = `${this.address.name}`;
+            this.address.selectedDisplayedLabel = `${this.address.displayLabel[0]}`;
           } else if (this.address.relayPoint) {
             this.address.selectedDisplayedLabel = `${this.address.relayPoint.name}`;
           } else if (this.address.event) {
@@ -157,6 +158,11 @@ export default {
           this.entries.push(this.address);
         } 
       }
+    }
+  },
+  mounted() {
+    if (this.dtoken === '') {
+      this.dtoken = this.$root.token;
     }
   },
   methods: {
@@ -170,7 +176,8 @@ export default {
       this.cancelSource = axios.CancelToken.source();
 
       axios
-        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""), {
+        .get(`${this.url}${val}`, {
+          headers: { Authorization: 'Bearer ' + this.dtoken },
           cancelToken: this.cancelSource.token
         })
         .then(res => {
@@ -194,7 +201,7 @@ export default {
             addresses[addressKey].displayedLabel = `${address.displayLabel[0]}`;
             addresses[addressKey].displayedSecondLabel = `${address.displayLabel[1]}`;
             if (address.name) {
-              addresses[addressKey].selectedDisplayedLabel = `${address.name}`;
+              addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel[0]}`;
             } else if (address.relayPoint) {
               addresses[addressKey].selectedDisplayedLabel = `${address.relayPoint.name}`;
             } else if (address.event) {

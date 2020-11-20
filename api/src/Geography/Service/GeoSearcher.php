@@ -36,6 +36,9 @@ use App\RelayPoint\Entity\RelayPoint;
 use App\User\Repository\UserRepository;
 use App\Image\Repository\IconRepository;
 use App\Geography\ProviderFactory\PeliasAddress;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * The geo searcher service.
@@ -56,6 +59,7 @@ class GeoSearcher
     private $addressRepository;
     private $relayPointRepository;
     private $iconRepository;
+    private $security;
     private $iconPath;
     private $dataPath;
     private $eventRepository;
@@ -69,14 +73,33 @@ class GeoSearcher
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, EventRepository $eventRepository, IconRepository $iconRepository, string $iconPath, string $dataPath, string $defaultSigResultNumber, string $defaultNamedResultNumber, string $defaultRelayPointResultNumber, string $defaultEventResultNumber, array $geoDataFixes, bool $distanceOrder)
-    {
+    public function __construct(
+        PluginProvider $geocoder,
+        GeoTools $geoTools,
+        UserRepository $userRepository,
+        AddressRepository $addressRepository,
+        RelayPointRepository $relayPointRepository,
+        EventRepository $eventRepository,
+        IconRepository $iconRepository,
+        Security $security,
+        TranslatorInterface $translator,
+        string $iconPath,
+        string $dataPath,
+        string $defaultSigResultNumber,
+        string $defaultNamedResultNumber,
+        string $defaultRelayPointResultNumber,
+        string $defaultEventResultNumber,
+        array $geoDataFixes,
+        bool $distanceOrder
+    ) {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
         $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
         $this->relayPointRepository = $relayPointRepository;
         $this->iconRepository = $iconRepository;
+        $this->security = $security;
+        $this->translator = $translator;
         $this->iconPath = $iconPath;
         $this->dataPath = $dataPath;
         $this->eventRepository = $eventRepository;
@@ -107,25 +130,40 @@ class GeoSearcher
         // First we handle the quote
         $input = str_replace("'", "''", $input);
 
-        // if we have a token, we search for the corresponding user
-        $user = null;
+        // we search if the user is a real user (not an app)
         $userPrioritize = null;
-        if ($token) {
-            if ($user = $this->userRepository->findOneBy(['geoToken'=>$token])) {
-                // we search its home address
-                foreach ($user->getAddresses() as $address) {
-                    if ($address->isHome()) {
-                        $userPrioritize = [
-                            'latitude' => $address->getLatitude(),
-                            'longitude' => $address->getLongitude()
-                        ];
+        $user = $this->security->getUser();
+        if ($user instanceof User) {
+            // we search its home address
+            foreach ($user->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $userPrioritize = [
+                        'latitude' => $address->getLatitude(),
+                        'longitude' => $address->getLongitude()
+                    ];
+                    break;
+                }
+            }
+        }
+
+        // 1 - named addresses
+        if ($user instanceof User) {
+            $namedAddresses = $this->addressRepository->findByName($this->translator->trans($input), $user->getId());
+            if (count($namedAddresses)>0) {
+                $i = 0;
+                foreach ($namedAddresses as $address) {
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
+                    $result[] = $address;
+                    $i++;
+                    if ($i>=$this->defaultNamedResultNumber) {
                         break;
                     }
                 }
             }
         }
-
-        // 1 - sig addresses
+        
+        // 2 - sig addresses
         if (!is_null($userPrioritize)) {
             $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
             ->withLimit($this->defaultSigResultNumber)
@@ -226,22 +264,7 @@ class GeoSearcher
             });
         }
         
-        // 2 - named addresses
-        if ($user) {
-            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
-            if (count($namedAddresses)>0) {
-                $i = 0;
-                foreach ($namedAddresses as $address) {
-                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                    $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
-                    $result[] = $address;
-                    $i++;
-                    if ($i>=$this->defaultNamedResultNumber) {
-                        break;
-                    }
-                }
-            }
-        }
+        
 
         // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);

@@ -30,7 +30,9 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class UserProvider implements UserProviderInterface
 {
@@ -41,6 +43,8 @@ class UserProvider implements UserProviderInterface
     private $router;
     private $translator;
     private $request;
+    private $session;
+    private $cache;
     private $user;
 
     /**
@@ -48,10 +52,12 @@ class UserProvider implements UserProviderInterface
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, RouterInterface $router, TranslatorInterface $translator, RequestStack $requestStack)
+    public function __construct(DataProvider $dataProvider, RouterInterface $router, TranslatorInterface $translator, RequestStack $requestStack, SessionInterface $session)
     {
         $this->router = $router;
         $this->translator = $translator;
+        $this->session = $session;
+        $this->cache = new FilesystemAdapter();
         $this->request = $requestStack->getCurrentRequest();
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
@@ -110,12 +116,17 @@ class UserProvider implements UserProviderInterface
     {
         $response = $this->dataProvider->getSpecialCollection("me");
 
-
         if ($response->getCode() == 200) {
             $userData = $response->getValue();
 
             if (is_array($userData->getMember()) && count($userData->getMember())==1) {
-                return $userData->getMember()[0];
+                $user = $userData->getMember()[0];
+                if ($apiToken = $this->session->get('apiToken')) {
+                    if ($apiToken->isValid()) {
+                        $user->setToken($apiToken->getToken());
+                    }
+                }
+                return $user;
             }
         }
 

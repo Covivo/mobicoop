@@ -38,6 +38,7 @@
                     ></m-header>
                 {% else %}
                     <m-header 
+                        token="{{token.getToken}}"
                         :url-mobile="{{urlMobile|json_encode}}"
                         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
                         :locale="{{ app.session.get('language') is null ? app.request.locale|json_encode : app.session.get('language')|json_encode }}"
