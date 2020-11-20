@@ -58,9 +58,9 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
     
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        if(
+        if (
             is_null($this->request->get("pwdToken"))
-        ){
+        ) {
             return null;
         }
         return $this->userManager->checkPasswordToken(
