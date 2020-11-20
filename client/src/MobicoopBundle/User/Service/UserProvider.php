@@ -23,7 +23,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -31,8 +30,6 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class UserProvider implements UserProviderInterface
 {
@@ -40,24 +37,17 @@ class UserProvider implements UserProviderInterface
     const USER_LOGIN_TOKEN_ROUTE = "user_sign_up_validation";
 
     private $dataProvider;
-    private $router;
-    private $translator;
     private $request;
     private $session;
-    private $cache;
-    private $user;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, RouterInterface $router, TranslatorInterface $translator, RequestStack $requestStack, SessionInterface $session)
+    public function __construct(DataProvider $dataProvider, RequestStack $requestStack, SessionInterface $session)
     {
-        $this->router = $router;
-        $this->translator = $translator;
         $this->session = $session;
-        $this->cache = new FilesystemAdapter();
         $this->request = $requestStack->getCurrentRequest();
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
