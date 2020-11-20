@@ -65,7 +65,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      itemOperations={
  *          "get",
- *          "put",
+ *          "put"={
+ *              "method"="PUT",
+ *              "security"="is_granted('community_update',object)"
+ *          },
  *          "delete"={
  *              "controller"=LeaveCommunityAction::class
  *          }
