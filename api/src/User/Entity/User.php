@@ -394,7 +394,6 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
- * @ApiFilter(NumericFilter::class, properties={"gender"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL, "lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
  */
