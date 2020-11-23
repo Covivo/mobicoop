@@ -21,33 +21,20 @@
  *    LICENSE
  **************************/
 
- namespace App\ExternalJourney\DataPersister;
+namespace App\ExternalJourney\Service;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\ExternalJourney\Ressource\ExternalConnection;
-use App\ExternalJourney\Service\ExternalConnectionManager;
 
-final class ExternalConnectionDataPersister implements ContextAwareDataPersisterInterface
+/**
+ * External connection service.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class ExternalConnectionManager
 {
-    private $externalConnectionManager;
-
-    public function __construct(ExternalConnectionManager $externalConnectionManager)
+    public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
-        $this->externalConnectionManager = $externalConnectionManager;
-    }
-
-    public function supports($data, array $context = []): bool
-    {
-        return $data instanceof ExternalConnection && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
-    }
-
-    public function persist($data, array $context = [])
-    {
-        return $this->externalConnectionManager->sendConnection($data);
-    }
-
-    public function remove($data, array $context = [])
-    {
-        // call your persistence layer to delete $data
+        return $externalConnection;
     }
 }

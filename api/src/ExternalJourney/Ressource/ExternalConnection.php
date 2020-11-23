@@ -71,13 +71,13 @@ class ExternalConnection
     private $id;
 
     /**
-     * @var String Operator making the ExternalConnection (i.e. the message)
+     * @var string Operator making the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $operator;
 
     /**
-     * @var String  Origin site of the ExternalConnection (i.e. the message)
+     * @var string  Origin site of the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $origin;
@@ -90,14 +90,14 @@ class ExternalConnection
     private $carpoolerUuid;
 
     /**
-     * @var String Uuid of the journey concerned by this ExternalConnection (i.e. the message)
+     * @var string Uuid of the journey concerned by this ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      * @Assert\NotBlank
      */
     private $journeysUuid;
 
     /**
-     * @var String Details of the ExternalConnection (i.e. the message)
+     * @var string Details of the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $details;
@@ -115,67 +115,67 @@ class ExternalConnection
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(?int $id): self
     {
         $this->id = $id;
         
         return $this;
     }
 
-    public function getOperator(): String
+    public function getOperator(): ?string
     {
         return $this->operator;
     }
 
-    public function setOperator(String $operator): self
+    public function setOperator(?string $operator): self
     {
         $this->operator = $operator;
         
         return $this;
     }
 
-    public function getOrigin(): String
+    public function getOrigin(): ?string
     {
         return $this->origin;
     }
 
-    public function setOrigin(String $origin): self
+    public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
         
         return $this;
     }
        
-    public function getCarpoolerUuid(): String
+    public function getCarpoolerUuid(): ?string
     {
         return $this->carpoolerUuid;
     }
 
-    public function setCarpoolerUuid(String $carpoolerUuid): self
+    public function setCarpoolerUuid(?string $carpoolerUuid): self
     {
         $this->carpoolerUuid = $carpoolerUuid;
         
         return $this;
     }
     
-    public function getJourneysUuid(): String
+    public function getJourneysUuid(): ?string
     {
         return $this->journeysUuid;
     }
 
-    public function setJourneysUuid(String $journeysUuid): self
+    public function setJourneysUuid(?string $journeysUuid): self
     {
         $this->journeysUuid = $journeysUuid;
         
         return $this;
     }
 
-    public function getDetails(): String
+    public function getDetails(): ?string
     {
         return $this->details;
     }
 
-    public function setDetails(String $details): self
+    public function setDetails(?string $details): self
     {
         $this->details = $details;
         
