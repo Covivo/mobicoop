@@ -23,8 +23,10 @@
 
 namespace App\ExternalJourney\Service;
 
+use App\Carpool\Ressource\Ad;
 use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\ExternalJourney\Ressource\ExternalConnection;
+use GuzzleHttp\Client;
 
 /**
  * External connection service.
@@ -33,8 +35,86 @@ use App\ExternalJourney\Ressource\ExternalConnection;
  */
 class ExternalConnectionManager
 {
+    private const EXTERNAL_CONNECTION_HASH = "sha256";         // hash algorithm
+
+    private $providers;
+    private $operator;
+
+    public function __construct(array $providers, array $operator)
+    {
+        $this->providers = $providers;
+        $this->operator = $operator;
+    }
+
     public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
+        
+        // Check if the provider is valid
+        if (!isset($this->providers[$externalConnection->getProvider()])) {
+            throw new \LogicException("Not a valid provider in providers.json");
+        }
+
+        $provider = new ExternalJourneyProvider();
+        $provider->setName($externalConnection->getProvider());
+        $provider->setUrl($this->providers[$externalConnection->getProvider()]['url']);
+        $provider->setResource($this->providers[$externalConnection->getProvider()]['resourceConnection']);
+        $provider->setApiKey($this->providers[$externalConnection->getProvider()]['api_key']);
+        $provider->setPrivateKey($this->providers[$externalConnection->getProvider()]['private_key']);
+
+        // Determine if the current User is the driver or the passenger
+        
+        // By default, if not specified, the sender is the passenger
+        $role = Ad::ROLE_PASSENGER;
+        if (!is_null($externalConnection->getRole())) {
+            $role = $externalConnection->getRole();
+        }
+        
+        if (!is_numeric($role) ||
+            ($role !== Ad::ROLE_DRIVER && $role !== Ad::ROLE_PASSENGER  && $role !== Ad::ROLE_DRIVER_OR_PASSENGER)
+        ) {
+            throw new \LogicException("Invalid role");
+        } elseif ($role == Ad::ROLE_DRIVER_OR_PASSENGER) {
+            // Force "driver_or_passenger" to passenger
+            $role = Ad::ROLE_PASSENGER;
+        }
+
+        
+        // initialize client API for any request
+        $client = new Client();
+
+        $params = [
+            "origin" => $this->operator['origin'],
+            "operator" => $this->operator['name'],
+            "details" => $externalConnection->getContent(),
+            "journeys" => [
+                "uuid" => $externalConnection->getJourneysUuid()
+            ],
+            "driver" => [
+                "uuid" => ($role == Ad::ROLE_PASSENGER) ? $externalConnection->getCarpoolerUuid() : null,
+                "state" => ($role == Ad::ROLE_PASSENGER) ? "recipient" : "sender"
+            ],
+            "passenger" => [
+                "uuid" => ($role == Ad::ROLE_PASSENGER) ? null : $externalConnection->getCarpoolerUuid(),
+                "state" => ($role == Ad::ROLE_PASSENGER) ? "sender" : "recipient"
+            ]
+        ];
+
+        $query = array(
+            'timestamp' => time(),
+            'apikey'    => $provider->getApiKey(),
+        );
+
+        // construct the requested url
+        $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
+        $signature = hash_hmac(self::EXTERNAL_CONNECTION_HASH, $url, $provider->getPrivateKey());
+        $signedUrl = $url.'&signature='.$signature;
+
+        // Type of the body
+        $options['form_params']=$params;
+
+        $data = $client->post($signedUrl, $options);
+        $data = $data->getBody()->getContents();
+
         return $externalConnection;
     }
 }

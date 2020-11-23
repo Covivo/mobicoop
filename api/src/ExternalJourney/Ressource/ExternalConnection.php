@@ -62,6 +62,10 @@ class ExternalConnection
 {
     const DEFAULT_ID = 999999999999;
     
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+    const ROLE_DRIVER_OR_PASSENGER = 3;
+
     /**
      * @var int Id of the ExternalConnection
      *
@@ -76,6 +80,13 @@ class ExternalConnection
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $provider;
+
+    
+    /**
+     * @var int The role of the User who's sending the external connection
+     * @Groups({"readExternalConnection","writeExternalConnection"})
+     */
+    private $role;
 
     /**
      * @var string Uuid of the Carpooler targetted by the ExternalConnection (i.e. the message)
@@ -92,10 +103,10 @@ class ExternalConnection
     private $journeysUuid;
 
     /**
-     * @var string Details of the ExternalConnection (i.e. the message)
+     * @var string Content of the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
-    private $details;
+    private $content;
 
     public function __construct(int $id = null)
     {
@@ -105,7 +116,7 @@ class ExternalConnection
         }
     }
         
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -125,6 +136,18 @@ class ExternalConnection
     public function setProvider(?string $provider): self
     {
         $this->provider = $provider;
+        
+        return $this;
+    }
+
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+
+    public function setRole(?int $role): self
+    {
+        $this->role = $role;
         
         return $this;
     }
@@ -153,14 +176,14 @@ class ExternalConnection
         return $this;
     }
 
-    public function getDetails(): ?string
+    public function getContent(): ?string
     {
-        return $this->details;
+        return $this->content;
     }
 
-    public function setDetails(?string $details): self
+    public function setContent(?string $content): self
     {
-        $this->details = $details;
+        $this->content = $content;
         
         return $this;
     }
