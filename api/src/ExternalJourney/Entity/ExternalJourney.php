@@ -35,13 +35,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *      "swagger_context"={
  *           "parameters"={
  *              {
- *                  "name" = "provider",
- *                  "in" = "query",
- *                  "required" = "false",
- *                  "type" = "string",
- *                  "description" = "The name of the provider. If none, we return journeys from all the available providers"
- *              },
- *              {
  *                  "name" = "driver",
  *                  "in" = "query",
  *                  "required" = "true",
