@@ -194,6 +194,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
             // The carpooler
             $carpooler = new User();
+            $carpooler->setId($currentJourney['driver']['uuid']);
             $carpooler->setGivenName($currentJourney['driver']['alias']);
             $carpooler->setGender(User::GENDER_FEMALE);
             if ($currentJourney['driver']['gender']==="male") {

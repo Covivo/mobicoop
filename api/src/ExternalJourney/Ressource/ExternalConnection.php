@@ -25,7 +25,9 @@ namespace App\ExternalJourney\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An external connection (i.e. sending a message) to an ExternalJourneyProvider
@@ -69,7 +71,7 @@ class ExternalConnection
     private $id;
 
     /**
-     * @var String  Operator making the ExternalConnection (i.e. the message)
+     * @var String Operator making the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $operator;
@@ -81,25 +83,21 @@ class ExternalConnection
     private $origin;
 
     /**
-     * @var ExternalConnectionActor  Driver of the ExternalConnection (i.e. the message)
+     * @var string Uuid of the Carpooler targetted by the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
+     * @Assert\NotBlank
      */
-    private $driver;
+    private $carpoolerUuid;
 
     /**
-     * @var ExternalConnectionActor  Passenger of the ExternalConnection (i.e. the message)
+     * @var String Uuid of the journey concerned by this ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
-     */
-    private $passenger;
-
-    /**
-     * @var String  Uuid of the journey concerned by this ExternalConnection (i.e. the message)
-     * @Groups({"readExternalConnection","writeExternalConnection"})
+     * @Assert\NotBlank
      */
     private $journeysUuid;
 
     /**
-     * @var String  Details of the ExternalConnection (i.e. the message)
+     * @var String Details of the ExternalConnection (i.e. the message)
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $details;
@@ -147,27 +145,15 @@ class ExternalConnection
         
         return $this;
     }
-    
-    public function getDriver(): ExternalConnectionActor
+       
+    public function getCarpoolerUuid(): String
     {
-        return $this->driver;
+        return $this->carpoolerUuid;
     }
 
-    public function setDriver(ExternalConnectionActor $driver): self
+    public function setCarpoolerUuid(String $carpoolerUuid): self
     {
-        $this->driver = $driver;
-        
-        return $this;
-    }
-    
-    public function getPassenger(): ExternalConnectionActor
-    {
-        return $this->passenger;
-    }
-
-    public function setPassenger(ExternalConnectionActor $passenger): self
-    {
-        $this->passenger = $passenger;
+        $this->carpoolerUuid = $carpoolerUuid;
         
         return $this;
     }
@@ -183,7 +169,7 @@ class ExternalConnection
         
         return $this;
     }
-    
+
     public function getDetails(): String
     {
         return $this->details;

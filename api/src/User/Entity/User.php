@@ -451,7 +451,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1229,6 +1229,13 @@ class User implements UserInterface, EquatableInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getStatus(): int
