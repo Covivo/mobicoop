@@ -71,16 +71,11 @@ class ExternalConnection
     private $id;
 
     /**
-     * @var string Operator making the ExternalConnection (i.e. the message)
+     * @var string Provider of the external journey (provider key in providers.json configuration)
+     * @Assert\NotBlank
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
-    private $operator;
-
-    /**
-     * @var string  Origin site of the ExternalConnection (i.e. the message)
-     * @Groups({"readExternalConnection","writeExternalConnection"})
-     */
-    private $origin;
+    private $provider;
 
     /**
      * @var string Uuid of the Carpooler targetted by the ExternalConnection (i.e. the message)
@@ -122,30 +117,18 @@ class ExternalConnection
         return $this;
     }
 
-    public function getOperator(): ?string
+    public function getProvider(): ?string
     {
-        return $this->operator;
+        return $this->provider;
     }
 
-    public function setOperator(?string $operator): self
+    public function setProvider(?string $provider): self
     {
-        $this->operator = $operator;
+        $this->provider = $provider;
         
         return $this;
     }
 
-    public function getOrigin(): ?string
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?string $origin): self
-    {
-        $this->origin = $origin;
-        
-        return $this;
-    }
-       
     public function getCarpoolerUuid(): ?string
     {
         return $this->carpoolerUuid;

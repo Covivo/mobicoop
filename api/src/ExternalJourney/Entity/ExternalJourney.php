@@ -122,7 +122,7 @@ class ExternalJourney
 
     public function getProviderName()
     {
-        return $this->provider_name;
+        return $this->providerName;
     }
 
     public function setProviderName($providerName)

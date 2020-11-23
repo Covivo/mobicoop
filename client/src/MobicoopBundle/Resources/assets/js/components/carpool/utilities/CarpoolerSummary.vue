@@ -193,6 +193,10 @@ export default {
       type: String,
       default: null
     },
+    externalProvider: {
+      type: String,
+      default: null
+    },
     communities: {
       type: Object,
       default: null

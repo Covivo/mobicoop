@@ -175,7 +175,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                     $aggregatedResults = json_decode($data, true);
                 } else {
                     // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                    foreach ($this->createResultFromRDEX($data) as $currentResult) {
+                    foreach ($this->createResultFromRDEX($data, $provider) as $currentResult) {
                         $aggregatedResults[] = $currentResult;
                     }
                 }
@@ -184,7 +184,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         return $aggregatedResults;
     }
 
-    public function createResultFromRDEX($data): array
+    public function createResultFromRDEX($data, $provider): array
     {
         $results = [];
         $journeys = json_decode($data, true);
@@ -314,6 +314,8 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             }
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
+            $result->setExternalOperator($currentJourney['operator']);
+            $result->setExternalProvider($provider->getName());
 
             $results[] = $result;
         }
