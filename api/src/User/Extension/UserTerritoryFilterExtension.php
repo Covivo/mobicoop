@@ -34,10 +34,9 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
 /**
-  *  We use this extension for add a filter on the user on the GET request and for the listing user
-  *  In admin : we can only manage and see the user that belong to our territory
-  *  For that we check the HOME ADRESSE of the users
-  *  If we dont belong to a territory : we can get all users
+  *  Extension used to add an automatic filter to the "get users" request
+  *  In admin, one can only manage and see the users that belong to its territories
+  *  We check the user's home address, and the origin / destination of its proposals
   *
   * @author Julien Deschampt <julien.deschampt@mobicoop.org>
 */
@@ -83,12 +82,13 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
 
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->leftJoin(sprintf("%s.addresses", $rootAlias), 'a')
-                          ->leftJoin(sprintf("%s.proposals", $rootAlias), 'p')
-                          ->leftJoin("p.waypoints", 'w')
-                            //Check the HOME address (home =1) OR Waypoint is Origin Or destination
-                          ->andWhere("a.home = 1 OR (w.position = 0 OR w.destination = 1)")
-                          ->leftJoin("w.address", 'a2');
+            $queryBuilder
+            ->leftJoin(sprintf("%s.addresses", $rootAlias), 'autfe')
+            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'putfe')
+            ->leftJoin("putfe.waypoints", 'wutfe')
+            ->leftJoin("wutfe.address", 'a2utfe')
+            ->andWhere("(putfe.private <> 1 AND autfe.home = 1 AND (wutfe.position = 0 OR wutfe.destination = 1))")
+            ;
 
             $where = "(";
             /**
@@ -100,12 +100,12 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
                 }
                 //Check if the home address is in territory
                 $territoryFrom = 'territory'.$territory;
-                $queryBuilder->leftJoin('a.territories', $territoryFrom);
+                $queryBuilder->leftJoin('autfe.territories', $territoryFrom);
                 $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
 
                 //Check if the proposal address is in territory
                 $territoryFromOD = 'territoryod'.$territory;
-                $queryBuilder->leftJoin('a2.territories', $territoryFromOD);
+                $queryBuilder->leftJoin('a2utfe.territories', $territoryFromOD);
                 $where .= sprintf(" OR %s.id = %s", $territoryFromOD, $territory);
             }
             $where .= ")";
