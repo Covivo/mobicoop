@@ -63,6 +63,7 @@ api_platform:
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/Community/Resource'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
+        - '%kernel.project_dir%/src/ExternalJourney/Ressource'
         - '%kernel.project_dir%/src/Event/Entity'
         - '%kernel.project_dir%/src/Geography/Entity'
         - '%kernel.project_dir%/src/Image/Entity'

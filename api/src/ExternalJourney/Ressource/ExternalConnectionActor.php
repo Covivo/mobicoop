@@ -23,6 +23,8 @@
 
 namespace App\ExternalJourney\Ressource;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
  * A driver or a passenger involved in an external connection
  *

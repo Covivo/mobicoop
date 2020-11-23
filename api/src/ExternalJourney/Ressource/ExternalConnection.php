@@ -25,6 +25,7 @@ namespace App\ExternalJourney\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An external connection (i.e. sending a message) to an ExternalJourneyProvider
