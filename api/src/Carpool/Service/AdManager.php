@@ -1173,6 +1173,16 @@ class AdManager
             $proposal->getCriteria()->setLuggage($ad->hasLuggage());
             $proposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
             $proposal->setComment($ad->getComment());
+            
+            if ($ad->getCommunities() && count($ad->getCommunities()) > 0) {
+                foreach ($ad->getCommunities() as $communityId) {
+                    if ($community = $this->communityRepository->findOneBy(['id'=>$communityId])) {
+                        $proposal->addCommunity($community);
+                    } else {
+                        throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
+                    }
+                }
+            }
 
             if ($proposal->getProposalLinked()) {
                 // same if there is linked proposal
@@ -1184,6 +1194,16 @@ class AdManager
                 $linkedProposal->getCriteria()->setLuggage($ad->hasLuggage());
                 $linkedProposal->getCriteria()->setSeatsDriver($ad->getSeatsDriver());
                 $linkedProposal->setComment($ad->getComment());
+                
+                if ($ad->getCommunities() && count($ad->getCommunities()) > 0) {
+                    foreach ($ad->getCommunities() as $communityId) {
+                        if ($community = $this->communityRepository->findOneBy(['id'=>$communityId])) {
+                            $linkedProposal->addCommunity($community);
+                        } else {
+                            throw new CommunityNotFoundException('Community ' . $communityId . ' not found');
+                        }
+                    }
+                }
 
                 $this->entityManager->persist($linkedProposal);
             }
