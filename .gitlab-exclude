@@ -87,6 +87,7 @@
 /client/.env.test.local
 /client/.env.prod.local
 /client/var/log/
+/client/public/externalCgu/*.*
 /client/public/google*.html
 /client/public/robots.txt
 /client/public/mobile_app_repository.json
