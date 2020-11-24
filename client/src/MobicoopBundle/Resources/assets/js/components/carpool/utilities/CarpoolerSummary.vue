@@ -96,12 +96,13 @@
           </span>
         </v-btn>
         <v-btn
+          :disabled="user == null"
           rounded
           color="primary"
           type="button"
           target="_blank"
           class="mt-1"
-          @click="externalContact"
+          @click="externalContactModal"
         >
           <span>
             {{ $t('externalResult.contact.button') }}
@@ -159,6 +160,7 @@
     <v-dialog
       v-model="dialogExternalContact"
       width="80%"
+      min-height="500px"
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
@@ -172,9 +174,25 @@
             {{ $t('externalResult.contact.popup.instructions.line2') }}.
           </p>
         </v-card-text>
-
+        <v-card-text>
+          <v-textarea
+            name="input-7-1"
+            :label="$t('externalResult.contact.popup.textarea.label')"
+            :value="defaultTextContact"
+            rows="9"
+          />
+          <p class="text-right">
+            <v-btn
+              rounded
+              color="primary"
+              :loading="loadingSendContact"
+              @click="externalContactSend"
+            >
+              {{ $t('externalResult.contact.popup.send') }}
+            </v-btn>
+          </p>
+        </v-card-text>
         <v-divider />
-
         <v-card-actions>
           <v-spacer />
           <v-btn
@@ -207,6 +225,14 @@ export default {
     CarpoolerContact
   },
   props: {
+    origin: {
+      type: Object,
+      default: null
+    },
+    destination: {
+      type: Object,
+      default: null
+    },
     proposal: {
       type: Object,
       default: null
@@ -247,7 +273,8 @@ export default {
   data() {
     return {
       connected: this.user !== null,
-      dialogExternalContact: false
+      dialogExternalContact: false,
+      loadingSendContact: false
     };
   },
   computed: {
@@ -266,6 +293,18 @@ export default {
       default:
         return '20';
       } 
+    },
+    defaultTextContact(){
+
+      if(this.user==null) return null;
+
+      let text = this.$t('externalResult.contact.popup.textarea.content.hello')+" "+this.carpooler.givenName+"\n\n";
+      text += this.$t('externalResult.contact.popup.textarea.content.carpool',{origin:this.origin.addressLocality,destination:this.destination.addressLocality})+".\n";
+      text += this.$t('externalResult.contact.popup.textarea.content.name',{name:this.user.givenName+" "+this.user.shortFamilyName})+"\n";
+      if(this.user.phoneDisplay==1) text += this.$t('externalResult.contact.popup.textarea.content.phone',{phone:this.user.telephone})+".\n";
+      text += this.$t('externalResult.contact.popup.textarea.content.email',{email:this.user.email})+".\n\n";
+      text += this.$t('externalResult.contact.popup.textarea.content.seeya')+" !";
+      return text;
     }
   },
   methods: {
@@ -279,8 +318,11 @@ export default {
         this.$emit("loginOrRegister");
       }
     },
-    externalContact(){
+    externalContactModal(){
       this.dialogExternalContact = true;
+    },
+    externalContactSend(){
+      this.loadingSendContact = true;
     }
   }
 };

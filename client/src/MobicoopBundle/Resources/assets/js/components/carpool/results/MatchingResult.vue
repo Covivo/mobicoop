@@ -76,6 +76,8 @@
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             :external-provider="(result.externalProvider) ? result.externalProvider : null"
             :communities="result.communities"
+            :origin="result.origin"
+            :destination="result.destination"
             @carpool="carpool"
             @loginOrRegister="loginOrRegister"
           />
