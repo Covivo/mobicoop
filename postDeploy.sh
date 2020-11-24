@@ -47,12 +47,6 @@ then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/domains.json
     fi
 
-    # check Modules files
-    MODULES_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
-    if [ ! -f "$MODULES_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
-    fi
-
     # check SSO files
     SSO_FILE=/var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     if [ ! -f "$SSO_FILE" ]; then
@@ -60,9 +54,9 @@ then
     fi
     
     # check Modules files
-    MODULES_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+    MODULES_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/modules.json
     if [ ! -f "$MODULES_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+        cp /var/www/$VERSION/$INSTANCE/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/modules.json
     fi
 
     # Migrations
@@ -72,6 +66,15 @@ then
     # Crontab update
     #python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
+    # External Cgu Mango
+    EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/client/public/externalCgu
+    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
+        cd /var/www/$VERSION/$INSTANCE/client/public/;
+        mkdir externalCgu;
+    fi
+    cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
+    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
+    
     #Admin build
     cd /var/www/$VERSION/$INSTANCE/admin;
     rm -Rf node_modules;
@@ -113,12 +116,27 @@ else
         echo "{}" >> /var/www/$INSTANCE/$VERSION/api/config/user/sso.json
     fi
 
+    # check Modules files
+    MODULES_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/modules.json
+    if [ ! -f "$MODULES_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/modules.json
+    fi
+
     # Migrations
     cd /var/www/$INSTANCE/$VERSION/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
     #python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+
+    # External Cgu Mango
+    EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/client/public/externalCgu
+    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
+        cd /var/www/$INSTANCE/$VERSION/client/public/;
+        mkdir externalCgu;
+    fi
+    cd /var/www/$INSTANCE/$VERSION/client/public/externalCgu;
+    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;
