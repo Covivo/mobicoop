@@ -46,6 +46,12 @@ class ExternalConnectionManager
         $this->operator = $operator;
     }
 
+    /**
+     * Send an external connection
+     *
+     * @param ExternalConnection $externalConnection
+     * @return ExternalConnection
+     */
     public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
         
@@ -91,11 +97,11 @@ class ExternalConnectionManager
             ],
             "driver" => [
                 "uuid" => ($role == Ad::ROLE_PASSENGER) ? $externalConnection->getCarpoolerUuid() : null,
-                "state" => ($role == Ad::ROLE_PASSENGER) ? "recipient" : "sender"
+                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_RECIPIENT : ExternalConnection::STATUS_SENDER
             ],
             "passenger" => [
                 "uuid" => ($role == Ad::ROLE_PASSENGER) ? null : $externalConnection->getCarpoolerUuid(),
-                "state" => ($role == Ad::ROLE_PASSENGER) ? "sender" : "recipient"
+                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_SENDER : ExternalConnection::STATUS_RECIPIENT
             ]
         ];
 

@@ -66,6 +66,9 @@ class ExternalConnection
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
+    const STATUS_RECIPIENT = "recipient";
+    const STATUS_SENDER = "sender";
+
     /**
      * @var int Id of the ExternalConnection
      *
