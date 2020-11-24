@@ -77,6 +77,7 @@ class UserController extends AbstractController
     private $communityShow;
     private $userProvider;
     private $signUpLinkInConnection;
+    private $signupRgpdInfos;
     private $loginLinkInConnection;
     private $solidaryDisplay;
     private $paymentElectronicActive;
@@ -99,6 +100,7 @@ class UserController extends AbstractController
         $community_show,
         UserProvider $userProvider,
         $signUpLinkInConnection,
+        $signupRgpdInfos,
         $loginLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
@@ -116,6 +118,7 @@ class UserController extends AbstractController
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
+        $this->signupRgpdInfos = $signupRgpdInfos;
         $this->loginLinkInConnection = $loginLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
         $this->paymentElectronicActive = $paymentElectronicActive;
@@ -226,6 +229,7 @@ class UserController extends AbstractController
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
                 "community_show"=>($this->community_show==="true") ? true : false,
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
+                "signup_rgpd_infos"=>$this->signupRgpdInfos,
                 "required_community"=>($this->required_community==="true") ? true : false
         ]);
     }

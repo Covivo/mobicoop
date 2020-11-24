@@ -391,6 +391,24 @@
           </v-stepper>
         </v-col>
       </v-row>
+      <v-row
+        v-if="signupRgpdInfos"
+      >
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <p>
+            {{ $t('rgpd.infos') }}
+          </p>
+          <a
+            class="primary--text"
+            target="_blank"
+            :href="$t('rgpd.link.route')"
+          >{{ $t('rgpd.link.label') }}
+          </a>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -461,6 +479,10 @@ export default {
       default: null,
     },
     loginLinkInConnection: {
+      type: Boolean,
+      default: false
+    },
+    signupRgpdInfos: {
       type: Boolean,
       default: false
     }
