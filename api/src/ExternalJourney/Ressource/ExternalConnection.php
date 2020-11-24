@@ -42,11 +42,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"={
  *              "security"="is_granted('reject',object)"
  *          },
- *          "post"
+ *          "post"={
+ *              "security"="is_granted('external_connection_create',object)"
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('review_read',object)"
+ *              "security"="is_granted('reject',object)"
  *          },
  *          "put"={
  *              "security"="is_granted('reject',object)"

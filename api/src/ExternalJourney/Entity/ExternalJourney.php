@@ -30,8 +30,10 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  * An external carpool journey provided by a partner provider.
  *
  * @ApiResource(
- *     collectionOperations={"get"={
+ *     collectionOperations={
+ *     "get"={
  *      "normalization_context"={"groups"={"externalJourney"}},
+ *      "security"="is_granted('external_journey_list',object)",
  *      "swagger_context"={
  *           "parameters"={
  *              {
@@ -85,8 +87,11 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *              }
  *           }
  *      }
- *    }},
- *      itemOperations={}
+ *    }
+ * },
+ *      itemOperations={
+ *          "get" = {"security"="is_granted('reject',object)"}
+ *      }
  * )
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
