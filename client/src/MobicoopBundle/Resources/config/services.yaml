@@ -197,7 +197,7 @@ services:
             $community_show: '%env(resolve:COMMUNITY_SHOW)%'
             $signUpLinkInConnection: '%env(bool:SIGNUP_LINK_IN_CONNECTION)%'
             $loginLinkInConnection: '%env(bool:LOGIN_LINK_IN_SIGNUP)%'
-            $signupRgpdInfos: '%env(bool:SIGNUP_RGPD_INFOS)%'
+            $signupRgpdInfos: '%env(bool:RGPD_INFOS)%'
             $solidaryDisplay: '%env(bool:SOLIDARY_DISPLAY)%'
             $paymentElectronicActive: '%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%'
             $validationDocsAuthorizedExtensions: '%env(string:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
