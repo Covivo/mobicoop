@@ -85,8 +85,9 @@
                   <v-textarea
                     v-model="form.message"
                     :rules="form.messageRules"
-                    :label="$t('message.placeholder') + ` *`"
+                    :label="$t('message.label') + ` *`"
                     name="message"
+                    :hint="this.$t('message.hint')"
                   />
                 </v-col>
 
