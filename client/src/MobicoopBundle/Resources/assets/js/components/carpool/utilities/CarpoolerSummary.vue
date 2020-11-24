@@ -86,14 +86,25 @@
         <v-btn
           rounded
           color="secondary"
-          large
           type="button"
           :href="externalUrl"
           target="_blank"
           class="mt-1"
         >
           <span>
-            {{ $t('externalUrl') }}
+            {{ $t('externalResult.go') }}
+          </span>
+        </v-btn>
+        <v-btn
+          rounded
+          color="primary"
+          type="button"
+          target="_blank"
+          class="mt-1"
+          @click="externalContact"
+        >
+          <span>
+            {{ $t('externalResult.contact.button') }}
           </span>
         </v-btn>
         <br>
@@ -145,6 +156,37 @@
       </v-col>
       <v-col cols="3" />
     </v-row>
+    <v-dialog
+      v-model="dialogExternalContact"
+      width="80%"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ $t('externalResult.contact.popup.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          <p>{{ $t('externalResult.contact.popup.intro', {origin:externalOrigin}) }}.</p>
+          <p>
+            {{ $t('externalResult.contact.popup.instructions.line1') }}.<br>
+            {{ $t('externalResult.contact.popup.instructions.line2') }}.
+          </p>
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="error"
+            text
+            @click="dialogExternalContact = false"
+          >
+            {{ $t('externalResult.contact.popup.cancel') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -205,6 +247,7 @@ export default {
   data() {
     return {
       connected: this.user !== null,
+      dialogExternalContact: false
     };
   },
   computed: {
@@ -235,6 +278,9 @@ export default {
       } else {
         this.$emit("loginOrRegister");
       }
+    },
+    externalContact(){
+      this.dialogExternalContact = true;
     }
   }
 };

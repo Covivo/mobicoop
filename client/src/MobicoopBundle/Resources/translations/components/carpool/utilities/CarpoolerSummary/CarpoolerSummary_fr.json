@@ -1,7 +1,21 @@
 {
     "birthYears": "ans",
     "carpool": "Covoiturer",
-    "externalUrl": "S'y rendre",
+    "externalResult":{
+        "go":"S'y rendre",
+        "contact":{
+            "button":"Contacter",
+            "popup":{
+                "title":"Contacter",
+                "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
+                "instructions":{
+                    "line1":"Merci de compléter ou de modifier le message ci-dessous.",
+                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
+                },
+                "cancel":"Annuler"
+            }
+        }
+    },
     "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
     "inDev": "En cours de développement.",
     "route": {
