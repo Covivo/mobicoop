@@ -613,6 +613,14 @@ rdex_journey:
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
+# rdex journey (POST) (AJAX json)
+rdex_connection:
+    methods: [POST]
+    path:
+        fr: /covoiturage/rdexConnection
+        en: /carpool/rdexConnection
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexConnection
+
 # public transport journey (AJAX)
 public_transport_journey:
     methods: [POST]

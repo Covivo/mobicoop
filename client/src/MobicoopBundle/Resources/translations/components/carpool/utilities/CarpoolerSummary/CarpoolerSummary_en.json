@@ -25,6 +25,11 @@
                     }
                 },
                 "send":"Envoyer"
+            },
+            "urlSendContact":"/carpool/rdexConnection",
+            "return":{
+                "ok":"Le message a bien été envoyé.",
+                "error":"Suite à un problème technique le message n'a pas pu être envoyé"
             }
         }
     },

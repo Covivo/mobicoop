@@ -75,6 +75,7 @@
             :external-url="(result.externalUrl) ? result.externalUrl : null"
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
             :external-provider="(result.externalProvider) ? result.externalProvider : null"
+            :external-journey-id="(result.externalJourneyId) ? result.externalJourneyId : null"
             :communities="result.communities"
             :origin="result.origin"
             :destination="result.destination"

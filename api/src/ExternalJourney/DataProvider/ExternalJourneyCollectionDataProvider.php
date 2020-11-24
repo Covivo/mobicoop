@@ -316,7 +316,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalProvider($provider->getName());
-
+            $result->setExternalJourneyId($currentJourney['uuid']);
             $results[] = $result;
         }
 

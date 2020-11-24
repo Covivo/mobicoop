@@ -1,5 +1,19 @@
 <template>
   <div>
+    <v-snackbar
+      v-model="showSendSuccess"
+      color="success"
+      top
+    >
+      <v-icon>mdi-check-circle-outline</v-icon> {{ $t('externalResult.contact.return.ok') }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="showSendError"
+      color="error"
+      top
+    >
+      <v-icon>mdi-close-circle-outline</v-icon> {{ $t('externalResult.contact.return.error') }}
+    </v-snackbar>
     <v-row
       align="center"
       dense
@@ -176,6 +190,7 @@
         </v-card-text>
         <v-card-text>
           <v-textarea
+            v-model="content"
             name="input-7-1"
             :label="$t('externalResult.contact.popup.textarea.label')"
             :value="defaultTextContact"
@@ -209,6 +224,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 import CarpoolerIdentity from "./CarpoolerIdentity";
 import CarpoolerContact from "./CarpoolerContact";
@@ -265,6 +281,10 @@ export default {
       type: String,
       default: null
     },
+    externalJourneyId: {
+      type: String,
+      default: null
+    },
     communities: {
       type: Object,
       default: null
@@ -274,7 +294,10 @@ export default {
     return {
       connected: this.user !== null,
       dialogExternalContact: false,
-      loadingSendContact: false
+      loadingSendContact: false,
+      content:"",
+      showSendError: false,
+      showSendSuccess: false
     };
   },
   computed: {
@@ -307,6 +330,9 @@ export default {
       return text;
     }
   },
+  created(){
+    this.content = this.defaultTextContact;
+  },
   methods: {
     buttonAlert(msg, e) {
       alert(msg);
@@ -323,6 +349,29 @@ export default {
     },
     externalContactSend(){
       this.loadingSendContact = true;
+
+      // ROLE is always passenger for now. See Matchings.vue, we search only driver by RDEX
+      let params = {
+        provider: this.externalProvider,
+        role: 2,
+        carpoolerUuid: this.carpooler.id,
+        journeysUuid: this.externalJourneyId,
+        content: this.content
+      };
+
+      axios.post(this.$t("externalResult.contact.urlSendContact"),params)
+        .then(response => {
+          // console.error(response.data);
+          this.loadingSendContact = false;
+          this.dialogExternalContact = false;
+
+          // Message ok or error
+          (response.data.error) ? this.showSendError = true : this.showSendSuccess = true;
+          
+        })
+        .catch(function (error) {
+          console.error(error);
+        });     
     }
   }
 };
