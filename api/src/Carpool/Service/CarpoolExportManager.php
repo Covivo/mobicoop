@@ -59,7 +59,7 @@ class CarpoolExportManager
         String $carpoolExportUri,
         String $carpoolExportPath,
         String $carpoolExportPlatformName,
-        bool $paymentActive
+        string $paymentActive
     ) {
         $this->security = $security;
         $this->pdfManager = $pdfManager;

@@ -111,7 +111,7 @@ class PaymentManager
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         LoggerInterface $logger,
-        bool $paymentActive,
+        string $paymentActive,
         String $paymentProviderService,
         string $securityToken,
         string $validationDocsPath,
