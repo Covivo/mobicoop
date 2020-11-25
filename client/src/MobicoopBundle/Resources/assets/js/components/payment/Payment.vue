@@ -542,6 +542,7 @@
                           <v-btn
                             v-else
                             color="secondary"
+                            class="mt-n12"
                             rounded
                             :disabled="disabledComponent || getAmount(currentItem)<=0"
                             @click="confirmPayment(2)"
