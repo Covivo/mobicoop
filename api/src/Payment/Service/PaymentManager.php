@@ -112,7 +112,7 @@ class PaymentManager
         UserManager $userManager,
         LoggerInterface $logger,
         string $paymentActive,
-        String $paymentProviderService,
+        string $paymentProviderService,
         string $securityToken,
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
