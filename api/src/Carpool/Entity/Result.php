@@ -281,6 +281,18 @@ class Result
     private $externalOrigin;
 
     /**
+     * @var string Provider of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalProvider;
+
+    /**
+     * @var string External journeyId of the result if it's an external result (like RDEX)
+     * @Groups("externalJourney")
+     */
+    private $externalJourneyId;
+
+    /**
      * @var int|null
      * @Groups("results")
      */
@@ -789,6 +801,30 @@ class Result
     public function setExternalOrigin(?string $externalOrigin): self
     {
         $this->externalOrigin = $externalOrigin;
+
+        return $this;
+    }
+
+    public function getExternalProvider(): ?string
+    {
+        return $this->externalProvider;
+    }
+
+    public function setExternalProvider(?string $externalProvider): self
+    {
+        $this->externalProvider = $externalProvider;
+
+        return $this;
+    }
+
+    public function getExternalJourneyId(): ?string
+    {
+        return $this->externalJourneyId;
+    }
+
+    public function setExternalJourneyId(?string $externalJourneyId): self
+    {
+        $this->externalJourneyId = $externalJourneyId;
 
         return $this;
     }

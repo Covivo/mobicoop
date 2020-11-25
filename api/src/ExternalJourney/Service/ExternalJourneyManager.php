@@ -28,7 +28,8 @@ use App\ExternalJourney\Entity\ExternalJourneyProvider;
 /**
  * External journey service.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ExternalJourneyManager
 {

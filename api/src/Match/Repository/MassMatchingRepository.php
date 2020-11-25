@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityRepository;
 use App\Match\Entity\MassMatching;
 
 /**
- * @author Maxime Bardot <maxime.bardot@gmail.com>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @method MassMatching|null find($id)
  */
 class MassMatchingRepository

@@ -527,6 +527,19 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Journey rdex
+     */
+    public function rdexConnection(ExternalJourneyManager $externalJourneyManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return $this->json($externalJourneyManager->postExternalConnection($data, DataProvider::RETURN_JSON));
+        }
+
+        return $this->json("");
+    }
+
+    /**
      * Public Transport search (POST)
      */
     public function PTSearch(Request $request)

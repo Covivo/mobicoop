@@ -1,13 +1,15 @@
 {
     "name": {
         "url": "url", 
-        "resource": "resource", 
+        "resource": "resource",
+        "resourceConnection": "connections",
         "api_key": "api_key", 
         "private_key": "private_key"
     },
     "name2": {
         "url": "url", 
-        "resource": "resource", 
+        "resource": "resource",
+        "resourceConnection": "connections",
         "api_key": "api_key", 
         "private_key": "private_key"
     }

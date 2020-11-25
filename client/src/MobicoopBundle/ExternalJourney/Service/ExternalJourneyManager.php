@@ -10,6 +10,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalConnection;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
 class ExternalJourneyManager
@@ -56,5 +57,30 @@ class ExternalJourneyManager
         $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection();
         return $response->getValue();
+    }
+
+    /**
+     * Post an external connection.
+     *
+     * @return void
+     */
+    public function postExternalConnection(array $params = null, $format = null)
+    {
+        $this->dataProvider->setClass(ExternalConnection::class);
+
+        $externalConnection = new ExternalConnection();
+        $externalConnection->setProvider($params['provider']);
+        $externalConnection->setRole($params['role']);
+        $externalConnection->setCarpoolerUuid($params['carpoolerUuid']);
+        $externalConnection->setJourneysUuid($params['journeysUuid']);
+        $externalConnection->setContent($params['content']);
+        
+        $response = $this->dataProvider->post($externalConnection);
+        
+        if ($response->getCode()==201) {
+            return ['error'=>false];
+        }
+        return ['error'=>true];
+        ;
     }
 }

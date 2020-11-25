@@ -30,17 +30,12 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  * An external carpool journey provided by a partner provider.
  *
  * @ApiResource(
- *     collectionOperations={"get"={
+ *     collectionOperations={
+ *     "get"={
  *      "normalization_context"={"groups"={"externalJourney"}},
+ *      "security"="is_granted('external_journey_list',object)",
  *      "swagger_context"={
  *           "parameters"={
- *              {
- *                  "name" = "provider",
- *                  "in" = "query",
- *                  "required" = "false",
- *                  "type" = "string",
- *                  "description" = "The name of the provider. If none, we return journeys from all the available providers"
- *              },
  *              {
  *                  "name" = "driver",
  *                  "in" = "query",
@@ -92,108 +87,19 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *              }
  *           }
  *      }
- *    }},
- *      itemOperations={}
+ *    }
+ * },
+ *      itemOperations={
+ *          "get" = {"security"="is_granted('reject',object)"}
+ *      }
  * )
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ExternalJourney
 {
-    /**
-    * @var int $id of
-    */
-    private $id;
-
-    private $providerName;
-    private $driver;
-    private $passenger;
-    private $fromLatitude;
-    private $fromLongitude;
-    private $toLatitude;
-    private $toLongitude;
-
-    public function __construct()
-    {
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($id)
-    {
-        return $this->id = $id;
-    }
-
-    public function getProviderName()
-    {
-        return $this->provider_name;
-    }
-
-    public function setProviderName($providerName)
-    {
-        return $this->providerName = $providerName;
-    }
-
-    public function getDriver()
-    {
-        return $this->driver;
-    }
-
-    public function setDriver($driver)
-    {
-        return $this->driver= $driver;
-    }
-
-    public function getPassenger()
-    {
-        return $this->passenger;
-    }
-
-    public function setPassenger($passenger)
-    {
-        return $this->passenger= $passenger;
-    }
-
-    public function getFromLatitude()
-    {
-        return $this->fromLatitude;
-    }
-
-    public function setFromLatitude($fromLatitude)
-    {
-        return $this->fromLatitude= $fromLatitude;
-    }
-
-    public function getFromLongitude()
-    {
-        return $this->fromLongitude;
-    }
-
-    public function setFromLongitude($fromLongitude)
-    {
-        return $this->fromLongitude= $fromLongitude;
-    }
-
-    public function getToLatitude()
-    {
-        return $this->toLatitude;
-    }
-
-    public function setToLatitude($toLatitude)
-    {
-        return $this->toLatitude= $toLatitude;
-    }
-
-    public function getToLongitude()
-    {
-        return $this->toLongitude;
-    }
-
-    public function setToLongitude($toLongitude)
-    {
-        return $this->toLongitude= $toLongitude;
-    }
+    // No field because this ressource is only used to make api call.
+    // Every parameters are passed in GET params in the url. The body is empty.
+    // The answer is a collection of App\Carpool\Entity\Results or a raw Json depending of the rawJson parameter.
 }

@@ -21,41 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Repository;
+ namespace App\ExternalJourney\DataPersister;
 
-use App\PublicTransport\Entity\PTJourney;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\ExternalJourney\Ressource\ExternalConnection;
+use App\ExternalJourney\Service\ExternalConnectionManager;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class PTJourneyRepository
+final class ExternalConnectionDataPersister implements ContextAwareDataPersisterInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    private $entityManager;
+    private $externalConnectionManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ExternalConnectionManager $externalConnectionManager)
     {
-        $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(PTJourney::class);
+        $this->externalConnectionManager = $externalConnectionManager;
     }
 
-    public function find(int $id): ?PTJourney
+    public function supports($data, array $context = []): bool
     {
-        return $this->repository->find($id);
+        return $data instanceof ExternalConnection && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
     }
 
-    public function deletePTJourneysOfAMass($massId)
+    public function persist($data, array $context = [])
     {
-        $conn = $this->entityManager->getConnection();
+        return $this->externalConnectionManager->sendConnection($data);
+    }
 
-        $sql = "DELETE ptjourney FROM `ptjourney` INNER JOIN mass_person on mass_person.id = ptjourney.mass_person_id WHERE mass_person.mass_id = ".$massId;
-
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
