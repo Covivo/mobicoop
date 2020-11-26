@@ -1,0 +1,10 @@
+{
+    "startEvent": {
+        "label": "Début"
+    },
+    "endEvent": {
+        "label": "Fin"
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
+}

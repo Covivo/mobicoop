@@ -506,4 +506,20 @@ class CommunityController extends AbstractController
             return new JsonResponse("bad method");
         }
     }
+
+    /**
+    *  Get all relay points map (AJAX).
+    */
+    public function getRelayPointsMap(CommunityManager $communityManager, Request $request)
+    {
+        // We get the current community
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (isset($data['communityId'])) {
+                return new JsonResponse($communityManager->getRelayPointsMap($data['communityId']));
+            }
+            return [] ;
+        }
+    }
 }

@@ -128,14 +128,14 @@
 </template>
 
 <script>
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/results/MatchingFilter.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingFilter.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingFilter/";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     communities: {

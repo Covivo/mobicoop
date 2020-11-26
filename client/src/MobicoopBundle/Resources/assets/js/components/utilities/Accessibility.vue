@@ -7,16 +7,16 @@
 </template>
 
 <script>
-import { merge } from "lodash";
-import Translations from "@translations/components/utilities/Accessibility.json";
-import TranslationsClient from "@clientTranslations/components/utilities/Accessibility.json";
+import {messages_en, messages_fr} from "@translations/components/utilities/Accessibility/";
 import '@css/page/home/accessconfig.scss';
 import '@js/config/accessconfig.js';
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
   }

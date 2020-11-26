@@ -1,0 +1,13 @@
+{
+    "title": "Join a secured community",
+    "titleWithName": "Join this community :",
+    "credential1": "First credential",
+    "credential2": "Second credential",
+    "urlSignIn": "/community/{id}/secured/register",
+    "join": "Join the community",
+    "errors": {
+        "required": "This field is required",
+        "badCredentials": "Bad credentials",
+        "notLogged": "You have to be logged"
+    }
+}

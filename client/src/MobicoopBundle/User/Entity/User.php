@@ -275,6 +275,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $avatars;
 
     /**
+     * @var Array|null The images of the user.
+     */
+    private $avatar;
+
+    /**
     * @var array|null User notification alert preferences.
     * @Groups({"put"})
     */
@@ -382,6 +387,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @var string|null CarpoolExport of a User
      */
     private $carpoolExport;
+
+    /**
+     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     */
+    private $canReceiveReview;
 
     public function __construct($id=null, $status=null)
     {
@@ -827,6 +837,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
     public function getAlerts()
     {
         return $this->alerts;
@@ -1128,6 +1150,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getCanReceiveReview(): ?bool
+    {
+        return $this->canReceiveReview;
+    }
+
+    public function setCanReceiveReview(?bool $canReceiveReview): self
+    {
+        $this->canReceiveReview = $canReceiveReview;
+
+        return $this;
+    }
+    
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1158,7 +1192,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
             'communityId'           => $this->getCommunityId(),
             'bankAccounts'          => $this->getBankAccounts(),
-            'carpoolExport'         => $this->getCarpoolExport()
+            'carpoolExport'         => $this->getCarpoolExport(),
+            'canReceiveReview'      => $this->getCanReceiveReview()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

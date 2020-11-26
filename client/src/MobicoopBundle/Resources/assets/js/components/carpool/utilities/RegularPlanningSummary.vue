@@ -136,19 +136,19 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/utilities/RegularPlanningSummary.json";
-import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularPlanningSummary.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/RegularPlanningSummary/";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     RegularDaysSummary
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     outwardTime: {
@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment.utc(time).format(this.$t("hourMinute"));
     }
   }
 };

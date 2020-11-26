@@ -1,0 +1,70 @@
+{
+    "gender": {
+        "placeholder": "Civilité",
+        "values": {
+            "male": "Monsieur",
+            "female": "Madame",
+            "other": "Autre"
+        },
+        "errors": {
+            "required": "La civilité est requise"
+        }
+    },
+    "familyName": {
+        "placeholder": "Nom",
+        "errors": {
+            "required": "Le nom est requis"
+        }
+    },
+    "givenName": {
+        "placeholder": "Prénom",
+        "errors": {
+            "required": "Le prénom est requis"
+        }
+    },
+    "email": {
+        "placeholder": "Email",
+        "errors": {
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide"
+        }
+    },
+    "phone": {
+        "placeholder": "Téléphone portable",
+        "errors": {
+            "required": "Le numéro de téléphone est requis",
+            "valid": "Le numéro de téléphone doit être valide"
+        }
+    },
+    "ui": {
+        "buttons": {
+            "validate": {
+                "label": "Validate",
+                "route": "/solidary/ask"
+            },
+            "cancel": {
+                "label": "Cancel"
+            }
+        }
+    },
+    "yearOfBirth": {
+        "label": "Year of birth",
+        "placeholder": "Year of birth"
+    },
+    "hasRSA": {
+        "label": "",
+        "placeholder": ""
+    },
+    "subject": {
+        "label": "",
+        "placeholder": ""
+    },
+    "structure": {
+        "label": "",
+        "placeholder": ""
+    },
+    "other": {
+        "label": "Other",
+        "placeholder": "Other"
+    }
+}

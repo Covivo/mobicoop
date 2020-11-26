@@ -57,7 +57,7 @@
               id="email"
               v-model="email"
               :rules="emailRules"
-              :label="$t('models.user.email.placeholder')"
+              :label="$t('email')"
               name="email"
               required
             />
@@ -69,7 +69,7 @@
               :rules="passwordRules"
               :type="show1 ? 'text' : 'password'"
               name="password"
-              :label="$t('models.user.password.placeholder')"
+              :label="$t('password')"
               @click:append="show1 = !show1"
             />
 
@@ -81,7 +81,7 @@
               rounded
               @click="validate"
             >
-              {{ $t('ui.button.connection') }}
+              {{ $t('connection') }}
             </v-btn>
           </v-form>
           <v-card-text>
@@ -122,15 +122,20 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Login.json";
-import TranslationsClient from "@clientTranslations/components/user/Login.json";
+import {messages_en, messages_fr} from "@translations/components/user/Login/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/Login/";
 import MFacebookAuth from '@components/user/MFacebookAuth';
 import SsoLogin from '@components/user/SsoLogin';
-let TranslationsMerged = merge(Translations, TranslationsClient);
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   name: "Login",
   components : {
@@ -165,13 +170,13 @@ export default {
       loading: false,
       email: "",
       emailRules: [
-        v => !!v || this.$t("models.user.email.errors.required"),
-        v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
+        v => !!v || this.$t("emailRequired"),
+        v => /.+@.+/.test(v) || this.$t("emailInvalid")
       ],
       show1: false,
       password: "",
       passwordRules: [
-        v => !!v || this.$t("models.user.password.errors.required")
+        v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
       action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
@@ -181,6 +186,7 @@ export default {
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
     this.getSso();
+    //console.log(this.$i18n.messages)
   },
   methods: {
     validate() {

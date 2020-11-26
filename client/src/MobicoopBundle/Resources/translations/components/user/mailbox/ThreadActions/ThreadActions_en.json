@@ -1,0 +1,17 @@
+{
+    "notLinkedToACarpool": "There is no carpool linked to this thread",
+    "roundTrip": "Round trip",
+    "urlGetAdAsk": "/user/messages/actions/infos",
+    "regular": {
+        "ask": "Ask a regular carpool"
+    },
+    "distance": "Distance",
+    "distanceTooltip": "Carpooled distance including driver detour",
+    "seatsAvailable": "Available seats",
+    "price": "Price",
+    "priceTooltip": "Indicative price",
+    "userDelete": "Unsubscribed user",
+    "block": "Block",
+    "blocked": "Blocked",
+    "blockUrl": "/user/block"
+}

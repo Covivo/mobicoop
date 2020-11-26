@@ -142,7 +142,7 @@
                 :rules="rules.genderRules"
                 item-text="genderItem"
                 item-value="genderValue"
-                :label="$t('models.user.gender.placeholder') + ' *'"
+                :label="$t('gender.placeholder') + ' *'"
               />
             </v-col>
             <v-col
@@ -150,7 +150,7 @@
             >
               <v-text-field
                 v-model="form.familyName"
-                :label="$t('models.user.familyName.placeholder') + ' *'"
+                :label="$t('familyName.placeholder') + ' *'"
                 :rules="rules.familyNameRules"
                 name="lastName"
               />
@@ -160,7 +160,7 @@
             >
               <v-text-field
                 v-model="form.givenName"
-                :label="$t('models.user.givenName.placeholder') + ' *'"
+                :label="$t('givenName.placeholder') + ' *'"
                 :rules="rules.givenNameRules"
                 name="firstName"
               />
@@ -218,7 +218,7 @@
             >
               <v-text-field
                 v-model="form.email"
-                :label="$t('models.user.email.placeholder') + ' *'"
+                :label="$t('email.placeholder') + ' *'"
                 :rules="rules.emailRules"
                 name="email"
               />
@@ -228,7 +228,7 @@
             >
               <v-text-field
                 v-model="form.phoneNumber"
-                :label="$t('models.user.phone.placeholder') + ' *'"
+                :label="$t('phone.placeholder') + ' *'"
                 :rules="rules.phoneNumberRules"
                 name="phone"
               />
@@ -262,18 +262,18 @@
 </template>
 
 <script>
-import {merge, find} from "lodash";
+import {find} from "lodash";
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/solidary/SolidaryForm.js";
-import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
+import {messages_en, messages_fr} from "@translations/components/solidary/SolidaryForm/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     SearchJourney
@@ -330,27 +330,27 @@ export default {
         search: null
       },
       genderItems: [
-        { genderItem: this.$t('models.user.gender.values.female'), genderValue: 1 },
-        { genderItem: this.$t('models.user.gender.values.male'), genderValue: 2 },
-        { genderItem: this.$t('models.user.gender.values.other'), genderValue: 3 },
+        { genderItem: this.$t('gender.values.female'), genderValue: 1 },
+        { genderItem: this.$t('gender.values.male'), genderValue: 2 },
+        { genderItem: this.$t('gender.values.other'), genderValue: 3 },
       ],
       rules: {
         genderRules: [
-          v => !!v || this.$t("models.user.gender.errors.required"),
+          v => !!v || this.$t("gender.errors.required"),
         ],
         givenNameRules: [
-          v => !!v || this.$t("models.user.givenName.errors.required"),
+          v => !!v || this.$t("givenName.errors.required"),
         ],
         familyNameRules: [
-          v => !!v || this.$t("models.user.familyName.errors.required"),
+          v => !!v || this.$t("familyName.errors.required"),
         ],
         phoneNumberRules: [
-          v => !!v || this.$t("models.user.phone.errors.required"),
-          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
+          v => !!v || this.$t("phone.errors.required"),
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
         ],
         emailRules: [
-          v => !!v || this.$t("models.user.email.errors.required"),
-          v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
+          v => !!v || this.$t("email.errors.required"),
+          v => /.+@.+/.test(v) || this.$t("email.errors.valid")
         ],
         yearsOfBirthRules: [
           v => !!v || this.$t("yearOfBirth.errors.required"),

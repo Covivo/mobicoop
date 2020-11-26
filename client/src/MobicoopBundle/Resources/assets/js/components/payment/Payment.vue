@@ -542,6 +542,7 @@
                           <v-btn
                             v-else
                             color="secondary"
+                            class="mt-n12"
                             rounded
                             :disabled="disabledComponent || getAmount(currentItem)<=0"
                             @click="confirmPayment(2)"
@@ -827,15 +828,18 @@
   </v-container>
 </template>
 <script>
+
 import axios from 'axios';
 import moment from "moment";
 import DayListChips from "@components/utilities/DayListChips";
-import Translations from "@translations/components/payment/payment.json";
-
+import {messages_en, messages_fr} from "@translations/components/payment/Payment/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     DayListChips

@@ -219,10 +219,12 @@
         :result="result"
         :user="user"
         :reset-step="resetStepMatchingJourney"
+        :profile-summary-refresh="profileSummaryRefresh"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
+        @profileSummaryRefresh="refreshProfileSummary"
       />
     </v-dialog>
     
@@ -285,9 +287,7 @@
 <script>
 
 import axios from "axios";
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/results/Matching.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
@@ -295,7 +295,6 @@ import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import Search from "@components/carpool/search/Search";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     MatchingHeader,
@@ -306,7 +305,10 @@ export default {
     MatchingPTResults
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     // proposal Id if Matching results after an ad post
@@ -415,6 +417,7 @@ export default {
       lCommunityId: this.communityId,
       lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false,
+      profileSummaryRefresh: false,
       page:1
     };
   },
@@ -473,6 +476,7 @@ export default {
       // open the dialog
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
+      this.profileSummaryRefresh = true;
     },
     loginOrRegister(carpool) {
       this.result = carpool;
@@ -722,6 +726,9 @@ export default {
     },
     startNewSearch() {
       this.newSearch = true;
+    },
+    refreshProfileSummary(){
+      this.profileSummaryRefresh = false;
     }
   }
 };

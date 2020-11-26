@@ -98,7 +98,7 @@ class Ask
     const PAYMENT_STATUS_ONLINE = 1;
     const PAYMENT_STATUS_DIRECT = 2;
     const PAYMENT_STATUS_UNPAID = 3;
-    const PAYMENT_STATUS_PAID = 4; // Paid but with undertermined method
+    const PAYMENT_STATUS_PAID = 4; // Paid but with undetermined method
     
     /**
      * @var int The id of this ask.

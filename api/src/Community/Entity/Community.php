@@ -139,6 +139,7 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"readCommunityPublic"}},
  *          },
  *          "put"={
+ *              "method"="PUT",
  *              "security"="is_granted('community_update',object)"
  *          },
  *          "delete"={
@@ -322,7 +323,6 @@ class Community
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $relayPoints;
 

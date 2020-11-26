@@ -38,6 +38,8 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -83,10 +85,42 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
-            $this->logger->info('User | Is found');
             return $user;
         }
-        $this->logger->error('User | is Not found');
+        return null;
+    }
+
+    /**
+     * Get the profile summary of a user
+     *
+     * @param integer $userId   User id
+     * @return ProfileSummary|null
+     */
+    public function getProfileSummary(int $userId): ?ProfileSummary
+    {
+        $this->dataProvider->setClass(ProfileSummary::class);
+        $response = $this->dataProvider->getItem($userId);
+        if ($response->getCode() == 200) {
+            $profileSummary = $response->getValue();
+            return $profileSummary;
+        }
+        return null;
+    }
+
+    /**
+     * Get the public profile of a user
+     *
+     * @param integer $userId   User id
+     * @return ProfileSummary|null
+     */
+    public function getProfilePublic(int $userId): ?PublicProfile
+    {
+        $this->dataProvider->setClass(PublicProfile::class);
+        $response = $this->dataProvider->getItem($userId);
+        if ($response->getCode() == 200) {
+            $profileSummary = $response->getValue();
+            return $profileSummary;
+        }
         return null;
     }
 
@@ -667,6 +701,19 @@ class UserManager
     {
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
+        return $response->getValue();
+    }
+
+    /**
+     * Check if password token exist
+     *
+     * @param string $pwdToken
+     * @return void
+     */
+    public function checkPasswordToken(string $pwdToken)
+    {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection('checkPasswordToken', ['pwdToken' => $pwdToken]);
         return $response->getValue();
     }
 

@@ -39,14 +39,15 @@
 </template>
 <script>
 import axios from "axios";
-import { merge } from "lodash";
 import Alert from "@components/user/profile/Alert";
-import Translations from "@translations/components/user/profile/Alerts.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/Alerts.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/user/profile/Alerts/";
+
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components:{
     Alert

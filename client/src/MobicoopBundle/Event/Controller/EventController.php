@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
@@ -221,24 +222,34 @@ class EventController extends AbstractController
      */
     public function eventReport($id, EventManager $eventManager, DataProvider $dataProvider, Request $request)
     {
-        $success = false;
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
 
-        // RETRIEVE EVENT
-        $event = $eventManager->getEvent($id);
-        $this->denyAccessUnlessGranted('report', $event);
+            $success = false;
 
-        // SEND MAIL
-        if ($request->request->has('email') && $request->request->has('description')) {
-            $response = $dataProvider->simplePost('events/' . $id . '/report', [
-                'email' => $request->request->get('email'),
-                'description' => $request->request->get('description')
-            ]);
+            // Get the Event
+            $event = $eventManager->getEvent($id);
+            $this->denyAccessUnlessGranted('report', $event);
 
-            if (200 === $response->getCode()) {
-                $success = true;
+            // Post the Report
+            if (
+                isset($data['email']) && isset($data['text']) &&
+                $data['email'] !== '' && $data['text'] !== ''
+            ) {
+                $dataProvider->setClass(Report::class);
+
+                $report = new Report();
+                $report->setEvent($event);
+                $report->setReporterEmail($data['email']);
+                $report->setText($data['text']);
+
+                $response = $dataProvider->post($report);
+
+                if (201 === $response->getCode()) {
+                    $success = true;
+                }
             }
         }
-
         return new JsonResponse(['success' => $success]);
     }
 }

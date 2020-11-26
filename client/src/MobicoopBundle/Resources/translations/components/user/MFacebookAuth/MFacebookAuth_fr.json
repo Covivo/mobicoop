@@ -1,0 +1,7 @@
+{
+    "urlFacebookConnect": "/utilisateur/facebook/connexion",
+    "signup": "Inscription par facebook",
+    "connection": "Connexion par facebook",
+    "fillPublicInfos": "Le formulaire a été pré rempli avec les informations publiques de votre profil Facebook.",
+    "fillRemainingFields": "Merci de compléter les champs obligatoires restants."
+}

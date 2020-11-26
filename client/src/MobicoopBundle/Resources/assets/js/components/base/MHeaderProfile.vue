@@ -47,13 +47,18 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/base/MHeaderProfile.json";
-import TranslationsClient from "@clientTranslations/components/base/MHeaderProfile.json";
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/base/MHeaderProfile/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeaderProfile/"
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   props: {
     avatar:{

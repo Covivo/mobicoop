@@ -672,13 +672,13 @@
               outlined
               @click="dialog = false"
             >
-              {{ $t('ui.common.no') }}
+              {{ $t('no') }}
             </v-btn>
             <v-btn
               color="secondary"
               @click="updateAd"
             >
-              {{ $t('ui.common.yes') }}
+              {{ $t('yes') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -688,8 +688,8 @@
 </template>
 
 <script>
-import Translations from "@translations/components/carpool/publish/AdPublish.json";
-import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdPublish/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/carpool/publish/AdPublish/";
 
 import axios from "axios";
 import { merge, isEmpty, isEqual } from "lodash";
@@ -702,11 +702,15 @@ import AdSummary from "@components/carpool/publish/AdSummary";
 import MMap from '@components/utilities/MMap'
 import L from "leaflet";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   components: {
     SearchJourney,

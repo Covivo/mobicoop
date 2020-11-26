@@ -296,7 +296,7 @@ class CommunityManager
     }
 
     /**
-     * Give the roles : community_manager to the creator of a public community and save the data
+     * Give the roles : community_manager_public to the creator of a public community and save the data
      *
      * @param Community       $community           The community created
      * @return void
@@ -307,7 +307,7 @@ class CommunityManager
 
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
 
-        //Check if the user dont have the ROLE_COMMUNITY_MANAGER right yet
+        //Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
@@ -318,6 +318,49 @@ class CommunityManager
         $this->entityManager->persist($community);
         $this->entityManager->flush();
 
+        return $community;
+    }
+
+    /**
+     * We update the community
+     *
+     * @param Community $community
+     * @return void
+     */
+    public function updateCommunity(Community $community)
+    {
+        $user = $community->getUser();
+
+        // We check if the user is already a user of the community if not we add it
+        $communityUsers = $community->getCommunityUsers();
+        $members = [];
+        foreach ($communityUsers as $communityUser) {
+            $members[] = $communityUser->getUser()->getId();
+        }
+       
+        
+        if (!in_array($user->getId(), $members)) {
+            $communityUser = new CommunityUser;
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($community);
+
+            $this->entityManager->persist($communityUser);
+        }
+        
+        //Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
+        $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+
+        if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+
+            $this->entityManager->persist($user);
+        }
+
+        $this->entityManager->persist($community);
+        $this->entityManager->flush();
+        
         return $community;
     }
 
@@ -340,6 +383,20 @@ class CommunityManager
             $event = new CommunityNewMembershipRequestEvent($community, $user);
             $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
         }
+        return $communityUser;
+    }
+
+    /**
+     * Update communityUser
+     *
+     * @param CommunityUser $communityUser
+     * @return void
+     */
+    public function updateCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
         return $communityUser;
     }
 

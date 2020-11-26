@@ -46,11 +46,14 @@
 <script>
 
 import axios from "axios";
-import Translations from "@translations/components/article/MArticle.json";
+import {messages_en, messages_fr} from "@translations/components/article/MArticle/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     articleId: {

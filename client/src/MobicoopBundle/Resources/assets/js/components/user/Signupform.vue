@@ -115,7 +115,7 @@
                   id="email"
                   v-model="form.email"
                   :rules="form.emailRules"
-                  :label="$t('models.user.email.placeholder') + ` *`"
+                  :label="$t('email.placeholder') + ` *`"
                   name="email"
                   required
                   :loading="loadingCheckEmailAldreadyTaken"
@@ -132,7 +132,7 @@
                 <v-text-field
                   id="telephone"
                   v-model="form.telephone"
-                  :label="$t('models.user.phone.placeholder') + ` *`"
+                  :label="$t('phone.placeholder') + ` *`"
                   required
                   :rules="form.telephoneRules"
                   name="telephone"
@@ -151,7 +151,7 @@
                   ]"
                   :type="form.showPassword ? 'text' : 'password'"
                   name="password"
-                  :label="$t('models.user.password.placeholder') + ` *`"
+                  :label="$t('password.placeholder') + ` *`"
                   required
                   @click:append="form.showPassword = !form.showPassword"
                 />
@@ -165,7 +165,7 @@
                   :disabled="!step1"
                   @click="nextStep(1)"
                 >
-                  {{ $t("ui.button.next") }}
+                  {{ $t("button.next") }}
                 </v-btn>
                 <v-card-text
                   v-if="loginLinkInConnection"
@@ -195,15 +195,15 @@
                   id="givenName"
                   v-model="form.givenName"
                   :rules="form.givenNameRules"
-                  :label="$t('models.user.givenName.placeholder') + ` *`"
+                  :label="$t('givenName.placeholder') + ` *`"
                   class="givenName"
                   required
                 />
-                <v-text-field
+                <v-text-field       
                   id="familyName"
                   v-model="form.familyName"
                   :rules="form.familyNameRules"
-                  :label="$t('models.user.familyName.placeholder') + ` *`"
+                  :label="$t('familyName.placeholder') + ` *`"
                   class="familyName"
                   required
                 />
@@ -228,7 +228,7 @@
                     <v-text-field
                       id="birthday"
                       v-model="form.date"
-                      :label="$t('models.user.birthDate.placeholder')+` *`"
+                      :label="$t('birthDate.placeholder')+` *`"
                       readonly
                       :rules="[ form.birthdayRules.checkIfAdult, form.birthdayRules.required ]"
                       required
@@ -256,7 +256,7 @@
                     color="secondary"
                     @click="previousStep(2)"
                   >
-                    {{ $t("ui.button.previous") }}
+                    {{ $t("button.previous") }}
                   </v-btn>
                   <v-btn
                     id="buttonNext2"
@@ -268,7 +268,7 @@
                     :disabled="!step2"
                     @click="nextStep(2)"
                   >
-                    {{ $t("ui.button.next") }}
+                    {{ $t("button.next") }}
                   </v-btn>
                 </v-row>
               </v-form>
@@ -286,7 +286,7 @@
                 <!-- hometown -->
                 <GeoComplete
                   name="homeAddress"
-                  :label="$t('models.user.homeTown.placeholder')"
+                  :label="$t('homeTown.placeholder')"
                   :url="geoSearchUrl"
                   persistent-hint
                   :required="requiredHomeAddress"
@@ -308,9 +308,10 @@
                   :items="communities"
                   outlined
                   chips
-                  :label="$t('communities.label')"
+                  :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
                   item-text="name"
                   item-value="id"
+                  :required="requiredCommunity"
                   @change="emitEvent"
                 >
                   <template v-slot:selection="data">
@@ -370,7 +371,7 @@
                     color="secondary"
                     @click="--step"
                   >
-                    {{ $t("ui.button.previous") }}
+                    {{ $t("button.previous") }}
                   </v-btn>
                   <v-btn
                     color="secondary"
@@ -382,7 +383,7 @@
                     "
                     @click="validate"
                   >
-                    {{ $t("ui.button.register") }}
+                    {{ $t("button.register") }}
                   </v-btn>
                 </v-row>
               </v-form>
@@ -400,14 +401,18 @@ import GeoComplete from "@js/components/utilities/GeoComplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/user/SignUp.json";
-import TranslationsClient from "@clientTranslations/components/user/SignUp.json";
+import {messages_en, messages_fr} from "@translations/components/user/SignUp/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   components: {
     GeoComplete,
@@ -440,6 +445,10 @@ export default {
       default: null,
     },
     requiredHomeAddress: {
+      type: Boolean,
+      default: false,
+    },
+    requiredCommunity: {
       type: Boolean,
       default: false,
     },
@@ -491,16 +500,16 @@ export default {
         createToken: this.sentToken,
         email: null,
         emailRules: [
-          (v) => !!v || this.$t("models.user.email.errors.required"),
-          (v) => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid"),
+          (v) => !!v || this.$t("email.errors.required"),
+          (v) => /.+@.+/.test(v) || this.$t("email.errors.valid"),
         ],
         givenName: null,
         givenNameRules: [
-          (v) => !!v || this.$t("models.user.givenName.errors.required"),
+          (v) => !!v || this.$t("givenName.errors.required"),
         ],
         familyName: null,
         familyNameRules: [
-          (v) => !!v || this.$t("models.user.familyName.errors.required"),
+          (v) => !!v || this.$t("familyName.errors.required"),
         ],
         gender: null,
         genderRules: [
@@ -523,43 +532,43 @@ export default {
         date: null,
         telephone: null,
         telephoneRules: [
-          (v) => !!v || this.$t("models.user.phone.errors.required"),
+          (v) => !!v || this.$t("phone.errors.required"),
           (v) =>
             /^((\+)33|0)[1-9](\d{2}){4}$/.test(v) ||
-            this.$t("models.user.phone.errors.valid"),
+            this.$t("phone.errors.valid"),
         ],
         password: null,
         showPassword: false,
         passWordRules: {
           required: (v) =>
-            !!v || this.$t("models.user.password.errors.required"),
+            !!v || this.$t("password.errors.required"),
           min: (v) =>
-            (v && v.length >= 8) || this.$t("models.user.password.errors.min"),
+            (v && v.length >= 8) || this.$t("password.errors.min"),
           checkUpper: (value) => {
             const pattern = /^(?=.*[A-Z]).*$/;
             return (
               pattern.test(value) ||
-              this.$t("models.user.password.errors.upper")
+              this.$t("password.errors.upper")
             );
           },
           checkLower: (value) => {
             const pattern = /^(?=.*[a-z]).*$/;
             return (
               pattern.test(value) ||
-              this.$t("models.user.password.errors.lower")
+              this.$t("password.errors.lower")
             );
           },
           checkNumber: (value) => {
             const pattern = /^(?=.*[0-9]).*$/;
             return (
               pattern.test(value) ||
-              this.$t("models.user.password.errors.number")
+              this.$t("password.errors.number")
             );
           },
         },
         birthdayRules: {
           required: (v) =>
-            !!v || this.$t("models.user.birthDay.errors.required"),
+            !!v || this.$t("birthDay.errors.required"),
           checkIfAdult: (value) => {
             var d1 = new Date();
             var d2 = new Date(value);
@@ -569,13 +578,13 @@ export default {
 
             var diffYears = Math.abs(Math.floor(diff / 365.24));
             return (
-              diffYears >= 16 || this.$t("models.user.birthDay.errors.notadult")
+              diffYears >= 16 || this.$t("birthDay.errors.notadult")
             );
           },
         },
         homeAddress: null,
         checkboxRules: [
-          (v) => !!v || this.$t("ui.pages.signup.chart.errors.required"),
+          (v) => !!v || this.$t("chart.required"),
         ],
         idFacebook: null,
       },
@@ -603,12 +612,15 @@ export default {
         container: this.container,
       };
     },
-    // disable validation if homeAddress is empty and required or email already taken
+    // disable validation if homeAddress and community is empty and required or email already taken
     isDisable() {
       if (this.requiredHomeAddress && !this.form.homeAddress) {
         return true;
       }
       if (this.emailAlreadyTaken) {
+        return true;
+      }
+      if (this.requiredCommunity && !this.selectedCommunity) {
         return true;
       }
       return false;

@@ -1,0 +1,7 @@
+{
+    "tooltip":"Laisser une évaluation",
+    "intro":{
+        "part1":"Vous pouvez laisser un avis à {user}",
+        "part2":"Ce commentaire sera visible de tous les utilisateurs."
+    }
+}

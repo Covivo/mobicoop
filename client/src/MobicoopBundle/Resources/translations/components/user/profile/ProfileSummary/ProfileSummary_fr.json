@@ -1,0 +1,8 @@
+{
+    "yearsOld":"ans",
+    "getProfileSummaryUri":"/utilisateur/profil/resume",
+    "infos":{
+        "carpoolRealized":"Covoiturages réalisés",
+        "answerPct":"Taux de réponse"
+    }   
+}

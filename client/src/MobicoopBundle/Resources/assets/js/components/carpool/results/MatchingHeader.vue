@@ -52,19 +52,19 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/results/MatchingHeader.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingHeader.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingHeader/";
 import RouteSummary from "@components/carpool/utilities/RouteSummary"
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     RouteSummary
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     origin: {
@@ -96,7 +96,7 @@ export default {
   computed: {
     computedDateFormat() {
       return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.date).format(this.$t("fullDate"))
         : "";
     },
     computedOrigin() {

@@ -55,7 +55,7 @@ then
 
     # check Modules files
     MODULES_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
-    if [ ! -f "$DOMAINS_FILE" ]; then
+    if [ ! -f "$MODULES_FILE" ]; then
         cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
     fi
 
@@ -83,6 +83,15 @@ then
     # Crontab update
     python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
+    # External Cgu Mango
+    EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/public/externalCgu
+    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
+        cd /var/www/$VERSION/$INSTANCE/public/;
+        mkdir externalCgu;
+    fi
+    cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
+    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+ 
     # Admin build
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/admin;
     rm -Rf node_modules;
@@ -152,7 +161,16 @@ else
     fi
 
     # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    
+	# External Cgu Mango
+    EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/public/externalCgu
+    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
+        cd /var/www/$INSTANCE/$VERSION/public/;
+        mkdir externalCgu;
+    fi
+    cd /var/www/$INSTANCE/$VERSION/public/externalCgu;
+    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
     
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable

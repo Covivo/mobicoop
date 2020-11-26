@@ -56,14 +56,18 @@
 import moment from "moment";
 import MatchingPTResultSummary from "@components/carpool/results/publicTransport/MatchingPTResultSummary";
 import MatchingPTResultDetails from "@components/carpool/results/publicTransport/MatchingPTResultDetails";
-import Translations from "@translations/components/carpool/results/publicTransport/MatchingPTResult.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResult/";
+
 export default {
   components:{
     MatchingPTResultSummary,
     MatchingPTResultDetails
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     ptResult: {

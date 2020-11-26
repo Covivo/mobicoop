@@ -44,7 +44,7 @@
         :card-text-button="this.$t('solidary.button.label')"
         card-text-color-button="secondary--text"
         card-color-button="white"
-        :href-button="this.$t('solidary.button.route')"
+        :href-button="mobileUrl+this.$t('solidary.button.route')"
         :card-text-button-two="this.$t('solidary.button2.label')"
         card-text-color-button-two="secondary--text"
         card-color-button-two="white"
@@ -54,12 +54,21 @@
   </v-row>
 </template>
 <script>
+
+import { merge } from "lodash";
 import MCard from '@js/components/utilities/MCard'
-import Translations from "@translations/components/home/HomeContent.json";
+import {messages_en, messages_fr} from "@translations/components/home/HomeContent/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/HomeContent/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     MCard
@@ -76,7 +85,16 @@ export default {
     communityDisplay: {
       type: Boolean,
       default: false
+    },
+    urlMobile: {
+      type: String,
+      default: null
     }
-  }
+  },
+  data () {
+    return {
+      mobileUrl: this.urlMobile
+    }
+  },
 }
 </script>

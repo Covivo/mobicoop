@@ -1,0 +1,5 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>{{ "iContactYouAgainAboutPayment" |trans|raw }} {{context.amount}} € {{ "byJourney"|trans }}.</p>
+{% endblock %}
+

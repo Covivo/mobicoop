@@ -94,15 +94,11 @@ class BlockRepository
      */
     public function findAllByUsersInvolved(User $user1, User $user2): array
     {
-        $blocks = [];
-
         $query = $this->repository->createQueryBuilder('b')
         ->where('(b.user = :user1 and b.blockedUser = :user2) or (b.user = :user2 and b.blockedUser = :user1)')
         ->setParameter('user1', $user1)
         ->setParameter('user2', $user2)
         ;
         return $query->getQuery()->getResult();
-
-        return $blocks;
     }
 }
