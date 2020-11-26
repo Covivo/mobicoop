@@ -58,7 +58,7 @@ export const RelayPointEdit = (props) => {
           </ReferenceField>
           <GeocompleteInput source="address" label="Nouvelle addresse" />
           <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
-          <ReferenceInput source="relayPointType.id" label="Types" reference="relay_point_types">
+          <ReferenceInput source="relayPointType" label="Types" reference="relay_point_types">
             <SelectInput optionText="name" />
           </ReferenceInput>
           <TextInput source="description" label="Description" validate={required()} />
