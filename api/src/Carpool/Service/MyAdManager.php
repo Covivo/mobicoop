@@ -458,7 +458,7 @@ class MyAdManager
             'waypoints' => $waypoints,
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
             'askId' => $ask->getId(),
-            'frequency' => $ask->getCriteria()->getFrequency()
+            'askFrequency' => $ask->getCriteria()->getFrequency()
         ];
 
         // date and time
@@ -979,7 +979,7 @@ class MyAdManager
             'waypoints' => $waypoints,
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
             'askId' => $ask->getId(),
-            'frequency' => $ask->getCriteria()->getFrequency()
+            'askFrequency' => $ask->getCriteria()->getFrequency()
         ];
 
         // date and time

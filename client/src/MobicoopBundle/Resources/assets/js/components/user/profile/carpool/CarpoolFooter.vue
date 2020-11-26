@@ -64,7 +64,7 @@
               :carpooler="carpooler"
               :passenger="ad.passengers.length>0"
               :driver="!Array.isArray(ad.driver)" 
-              :frequency="carpooler.frequency"
+              :frequency="carpooler.askFrequency"
               :user="user"
             />
             <v-divider
