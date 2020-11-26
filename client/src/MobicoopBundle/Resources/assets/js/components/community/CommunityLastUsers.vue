@@ -48,15 +48,14 @@
 </template>
 <script>
 
-import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityLastUsers.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityLastUsers.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/community/CommunityLastUsers/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     community: {

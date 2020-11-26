@@ -129,39 +129,16 @@
                 cols="4"
               >
                 <v-card>
-                  <!-- Avatar -->
-                  <v-img
-                    aspect-ratio="2"
-                    :src="result.carpooler.avatars[result.carpooler.avatars.length-1]"
+                  <ProfileSummary
+                    :user-id="result.carpooler.id"
+                    :refresh="profileSummaryRefresh"
+                    @showProfile="step=4"
+                    @profileSummaryRefresh="refreshProfileSummary"
                   />
-                  <v-card-title>
-                    <v-row
-                      dense
-                    >
-                      <v-col
-                        class="text-center"
-                      >
-                        {{ lResult.carpooler.givenName }} {{ lResult.carpooler.shortFamilyName }}
-                      </v-col>
-                    </v-row>
-                  </v-card-title>
                   <v-card-text>
                     <v-row
                       dense
                     >
-                      <v-col
-                        cols="12"
-                        class="text-center"
-                      >
-                        {{ age }}
-                      </v-col>
-                      <v-col
-                        v-if="user && lResult.carpooler.phoneDisplay == 2"
-                        cols="12"
-                        class="text-center"
-                      >
-                        {{ lResult.carpooler.telephone }}
-                      </v-col>
                       <v-col  
                         cols="12"
                         class="text-center"
@@ -349,6 +326,14 @@
             @change="changeReturn"
           />
         </v-stepper-content>
+
+        <v-stepper-content step="4">
+          <PublicProfile
+            :user="result.carpooler"
+            :refresh="refreshPublicProfile"
+            @publicProfileRefresh="publicProfileRefresh"
+          />
+        </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
 
@@ -447,8 +432,19 @@
       </v-row>
 
       <!-- Step 2 or 3 (previous) --> 
+      
+      <!-- Public profile -->
       <v-btn
-        v-if="step > 1"
+        v-if="step == 4"
+        color="secondary"
+        outlined
+        @click="step = 1"
+      >
+        {{ $t('previous') }}
+      </v-btn>
+      
+      <v-btn
+        v-else-if="step > 1"
         color="secondary"
         outlined
         @click="step--"
@@ -491,23 +487,27 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/results/MatchingJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingJourney.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
+import ProfileSummary from "@components/user/profile/ProfileSummary";
+import PublicProfile from "@components/user/profile/PublicProfile";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     VJourney,
     RegularDaysSummary,
-    RegularAsk
+    RegularAsk,
+    ProfileSummary,
+    PublicProfile
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     result: {
@@ -597,6 +597,10 @@ export default {
     resetStep: {
       type: Boolean,
       default: false
+    },
+    profileSummaryRefresh: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -629,7 +633,8 @@ export default {
       returnSatTime: this.defaultReturnSatTime,
       returnSunTime: this.defaultReturnSunTime,
       outwardTrip: this.defaultOutwardTrip,
-      returnTrip: this.defaultReturnTrip
+      returnTrip: this.defaultReturnTrip,
+      refreshPublicProfile: false
     }
   },
   computed: {
@@ -717,6 +722,11 @@ export default {
       if(this.resetStep){
         this.step = 1;
         this.$emit('resetStepMatchingJourney');
+      }
+    },
+    step(){
+      if(this.step==4){
+        this.refreshPublicProfile = true;
       }
     }
   },
@@ -871,6 +881,12 @@ export default {
         }
       });      
       return found;
+    },
+    publicProfileRefresh(data){
+      this.refreshPublicProfile = false;
+    },
+    refreshProfileSummary(data){
+      this.$emit("profileSummaryRefresh",data);
     }
   }
 };

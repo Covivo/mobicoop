@@ -80,7 +80,11 @@ use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointMap;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -216,6 +220,15 @@ class Deserializer
                 break;
             case SsoConnection::class:
                 return $this->deserializeSsoConnection($data);
+                break;
+            case ProfileSummary::class:
+                return $this->deserializeProfileSummary($data);
+                break;
+            case PublicProfile::class:
+                return $this->deserializePublicProfile($data);
+                break;
+            case RelayPointMap::class:
+                return $this->deserializeRelayPointMap($data) ;
                 break;
             default:
                 break;
@@ -921,6 +934,40 @@ class Deserializer
         return $ssoconnection;
     }
 
+    private function deserializeProfileSummary(array $data): ?ProfileSummary
+    {
+        $profileSummary = new ProfileSummary();
+        $profileSummary = $this->autoSet($profileSummary, $data);
+        return $profileSummary;
+    }
+
+    private function deserializePublicProfile(array $data): ?PublicProfile
+    {
+        $publicProfile = new PublicProfile();
+        $publicProfile = $this->autoSet($publicProfile, $data);
+
+        if (isset($data["profileSummary"])) {
+            $publicProfile->setProfileSummary($this->deserializeProfileSummary($data['profileSummary']));
+        }
+
+        return $publicProfile;
+    }
+
+    private function deserializeRelayPointMap(array $data): ?RelayPointMap
+    {
+        $relayPointMap = new RelayPointMap();
+        $relayPointMap = $this->autoSet($relayPointMap, $data);
+
+        if (isset($data["address"])) {
+            $relayPointMap->setAddress($this->deserializeAddress($data['address']));
+        }
+       
+        if (isset($data["relayPointType"])) {
+            $relayPointMap->setRelayPointType($this->deserializeRelayPointType($data['relayPointType']));
+        }
+
+        return $relayPointMap;
+    }
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();

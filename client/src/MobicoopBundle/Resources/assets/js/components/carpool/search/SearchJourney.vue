@@ -213,16 +213,14 @@
 <script>
 import moment from "moment";
 import GeoComplete from "@components/utilities/GeoComplete";
-
-import { merge } from "lodash";
-import Translations from "@translations/components/carpool/search/SearchJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/search/SearchJourney.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   components: {
     GeoComplete
@@ -311,7 +309,7 @@ export default {
   computed: {
     computedDateFormat() {
       return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        ? moment(this.date).format(this.$t("fullDate"))
         : null;
     },
     checkOutwardDate() {

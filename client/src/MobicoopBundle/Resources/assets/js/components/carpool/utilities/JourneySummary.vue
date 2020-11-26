@@ -75,19 +75,19 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/utilities/JourneySummary.json";
-import TranslationsClient from "@clientTranslations/components/carpool/utilities/JourneySummary.json";
+import {messages_en, messages_fr} from "@translations/components/carpool/utilities/JourneySummary/";
 import RouteSummary from "@components/carpool/utilities/RouteSummary"
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     RouteSummary
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props: {
     origin: {
@@ -135,13 +135,13 @@ export default {
   computed: {
     computedTime() {
       if (this.time) {
-        return moment.utc(this.time).format(this.$t("ui.i18n.time.format.hourMinute"));  
+        return moment.utc(this.time).format(this.$t("hourMinute"));  
       }
       return null;  
     },
     computedDate() {
       if (this.date) {
-        return moment.utc(this.date).format(this.$t("ui.i18n.date.format.shortDate"));
+        return moment.utc(this.date).format(this.$t("shortDate"));
       }
       return null;
     }

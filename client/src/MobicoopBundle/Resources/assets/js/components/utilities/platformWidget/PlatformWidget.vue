@@ -51,17 +51,19 @@
 </template>
 <script>
 
-import Translations from "@translations/components/utilities/PlatformWidget.json";
+import {messages_en, messages_fr} from "@translations/components/utilities/PlatformWidget/";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
-
 
 export default {
   components: {
     Search
   },
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props:{
     user: {

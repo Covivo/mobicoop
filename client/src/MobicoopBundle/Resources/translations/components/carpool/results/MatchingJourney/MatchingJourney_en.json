@@ -1,0 +1,31 @@
+{
+    "priceTooltip": "",
+    "detailTitle": "Journey detail",
+    "places": "{seats} seat | {seats} seats",
+    "carpool": "Carpool",
+    "carpoolAsDriver": "Carpool as driver",
+    "carpoolAsPassenger": "Carpool as passenger",
+    "alreadyAskCarpool": "You have already made a request on this proposal.",
+    "birthYears": "years",
+    "contact": "Contact",
+    "outward": "Choose outward",
+    "return": "Choose return",
+    "previous": "Previous",
+    "detail": "Detail",
+    "fromDate": "From",
+    "maxDate": "To",
+    "i18n": {
+        "date": {
+            "format": {
+                "fullDate": "ddd Do MMMM YYYY",
+                "shortDate": "DD/MM/YYYY",
+                "computeDate": "YYYY-MM-DD"
+            }
+        },
+        "time": {
+            "format": {
+                "hourMinute": "HH[h]mm"
+            }
+        }
+    }
+}

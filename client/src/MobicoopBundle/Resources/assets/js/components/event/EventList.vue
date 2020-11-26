@@ -251,23 +251,21 @@
 <script>
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/event/EventList.json";
-import TranslationsClient from "@clientTranslations/components/event/EventList.json";
+import {messages_en, messages_fr} from "@translations/components/event/EventList/";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
-
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components:{
     EventListItem,MMap
   },
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     paths: {

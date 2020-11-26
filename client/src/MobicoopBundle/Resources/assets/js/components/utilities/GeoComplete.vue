@@ -58,12 +58,8 @@
 <script>
 import axios from "axios";
 import debounce from "lodash/debounce";
-import merge from "lodash/merge";
 
-import Translations from "@translations/components/utilities/GeoComplete.json";
-import TranslationsClient from "@clientTranslations/components/utilities/GeoComplete.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/utilities/GeoComplete/";
 
 const defaultString = {
   type: String,
@@ -71,7 +67,10 @@ const defaultString = {
 };
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
     url: defaultString,

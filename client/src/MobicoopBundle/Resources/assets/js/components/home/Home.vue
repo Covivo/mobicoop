@@ -137,6 +137,7 @@
             :event-display="eventDisplay"
             :solidary-display="solidaryDisplay"
             :additional-text-display="additionalTextDisplay"
+            :url-mobile="mobileUrl"
           />
         </v-col>
       </v-row>
@@ -148,16 +149,20 @@
 <script>
 import {merge} from "lodash";
 import Cookies from "@components/utilities/Cookies";
-import Translations from "@translations/components/home/Home.json";
-import TranslationsClient from "@clientTranslations/components/home/Home.json";
+import {messages_en, messages_fr} from "@translations/components/home/Home/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
   },
   components: {
     Search,
@@ -229,12 +234,17 @@ export default {
     rss: {
       type: Object,
       default: null
-    }
+    },
+    urlMobile: {
+      type: String,
+      default: null
+    },
   },
   data () {
     return {
       snackbar: true,
-      displayVerifiedMessage: false
+      displayVerifiedMessage: false,
+      mobileUrl: this.urlMobile
     }
   },
   mounted() {

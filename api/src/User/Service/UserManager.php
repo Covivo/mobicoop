@@ -50,6 +50,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\Communication\Service\InternalMessageManager;
 use App\Community\Entity\Community;
 use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
@@ -75,6 +76,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
 use App\User\Entity\SsoUser;
+use App\User\Ressource\ProfileSummary;
+use App\User\Ressource\PublicProfile;
 
 /**
  * User manager service.
@@ -105,6 +108,8 @@ class UserManager
     private $security;
     private $paymentProvider;
     private $blockManager;
+    private $internalMessageManager;
+    private $reviewManager;
 
     // Default carpool settings
     private $chat;
@@ -114,6 +119,8 @@ class UserManager
     private $fakeFirstMail;
     private $fakeFirstToken;
     private $domains;
+    private $profile;
+    private $passwordTokenValidity;
 
     /**
         * Constructor.
@@ -148,7 +155,11 @@ class UserManager
         string $fakeFirstToken,
         PaymentDataProvider $paymentProvider,
         BlockManager $blockManager,
-        array $domains
+        InternalMessageManager $internalMessageManager,
+        ReviewManager $reviewManager,
+        array $domains,
+        array $profile,
+        $passwordTokenValidity
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -177,6 +188,10 @@ class UserManager
         $this->domains = $domains;
         $this->paymentProvider = $paymentProvider;
         $this->blockManager = $blockManager;
+        $this->internalMessageManager = $internalMessageManager;
+        $this->reviewManager = $reviewManager;
+        $this->profile = $profile;
+        $this->passwordTokenValidity = $passwordTokenValidity;
     }
 
     /**
@@ -224,6 +239,22 @@ class UserManager
         return implode(", ", $this->domains);
     }
 
+    /**
+     * Check if a password token and password token date exist
+     *
+     * @param string $pwdToken The password token to check
+     * @return string|null The checked token or null if token invalid
+     */
+    public function checkPasswordToken(string $pwdToken)
+    {
+        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])) {
+            if ((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
+                return null;
+            }
+            return $pwdToken;
+        }
+        return null;
+    }
 
     /**
      * Get a user by security token.
@@ -860,11 +891,11 @@ class UserManager
                 continue;
             }
             if (!in_array($userNotification->getNotification()->getAction()->getName(), $alerts)) {
-                $alerts[$userNotification->getNotification()->getAction()->getPosition()] = [
+                $alerts[$userNotification->getNotification()->getAction()->getId()] = [
                     'action' => $userNotification->getNotification()->getAction()->getName(),
                     'alert' => []
                 ];
-                $actions[$userNotification->getNotification()->getAction()->getId()] = $userNotification->getNotification()->getAction()->getPosition();
+                $actions[$userNotification->getNotification()->getAction()->getId()] = $userNotification->getNotification()->getAction()->getId();
             }
         }
         ksort($alerts);
@@ -884,6 +915,7 @@ class UserManager
                 'active' => $userNotification->isActive()
             ];
         }
+       
         // third pass to order media
         $mediaOrdered = [];
         foreach ($media as $actionID => $unorderedMedia) {
@@ -1371,10 +1403,18 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
         if (is_null($user)) {
-            // echo "new user\n";
-            // echo $ssoUser->getSub()."\n";
-            // echo $ssoUser->getProvider()."\n";
-            // echo $ssoUser->getGender()."\n";die;
+
+            // check if a user with this email already exists
+            $user = $this->userRepository->findOneBy(['email'=>$ssoUser->getEmail()]);
+            if (!is_null($user)) {
+                // We update the user with ssoId and ssoProvider and return it
+                $user->setSsoId($ssoUser->getSub());
+                $user->setSsoProvider($ssoUser->getProvider());
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+                return $user;
+            }
+
             // Create a new one
             $user = new User();
             $user->setSsoId($ssoUser->getSub());
@@ -1397,5 +1437,105 @@ class UserManager
             $user = $this->registerUser($user);
         }
         return $user;
+    }
+
+    /**
+     * Get the profile summary of a User
+     *
+     * @param User $user   The User
+     * @return ProfileSummary
+     */
+    public function getProfileSummary(User $user): ProfileSummary
+    {
+        $profileSummary = new ProfileSummary($user->getId());
+        $profileSummary->setGivenName($user->getGivenName());
+        $profileSummary->setShortFamilyName($user->getShortFamilyName());
+        $profileSummary->setCreatedDate($user->getCreatedDate());
+        $profileSummary->setLastActivityDate($user->getLastActivityDate());
+
+        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+
+        $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
+        if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
+            $profileSummary->setTelephone($user->getTelephone());
+        }
+        if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
+            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+        }
+
+        // Number of realized carpool (number of accepted Aks as driver or passenger)
+        $asks = $this->askRepository->findAcceptedAsksForUser($user);
+        // We count only one way and outward of a round trip
+        $nbAsks = 0;
+        foreach ($asks as $ask) {
+            if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+                $nbAsks++;
+            }
+        }
+        $profileSummary->setCarpoolRealized($nbAsks);
+
+        // Get the first messages of every threads the user is involved in
+        $threads = $this->messageRepository->findThreads($user);
+        $nbMessageConsidered = 0;
+        $nbMessagesTotal = 0;
+        $nbMessagesAnswered = 0;
+        foreach ($threads as $firstMessage) {
+            // We keep only the XX last messages (.env variable)
+            if ($nbMessageConsidered>=$this->profile['maxMessagesForAnswerRate']) {
+                break;
+            }
+
+            // We keep only the messages where the user was recipient
+            if ($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()) {
+                $nbMessagesTotal++;
+                //We check if the User sent an anwser to this message
+                $completeThread = $this->internalMessageManager->getCompleteThread($firstMessage->getId());
+                foreach ($completeThread as $message) {
+                    if ($message->getUser()->getid() == $user->getId()) {
+                        $nbMessagesAnswered++;
+                        break;
+                    }
+                }
+            }
+
+            $nbMessageConsidered++;
+        }
+        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+
+        // Experienced user
+        $profileSummary->setExperienced(false);
+        if ($this->profile['experiencedTag']) {
+            if ($profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools']) {
+                $profileSummary->setExperienced(true);
+            }
+        }
+
+        return $profileSummary;
+    }
+
+    /**
+     * Get the public profile of a User
+     *
+     * @param User $user   The User
+     * @return PublicProfile
+     */
+    public function getPublicProfile(User $user): PublicProfile
+    {
+        $publicProfile = new PublicProfile($user->getId());
+        // Get the profile summary
+        $publicProfile->setProfileSummary($this->getProfileSummary($user));
+
+        // Preferences
+        $publicProfile->setSmoke($user->getSmoke());
+        $publicProfile->setMusic($user->hasMusic());
+        $publicProfile->setMusicFavorites($user->getMusicFavorites());
+        $publicProfile->setChat($user->hasChat());
+        $publicProfile->setChatFavorites($user->getChatFavorites());
+
+        // Get the reviews about this user
+        $publicProfile->setReviewActive($this->profile['userReview']);
+        $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
+
+        return $publicProfile;
     }
 }

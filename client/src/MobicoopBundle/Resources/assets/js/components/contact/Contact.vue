@@ -22,15 +22,15 @@
 </template>
 
 <script>
-import {merge} from "lodash";
-import Translations from "@translations/components/contact/Contact.json";
-import TranslationsClient from "@clientTranslations/components/contact/Contact.json";
+import {messages_en, messages_fr} from "@translations/components/contact/Contact/";
 import ContactForm from "@components/contact/ContactForm.vue"
 
-let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components: {
     ContactForm

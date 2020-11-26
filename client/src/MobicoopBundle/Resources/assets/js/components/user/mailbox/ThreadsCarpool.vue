@@ -30,13 +30,18 @@
   </v-main>
 </template>
 <script>
+
 import axios from "axios";
 import moment from "moment";
-import Translations from "@translations/components/user/mailbox/ThreadsCarpool.json";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadsCarpool/";
 import ThreadCarpool from '@components/user/mailbox/ThreadCarpool'
+
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   components:{
     ThreadCarpool

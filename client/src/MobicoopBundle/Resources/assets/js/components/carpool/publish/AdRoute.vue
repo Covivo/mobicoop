@@ -197,18 +197,16 @@
 </template>
 
 <script>
-import { merge } from "lodash";
 import axios from "axios";
-import Translations from "@translations/components/carpool/publish/AdRoute.json";
-import TranslationsClient from "@clientTranslations/components/carpool/publish/AdRoute.json";
-
+import {messages_en, messages_fr} from "@translations/components/carpool/publish/AdRoute/";
 import GeoComplete from "@components/utilities/GeoComplete";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   components: {
     GeoComplete

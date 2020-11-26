@@ -156,13 +156,10 @@ class AdManager
             }
         }
 
-        // SOLIDARY TEMPORARY FIX
-        // if the poster is solidary manager, we assume the Ad is solidary
-        // if (isset($user)) {
-        //     if ($this->authManager->isAuthorized('ROLE_SOLIDARY_MANAGER')) {
-        //         $ad->setSolidary(true);
-        //     }
-        // }
+        // Init solidary exclusive
+        if (!$ad->isSearch() && is_null($ad->isSolidaryExclusive())) {
+            $ad->setSolidaryExclusive(false);
+        }
 
         // the proposal is private if it's a search only ad
         $outwardProposal->setPrivate($ad->isSearch() ? true : false);
@@ -1682,6 +1679,7 @@ class AdManager
         }
         return $schedules;
     }
+
 
     /**
      * Get ads with accepted asks of a user

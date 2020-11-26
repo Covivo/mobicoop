@@ -1,0 +1,6 @@
+{
+    "notThreadSelected": "No thread selected",
+    "urlCompleteThread": "/user/messages/{idMessage}/thread",
+    "messageDelete": "Message deleted",
+    "sendBy": "Send by {name}"
+}

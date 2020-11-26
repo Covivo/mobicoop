@@ -1,0 +1,24 @@
+{
+    "outward": "Aller",
+    "return": "Retour",
+    "mon": "Lundi",
+    "tue": "Mardi",
+    "wed": "Mercredi",
+    "thu": "Jeudi",
+    "fri": "Vendredi",
+    "sat": "Samedi",
+    "sun": "Dimanche",
+    "notSelected": "Non covoituré",
+    "i18n": {
+        "date": {
+            "format": {
+                "fullDate": "ddd Do MMMM YYYY"
+            }
+        },
+        "time": {
+            "format": {
+                "hourMinute": "HH[h]mm"
+            }
+        }
+    }
+}

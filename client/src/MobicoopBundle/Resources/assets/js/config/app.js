@@ -3,8 +3,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
-import CommonTranslations from "@translations/translations.js"
-import fr from 'vuetify/es5/locale/fr'
+import {fr, en} from 'vuetify/es5/locale'
 import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LPopup, LIcon, LPolyline} from 'vue2-leaflet'
 
@@ -31,7 +30,7 @@ import Vuetify, {
   VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
   // header
-  VToolbar, VAppBar, VToolbarTitle, VToolbarItems, VBtn, VImg,
+  VToolbar, VAppBar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg,
   // footer
   VFooter, VCardText,
 } from 'vuetify/lib'
@@ -45,7 +44,7 @@ Vue.use(Vuetify, {
     VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
     // header
-    VToolbar, VToolbarTitle, VToolbarItems, VBtn, VImg, VAppBar,
+    VToolbar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg, VAppBar,
     // footer
     VFooter, VCardText,
     //Vue2Leaflet
@@ -58,7 +57,6 @@ Vue.use(VueI18n)
 const i18n = new VueI18n({
   locale: 'fr', // set locale
   fallbackLocale: 'fr',
-  messages: CommonTranslations,
   // Suppress warnings (while keeping those which warn of the total absence of translation for the given key) when
   // the local component translations doesn't not have root ones
   silentTranslationWarn: true 
@@ -70,7 +68,7 @@ const vuetify = new Vuetify({
   },
   theme: colorTheme,
   lang: {
-    locales: {fr},
+    locales: {fr, en},
     current: 'fr',
   },
 });

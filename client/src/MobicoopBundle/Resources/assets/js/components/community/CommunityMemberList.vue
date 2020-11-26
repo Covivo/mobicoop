@@ -77,15 +77,14 @@
 <script>
 
 import axios from "axios";
-import { merge } from "lodash";
-import Translations from "@translations/components/community/CommunityMemberList.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityMemberList.json";
-
-let TranslationsMerged = merge(Translations, TranslationsClient);
+import {messages_en, messages_fr} from "@translations/components/community/CommunityMemberList/";
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
   },
   props:{
     communityId: {

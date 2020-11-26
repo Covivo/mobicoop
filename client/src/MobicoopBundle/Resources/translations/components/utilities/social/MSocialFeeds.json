@@ -1,8 +1,0 @@
-{
-    "fr":{
-        "urlGetArticles":"/articles/derniers/externes"
-    },
-    "en":{
-        "urlGetArticles":"/articles/last/extern"
-    }
-}

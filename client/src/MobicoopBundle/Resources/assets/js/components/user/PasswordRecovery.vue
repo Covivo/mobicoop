@@ -55,12 +55,16 @@
   </div>
 </template>
 <script>
+
 import axios from "axios";
-import Translations from "@translations/components/user/PasswordRecovery.json";
+import {messages_en, messages_fr} from "@translations/components/user/PasswordRecovery/";
 
 export default {
   i18n: {
-    messages: Translations,
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
   },
   props: {
   },
