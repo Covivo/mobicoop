@@ -96,7 +96,7 @@ class PaymentManager
      * @param CarpoolItemRepository $carpoolItemRepository          The carpool items repository
      * @param PaymentDataProvider $paymentProvider                  The payment data provider
      * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
-     * @param boolean $paymentActive                                If the online payment is active
+     * @param string $paymentActive                                 If the online payment is active
      * @param string $paymentProviderService                        The payment provider service
      * @param string $securityToken                                 The payment security token (for hooks)
      * @param string $validationDocsPath                            Path to the temp directory for validation documents
@@ -111,8 +111,8 @@ class PaymentManager
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         LoggerInterface $logger,
-        bool $paymentActive,
-        String $paymentProviderService,
+        string $paymentActive,
+        string $paymentProviderService,
         string $securityToken,
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
