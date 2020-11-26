@@ -457,7 +457,8 @@ class MyAdManager
             'avatars' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getAvatars() : $ask->getUser()->getAvatars(),
             'waypoints' => $waypoints,
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
-            'askId' => $ask->getId()
+            'askId' => $ask->getId(),
+            'askFrequency' => $ask->getCriteria()->getFrequency()
         ];
 
         // date and time
@@ -977,7 +978,8 @@ class MyAdManager
             'avatars' => $ask->getUser()->getId() == $user->getId() ? $ask->getUserRelated()->getAvatars() : $ask->getUser()->getAvatars(),
             'waypoints' => $waypoints,
             'price' => $ask->getCriteria()->getPassengerComputedRoundedPrice(),
-            'askId' => $ask->getId()
+            'askId' => $ask->getId(),
+            'askFrequency' => $ask->getCriteria()->getFrequency()
         ];
 
         // date and time
