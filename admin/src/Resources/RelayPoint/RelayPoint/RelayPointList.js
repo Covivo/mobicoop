@@ -52,7 +52,7 @@ export const RelayPointList = (props) => (
       <ReferenceField source="address.id" label="Adresse" reference="addresses" linkType="">
         <FunctionField render={addressRenderer} />
       </ReferenceField>
-      <ReferenceField source="relayPointType.id" label="Type" reference="relay_point_types" linkType="">
+      <ReferenceField source="relayPointType.id" label="Type" reference="relay_point_types" linkType="" sortable={false}>
         <TextField source="name" />
       </ReferenceField>
       <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
