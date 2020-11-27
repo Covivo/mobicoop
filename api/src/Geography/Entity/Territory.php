@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Controller\TerritoryPost;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -93,6 +94,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
 class Territory
 {
