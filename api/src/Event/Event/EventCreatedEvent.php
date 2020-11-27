@@ -21,30 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Controller;
+namespace App\Event\Event;
 
-use App\Event\Service\EventManager;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\Event\Entity\Event as EventEntity;
 
-class ValidateCreateEventController
+/**
+ * Event sent when an event is created.
+ */
+class EventCreatedEvent extends Event
 {
-    use TranslatorTrait;
+    public const NAME = 'validate_create_event';
 
-    private $eventManager;
+    protected $event;
 
-    public function __construct(EventManager $eventManager)
+    public function __construct(EventEntity $event)
     {
-        $this->eventManager = $eventManager;
+        $this->event = $event;
     }
 
-    public function __invoke(int $id)
+    public function getEvent()
     {
-        $event = $this->eventManager->sendValidateEmail($id);
-
-        if (is_null($event)) {
-            throw new \InvalidArgumentException($this->translator->trans('bad event id is provided'));
-        }
-        return $event;
+        return $this->event;
     }
 }

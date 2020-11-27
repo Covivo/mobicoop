@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\EventSubscriber;
+namespace App\Event\DataPersister;
 
-use App\Event\Event\ValidateCreateEventEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
-use App\Communication\Event\EmailNotificationSentEvent;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Event\Entity\Event;
+use App\Event\Service\EventManager;
 
-class EmailSubscriber implements EventSubscriberInterface
+final class EventPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $notificationManager;
+    private $eventManager;
 
-    public function __construct(NotificationManager $notificationManager)
+    public function __construct(EventManager $eventManager)
     {
-        $this->notificationManager = $notificationManager;
+        $this->eventManager = $eventManager;
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Event && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';
     }
 
-    public static function getSubscribedEvents()
+    public function persist($data, array $context = [])
     {
-        return [
-            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent'
-        ];
+        return $this->eventManager->createEvent($data);
     }
 
-    public function onEmailNotificationSent(EmailNotificationSentEvent $event)
+    public function remove($data, array $context = [])
     {
-        // todo : which user ???
-        $this->notificationManager->createNotified($event->getNotification(), $event->getUser(), $event->getMedium());
+        // call your persistence layer to delete $data
     }
 }

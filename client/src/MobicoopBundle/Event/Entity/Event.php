@@ -63,6 +63,13 @@ class Event implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $status;
+
+    /**
+     * @var boolean Private event. Should be filtered when event list is publicly displayed.
+     *
+     *  @Groups({"post","put"})
+     */
+    private $private;
     
     /**
      * @var string The short description of the event.
@@ -182,6 +189,16 @@ class Event implements ResourceInterface, \JsonSerializable
     public function setStatus(int $status)
     {
         $this->status = $status;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(bool $private)
+    {
+        $this->private = $private;
     }
     
     public function getDescription(): ?string
@@ -321,6 +338,7 @@ class Event implements ResourceInterface, \JsonSerializable
                 'iri'               => $this->getIri(),
                 'name'              => $this->getName(),
                 'status'            => $this->getStatus(),
+                'private'           => $this->isPrivate(),
                 'fullDescription'   => $this->getFullDescription(),
                 'description'       => $this->getDescription(),
                 'fromDate'          => $this->getFromDate(),

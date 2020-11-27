@@ -237,9 +237,7 @@
           </v-row>
           <!-- END times -->
 
-
-
-
+          <!-- URL -->
           <v-row justify="center">
             <v-col cols="6">
               <v-tooltip
@@ -258,6 +256,33 @@
               </v-tooltip>
             </v-col>
           </v-row>
+
+          <!-- Private ? -->
+          <v-row justify="center">
+            <v-col cols="6">
+              <v-switch
+                v-model="isPrivate"
+                color="success"
+                inset
+              >
+                <template v-slot:label>
+                  {{ $t('form.private.label') }} 
+                  <v-tooltip
+                    color="info"
+                    right
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('form.private.tooltip') }}</span>
+                  </v-tooltip>
+                </template>
+              </v-switch>
+            </v-col>
+          </v-row>
+
           <v-row justify="center">
             <v-col cols="6">
               <v-file-input
@@ -396,6 +421,7 @@ export default {
       endDateRules: [
         v => !!v || this.$t("endDate.error"),
       ],
+      isPrivate: false,
       avatar: null,
       loading: false,
       snackError: null,
@@ -437,6 +463,7 @@ export default {
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
         newEvent.append("description", this.description);
+        newEvent.append("private", this.private);
         newEvent.append("avatar", this.avatar);
         newEvent.append("address", JSON.stringify(this.eventAddress));
         newEvent.append("startDate", this.startDate);

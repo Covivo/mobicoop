@@ -34,6 +34,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -109,6 +110,7 @@ use App\Event\Filter\TerritoryFilter;
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
+ * @ApiFilter(BooleanFilter::class, properties={"private"})
  */
 class Event
 {
@@ -141,6 +143,14 @@ class Event
      * @Groups({"readEvent","write"})
      */
     private $status;
+
+    /**
+     * @var boolean Private event. Should be filtered when event list is publicly displayed.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"readEvent","write"})
+     */
+    private $private;
     
     /**
      * @var string The short description of the event.
@@ -286,6 +296,18 @@ class Event
     public function setStatus(int $status)
     {
         $this->status = $status;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(bool $private): self
+    {
+        $this->private = $private;
+
+        return $this;
     }
     
     public function getDescription(): string
