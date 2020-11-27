@@ -77,7 +77,7 @@ final class RelayPointTerritoryFilterExtension implements QueryCollectionExtensi
         } else {
             switch ($operationName) {
                 case "get":
-                    $territories = $this->authManager->getTerritoriesForItem("user_list");
+                    $territories = $this->authManager->getTerritoriesForItem("relay_point_list");
             }
         }
 
