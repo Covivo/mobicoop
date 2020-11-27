@@ -1,4 +1,5 @@
 {
+    "private": "Private",
     "startEvent": {
         "label": "Start"
     },

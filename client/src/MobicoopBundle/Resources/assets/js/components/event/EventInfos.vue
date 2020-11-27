@@ -32,6 +32,13 @@
         <v-card-text>
           <h3 class="text-h5  text-left font-weight-bold">
             {{ event.name }}
+            <v-chip 
+              v-if="event.private" 
+              small
+              color="warning"
+            >
+              {{ $t('private') }}
+            </v-chip>
           </h3>
           <p class="text-h5 text-left text-subtitle-1">
             {{ event.address.addressLocality }}

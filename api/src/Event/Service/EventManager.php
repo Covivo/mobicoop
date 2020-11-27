@@ -24,7 +24,7 @@
 namespace App\Event\Service;
 
 use App\Event\Entity\Event;
-use App\Event\Event\ValidateCreateEventEvent;
+use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -39,20 +39,35 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EventManager
 {
-    private $entityManager;
     private $eventRepository;
     private $dispatcher;
+    private $entityManager;
     
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository, EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
-        $this->eventDispatcher = $dispatcher;
+        $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * Create an event
+     *
+     * @param Event $event  The event to create
+     * @return Event        The event created
+     */
+    public function createEvent(Event $event)
+    {
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        $eventEvent = new EventCreatedEvent($event);
+        $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
+
+        return $event;
     }
 
     /**
@@ -66,21 +81,11 @@ class EventManager
         return $this->eventRepository->find($eventId);
     }
 
+    // very useful method :-|
     public function canReport()
     {
         // EVERYONE CAN REPORT EVENT
         return true;
-    }
-
-
-    //Send and email to the owner of the event
-    public function sendValidateEmail(int $id)
-    {
-        $event = $this->getEvent($id);
-        $eventEvent = new ValidateCreateEventEvent($event);
-        $this->eventDispatcher->dispatch($eventEvent, ValidateCreateEventEvent::NAME);
-
-        return $event;
     }
 
     /**

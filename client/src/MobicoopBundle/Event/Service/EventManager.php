@@ -91,6 +91,7 @@ class EventManager
 
         // set event infos
         $event->setName($data->get('name'));
+        $event->setPrivate($data->get('private'));
         $event->setDescription($data->get('description'));
         $event->setFullDescription($data->get('fullDescription'));
         $event->setAddress($address);
@@ -125,7 +126,8 @@ class EventManager
      */
     public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy="fromDate", string $order="asc", int $limit=null, int $page=1, $search=[])
     {
-        $params=[];
+        // we only retrieve the public events, private events are still available directly with the correct url
+        $params=['private'=>false];
 
         $endDate = $endDateIsAfter ? $endDateIsAfter :  $now = new \DateTime();
         if ($flag == 0) {

@@ -7,12 +7,14 @@ import {
   Labeled,
   RichTextField,
   TextField,
+  BooleanField,
   ReferenceField,
   SelectField,
   ImageField,
   DateField,
   FunctionField,
   UrlField,
+  useTranslate
 } from 'react-admin';
 
 import { addressRenderer, UserRenderer } from '../../utils/renderers';
@@ -27,6 +29,7 @@ const useStyles = makeStyles({
 
 export const EventShow = (props) => {
   const classes = useStyles();
+  const translate = useTranslate();
   return (
     <Show {...props} title="Evénement > afficher">
       <SimpleShowLayout className={classes.form}>
@@ -68,6 +71,10 @@ export const EventShow = (props) => {
             { id: 1, name: 'Validé' },
             { id: 2, name: 'Désactivé' },
           ]}
+        />
+        <BooleanField
+          source="private"
+          label={translate('custom.label.event.private')}
         />
       </SimpleShowLayout>
     </Show>

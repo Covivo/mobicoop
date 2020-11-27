@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,27 +20,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Event;
+namespace App\Communication\EventSubscriber;
 
-use Symfony\Contracts\EventDispatcher\Event;
-use App\Event\Entity\Event as EventEntity;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Communication\Service\NotificationManager;
+use App\Event\Event\EventCreatedEvent;
 
-/**
- * Event sent when an email notification is sent.
- */
-class ValidateCreateEventEvent extends Event
+class EventSubscriber implements EventSubscriberInterface
 {
-    public const NAME = 'validate_create_event';
+    private $notificationManager;
 
-    protected $event;
 
-    public function __construct(EventEntity $event)
+    public function __construct(NotificationManager $notificationManager)
     {
-        $this->event = $event;
+        $this->notificationManager = $notificationManager;
     }
 
-    public function getEvent()
+    public static function getSubscribedEvents()
     {
-        return $this->event;
+        return [
+            EventCreatedEvent::NAME => 'onEventCreated'
+        ];
+    }
+
+    public function onEventCreated(EventCreatedEvent $event)
+    {
+        $this->notificationManager->notifies(EventCreatedEvent::NAME, $event->getEvent()->getUser(), $event->getEvent());
     }
 }
