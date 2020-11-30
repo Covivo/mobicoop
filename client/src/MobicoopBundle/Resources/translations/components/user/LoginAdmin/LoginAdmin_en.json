@@ -1,0 +1,14 @@
+{
+    "title": "Connexion en tant que {user} ",
+    "Bad credentials.": "Nom d'utilisateur ou mot de passe incorrect.",
+    "Unable to get an API token.": "Erreur lors de la connexion.",
+    "connection": "Se connecter",
+    "password": "Mon mot de passe",
+    "userEmail": "Email de l'utilisateur",
+    "userEmailRequired": "L'adresse email de l'utilisateur est requise",
+    "userEmailInvalid": "L'adresse email de l'utilisateur doit être valide",
+    "adminEmail": "Mon email",
+    "adminEmailRequired": "Mon adresse email est requise",
+    "adminEmailInvalid": "Mon adresse email doit être valide",
+    "passwordRequired": "Le mot de passe est requis"
+}
