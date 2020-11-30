@@ -81,6 +81,12 @@ user_login_token:
         en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
+user_login_delegate:
+    path:
+        fr: /delegate/connexion/{email}/{delegateEmail}
+        en: /delegate/login/{email}/{delegateEmail}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::loginAdmin
+    
 # logout
 user_logout:
     path: /user/logout

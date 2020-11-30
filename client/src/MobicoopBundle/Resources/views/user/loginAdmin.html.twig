@@ -1,0 +1,16 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+  {% trans from 'ui' %}user.login.title{% endtrans %} - {{ app_name }}
+{% endblock %}
+{% block stylesheets %}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/login") }}#}
+{% endblock %}
+
+{% block main %}
+  <login-admin
+      :email = "{{ email|json_encode }}"
+      :delegate-email = "{{ delegate_email|json_encode }}"
+  />
+
+{% endblock %}
