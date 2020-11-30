@@ -23,8 +23,10 @@
 
 namespace App\Action\Service;
 
+use Symfony\Contracts\EventDispatcher\Event;
 use App\Action\Entity\Action;
 use App\Action\Entity\Animation;
+use App\Action\Exception\ActionException;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
 use App\App\Entity\App;
@@ -44,6 +46,7 @@ use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
 use App\Solidary\Event\SolidaryUserUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\User\Entity\User;
+use App\User\Event\LoginDelegateEvent;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -67,40 +70,41 @@ class ActionManager
     }
     
     /**
-     * Handle a Solidary Event
+     * Handle events
      *
      * @param string $actionName    Name of the action of this event
-     * @param Object $object        Event of the action
+     * @param Event $event          Event of the action
      * @return void
      */
-    public function handleAction(string $actionName, Object $object=null)
+    public function handleAction(string $actionName, Event $event=null)
     {
         // Get the action
         $action = $this->actionRepository->findOneBy(['name'=>$actionName]);
         if (empty($action)) {
-            throw new SolidaryException(SolidaryException::BAD_SOLIDARY_ACTION);
+            throw new ActionException(ActionException::BAD_ACTION);
         }
         switch ($actionName) {
-            case SolidaryUserStructureAcceptedEvent::NAME:$this->onSolidaryUserStructureAccepted($action, $object);
+            case SolidaryUserStructureAcceptedEvent::NAME:$this->onSolidaryUserStructureAccepted($action, $event);
                 break;
-            case SolidaryUserStructureRefusedEvent::NAME:$this->onSolidaryUserStructureRefused($action, $object);
+            case SolidaryUserStructureRefusedEvent::NAME:$this->onSolidaryUserStructureRefused($action, $event);
                 break;
-            case SolidaryUserCreatedEvent::NAME:$this->onSolidaryUserCreated($action, $object);
+            case SolidaryUserCreatedEvent::NAME:$this->onSolidaryUserCreated($action, $event);
                 break;
-            case SolidaryUserUpdatedEvent::NAME:$this->onSolidaryUserUpdated($action, $object);
+            case SolidaryUserUpdatedEvent::NAME:$this->onSolidaryUserUpdated($action, $event);
                 break;
-            case SolidaryCreatedEvent::NAME:$this->onSolidaryCreated($action, $object);
+            case SolidaryCreatedEvent::NAME:$this->onSolidaryCreated($action, $event);
                 break;
-            case SolidaryUpdatedEvent::NAME:$this->onSolidaryUpdated($action, $object);
+            case SolidaryUpdatedEvent::NAME:$this->onSolidaryUpdated($action, $event);
                 break;
-            case SolidaryContactMessageEvent::NAME:$this->onSolidaryContactMessage($action, $object);
+            case SolidaryContactMessageEvent::NAME:$this->onSolidaryContactMessage($action, $event);
                 break;
-            case SolidaryContactSmsEvent::NAME:$this->onSolidaryContactSms($action, $object);
+            case SolidaryContactSmsEvent::NAME:$this->onSolidaryContactSms($action, $event);
                 break;
-            case SolidaryContactEmailEvent::NAME:$this->onSolidaryContactEmail($action, $object);
+            case SolidaryContactEmailEvent::NAME:$this->onSolidaryContactEmail($action, $event);
                 break;
-            case SolidaryAnimationPostedEvent::NAME:$this->onSolidaryAnimationPosted($object);
+            case SolidaryAnimationPostedEvent::NAME:$this->onSolidaryAnimationPosted($event);
                 break;
+            case LoginDelegateEvent::NAME:$this->onLoginDelegate($action, $event);
         }
     }
 
@@ -278,5 +282,10 @@ class ActionManager
                 $solidaryAnimation->getProgression()
             );
         }
+    }
+
+    private function onLoginDelegate(Action $action, LoginDelegateEvent $event)
+    {
+        $this->treatDiary($action, $event->getUserDelegated(), $event->getUser());
     }
 }

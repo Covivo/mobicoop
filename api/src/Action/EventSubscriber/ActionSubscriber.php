@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,10 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Exception;
+namespace App\Action\EventSubscriber;
 
-class ActionException extends \LogicException
+use App\Action\Service\ActionManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\User\Event\LoginDelegateEvent;
+
+/**
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ */
+class ActionSubscriber implements EventSubscriberInterface
 {
-    const INVALID_DATA_PROVIDED = "Invalid data provided";
-    const BAD_ACTION = "Unknown action";
+    private $actionManager;
+
+    public function __construct(ActionManager $actionManager)
+    {
+        $this->actionManager = $actionManager;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            LoginDelegateEvent::NAME => 'onLoginDelegate'
+        ];
+    }
+
+    public function onLoginDelegate(LoginDelegateEvent $event)
+    {
+        $this->actionManager->handleAction(LoginDelegateEvent::NAME, $event);
+    }
 }

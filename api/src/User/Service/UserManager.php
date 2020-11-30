@@ -574,6 +574,18 @@ class UserManager
     }
 
     /**
+     * Check a password for a user
+     *
+     * @param User $user        The user
+     * @param string $password  The password to check
+     * @return bool             The password matches or not
+     */
+    public function isValidPassword(User $user, string $password)
+    {
+        return $this->encoder->isPasswordValid($user, $password);
+    }
+
+    /**
      * Treat a user : set default parameters.
      * Used for example for imports.
      *
