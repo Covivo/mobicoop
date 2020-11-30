@@ -623,7 +623,9 @@ class PaymentManager
                     $this->eventDispatcher->dispatch(ConfirmDirectPaymentRegularEvent::NAME, $event);
                     // we put in array the ask and the ask linked
                     $askIds[] = $carpoolItem->getAsk()->getId();
-                    $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                    if ($carpoolItem->getAsk()->getAskLinked()) {
+                        $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                    }
                 }
             }
 
@@ -737,7 +739,9 @@ class PaymentManager
                         
                         // we put in array the ask and the ask linked
                         $askIds[] = $carpoolItem->getAsk()->getId();
-                        $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                        if ($carpoolItem->getAsk()->getAskLinked()) {
+                            $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                        }
                     }
                 }
             }
