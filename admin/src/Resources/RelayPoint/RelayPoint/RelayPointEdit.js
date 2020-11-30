@@ -15,7 +15,6 @@ import {
   ReferenceField,
   useTranslate,
   FormDataConsumer,
-  useNotify,
 } from 'react-admin';
 
 import GeocompleteInput from '../../../components/geolocation/geocomplete';
@@ -33,7 +32,6 @@ const isLatitude = (lat) => isFinite(lat) && Math.abs(lat) <= 90;
 const isLongitude = (lng) => isFinite(lng) && Math.abs(lng) <= 180;
 
 export const RelayPointEdit = (props) => {
-  const notify = useNotify();
   const translate = useTranslate();
 
   const validateLatitude = (value) =>
