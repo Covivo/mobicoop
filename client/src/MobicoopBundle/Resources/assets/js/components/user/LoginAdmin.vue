@@ -100,7 +100,7 @@ export default {
       type: String,
       default: null
     },
-    errormessage: {
+    errorMessage: {
       type: Object,
       default: null
     },

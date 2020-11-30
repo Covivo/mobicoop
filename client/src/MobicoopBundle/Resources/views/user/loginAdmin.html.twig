@@ -11,6 +11,7 @@
   <login-admin
       :email = "{{ email|json_encode }}"
       :delegate-email = "{{ delegate_email|json_encode }}"
+      :error-message = "{{ errorMessage|json_encode }}"
   />
 
 {% endblock %}
