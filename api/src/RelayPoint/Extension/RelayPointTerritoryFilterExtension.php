@@ -60,7 +60,9 @@ final class RelayPointTerritoryFilterExtension implements QueryCollectionExtensi
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        // this filter only applies to collection
+        return;
+        //$this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
@@ -69,7 +71,6 @@ final class RelayPointTerritoryFilterExtension implements QueryCollectionExtensi
         if (RelayPoint::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
             return;
         }
-
         $territories = [];
 
         // we check if the user has limited territories
