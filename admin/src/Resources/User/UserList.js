@@ -9,6 +9,7 @@ import {
   ReferenceInput,
   TextField,
   DateField,
+  Button,
   EditButton,
   BooleanField,
   DatagridBody,
@@ -25,6 +26,7 @@ import FiltersTraject from './FiltersTraject';
 
 import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
 import frLocale from 'date-fns/locale/fr';
+import decodeJwt from 'jwt-decode';
 
 const UserList = (props) => {
   const translate = useTranslate();
@@ -32,6 +34,19 @@ const UserList = (props) => {
   const [communities, setCommunities] = useState();
   const dataProvider = useDataProvider();
 
+  const frontLoginDelegatePath = process.env.REACT_APP_FRONT_LOGIN_DELEGATE_PATH;
+  const frontLoginDelegate = (process.env.REACT_APP_FRONT_LOGIN_DELEGATE == 'true' ? true : false);
+  const email = decodeJwt(global.localStorage.getItem('token')).username;
+
+  const ConnectButton = ({ record }) => (
+    <Button
+      onClick={() => { 
+        window.open(frontLoginDelegatePath+'/'+email+'/'+record.email, '_blank'); 
+      }}
+      label={translate('custom.label.user.loginDelegate')}
+    />
+  );
+  
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
     { id: 2, name: translate('custom.label.user.choices.men') },
@@ -99,7 +114,7 @@ const UserList = (props) => {
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
-
+  
   const UserBulkActionButtons = (props) => {
     return (
       <>
@@ -193,6 +208,7 @@ const UserList = (props) => {
           source="lastActivityDate"
           label={translate('custom.label.user.lastActivityDate')}
         />
+        {isAuthorized('login_delegate') && frontLoginDelegate && <ConnectButton /> }
         {isAuthorized('user_update') && <EditButton />}
       </MyDatagridUser>
     </List>
