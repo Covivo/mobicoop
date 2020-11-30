@@ -57,6 +57,6 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
             $user = $this->security->getUser();
         }
         
-        return $this->relayPointManager->getRelayPoints($user, $context);
+        return $this->relayPointManager->getRelayPoints($user, $context, $operationName);
     }
 }

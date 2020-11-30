@@ -59,6 +59,11 @@ use App\RelayPoint\Filter\TerritoryFilter;
  *          "get"={
  *              "security_post_denormalize"="is_granted('relay_point_list',object)"
  *          },
+ *          "public"={
+ *              "method"="GET",
+ *              "security_post_denormalize"="is_granted('relay_point_list',object)",
+ *              "path"="/relay_points/public"
+ *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('relay_point_create',object)"
  *          },
