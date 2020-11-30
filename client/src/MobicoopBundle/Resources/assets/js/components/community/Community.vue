@@ -78,6 +78,20 @@
                 >
                   {{ $t("buttons.publish.label") }}
                 </v-btn>
+                <!-- button for access to the admin : only for creator -->
+                <div v-if="isCreator && canAccessAdminFromCommunity !== false">
+                  <v-btn
+                    class="mt-5"
+                    color="secondary"
+                    style="letter-spacing: -0.01px;"
+                    rounded
+                    target="_blank"
+                    :href="urlAdmin"
+                    :width="250"
+                  >
+                    {{ $t("buttons.accessAdmin.label") }}
+                  </v-btn>
+                </div>
                 <v-btn
                   class="mt-5"
                   color="primary"
@@ -177,21 +191,6 @@
                   </template>
                   <span>{{ $t("tooltips.connected") }}</span>
                 </v-tooltip>
-              </div>
-
-              <!-- button for access to the admin : only for creator -->
-              <div v-if="isCreator && canAccessAdminFromCommunity !== false">
-                <v-btn
-                  class="mt-5"
-                  color="secondary"
-                  style="letter-spacing: -0.01px;"
-                  rounded
-                  target="_blank"
-                  :href="urlAdmin"
-                  :width="250"
-                >
-                  {{ $t("buttons.accessAdmin.label") }}
-                </v-btn>
               </div>
 
               <!-- widget -->
