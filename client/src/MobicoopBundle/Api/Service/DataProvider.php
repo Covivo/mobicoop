@@ -87,6 +87,7 @@ class DataProvider
 
     private $uri;
     private $username;
+    private $usernameDelegate;
     private $password;
     private $emailToken;
     private $passwordToken;
@@ -127,13 +128,14 @@ class DataProvider
      * @param string $passwordToken         The reset password token for authentification
      * @param string $authPath              The api path for default authentication
      * @param string $loginPath             The api path for user authentication
+     * @param string $loginDelegatePath     The api path for user delegation authentication
      * @param string $loginTokenPath        The api path for user authentication with only validate token
      * @param string $loginSsoPath          The api path for user authentication by sso
      * @param string $tokenId               The token id
      * @param Deserializer $deserializer    The deserializer
      * @param SessionInterface  $session    The session
      */
-    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
+    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $loginDelegatePath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
     {
         $this->uri = $uri;
         $this->username = $username;
@@ -142,6 +144,7 @@ class DataProvider
         $this->passwordToken = $passwordToken;
         $this->authPath = $authPath;
         $this->loginPath = $loginPath;
+        $this->loginDelegatePath = $loginDelegatePath;
         $this->refreshPath = $refreshPath;
         $this->loginTokenPath = $loginTokenPath;
         $this->loginSsoPath = $loginSsoPath;
@@ -219,6 +222,17 @@ class DataProvider
     }
 
     /**
+     * Set the delegate username (for delegate user authentication)
+     *
+     * @param string $username  The delegated username
+     * @return void
+     */
+    public function setUsernameDelegate(string $usernameDelegate)
+    {
+        $this->usernameDelegate = $usernameDelegate;
+    }
+
+    /**
      * Set the email token (for user authentication with email token)
      *
      * @param string $emailToken  The token
@@ -280,6 +294,8 @@ class DataProvider
                 $this->authLoginPath = $this->loginTokenPath;
             } elseif ($this->ssoId && $this->ssoProvider) {
                 $this->authLoginPath = $this->loginSsoPath;
+            } elseif ($this->usernameDelegate) {
+                $this->authLoginPath = $this->loginDelegatePath;
             } else {
                 $this->authLoginPath = $this->loginPath;
             }
@@ -434,6 +450,27 @@ class DataProvider
                                     "ssoId" => $this->ssoId,
                                     "ssoProvider" => $this->ssoProvider,
                                     "baseSiteUri" => $this->baseSiteUri
+                                ]
+                        ]);
+                    $value = json_decode((string) $clientResponse->getBody(), true);
+                } catch (ServerException $e) {
+                    throw new ApiTokenException("Unable to get an API token.");
+                } catch (ClientException $e) {
+                    //Wrong credentials
+                    if ($e->getCode() == '401') {
+                        return new JsonResponse('bad-credentials-api');
+                    }
+                    throw new ApiTokenException("Unable to get an API token.");
+                }
+            } elseif (!is_null($this->usernameDelegate) && !is_null($this->username) && !is_null($this->password)) {
+                // we have a username, usernameDelegate and password
+                try {
+                    $clientResponse = $this->client->post($this->authLoginPath, [
+                                'headers' => ['accept' => 'application/json'],
+                                RequestOptions::JSON => [
+                                    "username" => $this->username,
+                                    "username_delegate" => $this->usernameDelegate,
+                                    "password" => $this->password
                                 ]
                         ]);
                     $value = json_decode((string) $clientResponse->getBody(), true);

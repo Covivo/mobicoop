@@ -99,6 +99,7 @@ services:
             $password: '%env(resolve:API_PASSWORD)%'
             $authPath: '%env(resolve:API_AUTH_PATH)%'
             $loginPath: '%env(resolve:API_LOGIN_PATH)%'
+            $loginDelegatePath: '%env(resolve:API_LOGIN_DELEGATE_PATH)%'
             $refreshPath: '%env(resolve:API_REFRESH_PATH)%'
             $loginTokenPath: '%env(resolve:API_LOGIN_TOKEN_PATH)%'
             $loginSsoPath: '%env(resolve:API_LOGIN_SSO_PATH)%'

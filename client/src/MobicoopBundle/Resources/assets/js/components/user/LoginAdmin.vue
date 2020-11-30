@@ -30,7 +30,6 @@
             {{ errorDisplay }}
           </v-alert>
           <v-form
-            id="formLogin"
             ref="form"
             v-model="valid"
             lazy-validation
@@ -42,14 +41,14 @@
               v-model="userEmail"
               :rules="userRules"
               :label="$t('userEmail')"
-              name="email"
+              name="emailDelegate"
               required
             />
             <v-text-field
               v-model="adminEmail"
               :rules="adminRules"
               :label="$t('adminEmail')"
-              name="adminEmail"
+              name="email"
               required
             />
 
