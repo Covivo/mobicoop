@@ -43,6 +43,9 @@ use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\PayAfterCarpoolEvent;
 use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Event\SignalDeptEvent;
+use App\Payment\Event\IdentityProofAcceptedEvent;
+use App\Payment\Event\IdentityProofRejectedEvent;
+use App\Payment\Event\IdentityProofOutdatedEvent;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -1132,10 +1135,17 @@ class PaymentManager
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
                 $paymentProfile->setElectronicallyPayable(true);
                 $paymentProfile->setValidatedDate(new \DateTime());
+                $paymentProfile->setValidationOutdatedDate(null);
+                // we dispatch the event
+                $event = new IdentityProofAcceptedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofAcceptedEvent::NAME, $event);
             break;
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
                 $paymentProfile->setElectronicallyPayable(false);
+                // we dispatch the event
+                $event = new IdentityProofRejectedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofRejectedEvent::NAME, $event);
             break;
             case Hook::STATUS_OUTDATED_RESSOURCE:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
@@ -1144,6 +1154,9 @@ class PaymentManager
                 // We reinit the dates
                 $paymentProfile->setValidationAskedDate(null);
                 $paymentProfile->setValidatedDate(null);
+                // we dispatch the event
+                $event = new IdentityProofOutdatedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofOutdatedEvent::NAME, $event);
             break;
         }
 
