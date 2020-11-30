@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,10 +21,34 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Exception;
+namespace App\User\Event;
 
-class ActionException extends \LogicException
+use App\User\Entity\User;
+use Symfony\Contracts\EventDispatcher\Event;
+
+/**
+ * Event sent when login delegation.
+ */
+class LoginDelegateEvent extends Event
 {
-    const INVALID_DATA_PROVIDED = "Invalid data provided";
-    const BAD_ACTION = "Unknown action";
+    public const NAME = 'login_delegate';
+
+    protected $user;
+    protected $userDelegated;
+
+    public function __construct(User $user, User $userDelegated)
+    {
+        $this->user = $user;
+        $this->userDelegated = $userDelegated;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function getUserDelegated()
+    {
+        return $this->userDelegated;
+    }
 }

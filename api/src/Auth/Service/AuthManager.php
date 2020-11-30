@@ -119,6 +119,26 @@ class AuthManager
     }
 
     /**
+     * Check if a requester has an authorization on an item.
+     * The requester is passed in arguments.
+     * Used for api inner checks.
+     *
+     * @param User      $requester  The requester
+     * @param string    $itemName   The name of the item to check
+     * @param array     $params     The params associated with the item
+     * @return bool
+     */
+    public function isInnerAuthorized(User $requester, string $itemName, array $params = [])
+    {
+        if (!$item = $this->authItemRepository->findByName($itemName)) {
+            throw new AuthItemNotFoundException('Auth item ' . $itemName . ' not found');
+        }
+
+        // check if the item is authorized for the requester
+        return $this->isAssigned($requester, $item, $params);
+    }
+
+    /**
      * Check if a requester is assigned an auth item (recursive).
      *
      * @param UserInterface $requester  The requester

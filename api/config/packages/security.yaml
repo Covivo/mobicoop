@@ -16,12 +16,12 @@ security:
             chain:
                 providers: [servers, users]
                 # providers: [jwt, servers, users]
-        # provider for apps authentication (eg. frontend)
+        # provider for apps authentication (eg. unlogged frontend)
         servers:
             entity:
                 class: 'App\App\Entity\App'
                 property: 'username'
-        # provider for users authentication (eg. mobile apps, admin)
+        # provider for users authentication (eg. logged frontend, mobile apps, admin)
         users:
             entity:
                 class: 'App\User\Entity\User'
@@ -66,6 +66,16 @@ security:
             guard:
                 authenticators:
                     - App\Security\SsoAuthenticator
+
+        # firewall for user to server delegated authentication
+        login_user_delegate:
+            pattern:  ^/login-delegate
+            stateless: true
+            anonymous: true
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\DelegateAuthenticator
 
         # firewall for user to server authentication
         login_user:
