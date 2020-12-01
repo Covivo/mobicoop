@@ -28,6 +28,7 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -111,9 +112,13 @@ class CommunityVoter extends Voter
         return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community'=>$community]);
     }
 
-    private function canUpdateCommunity(Community $community)
+    private function canUpdateCommunity($subject)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$community]);
+        if ($subject instanceof Community) {
+            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$subject]);
+        } elseif ($subject instanceof CommunityUser) {
+            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$subject->getCommunity()]);
+        }
     }
 
     private function canDeleteCommunity(Community $community)

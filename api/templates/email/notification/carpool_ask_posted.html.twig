@@ -64,41 +64,59 @@
             <table  style="width:100%;">
                 <tr>
                     <td style="width:100%">
-                        {% if (result.outward and result.outward.monCheck) or (result.return and result.return.monCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_DARK_LOGO')}}" alt="Mon"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_MON_LIGHT_LOGO')}}" alt="Mon"/>
-                        {% endif %}
-                        {% if (result.outward and result.outward.tueCheck) or (result.return and result.return.tueCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_DARK_LOGO')}}" alt="Tue"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TUE_LIGHT_LOGO')}}" alt="Tue"/>
-                        {% endif %} 
-                        {% if (result.outward and result.outward.wedCheck) or (result.return and result.return.wedCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_DARK_LOGO')}}" alt="Wed"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_WED_LIGHT_LOGO')}}" alt="Wed"/>
-                        {% endif %} 
-                        {% if (result.outward and result.outward.thuCheck) or (result.return and result.return.thuCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_DARK_LOGO')}}" alt="Thu"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_THU_LIGHT_LOGO')}}" alt="Thu"/>
-                        {% endif %} 
-                        {% if (result.outward and result.outward.friCheck) or (result.return and result.return.friCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_DARK_LOGO')}}" alt="Fri"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FRI_LIGHT_LOGO')}}" alt="Fri"/>
-                        {% endif %} 
-                        {% if (result.outward and result.outward.satCheck) or (result.return and result.return.satCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_DARK_LOGO')}}" alt="Sat"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SAT_LIGHT_LOGO')}}" alt="Sat"/>
-                        {% endif %} 
-                        {% if (result.outward and result.outward.sunCheck) or (result.return and result.return.sunCheck) %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_DARK_LOGO')}}" alt="Sun"/>
-                        {% else %}
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_SUN_LIGHT_LOGO')}}" alt="Sun"/>
-                        {% endif %}     
+                        <table>
+                            <tr>
+                                <td>
+                                    {% if (result.outward and result.outward.monCheck) or (result.return and result.return.monCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayMonday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayMonday"|trans }}</span></div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.tueCheck) or (result.return and result.return.tueCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayTuesday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayTuesday"|trans }}</span></div>
+                                    {% endif %} 
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.wedCheck) or (result.return and result.return.wedCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayWednesday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayWednesday"|trans }}</span></div>
+                                    {% endif %} 
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.thuCheck) or (result.return and result.return.thuCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayThursday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayThursday"|trans }}</span></div>
+                                    {% endif %} 
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.friCheck) or (result.return and result.return.friCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayFriday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayFriday"|trans }}</span></div>
+                                    {% endif %} 
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.satCheck) or (result.return and result.return.satCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdaySaturday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdaySaturday"|trans }}</span></div>
+                                    {% endif %} 
+                                </td>
+                                <td>
+                                    {% if (result.outward and result.outward.sunCheck) or (result.return and result.return.sunCheck) %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdaySunday"|trans }}</strong></span></div>
+                                    {% else %}
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdaySunday"|trans }}</span></div>
+                                    {% endif %}     
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>

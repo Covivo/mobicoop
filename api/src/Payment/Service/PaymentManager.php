@@ -43,6 +43,9 @@ use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\PayAfterCarpoolEvent;
 use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Event\SignalDeptEvent;
+use App\Payment\Event\IdentityProofAcceptedEvent;
+use App\Payment\Event\IdentityProofRejectedEvent;
+use App\Payment\Event\IdentityProofOutdatedEvent;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Repository\PaymentProfileRepository;
@@ -96,7 +99,7 @@ class PaymentManager
      * @param CarpoolItemRepository $carpoolItemRepository          The carpool items repository
      * @param PaymentDataProvider $paymentProvider                  The payment data provider
      * @param PaymentProfileRepository $paymentProfileRepository    The payment profile repository
-     * @param boolean $paymentActive                                If the online payment is active
+     * @param string $paymentActive                                 If the online payment is active
      * @param string $paymentProviderService                        The payment provider service
      * @param string $securityToken                                 The payment security token (for hooks)
      * @param string $validationDocsPath                            Path to the temp directory for validation documents
@@ -111,8 +114,8 @@ class PaymentManager
         PaymentProfileRepository $paymentProfileRepository,
         UserManager $userManager,
         LoggerInterface $logger,
-        bool $paymentActive,
-        String $paymentProviderService,
+        string $paymentActive,
+        string $paymentProviderService,
         string $securityToken,
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
@@ -620,7 +623,9 @@ class PaymentManager
                     $this->eventDispatcher->dispatch(ConfirmDirectPaymentRegularEvent::NAME, $event);
                     // we put in array the ask and the ask linked
                     $askIds[] = $carpoolItem->getAsk()->getId();
-                    $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                    if ($carpoolItem->getAsk()->getAskLinked()) {
+                        $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                    }
                 }
             }
 
@@ -734,7 +739,9 @@ class PaymentManager
                         
                         // we put in array the ask and the ask linked
                         $askIds[] = $carpoolItem->getAsk()->getId();
-                        $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                        if ($carpoolItem->getAsk()->getAskLinked()) {
+                            $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
+                        }
                     }
                 }
             }
@@ -1132,10 +1139,17 @@ class PaymentManager
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
                 $paymentProfile->setElectronicallyPayable(true);
                 $paymentProfile->setValidatedDate(new \DateTime());
+                $paymentProfile->setValidationOutdatedDate(null);
+                // we dispatch the event
+                $event = new IdentityProofAcceptedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofAcceptedEvent::NAME, $event);
             break;
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
                 $paymentProfile->setElectronicallyPayable(false);
+                // we dispatch the event
+                $event = new IdentityProofRejectedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofRejectedEvent::NAME, $event);
             break;
             case Hook::STATUS_OUTDATED_RESSOURCE:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
@@ -1144,6 +1158,9 @@ class PaymentManager
                 // We reinit the dates
                 $paymentProfile->setValidationAskedDate(null);
                 $paymentProfile->setValidatedDate(null);
+                // we dispatch the event
+                $event = new IdentityProofOutdatedEvent($paymentProfile);
+                $this->eventDispatcher->dispatch(IdentityProofOutdatedEvent::NAME, $event);
             break;
         }
 

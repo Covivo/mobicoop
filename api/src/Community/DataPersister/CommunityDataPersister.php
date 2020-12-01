@@ -33,6 +33,7 @@ use App\Community\Service\CommunityManager;
  * Use for add the role community_manager to the author before save
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
+ * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
 
 final class CommunityDataPersister implements ContextAwareDataPersisterInterface
@@ -48,18 +49,23 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        // We post a community, we add the role community_manager to the author
-        return $data instanceof Community && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        // We post a community, we add the role community_manager_public to the author
+        return $data instanceof Community;
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community id is provided"));
         }
-
-        $data = $this->communityManager->save($data);
+       
+        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+            // only for validation or update availabilities
+            $data = $this->communityManager->updateCommunity($data);
+        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+            // create
+            $data = $this->communityManager->save($data);
+        }
         return $data;
     }
 

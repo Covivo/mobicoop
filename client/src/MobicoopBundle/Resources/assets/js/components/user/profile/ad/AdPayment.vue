@@ -75,10 +75,7 @@ export default {
       return this.paymentStatus == -1;
     },
     status() {
-      switch (this.paymentStatus) {
-      case 1: return "pending";
-      default: return "paid";
-      }
+      return this.getStatus(this.paymentStatus);
     },  
     displayPaymentStatus(){
       return (this.isDriver) ? this.$t('driver.'+this.status) : this.$t('passenger.'+this.status);
@@ -89,11 +86,10 @@ export default {
   },
   methods:{
     getStatus(paymentStatus){
-      if(paymentStatus=="1"){
+      switch (this.paymentStatus) {
+      case 1: 
         return "pending";
-      }
-      else if(paymentStatus=="2"){
-        // Paid
+      default: 
         this.disabled = true;
         return "paid";
       }

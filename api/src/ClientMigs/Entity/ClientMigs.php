@@ -21,26 +21,54 @@
  *    LICENSE
  **************************/
 
-namespace App\Payment\Event;
+namespace App\ClientMigs\Entity;
 
-use App\Payment\Entity\PaymentProfile;
-use Symfony\Contracts\EventDispatcher\Event;
+use Doctrine\ORM\Mapping as ORM;
 
-class IdentityProofOutdatedEvent extends Event
+/**
+ * A client migration.
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="client_migs")
+ */
+class ClientMigs
 {
-    public const NAME = 'identity_proof_outdated';
-
-
-    public function __construct(PaymentProfile $paymentProfile)
-    {
-        $this->paymentProfile = $paymentProfile;
-    }
+    /**
+     * @var string The id of this migration
+     *
+     * @ORM\Id
+     * @ORM\Column(type="string")
+     */
+    private $version;
 
     /**
-     * @return PaymentProfile
+     * @var \DateTime The date and time of this migration
+     *
+     * @ORM\Column(type="datetime")
      */
-    public function getPaymentProfile(): PaymentProfile
+    private $executedAt;
+    
+    public function getVersion(): string
     {
-        return $this->paymentProfile;
+        return $this->version;
+    }
+    
+    public function setVersion(string $version): self
+    {
+        $this->version = $version;
+        
+        return $this;
+    }
+
+    public function getExecutedAt(): ?\DateTimeInterface
+    {
+        return $this->executedAt;
+    }
+
+    public function setExecutedAt(\DateTimeInterface $executedAt): self
+    {
+        $this->executedAt = $executedAt;
+
+        return $this;
     }
 }

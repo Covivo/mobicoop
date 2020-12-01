@@ -58,9 +58,15 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community user id is provided"));
         }
-
-        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post' && $this->communityManager->canJoin($data)) {
-            $data = $this->communityManager->saveCommunityUser($data);
+        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+            // only for validation or update availabilities
+            $data = $this->communityManager->updateCommunityUser($data);
+        } elseif (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post') {
+            if (!$this->communityManager->canJoin($data)) {
+                throw new \InvalidArgumentException("the user don't have a valid domain to join this community");
+            } else {
+                $data = $this->communityManager->saveCommunityUser($data);
+            }
         }
         return $data;
     }
