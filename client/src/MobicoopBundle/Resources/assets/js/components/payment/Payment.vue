@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <v-row align="center">
+    <v-row
+      align="center"
+    >
       <!-- BACK BUTTON -->
       <v-col
         class="mt-0 mb-0 mr-0 ml-3 pa-0"
@@ -98,9 +100,29 @@
         </v-menu>
       </v-col>
     </v-row>
-    
+    <v-row
+      v-if="loadingPage"
+      justify="center"
+    >
+      <v-col cols="8">
+        <v-alert
+          text
+          color="success"
+          class="text-center"
+        >
+          {{ $t('loadingPageText') }}
+          <v-progress-linear
+            indeterminate
+            rounded
+          />
+        </v-alert>
+      </v-col>
+    </v-row>      
     <!-- MAIN -->
-    <v-row justify="center">
+    <v-row
+      v-else-if="currentItem || nextItem || previousItem"
+      justify="center"
+    >
       <!-- JOURNEY SELECTION ("carousel") -->
       <v-col
         cols="8"
@@ -825,6 +847,22 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row
+      v-else
+      justify="center"
+    >
+      <v-col
+        cols="8"
+      >
+        <v-alert
+          v-alert
+          text
+          type="success"
+        >
+          {{ $t('noMoreItems') }}
+        </v-alert>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -878,7 +916,8 @@ export default {
       periods: [],
       loading: false,
       disabledComponent: false,
-      dialog: false
+      dialog: false,
+      loadingPage: true
     };
   },
   computed: {
@@ -1008,6 +1047,7 @@ export default {
       this.getPayments();
     },
     getPayments() {
+      this.loadingPage = true;
       // we set params
       let params = {
         'frequency':this.frequency,
@@ -1026,6 +1066,7 @@ export default {
             }
           });
           this.paymentItems = items;
+          this.loadingPage = false;
         });
     },
     getAmount(item) {
