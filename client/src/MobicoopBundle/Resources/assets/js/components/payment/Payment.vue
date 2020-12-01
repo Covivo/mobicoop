@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <v-row align="center">
+    <v-row
+      align="center"
+    >
       <!-- BACK BUTTON -->
       <v-col
         class="mt-0 mb-0 mr-0 ml-3 pa-0"
@@ -100,7 +102,10 @@
     </v-row>
     
     <!-- MAIN -->
-    <v-row justify="center">
+    <v-row
+      v-if="currentItem || nextItem || previousItem"
+      justify="center"
+    >
       <!-- JOURNEY SELECTION ("carousel") -->
       <v-col
         cols="8"
@@ -823,6 +828,22 @@
             {{ $t('buttons.validate') }}
           </v-btn>
         </v-row>
+      </v-col>
+    </v-row>
+    <v-row
+      v-else
+      justify="center"
+    >
+      <v-col
+        cols="8"
+      >
+        <v-alert
+          v-alert
+          text
+          type="success"
+        >
+          {{ $t('noMoreItems') }}
+        </v-alert>
       </v-col>
     </v-row>
   </v-container>
