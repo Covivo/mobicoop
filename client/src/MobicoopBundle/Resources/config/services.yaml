@@ -201,7 +201,7 @@ services:
             $solidaryDisplay: '%env(bool:SOLIDARY_DISPLAY)%'
             $paymentElectronicActive: '%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%'
             $validationDocsAuthorizedExtensions: '%env(string:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
-            $canLogAsAdmin: '%env(bool:CAN_LOG_AS_ADMIN)%'
+            $loginDelegate: '%env(bool:LOGIN_DELEGATE)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

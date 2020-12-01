@@ -86,7 +86,7 @@ class UserController extends AbstractController
     private $validationDocsAuthorizedExtensions;
     private $ssoManager;
     private $required_community;
-    private $canLogAsAdmin;
+    private $loginDelegate;
 
     /**
      * Constructor
@@ -109,7 +109,7 @@ class UserController extends AbstractController
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
         $required_community,
-        bool $canLogAsAdmin
+        bool $loginDelegate
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -126,7 +126,7 @@ class UserController extends AbstractController
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
-        $this->canLogAsAdmin = $canLogAsAdmin;
+        $this->loginDelegate = $loginDelegate;
 
         $this->ssoManager = $ssoManager;
     }
@@ -1312,7 +1312,7 @@ class UserController extends AbstractController
     */
     public function loginAdmin(Request $request)
     {
-        if ($this->canLogAsAdmin) {
+        if ($this->loginDelegate) {
             return $this->render('@Mobicoop/user/loginAdmin.html.twig', [
                 "email"=>$request->get('email'),
                 "delegate_email"=>$request->get('delegateEmail'),
