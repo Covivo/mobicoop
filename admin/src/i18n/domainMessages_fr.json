@@ -444,7 +444,8 @@
             },
             "relayPoint": {
                 "invalidLatitude": "La latitude est invalide",
-                "invalidLongitude": "La latitude est invalide"
+                "invalidLongitude": "La latitude est invalide",
+                "territory": "Territoire"
             },
             "article": {
                 "title": {
