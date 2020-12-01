@@ -100,10 +100,27 @@
         </v-menu>
       </v-col>
     </v-row>
-    
+    <v-row
+      v-if="loadingPage"
+      justify="center"
+    >
+      <v-col cols="8">
+        <v-alert
+          text
+          color="success"
+          class="text-center"
+        >
+          {{ $t('loadingPageText') }}
+          <v-progress-linear
+            indeterminate
+            rounded
+          />
+        </v-alert>
+      </v-col>
+    </v-row>      
     <!-- MAIN -->
     <v-row
-      v-if="currentItem || nextItem || previousItem"
+      v-else-if="currentItem || nextItem || previousItem"
       justify="center"
     >
       <!-- JOURNEY SELECTION ("carousel") -->
@@ -899,7 +916,8 @@ export default {
       periods: [],
       loading: false,
       disabledComponent: false,
-      dialog: false
+      dialog: false,
+      loadingPage: true
     };
   },
   computed: {
@@ -1029,6 +1047,7 @@ export default {
       this.getPayments();
     },
     getPayments() {
+      this.loadingPage = true;
       // we set params
       let params = {
         'frequency':this.frequency,
@@ -1047,6 +1066,7 @@ export default {
             }
           });
           this.paymentItems = items;
+          this.loadingPage = false;
         });
     },
     getAmount(item) {
