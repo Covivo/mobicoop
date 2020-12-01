@@ -1312,17 +1312,10 @@ class UserController extends AbstractController
     */
     public function loginAdmin(Request $request)
     {
-        $errorMessage =   '';
-        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage =  'Bad credentials.';
-            $request->getSession()->getFlashBag()->clear();
-        }
-        
         if ($this->canLogAsAdmin) {
             return $this->render('@Mobicoop/user/loginAdmin.html.twig', [
                 "email"=>$request->get('email'),
                 "delegate_email"=>$request->get('delegateEmail'),
-                "errorMessage"=>$errorMessage
             ]);
         } else {
             throw new AccessDeniedException('Access Denied.');

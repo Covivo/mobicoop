@@ -15,29 +15,20 @@
         <h1>{{ $t('title', {user: userEmail}) }}</h1>
       </v-col>
     </v-row>
-    <div class="pt-12 mt-12">
+    <div class="mt-6 pt-6">
       <v-row
         justify="center"
         align="center"
         class="text-center"
       >
         <v-col class="col-4">
-          <v-alert
-            v-if="errorDisplay!==''"
-            type="error"
-            class="text-left"
-          >
-            {{ errorDisplay }}
-          </v-alert>
           <v-form
             ref="form"
             v-model="valid"
             lazy-validation
-            :action="action"
             method="POST"
           >
             <v-text-field
-              id="email"
               v-model="userEmail"
               :rules="userRules"
               :label="$t('userEmail')"
@@ -51,9 +42,7 @@
               name="email"
               required
             />
-
             <v-text-field
-              id="password"
               v-model="password"
               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="passwordRules"
@@ -62,16 +51,26 @@
               :label="$t('password')"
               @click:append="show1 = !show1"
             />
-
+            <v-checkbox
+              v-model="validation"
+              class="check mt-12"
+              color="primary"
+              :rules="checkboxRules"
+              required
+            >
+              <template v-slot:label>
+                <div v-html="$t('checkbox.text', {user: userEmail})" />
+              </template>
+            </v-checkbox>
             <v-btn
-              :disabled="!valid"
+              :disabled="!valid || !validation || !password"
               :loading="loading"
               color="secondary"
               type="submit"
               rounded
               @click="validate"
             >
-              {{ $t('connection') }}
+              {{ $t('connection', {user: userEmail}) }}
             </v-btn>
           </v-form>
         </v-col>
@@ -81,7 +80,6 @@
 </template>
 <script>
 import axios from "axios";
-import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/LoginAdmin/";
 
 export default {
@@ -99,18 +97,13 @@ export default {
     delegateEmail: {
       type: String,
       default: null
-    },
-    errorMessage: {
-      type: Object,
-      default: null
-    },
+    }
   },
   data() {
     return {
       valid: true,
       loading: false,
       show1: false,
-      errorDisplay: "",
       userEmail: this.delegateEmail,
       userRules: [
         v => !!v || this.$t("userEmailRequired"),
@@ -121,21 +114,21 @@ export default {
         v => !!v || this.$t("adminEmailRequired"),
         v => /.+@.+/.test(v) || this.$t("adminEmailInvalid")
       ],
-      password: "",
+      password: null,
       passwordRules: [
         v => !!v || this.$t("passwordRequired")
-      ]
+      ],
+      checkboxRules: [
+        (v) => !!v || this.$t("checkbox.required", {user: userEmail}),
+      ],
+      validation: false,
     };
   },
   methods: {
-    validate() {
+    validate(e) {
       if (this.$refs.form.validate()) {
         this.loading = true;
       }
-    },
-    treatErrorMessage(errorMessage) {
-      this.errorDisplay = this.$t(errorMessage.value);
-      this.loading = false;
     }
   }
 };
