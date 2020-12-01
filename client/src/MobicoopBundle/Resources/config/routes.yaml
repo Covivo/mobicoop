@@ -1216,6 +1216,13 @@ get_platform_widget:
         en: /widget/get
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPlatformWidget
 
+# Get the platform blogPost
+platform_blog_post:
+    path:
+        fr: /blogpost
+        en: /blogpost
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::blogPost
+
 # The platform widget
 platform_widget:
     path:

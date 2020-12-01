@@ -48,4 +48,6 @@ toolsbox:
 relaypoints:
     title: "Relay points"
 payment:
-    title: "Payments"        
+    title: "Payments"
+blogPost:
+    title: "BlogPost"      

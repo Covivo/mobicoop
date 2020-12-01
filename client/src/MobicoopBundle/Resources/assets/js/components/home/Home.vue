@@ -231,10 +231,6 @@ export default {
       type: Object,
       default: null
     },
-    rss: {
-      type: Object,
-      default: null
-    },
     urlMobile: {
       type: String,
       default: null

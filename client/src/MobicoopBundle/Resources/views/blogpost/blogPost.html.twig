@@ -1,0 +1,8 @@
+{% extends '@Mobicoop/base.widget.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}blogPost.title{% endtrans %}{% endblock %}
+{% block main %}
+    <blog-post
+        :rss="{{rss|json_encode}}"
+    ></blog-post>
+{% endblock %}

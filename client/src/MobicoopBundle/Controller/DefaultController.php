@@ -100,6 +100,24 @@ class DefaultController extends AbstractController
         return $this->render('@Mobicoop/platform-get-widget.html.twig');
     }
 
+    public function blogPost(){
+        $url='https://blog.covoiturage-grandlyon.com/feed';
+
+        //xml to object
+        $feedResult = simplexml_load_file($url,'SimpleXMLElement', LIBXML_NOCDATA);
+        
+
+
+        foreach($feedResult as $item){
+
+            dd($item);
+
+            return $this->render('@Mobicoop/blogpost/blogpost.html.twig', [
+                'rss' => $item
+                ]);
+        }
+    }
+
     /**
      * Show a default page when the request page no longer exists
      */
