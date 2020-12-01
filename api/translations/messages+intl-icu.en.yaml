@@ -7,6 +7,13 @@ URLEmailsAlerts: "utilisateur/profil/modifier/mon-profil"
 Download: "Téléchargez l'application <b>Android</b> ou <b>IOS</b>"
 FollowUs: "Suivez-nous"
 signature: "A bientôt sur "
+shortdayMonday: "Lu"
+shortdayTuesday: "Ma"
+shortdayWednesday: "Me"
+shortdayThursday: "Je"
+shortdayFriday: "Ve"
+shortdaySaturday: "Sa"
+shortdaySunday: "Di"
 
 # CARPOOL_AD_RENEWAL
 
