@@ -19,14 +19,13 @@ import {
   AutocompleteInput,
 } from 'react-admin';
 
+import { DateInput } from 'react-admin-date-inputs';
+import frLocale from 'date-fns/locale/fr';
+import decodeJwt from 'jwt-decode';
 import EmailComposeButton from '../../components/email/EmailComposeButton';
 import ResetButton from '../../components/button/ResetButton';
 import isAuthorized from '../../auth/permissions';
 import FiltersTraject from './FiltersTraject';
-
-import { DateInput, DateTimeInput } from 'react-admin-date-inputs';
-import frLocale from 'date-fns/locale/fr';
-import decodeJwt from 'jwt-decode';
 
 const UserList = (props) => {
   const translate = useTranslate();
@@ -35,18 +34,18 @@ const UserList = (props) => {
   const dataProvider = useDataProvider();
 
   const frontLoginDelegatePath = process.env.REACT_APP_FRONT_LOGIN_DELEGATE_PATH;
-  const frontLoginDelegate = (process.env.REACT_APP_FRONT_LOGIN_DELEGATE == 'true' ? true : false);
+  const frontLoginDelegate = process.env.REACT_APP_FRONT_LOGIN_DELEGATE === 'true';
   const email = decodeJwt(global.localStorage.getItem('token')).username;
 
   const ConnectButton = ({ record }) => (
     <Button
-      onClick={() => { 
-        window.open(frontLoginDelegatePath+'/'+email+'/'+record.email, '_blank'); 
+      onClick={() => {
+        window.open(`${frontLoginDelegatePath}/${email}/${record.email}`, '_blank');
       }}
       label={translate('custom.label.user.loginDelegate')}
     />
   );
-  
+
   const genderChoices = [
     { id: 1, name: translate('custom.label.user.choices.women') },
     { id: 2, name: translate('custom.label.user.choices.men') },
@@ -69,11 +68,11 @@ const UserList = (props) => {
 
   const BooleanStatusField = ({ record = {}, source }) => {
     const theRecord = { ...record };
-    theRecord[source + 'Num'] = !!parseInt(record.status === 1 ? 1 : 0);
+    theRecord[`${source}Num`] = !!parseInt(record.status === 1 ? 1 : 0);
     return (
       <BooleanField
         record={theRecord}
-        source={source + 'Num'}
+        source={`${source}Num`}
         valueLabelTrue="custom.label.user.accountEnabled"
         valueLabelFalse="custom.label.user.accountDisabled"
       />
@@ -87,7 +86,7 @@ const UserList = (props) => {
   const MyDatagridRow = ({ record, resource, id, onToggleItem, children, selected, basePath }) => {
     if (selected && record.newsSubscription === false) setCount(1);
     return (
-      <TableRow key={id} hover={true}>
+      <TableRow key={id} hover>
         {/* first column: selection checkbox */}
         <TableCell padding="none">
           <Checkbox
@@ -99,22 +98,26 @@ const UserList = (props) => {
           />
         </TableCell>
         {/* data columns based on children */}
-        {React.Children.map(children, (field) => (
-          <TableCell key={`${id}-${field.props.source}`}>
-            {React.cloneElement(field, {
-              record,
-              basePath,
-              resource,
-            })}
-          </TableCell>
-        ))}
+        {React.Children.map(
+          children,
+          (field) =>
+            field && (
+              <TableCell key={`${id}-${field.props.source}`}>
+                {React.cloneElement(field, {
+                  record,
+                  basePath,
+                  resource,
+                })}
+              </TableCell>
+            )
+        )}
       </TableRow>
     );
   };
 
   const MyDatagridBody = (props) => <DatagridBody {...props} row={<MyDatagridRow />} />;
   const MyDatagridUser = (props) => <Datagrid {...props} body={<MyDatagridBody />} />;
-  
+
   const UserBulkActionButtons = (props) => {
     return (
       <>
@@ -208,7 +211,7 @@ const UserList = (props) => {
           source="lastActivityDate"
           label={translate('custom.label.user.lastActivityDate')}
         />
-        {isAuthorized('login_delegate') && frontLoginDelegate && <ConnectButton /> }
+        {isAuthorized('login_delegate') && frontLoginDelegate && <ConnectButton />}
         {isAuthorized('user_update') && <EditButton />}
       </MyDatagridUser>
     </List>
