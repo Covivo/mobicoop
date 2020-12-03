@@ -1504,8 +1504,8 @@ class UserManager
 
             $nbMessageConsidered++;
         }
-        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
-
+        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? $this->profile['experiencedTagMinAnswerPctDefault'] : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+        
         // Experienced user
         // To be experienced :
         // The User has to have a number of realized carpools >= experiencedTagMinCarpools(.env)

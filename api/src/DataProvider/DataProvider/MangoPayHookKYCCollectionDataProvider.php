@@ -70,7 +70,9 @@ final class MangoPayHookKYCCollectionDataProvider implements CollectionDataProvi
         $mangoPayHook->setEventType($this->request->get('EventType'));
         $mangoPayHook->setRessourceId($this->request->get('RessourceId'));
         $mangoPayHook->setDate($this->request->get('Date'));
-        $mangoPayHook->setSecurityToken($this->request->get('token'));
+        if (null !== $this->request->get('token') && $this->request->get('token')!=="") {
+            $mangoPayHook->setSecurityToken($this->request->get('token'));
+        }
         return $this->paymentManager->handleHookValidation($mangoPayHook);
     }
 }

@@ -82,6 +82,7 @@ class PaymentManager
     private $userManager;
     private $paymentActive;
     private $paymentActiveDate;
+    private $securityTokenActive;
     private $securityToken;
     private $exportPath;
     private $carpoolPaymentRepository;
@@ -116,6 +117,7 @@ class PaymentManager
         LoggerInterface $logger,
         string $paymentActive,
         string $paymentProviderService,
+        bool $securityTokenActive,
         string $securityToken,
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
@@ -136,6 +138,7 @@ class PaymentManager
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
+        $this->securityTokenActive = $securityTokenActive;
         $this->securityToken = $securityToken;
         $this->validationDocsPath = $validationDocsPath;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
@@ -1069,7 +1072,7 @@ class PaymentManager
      */
     public function handleHookPayIn(Hook $hook)
     {
-        if ($this->securityToken !== $hook->getSecurityToken()) {
+        if ($this->securityTokenActive && $this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
 
@@ -1123,7 +1126,7 @@ class PaymentManager
      */
     public function handleHookValidation(Hook $hook)
     {
-        if ($this->securityToken !== $hook->getSecurityToken()) {
+        if ($this->securityTokenActive && $this->securityToken !== $hook->getSecurityToken()) {
             throw new PaymentException(PaymentException::INVALID_SECURITY_TOKEN);
         }
 

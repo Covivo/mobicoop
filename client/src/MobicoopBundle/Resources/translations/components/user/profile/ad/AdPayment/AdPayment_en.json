@@ -5,7 +5,12 @@
     },
     "passenger": {
         "paid": "Paid",
-        "pending": "Pay"
+        "pending": "Pay",
+        "pendingElectronicNotActive": "Confirmer"
+    },
+    "tooltip" : {
+        "paymentElectronicActive": "Pay online or confirm the direct payment and the carpooling",
+        "paymentElectronicNotActive": "Confirm the direct payment and the carpooling"
     },
     "route": "/payments/{id}/{frequency}/{type}/{week}",
     "unpaid": "Unpaid"

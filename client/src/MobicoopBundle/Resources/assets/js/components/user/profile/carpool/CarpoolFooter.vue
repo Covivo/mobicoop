@@ -66,6 +66,7 @@
               :driver="!Array.isArray(ad.driver)" 
               :frequency="carpooler.askFrequency"
               :user="user"
+              :payment-electronic-active="paymentElectronicActive"
             />
             <v-divider
               v-if="index < carpoolers.length - 1"
@@ -104,7 +105,11 @@ export default {
     showCarpooler: {
       type: Boolean,
       default: false
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {

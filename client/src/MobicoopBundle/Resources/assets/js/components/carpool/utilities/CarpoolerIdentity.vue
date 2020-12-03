@@ -1,15 +1,11 @@
 <template>
   <v-list-item>
     <!--Carpooler avatar-->
-    <v-list-item-avatar
-      color="grey darken-3"
-      size="50"
-    >
-      <v-img
-        aspect-ratio="2"
-        :src="carpooler.avatars[0]"
-      />
-    </v-list-item-avatar>
+    <ProfileAvatar
+      :avatar="carpooler.avatars[1]"
+      :experienced="carpooler.experienced"
+      :minimized="true"
+    />
     <!--Carpooler data-->
     <v-list-item-content>
       <v-list-item-title class="font-weight-bold">
@@ -22,6 +18,7 @@
 
 <script>
 import moment from "moment";
+import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import {messages_en, messages_fr} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 
 export default {
@@ -30,6 +27,9 @@ export default {
       'en': messages_en,
       'fr': messages_fr
     },
+  },
+  components:{
+    ProfileAvatar
   },
   props: {
     carpooler: {
