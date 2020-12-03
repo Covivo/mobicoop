@@ -69,7 +69,7 @@ class UserLoadListener
             }
             $user->setUserReviewsActive($this->userReviewActive);
             $publicProfile = $this->userManager->getPublicProfile($user);
-            $user->setExperienced($publicProfile->getProfileSummary()->isExperienced());
+            $user->setExperienced((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->isExperienced() : false);
         }
     }
 }
