@@ -533,6 +533,7 @@ class ResultManager
                 // Clone doesn't treat avatars as it's a loadListener
                 $resultCarpooler = clone $carpooler;
                 $resultCarpooler->setAvatars($carpooler->getAvatars());
+                $resultCarpooler->setExperienced($carpooler->isExperienced());
                 $result->setCarpooler($resultCarpooler);
                 // We check if we have accepted carpool if yes we display the carpooler phone number
                 $hasAsk = false;
@@ -1039,6 +1040,7 @@ class ResultManager
                 // Clone doesn't treat avatars as it's a loadListener
                 $resultCarpooler = clone $carpooler;
                 $resultCarpooler->setAvatars($carpooler->getAvatars());
+                $resultCarpooler->setExperienced($carpooler->isExperienced());
                 $result->setCarpooler($resultCarpooler);
                 // We check if we have accepted carpool
                 $hasAsk = false;

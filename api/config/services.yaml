@@ -550,6 +550,7 @@ services:
                 experiencedTag: '%env(bool:USER_EXPERIENCED_TAG)%'
                 experiencedTagMinCarpools : '%env(int:USER_EXPERIENCED_TAG_MIN_CARPOOLS)%'
                 experiencedTagMinAnswerPct : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT)%'
+                experiencedTagMinAnswerPctDefault : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT_DEFAULT)%'
                 userReview: '%env(bool:USER_REVIEW)%'
             $passwordTokenValidity: '%env(int:PASSWORD_TOKEN_VALIDITY)%'    
     
