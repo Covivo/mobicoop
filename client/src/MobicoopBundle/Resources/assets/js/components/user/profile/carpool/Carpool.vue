@@ -17,6 +17,7 @@
       :payment-status="ad.paymentStatus"
       :payment-week="ad.paymentItemWeek"
       :unpaid-date="ad.unpaidDate"
+      :payment-electronic-active="paymentElectronicActive"
       @activePanel="activePanel()"
     />
 
@@ -46,6 +47,7 @@
         :ad="ad"
         :user="user"
         :show-carpooler="showCarpooler"
+        :payment-electronic-active="paymentElectronicActive"
       />
     </v-card-actions>
   </v-card>
@@ -77,7 +79,11 @@ export default {
     user: {
       type: Object,
       default: null
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: null
+    },
   },
   data() {
     return {

@@ -144,6 +144,7 @@
           :unpaid-date="unpaidDate"
           outlined
           show-unpaid
+          :payment-electronic-active="paymentElectronicActive"
           @activePanel="activePanel()"
         />
       </v-col>
@@ -264,7 +265,11 @@ export default {
     unpaidDate: {
       type: String,
       default: null
-    }    
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: null
+    },    
   },
   data () {
     return {

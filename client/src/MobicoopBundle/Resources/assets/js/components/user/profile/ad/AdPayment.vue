@@ -11,15 +11,21 @@
         </v-icon> {{ $t('unpaid') }}
       </v-col>
       <v-col v-if="!hideButton">
-        <v-btn
-          color="primary"
-          rounded
-          :outlined="outlined"
-          :disabled="disabled"
-          @click="action()"
-        >
-          {{ displayPaymentStatus }}
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              color="primary"
+              rounded
+              :outlined="outlined"
+              :disabled="disabled"
+              @click="action()"
+              v-on="(isDriver === false) ? on : {}"
+            >
+              {{ displayPaymentStatus }}
+            </v-btn>
+          </template>
+          <span>{{ displayTooltips }}</span>
+        </v-tooltip>
       </v-col>         
     </v-row>
   </v-container>
@@ -62,7 +68,11 @@ export default {
     frequency: {
       type: Number,
       default: null
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
+    },
   },
   data(){
     return {
@@ -78,7 +88,10 @@ export default {
       return this.getStatus(this.paymentStatus);
     },  
     displayPaymentStatus(){
-      return (this.isDriver) ? this.$t('driver.'+this.status) : this.$t('passenger.'+this.status);
+      return (this.isDriver) ? this.$t('driver.'+this.status) : (this.paymentElectronicActive) ? this.$t('passenger.'+this.status) : this.$t('passenger.pendingElectronicNotActive');
+    },
+    displayTooltips(){
+      return (this.paymentElectronicActive) ? this.$t('tooltip.paymentElectronicActive') : this.$t('tooltip.paymentElectronicNotActive')
     },
     type(){
       return (this.isDriver) ? 2 : 1;

@@ -38,6 +38,7 @@
             <Carpools
               :carpools="acceptedAds"
               :user="user"
+              :payment-electronic-active="paymentElectronicActive"
             />
           </v-tab-item>
           
@@ -100,12 +101,12 @@
 
               <!-- BANK COORDINATES -->
               <v-tab
-                v-if="bankCoordinates"
+                v-if="paymentElectronicActive"
                 class="text-subtitle-1"
               >
                 {{ $t("tabs.bankCoordinates") }}
               </v-tab>
-              <v-tab-item v-if="bankCoordinates">
+              <v-tab-item v-if="paymentElectronicActive">
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"
@@ -248,9 +249,9 @@ export default {
       type: String,
       default: null
     },
-    bankCoordinates: {
+    paymentElectronicActive: {
       type: Boolean,
-      default: false
+      default: null
     },
     validationDocsAuthorizedExtensions: {
       type: String,

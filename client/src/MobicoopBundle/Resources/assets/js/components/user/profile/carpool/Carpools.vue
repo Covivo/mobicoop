@@ -70,6 +70,7 @@
                     :ad="ad"
                     :is-archived="true"
                     :user="user"
+                    :payment-electronic-active="paymentElectronicActive"
                   />
                 </v-col>
               </v-row>
@@ -104,7 +105,11 @@ export default {
     user: {
       type: Object,
       default: null
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: null
+    },
   },
   data(){
     return {
