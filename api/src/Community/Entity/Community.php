@@ -139,6 +139,7 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"readCommunityPublic"}},
  *          },
  *          "put"={
+ *              "method"="PUT",
  *              "security"="is_granted('community_update',object)"
  *          },
  *          "delete"={

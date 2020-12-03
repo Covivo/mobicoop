@@ -16,6 +16,7 @@
     "email": {
         "label": "Your email",
         "placeholder": "Your email",
+        "hint": "",
         "errors": {
             "required": "Email is required",
             "valid": "Email must be valid"
@@ -34,6 +35,7 @@
     "message": {
         "label": "Your message",
         "placeholder": "Your message",
+        "hint": " ",
         "errors": {
             "required": "Message is required."
         }

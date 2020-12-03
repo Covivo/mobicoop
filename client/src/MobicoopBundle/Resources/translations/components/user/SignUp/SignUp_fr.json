@@ -99,5 +99,12 @@
         "previous": "Précédent",
         "next": "Suivant",
         "register": "Je m'inscris"
+    },
+    "rgpd": {
+        "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
+        "link": {
+            "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
+            "route": "/cgu"
+        }
     }
 }

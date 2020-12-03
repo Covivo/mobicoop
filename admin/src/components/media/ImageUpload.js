@@ -94,6 +94,10 @@ const ImageUpload = ({
       if (response.status === 201) {
         if (imageId) deleteImage(); // On supprime l'ancienne image si elle existe
         setImage(response.json);
+        notify(
+          "Image ajoutee avec succès",
+          'success'
+        );
         if (onChange) onChange(response.json);
       } else {
         setError(`Impossible de charge l'image. Erreur : ${response.error}`);

@@ -69,7 +69,7 @@ class PaymentDataProvider
     public function __construct(
         PaymentProfileRepository $paymentProfileRepository,
         Security $security,
-        bool $paymentActive,
+        string $paymentActive,
         string $paymentProvider,
         string $clientId,
         string $apikey,
