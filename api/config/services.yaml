@@ -498,6 +498,7 @@ services:
         arguments:
             $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
             $paymentProviderService: '%env(string:PAYMENT_PROVIDER)%'
+            $securityTokenActive: '%env(bool:PAYMENT_SECURITY_TOKEN_ACTIVE)%'
             $securityToken: '%env(string:PAYMENT_SECURITY_TOKEN)%'
             $validationDocsPath: '%env(resolve:PAYMENT_VALIDATION_DOCS_PATH)%'
             $validationDocsAuthorizedExtensions: '%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
