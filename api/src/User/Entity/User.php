@@ -1191,6 +1191,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $userReviewsActive;
 
+    /**
+     * @var bool|null If the User is an experienced carpooler
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
+     */
+    private $experienced;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1228,6 +1234,7 @@ class User implements UserInterface, EquatableInterface
         $this->setStatus($status);
         $this->setAlreadyRegistered(false);
         $this->setMobileRegistration(null);
+        $this->setExperienced(false);
     }
 
     public function getId(): ?int
@@ -2816,6 +2823,18 @@ class User implements UserInterface, EquatableInterface
     public function setUserReviewsActive(?bool $userReviewsActive): self
     {
         $this->userReviewsActive = $userReviewsActive;
+
+        return $this;
+    }
+
+    public function isExperienced(): ?bool
+    {
+        return $this->experienced;
+    }
+
+    public function setExperienced(?bool $experienced): self
+    {
+        $this->experienced = $experienced;
 
         return $this;
     }
