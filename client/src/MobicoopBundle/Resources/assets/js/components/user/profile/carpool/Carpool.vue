@@ -82,7 +82,7 @@ export default {
     },
     paymentElectronicActive: {
       type: Boolean,
-      default: null
+      default: false
     },
   },
   data() {

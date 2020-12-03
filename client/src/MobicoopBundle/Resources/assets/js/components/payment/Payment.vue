@@ -885,7 +885,7 @@ export default {
   props: {
     paymentElectronicActive: {
       type: Boolean,
-      default: null
+      default: false
     },
     frequency: {
       type: Number,

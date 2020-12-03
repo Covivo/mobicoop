@@ -251,7 +251,7 @@ export default {
     },
     paymentElectronicActive: {
       type: Boolean,
-      default: null
+      default: false
     },
     validationDocsAuthorizedExtensions: {
       type: String,
