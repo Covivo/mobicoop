@@ -52,8 +52,9 @@ import MArticle from "@components/article/MArticle";
 import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
 import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
 
-// BLOG POST
-import BlogPost from "@components/utilities/blogPost/BlogPost";
+// BLOGPOST
+import MBlogPost from "@components/utilities/MBlogPost/MBlogPost";
+import MGetBlogPost from "@components/utilities/MBlogPost/MGetBlogPost";
 
 // RELAY POINT
 import RelayPoints from "@components/relaypoints/RelayPoints";
@@ -100,7 +101,8 @@ export default {
   MArticle,
   PlatformWidget,
   PlatformGetWidget,
-  BlogPost,
+  MBlogPost,
+  MGetBlogPost,
   RelayPoints,
   ToolBox,
   DayListChips,

@@ -24,15 +24,29 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use DOMDocument;
 
 class DefaultController extends AbstractController
 {
+    use HydraControllerTrait;
+
+    /**
+     * Constructor
+     */
+    private $rssFeed;
+
+    public function __construct($rssFeed)
+    {
+        $this->rssFeed = $rssFeed;
+    }
+
     /**
      * HomePage
      */
@@ -100,24 +114,6 @@ class DefaultController extends AbstractController
         return $this->render('@Mobicoop/platform-get-widget.html.twig');
     }
 
-    public function blogPost(){
-        $url='https://blog.covoiturage-grandlyon.com/feed';
-
-        //xml to object
-        $feedResult = simplexml_load_file($url,'SimpleXMLElement', LIBXML_NOCDATA);
-        
-
-
-        foreach($feedResult as $item){
-
-            dd($item);
-
-            return $this->render('@Mobicoop/blogpost/blogpost.html.twig', [
-                'rss' => $item
-                ]);
-        }
-    }
-
     /**
      * Show a default page when the request page no longer exists
      */
@@ -140,5 +136,58 @@ class DefaultController extends AbstractController
             $session->set('language', $data['locale']);
         }
         return new JsonResponse();
+    }
+
+    /**
+     * Show the blogpost.
+     */
+    public function blogPost()
+    {
+        $url= $this->rssFeed;
+
+        // transform xml to object
+        $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        foreach ($feedResult->channel->item as $item) {
+
+            $title = (string) $item->title;
+
+            $description = (string) $item->description;
+
+            $start = strpos($description, '<p>');
+            $end = strpos($description, '</p>', $start);
+
+            if(strlen($description)>255){
+                $description = substr($description, $start, $end-$start+247)." ...";
+            }
+
+            $dom = new DOMDocument();
+            libxml_use_internal_errors(true);
+
+            $content = $item->children('content', true);
+
+            $html_string = $content->encoded;
+            $dom->loadHTML($html_string);
+            libxml_clear_errors();
+
+            $img = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+
+            $pubDate=date('d M Y', strtotime($item->pubDate));
+
+            return $this->render('@Mobicoop/blogpost/blog-post.html.twig', [
+                'image'=> $img,
+                'title'=> $title,
+                'description'=>$description,
+                'pubDate'=>$pubDate
+                ]);
+        }
+    }
+
+    /**
+     * Show the blogpost page to get the blogpost code.
+     */
+    public function getBlogPost()
+    {
+        return $this->render('@Mobicoop/blogpost/get-blog-post.html.twig');
     }
 }

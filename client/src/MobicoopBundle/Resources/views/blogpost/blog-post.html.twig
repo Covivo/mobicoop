@@ -1,0 +1,11 @@
+{% extends '@Mobicoop/base.widget.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}blogPost.title{% endtrans %}{% endblock %}
+{% block main %}
+    <m-blog-post
+        :title="{{title|json_encode}}"
+        :image="{{image|json_encode}}"
+        :description="{{description|json_encode}}"
+        pub-date="{{pubDate|json_encode}}"
+    ></m-blog-post>
+{% endblock %}
