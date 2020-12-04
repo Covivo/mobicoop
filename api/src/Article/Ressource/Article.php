@@ -60,28 +60,52 @@ class Article
     const DEFAULT_ID = "999999999999";
 
     const CONTEXT_HOME = "home";
+    const CONTEXT_INTERNAL = "internal";
 
     /**
-     * @var int The id of this bank account
+     * @var int The id of the article
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readPayment"})
+     * @Groups({"readArticle"})
      */
     private $id;
 
-    public function __construct()
+    /**
+     * @var string The title of the article
+     *
+     * @Groups({"readArticle"})
+     */
+    private $title;
+
+    public function __construct(int $id=null)
     {
-        $this->id = self::DEFAULT_ID;
+        if (!is_null($id)) {
+            $this->id = $id;
+        } else {
+            $this->id = self::DEFAULT_ID;
+        }
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
         
         return $this;
     }

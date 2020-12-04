@@ -27,10 +27,12 @@ use App\Article\Entity\Section;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Article\Entity\Paragraph;
-use App\Article\Entity\Article;
+use App\Article\Entity\Article as ArticleEntity;
+use App\Article\Entity\RssElement;
 use App\Article\Repository\SectionRepository;
 use App\Article\Repository\ParagraphRepository;
 use App\Article\Repository\ArticleRepository;
+use App\Article\Ressource\Article;
 
 /**
  * Article manager service.
@@ -147,8 +149,86 @@ class ArticleManager
     /**
      * Get the external articles
      */
-    public function getLastExternalArticles(int $nbArticles=Article::NB_EXTERNAL_ARTICLES_DEFAULT)
+    public function getLastExternalArticles(int $nbArticles=ArticleEntity::NB_EXTERNAL_ARTICLES_DEFAULT)
     {
         return $this->articleRepository->findLastExternal($nbArticles);
+    }
+
+    /**
+     * Make an Article ressource from Article (Page) entity
+     *
+     * @param ArticleEntity $articleEntity
+     * @return Article
+     */
+    private function makeArticleFromEntity(ArticleEntity $articleEntity): Article
+    {
+        $article = new Article($articleEntity->getId());
+
+        $article->setTitle($articleEntity->getTitle());
+
+        return $article;
+    }
+
+
+    /**
+     * Make an article ressource from an RSS element
+     * @param RssElement $rssElement   Rss element to convert
+     *
+     * @return Article
+     */
+    private function makeArticleFromRss(RssElement $rssElement): Article
+    {
+        $article = new Article();
+
+
+        return $article;
+    }
+
+    
+    /**
+     * Get Rss elements from all feeds (in .env ARTICLE_FEEDS)
+     *
+     * @return RssElement[]
+     */
+    private function getRssFeeds(): array
+    {
+        $rssElements = [];
+        // foreach(){
+
+        // }
+
+        return $rssElements;
+    }
+    
+    /**
+     * Get a collection of Article
+     *
+     * @param string $context   (optionnal) : Context to select specific articles
+     * @return Article[]
+     */
+    public function getArticles(string $context=null): array
+    {
+        $articles = [];
+        
+        
+        // Get the articles in database
+        if (is_null($context) || $context==Article::CONTEXT_INTERNAL) {
+            $pages = $this->articleRepository->findAll();
+
+            foreach ($pages as $page) {
+                $articles[] = $this->makeArticleFromEntity($page);
+            }
+        }
+
+        // Get the RSS articles
+        if (is_null($context) || $context==Article::CONTEXT_HOME) {
+            $rssItems = $this->getRssFeeds();
+            foreach ($rssItems as $rssItem) {
+                $articles[] = $this->makeArticleFromRss($rssItem);
+            }
+            $rssArticles = null;
+        }
+
+        return $articles;
     }
 }
