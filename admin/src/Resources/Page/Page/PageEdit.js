@@ -6,7 +6,7 @@ const statusChoices = [
   { id: 1, name: 'En ligne' },
 ];
 
-export const ArticleEdit = (props) => (
+export const PageEdit = (props) => (
   <Edit {...props} title="Articles > éditer">
     <SimpleForm>
       <TextInput disabled source="originId" label="ID" />

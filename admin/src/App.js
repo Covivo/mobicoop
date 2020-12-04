@@ -19,7 +19,7 @@ import StructureProofResource from './Resources/Solidary/StructureProof';
 import SolidaryResource from './Resources/Solidary/Solidary';
 import SolidaryUsersBeneficiaryResource from './Resources/Solidary/SolidaryUserBeneficiary';
 import SolidaryUsersVolunteerResource from './Resources/Solidary/SolidaryUserVolunteer';
-import ArticleResource from './Resources/Article/Article';
+import ArticleResource from './Resources/Page/Page';
 import EventResource from './Resources/Event';
 import SectionResource from './Resources/Article/Section';
 import ParagraphResource from './Resources/Article/Paragraph';
@@ -57,7 +57,7 @@ export default () => (
           {...(can('campaign_manage') ? CampaignResource : {})}
         />,
         <Resource name="events" {...(can('event_manage') ? EventResource : {})} />,
-        <Resource name="articles" {...(can('article_manage') ? ArticleResource : {})} />,
+        <Resource name="pages" {...(can('article_manage') ? ArticleResource : {})} />,
         <Resource name="sections" {...(can('article_manage') ? SectionResource : {})} />,
         <Resource name="paragraphs" {...(can('article_manage') ? ParagraphResource : {})} />,
         <Resource name="relay_points" {...(can('relay_point_manage') ? RelayPointResource : {})} />,
