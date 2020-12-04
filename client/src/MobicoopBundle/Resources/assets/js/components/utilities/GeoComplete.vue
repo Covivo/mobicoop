@@ -75,7 +75,10 @@ export default {
   props: {
     url: defaultString,
     label: defaultString,
-    token: defaultString,
+    token: {
+      type: String,
+      default: ''
+    },
     disabled: {
       type: Boolean,
       default: false
