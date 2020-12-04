@@ -471,7 +471,7 @@ class NotificationManager
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
-        if (is_null($recipient->getTelephone()) || is_null($recipient->getPhoneValidatedDate())) {
+        if (is_null($recipient->getTelephone()) || (is_null($recipient->getPhoneValidatedDate()) && is_null($recipient->getPhoneToken()))) {
             return;
         }
         $sms = new Sms();
