@@ -38,13 +38,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
+ *      shortName="Page",
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "getPages"={
+ *          "get"={
  *              "method"="GET",
  *              "path"="/pages",
  *              "security"="is_granted('article_list',object)"
@@ -54,14 +55,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "path"="/pages/external",
  *              "security"="is_granted('article_list',object)"
  *          },
- *          "postPages"={
+ *          "post"={
  *              "method"="POST",
  *              "path"="/pages",
  *              "security_post_denormalize"="is_granted('article_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "getPage"={
+ *          "get"={
  *              "method"="GET",
  *              "path"="/pages/{id}",
  *              "security"="is_granted('article_read',object)"
