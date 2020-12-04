@@ -59,6 +59,8 @@ class Article
 {
     const DEFAULT_ID = "999999999999";
 
+    const CONTEXT_HOME = "home";
+
     /**
      * @var int The id of this bank account
      *
