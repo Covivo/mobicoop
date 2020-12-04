@@ -77,7 +77,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "security"="is_granted('article_delete',object)"
  *          },
  *      }
- *    
+ *
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
