@@ -36,6 +36,8 @@ class Article implements ResourceInterface, \JsonSerializable
     const STATUS_PUBLISHED = 1;
     const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
     
+    const RESOURCE_NAME = "pages";
+
     /**
      * @var int The id of this article.
      */

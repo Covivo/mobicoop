@@ -31,7 +31,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Article\Controller\ExternalArticlesAction;
 
 /**
  * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
@@ -46,12 +45,13 @@ use App\Article\Controller\ExternalArticlesAction;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "method"="GET",
+ *              "path"="/pages",
  *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
  *          "externalArticles"={
  *              "method"="GET",
- *              "path"="/articles/external",
- *              "controller"=ExternalArticlesAction::class,
+ *              "path"="/pages/external",
  *              "security_post_denormalize"="is_granted('article_list',object)"
  *          },
  *          "post"={
@@ -60,12 +60,18 @@ use App\Article\Controller\ExternalArticlesAction;
  *      },
  *      itemOperations={
  *          "get"={
+ *              "method"="GET",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_read',object)"
  *          },
  *          "put"={
+ *              "method"="PUT",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_update',object)"
  *          },
  *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_delete',object)"
  *          },
  *      }

@@ -41,7 +41,7 @@ class ArticleManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Article::class);
+        $this->dataProvider->setClass(Article::class, Article::RESOURCE_NAME);
     }
 
     /**

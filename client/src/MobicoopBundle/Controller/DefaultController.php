@@ -149,7 +149,6 @@ class DefaultController extends AbstractController
         $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
 
         foreach ($feedResult->channel->item as $item) {
-
             $title = (string) $item->title;
 
             $description = (string) $item->description;
@@ -157,7 +156,7 @@ class DefaultController extends AbstractController
             $start = strpos($description, '<p>');
             $end = strpos($description, '</p>', $start);
 
-            if(strlen($description)>255){
+            if (strlen($description)>255) {
                 $description = substr($description, $start, $end-$start+247)." ...";
             }
 
