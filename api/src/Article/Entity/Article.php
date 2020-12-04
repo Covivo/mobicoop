@@ -44,22 +44,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get"={
+ *          "getPages"={
  *              "method"="GET",
  *              "path"="/pages",
- *              "security_post_denormalize"="is_granted('article_list',object)"
+ *              "security"="is_granted('article_list',object)"
  *          },
  *          "externalArticles"={
  *              "method"="GET",
  *              "path"="/pages/external",
- *              "security_post_denormalize"="is_granted('article_list',object)"
+ *              "security"="is_granted('article_list',object)"
  *          },
- *          "post"={
+ *          "postPages"={
+ *              "method"="POST",
+ *              "path"="/pages",
  *              "security_post_denormalize"="is_granted('article_create',object)"
  *          },
  *      },
  *      itemOperations={
- *          "get"={
+ *          "getPage"={
  *              "method"="GET",
  *              "path"="/pages/{id}",
  *              "security"="is_granted('article_read',object)"
@@ -75,6 +77,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "security"="is_granted('article_delete',object)"
  *          },
  *      }
+ *    
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

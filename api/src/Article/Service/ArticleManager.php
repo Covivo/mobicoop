@@ -151,4 +151,14 @@ class ArticleManager
     {
         return $this->articleRepository->findLastExternal($nbArticles);
     }
+
+    public function getArticles(): array
+    {
+        return $this->articleRepository->findAll();
+    }
+
+    public function getArticle(int $id): Article
+    {
+        return $this->articleRepository->find($id);
+    }
 }
