@@ -153,7 +153,8 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>{{ $t('switch.regular.help') }}</span>
+            <span v-if="regular">{{ $t('switch.regular.help') }}</span>
+            <span v-else>{{ $t('switch.punctual.help') }}</span>
           </v-tooltip>
         </v-col>
       </v-row>
