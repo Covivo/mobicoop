@@ -337,7 +337,7 @@ class DataProvider
         if (is_null($this->jwtToken)) {
             $tokens = $this->getJwtToken();
             if (is_null($tokens) || !is_array($tokens)) {
-                return ("bad-credentials-api");
+                throw new ApiTokenException("Bad credentials");
             }
 
             if (!isset($tokens['token']) || !isset($tokens['refreshToken'])) {
