@@ -47,10 +47,11 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
         //     ->join('\App\Geography\Entity\Territory', 'homeAddressODTerritory')
         //     ->andWhere(sprintf('(homeAddressODTerritory.id = %s AND ((w.position=0 OR w.destination=true) AND(ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,a.geoJson)=1)  OR (ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->leftJoin('u.addresses', 'homeAddress')
+            ->leftJoin(sprintf("%s.addresses", $rootAlias), 'homeAddress')
             ->leftJoin('homeAddress.territories', 't')
-            ->leftJoin('u.proposals', 'p')
+            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'p')
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             ->leftJoin('a.territories', 'ta')

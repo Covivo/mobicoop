@@ -116,7 +116,7 @@ use App\User\Controller\UserCanUseEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -268,7 +268,16 @@ use App\User\Controller\UserCanUseEmail;
  *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
  *              "method"="GET",
  *              "path"="/users/accesFromAdminReact",
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/users",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"arUser"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('user_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -370,7 +379,23 @@ use App\User\Controller\UserCanUseEmail;
  *              "path"="/users/{id}/carpool_export",
  *              "normalization_context"={"groups"={"carpoolExport"}},
  *              "security"="is_granted('user_update',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"arUser"},
+ *                  "skip_null_values"="true"
+ *              },
+ *              "security"="is_granted('user_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"arUser"}},
+ *              "denormalization_context"={"groups"={"awUser"}},
+ *              "security"="is_granted('user_update',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
@@ -447,7 +472,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"arUser","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -457,7 +482,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","results","write"})
+     * @Groups({"arUser","awUser","readUser","readCommunityUser","results","write"})
      */
     private $status;
 
@@ -465,7 +490,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
+     * @Groups({"arUser","awUser","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
      */
     private $givenName;
 
@@ -473,14 +498,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
+     * @Groups({"arUser","awUser","readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
+     * @Groups({"arUser","readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $shortFamilyName;
 
@@ -498,7 +523,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
+     * @Groups({"arUser","awUser","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
 
@@ -537,7 +562,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write","externalJourney"})
+     * @Groups({"arUser","awUser","readUser","results","write","externalJourney"})
      */
     private $gender;
 
@@ -545,7 +570,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The nationality of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $nationality;
 
@@ -553,7 +578,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      *
      * @ApiProperty(
      *     attributes={
@@ -574,7 +599,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","results", "readSolidary"})
+     * @Groups({"arUser","awUser","readUser","write","checkPhoneToken","results", "readSolidary"})
      */
     private $telephone;
 
@@ -589,7 +614,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write","results"})
+     * @Groups({"arUser","awUser","readUser","write","results"})
      */
     private $phoneDisplay;
 
@@ -632,7 +657,7 @@ class User implements UserInterface, EquatableInterface
      * 2 = i smoke
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $smoke;
 
@@ -642,7 +667,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = i listen to music or radio
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $music;
 
@@ -650,7 +675,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Music favorites.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $musicFavorites;
 
@@ -660,7 +685,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = chat
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $chat;
 
@@ -668,7 +693,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Chat favorite subjects.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","awUser","readUser","write"})
      */
     private $chatFavorites;
 
@@ -676,7 +701,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write","readCommunity","readCommunityUser"})
+     * @Groups({"arUser","awUser","readUser","write","readCommunity","readCommunityUser"})
      */
     private $newsSubscription;
 
@@ -684,7 +709,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("readUser")
+     * @Groups({"arUser","readUser"})
      */
     private $createdDate;
 
@@ -976,7 +1001,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var string|null Default avatar of the user
-     * @Groups({"readUser","readPublicProfile","readReview"})
+     * @Groups({"arUser","readUser","readPublicProfile","readReview"})
      */
     private $avatar;
 
@@ -1088,7 +1113,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Last user activity date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"arUser","readUser","write"})
      */
     private $lastActivityDate;
 
@@ -1188,6 +1213,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $experienced;
+
+    /**
+     * @var Address 
+     * @Groups({"arUser","awUser"})
+     */
+    private $homeAddress;
 
     public function __construct($status = null)
     {
@@ -2823,6 +2854,24 @@ class User implements UserInterface, EquatableInterface
     public function setExperienced(?bool $experienced): self
     {
         $this->experienced = $experienced;
+
+        return $this;
+    }
+
+    public function getHomeAddress(): ?Address
+    {
+        foreach ($this->addresses as $address) {
+            if ($address->isHome()) {
+                $this->homeAddress = $address;
+                break;
+            }
+        }
+        return $this->homeAddress;
+    }
+
+    public function sethomeaddress(?Address $homeAddress): self
+    {
+        $this->homeAddress = $homeAddress;
 
         return $this;
     }
