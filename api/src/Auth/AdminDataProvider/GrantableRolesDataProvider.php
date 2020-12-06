@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,40 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\DataProvider;
+namespace App\Auth\AdminDataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoSearcher;
-use App\Geography\Entity\Address;
+use App\Auth\Entity\Permission;
+use App\Auth\ServiceAdmin\AuthManager;
 
 /**
- * Collection data provider for anonymous address search.
+ * Get the grantable roles from an admin user to another user
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class AddressSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class GrantableRolesDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
-    
-    public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
+    public function __construct(AuthManager $authManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->geoSearcher = $geoSearcher;
+        $this->authManager = $authManager;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "search";
+        return Permission::class === $resourceClass && $operationName === "ADMIN_grantable";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if ($this->request->get("q") !== null) {
-            return $this->geoSearcher->geoCode($this->request->get("q"));
-        }
-        return [];
+        return $this->authManager->getGrantable();
     }
 }

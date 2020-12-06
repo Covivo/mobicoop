@@ -115,10 +115,9 @@ class GeoSearcher
      * Returns an array of result addresses (named addresses, relaypoints, sig addresses...)
      *
      * @param string $input     The string representing the user input
-     * @param string $token     The geographic token authorization
      * @return array            The results
      */
-    public function geoCode(string $input, string $token=null)
+    public function geoCode(string $input)
     {
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
@@ -152,7 +151,7 @@ class GeoSearcher
             if (count($namedAddresses)>0) {
                 $i = 0;
                 foreach ($namedAddresses as $address) {
-                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
                     $result[] = $address;
                     $i++;
@@ -253,7 +252,7 @@ class GeoSearcher
                 $address = $this->fixAddress($geoResult->getId(), $address);
             }
 
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
 
             $result[] = $address;
         }
@@ -301,7 +300,7 @@ class GeoSearcher
                         $address->setIcon($this->dataPath.$this->iconPath.$relayPointType->getIcon()->getFileName());
                     }
                 }
-                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                 $result[] = $address;
                 $i++;
                 if ($i>=$this->defaultRelayPointResultNumber) {
@@ -317,7 +316,7 @@ class GeoSearcher
         foreach ($events as $event) {
             $address = $event->getAddress();
             $address->setEvent($event);
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
             $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
             $result[] = $address;
             $i++;

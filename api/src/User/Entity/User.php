@@ -383,10 +383,7 @@ use App\User\Controller\UserCanUseEmail;
  *          "ADMIN_get"={
  *              "path"="/admin/users/{id}",
  *              "method"="GET",
- *              "normalization_context"={
- *                  "groups"={"arUser"},
- *                  "skip_null_values"="true"
- *              },
+ *              "normalization_context"={"groups"={"arUser"}},
  *              "security"="is_granted('user_read',object)"
  *          },
  *          "ADMIN_patch"={
@@ -1215,10 +1212,16 @@ class User implements UserInterface, EquatableInterface
     private $experienced;
 
     /**
-     * @var Address 
+     * @var Address
      * @Groups({"arUser","awUser"})
      */
     private $homeAddress;
+
+    /**
+     * @var array
+     * @Groups({"arUser","awUser"})
+     */
+    private $rolesTerritory;
 
     public function __construct($status = null)
     {
@@ -1249,6 +1252,7 @@ class User implements UserInterface, EquatableInterface
         $this->operates = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
+        $this->rolesTerritory = [];
         $this->bankAccounts = [];
         $this->wallets = [];
         if (is_null($status)) {
@@ -2005,6 +2009,16 @@ class User implements UserInterface, EquatableInterface
         }
 
         return $this;
+    }
+
+    public function removeUserAuthAssignments()
+    {
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            $this->userAuthAssignments->removeElement($userAuthAssignment);
+            if ($userAuthAssignment->getUser() === $this) {
+                $userAuthAssignment->setUser(null);
+            }
+        }
     }
 
     public function getMasses()
@@ -2858,23 +2872,43 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+
+
+    // ADMIN
+
     public function getHomeAddress(): ?Address
     {
-        foreach ($this->addresses as $address) {
-            if ($address->isHome()) {
-                $this->homeAddress = $address;
-                break;
+        if (is_null($this->homeAddress)) {
+            foreach ($this->addresses as $address) {
+                if ($address->isHome()) {
+                    $this->homeAddress = $address;
+                    break;
+                }
             }
         }
         return $this->homeAddress;
     }
 
-    public function sethomeaddress(?Address $homeAddress): self
+    public function setHomeAddress(?Address $homeAddress): self
     {
         $this->homeAddress = $homeAddress;
 
         return $this;
     }
+
+    public function getRolesTerritory(): array
+    {
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+                $this->rolesTerritory[] = [
+                    'role' => $userAuthAssignment->getAuthItem()->getId(),
+                    'territory' => $userAuthAssignment->getTerritory() ? $userAuthAssignment->getTerritory()->getId() : null
+                ];
+            }
+        }
+        return $this->rolesTerritory;
+    }
+
 
     // DOCTRINE EVENTS
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\DataProvider;
+namespace App\Geography\AdminDataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
@@ -30,9 +30,9 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Entity\Address;
 
 /**
- * Collection data provider for anonymous address search.
+ * Collection data provider for address search in administration context.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
 final class AddressSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
@@ -47,7 +47,7 @@ final class AddressSearchCollectionDataProvider implements CollectionDataProvide
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "search";
+        return Address::class === $resourceClass && $operationName === "ADMIN_search";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
