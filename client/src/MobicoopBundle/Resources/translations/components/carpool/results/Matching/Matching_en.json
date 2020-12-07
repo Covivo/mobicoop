@@ -1,5 +1,5 @@
 {
-    "title": "Carpool results",
+    "title": "Carpool results between {cityA} and {cityB}",
     "proposalUrl": "/carpool/ad/{id}/detail",
     "externalUrl": "/carpool/ad/{id}/external",
     "matchingUrl": "/carpool/search/matching",

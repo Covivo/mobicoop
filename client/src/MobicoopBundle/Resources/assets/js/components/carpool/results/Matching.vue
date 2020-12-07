@@ -10,7 +10,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ $t('title', {'cityA':displayOrigin, 'cityB':displayDestination}) }}</h1>
 
           <!-- Matching header -->
           <matching-header
@@ -444,6 +444,12 @@ export default {
     },
     displayTab(){
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
+    },
+    displayOrigin(){
+      return this.origin.addressLocality;
+    },
+    displayDestination(){
+      return this.destination.addressLocality;
     }
   },
   watch:{

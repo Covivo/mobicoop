@@ -15,5 +15,5 @@ meta:
         title: "Proposer un trajet | "
         description: " permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
     results:
-        title: "Covoiturages gratuits entre VilleA et VilleB | Mobicoop"
-        description: "Les covoiturages entre VilleA et VilleB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."
+        title: "Covoiturages gratuits entre CityA et CityB | Mobicoop"
+        description: "Les covoiturages entre CityA et CityB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."
