@@ -13,7 +13,10 @@ meta:
         description: "Le site de covoiturage libre et gratuit"
     publish:
         title: "Proposer un trajet | "
-        description: " permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
+        description: "Mobicoop permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
+    relaypoints:
+        title: "Les aires de covoiturages"
+        description: "La carte des aires de covoiturages, points de rendez-vous, parkings et points relais."
     results:
         title: "Covoiturages gratuits entre CityA et CityB | Mobicoop"
         description: "Les covoiturages entre CityA et CityB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."
