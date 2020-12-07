@@ -1,11 +1,7 @@
 {% embed "@Bundle/default/index.html.twig" %}
 
-{% block title %}
-{% trans from 'meta' %}meta.home.title{% endtrans %}
-{% endblock %}
+{% block title %}{% trans from 'meta' %}meta.home.title{% endtrans %}{{ app_name }}{% endblock %}
 
-{% block desc %}
-{% trans from 'meta' %}meta.home.description{% endtrans %}
-{% endblock %}
+{% block desc %}{% trans from 'meta' %}meta.home.description{% endtrans %}{% endblock %}
 
 {% endembed %}

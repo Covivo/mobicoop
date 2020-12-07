@@ -1,6 +1,6 @@
 meta:
     default:
-        title: "Le site de covoiturage libre et gratuit | Mobicoop.fr"
+        title: "Le site de covoiturage libre et gratuit | "
         description: "Le site de covoiturage libre et gratuit"      
     community:
         title: "Covoiturage gratuit pour votre communauté | Mobicoop"
@@ -9,11 +9,11 @@ meta:
         title: "Covoiturage gratuit pour vos événements grands publics et festivals | Mobicoop"
         description: "Trouvez ou proposez gratuitement des covoiturages pour vos événements et festivals partout en France avec Mobicoop"
     home:
-        title: "Le site de covoiturage libre et gratuit | Mobicoop.fr"
+        title: "Le site de covoiturage libre et gratuit | "
         description: "Le site de covoiturage libre et gratuit"
     publish:
-        title: "Proposer un trajet | Mobicoop"
-        description: "Mobicoop permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
+        title: "Proposer un trajet | "
+        description: " permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
     results:
         title: "Covoiturages gratuits entre VilleA et VilleB | Mobicoop"
         description: "Les covoiturages entre VilleA et VilleB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."

@@ -338,10 +338,10 @@ class CarpoolController extends AbstractController
         $origin = json_decode($request->request->get('origin'));
         $destination = json_decode($request->request->get('destination'));
         $originTitle = $destinationTitle = "";
-        if(isset($origin->addressLocality) && $origin->addressLocality !== ""){
+        if (isset($origin->addressLocality) && $origin->addressLocality !== "") {
             $originTitle = $origin->addressLocality;
         }
-        if(isset($destination->addressLocality) && $destination->addressLocality !== ""){
+        if (isset($destination->addressLocality) && $destination->addressLocality !== "") {
             $destinationTitle = $destination->addressLocality;
         }
         return $this->render('@Mobicoop/carpool/results.html.twig', [
@@ -373,10 +373,10 @@ class CarpoolController extends AbstractController
         $origin = json_decode($request->request->get('origin'));
         $destination = json_decode($request->request->get('destination'));
         $originTitle = $destinationTitle = "";
-        if(isset($origin->addressLocality) && $origin->addressLocality !== ""){
+        if (isset($origin->addressLocality) && $origin->addressLocality !== "") {
             $originTitle = $origin->addressLocality;
         }
-        if(isset($destination->addressLocality) && $destination->addressLocality !== ""){
+        if (isset($destination->addressLocality) && $destination->addressLocality !== "") {
             $destinationTitle = $destination->addressLocality;
         }
         return $this->render('@Mobicoop/carpool/results.html.twig', [
