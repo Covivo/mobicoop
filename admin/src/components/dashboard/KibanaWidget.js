@@ -63,7 +63,7 @@ const KibanaWidget = ({
           <Grid container justify="space-between" style={{ marginBottom: 20 }}>
             <Grid item>&nbsp;</Grid>
             <Grid item>
-              <Button variant="contained" color="primary" href="https://scope.mobicoop.io/">
+            <Button variant="contained" color="primary" href={`${url}/app/dashboards`}>
                 Consulter les autres tableaux de bord
               </Button>
             </Grid>
