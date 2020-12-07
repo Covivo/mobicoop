@@ -66,9 +66,6 @@ const KibanaWidget = ({
               <Button variant="contained" color="primary" href="https://scope.mobicoop.io/">
                 Consulter les autres tableaux de bord
               </Button>
-              <p>
-                Attention, données non fiabilisées-à ne pas communiquer.
-              </p>
             </Grid>
           </Grid>
         )}
