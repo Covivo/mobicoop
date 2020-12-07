@@ -258,7 +258,9 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => false, // No RDEX, this not a new search
             'ptSearch' => false, // No PT Results, this not a new search
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'originTitle' => "",
+            'destinationTitle' => ""
         ]);
     }
 
@@ -275,8 +277,10 @@ class CarpoolController extends AbstractController
                 'platformName' => $this->platformName,
                 'externalRDEXJourneys' => false, // No RDEX, this not a new search
                 'ptSearch' => false, // No PT Results, this not a new search
-                'defaultRole'=>$this->defaultRole
-            ]);
+                'defaultRole'=>$this->defaultRole,
+                'originTitle' => "",
+                'destinationTitle' => ""
+                ]);
         }
         // for now if the claim fails we redirect to home !
         return $this->redirectToRoute('home');
@@ -331,6 +335,15 @@ class CarpoolController extends AbstractController
      */
     public function carpoolSearchResult(Request $request, UserManager $userManager)
     {
+        $origin = json_decode($request->request->get('origin'));
+        $destination = json_decode($request->request->get('destination'));
+        $originTitle = $destinationTitle = "";
+        if(isset($origin->addressLocality) && $origin->addressLocality !== ""){
+            $originTitle = $origin->addressLocality;
+        }
+        if(isset($destination->addressLocality) && $destination->addressLocality !== ""){
+            $destinationTitle = $destination->addressLocality;
+        }
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => $request->request->get('origin'),
             'destination' => $request->request->get('destination'),
@@ -342,7 +355,9 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => $this->ptResults,
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'originTitle' => $originTitle,
+            'destinationTitle' => $destinationTitle
         ]);
     }
 
@@ -355,6 +370,15 @@ class CarpoolController extends AbstractController
      */
     public function carpoolSearchResultGet(Request $request, UserManager $userManager)
     {
+        $origin = json_decode($request->request->get('origin'));
+        $destination = json_decode($request->request->get('destination'));
+        $originTitle = $destinationTitle = "";
+        if(isset($origin->addressLocality) && $origin->addressLocality !== ""){
+            $originTitle = $origin->addressLocality;
+        }
+        if(isset($destination->addressLocality) && $destination->addressLocality !== ""){
+            $destinationTitle = $destination->addressLocality;
+        }
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             // todo: use if we can keep the proposal (request or offer) if we delete the matched one - cf CarpoolSubscriber
 //            'proposalId' => $request->get('pid'),
@@ -367,7 +391,9 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => $this->ptResults,
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'originTitle' => $originTitle,
+            'destinationTitle' => $destinationTitle
         ]);
     }
 
@@ -387,7 +413,10 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => false, // No PT Results, this not a new search
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'originTitle' => "",
+            'destinationTitle' => ""
+
         ]);
     }
 
