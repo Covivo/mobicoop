@@ -9,7 +9,8 @@
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
         
-        <meta name="description" content="{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}">
+        <meta name="description" content="{% if metaDescription is defined %}{{metaDescription}}{% else %}{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}{% endif %}">
+
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
         {% block favicon %}
          {% endblock %}

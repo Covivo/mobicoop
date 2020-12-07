@@ -41,8 +41,7 @@ class DefaultController extends AbstractController
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
-                'baseUri' => $_ENV['API_URI'],
-                'metaDescription' => 'meta.home.description'
+                'baseUri' => $_ENV['API_URI']
             ]
         );
     }
@@ -56,7 +55,6 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'metaDescription' => 'meta.home.description',
                 'logout' => 1,
             ]
         );
