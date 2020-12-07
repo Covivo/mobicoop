@@ -42,7 +42,7 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'metaDescription' => 'Mobicoop'
+                'metaDescription' => 'meta.home.description'
             ]
         );
     }
@@ -56,7 +56,7 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'metaDescription' => 'Mobicoop',
+                'metaDescription' => 'meta.home.description',
                 'logout' => 1,
             ]
         );

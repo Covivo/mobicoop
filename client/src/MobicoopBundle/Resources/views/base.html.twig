@@ -4,11 +4,12 @@
     <head>
         <meta charset="UTF-8">
         <title>
-            {% block title %}{{ app_name }}{% endblock %}
+            {% block title %}{% trans from 'meta' %}meta.default.title{% endtrans %}{% endblock %}
         </title>
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
-        {% block desc %}{% endblock %}
+        
+        <meta name="description" content="{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}">
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
         {% block favicon %}
          {% endblock %}

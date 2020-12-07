@@ -1,7 +1,11 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-    {{ app_name }}
+{% trans from 'meta' %}meta.home.title{% endtrans %}
+{% endblock %}
+
+{% block desc %}
+{% trans from 'meta' %}meta.home.description{% endtrans %}
 {% endblock %}
 
 {% block stylesheets %}
