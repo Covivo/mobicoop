@@ -12,7 +12,10 @@
         "phoneValidated": "Votre télephone a bien été vérifié.",
         "unknown": "Le code de validation est erroné.",
         "tokenOk": "Le code de validation a bien été envoyé.",
-        "tokenError": "Erreur le code n'a pas été envoyé"
+        "tokenError": "Erreur le code n'a pas été envoyé",
+        "emailOk": "L'email de validation a bien été envoyé.",
+        "emailError": "Erreur l'email n'a pas été envoyé"
+
     },
     "avatar": {
         "label": "Photo",
@@ -111,7 +114,21 @@
         "route": "/user/events/created"
     },
     "email": {
-        "label": "Email"
+        "label": "Email",
+        "errors": {
+            "valid": "L'adresse email doit être au bon format"
+        },
+        "tooltips": {
+            "verified": "Votre adresse email est vérifiée",
+            "notVerified": "Votre adresse email n'est pas vérifiée"
+        },
+        "buttons": {
+            "label": {
+                "generateEmail": "Envoyer un email de vérification",
+                "generateEmailAgain": "Renvoyer un email de vérification"
+            }
+        },    
+        "verificationRoute":"/utilisateur/email/validation"    
     },
     "givenName": {
         "label": "Prénom"

@@ -95,13 +95,68 @@
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
 
+         
           <!--Email-->
-          <v-text-field
+          <v-row 
+            justify="center" 
+          >
+            <v-col>
+              <v-text-field
             v-model="email"
             :label="$t('email.label')"
             type="email"
             class="email"
           />
+            </v-col>
+          <!-- email verified -->
+            <v-col cols="1" v-if="email && emailVerified == true" >
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template v-slot:activator="{ on }">
+                  <v-icon 
+                    color="success" 
+                    v-on="on"  
+                    class="mt-7 ml-n12"
+                  >
+                    mdi-check-circle-outline
+                  </v-icon>
+                </template>
+                  <span> {{$t('email.tooltips.verified')}}</span>
+              </v-tooltip>
+            </v-col>
+          <!--email verification -->
+            <v-col cols="1"  v-if="emailVerified == false">
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template 
+                  v-slot:activator="{ on }"
+                >
+                  <v-icon 
+                    color="warning" 
+                    v-on="on" 
+                    class="mt-7 ml-n12" 
+                  >
+                    mdi-alert-circle-outline
+                  </v-icon>
+                </template>
+                  <span>{{$t('email.tooltips.notVerified')}}</span>
+              </v-tooltip>
+            </v-col>
+            <v-col  v-if="emailVerified == false">
+              <v-btn 
+                rounded color="secondary" 
+                @click="sendVerificationEmail" 
+                class="mt-4" 
+                :loading="loadingEmail"
+              >
+                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain')}}
+              </v-btn>
+            </v-col>
+          </v-row>
 
           <!--Telephone-->
           <v-row 
@@ -511,6 +566,7 @@ export default {
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
+      emailValidatedDate: this.user.validatedDate,
       token: null,
       menu : false,
 
@@ -554,6 +610,9 @@ export default {
       urlAvatar: this.user.avatars[this.user.avatars.length-1],
       displayFileUpload: (this.user.images[0]) ? false : true,
       phoneVerified: null,
+      emailVerified: false,
+      emailSended: false,
+      loadingEmail: false,
       diplayVerification: this.user.telephone ? true : false,
       loadingToken: false,
       loadingValidatePhone: false,
@@ -595,6 +654,7 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
+    this.checkVerifiedEmail();
     this.getOwnedCommunities();
     this.getCreatedEvents();
   },
@@ -640,6 +700,7 @@ export default {
             this.phoneToken = null;
             this.diplayVerification = true;
             this.checkVerifiedPhone();
+            this.checkVerifiedEmail();
           }
           //this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false; 
@@ -689,6 +750,11 @@ export default {
         this.phoneVerified = this.phoneValidatedDate ? true : false;
       }
     },
+    checkVerifiedEmail() {
+      if (this.email !== null) {
+        this.emailVerified = this.emailValidatedDate ? true : false;
+      }
+    },
     generateToken() {
     this.loadingToken = true;   
     axios 
@@ -704,6 +770,22 @@ export default {
           this.phoneToken = true;
           this.token = null;
           this.loadingToken = false;
+        })
+    },
+    sendVerificationEmail() {
+    this.loadingEmail = true;   
+    axios 
+      .get(this.$t('email.verificationRoute'))
+      .then(res => {
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t('snackBar.emailError');
+            this.snackbar = true;
+          }
+          this.textSnackOk = this.$t('snackBar.emailOk');
+          this.snackbar = true;
+          this.emailSended = true;
+          this.loadingEmail = false;   
         })
     },
     validateToken() {

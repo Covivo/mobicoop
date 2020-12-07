@@ -301,6 +301,12 @@ use App\User\Controller\UserCanUseEmail;
  *              "controller"=UserGeneratePhoneToken::class,
  *              "security"="is_granted('user_update',object)"
  *          },
+ *          "send_validation_email"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/send_validation_email",
+ *              "controller"=UserSendVerificationEmail::class,
+ *              "security"="is_granted('user_update',object)"
+ *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},
@@ -501,6 +507,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
+
+    /**
+     * @var string|null The email of the user.
+     * @Groups({"readUser", "write"})
+     */
+    private $oldEmail;
 
     /**
      * @var string The email of the user in a professional context.
@@ -1309,6 +1321,18 @@ class User implements UserInterface, EquatableInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getOldEmail(): string
+    {
+        return $this->oldEmail;
+    }
+
+    public function setOldEmail(string $oldEmail): self
+    {
+        $this->oldEmail = $oldEmail;
 
         return $this;
     }

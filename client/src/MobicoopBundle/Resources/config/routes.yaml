@@ -184,6 +184,13 @@ user_phone_token:
         en: /user/phone/token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
 
+# send a validation email AJAX
+user_email_validation:
+    path:    
+        fr: /utilisateur/email/validation
+        en: /user/email/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
+
 # delete avatar
 user_profile_image_delete:
     path:

@@ -331,6 +331,24 @@ class UserController extends AbstractController
     }
 
     /**
+     * Send a validation email
+     *
+     * @return User
+     */
+    public function sendValidationEmail()
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        $this->userManager->sendValidationEmail($user);
+        return new response(json_encode('emailSend'));
+    }
+
+    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)

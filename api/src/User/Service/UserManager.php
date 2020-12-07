@@ -76,6 +76,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
 use App\Payment\Ressource\BankAccount;
 use App\User\Entity\SsoUser;
+use App\User\Exception\UserNotFoundException;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
 
@@ -500,6 +501,12 @@ class UserManager
             $user->setPhoneValidatedDate(null);
             // deactivate sms notification since the phone is new
             $user = $this->deActivateSmsNotification($user);
+        }
+
+        // check if the email is updated and if so set a new Token and reset the validatedDate
+        if ($user->getEmail() != $user->getOldEmail()) {
+            $user->setEmailToken($this->createToken($user));
+            $user->setValidatedDate(null);
         }
 
         //we add/remove structures associated to user
@@ -1547,5 +1554,22 @@ class UserManager
         $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
 
         return $publicProfile;
+    }
+
+    /**
+    * Send a verification email
+    *
+    * @param string $email The email to verify
+    * @return User|null    The user found
+    */
+    public function sendVerificationEmail(string $email)
+    {
+        if ($user = $this->userRepository->findOneBy(["email"=>$email])) {
+            $event = new UserRegisteredEvent($user);
+            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+            return $user;
+        } else {
+            throw new UserNotFoundException("Unknow email", 1);
+        }
     }
 }
