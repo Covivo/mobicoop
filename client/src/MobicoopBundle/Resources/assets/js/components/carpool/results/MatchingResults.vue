@@ -44,7 +44,6 @@
             :result="result"
             :user="user"
             :distinguish-regular="distinguishRegular"
-            :carpooler-rate="carpoolerRate"
             :external-rdex-journeys="externalRdexJourneys"
             @carpool="carpool(result)"
             @loginOrRegister="loginOrRegister(result)"
@@ -107,10 +106,6 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
-    },
-    carpoolerRate: {
-      type: Boolean,
-      default: true
     },
     loadingProp: {
       type: Boolean,

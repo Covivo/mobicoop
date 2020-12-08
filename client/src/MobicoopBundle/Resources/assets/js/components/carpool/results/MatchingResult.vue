@@ -69,7 +69,6 @@
           <!-- Carpooler detail -->
           <carpooler-summary
             :carpooler="result.carpooler"
-            :carpooler-rate="carpoolerRate"
             :user="user"
             :external-rdex-journeys="externalRdexJourneys"
             :external-url="(result.externalUrl) ? result.externalUrl : null"
@@ -120,10 +119,6 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
-    },
-    carpoolerRate: {
-      type: Boolean,
-      default: true
     },
     externalRdexJourneys: {
       type: Boolean,
