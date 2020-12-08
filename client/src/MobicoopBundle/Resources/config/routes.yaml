@@ -438,8 +438,8 @@ user_review_write:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/post/
+        fr: /covoiturage/publierannonce
+        en: /carpool/postad
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
 # update an ad
@@ -459,14 +459,14 @@ carpool_ad_delete:
 # post a first ad
 carpool_first_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/premiere
+        fr: /covoiturage/publierannonce/premiere
         en: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a solidary exclusive ad
 carpool_solidary_exclusive_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/solidaire
+        fr: /covoiturage/publierannonce/solidaire
         en: /carpool/ad/post/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
 

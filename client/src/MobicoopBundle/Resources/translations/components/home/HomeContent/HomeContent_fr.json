@@ -24,7 +24,7 @@
         },
         "button2": {
             "label": "Donner un coup de pouce",
-            "route": "/covoiturage/annonce/poster/solidaire"
+            "route": "/covoiturage/publierannonce/solidaire"
         }
     }
 }
