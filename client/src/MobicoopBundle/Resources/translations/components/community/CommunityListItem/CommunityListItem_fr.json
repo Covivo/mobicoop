@@ -17,7 +17,7 @@
         }
     },
     "routes": {
-        "community": "/communaute/{id}",
+        "community": "/communaute/{id}/{urlKey}",
         "communitySecuredRegister": "/communaute/{id}/securisee/inscription"
     },
     "communityDetails": "Voir la communauté",

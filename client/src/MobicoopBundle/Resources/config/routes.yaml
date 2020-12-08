@@ -664,8 +664,8 @@ community_get_list:
 # display one community
 community_show:
     path:
-        fr: /communaute/{id}
-        en: /community/{id}
+        fr: /communaute/{id}/{urlKey}
+        en: /community/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
