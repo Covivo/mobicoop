@@ -164,7 +164,7 @@ class ProfileSummary
         return $this->givenName;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
         
@@ -188,7 +188,7 @@ class ProfileSummary
         return $this->age;
     }
 
-    public function setAge(int $age): self
+    public function setAge(?int $age): self
     {
         $this->age = $age;
         
