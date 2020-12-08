@@ -37,15 +37,15 @@ class DefaultController extends AbstractController
 {
     use HydraControllerTrait;
 
-    /**
-     * Constructor
-     */
-    private $rssFeed;
+    // /**
+    //  * Constructor
+    //  */
+    // private $rssFeed;
 
-    public function __construct($rssFeed)
-    {
-        $this->rssFeed = $rssFeed;
-    }
+    // public function __construct($rssFeed)
+    // {
+    //     $this->rssFeed = $rssFeed;
+    // }
 
     /**
      * HomePage
@@ -143,43 +143,43 @@ class DefaultController extends AbstractController
      */
     public function blogPost()
     {
-        $url= $this->rssFeed;
+        // $url= $this->rssFeed;
 
-        // transform xml to object
-        $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
+        // // transform xml to object
+        // $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
 
-        foreach ($feedResult->channel->item as $item) {
-            $title = (string) $item->title;
+        // foreach ($feedResult->channel->item as $item) {
+        //     $title = (string) $item->title;
 
-            $description = (string) $item->description;
+        //     $description = (string) $item->description;
 
-            $start = strpos($description, '<p>');
-            $end = strpos($description, '</p>', $start);
+        //     $start = strpos($description, '<p>');
+        //     $end = strpos($description, '</p>', $start);
 
-            if (strlen($description)>255) {
-                $description = substr($description, $start, $end-$start+247)." ...";
-            }
+        //     if (strlen($description)>255) {
+        //         $description = substr($description, $start, $end-$start+247)." ...";
+        //     }
 
-            $dom = new DOMDocument();
-            libxml_use_internal_errors(true);
+        //     $dom = new DOMDocument();
+        //     libxml_use_internal_errors(true);
 
-            $content = $item->children('content', true);
+        //     $content = $item->children('content', true);
 
-            $html_string = $content->encoded;
-            $dom->loadHTML($html_string);
-            libxml_clear_errors();
+        //     $html_string = $content->encoded;
+        //     $dom->loadHTML($html_string);
+        //     libxml_clear_errors();
 
-            $img = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+        //     $img = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
 
-            $pubDate=date('d M Y', strtotime($item->pubDate));
+        //     $pubDate=date('d M Y', strtotime($item->pubDate));
 
-            return $this->render('@Mobicoop/blogpost/blog-post.html.twig', [
-                'image'=> $img,
-                'title'=> $title,
-                'description'=>$description,
-                'pubDate'=>$pubDate
-                ]);
-        }
+        //     return $this->render('@Mobicoop/blogpost/blog-post.html.twig', [
+        //         'image'=> $img,
+        //         'title'=> $title,
+        //         'description'=>$description,
+        //         'pubDate'=>$pubDate
+        //         ]);
+        // }
     }
 
     /**
@@ -187,6 +187,6 @@ class DefaultController extends AbstractController
      */
     public function getBlogPost()
     {
-        return $this->render('@Mobicoop/blogpost/get-blog-post.html.twig');
+        // return $this->render('@Mobicoop/blogpost/get-blog-post.html.twig');
     }
 }

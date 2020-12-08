@@ -33,6 +33,7 @@ use App\Article\Repository\SectionRepository;
 use App\Article\Repository\ParagraphRepository;
 use App\Article\Repository\ArticleRepository;
 use App\Article\Ressource\Article;
+use DOMDocument;
 
 /**
  * Article manager service.
@@ -66,18 +67,21 @@ class ArticleManager
      */
     private $articleRepository;
 
+    private $articleFeeds;
+
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeeds)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->sectionRepository = $sectionRepository;
         $this->paragraphRepository = $paragraphRepository;
         $this->articleRepository = $articleRepository;
+        $this->articleFeeds = $articleFeeds;
     }
 
     /**
@@ -180,11 +184,14 @@ class ArticleManager
     {
         $article = new Article();
 
+        $article->setTitle($rssElement->getTitle());
+        $article->setDescription($rssElement->getDescription());
+        $article->setImage($rssElement->getImage());
+        $article->setPubDate($rssElement->getPubDate());
 
         return $article;
     }
 
-    
     /**
      * Get Rss elements from all feeds (in .env ARTICLE_FEEDS)
      *
@@ -193,9 +200,46 @@ class ArticleManager
     private function getRssFeeds(): array
     {
         $rssElements = [];
-        // foreach(){
 
-        // }
+        // $url= $this->articleFeeds;
+        $url="https://blog.covoiturage-grandlyon.com/feed";
+
+        // transform xml to object
+        $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        foreach ($feedResult->channel->item as $item) {
+
+            $rssElement = new RssElement();
+
+            $rssElement->setTitle((string) $item->title);
+            $rssElement->setPubDate(date('d M Y', strtotime($item->pubDate)));
+
+            $description = (string) $item->description;
+
+            $start = strpos($description, '<p>');
+            $end = strpos($description, '</p>', $start);
+
+            if(strlen($description)>255){
+                $description = substr($description, $start, $end-$start+255)." ...";
+            }
+
+            $rssElement->setDescription($description);
+
+            $dom = new DOMDocument();
+            libxml_use_internal_errors(true);
+
+            $content = $item->children('content', true);
+
+            $html_string = $content->encoded;
+            $dom->loadHTML($html_string);
+            libxml_clear_errors();
+
+            $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+
+            $rssElement->setImage($image);
+
+            $rssElements[]=$rssElement;
+        }   
 
         return $rssElements;
     }
@@ -210,7 +254,6 @@ class ArticleManager
     {
         $articles = [];
         
-        
         // Get the articles in database
         if (is_null($context) || $context==Article::CONTEXT_INTERNAL) {
             $pages = $this->articleRepository->findAll();
@@ -223,12 +266,18 @@ class ArticleManager
         // Get the RSS articles
         if (is_null($context) || $context==Article::CONTEXT_HOME) {
             $rssItems = $this->getRssFeeds();
+
             foreach ($rssItems as $rssItem) {
                 $articles[] = $this->makeArticleFromRss($rssItem);
             }
+
             $rssArticles = null;
+
         }
 
         return $articles;
+
+
+
     }
 }

@@ -108,6 +108,10 @@ services:
         resource: '../src/Article/Controller'
         tags: ['controller.service_arguments']
 
+    App\Article\Service\ArticleManager:
+        arguments:
+            $articleFeeds: '%env(json:ARTICLE_FEEDS)%'
+            
     # Auth
     App\Auth\Controller\:
         resource: '../src/Auth/Controller'

@@ -25,8 +25,6 @@ services:
     ### as action arguments even if you don't extend any base controller class
     Mobicoop\Bundle\MobicoopBundle\Controller\:
         resource: '@MobicoopBundle/Controller/*'
-        arguments:
-            $rssFeed: '%env(resolve:RSS_FEED)%'
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
