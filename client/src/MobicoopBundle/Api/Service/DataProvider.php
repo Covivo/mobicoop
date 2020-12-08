@@ -635,7 +635,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
-                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+                //var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
 
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => $headers]);
             }
