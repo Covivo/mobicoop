@@ -26,6 +26,11 @@ use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
+/**
+ * Controller class to send a confirmation email
+ *
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ */
 class UserSendVerificationEmail
 {
     use TranslatorTrait;
@@ -45,7 +50,7 @@ class UserSendVerificationEmail
      * @param User $user the user
      * @return User
      */
-    public function __invoke($user)
+    public function __invoke(User $user)
     {
         if (is_null($user)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));

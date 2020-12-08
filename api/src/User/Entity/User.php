@@ -103,6 +103,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
+use App\User\Controller\UserSendVerificationEmail;
 
 /**
  * A user.
