@@ -1096,8 +1096,8 @@ event_widget:
 # get widget
 event_get_widget:
     path:
-        fr: /evenement/widget/get/{id}
-        en: /event/widget/get/{id}
+        fr: /evenement/widget/get/{id}/{urlKey}
+        en: /event/widget/get/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
