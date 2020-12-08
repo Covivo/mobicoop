@@ -171,7 +171,6 @@
                 :results="results"
                 :nb-results="nbCarpoolPlatform"
                 :distinguish-regular="distinguishRegular"
-                :carpooler-rate="carpoolerRate"
                 :user="user"
                 :loading-prop="loading"
                 :page="page"
@@ -188,7 +187,6 @@
               <matching-results
                 :results="externalRDEXResults"
                 :distinguish-regular="distinguishRegular"
-                :carpooler-rate="carpoolerRate"
                 :user="user"
                 :loading-prop="loadingExternal"
                 :external-rdex-journeys="externalRdexJourneys"
@@ -358,10 +356,6 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
-    },
-    carpoolerRate: {
-      type: Boolean,
-      default: true
     },
     geoSearchUrl: {
       type: String,

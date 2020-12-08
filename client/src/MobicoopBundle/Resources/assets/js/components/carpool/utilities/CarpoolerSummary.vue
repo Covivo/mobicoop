@@ -21,52 +21,64 @@
       <!-- Carpooler identity -->
       <v-col
         cols="4"
+        md="3"
+        lg="3"
       >
         <carpooler-identity
           :carpooler="carpooler"
         />
       </v-col>
-  
-      <!-- Carpooler rate -->
+
+      <!-- Community -->
       <v-col
-        v-if="carpoolerRate"
-        cols="1"
+        v-if="enabled"
+        align="left"
+        cols="2"
+        md="3"
+        lg="3"
       >
         <v-tooltip
-          bottom
+          v-for="community in communities"
+          :key="community.id"
           color="info"
+          right
         >
           <template v-slot:activator="{ on }">
-            <v-container
-              class="pt-0 pb-0 pl-0 pr-0"
+            <v-list-item-avatar
+              class="grey lighten-2 ml-1 mr-1"
+              contain
+              :size="avatarSize" 
+              v-on="on"
             >
-              <v-row
-                align="center"
-                dense
-                v-on="on"
-              >
-                <span
-                  class="yellow--text text--darken-2"
-                >
-                  4.7
-                </span>
-
-                <v-icon
-                  :color="'yellow darken-2'"
-                  class="ml-1"
-                >
-                  mdi-star
-                </v-icon>
-              </v-row>
-            </v-container>
+              <v-img
+                v-if="community.image[0]"
+                :src="community.image[0]['versions']['square_100']"
+                alt="avatar"
+              />
+              <v-img
+                v-else
+                class="grey lighten-2"
+                src="/images/avatarsDefault/avatar.svg"
+                alt="avatar"
+              />
+            </v-list-item-avatar>
           </template>
-          <span> {{ $t('inDev') }} </span>
+          <span>
+            {{ community.name }}</span> 
         </v-tooltip>
       </v-col>
+      <v-col
+        v-else
+        cols="2"
+        md="3"
+        lg="3"
+      />
 
       <!-- Carpooler contact -->
       <v-col
         cols="4"
+        md="2"
+        lg="3"
       >
         <carpooler-contact
           :carpooler="carpooler"
@@ -78,7 +90,8 @@
       <!-- Carpool button -->
       <v-col
         v-if="!externalRdexJourneys"
-        cols="3"
+        cols="2"
+        lg="3"
         class="text-right"
       >
         <v-btn
@@ -94,7 +107,8 @@
       </v-col>
       <v-col
         v-else
-        cols="3"
+        cols="2"
+        lg="3"
         class="text-right"
       >
         <v-btn
@@ -128,49 +142,7 @@
         </v-card-text>
       </v-col>  
     </v-row>
-
-    <!-- Community -->
-    <v-row 
-      v-if="communities" 
-      no-gutters
-    >
-      <v-col cols="4" />
-      <v-col
-        align="left"
-        cols="5"
-      >
-        <v-tooltip
-          v-for="community in communities"
-          :key="community.id"
-          color="info"
-          right
-        >
-          <template v-slot:activator="{ on }">
-            <v-list-item-avatar
-              class="grey lighten-2 ml-1 mr-1"
-              contain
-              :size="avatarSize" 
-              v-on="on"
-            >
-              <v-img
-                v-if="community.image[0]"
-                :src="community.image[0]['versions']['square_100']"
-                alt="avatar"
-              />
-              <v-img
-                v-else
-                class="grey lighten-2"
-                src="/images/avatarsDefault/avatar.svg"
-                alt="avatar"
-              />
-            </v-list-item-avatar>
-          </template>
-          <span>
-            {{ community.name }}</span> 
-        </v-tooltip>
-      </v-col>
-      <v-col cols="3" />
-    </v-row>
+    
     <v-dialog
       v-model="dialogExternalContact"
       width="80%"
@@ -257,10 +229,6 @@ export default {
       type: Object,
       default: null
     },
-    carpoolerRate: {
-      type: Boolean,
-      default: true
-    },
     user: {
       type: Object,
       default: null
@@ -297,20 +265,17 @@ export default {
       loadingSendContact: false,
       content:"",
       showSendError: false,
-      showSendSuccess: false
+      showSendSuccess: false,
+      enabled: Object.keys(this.communities).length > 0
     };
   },
   computed: {
     avatarSize() {
       switch (this.$vuetify.breakpoint.name) {
-      case "xs":
-        return '20';
-      case "sm":
-        return '20';
       case "md":
         return '20';
       case "lg":
-        return '35';
+        return '30';
       case "xl":
         return '35';
       default:
