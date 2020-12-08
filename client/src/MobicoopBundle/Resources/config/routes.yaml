@@ -1078,8 +1078,8 @@ event_create:
 # display one event
 event_show:
     path:
-        fr: /evenement/{id}
-        en: /event/{id}
+        fr: /evenement/{id}/{urlKey}
+        en: /event/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'

@@ -8,7 +8,7 @@
     "seeAds": "See the ads",
     "noEvent": "No event",
     "routes": {
-        "event": "/event/{id}",
+        "event": "/event/{id}/{urlKey}",
         "getList": "/events/getEventList"
     }
 }

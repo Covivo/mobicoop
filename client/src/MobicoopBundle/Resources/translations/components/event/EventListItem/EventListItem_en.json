@@ -1,6 +1,6 @@
 {
     "routes": {
-        "event": "/event/{id}"
+        "event": "/event/{id}/{urlKey}"
     },
     "eventDetails": "Event details",
     "join": "Join the event",

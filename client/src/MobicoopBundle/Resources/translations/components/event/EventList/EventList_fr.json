@@ -11,7 +11,7 @@
     "endEvent": "Fin",
     "noEvent": "Aucun événement",
     "routes": {
-        "event": "/evenement/{id}",
+        "event": "/evenement/{id}/{urlKey}",
         "getList": "/evenements/getEventList",
         "login": "/utilisateur/connexion"
     }
