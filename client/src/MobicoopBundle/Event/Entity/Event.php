@@ -58,7 +58,7 @@ class Event implements ResourceInterface, \JsonSerializable
     private $name;
     
     /**
-     * @var string The name of the event.
+     * @var string The urlkey of the event.
      */
     private $urlKey;
 

@@ -100,7 +100,6 @@ class EventManager
         return $createdEvents;
     }
 
-
     /**
      * Generate the UrlKey of an Event
      *
@@ -115,6 +114,11 @@ class EventManager
         $urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
         $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
 
+        // We don't want to finish with a single "-"
+        if (substr($urlKey, -1)=="-") {
+            $urlKey = substr($urlKey, 0, strlen($urlKey)-1);
+        }
+        
         return $urlKey;
     }
 }
