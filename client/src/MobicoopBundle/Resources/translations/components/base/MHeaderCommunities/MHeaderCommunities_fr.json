@@ -2,6 +2,6 @@
     "title": "Mes communautés",
     "getCommunities": "/utilisateur/communautes",
     "availableCommunities": "Les communautés disponibles",
-    "urlCommunityList": "/communautes",
-    "urlCommunityDetails": "/communaute/{id}/{urlKey}"
+    "urlCommunityList": "/covoiturage-communaute",
+    "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}"
 }

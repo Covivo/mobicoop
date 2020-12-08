@@ -649,8 +649,8 @@ community_create:
 # display communities
 community_list:
     path:
-        fr: /communautes
-        en: /community
+        fr: /covoiturage-communaute
+        en: /carpool-community
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # Get the communities (AJAX)
@@ -664,8 +664,8 @@ community_get_list:
 # display one community
 community_show:
     path:
-        fr: /communaute/{id}/{urlKey}
-        en: /community/{id}/{urlKey}
+        fr: /covoiturage-communaute/{id}/{urlKey}
+        en: /carpool-community/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
@@ -1064,8 +1064,8 @@ event_get_list:
 # display events
 event_list:
     path:
-        fr: /evenements/{tabDefault?}
-        en: /events/{tabDefault?}
+        fr: /covoiturages-evenements/{tabDefault?}
+        en: /carpools-events/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # create event
@@ -1078,8 +1078,8 @@ event_create:
 # display one event
 event_show:
     path:
-        fr: /evenement/{id}/{urlKey}
-        en: /event/{id}/{urlKey}
+        fr: /covoiturages-evenements/{id}/{urlKey}
+        en: /carpools-events/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
