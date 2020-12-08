@@ -137,6 +137,13 @@ class Event
     private $name;
 
     /**
+     * @var string Urlkey of the event
+     *
+     * @Groups({"readEvent"})
+     */
+    private $urlKey;
+
+    /**
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
@@ -288,6 +295,16 @@ class Event
         $this->name = $name;
     }
     
+    public function getUrlKey(): ?string
+    {
+        return $this->urlKey;
+    }
+    
+    public function setUrlKey(?string $urlKey)
+    {
+        $this->urlKey = $urlKey;
+    }
+
     public function getStatus(): int
     {
         return $this->status;
