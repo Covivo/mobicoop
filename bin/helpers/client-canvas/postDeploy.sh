@@ -62,7 +62,7 @@ then
     # check env files
     python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
 
-    # Migrations
+    # Migrations platform
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
@@ -79,6 +79,10 @@ then
             ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client;
         fi
     fi
+
+    # Migrations instance
+    cd /var/www/$VERSION/$INSTANCE/;
+    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
     python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
@@ -142,7 +146,7 @@ else
     # check env files
     python3 /var/www/$INSTANCE/$VERSION/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$INSTANCE/$VERSION/mobicoop-platform -env $VERSION_MIGRATE
 
-    # Migrations
+    # Migrations platform
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
@@ -159,6 +163,10 @@ else
             ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client;
         fi
     fi
+
+    # Migrations instance
+    cd /var/www/$INSTANCE/$VERSION/;
+    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
     python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
