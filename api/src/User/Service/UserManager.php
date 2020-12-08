@@ -1453,7 +1453,9 @@ class UserManager
         $profileSummary->setCreatedDate($user->getCreatedDate());
         $profileSummary->setLastActivityDate($user->getLastActivityDate());
 
-        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+        if ($user->getBirthDate()) {
+            $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+        }
 
         $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
         if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
