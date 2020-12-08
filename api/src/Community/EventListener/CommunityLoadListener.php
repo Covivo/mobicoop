@@ -47,9 +47,10 @@ class CommunityLoadListener
     {
         if ($this->requestStack->getCurrentRequest()) {
             $request = $this->requestStack->getCurrentRequest();
-            if ($request->get("userId")) {
-                $community = $args->getEntity();
-                if ($community instanceof Community) {
+
+            $community = $args->getEntity();
+            if ($community instanceof Community) {
+                if ($request->get("userId")) {
                     /** @var CommunityUser[] $communityUsers */
                     $communityUsers = $community->getCommunityUsers();
                     foreach ($communityUsers as $communityUser) {
@@ -60,8 +61,10 @@ class CommunityLoadListener
                             break;
                         }
                     }
-                    $community->setUrlKey($this->communityManager->generateUrlKey($community));
                 }
+                
+                // Url Key of the community
+                $community->setUrlKey($this->communityManager->generateUrlKey($community));
             }
         }
     }

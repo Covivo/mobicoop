@@ -57,12 +57,15 @@ class CommunityUserLoadListener
 
             $request = $this->requestStack->getCurrentRequest();
             $userId = intval($request->get('userId') ?: $request->get('user')); //TODO Homogénéiser les appels
+
+            $community=$communityUser->getCommunity();
             if ($userId > 0) {
                 $isMember = ($communityUser->getUser()->getId() === $userId) && (CommunityUser::STATUS_ACCEPTED_AS_MEMBER === $communityUser->getStatus() || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus());
-                $community = $communityUser->getCommunity();
                 $community->setMember($isMember);
-                $community->setUrlKey($this->communityManager->generateUrlKey($community));
             }
+            
+            // Set url Key
+            $community->setUrlKey($this->communityManager->generateUrlKey($community));
         }
     }
 }
