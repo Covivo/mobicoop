@@ -8,8 +8,13 @@
         "help": "Click to swap origin and destination addresses"
     },
     "switch": {
-        "label": "Regular ride",
-        "help": "Switch to indicate a regular ride"
+        "regular": {
+            "label": "Regular ride",
+            "help": "Switch to indicate a punctual ride then select a date"
+        },
+        "punctual": {
+            "help": "Switch to indicate a regular ride"
+        }
     },
     "datePicker": {
         "label": "Departure date"

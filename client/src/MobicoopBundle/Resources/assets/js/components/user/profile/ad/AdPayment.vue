@@ -97,6 +97,9 @@ export default {
       return (this.isDriver) ? 2 : 1;
     },
   },
+  mounted(){
+    this.getStatus(this.paymentStatus);
+  },
   methods:{
     getStatus(paymentStatus){
       switch (this.paymentStatus) {

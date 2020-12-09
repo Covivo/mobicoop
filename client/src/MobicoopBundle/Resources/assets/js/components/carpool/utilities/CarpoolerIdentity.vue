@@ -1,5 +1,5 @@
 <template>
-  <v-list-item>
+  <v-list-item class="pa-0">
     <!--Carpooler avatar-->
     <ProfileAvatar
       :avatar="carpooler.avatars[1]"

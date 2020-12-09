@@ -79,7 +79,6 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/user/LoginAdmin/";
 
 export default {
@@ -119,7 +118,7 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       checkboxRules: [
-        (v) => !!v || this.$t("checkbox.required", {user: userEmail}),
+        (v) => !!v || this.$t("checkbox.required", {user: this.userEmail}),
       ],
       validation: false,
     };
