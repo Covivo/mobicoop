@@ -393,6 +393,13 @@ use App\User\Controller\UserCanUseEmail;
  *              "denormalization_context"={"groups"={"awUser"}},
  *              "security"="is_granted('user_update',object)"
  *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"arUser"}},
+ *              "denormalization_context"={"groups"={"awUser"}},
+ *              "security"="is_granted('user_delete',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})

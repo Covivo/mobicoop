@@ -57,6 +57,9 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
-        // call your persistence layer to delete $data
+        // no delete item yet !
+        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+            return $data;
+        }
     }
 }

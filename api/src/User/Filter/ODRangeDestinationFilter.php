@@ -46,8 +46,9 @@ final class ODRangeDestinationFilter extends AbstractContextAwareFilter
         // we decode the json we received for get Latitude and Longitude
         $value = json_decode($value);
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->leftJoin('u.proposals', 'pdest')
+            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'pdest')
             ->leftJoin('pdest.waypoints', 'wdest')
             ->leftJoin('wdest.address', 'adest')
             ->andWHere('pdest.private <> 1 AND wdest.destination = 1 AND acos(sin(adest.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 
