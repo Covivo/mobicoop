@@ -2,6 +2,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Security;
 
+use Exception;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,7 +122,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         // We set the dataProvider to private => will discard the current JWT token
         $this->dataProvider->setPrivate(true);
 
-        $response = $this->dataProvider->getSpecialCollection("me");
+        try {
+            $response = $this->dataProvider->getSpecialCollection("me");
+        } catch (Exception $e) {
+            return null;
+        }
 
         if (null === $response) {
             // The token header was empty, authentication fails with HTTP Status

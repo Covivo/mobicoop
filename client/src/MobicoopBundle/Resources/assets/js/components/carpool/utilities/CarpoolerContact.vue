@@ -14,6 +14,8 @@
     <div v-if="user && carpooler.telephone">
       <v-btn
         v-show="!phoneButtonToggled"
+        class="mb-1"
+
         color="secondary"
         small
         depressed
@@ -32,6 +34,7 @@
         depressed
         rounded
         height="40px"
+        class="mb-1"
         @click="toggleButton"
       >
         <v-icon>mdi-phone</v-icon>
@@ -44,7 +47,7 @@
         small
         depressed
         fab
-        class="ml-2"
+        class="ml-2 mb-1"
       >
         <v-icon
           @click="openMailBox()"

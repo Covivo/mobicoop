@@ -17,7 +17,6 @@
         :user="{{ app.user|json_encode }}"
         {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
         {{ distinguishRegular ? 'distinguish-regular' : '' }}
-        :carpooler-rate = "{{ carpoolerRate }}"
         geo-search-url="{{ geoCompleteUri }}"
         platform-name="{{ platformName }}"
         :external-rdex-journeys="{{ (externalRDEXJourneys) ? 'true' : 'false' }}"
