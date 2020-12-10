@@ -60,18 +60,17 @@ class UserManager
      * @param EntityManagerInterface $entityManager The entity manager
      */
     public function __construct(
-        EntityManagerInterface $entityManager, 
-        AuthItemRepository $authItemRepository, 
-        TerritoryRepository $territoryRepository, 
-        UserPasswordEncoderInterface $encoder, 
+        EntityManagerInterface $entityManager,
+        AuthItemRepository $authItemRepository,
+        TerritoryRepository $territoryRepository,
+        UserPasswordEncoderInterface $encoder,
         EventDispatcherInterface $dispatcher,
         Security $security,
         ServiceUserManager $userManager,
         $chat,
         $smoke,
         $music
-        )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
         $this->territoryRepository = $territoryRepository;
@@ -168,7 +167,7 @@ class UserManager
             $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
             $homeAddress->setHome(true);
             $homeAddress->setName(Address::HOME_ADDRESS);
-            $homeAddress->setUser($user);   
+            $homeAddress->setUser($user);
             $this->entityManager->persist($homeAddress);
             $this->entityManager->flush();
         }
