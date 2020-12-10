@@ -76,19 +76,36 @@ export default {
     linksColorClass: {
       type: String,
       default: ""
+    },
+    showReviews: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
     return {
-      items: [
+      
+    }
+  },
+  computed:{
+    items(){
+
+      let items = [
         { title: this.$t('myAds.label'), url: this.$t('myAds.route') },
         { title: this.$t('myAcceptedCarpools.label'), url: this.$t('myAcceptedCarpools.route') },
         { title: this.$t('myProfile.label'), url: this.$t('myProfile.route') },
-        {},
-        { title: this.$t('logOut.label'), url: this.$t('logOut.route') }
-      ],
+      ];
+
+      if(this.showReviews){
+        items.push({ title: this.$t('reviews.label'), url: this.$t('reviews.route') });
+      }
+
+      items.push({});
+      items.push({ title: this.$t('logOut.label'), url: this.$t('logOut.route') });
+
+      return items;
     }
-  },
+  }
 }
 </script>
 <style lang="scss" scoped>

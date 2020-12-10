@@ -28,7 +28,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class IdentityProofOutdatedEvent extends Event
 {
-    public const NAME = 'identity_proof_oudated';
+    public const NAME = 'identity_proof_outdated';
 
 
     public function __construct(PaymentProfile $paymentProfile)

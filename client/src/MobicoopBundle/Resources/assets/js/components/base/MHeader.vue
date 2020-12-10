@@ -30,6 +30,7 @@
         <MHeaderProfile
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+          :show-reviews="showReviews"
         />
       </v-toolbar-items>
       <v-toolbar-items
@@ -59,6 +60,7 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+     
       <div @click="snackbar = true">
         <v-btn
           v-if="!user"
@@ -69,9 +71,19 @@
           {{ $t('buttons.shareAnAd.label') }}
         </v-btn>
       </div>
+      <v-toolbar-items
+        class="hidden-md-and-down"
+      >
+        <MHeaderLanguage
+          :languages="languages"
+          :language="dlocale"
+          @languageSelected="updateLanguage"
+        />
+      </v-toolbar-items>
       <v-snackbar
         v-if="!user"
         v-model="snackbar"
+        top
         color="info"
       >
         {{ $t('snackbar.needConnection') }}
@@ -110,9 +122,19 @@
         <v-list>
           <v-list-item>
             <v-list-item-title>
+              <MHeaderLanguage
+                :languages="languages"
+                :language="dlocale"
+                @languageSelected="updateLanguage"
+              />
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
               <MHeaderProfile
                 :avatar="user.avatars[0]"
                 :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
+                :show-reviews="showReviews"
               />
             </v-list-item-title>
           </v-list-item>
@@ -218,12 +240,14 @@
 </template>
 
 <script>
-import { merge } from "lodash";
+import { merge, has } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
+import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
+
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -238,7 +262,8 @@ export default {
   components: {
     //Accessibility,
     MHeaderProfile,
-    MHeaderCommunities
+    MHeaderCommunities,
+    MHeaderLanguage
   },
   props: {
     user: {
@@ -252,22 +277,38 @@ export default {
     locale: {
       type: String,
       default: "fr"
+    },
+    showReviews: {
+      type: Boolean,
+      default: false
+    },
+    languages: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
     return {
       snackbar: false,
       width: 0,
+      defaultLocale: 'fr',
       dlocale: this.locale
     }
   },
-  watch: {
-    dlocale (val) {
-      this.$root.$i18n.locale = val
+  mounted() {
+    if (has(this.languages, this.locale)) {
+      this.dlocale = this.locale;
+    } else {
+      this.dlocale = this.defaultLocale;
     }
   },
   created() {
-    this.$root.$i18n.locale = this.locale
+    this.$root.$i18n.locale = this.dlocale
+  },
+  methods:{
+    updateLanguage(language) {
+      this.$root.$i18n.locale = language
+    },
   }
 };
 </script>

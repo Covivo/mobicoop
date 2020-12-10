@@ -24,7 +24,7 @@
 namespace App\Auth\Service;
 
 use App\App\Entity\App;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Service\AdManager;
 use App\Community\Service\CommunityManager;

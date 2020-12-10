@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import { Card, Grid, Avatar, Divider } from '@material-ui/core';
 
+import { useDataProvider, useNotify } from 'react-admin';
 import DropDownButton from '../../../../components/button/DropDownButton';
 import DayChip from './DayChip';
 import SolidarySchedule from './SolidarySchedule';
@@ -41,28 +42,70 @@ const driverSearchOptions = [
   {
     label: 'Rechercher aller covoiturage',
     target: 'solidary_searches',
-    filter: (solidaryId) => ({ way: 'outward', type: 'carpool', solidary: solidaryId }),
+    filter: (solidaryId) => ({
+      way: 'outward',
+      type: 'carpool',
+      solidary: solidaryId,
+    }),
   },
   {
     label: 'Rechercher retour covoiturage',
     target: 'solidary_searches',
-    filter: (solidaryId) => ({ way: 'return', type: 'carpool', solidary: solidaryId }),
+    filter: (solidaryId) => ({
+      way: 'return',
+      type: 'carpool',
+      solidary: solidaryId,
+    }),
   },
   can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole aller',
     target: 'solidary_volunteers',
-    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
+    filter: (solidaryId) => ({
+      way: 'outward',
+      type: 'transport',
+      solidary: solidaryId,
+    }),
   },
   can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole retour',
     target: 'solidary_volunteers',
-    filter: (solidaryId) => ({ validatedCandidate: true, solidary: solidaryId }),
+    filter: (solidaryId) => ({
+      way: 'return',
+      type: 'transport',
+      solidary: solidaryId,
+    }),
   },
 ].filter((x) => x);
 
+const createSolidarySolutionResolver = async (dataProvider, filter) => {
+  const getSolidaryMatching = async () => {
+    const { data } = await dataProvider.getList('solidary_searches', {
+      pagination: {},
+      sort: {},
+      filter,
+    });
+    return data;
+  };
+
+  // Attempt to find a matching solution and create it
+  const matchings = await getSolidaryMatching();
+  // Moreover, shouldn't we retrieve the corresponding solution matching instead of checking user ?
+  const matching = matchings.find((m) => !!m.solidaryMatching);
+  if (!matching) {
+    throw new Error("Can't find matching solution");
+  }
+
+  return dataProvider
+    .create('solidary_solutions', {
+      data: { solidaryMatching: matching.solidaryMatching.id },
+    })
+    .then((response) => (response ? response.data.originId : null));
+};
+
 const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
-  const history = useHistory();
+  const dataProvider = useDataProvider();
+  const notify = useNotify();
 
   if (!record) {
     return null;
@@ -95,11 +138,16 @@ const SolidaryShowInformation = ({ record }) => {
   const { user } = solidaryUser || {};
 
   const handleDriverSearch = (choice, index) => {
-    const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
-      JSON.stringify(driverSearchOptions[index].filter(id))
-    )}`;
-
-    history.push(url);
+    createSolidarySolutionResolver(dataProvider, driverSearchOptions[index].filter(id))
+      .then(() => {
+        notify(
+          `${
+            driverSearchOptions[index].filter(id).type === 'transport' ? 'Bénévole' : 'Covoitureur'
+          } ajouté comme conducteur potentiel`,
+          'success'
+        );
+      })
+      .catch((e) => notify(e.message, 'warning'));
   };
 
   return (
@@ -232,7 +280,6 @@ const SolidaryShowInformation = ({ record }) => {
 
 SolidaryShowInformation.propTypes = {
   record: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
 };
 
 export default SolidaryShowInformation;

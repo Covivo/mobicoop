@@ -59,6 +59,11 @@ use App\RelayPoint\Filter\TerritoryFilter;
  *          "get"={
  *              "security_post_denormalize"="is_granted('relay_point_list',object)"
  *          },
+ *          "public"={
+ *              "method"="GET",
+ *              "security_post_denormalize"="is_granted('relay_point_list',object)",
+ *              "path"="/relay_points/public"
+ *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('relay_point_create',object)"
  *          },
@@ -77,7 +82,7 @@ use App\RelayPoint\Filter\TerritoryFilter;
  * )
  * @ApiFilter(BooleanFilter::class, properties={"official"})
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointTypes.id":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointType.id":"exact"})
  * @ApiFilter(RangeFilter::class, properties={"address.longitude","address.latitude"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */

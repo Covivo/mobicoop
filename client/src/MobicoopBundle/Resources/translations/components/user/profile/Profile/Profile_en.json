@@ -10,7 +10,8 @@
         "alerts": "Alerts",
         "bankCoordinates": "Bank coordinates",
         "carpoolsAccepted": "Accepted carpools",
-        "myAccount":"Account"
+        "myAccount":"Account",
+        "reviews":"Reviews"
     },
     "form": {
         "newPassword": "New password",
@@ -36,5 +37,6 @@
         "lower": "Le mot de passe doit comprendre 1 minuscule.",
         "number": "Le mot de passe doit comprendre 1 chiffre."
     },
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "getMyCarpools": "/getMyCarpools"
 }

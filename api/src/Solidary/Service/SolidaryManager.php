@@ -26,7 +26,7 @@ use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Service\AdManager;

@@ -24,7 +24,7 @@
 namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 

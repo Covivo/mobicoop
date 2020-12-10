@@ -106,16 +106,19 @@ class RelayPointRepository
     /**
      * Find the public relaypoints and some private if the current user is entitled to (i.e community...)
      *
-     * @param User|null $user The User who make the request
+     * @param User|null $user       The User who make the request
+     * @param array $context        The operation context
+     * @param string $operationName The operation name
      * @return array|null     The relay points found
      */
-    public function findRelayPoints(User $user=null, array $context = []): PaginatorInterface
+    public function findRelayPoints(User $user=null, array $context = [], string $operationName): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('rp');
-        $query->where("rp.private is null or rp.private = 0");
         
-        if (!is_null($user)) {
-            $query->leftJoin('rp.community', 'c')
+        if (!is_null($user) && $operationName == "public") {
+            // for public list, we filter to get only publi relay points, or the ones related to a community where the user is a member
+            $query->where("rp.private is null or rp.private = 0")
+            ->leftJoin('rp.community', 'c')
             ->leftJoin('c.communityUsers', 'cu')
             ->orWhere("cu.user = :user")
             ->setParameter('user', $user);
@@ -123,9 +126,9 @@ class RelayPointRepository
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection($query, $queryNameGenerator, RelayPoint::class, 'get', $context);
-            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(RelayPoint::class, 'get')) {
-                $result = $extension->getResult($query, RelayPoint::class, 'get');
+            $extension->applyToCollection($query, $queryNameGenerator, RelayPoint::class, $operationName, $context);
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(RelayPoint::class, $operationName)) {
+                $result = $extension->getResult($query, RelayPoint::class, $operationName);
                 return $result;
             }
         }

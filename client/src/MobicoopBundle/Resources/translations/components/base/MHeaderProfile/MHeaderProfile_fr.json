@@ -11,6 +11,10 @@
         "label": "Profil",
         "route": "/utilisateur/profil/modifier/mon-profil"
     },
+    "reviews": {
+        "label": "Avis",
+        "route": "/utilisateur/profil/modifier/avis"
+    },
     "logOut": {
         "label": "Déconnexion",
         "route": "/user/logout"

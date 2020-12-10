@@ -83,7 +83,7 @@ class RelayPointManager
             'address.longitude[between]' => $this->bbox_min_lon . ".." . $this->bbox_max_lon,
             'perPage' => 999999
         ];
-        $response = $this->dataProvider->getCollection($params);
+        $response = $this->dataProvider->getSpecialCollection('public', $params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }

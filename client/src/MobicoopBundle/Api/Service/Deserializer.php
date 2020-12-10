@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAd;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
@@ -85,6 +86,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 
 /**
@@ -124,6 +126,9 @@ class Deserializer
                 break;
             case Ad::class:
                 return $this->deserializeAd($data);
+                break;
+            case MyAd::class:
+                return $this->deserializeMyAd($data);
                 break;
             case Proposal::class:
                 return $this->deserializeProposal($data);
@@ -230,6 +235,9 @@ class Deserializer
             case RelayPointMap::class:
                 return $this->deserializeRelayPointMap($data) ;
                 break;
+            case ReviewDashboard::class:
+                return $this->deserializeReviewDashboard($data) ;
+                break;
             default:
                 break;
         }
@@ -311,6 +319,13 @@ class Deserializer
         $ad = new Ad();
         $ad = $this->autoSet($ad, $data);
         return $ad;
+    }
+
+    private function deserializeMyAd(array $data): ?MyAd
+    {
+        $myAd = new MyAd();
+        $myAd = $this->autoSet($myAd, $data);
+        return $myAd;
     }
 
     private function deserializeProposal(array $data): ?Proposal
@@ -968,6 +983,14 @@ class Deserializer
 
         return $relayPointMap;
     }
+
+    private function deserializeReviewDashboard(array $data): ?ReviewDashboard
+    {
+        $reviewDashboard = new ReviewDashboard();
+        $reviewDashboard = $this->autoSet($reviewDashboard, $data);
+        return $reviewDashboard;
+    }
+
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();

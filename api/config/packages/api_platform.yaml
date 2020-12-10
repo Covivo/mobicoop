@@ -58,6 +58,7 @@ api_platform:
         - '%kernel.project_dir%/src/Auth/Entity'
         - '%kernel.project_dir%/src/Article/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
+        - '%kernel.project_dir%/src/Carpool/Ressource'
         - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/Community/Resource'

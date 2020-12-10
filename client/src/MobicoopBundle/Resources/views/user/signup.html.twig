@@ -23,6 +23,7 @@
                     :community-show = "{{ community_show ? "true" : "false"  }}"
                     :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
                     :login-link-in-connection = "{{ loginLinkInConnection ? "true" : "false" }}"
+                    :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
             />
 
         

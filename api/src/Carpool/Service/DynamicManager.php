@@ -27,9 +27,9 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
-use App\Carpool\Entity\Dynamic;
-use App\Carpool\Entity\DynamicAsk;
-use App\Carpool\Entity\DynamicProof;
+use App\Carpool\Ressource\Dynamic;
+use App\Carpool\Ressource\DynamicAsk;
+use App\Carpool\Ressource\DynamicProof;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Position;
 use App\Carpool\Entity\Proposal;
@@ -484,10 +484,19 @@ class DynamicManager
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
                     $pickUpDistance = null;
+                    $pickUpUnlock = false;
                     if (count($ask->getCarpoolProofs())==0) {
                         $addresses = [];
-                        $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
-                        $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        $addressDriver = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
+                        $addressPassenger = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        $addresses[] = $addressDriver;
+                        $addresses[] = $addressPassenger;
+                        $pickUpUnlock = $this->geoTools->haversineGreatCircleDistance(
+                            $addressDriver->getLatitude(),
+                            $addressDriver->getLongitude(),
+                            $addressPassenger->getLatitude(),
+                            $addressPassenger->getLongitude()
+                        )<=$this->params['dynamicProofDistance'];
                         if ($routes = $this->geoRouter->getRoutes($addresses)) {
                             $pickUpDuration = $routes[0]->getDuration();
                             $pickUpDistance = $routes[0]->getDistance();
@@ -528,6 +537,7 @@ class DynamicManager
                         'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
                         'pickUpDuration' => $pickUpDuration,
                         'pickUpDistance' => $pickUpDistance,
+                        'pickUpUnlock' => $pickUpUnlock,
                         'detourDistance' => $matching->getDetourDistance(),
                         'detourDuration' => $matching->getDetourDuration(),
                         'proof' => $proof
@@ -545,10 +555,19 @@ class DynamicManager
                     // if the pickup hasn't been made yet, we compute the direction between the driver and the passenger
                     $pickUpDuration = null;
                     $pickUpDistance = null;
+                    $pickUpUnlock = false;
                     if (count($ask->getCarpoolProofs())==0) {
                         $addresses = [];
-                        $addresses[] = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
-                        $addresses[] = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        $addressDriver = $matching->getProposalOffer()->getPosition()->getWaypoint()->getAddress();
+                        $addressPassenger = $matching->getProposalRequest()->getPosition()->getWaypoint()->getAddress();
+                        $addresses[] = $addressDriver;
+                        $addresses[] = $addressPassenger;
+                        $pickUpUnlock = $this->geoTools->haversineGreatCircleDistance(
+                            $addressDriver->getLatitude(),
+                            $addressDriver->getLongitude(),
+                            $addressPassenger->getLatitude(),
+                            $addressPassenger->getLongitude()
+                        )<=$this->params['dynamicProofDistance'];
                         if ($routes = $this->geoRouter->getRoutes($addresses)) {
                             $pickUpDuration = $routes[0]->getDuration();
                             $pickUpDistance = $routes[0]->getDistance();
@@ -589,6 +608,7 @@ class DynamicManager
                         'duration' => $matching->getDropOffDuration()-$matching->getPickUpDuration(),
                         'pickUpDuration' => $pickUpDuration,
                         'pickUpDistance' => $pickUpDistance,
+                        'pickUpUnlock' => $pickUpUnlock,
                         'detourDistance' => $matching->getDetourDistance(),
                         'detourDuration' => $matching->getDetourDuration(),
                         'proof' => $proof

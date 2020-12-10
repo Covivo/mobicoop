@@ -9,12 +9,14 @@
         lg="10"
         xl="8"
       >
+        <!-- VERTICAL TABS -->
         <v-tabs
           v-model="modelTabs"
           slider-color="primary"
           color="primary"
           vertical
         >
+          <!-- ADS -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 text-h6"
             href="#myAds"
@@ -22,8 +24,10 @@
             {{ $t("tabs.myAds") }}
           </v-tab>
           <v-tab-item value="myAds">
-            <Ads :ads="ads" />
+            <Ads :ads="publishedAds" />
           </v-tab-item>
+
+          <!-- ACCEPTED CARPOOLS -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 text-h6"
             href="#carpoolsAccepted"
@@ -31,11 +35,14 @@
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
           <v-tab-item value="carpoolsAccepted">
-            <carpools
-              :accepted-carpools="acceptedCarpools"
+            <Carpools
+              :carpools="acceptedAds"
               :user="user"
+              :payment-electronic-active="paymentElectronicActive"
             />
           </v-tab-item>
+          
+          <!-- PROFILE -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 text-h6"
             href="#myProfile"
@@ -47,10 +54,12 @@
             primary
             lighten-5
           >
+            <!-- HORIZONTAL SUB TABS -->
             <v-tabs grow>
               <v-tab class="text-subtitle-1">
                 {{ $t("tabs.myAccount") }}
               </v-tab>
+              <!-- ACCOUNT -->
               <v-tab-item>
                 <div class="text-right">
                   <v-btn
@@ -73,25 +82,31 @@
                   :platform="platform"
                 />
               </v-tab-item>
+
+              <!-- ALERTS -->
               <v-tab class="text-subtitle-1">
                 {{ $t("tabs.alerts") }}
               </v-tab>
               <v-tab-item>
                 <Alerts :alerts="alerts" />
               </v-tab-item>
+
+              <!-- SETTINGS -->
               <v-tab class="text-subtitle-1">
                 {{ $t("tabs.carpoolSettings") }}
               </v-tab>
               <v-tab-item>
                 <CarpoolSettings :user="user" />
               </v-tab-item>
+
+              <!-- BANK COORDINATES -->
               <v-tab
-                v-if="bankCoordinates"
+                v-if="paymentElectronicActive"
                 class="text-subtitle-1"
               >
                 {{ $t("tabs.bankCoordinates") }}
               </v-tab>
-              <v-tab-item v-if="bankCoordinates">
+              <v-tab-item v-if="paymentElectronicActive">
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"
@@ -100,6 +115,23 @@
               </v-tab-item>              
             </v-tabs>
           </v-tab-item>
+
+          <!-- REVIEW DASHBOARD -->
+          <v-tab
+            v-if="showReviews"
+            class="text-left justify-start ml-2 mr-5 text-h6"
+            href="#reviews"
+          >
+            {{ $t("tabs.reviews") }}
+          </v-tab>
+          <v-tab-item
+            v-if="showReviews"
+            value="reviews"
+          >
+            <ReviewDashboard />
+          </v-tab-item>
+
+          <!-- PROFILE SUMMARY -->
           <div>
             <ProfileSummary
               :user-id="user.id"
@@ -109,6 +141,8 @@
         </v-tabs>
       </v-col>
     </v-row>
+
+    <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
       v-model="dialog"
       width="100%"
@@ -141,7 +175,9 @@
     </v-dialog>    
   </v-container>
 </template>
+
 <script>
+import axios from "axios";
 import UpdateProfile from "@components/user/profile/UpdateProfile";
 import Ads from "@components/user/profile/ad/Ads";
 import Carpools from "@components/user/profile/carpool/Carpools";
@@ -150,6 +186,7 @@ import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
 
 import {messages_en, messages_fr} from "@translations/components/user/profile/Profile/";
 
@@ -168,7 +205,8 @@ export default {
     Carpools,
     BankAccount,
     ProfileSummary,
-    PublicProfile
+    PublicProfile,
+    ReviewDashboard
   },
   props: {
     user: {
@@ -207,33 +245,41 @@ export default {
       type: String,
       default: ""
     },
-    ads: {
-      type: Object,
-      default: () => {}
-    },
-    acceptedCarpools: {
-      type: Object,
-      default: () => {}
-    },
     tabDefault: {
       type: String,
       default: null
     },
-    bankCoordinates: {
+    paymentElectronicActive: {
       type: Boolean,
       default: false
     },
     validationDocsAuthorizedExtensions: {
       type: String,
       default: null
-    }
+    },
+    showReviews: {
+      type: Boolean,
+      default: false
+    }    
   },
   data(){
     return{
       modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds",
-      dialog:false
+      dialog:false,
+      publishedAds: {},
+      acceptedAds: {}
     }
-  }
+  },
+  mounted(){
+    axios.get(this.$t("getMyCarpools"))
+      .then(res => {
+        this.publishedAds = res.data.published;
+        this.acceptedAds = res.data.accepted;
+      })
+      .catch(function (error) {
+        
+      });
+  },
 }
 </script>
 <style lang="scss" scoped>

@@ -25,19 +25,26 @@
       width="80%"
     >
       <v-card>
-        <v-card-title class="headline grey lighten-2">
-          {{ tooltipTxt }}
-        </v-card-title>
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-card-title class="headline grey lighten-2">
+              {{ tooltipTxt }}
+            </v-card-title>
 
-        <v-card-text>
-          {{ $t('intro.part1', {'user':reviewedName}) }}<br>{{ $t('intro.part2') }}
-        </v-card-text>
-
-        <WriteReview
-          :reviewed="reviewed"
-          :reviewer="reviewer"
-          @reviewLeft="reviewLeft"
-        />
+            <v-card-text>
+              {{ $t('intro.part1', {'user':reviewedName}) }}<br>{{ $t('intro.part2') }}
+            </v-card-text>
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col cols="12">
+            <WriteReview
+              :reviewed="reviewed"
+              :reviewer="reviewer"
+              @reviewLeft="reviewLeft"
+            />
+          </v-col>
+        </v-row>
       </v-card>
     </v-dialog> 
   </v-container> 

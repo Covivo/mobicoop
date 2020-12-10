@@ -393,6 +393,16 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $canReceiveReview;
 
+    /**
+     * @var bool|null If the Reviews are enable on this instance
+     */
+    private $userReviewsActive;
+    
+    /**
+     * @var bool|null If the User is an experienced carpooler
+     */
+    private $experienced;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1162,6 +1172,30 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
     
+    public function isUserReviewsActive(): ?bool
+    {
+        return $this->userReviewsActive;
+    }
+
+    public function setUserReviewsActive(?bool $userReviewsActive): self
+    {
+        $this->userReviewsActive = $userReviewsActive;
+
+        return $this;
+    }
+
+    public function isExperienced(): ?bool
+    {
+        return $this->experienced;
+    }
+
+    public function setExperienced(?bool $experienced): self
+    {
+        $this->experienced = $experienced;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1193,7 +1227,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'communityId'           => $this->getCommunityId(),
             'bankAccounts'          => $this->getBankAccounts(),
             'carpoolExport'         => $this->getCarpoolExport(),
-            'canReceiveReview'      => $this->getCanReceiveReview()
+            'canReceiveReview'      => $this->getCanReceiveReview(),
+            'userReviewsActive'     => $this->isUserReviewsActive(),
+            'experienced'           => $this->isExperienced()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

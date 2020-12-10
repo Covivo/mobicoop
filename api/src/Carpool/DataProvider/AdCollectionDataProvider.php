@@ -25,7 +25,7 @@ namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use Symfony\Component\Security\Core\Security;
 

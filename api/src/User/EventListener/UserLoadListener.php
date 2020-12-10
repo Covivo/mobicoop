@@ -24,6 +24,7 @@
 namespace App\User\EventListener;
 
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
@@ -33,11 +34,15 @@ class UserLoadListener
 {
     private $avatarSizes;
     private $avatarDefaultFolder;
+    private $userReviewActive;
+    private $userManager;
 
-    public function __construct($params)
+    public function __construct(UserManager $userManager, $params)
     {
         $this->avatarSizes=$params['avatarSizes'];
         $this->avatarDefaultFolder=$params['avatarDefaultFolder'];
+        $this->userReviewActive=$params['userReview'];
+        $this->userManager = $userManager;
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -62,6 +67,9 @@ class UserLoadListener
                     }
                 }
             }
+            $user->setUserReviewsActive($this->userReviewActive);
+            $publicProfile = $this->userManager->getPublicProfile($user);
+            $user->setExperienced((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->isExperienced() : false);
         }
     }
 }

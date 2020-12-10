@@ -29,9 +29,11 @@ use App\User\Entity\Review as ReviewEntity;
 use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
+use App\User\Event\ReviewReceivedEvent;
 use App\User\Repository\ReviewRepository;
-use App\User\Ressource\ReviewsDashboard;
+use App\User\Ressource\ReviewDashboard;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Review manager service.
@@ -44,17 +46,20 @@ class ReviewManager
     private $reviewRepository;
     private $askRepository;
     private $userReview;
+    private $eventDispatcher;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ReviewRepository $reviewRepository,
         AskRepository $askRepository,
+        EventDispatcherInterface $dispatcher,
         bool $userReview
     ) {
         $this->entityManager = $entityManager;
         $this->reviewRepository = $reviewRepository;
         $this->askRepository = $askRepository;
         $this->userReview = $userReview;
+        $this->eventDispatcher = $dispatcher;
     }
 
     /**
@@ -128,6 +133,10 @@ class ReviewManager
         $reviewEntity = $this->buildReviewFromRessource($review);
         $this->entityManager->persist($reviewEntity);
         $this->entityManager->flush();
+
+        // Event
+        $event = new ReviewReceivedEvent($reviewEntity);
+        $this->eventDispatcher->dispatch(ReviewReceivedEvent::NAME, $event);
 
         return $this->buildReviewFromEntity($reviewEntity);
     }
@@ -268,11 +277,11 @@ class ReviewManager
      * Return the reviews Dashboard of a User
      *
      * @param User $user
-     * @return ReviewsDashboard
+     * @return ReviewDashboard
      */
-    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewsDashboard
+    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewDashboard
     {
-        $reviewDashboard = new ReviewsDashboard();
+        $reviewDashboard = new ReviewDashboard();
         $reviewDashboard->setReviewActive($this->userReview);
         // Get all reviews involving the User
         $reviews = $this->getReviews($reviewer, $reviewed);
@@ -290,5 +299,26 @@ class ReviewManager
         }
 
         return $reviewDashboard;
+    }
+
+    /**
+     * Determine if a user can get a review from another user
+     *
+     * @param User $reviewer    The reviewer
+     * @param User $reviewed    The reviewed
+     * @return bool             The result
+     */
+    public function canReceiveReview(User $reviewer, User $reviewed): bool
+    {
+        // Using the dashboard of the currentUser but specifically with the user possibly to review
+        // If there is a 'reviewsToGive' in the array, then the current user can leave a review for this specific user
+        $reviews = $this->getReviewDashboard($reviewer, $reviewed);
+        if (!$this->userReview) {
+            // Review system disable.
+            return false;
+        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+            return true;
+        }
+        return false;
     }
 }

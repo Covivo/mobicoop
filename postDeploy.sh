@@ -136,7 +136,7 @@ else
         mkdir externalCgu;
     fi
     cd /var/www/$INSTANCE/$VERSION/client/public/externalCgu;
-    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
+    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;

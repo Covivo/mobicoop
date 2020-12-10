@@ -77,6 +77,7 @@ class UserController extends AbstractController
     private $communityShow;
     private $userProvider;
     private $signUpLinkInConnection;
+    private $signupRgpdInfos;
     private $loginLinkInConnection;
     private $solidaryDisplay;
     private $paymentElectronicActive;
@@ -99,6 +100,7 @@ class UserController extends AbstractController
         $community_show,
         UserProvider $userProvider,
         $signUpLinkInConnection,
+        $signupRgpdInfos,
         $loginLinkInConnection,
         $solidaryDisplay,
         bool $paymentElectronicActive,
@@ -116,6 +118,7 @@ class UserController extends AbstractController
         $this->community_show = $community_show;
         $this->userProvider = $userProvider;
         $this->signUpLinkInConnection = $signUpLinkInConnection;
+        $this->signupRgpdInfos = $signupRgpdInfos;
         $this->loginLinkInConnection = $loginLinkInConnection;
         $this->solidaryDisplay = $solidaryDisplay;
         $this->paymentElectronicActive = $paymentElectronicActive;
@@ -226,6 +229,7 @@ class UserController extends AbstractController
                 "required_home_address"=>($this->required_home_address==="true") ? true : false,
                 "community_show"=>($this->community_show==="true") ? true : false,
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
+                "signup_rgpd_infos"=>$this->signupRgpdInfos,
                 "required_community"=>($this->required_community==="true") ? true : false
         ]);
     }
@@ -397,16 +401,33 @@ class UserController extends AbstractController
         if ($tabDefault == 'mon-profil') {
             $tabDefault = 'myProfile';
         }
+        if ($tabDefault == 'avis') {
+            $tabDefault = 'reviews';
+        }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
             'tabDefault' => $tabDefault,
-            'ads' => $userManager->getAds(),
-            'acceptedCarpools' => $userManager->getAds(true),
-            'bankCoordinates' => $this->paymentElectronicActive,
-            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions
+            'paymentElectronicActive' => $this->paymentElectronicActive,
+            'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
+            'showReviews' => $user->isUserReviewsActive(),
         ]);
+    }
+
+    /**
+     * Get user ads
+     * AJAX get
+     */
+    public function userAds(Request $request)
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return null;
+        }
+        return new JsonResponse($this->userManager->getMyAds());
     }
 
     /**
@@ -1265,5 +1286,19 @@ class UserController extends AbstractController
             }
         }
         return new JsonResponse(["success"=>false]);
+    }
+
+    /**
+     * Get the Review Dashboard of a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userReviewDashboard(Request $request, ReviewManager $reviewManager)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($reviewManager->reviewDashboard());
+        }
+        return new JsonResponse();
     }
 }

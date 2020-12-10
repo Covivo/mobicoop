@@ -34,6 +34,7 @@
     "message": {
         "label": "Votre message",
         "placeholder": "Votre message",
+        "hint": " ",
         "errors": {
             "required": "Le message est requis."
         }

@@ -23,7 +23,7 @@
 
 namespace App\Carpool\Controller;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AskManager;
 use App\TranslatorTrait;
 

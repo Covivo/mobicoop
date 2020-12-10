@@ -23,7 +23,7 @@
 
 namespace App\Import\Controller;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;

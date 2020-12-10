@@ -22,6 +22,13 @@ home_logout:
         en: /user/account-delete
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
 
+#  set language selected in session (AJAX)
+sessionLanguage:
+    path:
+        fr: /setLanguage
+        en: /setLanguage
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::setSessionLanguage    
+
 
 ###############
 # user routes #
@@ -121,6 +128,12 @@ user_profile_update:
         en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
+user_ads:
+    path:
+        fr: /getMyCarpools
+        en: /getMyCarpools
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userAds
+
 # profile summary
 user_profile_summary:
     methods: [POST]
@@ -129,7 +142,7 @@ user_profile_summary:
         en: /user/profile/summary
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileSummary
 
-# profile summary
+# public profile
 user_profile_public:
     methods: [POST]
     path:
@@ -137,7 +150,7 @@ user_profile_public:
         en: /user/profile/public
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfilePublic
 
-    # list of payments and carpools
+# list of payments and carpools
 list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
@@ -394,6 +407,13 @@ user_report:
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReport
     requirements:
         id: '\d+'
+
+user_review_dashboard:
+    methods: [POST]
+    path:
+        fr: /utilisateur/avis/tableau-de-bord
+        en: /user/review/dashboard
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewDashboard
 
 user_review_write:
     methods: [POST]
