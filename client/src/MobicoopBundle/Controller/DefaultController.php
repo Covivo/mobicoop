@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use DOMDocument;
+use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
 
 class DefaultController extends AbstractController
 {
@@ -139,54 +139,21 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * Show the blogpost.
+     * Rss feeds list controller.
      */
-    public function blogPost()
+    public function rssFeedSList(ArticleManager $articleManager, Request $request)
     {
-        // $url= $this->rssFeed;
-
-        // // transform xml to object
-        // $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-        // foreach ($feedResult->channel->item as $item) {
-        //     $title = (string) $item->title;
-
-        //     $description = (string) $item->description;
-
-        //     $start = strpos($description, '<p>');
-        //     $end = strpos($description, '</p>', $start);
-
-        //     if (strlen($description)>255) {
-        //         $description = substr($description, $start, $end-$start+247)." ...";
-        //     }
-
-        //     $dom = new DOMDocument();
-        //     libxml_use_internal_errors(true);
-
-        //     $content = $item->children('content', true);
-
-        //     $html_string = $content->encoded;
-        //     $dom->loadHTML($html_string);
-        //     libxml_clear_errors();
-
-        //     $img = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
-
-        //     $pubDate=date('d M Y', strtotime($item->pubDate));
-
-        //     return $this->render('@Mobicoop/blogpost/blog-post.html.twig', [
-        //         'image'=> $img,
-        //         'title'=> $title,
-        //         'description'=>$description,
-        //         'pubDate'=>$pubDate
-        //         ]);
-        // }
+        $articles = $articleManager->getArticles('home');
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'articles' => $articles
+        ]);       
     }
 
     /**
-     * Show the blogpost page to get the blogpost code.
+     * Show the article page to get the rss feeds code.
      */
-    public function getBlogPost()
+    public function getRssFeed()
     {
-        // return $this->render('@Mobicoop/blogpost/get-blog-post.html.twig');
+        return $this->render('@Mobicoop/article/get-article.html.twig');
     }
 }

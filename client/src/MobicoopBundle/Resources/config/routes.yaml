@@ -782,6 +782,20 @@ article:
         en: /article
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
+# Get the rss feeds
+rss_feed_get_list:
+    path:
+        fr: /articles/home
+        en: /articles/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::rssFeedSList
+
+# The rss feed
+get_article:
+    path:
+        fr: /rss-feeds/get
+        en: /rss-feeds/get
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getRssFeed    
+
 # display project page
 project:
     path:
@@ -1222,20 +1236,6 @@ platform_widget:
         fr: /widget
         en: /widget
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
-
-# The blogPost
-blog_post:
-    path:
-        fr: /blogpost
-        en: /blogpost
-    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::blogPost
-
-# Get the blogPost
-get_blog_post:
-    path:
-        fr: /blogpost/get
-        en: /blogpost/get
-    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getBlogPost    
 
 # Default page when no longer exists
 page_no_longer_exists:

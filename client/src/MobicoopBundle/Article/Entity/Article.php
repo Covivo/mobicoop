@@ -58,6 +58,27 @@ class Article implements ResourceInterface, \JsonSerializable
     private $title;
 
     /**
+     * @var string The description of the article.
+     *
+     * @Groups({"post","put"})
+     */
+    private $description;
+
+    /**
+     * @var string The image of the article.
+     *
+     * @Groups({"post","put"})
+     */
+    private $image;
+
+      /**
+     * @var string The pubDate of the article.
+     *
+     * @Groups({"post","put"})
+     */
+    private $pubDate;
+
+    /**
      * @var int The status of publication of the article.
      *
      * @Groups({"post","put"})
@@ -110,6 +131,42 @@ class Article implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+        
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+    
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        
+        return $this;
+    }
+
+    public function getPubDate(): ?string
+    {
+        return $this->pubDate;
+    }
+    
+    public function setPubDate(?string $pubDate): self
+    {
+        $this->pubDate = $pubDate;
+        
+        return $this;
+    }
+
     public function getStatus()
     {
         return $this->status;
@@ -156,6 +213,9 @@ class Article implements ResourceInterface, \JsonSerializable
             'id' => $this->getId(),
             'title' => $this->getTitle(),
             'sections' => $this->getSections(),
+            'description' => $this->getDescription(),
+            'image' => $this->getImage(),
+            'pubDate' => $this->getPubDate(),
         ];
     }
 }

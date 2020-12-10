@@ -53,5 +53,5 @@ relaypoints:
     title: "Points relais"
 payment:
     title: "Paiements"
-blogPost:
-    title: "BlogPost"          
+rssfeeds:
+    title: "Rss feeds"             

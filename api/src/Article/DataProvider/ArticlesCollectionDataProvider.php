@@ -55,25 +55,14 @@ final class ArticlesCollectionDataProvider implements CollectionDataProviderInte
     {
         $context = null;
 
-        if (!empty($this->request->get("home"))) {
-            $context = $this->request->get($context==Article::CONTEXT_HOME);
+        if (!empty($this->request->get("context"))) {
+            $context = $this->request->get("context");
         }
 
-        if (!empty($this->request->get("internal"))) {
-            $context = $this->request->get($context==Article::CONTEXT_INTERNAL);
+        if (!empty($this->request->get("context"))) {
+            $context = $this->request->get("context");
         }
 
         return $this->articleManager->getArticles($context);
-
-
-        // $context = null;
-        // if ($this->request->get("home")!=="" ) {
-        //     $this->articleManager->getArticles("home");
-        // } else {
-        //     $this->articleManager->getArticles("external");
-        // }
-
-        // var_dump($this->articleManager->getArticles($context));
-
     }
 }

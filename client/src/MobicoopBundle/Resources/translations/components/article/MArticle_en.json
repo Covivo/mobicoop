@@ -2,5 +2,5 @@
     "title": "BLOG MOBICOOP",
     "feedUrl": "",
     "readMore": "Lire la suite",
-    "externalRoute": "/blogpost"
+    "externalRoute": "/articles/home"
 }

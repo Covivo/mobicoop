@@ -84,7 +84,6 @@ class ArticleManager
                 "context" => $context
             ];
         }
-        
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue();
     }

@@ -47,14 +47,12 @@ import EventGetWidget from "@components/event/EventGetWidget";
 
 // ARTICLE
 import MArticle from "@components/article/MArticle";
+import MGetArticle from "@components/article/MGetArticle";
+
 
 // PLATFORM WIDGET
 import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
 import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
-
-// BLOGPOST
-import MBlogPost from "@components/utilities/MBlogPost/MBlogPost";
-import MGetBlogPost from "@components/utilities/MBlogPost/MGetBlogPost";
 
 // RELAY POINT
 import RelayPoints from "@components/relaypoints/RelayPoints";
@@ -99,14 +97,13 @@ export default {
   EventWidget,
   EventGetWidget,
   MArticle,
+  MGetArticle,
   PlatformWidget,
   PlatformGetWidget,
-  MBlogPost,
-  MGetBlogPost,
   RelayPoints,
   ToolBox,
   DayListChips,
   Payment,
   PaymentPaid,
-  SsoLoginReturn
+  SsoLoginReturn,
 }

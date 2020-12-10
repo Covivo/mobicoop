@@ -201,11 +201,12 @@ class ArticleManager
     {
         $rssElements = [];
 
-        // $url= $this->articleFeeds;
-        $url="https://blog.covoiturage-grandlyon.com/feed";
+        $articleFeeds = $this->articleFeeds;
 
         // transform xml to object
-        $feedResult = simplexml_load_file($url, 'SimpleXMLElement', LIBXML_NOCDATA);
+        foreach($articleFeeds as $articleFeed){
+            $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
+        }
 
         foreach ($feedResult->channel->item as $item) {
 
@@ -239,8 +240,8 @@ class ArticleManager
             $rssElement->setImage($image);
 
             $rssElements[]=$rssElement;
-        }   
-
+        }
+        
         return $rssElements;
     }
     
@@ -270,9 +271,6 @@ class ArticleManager
             foreach ($rssItems as $rssItem) {
                 $articles[] = $this->makeArticleFromRss($rssItem);
             }
-
-            $rssArticles = null;
-
         }
 
         return $articles;

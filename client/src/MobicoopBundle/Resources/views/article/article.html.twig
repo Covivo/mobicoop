@@ -1,18 +1,14 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}
-{% if article %}
-  {{ article.title }}
-{% else %}
-  Article
-{% endif %}  
-{% endblock %}
 
 {% block stylesheets %}
   {# {{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }} #}
 {% endblock %}
 
 {% block main %}
-<M-article :article-id = "{{ article.id|json_encode }}"/>  
+{# {{ dump(article) }} #}
+<M-article
+:articles="{{ articles|json_encode }}"
+/>  
 {% endblock %}
 
