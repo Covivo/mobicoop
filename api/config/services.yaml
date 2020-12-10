@@ -569,6 +569,12 @@ services:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+    
+    App\User\ServiceAdmin\UserManager:
+        arguments:
+            $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+            $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+            $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

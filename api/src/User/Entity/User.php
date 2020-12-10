@@ -278,6 +278,13 @@ use App\User\Controller\UserCanUseEmail;
  *              },
  *              "security"="is_granted('user_list',object)"
  *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/users",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"arUser"}},
+ *              "denormalization_context"={"groups"={"awUser"}},
+ *              "security"="is_granted('user_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

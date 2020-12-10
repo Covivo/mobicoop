@@ -1248,7 +1248,7 @@ class UserManager
      * @param User $user    The user
      * @return string   The token generated
      */
-    private function createToken(User $user)
+    public function createToken(User $user)
     {
         $datetime = new DateTime();
         $time = $datetime->getTimestamp();
@@ -1383,7 +1383,7 @@ class UserManager
      *
      * @return string
      */
-    private function randomPassword()
+    public function randomPassword()
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = array(); //remember to declare $pass as an array
