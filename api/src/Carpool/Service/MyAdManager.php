@@ -99,8 +99,8 @@ class MyAdManager
         $myAd->setPublished(!$proposal->isPrivate());
         $myAd->setPaused($proposal->isPaused());
         $myAd->setFrequency($proposal->getCriteria()->getFrequency());
-        $myAd->setRoleDriver($proposal->getCriteria()->isDriver());
-        $myAd->setRolePassenger($proposal->getCriteria()->isPassenger());
+        $myAd->setRoleDriver(($proposal->getCriteria()->isDriver()===true) ? true : false);
+        $myAd->setRolePassenger(($proposal->getCriteria()->isPassenger()===true) ? true : false);
 
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
