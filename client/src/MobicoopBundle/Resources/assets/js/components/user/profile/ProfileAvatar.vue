@@ -20,9 +20,10 @@
       dark
       fab
       small
-      style="position:absolute;top:10%;right:15%"
+      style="position:absolute"
+      :style="(!minimized) ? 'position:absolute;top:10%;right:15%' : 'position:absolute;top:10%;right:20%;height:15px;width:15px;'"
     >
-      <v-icon class="display-1">
+      <v-icon :class="(!minimized) ? 'display-1' : 'caption'">
         mdi-star
       </v-icon>
     </v-btn>
@@ -37,6 +38,10 @@ export default {
     },
     experienced:{
       type:Boolean,
+      default:false
+    },
+    minimized:{
+      type: Boolean,
       default:false
     }
   }

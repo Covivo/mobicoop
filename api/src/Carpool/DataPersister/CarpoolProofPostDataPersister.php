@@ -24,7 +24,7 @@
  namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Service\AdManager;
 use App\User\Entity\User;

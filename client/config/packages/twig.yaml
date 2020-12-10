@@ -41,3 +41,4 @@ twig:
         urlAdmin: '%env(resolve:URL_ADMIN)%'
         canAccessAdminFromCommunity: '%env(resolve:CAN_ACCESS_ADMIN_FROM_COMMUNITY)%'
         timePrecision: '%env(TIME_PRECISION)%'
+        languages: '%env(json:LANGUAGES)%'

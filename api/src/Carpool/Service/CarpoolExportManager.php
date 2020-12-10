@@ -45,6 +45,7 @@ class CarpoolExportManager
     private $carpoolExportPath;
     private $carpoolExportPlatformName;
     private $paymentActive;
+    private $paymentActiveDate;
 
     /**
      * Constructor.
@@ -58,7 +59,7 @@ class CarpoolExportManager
         String $carpoolExportUri,
         String $carpoolExportPath,
         String $carpoolExportPlatformName,
-        bool $paymentActive
+        string $paymentActive
     ) {
         $this->security = $security;
         $this->pdfManager = $pdfManager;
@@ -66,7 +67,11 @@ class CarpoolExportManager
         $this->carpoolExportUri = $carpoolExportUri;
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
-        $this->paymentActive = $paymentActive;
+        $this->paymentActive = false;
+        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+            $this->paymentActiveDate->setTime(0, 0);
+            $this->paymentActive = true;
+        }
     }
 
     /**

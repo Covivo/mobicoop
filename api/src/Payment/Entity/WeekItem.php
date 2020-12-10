@@ -69,8 +69,8 @@ class WeekItem
 
     /** @var int payement status of the week
     * 0 : waiting for payment
-    * 1 : payment receveid electronically
-    * 2 : payment receveid manually
+    * 1 : payment received electronically
+    * 2 : payment received manually
     * 3 : notified as unpaid
     */
     private $status;

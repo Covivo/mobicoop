@@ -1,3 +1,4 @@
+{# CAREFUL : Some client might need to replicate this template #}
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
     <p>{{ "yourWeekOfCarpool" |trans}} {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} {{"from"|trans}} {{context.origin}} {{"at"|trans}} {{context.destination}} {{"isDone"|trans}}</p>

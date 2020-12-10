@@ -1453,7 +1453,7 @@ class UserManager
         $profileSummary->setCreatedDate($user->getCreatedDate());
         $profileSummary->setLastActivityDate($user->getLastActivityDate());
 
-        $profileSummary->setAge($user->getBirthDate()->diff(new \DateTime())->y);
+        $profileSummary->setAge($user->getBirthDate() ? $user->getBirthDate()->diff(new \DateTime())->y : null);
 
         $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
         if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
@@ -1500,12 +1500,18 @@ class UserManager
 
             $nbMessageConsidered++;
         }
-        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? 100 : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
-
+        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? $this->profile['experiencedTagMinAnswerPctDefault'] : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
+        
         // Experienced user
+        // To be experienced :
+        // The User has to have a number of realized carpools >= experiencedTagMinCarpools(.env)
+        // The User has to have a answer percentage >= experiencedTagMinAnswerPct(.env)
         $profileSummary->setExperienced(false);
         if ($this->profile['experiencedTag']) {
-            if ($profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools']) {
+            if (
+                $profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools'] &&
+                $profileSummary->getAnswerPct()>=$this->profile['experiencedTagMinAnswerPct']
+            ) {
                 $profileSummary->setExperienced(true);
             }
         }

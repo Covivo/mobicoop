@@ -9,10 +9,22 @@
     <v-row class="align-center">
       <v-col
         cols="2"
+        class="text-center"
       >
         <ProfileAvatar :avatar="avatar" />
+        <Report
+          v-if="showReport"
+          :user="reviewed"
+          class="mt-2"
+        />
       </v-col>
-      <v-col cols="8">
+      <v-col
+        v-if="showReviewed"
+        cols="2"
+      >
+        {{ reviewedName }}
+      </v-col>
+      <v-col :cols="showReviewed ? 6 : 8">
         <v-textarea
           v-model="content"
           :label="labelTxt"
@@ -41,6 +53,7 @@
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/utilities/Reviews/WriteReview";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import Report from "@components/utilities/Report";
 export default {
   i18n: {
     messages: {
@@ -49,7 +62,8 @@ export default {
     }
   },
   components:{
-    ProfileAvatar
+    ProfileAvatar,
+    Report
   },
   props:{
     reviewer:{
@@ -67,6 +81,14 @@ export default {
     rows:{
       type:Number,
       default:3
+    },
+    showReviewed:{
+      type: Boolean,
+      default: false
+    },
+    showReport:{
+      type: Boolean,
+      default: true
     }
   },
   data(){
@@ -79,7 +101,12 @@ export default {
   },
   computed:{
     avatar(){
-      return this.reviewed.avatars[this.reviewed.avatars.length-1];
+      if(this.reviewed.avatars){
+        return this.reviewed.avatars[this.reviewed.avatars.length-1];
+      }
+      else{
+        return this.reviewed.avatar;
+      }
     },
     labelTxt(){
       if(this.label){
@@ -88,6 +115,9 @@ export default {
       else{
         return this.$t('label');
       }
+    },
+    reviewedName(){
+      return this.reviewed.givenName+' '+this.reviewed.shortFamilyName;
     }
   },
   mounted(){

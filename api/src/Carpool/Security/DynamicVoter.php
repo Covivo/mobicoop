@@ -24,7 +24,7 @@
 namespace App\Carpool\Security;
 
 use App\Auth\Service\AuthManager;
-use App\Carpool\Entity\Dynamic;
+use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Service\DynamicManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;

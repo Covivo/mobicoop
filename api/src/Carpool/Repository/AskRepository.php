@@ -197,7 +197,7 @@ class AskRepository
 
 
     /**
-     * Find accepted asks for a given user
+     * Find accepted asks for a given user (or between two specific users)
      *
      * @param User|null $user   The user
      * @param User|null $user2   The second user if we want to check between two specific users

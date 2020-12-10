@@ -91,7 +91,7 @@ then
     fi
     cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
- 
+    
     # Admin build
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/admin;
     rm -Rf node_modules;
@@ -163,7 +163,7 @@ else
     # Crontab update
     python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
     
-	# External Cgu Mango
+    # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/public/externalCgu
     if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
         cd /var/www/$INSTANCE/$VERSION/public/;

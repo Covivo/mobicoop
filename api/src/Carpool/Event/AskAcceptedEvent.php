@@ -23,7 +23,7 @@
 
 namespace App\Carpool\Event;
 
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**

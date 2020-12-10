@@ -5,7 +5,7 @@
   >
     <v-row :no-gutters="noGutters">
       <v-col
-        v-if="isRegular && !hasSameReturnTimes && !hasSameOutwardTimes"
+        v-if="isRegular && multipleOutward && multipleReturn"
         align="right"
       >
         <span class="accent--text text--darken-2 font-weight-bold text-body-1">{{ $t('outward') }}</span>
@@ -27,7 +27,7 @@
         <v-row>
           <!--Outward-->
           <v-col
-            v-if="isOutward"
+            v-if="outwardTime"
             cols="6"
             class="py-0"
             :class="isRefined || !hasDays ? 'text-left' : 'text-right'"
@@ -45,10 +45,10 @@
             </v-icon>
 
             <span
-              v-if="hasSameOutwardTimes"
+              v-if="!multipleOutward"
               class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
-              {{ formatTime(outwardTimes ? outwardTimes[0] : outwardTime ? outwardTime : null) }}
+              {{ dateTimeFormat === null ? outwardTime : formatTime(outwardTime) }}
             </span>
             <span
               v-else
@@ -60,7 +60,7 @@
 
           <!--Return-->
           <v-col
-            v-if="isReturn"
+            v-if="returnTime"
             class="py-0"
             :align="isRegular ? 'right' : 'left'"
           >
@@ -71,10 +71,10 @@
             </v-icon>
 
             <span
-              v-if="hasSameReturnTimes"
+              v-if="!multipleReturn"
               class="primary--text text--darken-2 text-body-1 text-capitalize"
             >
-              {{ formatTime(returnTimes ? returnTimes[0] : returnTime ? returnTime : null) }}
+              {{ dateTimeFormat === null ? returnTime : formatTime(returnTime) }}
             </span>
             <span
               v-else
@@ -101,23 +101,15 @@ export default {
     }
   },
   props: {
-    // for multiple computed times eg my ads
-    outwardTimes: {
-      type: Array,
-      default: null
-    },
-    // for multiple computed times
-    returnTimes: {
-      type: Array,
-      default: null
-    },
-    // for inline unique time by schedule eg my accepted carpools
     outwardTime: {
       type: String,
       default: null
     },
-    // for inline unique time by schedule
     returnTime: {
+      type: String,
+      default: null
+    },
+    dateTimeFormat: {
       type: String,
       default: null
     },
@@ -125,17 +117,13 @@ export default {
       type: Boolean,
       default: false
     },
-    isOutward: {
-      type: Boolean,
-      default: true
-    },
-    isReturn: {
+    multipleOutward: {
       type: Boolean,
       default: false
     },
-    dateTimeFormat: {
-      type: String,
-      default: "hourMinute"
+    multipleReturn: {
+      type: Boolean,
+      default: false
     },
     // if we want refined display of data for punctual carpools
     isRefined: {
@@ -157,50 +145,12 @@ export default {
       locale: this.$i18n.locale,
     };
   },
-  computed: {
-    hasSameOutwardTimes () {
-      let isSame = true;
-      if (this.outwardTimes) {
-        const times = this.outwardTimes;
-        const days = times.length;
-        if (days < 2) {
-          return isSame;
-        }
-        // start to 1 because we don't compare index 0 with index 0
-        for (let i = 1; i < days; i++) {
-          isSame = moment.utc(times[0]).isSame(times[i]);
-          if (!isSame) {
-            break;
-          }
-        }
-      }
-      return isSame;
-    },
-    hasSameReturnTimes () {
-      let isSame = true;
-      if (this.returnTimes) {
-        const times = this.returnTimes;
-        const days = times.length;
-        if (days < 2) {
-          return isSame;
-        }
-        // start to 1 because we don't compare index 0 with index 0
-        for (let i = 1; i < days; i++) {
-          isSame = moment.utc(times[0]).isSame(times[i]);
-          if (!isSame) {
-            break;
-          }
-        }
-      }
-      return isSame;
-    }
-  },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
   methods: {
     formatTime(time) {
-      return moment.utc(time).format(this.$t(this.dateTimeFormat));
+      return moment.utc(time) ? moment.utc(time).format(this.$t(this.dateTimeFormat)) : time;
     }
   }
 }

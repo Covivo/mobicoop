@@ -26,7 +26,7 @@ namespace App\Carpool\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
-use App\Carpool\Entity\ClassicProof;
+use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;

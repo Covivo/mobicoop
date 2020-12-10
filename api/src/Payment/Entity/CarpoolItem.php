@@ -38,20 +38,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CarpoolItem
 {
-    const STATUS_INITIALIZED = 0;
-    const STATUS_REALIZED = 1;
-    const STATUS_NOT_REALIZED = 2;
+    const STATUS_INITIALIZED = 0;               // carpool supposed to be done
+    const STATUS_REALIZED = 1;                  // carpool confirmed
+    const STATUS_NOT_REALIZED = 2;              // carpool invalidated (no carpool for this day)
 
-    const DEBTOR_STATUS_PENDING = 0;
-    const DEBTOR_STATUS_PENDING_ONLINE = 1;
-    const DEBTOR_STATUS_PENDING_DIRECT = 2;
-    const DEBTOR_STATUS_ONLINE = 3;
-    const DEBTOR_STATUS_DIRECT = 4;
+    const DEBTOR_STATUS_NULL = -1;              // no payment fo this item
+    const DEBTOR_STATUS_PENDING = 0;            // debtor has to pay
+    const DEBTOR_STATUS_PENDING_ONLINE = 1;     // debtor is paying online
+    const DEBTOR_STATUS_PENDING_DIRECT = 2;     // when debtor waits for creditor to confirm direct payment
+    const DEBTOR_STATUS_ONLINE = 3;             // debtor has paid online
+    const DEBTOR_STATUS_DIRECT = 4;             // debtor has paid manually (and creditor has confirmed)
 
-    const CREDITOR_STATUS_PENDING = 0;
-    const CREDITOR_STATUS_PENDING_ONLINE = 1;
-    const CREDITOR_STATUS_ONLINE = 3;
-    const CREDITOR_STATUS_DIRECT = 4;
+    const CREDITOR_STATUS_NULL = -1;            // no payment fo this item
+    const CREDITOR_STATUS_PENDING = 0;          // creditor has to confirm direct payment by the debtor
+    const CREDITOR_STATUS_PENDING_ONLINE = 1;   // credit is waiting for electronic payment
+    const CREDITOR_STATUS_ONLINE = 3;           // creditor was paid electronically
+    const CREDITOR_STATUS_DIRECT = 4;           // creditor has confirmed direct payment
     //const CREDITOR_STATUS_UNPAID = 3;
 
     /**
@@ -108,8 +110,10 @@ class CarpoolItem
     /**
      * @var int Debtor payment status :
      * 0 : waiting for payment
-     * 1 : payment done electronically
-     * 2 : payment done manually
+     * 1 : payment pending electronically
+     * 2 : payment pending manually
+     * 3 : payment done electronically
+     * 4 : payment done manually
      *
      * @ORM\Column(type="smallint")
      * @Groups({"readExport"})
@@ -119,8 +123,9 @@ class CarpoolItem
     /**
      * @var int Creditor payment status :
      * 0 : waiting for payment
-     * 1 : payment receveid electronically
-     * 2 : payment receveid manually
+     * 1 : payment pending electronically
+     * 3 : payment received electronically
+     * 4 : payment received manually
      *
      * @ORM\Column(type="smallint")
      * @Groups({"readExport"})
@@ -372,7 +377,9 @@ class CarpoolItem
      */
     public function setAutoDebtorStatus()
     {
-        $this->setDebtorStatus(self::DEBTOR_STATUS_PENDING);
+        if (is_null($this->getDebtorStatus())) {
+            $this->setDebtorStatus(self::DEBTOR_STATUS_PENDING);
+        }
     }
 
     /**
@@ -382,7 +389,9 @@ class CarpoolItem
      */
     public function setAutoCreditorStatus()
     {
-        $this->setCreditorStatus(self::CREDITOR_STATUS_PENDING);
+        if (is_null($this->getCreditorStatus())) {
+            $this->setCreditorStatus(self::CREDITOR_STATUS_PENDING);
+        }
     }
 
     /**

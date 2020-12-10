@@ -11,15 +11,21 @@
         </v-icon> {{ $t('unpaid') }}
       </v-col>
       <v-col v-if="!hideButton">
-        <v-btn
-          color="primary"
-          rounded
-          :outlined="outlined"
-          :disabled="disabled"
-          @click="action()"
-        >
-          {{ displayPaymentStatus }}
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              color="primary"
+              rounded
+              :outlined="outlined"
+              :disabled="disabled"
+              @click="action()"
+              v-on="(isDriver === false) ? on : {}"
+            >
+              {{ displayPaymentStatus }}
+            </v-btn>
+          </template>
+          <span>{{ displayTooltips }}</span>
+        </v-tooltip>
       </v-col>         
     </v-row>
   </v-container>
@@ -39,10 +45,6 @@ export default {
       type: Boolean,
       default: false
     },
-    isPassenger: {
-      type: Boolean,
-      default: false
-    },
     paymentStatus: {
       type: Number,
       default: null
@@ -59,18 +61,18 @@ export default {
       type: Boolean,
       default: false
     },
-    hideButton: {
-      type: Boolean,
-      default: false
-    },
     paymentItemId: {
       type: Number,
-      default: 1
+      default: null
     },
     frequency: {
       type: Number,
       default: null
-    }
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
+    },
   },
   data(){
     return {
@@ -79,22 +81,31 @@ export default {
     }
   },
   computed: {
+    hideButton() {
+      return this.paymentStatus == -1;
+    },
+    status() {
+      return this.getStatus(this.paymentStatus);
+    },  
     displayPaymentStatus(){
-      let status = this.getStatus(this.paymentStatus);
-      return (this.isDriver) ? this.$t('driver.'+status) : this.$t('passenger.'+status);
+      return (this.isDriver) ? this.$t('driver.'+this.status) : (this.paymentElectronicActive) ? this.$t('passenger.'+this.status) : this.$t('passenger.pendingElectronicNotActive');
+    },
+    displayTooltips(){
+      return (this.paymentElectronicActive) ? this.$t('tooltip.paymentElectronicActive') : this.$t('tooltip.paymentElectronicNotActive')
     },
     type(){
       return (this.isDriver) ? 2 : 1;
     },
   },
+  mounted(){
+    this.getStatus(this.paymentStatus);
+  },
   methods:{
     getStatus(paymentStatus){
-      if(paymentStatus=="0" || paymentStatus=="3"){
-        // Pending or Unpaid
+      switch (this.paymentStatus) {
+      case 1: 
         return "pending";
-      }
-      else if(paymentStatus=="1" || paymentStatus=="2" || paymentStatus=="4"){
-        // Paid
+      default: 
         this.disabled = true;
         return "paid";
       }

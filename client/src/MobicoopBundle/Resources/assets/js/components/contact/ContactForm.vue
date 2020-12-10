@@ -85,8 +85,9 @@
                   <v-textarea
                     v-model="form.message"
                     :rules="form.messageRules"
-                    :label="$t('message.placeholder') + ` *`"
+                    :label="$t('message.label') + ` *`"
                     name="message"
+                    :hint="this.$t('message.hint')"
                   />
                 </v-col>
 
@@ -156,14 +157,19 @@
 
 <script>
 import axios from "axios";
+import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/contact/ContactForm/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/contact/ContactForm/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'fr': messages_fr
-    }
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    },
   },
   props: {
     user: {

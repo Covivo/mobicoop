@@ -29,6 +29,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
@@ -58,7 +59,8 @@ class UserSubscriber implements EventSubscriberInterface
             UserPasswordChangedEvent::NAME => 'onUserPasswordChanged',
             UserGeneratePhoneTokenAskedEvent::NAME => 'onUserGeneratePhoneTokenAskedEvent',
             UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent',
-            UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent'
+            UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent',
+            ReviewReceivedEvent::NAME => 'onReviewReceivedEvent'
         ];
     }
 
@@ -113,5 +115,10 @@ class UserSubscriber implements EventSubscriberInterface
         } else {
             $this->notificationManager->notifies(UserDeleteAccountWasPassengerEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
         }
+    }
+
+    public function onReviewReceivedEvent(ReviewReceivedEvent $event)
+    {
+        $this->notificationManager->notifies(ReviewReceivedEvent::NAME, $event->getReview()->getReviewed(), $event->getReview());
     }
 }

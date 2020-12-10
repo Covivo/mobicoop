@@ -26,7 +26,7 @@ namespace App\Carpool\Security;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Carpool\Entity\Ad;
+use App\Carpool\Ressource\Ad;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Matching;

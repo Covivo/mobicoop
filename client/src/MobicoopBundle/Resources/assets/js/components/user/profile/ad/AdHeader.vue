@@ -132,7 +132,7 @@
         </v-btn>
       </v-col>
       <v-col
-        v-else-if="paymentStatus!==null && paymentItemId !== null"
+        v-else-if="paymentStatus!==null"
         class="text-right"
       >
         <AdPayment
@@ -144,6 +144,7 @@
           :unpaid-date="unpaidDate"
           outlined
           show-unpaid
+          :payment-electronic-active="paymentElectronicActive"
           @activePanel="activePanel()"
         />
       </v-col>
@@ -264,7 +265,11 @@ export default {
     unpaidDate: {
       type: String,
       default: null
-    }    
+    },
+    paymentElectronicActive: {
+      type: Boolean,
+      default: false
+    },    
   },
   data () {
     return {
@@ -296,7 +301,6 @@ export default {
         }
       })
         .then(function (response) {
-          console.log(response);
           self.$emit('ad-deleted', self.isArchived, self.adId, self.$t("delete.success"));
         })
         .catch(function (error) {

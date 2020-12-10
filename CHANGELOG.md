@@ -1,3 +1,16 @@
+# Release 1.18.0
+
+## API
+* New common report system via the Report ressource.
+* Review Dashboard.
+* New simplified resource for user ads/carpools.
+
+## CLIENT
+* Review Dashboard : See the given, left and ready to give reviews.
+* Report a User.
+* New 'star' icon for experienced users.
+* Language selection is now available
+
 # Release 1.17.0
 
 ## API

@@ -5,6 +5,7 @@ import {
   Datagrid,
   TextInput,
   SelectInput,
+  ReferenceInput,
   TextField,
   SelectField,
   ReferenceField,
@@ -27,6 +28,9 @@ const RelayPointFilter = (props) => (
   <Filter {...props}>
     <TextInput source="name" label="Nom" alwaysOn />
     <SelectInput source="status" label="Status" choices={statusChoices} />
+    <ReferenceInput source="relayPointType.id" label="Type" reference="relay_point_types" sort={ { field: 'name', order: 'asc'} } alwaysOn>
+      <SelectInput optionText="name" />
+    </ReferenceInput>
   </Filter>
 );
 const RelayPointPanel = ({ record }) => (
@@ -47,6 +51,9 @@ export const RelayPointList = (props) => (
       <TextField source="name" label="Nom" />
       <ReferenceField source="address.id" label="Adresse" reference="addresses" linkType="">
         <FunctionField render={addressRenderer} />
+      </ReferenceField>
+      <ReferenceField source="relayPointType.id" label="Type" reference="relay_point_types" linkType="" sortable={false}>
+        <TextField source="name" />
       </ReferenceField>
       <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
       <TextField source="description" label="Description" />

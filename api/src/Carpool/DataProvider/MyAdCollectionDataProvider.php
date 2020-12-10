@@ -25,37 +25,32 @@ namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Ad;
-use App\Carpool\Service\AdManager;
+use App\Carpool\Ressource\MyAd;
+use App\Carpool\Service\MyAdManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for user's ads.
+ * Collection data provider for MyAds.
  *
  */
 final class MyAdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $adManager;
+    protected $myAdManager;
     protected $security;
     
-    public function __construct(AdManager $adManager, Security $security)
+    public function __construct(MyAdManager $myAdManager, Security $security)
     {
-        $this->adManager = $adManager;
+        $this->myAdManager = $myAdManager;
         $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "getMyCarpools";
+        return MyAd::class === $resourceClass && $operationName === "get";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());
-        // if (is_null($data)) {
-        //     throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
-        // }
-        // $data = $this->userManager->registerUser($data, false);
-        // return $data;
+        return $this->myAdManager->getMyAds($this->security->getUser());
     }
 }
