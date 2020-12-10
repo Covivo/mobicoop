@@ -34,12 +34,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN", columns={"origin"})})
  * @ORM\Table(indexes={@ORM\Index(name="IDX_DESTINATION", columns={"destination"})})
  * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN_DESTINATION", columns={"origin","destination"})})
- * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeJourney"}}
+ *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
  *      },
  *      collectionOperations={
  *          "get"
@@ -51,7 +49,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Journey
 {
-    
     /**
      * @var int The id of this journey.
      *
@@ -65,28 +62,74 @@ class Journey
     /**
      * @var int The proposal id for this journey
      * @ORM\Column(type="integer")
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $proposalId;
+
+    /**
+     * @var int The user id for this journey
+     * @ORM\Column(type="integer")
+     * @Groups({"readJourney"})
+     */
+    private $userId;
+
+    /**
+     * @var string|null The name of the user.
+     * @ORM\Column(type="string", nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $userName;
     
     /**
      * @var string The origin of the journey
      * @ORM\Column(type="string")
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $origin;
 
     /**
+     * @var float|null The latitude of the origin.
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $latitudeOrigin;
+
+    /**
+     * @var float|null The longitude of the origin.
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $longitudeOrigin;
+
+    /**
      * @var string The destination of the journey
      * @ORM\Column(type="string")
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $destination;
 
     /**
+     * @var float|null The latitude of the destination.
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $latitudeDestination;
+
+    /**
+     * @var float|null The longitude of the destination.
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $longitudeDestination;
+
+    /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
      * @ORM\Column(type="smallint")
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $frequency;
 
@@ -94,7 +137,7 @@ class Journey
      * @var \DateTimeInterface The starting date.
      *
      * @ORM\Column(type="date")
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $fromDate;
 
@@ -102,9 +145,23 @@ class Journey
      * @var \DateTimeInterface The end date.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readJourney","writeJourney"})
+     * @Groups({"readJourney"})
      */
     private $toDate;
+
+    /**
+     * @var \DateTimeInterface|null The starting time for a punctual journey.
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $time;
+
+    /**
+     * @var string|null The json representation of the possible days and times for a regular journey.
+     * @ORM\Column(type="string", nullable=true)
+     * @Groups({"readJourney"})
+     */
+    private $days;
 
     /**
      * @var \DateTimeInterface Creation date of the journey.
@@ -138,6 +195,30 @@ class Journey
         return $this;
     }
 
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+    
+    public function setUserId(int $userId): self
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function getUserName(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUserName(?string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
     public function getOrigin(): string
     {
         return $this->origin;
@@ -150,6 +231,26 @@ class Journey
         return $this;
     }
 
+    public function getLatitudeOrigin()
+    {
+        return $this->latitudeOrigin;
+    }
+
+    public function setLatitudeOrigin($latitudeOrigin)
+    {
+        $this->latitudeOrigin = $latitudeOrigin;
+    }
+
+    public function getLongitudeOrigin()
+    {
+        return $this->longitudeOrigin;
+    }
+
+    public function setLongitudeOrigin($longitudeOrigin)
+    {
+        $this->longitudeOrigin = $longitudeOrigin;
+    }
+
     public function getDestination(): string
     {
         return $this->destination;
@@ -160,6 +261,26 @@ class Journey
         $this->destination = $destination;
 
         return $this;
+    }
+
+    public function getLatitudeDestination()
+    {
+        return $this->latitudeDestination;
+    }
+
+    public function setLatitudeDestination($latitudeDestination)
+    {
+        $this->latitudeDestination = $latitudeDestination;
+    }
+
+    public function getLongitudeDestination()
+    {
+        return $this->longitudeDestination;
+    }
+
+    public function setLongitudeDestination($longitudeDestination)
+    {
+        $this->longitudeDestination = $longitudeDestination;
     }
 
     public function getFrequency(): ?int
@@ -198,6 +319,33 @@ class Journey
         return $this;
     }
 
+    public function getTime(): ?\DateTimeInterface
+    {
+        if ($this->time) {
+            return \DateTime::createFromFormat('His', $this->time->format('His'));
+        }
+        return null;
+    }
+
+    public function setTime(?\DateTimeInterface $time): self
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    public function getDays(): ?string
+    {
+        return $this->days;
+    }
+
+    public function setDays(?string $days): self
+    {
+        $this->days = $days;
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -220,27 +368,5 @@ class Journey
         $this->updatedDate = $updatedDate;
 
         return $this;
-    }
-    
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
     }
 }
