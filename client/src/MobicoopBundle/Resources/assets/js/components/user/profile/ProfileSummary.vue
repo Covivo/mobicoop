@@ -35,6 +35,7 @@
           </v-col>
         </v-row>
         <v-row
+          v-if="profileSummary.age"
           no-gutters
         >
           <v-col
