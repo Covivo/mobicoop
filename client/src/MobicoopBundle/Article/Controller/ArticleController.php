@@ -440,6 +440,6 @@ class ArticleController extends AbstractController
      */
     public function getRssFeed()
     {
-        return $this->render('@Mobicoop/article/get-article.html.twig');
+        return $this->render('@Mobicoop/article/get-rss-article.html.twig');
     }
 }

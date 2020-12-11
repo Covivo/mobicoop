@@ -21,8 +21,8 @@ import SolidaryUsersBeneficiaryResource from './Resources/Solidary/SolidaryUserB
 import SolidaryUsersVolunteerResource from './Resources/Solidary/SolidaryUserVolunteer';
 import ArticleResource from './Resources/Page/Page';
 import EventResource from './Resources/Event';
-import SectionResource from './Resources/Article/Section';
-import ParagraphResource from './Resources/Article/Paragraph';
+import SectionResource from './Resources/Page/Section';
+import ParagraphResource from './Resources/Page/Paragraph';
 import RelayPointResource from './Resources/RelayPoint/RelayPoint';
 import RelayPointTypeResource from './Resources/RelayPoint/RelayPointType';
 import SolidaryAnimationResource from './Resources/Solidary/SolidaryAnimation';
