@@ -1,6 +1,3 @@
 {
-    "title": "BLOG MOBICOOP",
-    "feedUrl": "https://blog.covoiturage-grandlyon.com/feed",
-    "readMore": "Lire la suite",
-    "externalRoute": "/articles/home"
+    "getArticle": "/article"
 }

@@ -22,14 +22,14 @@
 </template>
 <script>
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/Article/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/Article/";
+import {messages_en, messages_fr} from "@translations/components/utilities/RssArticle/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/RssArticle/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
-  name:"MGetArticle",
+  name:"GetRssArticle",
   i18n: {
     messages: {
       'en': MessagesMergedEn,

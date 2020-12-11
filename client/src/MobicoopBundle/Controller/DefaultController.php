@@ -31,7 +31,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
 
 class DefaultController extends AbstractController
 {
@@ -136,25 +135,5 @@ class DefaultController extends AbstractController
             $session->set('language', $data['locale']);
         }
         return new JsonResponse();
-    }
-
-    /**
-     * Rss feeds list controller.
-     */
-    public function rssFeedSList(ArticleManager $articleManager, Request $request)
-    {
-        $articles = $articleManager->getArticles('home');
-        
-        return $this->render('@Mobicoop/article/article.html.twig', [
-            'articles' => $articles
-        ]);       
-    }
-
-    /**
-     * Show the article page to get the rss feeds code.
-     */
-    public function getRssFeed()
-    {
-        return $this->render('@Mobicoop/article/get-article.html.twig');
     }
 }

@@ -47,8 +47,10 @@ import EventGetWidget from "@components/event/EventGetWidget";
 
 // ARTICLE
 import MArticle from "@components/article/MArticle";
-import MGetArticle from "@components/article/MGetArticle";
 
+//RSS ARTILCE
+import RssArticle from "@components/utilities/rssArticle/RssArticle";
+import GetRssArticle from "@components/utilities/rssArticle/GetRssArticle";
 
 // PLATFORM WIDGET
 import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
@@ -97,7 +99,8 @@ export default {
   EventWidget,
   EventGetWidget,
   MArticle,
-  MGetArticle,
+  RssArticle,
+  GetRssArticle,
   PlatformWidget,
   PlatformGetWidget,
   RelayPoints,

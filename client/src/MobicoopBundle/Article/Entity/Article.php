@@ -38,6 +38,9 @@ class Article implements ResourceInterface, \JsonSerializable
     
     const RESOURCE_NAME = "pages";
 
+    const CONTEXT_HOME = "home";
+    const CONTEXT_INTERNAL= "internal";
+
     /**
      * @var int The id of this article.
      */

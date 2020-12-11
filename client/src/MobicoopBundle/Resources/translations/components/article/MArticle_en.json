@@ -1,6 +1,3 @@
 {
-    "title": "BLOG MOBICOOP",
-    "feedUrl": "",
-    "readMore": "Lire la suite",
-    "externalRoute": "/articles/home"
+    "getArticle": "/article"
 }

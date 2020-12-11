@@ -784,10 +784,11 @@ article:
 
 # Get the rss feeds
 rss_feed_get_list:
+    methods: [POST]
     path:
         fr: /articles/home
         en: /articles/home
-    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::rssFeedSList
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::rssFeedSList
 
 # The rss feed
 get_article:

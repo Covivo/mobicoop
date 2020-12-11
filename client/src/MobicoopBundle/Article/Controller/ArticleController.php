@@ -410,4 +410,36 @@ class ArticleController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+     * Rss feeds list controller.
+     */
+    public function rssFeedSList(ArticleManager $articleManager, Article $article, Request $request)
+    {
+        if($request->isMethod('POST')) {
+            $articles=$articleManager->getArticles(Article::CONTEXT_HOME);
+
+            // if (null !== $articles && $data['home']) {
+
+            //     foreach ($articles as $article) {
+            //         $articlesItems[] = [
+            //             'title' => $article->getTitle(),
+            //             'description' => $article->getDescription(),
+            //             'image' => $article->getImage(),
+            //             'pubDate' => $article->getPubDate(),
+            //         ];
+            //     }
+            // }
+            return new JsonResponse($articles);
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Show the article page to get the rss feeds code.
+     */
+    public function getRssFeed()
+    {
+        return $this->render('@Mobicoop/article/get-article.html.twig');
+    }
 }

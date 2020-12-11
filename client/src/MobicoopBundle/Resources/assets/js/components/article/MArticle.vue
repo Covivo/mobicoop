@@ -1,42 +1,43 @@
 <template>
   <v-container>
     <v-row
+      align="center"
       justify="center"
+      class="text-justify"
     >
       <v-col
-        align="center"
-        class="justify-center"
+        v-if="article"
+        cols="10"
       >
-        <p class="font-weight-bold black--text text-left mt-1 mb-n1">
-          {{ $t("title") }}
-        </p> 
-        <v-divider />
-        <p class="font-weight-bold black--text text-left text-h5 mt-4">
+        <h1 class="text-h4 primary--text text-center font-weight-bold">
           {{ article.title }}
-        </p>
-
-        <v-img
-          contain
-          min-width="250"
-          max-width="600"
-          min-height="150"
-          max-height="150"
-          :src="image"
-        />
-        <p class="mt-4 text-left">
-          <!-- {{ article.description }} -->
-        </p>
-
-        <a
-          :href="$t('feedUrl')"
-          target="_blank"
-        >            
-          <p class="text-left">{{ $t("readMore") }}</p>
-        </a>
-        <v-divider />
-        <p class="font-weight-thin black--text text-left mt-3 text-body-2">
-          <!-- {{ article.pubDate }} -->
-        </p>
+        </h1>
+        <v-row
+          v-for="section in article.sections"
+          :key="section.id"
+        >
+          <v-col>
+            <h2
+              class="text-h6 font-weight-bold"
+            >
+              {{ section.title }}
+            </h2>
+            <h3 class="text-h5">
+              {{ section.subtitle }}
+            </h3>
+            <v-row
+              v-for="paragraph in section.paragraphs"
+              :key="paragraph.id"
+            >
+              <v-col>
+                <div
+                  class="ma-n3"
+                  v-html="paragraph.text" 
+                />
+              </v-col>
+            </v-row>       
+          </v-col>
+        </v-row>    
       </v-col>
     </v-row>
   </v-container>
@@ -45,8 +46,7 @@
 <script>
 
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/article/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/Article/";
+import {messages_en, messages_fr} from "@translations/components/article/MArticle/";
 
 export default {
   i18n: {
@@ -56,15 +56,26 @@ export default {
     }
   },
   props: {
-    articles: {
-      type: Object,
+    articleId: {
+      type: Number,
       default: null
-    },
+    }
   },
   data () {
     return {
+      article: null,
     }
-  }
+  },
+  mounted(){
+    let params = {
+      'articleId':this.articleId
+    }
+    axios.post(this.$t("getArticle"), params)
+      .then(res => {
+        this.article = res.data;
+      });
+      
+  },
 }
 </script>
 
