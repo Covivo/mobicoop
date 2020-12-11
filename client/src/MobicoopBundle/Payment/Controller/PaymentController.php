@@ -40,14 +40,16 @@ class PaymentController extends AbstractController
 {
     private $payment_electronic_active;
     private $paymentManager;
+    private $tipsEncouragement;
 
     /**
     * Constructor
     */
-    public function __construct(PaymentManager $paymentManager, bool $payment_electronic_active)
+    public function __construct(PaymentManager $paymentManager, bool $payment_electronic_active, bool $tipsEncouragement)
     {
         $this->payment_electronic_active = $payment_electronic_active;
         $this->paymentManager = $paymentManager;
+        $this->tipsEncouragement = $tipsEncouragement;
     }
 
     /**
@@ -64,6 +66,7 @@ class PaymentController extends AbstractController
             "selectedId" => $id,
             "frequency" => $frequency,
             "type" => $type,
+            "tipsEncouragement" => $this->tipsEncouragement
         ]);
     }
 
