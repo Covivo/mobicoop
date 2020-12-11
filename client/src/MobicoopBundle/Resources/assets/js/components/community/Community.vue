@@ -233,6 +233,7 @@
                 :refresh="refreshMemberList"
                 :given-users="users"
                 :hidden="!isAccepted && community.membersHidden"
+                :direct-message="directMessage"
                 @contact="contact"
                 @refreshed="membersListRefreshed"
               />
@@ -459,6 +460,10 @@ export default {
     publishButtonAlwaysActive: {
       type: Boolean,
       default: false,
+    },
+    directMessage: {
+      type: Boolean,
+      default: false
     },
   },
   data() {

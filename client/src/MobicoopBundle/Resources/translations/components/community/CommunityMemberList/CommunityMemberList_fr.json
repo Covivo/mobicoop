@@ -12,5 +12,6 @@
     },
     "hidden": "La liste n'est visible que par les membres de la communauté",
     "urlMembersList": "/community/memberList",
-    "referrer": "Référent"
+    "referrer": "Référent",
+    "directMessage": "Envoyer un message direct"
 }
