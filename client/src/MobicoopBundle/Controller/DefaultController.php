@@ -144,6 +144,7 @@ class DefaultController extends AbstractController
     public function rssFeedSList(ArticleManager $articleManager, Request $request)
     {
         $articles = $articleManager->getArticles('home');
+        
         return $this->render('@Mobicoop/article/article.html.twig', [
             'articles' => $articles
         ]);       

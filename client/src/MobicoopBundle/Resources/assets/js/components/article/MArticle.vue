@@ -1,8 +1,6 @@
 <template>
   <v-container>
     <v-row
-      v-for="article in articles"
-      :key="article.id"
       justify="center"
     >
       <v-col
@@ -26,7 +24,7 @@
           :src="image"
         />
         <p class="mt-4 text-left">
-          {{ article.description }}
+          <!-- {{ article.description }} -->
         </p>
 
         <a
@@ -37,7 +35,7 @@
         </a>
         <v-divider />
         <p class="font-weight-thin black--text text-left mt-3 text-body-2">
-          {{ article.pubDate }}
+          <!-- {{ article.pubDate }} -->
         </p>
       </v-col>
     </v-row>
@@ -48,6 +46,7 @@
 
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/article/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/Article/";
 
 export default {
   i18n: {
