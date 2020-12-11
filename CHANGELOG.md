@@ -1,3 +1,8 @@
+# Release 1.20.0
+
+## CLIENT
+* Tip encouragement message : can show a message to encourage users to leave a tips before and after payement
+
 # Release 1.18.0
 
 ## API
