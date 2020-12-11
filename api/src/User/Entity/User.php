@@ -103,7 +103,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
-use App\User\Controller\UserSendVerificationEmail;
+use App\User\Controller\UserSendValidationEmail;
 
 /**
  * A user.
@@ -304,8 +304,8 @@ use App\User\Controller\UserSendVerificationEmail;
  *          },
  *          "send_validation_email"={
  *              "method"="GET",
- *              "path"="/users/{id}/send_validation_email",
- *              "controller"=UserSendVerificationEmail::class,
+ *              "path"="/users/{id}/sendValidationEmail",
+ *              "controller"=UserSendValidationEmail::class,
  *              "security"="is_granted('user_update',object)"
  *          },
  *          "alerts"={
@@ -1591,7 +1591,7 @@ class User implements UserInterface, EquatableInterface
     public function setPwdToken(?string $pwdToken): self
     {
         $this->pwdToken = $pwdToken;
-        $this->setPwdTokenDate($pwdToken ? new DateTime() : null);
+        $this->setPwdTokenDate($pwdToken ? new \DateTime() : null);
         return $this;
     }
 

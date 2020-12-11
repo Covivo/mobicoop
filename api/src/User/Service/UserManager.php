@@ -38,7 +38,7 @@ use App\User\Event\UserDeleteAccountWasDriverEvent;
 use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
-use DateTime;
+use App\User\Event\UserSendValidationEmailEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Auth\Repository\AuthItemRepository;
@@ -534,8 +534,8 @@ class UserManager
                     $structure = $this->structureRepository->find($solidaryStructure['id']);
                     $operate = new Operate;
                     $operate->setStructure($structure);
-                    $operate->setCreatedDate(new DateTime());
-                    $operate->setUpdatedDate(new DateTime());
+                    $operate->setCreatedDate(new \DateTime());
+                    $operate->setUpdatedDate(new \DateTime());
                     $user->addOperate($operate);
                 }
             }
@@ -1201,7 +1201,7 @@ class UserManager
      */
     public function updateActivity(User $user)
     {
-        $user->setLastActivityDate(new DateTime());
+        $user->setLastActivityDate(new \DateTime());
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -1257,7 +1257,7 @@ class UserManager
      */
     private function createToken(User $user)
     {
-        $datetime = new DateTime();
+        $datetime = new \DateTime();
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
 
@@ -1562,14 +1562,14 @@ class UserManager
     * @param string $email The email to verify
     * @return User|null    The user found
     */
-    public function sendVerificationEmail(string $email)
+    public function sendValidationEmail(string $email)
     {
         if ($user = $this->userRepository->findOneBy(["email"=>$email])) {
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+            $event = new UserSendValidationEmailEvent($user);
+            $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
             return $user;
         } else {
-            throw new UserNotFoundException("Unknow email", 1);
+            throw new UserNotFoundException("Unknow email", 1) ;
         }
     }
 }

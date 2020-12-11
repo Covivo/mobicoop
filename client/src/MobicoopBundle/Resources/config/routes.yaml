@@ -190,6 +190,14 @@ user_email_validation:
         fr: /utilisateur/email/validation
         en: /user/email/validation
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
+#user form email validation
+user_email_form_validation:    
+    path:
+        fr: /utilisateur/email/validation/{email}/{token}
+        en: /user/signup/email/{email}/{token}
+    defaults:
+        token: ""
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # delete avatar
 user_profile_image_delete:

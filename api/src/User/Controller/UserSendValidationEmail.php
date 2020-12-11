@@ -31,7 +31,7 @@ use App\User\Service\UserManager;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class UserSendVerificationEmail
+class UserSendValidationEmail
 {
     use TranslatorTrait;
     /**
@@ -56,6 +56,6 @@ class UserSendVerificationEmail
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
         
-        return $this->userManager->sendVerificationEmail($user->getEmail());
+        return $this->userManager->sendValidationEmail($user->getEmail());
     }
 }

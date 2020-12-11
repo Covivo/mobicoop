@@ -149,7 +149,7 @@
             <v-col  v-if="emailVerified == false">
               <v-btn 
                 rounded color="secondary" 
-                @click="sendVerificationEmail" 
+                @click="sendValidationEmail" 
                 class="mt-4" 
                 :loading="loadingEmail"
               >
@@ -772,7 +772,7 @@ export default {
           this.loadingToken = false;
         })
     },
-    sendVerificationEmail() {
+    sendValidationEmail() {
     this.loadingEmail = true;   
     axios 
       .get(this.$t('email.verificationRoute'))

@@ -201,7 +201,7 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
-            $user->setBirthDate(new DateTime($data['birthDay']));
+            $user->setBirthDate(new \DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
 
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
@@ -249,6 +249,23 @@ class UserController extends AbstractController
             $request->getSession()->getFlashBag()->clear();
         }
         return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+          'urlToken'=>$token,
+          'urlEmail'=>$email,
+          'error'=>$errorMessage
+        ]);
+    }
+
+    // /**
+    //  * User registration email validation
+    //  */
+    public function userEmailValidation($token, $email, Request $request)
+    {
+        $errorMessage =   '';
+        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage =  'Bad credentials.';
+            $request->getSession()->getFlashBag()->clear();
+        }
+        return $this->render('@Mobicoop/user/emailValidation.html.twig', [
           'urlToken'=>$token,
           'urlEmail'=>$email,
           'error'=>$errorMessage
@@ -389,7 +406,7 @@ class UserController extends AbstractController
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender((int)($data->get('gender')));
-            $user->setBirthDate(new DateTime($data->get('birthDay')));
+            $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 
