@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\User\ServiceAdmin;
+namespace App\User\Admin\Service;
 
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;

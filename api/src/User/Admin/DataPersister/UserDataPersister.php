@@ -20,11 +20,11 @@
  *    LICENSE
  **************************/
 
-namespace App\User\AdminDataPersister;
+namespace App\User\Admin\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\User\Entity\User;
-use App\User\ServiceAdmin\UserManager;
+use App\User\Admin\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
