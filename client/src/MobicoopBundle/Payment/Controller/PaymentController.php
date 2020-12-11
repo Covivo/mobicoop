@@ -176,7 +176,8 @@ class PaymentController extends AbstractController
         return $this->render(
             '@Mobicoop/payment/payment-paid.html.twig',
             [
-                "paymentPaymentId"=>$paymentPaymentId
+                "paymentPaymentId"=>$paymentPaymentId,
+                "tipsEncouragement" => $this->tipsEncouragement
             ]
         );
     }

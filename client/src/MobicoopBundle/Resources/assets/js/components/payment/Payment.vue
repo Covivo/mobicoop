@@ -916,7 +916,7 @@ export default {
     },
     tipsEncouragement: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data() {
