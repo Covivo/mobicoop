@@ -153,7 +153,13 @@ use App\Match\Entity\Mass;
  *          },
  *          "delete"={
  *              "security"="is_granted('community_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('community_read',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
@@ -257,7 +263,7 @@ class Community
      * @var \DateTimeInterface Updated date of the community.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readCommunity","communities"})
+     * @Groups({"aRead", "readCommunity","communities"})
      */
     private $updatedDate;
 
@@ -378,6 +384,12 @@ class Community
      * @Groups({"aRead"})
      */
     private $image;
+
+    /**
+     * @var string|null The community avatar
+     * @Groups({"aRead"})
+     */
+    private $avatar;
 
     public function __construct($id=null)
     {
@@ -724,6 +736,14 @@ class Community
     }
 
     public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getAvatar(): ?string
     {
         if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
