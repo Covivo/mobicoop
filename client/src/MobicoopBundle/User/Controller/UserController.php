@@ -98,7 +98,7 @@ class UserController extends AbstractController
         $facebook_show,
         $facebook_appid,
         $required_home_address,
-        $news_subscription,
+        bool $news_subscription,
         $community_show,
         UserProvider $userProvider,
         $signUpLinkInConnection,
@@ -170,6 +170,9 @@ class UserController extends AbstractController
 
         $error = false;
 
+        // Default status of the checkbox (.env)
+        $newsSubscription = $this->news_subscription;
+
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
@@ -202,9 +205,15 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
-            //$user->setNewsSubscription by default
 
-            $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
+            if (isset($data['newsSubscription'])) {
+                $newsSubscription = $data['newsSubscription'];
+            }
+
+            $user->setNewsSubscription($newsSubscription);
+
+
+
             // set phone display by default
             $user->setPhoneDisplay(1);
 
@@ -225,6 +234,7 @@ class UserController extends AbstractController
             }
         }
 
+        dump($newsSubscription);
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 "proposalId" => $proposalId,
                 'error' => $error,
@@ -234,7 +244,8 @@ class UserController extends AbstractController
                 "community_show"=>($this->community_show==="true") ? true : false,
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
-                "required_community"=>($this->required_community==="true") ? true : false
+                "required_community"=>($this->required_community==="true") ? true : false,
+                "newsSubscription" => $newsSubscription
         ]);
     }
 
