@@ -159,7 +159,7 @@ use App\Match\Entity\Mass;
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "security"="is_granted('community_read',object)"
- *          },
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})

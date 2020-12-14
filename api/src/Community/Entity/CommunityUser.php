@@ -61,6 +61,15 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('community_join',object)"
+ *          },
+ *          "ADMIN_get_members"={
+ *              "path"="/admin/communities/{id}/members",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_read',object)"
  *          }
  *      },
  *      itemOperations={
