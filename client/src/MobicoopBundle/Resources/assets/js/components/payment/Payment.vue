@@ -836,6 +836,17 @@
           v-if="ePayItems.length > 0 || directItems.length > 0"
           justify="center"
         >
+          <p
+            v-if="tipsEncouragement"
+            style="display:block"
+          >
+            {{ $t('tipsEncouragement.text', {'platformName':platformName}) }}
+            <a
+              :href="tipsEncouragementLink"
+              target="_blank"
+              title="a"
+            >{{ $t('tipsEncouragement.textLink') }}</a>.
+          </p>
           <v-btn
             rounded
             color="success"
@@ -898,6 +909,14 @@ export default {
     selectedId: {
       type: Number,
       default: null
+    },
+    platformName: {
+      type: String,
+      default: ""
+    },
+    tipsEncouragement: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -917,7 +936,8 @@ export default {
       loading: false,
       disabledComponent: false,
       dialog: false,
-      loadingPage: true
+      loadingPage: true,
+      tipsEncouragementLink: this.$t('tipsEncouragement.link')
     };
   },
   computed: {
