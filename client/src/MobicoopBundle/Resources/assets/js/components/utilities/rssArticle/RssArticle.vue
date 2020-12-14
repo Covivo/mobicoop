@@ -2,8 +2,6 @@
   <v-main>
     <v-container>
       <v-row
-        v-for="rssArticle in rssArticles"
-        :key="rssArticle.id"
         justify="center"
       >
         <v-col
@@ -15,7 +13,7 @@
           </p> 
           <v-divider />
           <p class="font-weight-bold black--text text-left text-h5 mt-4">
-            {{ rssArticle.title }}
+            {{ article.title }}
           </p>
 
           <v-img
@@ -24,21 +22,21 @@
             max-width="600"
             min-height="150"
             max-height="150"
-            :src="rssArticle.image"
+            :src="article.image"
           />
           <p class="mt-4 text-left">
-            {{ rssArticle.description }}
+            {{ article.description }}
           </p>
 
           <a
             :href="$t('feedUrl')"
             target="_blank"
-          >            
+          >
             <p class="text-left">{{ $t("readMore") }}</p>
           </a>
           <v-divider />
           <p class="font-weight-thin black--text text-left mt-3 text-body-2">
-            {{ rssArticle.pubDate }}
+            {{ article.pubDate }}
           </p>
         </v-col>
       </v-row>
@@ -46,11 +44,12 @@
   </v-main>
 </template>
 
+
 <script>
 import { merge } from "lodash";
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/utilities/RssArticle/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/RssArticle/";
+import {messages_en, messages_fr} from "@translations/components/utilities/rssArticle/RssArticle/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/rssArticle/RssArticle/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -64,9 +63,15 @@ export default {
       'fr': MessagesMergedFr
     }
   },
+  props:{
+    height: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
-      rssArticles:[]
+      article: null,
     };
   },
   mounted() {
@@ -76,8 +81,9 @@ export default {
     getRssArticle(){
       axios.post(this.$t("externalRoute"))
         .then(response => {
-          this.rssArticles = response.data;
-        });      
+          // console.error(response.data);
+          this.article = response.data[0];
+        });
     }
   }
 }

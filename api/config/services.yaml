@@ -110,7 +110,7 @@ services:
 
     App\Article\Service\ArticleManager:
         arguments:
-            $articleFeeds: '%env(json:ARTICLE_FEEDS)%'
+            $articleFeed: '%env(string:ARTICLE_FEED)%'
             
     # Auth
     App\Auth\Controller\:

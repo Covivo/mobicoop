@@ -55,11 +55,7 @@ final class ArticlesCollectionDataProvider implements CollectionDataProviderInte
     {
         $context = null;
 
-        if (!empty($this->request->get("context"))) {
-            $context = $this->request->get("context");
-        }
-
-        if (!empty($this->request->get("context"))) {
+        if ($this->request->get("context")!== null) {
             $context = $this->request->get("context");
         }
 

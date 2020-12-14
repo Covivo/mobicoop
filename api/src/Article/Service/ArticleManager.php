@@ -67,21 +67,21 @@ class ArticleManager
      */
     private $articleRepository;
 
-    private $articleFeeds;
+    private $articleFeed;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeeds)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->sectionRepository = $sectionRepository;
         $this->paragraphRepository = $paragraphRepository;
         $this->articleRepository = $articleRepository;
-        $this->articleFeeds = $articleFeeds;
+        $this->articleFeed = $articleFeed;
     }
 
     /**
@@ -201,12 +201,11 @@ class ArticleManager
     {
         $rssElements = [];
 
-        $articleFeeds = $this->articleFeeds;
+        $articleFeed = $this->articleFeed;
 
         // transform xml to object
-        foreach($articleFeeds as $articleFeed){
             $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
-        }
+
 
         foreach ($feedResult->channel->item as $item) {
 
@@ -221,7 +220,7 @@ class ArticleManager
             $end = strpos($description, '</p>', $start);
 
             if(strlen($description)>255){
-                $description = substr($description, $start, $end-$start+255)." ...";
+                $description = substr($description, $start, $end-$start+220)." ...";
             }
 
             $rssElement->setDescription($description);
@@ -269,11 +268,11 @@ class ArticleManager
             $rssItems = $this->getRssFeeds();
 
             foreach ($rssItems as $rssItem) {
-                $articles[] = $this->makeArticleFromRss($rssItem);
+                $article[] = $this->makeArticleFromRss($rssItem);
             }
         }
 
-        return $articles;
+        return $article;
 
 
 

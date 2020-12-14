@@ -782,20 +782,13 @@ article:
         en: /article
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
-# Get the rss feeds
+# Get the rss feeds (AJAX)
 rss_feed_get_list:
     methods: [POST]
     path:
         fr: /articles/home
         en: /articles/home
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::rssFeedSList
-
-# The rss feed
-get_article:
-    path:
-        fr: /rss-feeds/get
-        en: /rss-feeds/get
-    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getRssFeed    
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::getRssFeedList
 
 # display project page
 project:

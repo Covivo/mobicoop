@@ -412,34 +412,18 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * Rss feeds list controller.
+     * Rss feeds list controller
+     * 
+     * @param string            $context             The context
+     * @param ArticleManager    $articleManager The article manager
+     * @return JsonResponse
      */
-    public function rssFeedSList(ArticleManager $articleManager, Article $article, Request $request)
+    public function getRssFeedList(ArticleManager $articleManager, Request $request)
     {
         if($request->isMethod('POST')) {
-            $articles=$articleManager->getArticles(Article::CONTEXT_HOME);
 
-            // if (null !== $articles && $data['home']) {
-
-            //     foreach ($articles as $article) {
-            //         $articlesItems[] = [
-            //             'title' => $article->getTitle(),
-            //             'description' => $article->getDescription(),
-            //             'image' => $article->getImage(),
-            //             'pubDate' => $article->getPubDate(),
-            //         ];
-            //     }
-            // }
-            return new JsonResponse($articles);
+            return new JsonResponse($articleManager->getArticles(Article::CONTEXT_HOME));
         }
         return new JsonResponse();
-    }
-
-    /**
-     * Show the article page to get the rss feeds code.
-     */
-    public function getRssFeed()
-    {
-        return $this->render('@Mobicoop/article/get-rss-article.html.twig');
     }
 }
