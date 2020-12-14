@@ -24,7 +24,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
-use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -34,17 +33,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
-    use HydraControllerTrait;
-
-    // /**
-    //  * Constructor
-    //  */
-    // private $rssFeed;
-
-    // public function __construct($rssFeed)
-    // {
-    //     $this->rssFeed = $rssFeed;
-    // }
 
     /**
      * HomePage

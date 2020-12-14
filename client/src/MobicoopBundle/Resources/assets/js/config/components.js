@@ -106,5 +106,5 @@ export default {
   DayListChips,
   Payment,
   PaymentPaid,
-  SsoLoginReturn,
+  SsoLoginReturn
 }
