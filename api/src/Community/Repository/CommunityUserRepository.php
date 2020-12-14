@@ -65,7 +65,7 @@ class CommunityUserRepository
     public function findForCommunity(Community $community, array $context = [], string $operationName): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('cu');
-        $query->where("community = :community")
+        $query->where("cu.community = :community")
         ->setParameter('community', $community);
         $queryNameGenerator = new QueryNameGenerator();
 

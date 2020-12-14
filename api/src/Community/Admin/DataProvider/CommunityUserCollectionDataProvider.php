@@ -54,7 +54,7 @@ final class CommunityUserCollectionDataProvider implements CollectionDataProvide
         return CommunityUser::class === $resourceClass && $operationName === "ADMIN_get_members";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
         return $this->communityManager->getMembers($this->request->get("id"), $context, $operationName);
     }

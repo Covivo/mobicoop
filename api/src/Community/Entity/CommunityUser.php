@@ -132,7 +132,7 @@ class CommunityUser
      * @var int The status of the membership.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","readCommunityUser","write","readUserAdmin"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","write","readUserAdmin"})
      */
     private $status;
 
@@ -149,7 +149,7 @@ class CommunityUser
     * @var \DateTimeInterface Creation date of the community user.
     *
     * @ORM\Column(type="datetime")
-    * @Groups({"readCommunityUser","write"})
+    * @Groups({"aRead","readCommunityUser","write"})
     */
     private $createdDate;
 
@@ -164,7 +164,7 @@ class CommunityUser
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"readCommunity","readCommunityUser","write"})
+    * @Groups({"aRead","readCommunity","readCommunityUser","write"})
     */
     private $acceptedDate;
 
@@ -172,7 +172,7 @@ class CommunityUser
     * @var \DateTimeInterface Refusal date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"readCommunityUser","write"})
+    * @Groups({"aRead","readCommunityUser","write"})
     */
     private $refusedDate;
 
@@ -193,6 +193,25 @@ class CommunityUser
      * @Groups("readCommunityUser")
      */
     private $creator;
+
+    /**
+     * @var string The username of the member
+     * @Groups("aRead")
+     */
+    private $username;
+
+    /**
+     * @var string|null The member avatar
+     * @Groups({"aRead"})
+     */
+    private $avatar;
+
+    /**
+     * @var bool The member accepts emailing
+     * @Groups("aRead")
+     */
+    private $newsSubscription;
+
 
     public function getId(): ?int
     {
@@ -327,6 +346,24 @@ class CommunityUser
         $this->creator = boolval($isCreator);
 
         return $this;
+    }
+
+    public function getUsername()
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function hasNewsSubscription()
+    {
+        return $this->getUser()->hasNewsSubscription();
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
     }
 
     // DOCTRINE EVENTS
