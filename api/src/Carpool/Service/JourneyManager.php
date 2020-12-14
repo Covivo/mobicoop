@@ -112,4 +112,39 @@ class JourneyManager
         $stmt = $conn->prepare($sql);
         $stmt->execute();
     }
+
+    /**
+     * Get all cities with given first letter
+     *
+     * @param string|null $letter   The starting letter
+     * @return array                The cities found
+     */
+    public function getCities(?string $letter)
+    {
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT distinct origin as city FROM journey";
+        if ($letter) {
+            $sql .= " WHERE origin like '" . $letter . "%' order by origin asc";
+        }
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $origins = $stmt->fetchAll();
+        $sql = "SELECT distinct destination as city FROM journey";
+        if ($letter) {
+            $sql .= " WHERE destination like '" . $letter . "%' order by destination asc";
+        }
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $destinations = $stmt->fetchAll();
+        $cities = array_merge($origins, $destinations);
+        $result = [];
+        foreach ($cities as $city) {
+            $result[] = $city['city'];
+        }
+        $result = array_map(function ($word) {
+            return ucfirst(strtolower($word));
+        }, $result);
+        sort($result, SORT_STRING);
+        return array_unique($result);
+    }
 }

@@ -26,6 +26,11 @@ namespace App\Carpool\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * Carpooling : an effective journey.
@@ -40,12 +45,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get",
+ *          "cities"={
+ *              "method"="GET",
+ *              "path"="/journeys/cities"
+ *          },
  *      },
  *      itemOperations={
  *          "get",
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"origin":"partial", "destination":"partial"})
+ * @ApiFilter(NumericFilter::class, properties={"frequency"})
+ * @ApiFilter(DateFilter::class, properties={"fromDate": DateFilter::EXCLUDE_NULL,"toDate": DateFilter::EXCLUDE_NULL})
+ * @ApiFilter(OrderFilter::class, properties={"fromDate", "origin", "destination"}, arguments={"orderParameterName"="order"})
  */
 class Journey
 {
@@ -209,12 +222,12 @@ class Journey
 
     public function getUserName(): ?string
     {
-        return $this->username;
+        return $this->userName;
     }
 
-    public function setUserName(?string $username): self
+    public function setUserName(?string $userName): self
     {
-        $this->username = $username;
+        $this->userName = $userName;
 
         return $this;
     }

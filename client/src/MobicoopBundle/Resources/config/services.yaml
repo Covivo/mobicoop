@@ -49,7 +49,7 @@ services:
 
     # Carpool
     Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
-        resource: '@MobicoopBundle/Carpool/Controller/*'
+        resource: '@MobicoopBundle/Carpool/Controller/CarpoolController.php'
         tags: ['controller.service_arguments']
         arguments:
             $midPrice: '%env(resolve:MID_PRICE)%'

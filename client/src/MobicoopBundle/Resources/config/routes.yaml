@@ -566,14 +566,6 @@ carpool_search_result_community:
         en: /carpool/community/{communityName}/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromCommunityProposal
 
-# search results for city to city (GET) (full page)
-carpool_search_result_city_to_city:
-    methods: [GET]
-    path:
-        fr: /covoiturage/{originLocality}/{destinationLocality}/{proposalId}
-        en: /carpool/{originLocality}/{destinationLocality}/{proposalId}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultForCityToCity
-
 # search matching (POST) (AJAX json)
 carpool_search_matching:
     methods: [POST]
@@ -634,6 +626,42 @@ public_transport_journey:
         fr: /transport-public/recherche
         en: /public-transport/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::PTSearch
+
+# city to city
+#########
+
+# cities
+cities:
+    methods: [GET]
+    path:
+        fr: /covoiturage-par-ville
+        en: /carpool-from-{origin}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::cities
+
+# from a city
+city_from:
+    methods: [GET]
+    path:
+        fr: /communes/covoiturage/{origin}
+        en: /carpool-from-{origin}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::fromCity
+
+# to a city
+city_to:
+    methods: [GET]
+    path:
+        fr: /communes/covoiturage-vers-{destination}
+        en: /carpool-to-{destination}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::toCity
+
+# from a city to a city
+city_to_city:
+    methods: [GET]
+    path:
+        fr: /covoiturage/{origin}/{destination}
+        en: /carpool/{origin}/{destination}
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::fromCityToCity
+
 
 ####################
 # community routes #

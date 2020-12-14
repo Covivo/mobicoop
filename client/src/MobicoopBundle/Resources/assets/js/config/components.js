@@ -14,6 +14,10 @@ import Contact from '@components/contact/Contact'
 import AdPublish from '@components/carpool/publish/AdPublish'
 import Matching from '@components/carpool/results/Matching'
 
+// JOURNEY
+import JourneyCity from '@components/journey/JourneyCity';
+import JourneyResults from '@components/journey/JourneyResults';
+
 // COMMUNITY
 import CommunityList from "@components/community/CommunityList";
 import CommunityHelp from "@components/community/CommunityHelp";
@@ -71,6 +75,8 @@ export default {
   Home,
   Contact,
   AdPublish,
+  JourneyCity,
+  JourneyResults,
   Matching,
   CommunityList,
   CommunityHelp,
