@@ -11,7 +11,6 @@
           <p class="font-weight-bold black--text text-left mt-1 mb-n1">
             {{ $t("title") }}
           </p> 
-          <v-divider />
           <p class="font-weight-bold black--text text-left text-h5 mt-4">
             {{ article.title }}
           </p>
@@ -34,7 +33,6 @@
           >
             <p class="text-left">{{ $t("readMore") }}</p>
           </a>
-          <v-divider />
           <p class="font-weight-thin black--text text-left mt-3 text-body-2">
             {{ article.pubDate }}
           </p>
