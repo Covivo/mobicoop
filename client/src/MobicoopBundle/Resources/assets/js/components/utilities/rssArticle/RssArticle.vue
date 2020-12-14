@@ -8,7 +8,7 @@
           align="center"
           class="justify-center"
         >
-          <p class="font-weight-bold black--text text-left mt-1 mb-n1">
+          <p class="headline font-weight-bold text-left mt-1 mb-n1">
             {{ $t("title") }}
           </p> 
           <p class="font-weight-bold black--text text-left text-h5 mt-4">
