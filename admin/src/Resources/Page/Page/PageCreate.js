@@ -6,7 +6,7 @@ const statusChoices = [
   { id: 1, name: 'En ligne' },
 ];
 
-export const ArticleCreate = (props) => (
+export const PageCreate = (props) => (
   <Create {...props} title="Articles > ajouter">
     <SimpleForm>
       <TextInput source="title" label="Titre" />

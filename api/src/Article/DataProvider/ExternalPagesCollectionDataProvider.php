@@ -21,35 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Controller;
+namespace App\Article\DataProvider;
 
+use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Article\Entity\Article;
-use App\Article\Service\ArticleManager;
-use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Article\Service\ArticleManager;
 
 /**
- * Controller class for getting the external articles
- *
+ * Get the External Articles
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ExternalArticlesAction
+final class ExternalPagesCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
-    
-    private $articleManager;
-    private $request;
-
     public function __construct(ArticleManager $articleManager, RequestStack $request)
     {
         $this->articleManager = $articleManager;
         $this->request = $request->getCurrentRequest();
     }
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return Article::class === $resourceClass && $operationName == "externalArticles";
+    }
 
-    /**
-     * @return Array
-     */
-    public function __invoke(): array
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
         if ($this->request->get("nbArticles")!=="" && is_numeric($this->request->get("nbArticles"))) {

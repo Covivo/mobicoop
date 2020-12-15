@@ -41,6 +41,16 @@ class ArticleRepository
         $this->repository = $entityManager->getRepository(Article::class);
     }
     
+    /**
+     * Find All the articles
+     *
+     * @return Article[]|null
+     */
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
     public function find(int $id): ?Article
     {
         return $this->repository->find($id);
