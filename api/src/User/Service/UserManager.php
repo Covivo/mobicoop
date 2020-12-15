@@ -503,10 +503,12 @@ class UserManager
             $user = $this->deActivateSmsNotification($user);
         }
 
+        $emailUpdate = false;
         // check if the email is updated and if so set a new Token and reset the validatedDate
         if ($user->getEmail() != $user->getOldEmail()) {
             $user->setEmailToken($this->createToken($user));
             $user->setValidatedDate(null);
+            $emailUpdate = true;
         }
 
         //we add/remove structures associated to user
@@ -563,6 +565,12 @@ class UserManager
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
+        
+        // if the email has changed we send a validation email
+        if ($emailUpdate) {
+            $event = new UserSendValidationEmailEvent($user);
+            $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
+        }
        
         // return the user
         return $user;

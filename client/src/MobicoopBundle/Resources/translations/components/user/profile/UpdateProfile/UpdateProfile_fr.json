@@ -98,6 +98,14 @@
             "close": "Fermer"
         }
     },
+    "dialogEmail": {
+        "title": "Vous avez modifié votre adresse email",
+        "content": "<p>Vous avez modifié votre adresse email.</p><p>Si vous poursuivez, un email de validation de votre adresse email va vous être envoyé, et vous allez être déconnecté.</p><p>Voulez-vous poursuivre ?</p>",
+        "buttons": {
+            "confirmUpdate": "Je modifie mon adresse email",
+            "cancelUpdate": "Annuler"
+        }
+    },
     "buttons": {
         "supprimerAccount": "Supprimer mon compte"
     },

@@ -70,5 +70,13 @@
     },
     "save": "Enregistrer",
     "yes": "oui",
-    "no": "non"
+    "no": "non",
+    "dialogEmail": {
+        "title": "Vous avez modifié votre adresse email",
+        "content": "<p>Vous avez modifié votre adresse email.</p><p>Si vous poursuivez, un email de validation de votre adresse email va vous être envoyé, et vous allez être déconnecté.</p><p>Voulez-vous poursuivre ?</p>",
+        "buttons": {
+            "confirmUpdate": "Je modifie mon adresse email",
+            "cancelUpdate": "Annuler"
+        }
+    }
 }
