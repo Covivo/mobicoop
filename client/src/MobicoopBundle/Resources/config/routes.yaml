@@ -78,6 +78,7 @@ user_login_result:
 user_login_token:
     path:
         fr: /utilisateur/login-token
+        en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
 user_login_token_email:

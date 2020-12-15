@@ -113,7 +113,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                     $this->dataProvider->setEmailToken($request->attributes->get('token'));
                     return true;
                 }
-                // no break    
+                // no break
             case self::USER_LOGIN_SSO_ROUTE:
                 if (($request->get('ssoId') != '' &&  $request->get('ssoProvider') != '')) {
                     $this->dataProvider->setSsoId($request->get('ssoId'));

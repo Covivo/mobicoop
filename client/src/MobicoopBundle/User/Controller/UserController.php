@@ -265,7 +265,8 @@ class UserController extends AbstractController
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-        return $this->render('@Mobicoop/user/emailValidation.html.twig', [
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+          'emailValidation'=> true,
           'urlToken'=>$token,
           'urlEmail'=>$email,
           'error'=>$errorMessage
@@ -284,7 +285,7 @@ class UserController extends AbstractController
       ));
     }
 
-     /**
+    /**
     * User registration email validation check -> we get here if there is an error with $credentials
     * We redirect on  user_sign_up_validation, in message flash there is error
     */
