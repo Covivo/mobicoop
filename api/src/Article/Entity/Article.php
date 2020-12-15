@@ -31,7 +31,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Article\Controller\ExternalArticlesAction;
 
 /**
  * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
@@ -39,6 +38,7 @@ use App\Article\Controller\ExternalArticlesAction;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
+ *      shortName="Page",
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -46,29 +46,39 @@ use App\Article\Controller\ExternalArticlesAction;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('article_list',object)"
+ *              "method"="GET",
+ *              "path"="/pages",
+ *              "security"="is_granted('article_list',object)"
  *          },
  *          "externalArticles"={
  *              "method"="GET",
- *              "path"="/articles/external",
- *              "controller"=ExternalArticlesAction::class,
- *              "security_post_denormalize"="is_granted('article_list',object)"
+ *              "path"="/pages/external",
+ *              "security"="is_granted('article_list',object)"
  *          },
  *          "post"={
+ *              "method"="POST",
+ *              "path"="/pages",
  *              "security_post_denormalize"="is_granted('article_create',object)"
  *          },
  *      },
  *      itemOperations={
  *          "get"={
+ *              "method"="GET",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_read',object)"
  *          },
  *          "put"={
+ *              "method"="PUT",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_update',object)"
  *          },
  *          "delete"={
+ *              "method"="DELETE",
+ *              "path"="/pages/{id}",
  *              "security"="is_granted('article_delete',object)"
  *          },
  *      }
+ *
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})

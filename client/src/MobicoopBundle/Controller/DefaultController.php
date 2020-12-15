@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
+
     /**
      * HomePage
      */

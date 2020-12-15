@@ -26,7 +26,7 @@ const AddSectionButton = ({ record, translate }) => (
     <Button label={translate('custom.label.article.action.add_section')} />
   </Link>
 );
-export const ArticleShow = (props) => {
+export const PageShow = (props) => {
   const translate = useTranslate();
   const statusChoices = [
     { id: 0, name: translate('custom.label.article.label.draft') },
