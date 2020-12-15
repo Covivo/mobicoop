@@ -21,43 +21,44 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Controller;
+namespace App\Article\DataProvider;
 
-use App\Article\Entity\Article;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Article\Ressource\Article;
 use App\Article\Service\ArticleManager;
-use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Controller class for getting the external articles
+ * Collection data provider for Articles
  *
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Céline Jacquet <celine.jacquet@mobicoop.org>
+ *
  */
-class ExternalArticlesAction
+final class ArticlesCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    use TranslatorTrait;
-    
+    protected $request;
     private $articleManager;
-    private $request;
-
-    public function __construct(ArticleManager $articleManager, RequestStack $request)
+    
+    public function __construct(RequestStack $requestStack, ArticleManager $articleManager)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->articleManager = $articleManager;
-        $this->request = $request->getCurrentRequest();
     }
-
-    /**
-     * @return Array
-     */
-    public function __invoke(): array
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
-        if ($this->request->get("nbArticles")!=="" && is_numeric($this->request->get("nbArticles"))) {
-            $nbArticles = $this->request->get("nbArticles");
-        } else {
-            $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
+        return Article::class === $resourceClass && $operationName === "get";
+    }
+    
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    {
+        $context = null;
+
+        if ($this->request->get("context")!== null) {
+            $context = $this->request->get("context");
         }
-        
-        return $this->articleManager->getLastExternalArticles($nbArticles);
+
+        return $this->articleManager->getArticles($context);
     }
 }

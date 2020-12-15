@@ -41,7 +41,7 @@ class ArticleManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Article::class);
+        $this->dataProvider->setClass(Article::class, Article::RESOURCE_NAME);
     }
 
     /**
@@ -65,5 +65,27 @@ class ArticleManager
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection("external", ['nbArticles'=>$nbArticles]);
         return $response->getValue();
+    }
+
+    /**
+     * Get a collection of Article
+     *
+     * @param string $context   (optionnal) : Context to select specific articles
+     * @return Article[]
+     */
+    public function getArticles(string $context=null)
+    {
+        $this->dataProvider->setClass(Article::class);
+        
+            $params = [
+                "context" => $context
+            ];
+
+            if (!is_null($context)) {
+                $params['context'] = $context;
+            }
+            
+        $response = $this->dataProvider->getCollection($params);
+        return $response->getValue()->getMember();
     }
 }
