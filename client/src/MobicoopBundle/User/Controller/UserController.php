@@ -278,11 +278,24 @@ class UserController extends AbstractController
     */
     public function userSignUpValidationCheck(Request $request)
     {
+        return $this->redirectToRoute('user_email_form_validation', array(
+        'token'=>$request->get('emailToken'),
+        'email'=>$request->get('email'),
+      ));
+    }
+
+     /**
+    * User registration email validation check -> we get here if there is an error with $credentials
+    * We redirect on  user_sign_up_validation, in message flash there is error
+    */
+    public function userEmailValidationCheck(Request $request)
+    {
         return $this->redirectToRoute('user_sign_up_validation', array(
         'token'=>$request->get('emailToken'),
         'email'=>$request->get('email'),
       ));
     }
+
 
 
     /**

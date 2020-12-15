@@ -78,8 +78,13 @@ user_login_result:
 user_login_token:
     path:
         fr: /utilisateur/login-token
-        en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
+
+user_login_token_email:
+    path:
+        fr: /utilisateur/login-token/email
+        en: /user/login-token/email
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userEmailValidationCheck
 
 user_login_delegate:
     path:
@@ -190,6 +195,7 @@ user_email_validation:
         fr: /utilisateur/email/validation
         en: /user/email/validation
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
+
 #user form email validation
 user_email_form_validation:    
     path:

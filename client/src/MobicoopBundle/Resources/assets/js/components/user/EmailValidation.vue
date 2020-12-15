@@ -65,7 +65,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          action="/utilisateur/login-token"
+          action="/utilisateur/login-token/email"
           method="POST"
         >
           <input
