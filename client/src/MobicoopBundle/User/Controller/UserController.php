@@ -234,7 +234,6 @@ class UserController extends AbstractController
             }
         }
 
-        dump($newsSubscription);
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 "proposalId" => $proposalId,
                 'error' => $error,
