@@ -74,7 +74,7 @@ class Article implements ResourceInterface, \JsonSerializable
      */
     private $image;
 
-      /**
+    /**
      * @var string The pubDate of the article.
      *
      * @Groups({"post","put"})

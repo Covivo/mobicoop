@@ -413,15 +413,14 @@ class ArticleController extends AbstractController
 
     /**
      * Rss feeds list controller
-     * 
+     *
      * @param string            $context             The context
      * @param ArticleManager    $articleManager The article manager
      * @return JsonResponse
      */
     public function getRssFeedList(ArticleManager $articleManager, Request $request)
     {
-        if($request->isMethod('POST')) {
-
+        if ($request->isMethod('POST')) {
             return new JsonResponse($articleManager->getArticles(Article::CONTEXT_HOME));
         }
         return new JsonResponse();

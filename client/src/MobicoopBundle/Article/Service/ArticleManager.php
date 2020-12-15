@@ -77,13 +77,13 @@ class ArticleManager
     {
         $this->dataProvider->setClass(Article::class);
         
-            $params = [
+        $params = [
                 "context" => $context
             ];
 
-            if (!is_null($context)) {
-                $params['context'] = $context;
-            }
+        if (!is_null($context)) {
+            $params['context'] = $context;
+        }
             
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue()->getMember();

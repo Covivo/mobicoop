@@ -204,11 +204,10 @@ class ArticleManager
         $articleFeed = $this->articleFeed;
 
         // transform xml to object
-            $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
 
 
         foreach ($feedResult->channel->item as $item) {
-
             $rssElement = new RssElement();
 
             $rssElement->setTitle((string) $item->title);
@@ -219,7 +218,7 @@ class ArticleManager
             $start = strpos($description, '<p>');
             $end = strpos($description, '</p>', $start);
 
-            if(strlen($description)>255){
+            if (strlen($description)>255) {
                 $description = substr($description, $start, $end-$start+220)." ...";
             }
 
@@ -273,8 +272,5 @@ class ArticleManager
         }
 
         return $article;
-
-
-
     }
 }
