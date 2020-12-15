@@ -53,6 +53,7 @@
                   <Carpool
                     :ad="ad"
                     :user="user"
+                    :payment-electronic-active="paymentElectronicActive"
                   />
                 </v-col>
               </v-row>
