@@ -100,7 +100,7 @@ class CommunityUser
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","readUserAdmin","readUser"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","readUserAdmin","readUser"})
      */
     private $id;
 
