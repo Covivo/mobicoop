@@ -1,43 +1,99 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-row
-      align="center"
+      justify="center"
     >
       <!-- TITLE -->
       <v-col
+        cols="8"
+        md="8"
+        xl="6"
         align="center"
-        cols="12"
-      >
+      >      
         <h1
           v-if="origin!=='' && destination !==''"
         >
-          Covoiturages de {{ origin }} à {{ destination }}
+          {{ $t('titleFromCityToCity', { origin:origin, destination: destination }) }}
         </h1>
         <h1
           v-else-if="origin!==''"
         >
-          Covoiturages depuis {{ origin }}
+          {{ $t('titleFromCity', { city: origin }) }}
         </h1>
         <h1
           v-else-if="destination!==''"
         >
-          Covoiturages vers {{ destination }}
+          {{ $t('titleToCity', { city: destination }) }}
         </h1>
       </v-col> 
     </v-row>
-    <v-row>
+    <v-row
+      justify="center"
+    >
+      <!-- NB RESULTS -->
       <v-col
+        cols="8"
+        md="8"
+        xl="6"
         align="center"
-        cols="12"
-      />
+      >
+        {{ $tc('nbResults', total, { nb: total }) }}
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <!-- RESULTS -->
+      <v-col
+        cols="8"
+        md="8"
+        xl="6"
+        align="center"
+      >
+        <v-pagination
+          v-if="total>perPage"
+          v-model="lPage"
+          :length="Math.ceil(total/perPage)"
+          @input="paginate(lPage)"
+        />
+        <v-row 
+          v-for="(journey,index) in journeys"
+          :key="index"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            align="left"
+          >
+            {{ journey.origin }} - {{ journey.destination }}
+          </v-col>
+        </v-row>
+        <v-pagination
+          v-if="total>perPage"
+          v-model="lPage"
+          :length="Math.ceil(total/perPage)"
+          @input="paginate(lPage)"
+        />
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import {messages_en, messages_fr} from "@translations/components/journey/JourneyResults/";
 
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
+  },
   props: {
+    journeys: {
+      type: Array,
+      default: () => []
+    },
     origin: {
       type: String,
       default: ''
@@ -45,6 +101,40 @@ export default {
     destination: {
       type: String,
       default: ''
+    },
+    total: {
+      type: Number,
+      default: 0
+    },
+    perPage: {
+      type: Number,
+      default: 30
+    },
+    page: {
+      type: Number,
+      default: 1
+    }
+  },
+  data(){
+    return {
+      lPage:this.page
+    }
+  },
+  watch:{
+    page(){
+      console.log('hop');
+      this.lPage = this.page;
+    }
+  },
+  methods:{
+    carpool(carpool){
+      this.$emit("carpool", carpool);
+    },
+    loginOrRegister(carpool){
+      this.$emit("loginOrRegister", carpool);
+    },
+    paginate(page){
+      this.$emit("paginate", page)
     }
   }
 };

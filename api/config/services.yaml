@@ -209,6 +209,10 @@ services:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
 
+    App\Carpool\Repository\JourneyRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # Communication
     App\Communication\Controller\: 
         resource: '../src/Communication/Controller'

@@ -23,6 +23,8 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Repository\JourneyRepository;
+use App\Service\FileManager;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -33,15 +35,19 @@ use Doctrine\ORM\EntityManagerInterface;
 class JourneyManager
 {
     private $entityManager;
+    private $fileManager;
+    private $journeyRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, JourneyRepository $journeyRepository)
     {
         $this->entityManager = $entityManager;
+        $this->fileManager = $fileManager;
+        $this->journeyRepository = $journeyRepository;
     }
 
     /**
@@ -146,5 +152,92 @@ class JourneyManager
         }, $result);
         sort($result, SORT_STRING);
         return array_unique($result);
+    }
+
+    /**
+     * Get all journeys for the given origin
+     *
+     * @param string $origin   The origin
+     * @return Journey[]       The journeys found
+     */
+    public function getFrom(string $origin, string $operationName, array $context = [])
+    {
+        // first we search the city in the journeys as origin
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeys = $stmt->fetchAll();
+        // maybe we will find more tha one city corresponding (accents etc...)
+        $cities = [];
+        foreach ($journeys as $journey) {
+            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+                $cities[] = $journey['origin'];
+            }
+        }
+        // then we search with the 'real' spellings
+        return $this->journeyRepository->getAllFrom($cities, $operationName, $context);
+    }
+
+    /**
+     * Get all journeys for the given destination
+     *
+     * @param string $destination   The destination
+     * @return Journey[]            The journeys found
+     */
+    public function getTo(string $destination, string $operationName, array $context = [])
+    {
+        // first we search the city in the journeys as destination
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeys = $stmt->fetchAll();
+        // maybe we will find more than one city corresponding (accents etc...)
+        $cities = [];
+        foreach ($journeys as $journey) {
+            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+                $cities[] = $journey['destination'];
+            }
+        }
+        // then we search with the 'real' spellings
+        return $this->journeyRepository->getAllTo($cities, $operationName, $context);
+    }
+
+    /**
+     * Get all journeys for the given origin and destination
+     *
+     * @param string $origin        The origin
+     * @param string $destination   The destination
+     * @return Journey[]            The journeys found
+     */
+    public function getFromTo(string $origin, string $destination, string $operationName, array $context = [])
+    {
+        // first we search the city in the journeys as origin and destination
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeysOrigin = $stmt->fetchAll();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeysDestination = $stmt->fetchAll();
+        // maybe we will find more than one city corresponding (accents etc...)
+        $citiesOrigin = [];
+        foreach ($journeysOrigin as $journey) {
+            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+                $citiesOrigin[] = $journey['origin'];
+            }
+        }
+        $citiesDestination = [];
+        foreach ($journeysDestination as $journey) {
+            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+                $citiesDestination[] = $journey['destination'];
+            }
+        }
+
+        // then we search with the 'real' spellings
+        return $this->journeyRepository->getAllFromTo($citiesOrigin, $citiesDestination, $operationName, $context);
     }
 }

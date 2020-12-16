@@ -1,0 +1,6 @@
+{
+    "titleFromCity": "Covoiturage depuis {city}",
+    "titleToCity": "Covoiturage vers {city}",
+    "titleFromCityToCity": "Covoiturage de {origin} vers {destination}",
+    "nbResults": "Pas d'annonce trouvée | 1 annonce en covoiturage trouvée | {nb} annonces en covoiturage trouvées"
+}

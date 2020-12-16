@@ -1,0 +1,246 @@
+<?php
+
+/**
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
+namespace Mobicoop\Bundle\MobicoopBundle\Journey\Service;
+
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Journey\Entity\Journey;
+
+/**
+ * Journey management service.
+ */
+class JourneyManager
+{
+    private $dataProvider;
+
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
+    public function __construct(DataProvider $dataProvider)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Journey::class);
+    }
+
+    /**
+     * Get cities
+     * @return array The cities found
+     */
+    public function getCities()
+    {
+        $cities = [];
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection('cities');
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            // organize cities by first letter
+            foreach ($response->getValue() as $city) {
+                if (!array_key_exists($this->getFirstUpperLetter($city), $cities) || !in_array($city, $cities[$this->getFirstUpperLetter($city)])) {
+                    if (!is_numeric($this->getFirstUpperLetter($city))) {
+                        $cities[$this->getFirstUpperLetter($city)][] = $city;
+                    }
+                }
+            }
+        }
+        // we add the url-friendly name
+        $superCities = [];
+        foreach ($cities as $letter=>$lcities) {
+            foreach ($lcities as $city) {
+                $superCities[$letter][] = [
+                    'city' => $city,
+                    'sanitized' => $this->sanitize($city)
+                ];
+            }
+        }
+        return $superCities;
+    }
+
+    /**
+     * Get all journeys from a given city
+     *
+     * @param string $city  The city
+     * @return array The journeys found
+     */
+    public function getFrom(string $city, int $page=1, int $perPage=30)
+    {
+        $response = $this->dataProvider->getSpecialCollection('origin/'.$city, ['page'=>$page,'perPage'=>$perPage]);
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            $origin = $city;
+            // we search the "real" origin => the city provided as parameter is a sanitized version
+            foreach ($response->getValue()->getMember() as $journey) {
+                if ($journey->getOrigin() !== $origin) {
+                    // we stop as soon as we get a valid origin
+                    $origin = ucfirst(strtolower($journey->getOrigin()));
+                    break;
+                }
+            }
+            return [
+                'origin' => $origin,
+                'journeys' => $response->getValue()->getMember(),
+                'total' => $response->getValue()->getTotalItems()
+            ];
+        }
+        return [
+            'origin' => $city,
+            'journeys' => [],
+            'total' => 0
+        ];
+    }
+
+    /**
+     * Get all journeys to a given city
+     *
+     * @param string $city  The city
+     * @return array The journeys found
+     */
+    public function getTo(string $city, int $page=1, int $perPage=30)
+    {
+        $response = $this->dataProvider->getSpecialCollection('destination/'.$city, ['page'=>$page,'perPage'=>$perPage]);
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            $destination = $city;
+            // we search the "real" destination => the city provided as parameter is a sanitized version
+            foreach ($response->getValue()->getMember() as $journey) {
+                if ($journey->getDestination() !== $destination) {
+                    // we stop as soon as we get a valid destination
+                    $destination = ucfirst(strtolower($journey->getDestination()));
+                    break;
+                }
+            }
+            return [
+                'destination' => $destination,
+                'journeys' => $response->getValue()->getMember(),
+                'total' => $response->getValue()->getTotalItems()
+            ];
+        }
+        return [
+            'destination' => $city,
+            'journeys' => [],
+            'total' => 0
+        ];
+    }
+
+    /**
+     * Get all journeys from a given city to a given city
+     *
+     * @param string $origin        The origin
+     * @param string $destination   The destination
+     * @return array The journeys found
+     */
+    public function getFromTo(string $origin, string $destination, int $page=1, int $perPage=30)
+    {
+        $response = $this->dataProvider->getSpecialCollection('origin/'.$origin.'/destination/'.$destination, ['page'=>$page,'perPage'=>$perPage]);
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            // we search the "real" origin and destination => the cities provided as parameter are a sanitized version
+            foreach ($response->getValue()->getMember() as $journey) {
+                if ($journey->getOrigin() !== $origin) {
+                    // we stop as soon as we get a valid origin
+                    $origin = ucfirst(strtolower($journey->getOrigin()));
+                    break;
+                }
+            }
+            foreach ($response->getValue()->getMember() as $journey) {
+                if ($journey->getDestination() !== $destination) {
+                    // we stop as soon as we get a valid destination
+                    $destination = ucfirst(strtolower($journey->getDestination()));
+                    break;
+                }
+            }
+            return [
+                'origin' => $origin,
+                'destination' => $destination,
+                'journeys' => $response->getValue()->getMember(),
+                'total' => $response->getValue()->getTotalItems()
+            ];
+        }
+        return [
+            'origin' => $origin,
+            'destination' => $destination,
+            'journeys' => [],
+            'total' => 0
+        ];
+    }
+
+    private function getFirstUpperLetter(string $string)
+    {
+        return strtoupper($this->normalize(mb_substr($string, 0, 1, 'utf-8')));
+    }
+
+    private function normalize($string)
+    {
+        $table = array(
+            'Š'=>'S', 'š'=>'s', 'Ð'=>'Dj', 'Ž'=>'Z', 'ž'=>'z',
+            'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+            'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O',
+            'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss',
+            'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e',
+            'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o',
+            'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b',
+            'ÿ'=>'y',
+        );
+        return strtr($string, $table);
+    }
+
+    /**
+     * Sanitizes a name (remove special chars, replace spaces...).
+     * @param string $string
+     * @param boolean $force_lowercase
+     * @param boolean $anal
+     * @return string
+     */
+    private function sanitize(string $string, bool $force_lowercase = true, bool $anal = false)
+    {
+        $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
+            "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
+            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+        $clean = trim(str_replace($strip, "-", strip_tags($string)));
+        $clean = preg_replace('/\s+/', "-", $clean);
+        $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
+        if ($force_lowercase) {
+            if (function_exists('mb_strtolower')) {
+                $clean = mb_strtolower($clean, 'UTF-8');
+            } else {
+                $clean = strtolower($clean);
+            }
+        }
+        
+        $clean = strtr($clean, [
+            "à" => "a",
+            "â" => "a",
+            "ä" => "a",
+            "é" => "e",
+            "è" => "e",
+            "ê" => "e",
+            "ë" => "e",
+            "ï" => "i",
+            "î" => "i",
+            "ô" => "o",
+            "ö" => "o",
+            "ù" => "u",
+            "û" => "u",
+            "ü" => "u",
+            "ç" => "c"
+        ]);
+        return $clean;
+    }
+}

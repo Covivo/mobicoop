@@ -1,0 +1,6 @@
+{
+    "titleFromCity": "Carpool from {city}",
+    "titleToCity": "Carpool to {city}",
+    "titleFromCityToCity": "Carpool from {origin} to {destination}",
+    "nbResults": "No carpool found | 1 carpool found | {nb} carpools found"
+}

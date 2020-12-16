@@ -21,8 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Journey\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Journey\Service\JourneyManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -32,34 +33,53 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class JourneyController extends AbstractController
 {
-    public function __construct()
+    private $journeyManager;
+
+    public function __construct(JourneyManager $journeyManager)
     {
+        $this->journeyManager = $journeyManager;
     }
 
     public function cities()
     {
-        return $this->render('@Mobicoop/journey/cities.html.twig');
-    }
-
-    public function fromCity(string $origin)
-    {
-        return $this->render('@Mobicoop/journey/results.html.twig', [
-            "origin"=>$origin
+        return $this->render('@Mobicoop/journey/cities.html.twig', [
+            'cities' => $this->journeyManager->getCities()
         ]);
     }
 
-    public function toCity(string $destination)
+    public function fromCity(string $origin, int $page=1, int $perPage=30)
     {
+        $journeys = $this->journeyManager->getFrom($origin, $page, $perPage);
         return $this->render('@Mobicoop/journey/results.html.twig', [
-            "destination"=>$destination
+            "journeys"=>$journeys['journeys'],
+            "origin"=>$journeys['origin'],
+            "total"=>$journeys['total'],
+            "page"=>$page,
+            "perPage"=>$perPage
+        ]);
+    }
+
+    public function toCity(string $destination, int $page=1, int $perPage=30)
+    {
+        $journeys = $this->journeyManager->getTo($destination, $page, $perPage);
+        return $this->render('@Mobicoop/journey/results.html.twig', [
+            "journeys"=>$journeys['journeys'],
+            "destination"=>$journeys['destination'],
+            "total"=>$journeys['total'],
+            "page"=>$page,
+            "perPage"=>$perPage
         ]);
     }
 
     public function fromCityToCity(string $origin, string $destination)
     {
         return $this->render('@Mobicoop/journey/results.html.twig', [
-            "origin"=>$origin,
-            "destination"=>$destination
+            "journeys"=>$journeys['journeys'],
+            "origin"=>$journeys['origin'],
+            "destination"=>$journeys['destination'],
+            "total"=>$journeys['total'],
+            "page"=>$page,
+            "perPage"=>$perPage
         ]);
     }
 }

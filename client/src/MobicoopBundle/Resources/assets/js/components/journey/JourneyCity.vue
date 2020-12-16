@@ -2,29 +2,31 @@
   <v-container>
     <v-row
       align="center"
+      justify="center"
     >
       <!-- TITLE -->
       <v-col
         align="center"
-        cols="12"
+        cols="10"
       >
-        <h1>
-          De ville à ville
-        </h1>
+        <h1>{{ $t('title') }}</h1>
+        <h2>{{ $t('subtitle') }}</h2>
       </v-col> 
     </v-row>
-    <v-row>
+    <v-row justify="center">
       <v-col
-        cols="12"
+        cols="10"
       >
         <v-tabs
           v-model="tab"
+          background-color="success"
+          center-active
         >
           <v-tab
-            v-for="item in items"
-            :key="item.tab"
+            v-for="(letter,index) in cities"
+            :key="index"
           >
-            {{ item.tab }}
+            {{ index }}
           </v-tab>
         </v-tabs>
         <v-tabs-items 
@@ -33,23 +35,40 @@
           <v-card
             class="mx-auto"
           >
-            <v-list dense>
-              <v-tab-item
-                v-for="item in items"
-                :key="item.tab"
+            <v-tab-item
+              v-for="(letter, index) in cities"
+              :key="index"
+            >
+              <v-simple-table
+                fixed-header
+                height="500px"
               >
-                <v-list-item
-                  v-for="city in item.cities"
-                  :key="city"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ city }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-tab-item>
-            </v-list>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th />
+                      <th class="text-left">
+                        {{ $t('fromCity') }}
+                      </th>
+                      <th class="text-left">
+                        {{ $t('toCity') }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="city in letter"
+                      :key="city.city"
+                    >
+                      <td>{{ city.city }}</td>
+                      <td><a :href="$t('routeFromCity', { city: city.sanitized })">{{ $t('journeyFromCity', { city: city.city }) }}</a></td>
+                      <td><a :href="$t('routeToCity', { city: city.sanitized })">{{ $t('journeyToCity', { city: city.city }) }}</a></td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-tab-item>
           </v-card>
-          </v-tab-item>
         </v-tabs-items>
       </v-col>
     </v-row>
@@ -57,65 +76,25 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {messages_en, messages_fr} from "@translations/components/journey/JourneyCity/";
 
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    },
+  },
+  props: {
+    cities: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data () {
     return {
       tab: 0,
-      items: [
-        { tab: 'A', cities: [] },
-        { tab: 'B', cities: [] },
-        { tab: 'C', cities: [] },
-        { tab: 'D', cities: [] },
-        { tab: 'E', cities: [] },
-        { tab: 'F', cities: [] },
-        { tab: 'G', cities: [] },
-        { tab: 'H', cities: [] },
-        { tab: 'I', cities: [] },
-        { tab: 'J', cities: [] },
-        { tab: 'K', cities: [] },
-        { tab: 'L', cities: [] },
-        { tab: 'M', cities: [] },
-        { tab: 'N', cities: [] },
-        { tab: 'O', cities: [] },
-        { tab: 'P', cities: [] },
-        { tab: 'Q', cities: [] },
-        { tab: 'R', cities: [] },
-        { tab: 'S', cities: [] },
-        { tab: 'T', cities: [] },
-        { tab: 'U', cities: [] },
-        { tab: 'V', cities: [] },
-        { tab: 'W', cities: [] },
-        { tab: 'X', cities: [] },
-        { tab: 'Y', cities: [] },
-        { tab: 'Z', cities: [] }
-      ]
     };
-  },
-  watch: {
-    tab: function(newVal, oldVal){
-      this.getCities(this.items[newVal].tab);
-    }
-  },
-  mounted() {
-    this.getCities(this.items[this.tab].tab);
-  },
-  methods: {
-    getCities(letter) {
-      console.log(letter);
-      let item = this.items.find( item => item.tab == letter );
-      if (item.cities.length == 0) {
-        axios
-          .get(`http://localhost:8080/journeys/cities`, {
-            headers: { Authorization: 'Bearer ' + this.$root.token, Accept: 'application/json', 'Content-Type': 'application/json' },
-            params: { letter: letter }
-          })
-          .then(res => {
-            item.cities = res.data;
-          });
-      } 
-    }
   }
 };
 </script>

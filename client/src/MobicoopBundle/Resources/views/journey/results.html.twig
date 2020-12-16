@@ -6,7 +6,11 @@
 {% endblock %}
 {% block main %}
   <journey-results 
+    :journeys="{{ journeys|json_encode}}"
     origin="{{ origin is defined ? origin : '' }}"
     destination="{{ destination is defined ? destination : '' }}"
+    :total="{{ total is defined ? total : 0 }}"
+    :page="{{ page is defined ? page : 0 }}"
+    :perPage="{{ perPage is defined ? perPage : 0 }}"
   />
 {% endblock %}

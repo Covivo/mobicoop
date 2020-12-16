@@ -636,31 +636,34 @@ cities:
     path:
         fr: /covoiturage-par-ville
         en: /carpool-from-{origin}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::cities
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::cities
 
 # from a city
 city_from:
     methods: [GET]
     path:
-        fr: /communes/covoiturage/{origin}
-        en: /carpool-from-{origin}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::fromCity
+        fr: /communes/covoiturage/{origin}/{page}/{perPage}
+        en: /carpool-from-{origin}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCity
+    defaults: { page: 1, perPage: 30 }
 
 # to a city
 city_to:
     methods: [GET]
     path:
-        fr: /communes/covoiturage-vers-{destination}
-        en: /carpool-to-{destination}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::toCity
+        fr: /communes/covoiturage-vers-{destination}/{page}/{perPage}
+        en: /carpool-to-{destination}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::toCity
+    defaults: { page: 1, perPage: 30 }
 
 # from a city to a city
 city_to_city:
     methods: [GET]
     path:
-        fr: /covoiturage/{origin}/{destination}
-        en: /carpool/{origin}/{destination}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\JourneyController::fromCityToCity
+        fr: /covoiturage/{origin}/{destination}/{page}/{perPage}
+        en: /carpool/{origin}/{destination}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCityToCity
+    defaults: { page: 1, perPage: 30 }
 
 
 ####################

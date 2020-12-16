@@ -21,191 +21,105 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Journey\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
- * Carpooling : an effective journey.
- *
- * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN", columns={"origin"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_DESTINATION", columns={"destination"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN_DESTINATION", columns={"origin","destination"})})
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
- *      },
- *      collectionOperations={
- *          "get",
- *          "cities"={
- *              "method"="GET",
- *              "path"="/journeys/cities"
- *          },
- *          "origin"={
- *              "method"="GET",
- *              "path"="/journeys/origin/{origin}"
- *          },
- *          "destination"={
- *              "method"="GET",
- *              "path"="/journeys/destination/{destination}"
- *          },
- *          "originDestination"={
- *              "method"="GET",
- *              "path"="/journeys/origin/{origin}/destination/{destination}"
- *          },
- *      },
- *      itemOperations={
- *          "get",
- *      }
- * )
- * @ApiFilter(SearchFilter::class, properties={"origin":"partial", "destination":"partial"})
- * @ApiFilter(NumericFilter::class, properties={"frequency"})
- * @ApiFilter(DateFilter::class, properties={"fromDate": DateFilter::EXCLUDE_NULL,"toDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"fromDate", "origin", "destination"}, arguments={"orderParameterName"="order"})
+ * Carpooling : a journey (carpool summary between 2 cities for a user)
  */
-class Journey
+class Journey implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this journey.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"readJourney"})
      */
     private $id;
 
     /**
      * @var int The proposal id for this journey
-     * @ORM\Column(type="integer")
-     * @Groups({"readJourney"})
      */
     private $proposalId;
 
     /**
      * @var int The user id for this journey
-     * @ORM\Column(type="integer")
-     * @Groups({"readJourney"})
      */
     private $userId;
 
     /**
      * @var string|null The name of the user.
-     * @ORM\Column(type="string", nullable=true)
-     * @Groups({"readJourney"})
      */
     private $userName;
     
     /**
      * @var string The origin of the journey
-     * @ORM\Column(type="string")
-     * @Groups({"readJourney"})
      */
     private $origin;
 
     /**
      * @var float|null The latitude of the origin.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
      */
     private $latitudeOrigin;
 
     /**
      * @var float|null The longitude of the origin.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
      */
     private $longitudeOrigin;
 
     /**
      * @var string The destination of the journey
-     * @ORM\Column(type="string")
-     * @Groups({"readJourney"})
      */
     private $destination;
 
     /**
      * @var float|null The latitude of the destination.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
      */
     private $latitudeDestination;
 
     /**
      * @var float|null The longitude of the destination.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
      */
     private $longitudeDestination;
 
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
-     * @ORM\Column(type="smallint")
-     * @Groups({"readJourney"})
      */
     private $frequency;
 
     /**
      * @var \DateTimeInterface The starting date.
-     *
-     * @ORM\Column(type="date")
-     * @Groups({"readJourney"})
      */
     private $fromDate;
 
     /**
      * @var \DateTimeInterface The end date.
-     *
-     * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readJourney"})
      */
     private $toDate;
 
     /**
      * @var \DateTimeInterface|null The starting time for a punctual journey.
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readJourney"})
      */
     private $time;
 
     /**
      * @var string|null The json representation of the possible days and times for a regular journey.
-     * @ORM\Column(type="string", nullable=true)
-     * @Groups({"readJourney"})
      */
     private $days;
 
     /**
      * @var \DateTimeInterface Creation date of the journey.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups({"readJourney"})
      */
     private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the journey.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedDate;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getProposalId(): int
@@ -383,15 +297,27 @@ class Journey
         return $this;
     }
 
-    public function getUpdatedDate(): ?\DateTimeInterface
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
     {
-        return $this->updatedDate;
-    }
-
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
-
-        return $this;
+        return
+        [
+            'id' => $this->getId(),
+            'proposalId' => $this->getProposalId(),
+            'userId' => $this->getUserId(),
+            'username' => $this->getUsername(),
+            'origin' => $this->getOrigin(),
+            'latitudeOrigin' => $this->getLatitudeOrigin(),
+            'longitudeOrigin' => $this->getLongitudeOrigin(),
+            'destination' => $this->getDestination(),
+            'latitudeDestination' => $this->getLatitudeDestination(),
+            'longitudeDestination' => $this->getLongitudeDestination(),
+            'frequency' => $this->getFrequency(),
+            'fromDate' => $this->getFromDate(),
+            'toDate' => $this->getToDate(),
+            'time' => $this->getTime(),
+            'days' => $this->getDays(),
+            'createdDate' => $this->getCreatedDate()
+        ];
     }
 }

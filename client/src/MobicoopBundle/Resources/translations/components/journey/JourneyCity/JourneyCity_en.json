@@ -1,0 +1,8 @@
+{
+    "title": "Carpools city by city",
+    "subtitle": "Get all the carpools for your city",
+    "fromCity": "From city...",
+    "toCity": "... to city",
+    "journeyFromCity": "Journey from {city}",
+    "journeyToCity": "Journey to {city}"
+}

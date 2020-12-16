@@ -23,6 +23,9 @@ carpool:
         title: 'Modifier votre annonce de covoiturage'
     results:
         title: 'Résultats de covoiturage'
+journey:
+    results:
+        title: 'Covoiturages par ville'
 contact:
     title: "Nous contacter"
 solidary:
