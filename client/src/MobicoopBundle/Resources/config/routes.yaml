@@ -81,6 +81,12 @@ user_login_token:
         en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
+user_login_token_email:
+    path:
+        fr: /utilisateur/login-token/email
+        en: /user/login-token/email
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userEmailValidationCheck
+
 user_login_delegate:
     path:
         fr: /login-admin/{email}/{delegateEmail}
@@ -183,6 +189,22 @@ user_phone_token:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
+
+# send a validation email AJAX
+user_email_validation:
+    path:    
+        fr: /utilisateur/email/validation
+        en: /user/email/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
+
+#user form email validation
+user_email_form_validation:    
+    path:
+        fr: /utilisateur/email/validation/{email}/{token}
+        en: /user/signup/email/{email}/{token}
+    defaults:
+        token: ""
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # delete avatar
 user_profile_image_delete:

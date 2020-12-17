@@ -1,16 +1,13 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}
-  {% trans from 'ui' %}user.signupValidation.title{% endtrans %} - {{ app_name }}
-{% endblock %}
 {% block stylesheets %}
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
 
-<Signup-validation
-  email-validation="{{ emailValidation is defined ? emailValidation|json_encode : false|json_encode }}"
+<Email-validation 
   url-token="{{ urlToken }}"
   url-email="{{ urlEmail }}"
   error="{{ error }}" />
+
 {% endblock %}

@@ -65,7 +65,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          action="/utilisateur/login-token"
+          :action="emailValidation ? $t('urlEmailValidation') : $t('urlSignUpValidation') "
           method="POST"
         >
           <input
@@ -110,6 +110,10 @@ export default {
     }
   },
   props: {
+    emailValidation: {
+      type: Boolean,
+      default: false
+    },
     urlToken: {
       type: String,
       default: ""

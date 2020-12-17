@@ -1229,7 +1229,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'carpoolExport'         => $this->getCarpoolExport(),
             'canReceiveReview'      => $this->getCanReceiveReview(),
             'userReviewsActive'     => $this->isUserReviewsActive(),
-            'experienced'           => $this->isExperienced()
+            'experienced'           => $this->isExperienced(),
+            'validatedDate'         => $this->getValidatedDate()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

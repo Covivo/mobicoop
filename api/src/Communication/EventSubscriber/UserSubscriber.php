@@ -35,6 +35,7 @@ use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Service\UserManager;
 
 class UserSubscriber implements EventSubscriberInterface
@@ -60,7 +61,8 @@ class UserSubscriber implements EventSubscriberInterface
             UserGeneratePhoneTokenAskedEvent::NAME => 'onUserGeneratePhoneTokenAskedEvent',
             UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent',
             UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent',
-            ReviewReceivedEvent::NAME => 'onReviewReceivedEvent'
+            ReviewReceivedEvent::NAME => 'onReviewReceivedEvent',
+            UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail'
         ];
     }
 
@@ -120,5 +122,10 @@ class UserSubscriber implements EventSubscriberInterface
     public function onReviewReceivedEvent(ReviewReceivedEvent $event)
     {
         $this->notificationManager->notifies(ReviewReceivedEvent::NAME, $event->getReview()->getReviewed(), $event->getReview());
+    }
+
+    public function onUserSendValidationEmail(UserSendValidationEmailEvent $event)
+    {
+        $this->notificationManager->notifies(UserSendValidationEmailEvent::NAME, $event->getUser());
     }
 }

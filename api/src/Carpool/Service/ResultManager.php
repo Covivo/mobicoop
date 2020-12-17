@@ -629,7 +629,7 @@ class ResultManager
                     $item->setDate($matching['request']->getProposalRequest()->getCriteria()->getFromDate());
                     $item->setMarginDuration($matching['request']->getProposalRequest()->getCriteria()->getMarginDuration());
                     // the carpooler proposal is punctual, we have to take the proposal time matching to the carpooler day
-                    $fromTime = new DateTime();
+                    $fromTime = new \DateTime();
                     switch ($matching['request']->getProposalRequest()->getCriteria()->getFromDate()->format('w')) {
                         case 0: {
                             $fromTime = clone $proposal->getCriteria()->getSunTime();
