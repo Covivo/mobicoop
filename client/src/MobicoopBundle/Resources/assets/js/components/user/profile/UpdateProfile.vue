@@ -95,20 +95,75 @@
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
 
+         
           <!--Email-->
-          <v-text-field
-            v-model="email"
-            :label="$t('email.label')"
-            type="email"
-            class="email"
-          />
+          <v-row 
+            justify="start" 
+          >
+            <v-col cols="9" md="6" sm="4">
+                  <v-text-field
+                    v-model="email"
+                    :label="$t('email.label')"
+                    type="email"
+                    class="email"
+                   
+                  />
+            </v-col>
+          <!-- email verified -->
+            <v-col cols="1" v-if="email && emailVerified == true" >
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template v-slot:activator="{ on }">
+                  <v-icon 
+                    color="success" 
+                    v-on="on"  
+                    class="mt-7 ml-n12"
+                  >
+                    mdi-check-circle-outline
+                  </v-icon>
+                </template>
+                  <span> {{$t('email.tooltips.verified')}}</span>
+              </v-tooltip>
+            </v-col>
+          <!--email verification -->
+            <v-col cols="1"  v-if="emailVerified == false">
+              <v-tooltip 
+                color="info" 
+                top
+              >
+                <template 
+                  v-slot:activator="{ on }"
+                >
+                  <v-icon 
+                    color="warning" 
+                    v-on="on" 
+                    class="mt-7 ml-n12" 
+                  >
+                    mdi-alert-circle-outline
+                  </v-icon>
+                </template>
+                  <span>{{$t('email.tooltips.notVerified')}}</span>
+              </v-tooltip>
+            </v-col>
+            <v-col  v-if="emailVerified == false" align="start">
+              <v-btn 
+                rounded color="secondary" 
+                @click="sendValidationEmail" 
+                class="mt-4" 
+                :loading="loadingEmail"
+              >
+                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain')}}
+              </v-btn>
+            </v-col>
+          </v-row>
 
           <!--Telephone-->
           <v-row 
-            justify="center" 
-            
+            justify="start" 
           >
-            <v-col cols="3" md="4" sm="5" xl="2">
+            <v-col cols="9" md="6" sm="4">
               <v-text-field
                 v-model="telephone"
                 :label="$t('phone.label')"
@@ -154,7 +209,7 @@
                   <span>{{$t('phone.tooltips.notVerified')}}</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="4" xl="4" sm="9"  v-if="diplayVerification && telephone && phoneVerified == false">
+            <v-col  v-if="diplayVerification && telephone && phoneVerified == false" align="start">
               <v-btn 
                 rounded color="secondary" 
                 @click="generateToken" class="mt-4" 
@@ -164,10 +219,7 @@
               </v-btn>
             </v-col>
             <v-col 
-              cols="3" 
-              sm="7"
-              md="6"
-              xl="3"
+             cols="9" md="6" sm="4"
               v-if="phoneToken != null && telephone && phoneVerified == false"
             >
               <v-text-field
@@ -177,9 +229,11 @@
                 :label="$t('phone.validation.label')"
                   />
             </v-col>
+            <v-col cols="1"/>
             <v-col 
-              cols="2" xl="2" md="6" sm="7" class="justify-center" 
-              v-if="phoneToken != null && telephone && phoneVerified == false"
+              class="justify-center" 
+              v-if="phoneToken != null && telephone && phoneVerified == false "
+              align="start"
             >
               <v-btn 
                 rounded 
@@ -299,18 +353,49 @@
           </v-dialog>
 
           <!--Save Button-->
-          <v-btn
-            class="button saveButton"
-            color="secondary"
-            rounded
-            :disabled="!valid"
-            :loading="loading"
-            type="button"
-            :value="$t('save')"
-            @click="validate"
+          <v-dialog
+            v-model="dialogEmail"
+            persistent
+            max-width="450"
           >
-            {{ $t('save') }}
-          </v-btn>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="button saveButton"
+                color="secondary"
+                rounded
+                :disabled="!valid"
+                :loading="loading"
+                type="button"
+                :value="$t('save')"
+                @click="update"
+              >
+                {{ $t('save') }}
+              </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="headline">
+              {{$t('dialogEmail.title')}}
+            </v-card-title>
+            <v-card-text v-html="$t('dialogEmail.content')"></v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="error"
+                text
+                @click="cancel"
+              >
+               {{$t('dialogEmail.buttons.cancelUpdate')}}
+              </v-btn>
+              <v-btn
+                color="primary darken-1"
+                text
+                @click="validate"
+              >
+                 {{$t('dialogEmail.buttons.confirmUpdate')}}
+              </v-btn>
+            </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-form>
       </v-col>
     </v-row>
@@ -350,7 +435,6 @@
     <v-row>
       <ChangePassword />
     </v-row>
-
     <!-- Delete account -->
     <v-row class="text-left title font-weight-bold">
       <v-col>{{ $t('titles.deleteAccount') }}</v-col>
@@ -434,10 +518,8 @@
         </v-card>
       </v-dialog>
         </v-col>
-
       </v-container>
     </v-row>
-
   </v-container>
 </template>
 
@@ -511,10 +593,9 @@ export default {
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
+      emailValidatedDate: this.user.validatedDate,
       token: null,
       menu : false,
-
-
       genders:[
         { value: 1, gender: this.$t('gender.values.female')},
         { value: 2, gender: this.$t('gender.values.male')},
@@ -554,6 +635,9 @@ export default {
       urlAvatar: this.user.avatars[this.user.avatars.length-1],
       displayFileUpload: (this.user.images[0]) ? false : true,
       phoneVerified: null,
+      emailVerified: false,
+      emailSended: false,
+      loadingEmail: false,
       diplayVerification: this.user.telephone ? true : false,
       loadingToken: false,
       loadingValidatePhone: false,
@@ -565,7 +649,9 @@ export default {
       hasOwnedCommunities: false,
       disabledOwnedCommunities: false,
       disabledCreatedEvents: false,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      emailChanged: false,
+      dialogEmail: false
 
 
     };
@@ -577,6 +663,9 @@ export default {
     telephone (val) {
       this.phoneToken = null;
       this.diplayVerification = false;
+    }, 
+    email (val) {
+      this.emailChanged = true;
     }
    },
   computed : {
@@ -595,6 +684,7 @@ export default {
   },
   mounted() {
     this.checkVerifiedPhone();
+    this.checkVerifiedEmail();
     this.getOwnedCommunities();
     this.getCreatedEvents();
   },
@@ -606,10 +696,22 @@ export default {
     save (date) {
       this.$refs.menu.save(date)
     },
+   
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
+        this.dialogEmail = false;
       }
+    },
+    update() {
+      if (this.emailChanged) {
+        this.dialogEmail = true;
+      } else {
+        this.validate();
+      }
+    },
+    cancel () {
+      window.location.reload();
     },
     checkForm () {
       this.loading = true;
@@ -640,10 +742,14 @@ export default {
             this.phoneToken = null;
             this.diplayVerification = true;
             this.checkVerifiedPhone();
+            this.checkVerifiedEmail();
           }
           //this.urlAvatar = res.data.versions.square_800;
           this.displayFileUpload = false; 
-        });
+        })
+        .catch(error => {
+          window.location.reload();
+      });
     },
     updateAddress () {
       this.loadingAddress = true;
@@ -689,6 +795,11 @@ export default {
         this.phoneVerified = this.phoneValidatedDate ? true : false;
       }
     },
+    checkVerifiedEmail() {
+      if (this.email !== null) {
+        this.emailVerified = this.emailValidatedDate ? true : false;
+      }
+    },
     generateToken() {
     this.loadingToken = true;   
     axios 
@@ -704,6 +815,22 @@ export default {
           this.phoneToken = true;
           this.token = null;
           this.loadingToken = false;
+        })
+    },
+    sendValidationEmail() {
+    this.loadingEmail = true;   
+    axios 
+      .get(this.$t('email.verificationRoute'))
+      .then(res => {
+          if (res.data.state) {
+            this.errorUpdate = true;
+            this.textSnackError = this.$t('snackBar.emailError');
+            this.snackbar = true;
+          }
+          this.textSnackOk = this.$t('snackBar.emailOk');
+          this.snackbar = true;
+          this.emailSended = true;
+          this.loadingEmail = false;   
         })
     },
     validateToken() {

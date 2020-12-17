@@ -201,7 +201,7 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
-            $user->setBirthDate(new DateTime($data['birthDay']));
+            $user->setBirthDate(new \DateTime($data['birthDay']));
             //$user->setNewsSubscription by default
 
             $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
@@ -255,17 +255,48 @@ class UserController extends AbstractController
         ]);
     }
 
+    // /**
+    //  * User registration email validation
+    //  */
+    public function userEmailValidation($token, $email, Request $request)
+    {
+        $errorMessage =   '';
+        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage =  'Bad credentials.';
+            $request->getSession()->getFlashBag()->clear();
+        }
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+          'emailValidation'=> true,
+          'urlToken'=>$token,
+          'urlEmail'=>$email,
+          'error'=>$errorMessage
+        ]);
+    }
+
     /**
     * User registration email validation check -> we get here if there is an error with $credentials
     * We redirect on  user_sign_up_validation, in message flash there is error
     */
     public function userSignUpValidationCheck(Request $request)
     {
+        return $this->redirectToRoute('user_email_form_validation', array(
+        'token'=>$request->get('emailToken'),
+        'email'=>$request->get('email'),
+      ));
+    }
+
+    /**
+    * User registration email validation check -> we get here if there is an error with $credentials
+    * We redirect on  user_sign_up_validation, in message flash there is error
+    */
+    public function userEmailValidationCheck(Request $request)
+    {
         return $this->redirectToRoute('user_sign_up_validation', array(
         'token'=>$request->get('emailToken'),
         'email'=>$request->get('email'),
       ));
     }
+
 
 
     /**
@@ -331,6 +362,24 @@ class UserController extends AbstractController
     }
 
     /**
+     * Send a validation email
+     *
+     * @return User
+     */
+    public function sendValidationEmail()
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        $this->userManager->sendValidationEmail($user);
+        return new response(json_encode('emailSend'));
+    }
+
+    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
@@ -371,7 +420,7 @@ class UserController extends AbstractController
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender((int)($data->get('gender')));
-            $user->setBirthDate(new DateTime($data->get('birthDay')));
+            $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 

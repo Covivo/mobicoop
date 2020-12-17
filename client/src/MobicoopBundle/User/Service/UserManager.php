@@ -867,4 +867,17 @@ class UserManager
         }
         return null;
     }
+
+    /**
+     * Send a validation email
+     *
+     * @param User $user the user
+     * @return void
+     */
+    public function sendValidationEmail(User $user)
+    {
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($user->getId(), 'sendValidationEmail');
+        return $response->getValue();
+    }
 }
