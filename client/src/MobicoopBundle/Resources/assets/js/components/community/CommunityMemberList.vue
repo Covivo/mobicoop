@@ -48,14 +48,16 @@
       </template> 
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
-          <template>
+          <template v-slot:activator="{ on }">
             <v-icon
               color="secondary"
+              v-on="on"
               @click="contactItem(item)"
             >
               mdi-email
             </v-icon>
           </template>
+          <span>{{ $t('directMessage') }}</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -102,22 +104,34 @@ export default {
     givenUsers: {
       type: Array,
       default: null
-    }
+    },
+    directMessage: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
       firstload:true,
       search: '',
       dialog: false,
-      headers: [
-        { text: this.$t('table.colTitle.familyName'), value: 'member' },
-        { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
-      ],
       itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
       users: this.givenUsers ? this.givenUsers : [],
       usersShowned:[],
       loading:true,
       totalItems:0
+    }
+  },
+  computed:{
+    headers(){
+
+      let headers = [{ text: this.$t('table.colTitle.familyName'), value: 'member' }];
+
+      if(this.directMessage){
+        headers.push({ text: this.$t('table.colTitle.actions'), value: 'action', sortable: false });
+      }
+
+      return headers;
     }
   },
   watch: {
@@ -163,7 +177,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
