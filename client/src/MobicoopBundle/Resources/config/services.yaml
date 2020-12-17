@@ -196,7 +196,7 @@ services:
             $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
             $required_home_address: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
             $required_community: '%env(resolve:REQUIRED_COMMUNITY)%'
-            $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
+            $news_subscription: '%env(bool:NEWS_SUBSCRIPTION)%'
             $community_show: '%env(resolve:COMMUNITY_SHOW)%'
             $signUpLinkInConnection: '%env(bool:SIGNUP_LINK_IN_CONNECTION)%'
             $loginLinkInConnection: '%env(bool:LOGIN_LINK_IN_SIGNUP)%'

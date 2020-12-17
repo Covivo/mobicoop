@@ -74,6 +74,9 @@
         "route": "/cgu",
         "required": "La validation de la charte est requise"
     },
+    "newsSubscription":{
+        "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
+    },
     "communities": {
         "label": "Rejoindre une communauté",
         "route": "/utilisateur/inscription/liste-des-communautes"
