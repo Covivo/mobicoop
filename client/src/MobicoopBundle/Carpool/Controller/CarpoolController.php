@@ -65,6 +65,7 @@ class CarpoolController extends AbstractController
     private $ptUsername;
     private $publicTransportManager;
     private $participationText;
+    private $fraudWarningDisplay;
 
 
     public function __construct(
@@ -77,7 +78,8 @@ class CarpoolController extends AbstractController
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
-        int $ptResults
+        int $ptResults,
+        bool $fraudWarningDisplay
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -89,6 +91,7 @@ class CarpoolController extends AbstractController
         $this->ptResults = $ptResults;
         $this->publicTransportManager = $publicTransportManager;
         $this->participationText = $participationText;
+        $this->fraudWarningDisplay = $fraudWarningDisplay;
     }
     
     /**
@@ -258,7 +261,8 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => false, // No RDEX, this not a new search
             'ptSearch' => false, // No PT Results, this not a new search
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'fraudWarningDisplay' => $this->fraudWarningDisplay
         ]);
     }
 
@@ -275,7 +279,8 @@ class CarpoolController extends AbstractController
                 'platformName' => $this->platformName,
                 'externalRDEXJourneys' => false, // No RDEX, this not a new search
                 'ptSearch' => false, // No PT Results, this not a new search
-                'defaultRole'=>$this->defaultRole
+                'defaultRole'=>$this->defaultRole,
+                'fraudWarningDisplay' => $this->fraudWarningDisplay
             ]);
         }
         // for now if the claim fails we redirect to home !
@@ -342,7 +347,8 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => $this->ptResults,
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'fraudWarningDisplay' => $this->fraudWarningDisplay
         ]);
     }
 
@@ -367,7 +373,8 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => $this->ptResults,
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'fraudWarningDisplay' => $this->fraudWarningDisplay
         ]);
     }
 
@@ -387,7 +394,8 @@ class CarpoolController extends AbstractController
             'platformName' => $this->platformName,
             'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
             'ptSearch' => false, // No PT Results, this not a new search
-            'defaultRole'=>$this->defaultRole
+            'defaultRole'=>$this->defaultRole,
+            'fraudWarningDisplay' => $this->fraudWarningDisplay
         ]);
     }
 

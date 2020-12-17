@@ -129,6 +129,10 @@ urlMobileEmailValidation: "/#/confirm-registration/"
 yourPasswordIs: "Votre mot de passe est"
 yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 
+# USER_SEND_VALIDATION_EMAIL
+emailValidation: "Validation de votre adresse email"
+emailValidationUrl: "/utilisateur/email/validation/"
+
 # USER_UPDATED_SELF
 
 theModificationIsConfirmed: "La modification de votre profil est confirmée"
