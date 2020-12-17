@@ -2,6 +2,7 @@
 
 ## CLIENT
 * Tip encouragement message : can show a message to encourage users to leave a tips before and after payement
+* Can show a fraud warning message (in Mailbox and contact form after a carpool search)
 * News subscription : News subscription checkbox in the signup form. Unchecked by default.
 
 # Release 1.18.0

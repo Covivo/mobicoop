@@ -218,6 +218,7 @@
         :user="user"
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
+        :fraud-warning-display="fraudWarningDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -374,6 +375,10 @@ export default {
       default: 3
     },
     ptSearch: {
+      type: Boolean,
+      default: false
+    },
+    fraudWarningDisplay: {
       type: Boolean,
       default: false
     }
