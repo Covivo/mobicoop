@@ -359,6 +359,22 @@
                     </div>
                   </template>
                 </v-checkbox>
+
+                <!-- checkbox -->
+                <v-checkbox
+                  v-model="form.newsSubscription"
+                  class="check"
+                  color="primary"
+                  required
+                >
+                  <template v-slot:label>
+                    <div>
+                      {{ $t("newsSubscription.text") }}
+                    </div>
+                  </template>
+                </v-checkbox>
+
+
                 <v-row
                   justify="center"
                   align="center"
@@ -485,6 +501,10 @@ export default {
     signupRgpdInfos: {
       type: Boolean,
       default: false
+    },
+    newsSubscriptionDefault: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -609,6 +629,7 @@ export default {
           (v) => !!v || this.$t("chart.required"),
         ],
         idFacebook: null,
+        newsSubscription: this.newsSubscriptionDefault
       },
       communities: [],
       selectedCommunity: null,
@@ -695,6 +716,7 @@ export default {
             birthDay: this.form.date,
             address: this.form.homeAddress,
             idFacebook: this.form.idFacebook,
+            newsSubscription: this.form.newsSubscription,
             community: this.selectedCommunity ? this.selectedCommunity : null,
           },
           {
