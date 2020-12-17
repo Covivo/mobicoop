@@ -19,7 +19,7 @@
       </v-btn>
     </v-toolbar>
     <v-card v-if="fraudWarningDisplay">
-      <v-card-text>{{ $t('fraudWarningText') }}</v-card-text>
+      <v-card-text>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</v-card-text>
     </v-card>
     <v-stepper
       v-model="step"

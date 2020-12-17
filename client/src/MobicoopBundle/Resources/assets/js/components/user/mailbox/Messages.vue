@@ -24,7 +24,7 @@
       </v-row>
       <v-row v-if="fraudWarningDisplay">
         <v-col cols="12">
-          <p>{{ $t('fraudWarningText') }}</p>
+          <p>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</p>
         </v-col>
       </v-row>
       <v-row>

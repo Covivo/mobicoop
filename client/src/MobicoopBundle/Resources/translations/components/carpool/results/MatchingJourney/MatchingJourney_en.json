@@ -44,5 +44,10 @@
             }
         }
     },
-    "fraudWarningText":"Sur Mobicoop, les paiements pour vos covoiturages se réalisent essentiellement à la main ou en ligne (ajouter un lien vers covoiturages acceptés) ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    "fraudWarningText":{
+        "part1":"Sur Mobicoop, les paiements pour vos covoiturages se réalisent essentiellement ",
+        "link":"/user/profile/update/accepted-carpools",
+        "textLink":"à la main ou en ligne ",
+        "part2":"ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    }
 }
