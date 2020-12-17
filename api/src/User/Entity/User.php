@@ -1316,24 +1316,24 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
         return $this;
     }
 
-    public function getOldEmail(): string
+    public function getOldEmail(): ?string
     {
         return $this->oldEmail;
     }
 
-    public function setOldEmail(string $oldEmail): self
+    public function setOldEmail(?string $oldEmail): self
     {
         $this->oldEmail = $oldEmail;
 
