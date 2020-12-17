@@ -21,9 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Command;
+namespace App\Journey\Command;
 
-use App\Carpool\Service\JourneyManager;
+use App\Journey\Service\JourneyManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,7 +47,7 @@ class JourneyHydrateCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:journey-hydrate')
+        ->setName('app:journey:hydrate')
         ->setDescription('Hydrate journey entity.')
         ->setHelp('Hydrate journey entity with data from proposals).')
         ;

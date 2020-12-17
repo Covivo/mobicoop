@@ -21,20 +21,20 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\Journey\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Journey;
-use App\Carpool\Service\JourneyManager;
+use App\Journey\Entity\Journey;
+use App\Journey\Service\JourneyManager;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for Journey from a given origin and destination.
+ * Collection data provider for Journey cities.
  *
  */
-final class JourneyOriginDestinationCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class JourneyCitiesCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $journeyManager;
     protected $security;
@@ -49,11 +49,11 @@ final class JourneyOriginDestinationCollectionDataProvider implements Collection
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass && $operationName === "originDestination";
+        return Journey::class === $resourceClass && $operationName === "cities";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->journeyManager->getFromTo($this->request->get('origin'), $this->request->get('destination'), $operationName, $context);
+        return $this->journeyManager->getCities($this->request->get('letter'));
     }
 }

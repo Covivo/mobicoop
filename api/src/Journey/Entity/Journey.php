@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\Journey\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;

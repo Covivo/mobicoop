@@ -8,9 +8,11 @@
   <journey-results 
     :journeys="{{ journeys|json_encode}}"
     origin="{{ origin is defined ? origin : '' }}"
+    origin-sanitize="{{ originSanitize is defined ? originSanitize : '' }}"
     destination="{{ destination is defined ? destination : '' }}"
+    destination-sanitize="{{ destinationSanitize is defined ? destinationSanitize : '' }}"
     :total="{{ total is defined ? total : 0 }}"
     :page="{{ page is defined ? page : 0 }}"
-    :perPage="{{ perPage is defined ? perPage : 0 }}"
+    :per-page="{{ perPage is defined ? perPage : 0 }}"
   />
 {% endblock %}

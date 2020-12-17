@@ -53,6 +53,7 @@ class JourneyController extends AbstractController
         return $this->render('@Mobicoop/journey/results.html.twig', [
             "journeys"=>$journeys['journeys'],
             "origin"=>$journeys['origin'],
+            "originSanitize"=>$origin,
             "total"=>$journeys['total'],
             "page"=>$page,
             "perPage"=>$perPage
@@ -65,18 +66,22 @@ class JourneyController extends AbstractController
         return $this->render('@Mobicoop/journey/results.html.twig', [
             "journeys"=>$journeys['journeys'],
             "destination"=>$journeys['destination'],
+            "destinationSanitize"=>$destination,
             "total"=>$journeys['total'],
             "page"=>$page,
             "perPage"=>$perPage
         ]);
     }
 
-    public function fromCityToCity(string $origin, string $destination)
+    public function fromCityToCity(string $origin, string $destination, int $page=1, int $perPage=30)
     {
+        $journeys = $this->journeyManager->getFromTo($origin, $destination, $page, $perPage);
         return $this->render('@Mobicoop/journey/results.html.twig', [
             "journeys"=>$journeys['journeys'],
             "origin"=>$journeys['origin'],
+            "originSanitize"=>$origin,
             "destination"=>$journeys['destination'],
+            "destinationSanitize"=>$destination,
             "total"=>$journeys['total'],
             "page"=>$page,
             "perPage"=>$perPage

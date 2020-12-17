@@ -21,9 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Service;
+namespace App\Journey\Service;
 
-use App\Carpool\Repository\JourneyRepository;
+use App\Journey\Repository\JourneyRepository;
 use App\Service\FileManager;
 use Doctrine\ORM\EntityManagerInterface;
 

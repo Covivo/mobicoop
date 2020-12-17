@@ -98,7 +98,15 @@ export default {
       type: String,
       default: ''
     },
+    originSanitize: {
+      type: String,
+      default: ''
+    },
     destination: {
+      type: String,
+      default: ''
+    },
+    destinationSanitize: {
       type: String,
       default: ''
     },
@@ -120,12 +128,6 @@ export default {
       lPage:this.page
     }
   },
-  watch:{
-    page(){
-      console.log('hop');
-      this.lPage = this.page;
-    }
-  },
   methods:{
     carpool(carpool){
       this.$emit("carpool", carpool);
@@ -134,7 +136,13 @@ export default {
       this.$emit("loginOrRegister", carpool);
     },
     paginate(page){
-      this.$emit("paginate", page)
+      if (this.origin !== '' && this.destination !== '') {
+        window.location.href = this.$t('routeFromCityToCity', { origin: this.originSanitize, destination: this.destinationSanitize, page: this.lPage });
+      } else if (this.origin !== '') {
+        window.location.href = this.$t('routeFromCity', { city: this.originSanitize, page: this.lPage });
+      } else if (this.destination !== '') {
+        window.location.href = this.$t('routeToCity', { city: this.destinationSanitize, page: this.lPage });
+      }
     }
   }
 };

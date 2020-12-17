@@ -2,5 +2,8 @@
     "titleFromCity": "Carpool from {city}",
     "titleToCity": "Carpool to {city}",
     "titleFromCityToCity": "Carpool from {origin} to {destination}",
-    "nbResults": "No carpool found | 1 carpool found | {nb} carpools found"
+    "nbResults": "No carpool found | 1 carpool found | {nb} carpools found",
+    "routeFromCity": "/cities/carpool/{city}",
+    "routeToCity": "/cities/carpool-to-{city}",
+    "routeFromCityToCity": "/carpool/{origin}/{destination}"
 }

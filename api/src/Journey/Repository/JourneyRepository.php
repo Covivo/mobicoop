@@ -20,9 +20,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Repository;
+namespace App\Journey\Repository;
 
-use App\Carpool\Entity\Journey;
+use App\Journey\Entity\Journey;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
