@@ -88,6 +88,7 @@ class UserController extends AbstractController
     private $ssoManager;
     private $required_community;
     private $loginDelegate;
+    private $fraudWarningDisplay;
 
     /**
      * Constructor
@@ -111,7 +112,8 @@ class UserController extends AbstractController
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
         $required_community,
-        bool $loginDelegate
+        bool $loginDelegate,
+        bool $fraudWarningDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -130,6 +132,7 @@ class UserController extends AbstractController
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
         $this->loginDelegate = $loginDelegate;
+        $this->fraudWarningDisplay= $fraudWarningDisplay;
 
         $this->ssoManager = $ssoManager;
     }
@@ -708,7 +711,8 @@ class UserController extends AbstractController
             "idRecipient" => $idRecipient,
             "idAsk" => $idAsk,
             "newThread" => $newThread,
-            "solidaryDisplay" => $this->solidaryDisplay
+            "solidaryDisplay" => $this->solidaryDisplay,
+            "fraudWarningDisplay" => $this->fraudWarningDisplay
         ]);
     }
 
