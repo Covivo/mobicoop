@@ -173,7 +173,7 @@ class JourneyManager
         // maybe we will find more than one city corresponding (accents etc...)
         $cities = [];
         foreach ($journeys as $journey) {
-            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+            if ($this->fileManager->sanitize($journey['origin'], true, false, '-') === $origin) {
                 $cities[] = $journey['origin'];
             }
         }
@@ -200,7 +200,7 @@ class JourneyManager
         // maybe we will find more than one city corresponding (accents etc...)
         $cities = [];
         foreach ($journeys as $journey) {
-            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+            if ($this->fileManager->sanitize($journey['origin'], true, false, '-') === $origin) {
                 $cities[] = $journey['origin'];
             }
         }
@@ -227,7 +227,7 @@ class JourneyManager
         // maybe we will find more than one city corresponding (accents etc...)
         $cities = [];
         foreach ($journeys as $journey) {
-            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+            if ($this->fileManager->sanitize($journey['destination'], true, false, '-') === $destination) {
                 $cities[] = $journey['destination'];
             }
         }
@@ -254,7 +254,7 @@ class JourneyManager
         // maybe we will find more than one city corresponding (accents etc...)
         $cities = [];
         foreach ($journeys as $journey) {
-            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+            if ($this->fileManager->sanitize($journey['destination'], true, false, '-') === $destination) {
                 $cities[] = $journey['destination'];
             }
         }
@@ -286,13 +286,13 @@ class JourneyManager
         // maybe we will find more than one city corresponding (accents etc...)
         $citiesOrigin = [];
         foreach ($journeysOrigin as $journey) {
-            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+            if ($this->fileManager->sanitize($journey['origin'], true, false, '-') === $origin) {
                 $citiesOrigin[] = $journey['origin'];
             }
         }
         $citiesDestination = [];
         foreach ($journeysDestination as $journey) {
-            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+            if ($this->fileManager->sanitize($journey['destination'], true, false, '-') === $destination) {
                 $citiesDestination[] = $journey['destination'];
             }
         }

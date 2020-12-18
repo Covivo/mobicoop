@@ -67,7 +67,9 @@ class JourneyRepository
 
     public function getAllFrom(array $origin, string $operationName, array $context = []): PaginatorInterface
     {
-        $query = $this->repository->createQueryBuilder('j')->where("j.origin in ('" . implode("','", $origin) . "')");
+        $query = $this->repository->createQueryBuilder('j')
+        ->where("j.origin in (:origins')")
+        ->setParameter('origins', $origin);
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
@@ -83,7 +85,12 @@ class JourneyRepository
 
     public function getDestinationsForOrigin(array $origin)
     {
-        $query = $this->repository->createQueryBuilder('j')->select('j.origin,j.destination')->distinct()->where("j.origin in ('" . implode("','", $origin) . "')")->orderBy('j.destination');
+        $query = $this->repository->createQueryBuilder('j')
+        ->select('j.origin,j.destination')
+        ->distinct()
+        ->where("j.origin in (:origins)")
+        ->setParameter('origins', $origin)
+        ->orderBy('j.destination');
         return $query->getQuery()->getResult();
     }
 
@@ -105,13 +112,22 @@ class JourneyRepository
 
     public function getOriginsForDestination(array $destination)
     {
-        $query = $this->repository->createQueryBuilder('j')->select('j.origin,j.destination')->distinct()->where("j.destination in ('" . implode("','", $destination) . "')")->orderBy('j.origin');
+        $query = $this->repository->createQueryBuilder('j')
+        ->select('j.origin,j.destination')
+        ->distinct()
+        ->where('j.destination IN (:destinations)')
+        ->setParameter('destinations', $destination)
+        ->orderBy('j.origin');
+        
         return $query->getQuery()->getResult();
     }
 
     public function getAllFromTo(array $origin, array $destination, string $operationName, array $context = []): PaginatorInterface
     {
-        $query = $this->repository->createQueryBuilder('j')->where("j.origin in ('" . implode("','", $origin) . "') AND j.destination in ('" . implode("','", $destination) . "')");
+        $query = $this->repository->createQueryBuilder('j')
+        ->where("j.origin in (:origins) AND j.destination in (:destinations)")
+        ->setParameter('origins', $origin)
+        ->setParameter('destinations', $destination);
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
