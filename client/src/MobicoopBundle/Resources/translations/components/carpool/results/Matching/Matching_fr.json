@@ -1,5 +1,5 @@
 {
-    "title": "Résultats de covoiturage",
+    "title": "Résultats de covoiturages entre {cityA} et {cityB}",
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
     "externalUrl": "/covoiturage/annonce/{id}/externe",
     "matchingUrl": "/covoiturage/recherche/matching",

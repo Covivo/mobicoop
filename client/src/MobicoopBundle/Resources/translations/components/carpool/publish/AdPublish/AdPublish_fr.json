@@ -100,7 +100,7 @@
     },
     "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
     "route": {
-        "publish": "covoiturage/annonce/poster",
+        "publish": "covoiturage/publierannonce",
         "update": "covoiturage/annonce/{id}/modifier",
         "myAds": "/utilisateur/profil/modifier/mes-annonces",
         "roundPrice": "/prix/arrondir"

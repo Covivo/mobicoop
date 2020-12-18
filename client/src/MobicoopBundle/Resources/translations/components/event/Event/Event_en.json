@@ -6,7 +6,7 @@
         },
         "widget": {
             "label": "See Widget",
-            "route": "/event/widget/get/",
+            "route": "/event/widget/get/{id}/{urlKey}",
             "externalRoute": "/evenement/widget/{id}",
             "textDetails": {
                 "title": "Intégrer le widget",
