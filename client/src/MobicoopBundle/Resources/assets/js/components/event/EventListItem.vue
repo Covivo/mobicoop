@@ -113,7 +113,7 @@ export default {
   },
   methods:{
     linkToEventShow: function (item) {
-      return this.$t('routes.event', {id:item.id});
+      return this.$t('routes.event', {id:item.id, urlKey:item.urlKey});
     },
     computeEventDate(){
       let fromDate = moment(this.item.fromDate.date).format(this.$t("shortCompleteDate"));

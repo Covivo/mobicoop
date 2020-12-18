@@ -1,5 +1,5 @@
 {
-    "eventsAvailable": "Events available",
+    "eventsAvailable": "Carpool events",
     "eventsPassed": "Passed events",
     "createEvent": "Create an event",
     "search": "Search",
@@ -8,7 +8,7 @@
     "seeAds": "See the ads",
     "noEvent": "No event",
     "routes": {
-        "event": "/event/{id}",
+        "event": "/carpools-events/{id}/{urlKey}",
         "getList": "/events/getEventList"
     }
 }

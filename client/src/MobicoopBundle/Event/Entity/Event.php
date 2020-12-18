@@ -58,6 +58,11 @@ class Event implements ResourceInterface, \JsonSerializable
     private $name;
     
     /**
+     * @var string The urlkey of the event.
+     */
+    private $urlKey;
+
+    /**
      * @var int The status of the event (active/inactive).
      *
      * @Groups({"post","put"})
@@ -179,6 +184,16 @@ class Event implements ResourceInterface, \JsonSerializable
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function getUrlKey(): ?string
+    {
+        return $this->urlKey;
+    }
+    
+    public function setUrlKey(?string $urlKey)
+    {
+        $this->urlKey = $urlKey;
     }
     
     public function getStatus(): ?int
@@ -337,6 +352,7 @@ class Event implements ResourceInterface, \JsonSerializable
                 'id'                => $this->getId(),
                 'iri'               => $this->getIri(),
                 'name'              => $this->getName(),
+                'urlKey'            => $this->getUrlKey(),
                 'status'            => $this->getStatus(),
                 'private'           => $this->isPrivate(),
                 'fullDescription'   => $this->getFullDescription(),

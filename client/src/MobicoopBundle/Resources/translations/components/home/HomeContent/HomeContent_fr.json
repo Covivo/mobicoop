@@ -4,7 +4,7 @@
         "text": "Reconnaître les membres de mon club ou de mon entreprise.",
         "button": {
             "label": "Voir les communautés",
-            "route": "/communautes"
+            "route": "/covoiturage-communaute"
         }
     },
     "event": {
@@ -12,7 +12,7 @@
         "text": "Trouver des covoitureurs allant au même événement.",
         "button": {
             "label": "Voir les événements",
-            "route": "/evenements"
+            "route": "/covoiturages-evenements"
         }
     },
     "solidary": {
@@ -24,7 +24,7 @@
         },
         "button2": {
             "label": "Donner un coup de pouce",
-            "route": "/covoiturage/annonce/poster/solidaire"
+            "route": "/covoiturage/publierannonce/solidaire"
         }
     }
 }

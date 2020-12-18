@@ -219,6 +219,7 @@ class CommunityManager
     public function getCommunity(int $communityId, User $user=null)
     {
         $community = $this->communityRepository->find($communityId);
+        $community->setUrlKey($this->generateUrlKey($community));
         $this->getAdsOfCommunity($community);
         if ($user) {
             $this->checkIfCurrentUserIsMember($community, $user);
@@ -287,11 +288,14 @@ class CommunityManager
      * retrive communities owned by a user
      *
      * @param Int $userId
-     * @return void
+     * @return array
      */
-    public function getOwnedCommunities(Int $userId)
+    public function getOwnedCommunities(Int $userId): ?array
     {
         $ownedCommunities = $this->communityRepository->getOwnedCommunities($userId);
+        foreach ($ownedCommunities as $community) {
+            $community->setUrlKey($this->generateUrlKey($community));
+        }
         return $ownedCommunities;
     }
 
@@ -425,6 +429,7 @@ class CommunityManager
             $mCommunity->setId($community->getId());
             $mCommunity->setName($community->getName());
             $mCommunity->setValidationType($community->getValidationType());
+            $mCommunity->setUrlKey($this->generateUrlKey($community));
             $mCommunities[] = $mCommunity;
         }
         return $mCommunities;
@@ -441,5 +446,27 @@ class CommunityManager
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
         return $communityUser;
+    }
+
+    /**
+     * Generate the UrlKey of a Community
+     *
+     * @param Community $community
+     * @return string The url key
+     */
+    public function generateUrlKey(Community $community): string
+    {
+        $urlKey = $community->getName();
+        $urlKey = str_replace(" ", "-", $urlKey);
+        $urlKey = str_replace("'", "-", $urlKey);
+        $urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+        $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
+
+        // We don't want to finish with a single "-"
+        if (substr($urlKey, -1)=="-") {
+            $urlKey = substr($urlKey, 0, strlen($urlKey)-1);
+        }
+        
+        return $urlKey;
     }
 }
