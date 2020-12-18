@@ -77,66 +77,71 @@ class JourneyManager
     }
 
     /**
-     * Get all journeys from a given city
+     * Get all destinations from a given city
      *
      * @param string $city  The city
-     * @return array The journeys found
+     * @return array The destinations found
      */
-    public function getFrom(string $city, int $page=1, int $perPage=30)
+    public function getDestinations(string $city)
     {
-        $response = $this->dataProvider->getSpecialCollection('origin/'.$city, ['page'=>$page,'perPage'=>$perPage]);
+        $response = $this->dataProvider->getSpecialCollection('destinations/'.$city);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             $origin = $city;
+            // we format the destination
             // we search the "real" origin => the city provided as parameter is a sanitized version
             foreach ($response->getValue()->getMember() as $journey) {
+                $journey->setDestination(ucfirst(strtolower($journey->getDestination())));
+                $journey->setDestinationSanitized($this->sanitize($journey->getDestination()));
+                $journey->setOriginSanitized($this->sanitize($journey->getOrigin()));
                 if ($journey->getOrigin() !== $origin) {
-                    // we stop as soon as we get a valid origin
                     $origin = ucfirst(strtolower($journey->getOrigin()));
-                    break;
                 }
             }
             return [
                 'origin' => $origin,
-                'journeys' => $response->getValue()->getMember(),
-                'total' => $response->getValue()->getTotalItems()
+                'originSanitized' => $this->sanitize($origin),
+                'journeys' => $response->getValue()->getMember()
             ];
         }
         return [
             'origin' => $city,
-            'journeys' => [],
-            'total' => 0
+            'originSanitized' => $this->sanitize($city),
+            'journeys' => []
         ];
     }
 
     /**
-     * Get all journeys to a given city
+     * Get all origins to a given city
      *
      * @param string $city  The city
-     * @return array The journeys found
+     * @return array The origins found
      */
-    public function getTo(string $city, int $page=1, int $perPage=30)
+    public function getOrigins(string $city)
     {
-        $response = $this->dataProvider->getSpecialCollection('destination/'.$city, ['page'=>$page,'perPage'=>$perPage]);
+        $response = $this->dataProvider->getSpecialCollection('origins/'.$city);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             $destination = $city;
-            // we search the "real" destination => the city provided as parameter is a sanitized version
+            // we format the origin
+            // we also search the "real" destination => the city provided as parameter is a sanitized version
             foreach ($response->getValue()->getMember() as $journey) {
+                $journey->setOrigin(ucfirst(strtolower($journey->getOrigin())));
+                $journey->setOriginSanitized($this->sanitize($journey->getOrigin()));
+                $journey->setDestinationSanitized($this->sanitize($journey->getDestination()));
                 if ($journey->getDestination() !== $destination) {
                     // we stop as soon as we get a valid destination
                     $destination = ucfirst(strtolower($journey->getDestination()));
-                    break;
                 }
             }
             return [
                 'destination' => $destination,
-                'journeys' => $response->getValue()->getMember(),
-                'total' => $response->getValue()->getTotalItems()
+                'destinationSanitized' => $this->sanitize($destination),
+                'journeys' => $response->getValue()->getMember()
             ];
         }
         return [
             'destination' => $city,
-            'journeys' => [],
-            'total' => 0
+            'destinationSanitized' => $this->sanitize($city),
+            'journeys' => []
         ];
     }
 

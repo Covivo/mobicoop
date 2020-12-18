@@ -1,0 +1,4 @@
+{
+    "title": "Covoiturage depuis {origin} vers {destination}",
+    "nbResults": "Pas d'annonce en covoiturage trouvée | 1 annonce en covoiturage trouvée | {nb} annonces en covoiturage trouvées"
+}

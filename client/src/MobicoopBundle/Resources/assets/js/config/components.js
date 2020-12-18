@@ -17,6 +17,7 @@ import Matching from '@components/carpool/results/Matching'
 // JOURNEY
 import JourneyCity from '@components/journey/JourneyCity';
 import JourneyResults from '@components/journey/JourneyResults';
+import JourneyResult from '@components/journey/JourneyResult';
 
 // COMMUNITY
 import CommunityList from "@components/community/CommunityList";
@@ -77,6 +78,7 @@ export default {
   AdPublish,
   JourneyCity,
   JourneyResults,
+  JourneyResult,
   Matching,
   CommunityList,
   CommunityHelp,

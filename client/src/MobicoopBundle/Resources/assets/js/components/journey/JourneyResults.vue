@@ -9,14 +9,9 @@
         md="8"
         xl="6"
         align="center"
-      >      
+      >
         <h1
-          v-if="origin!=='' && destination !==''"
-        >
-          {{ $t('titleFromCityToCity', { origin:origin, destination: destination }) }}
-        </h1>
-        <h1
-          v-else-if="origin!==''"
+          v-if="origin!==''"
         >
           {{ $t('titleFromCity', { city: origin }) }}
         </h1>
@@ -37,7 +32,7 @@
         xl="6"
         align="center"
       >
-        {{ $tc('nbResults', total, { nb: total }) }}
+        {{ $tc('nbResults', journeys.length, { nb: journeys.length }) }}
       </v-col>
     </v-row>
     <v-row
@@ -50,30 +45,28 @@
         xl="6"
         align="center"
       >
-        <v-pagination
-          v-if="total>perPage"
-          v-model="lPage"
-          :length="Math.ceil(total/perPage)"
-          @input="paginate(lPage)"
-        />
-        <v-row 
-          v-for="(journey,index) in journeys"
-          :key="index"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            align="left"
-          >
-            {{ journey.origin }} - {{ journey.destination }}
-          </v-col>
-        </v-row>
-        <v-pagination
-          v-if="total>perPage"
-          v-model="lPage"
-          :length="Math.ceil(total/perPage)"
-          @input="paginate(lPage)"
-        />
+        <v-simple-table>
+          <template v-slot:default>
+            <tbody>
+              <tr
+                v-for="journey in journeys"
+                :key="origin!=='' ? journey.destination : journey.origin"
+              >
+                <td>{{ $t('journeyFrom') }}<span class="font-weight-bold">{{ journey.origin }}</span>{{ $t('journeyTo') }}<span class="font-weight-bold">{{ journey.destination }}</span></td>
+                <td>
+                  <v-btn 
+                    class="float-right"
+                    rounded
+                    color="primary"
+                    :href="$t('routeFromCityToCity', { origin: journey.originSanitized, destination: journey.destinationSanitized })"
+                  >
+                    {{ $t('listJourneys') }}
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
       </v-col>
     </v-row>
   </v-container>
@@ -109,18 +102,6 @@ export default {
     destinationSanitize: {
       type: String,
       default: ''
-    },
-    total: {
-      type: Number,
-      default: 0
-    },
-    perPage: {
-      type: Number,
-      default: 30
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data(){
@@ -134,15 +115,6 @@ export default {
     },
     loginOrRegister(carpool){
       this.$emit("loginOrRegister", carpool);
-    },
-    paginate(page){
-      if (this.origin !== '' && this.destination !== '') {
-        window.location.href = this.$t('routeFromCityToCity', { origin: this.originSanitize, destination: this.destinationSanitize, page: this.lPage });
-      } else if (this.origin !== '') {
-        window.location.href = this.$t('routeFromCity', { city: this.originSanitize, page: this.lPage });
-      } else if (this.destination !== '') {
-        window.location.href = this.$t('routeToCity', { city: this.destinationSanitize, page: this.lPage });
-      }
     }
   }
 };

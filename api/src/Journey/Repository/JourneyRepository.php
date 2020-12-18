@@ -81,6 +81,12 @@ class JourneyRepository
         return $query->getQuery()->getResult();
     }
 
+    public function getDestinationsForOrigin(array $origin)
+    {
+        $query = $this->repository->createQueryBuilder('j')->select('j.origin,j.destination')->distinct()->where("j.origin in ('" . implode("','", $origin) . "')")->orderBy('j.destination');
+        return $query->getQuery()->getResult();
+    }
+
     public function getAllTo(array $destination, string $operationName, array $context = []): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('j')->where("j.destination in ('" . implode("','", $destination) . "')");
@@ -94,6 +100,12 @@ class JourneyRepository
             }
         }
 
+        return $query->getQuery()->getResult();
+    }
+
+    public function getOriginsForDestination(array $destination)
+    {
+        $query = $this->repository->createQueryBuilder('j')->select('j.origin,j.destination')->distinct()->where("j.destination in ('" . implode("','", $destination) . "')")->orderBy('j.origin');
         return $query->getQuery()->getResult();
     }
 

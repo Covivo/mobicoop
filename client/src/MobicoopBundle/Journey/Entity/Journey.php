@@ -31,17 +31,17 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 class Journey implements ResourceInterface, \JsonSerializable
 {
     /**
-     * @var int The id of this journey.
+     * @var int|null The id of this journey.
      */
     private $id;
 
     /**
-     * @var int The proposal id for this journey
+     * @var int|null The proposal id for this journey
      */
     private $proposalId;
 
     /**
-     * @var int The user id for this journey
+     * @var int|null The user id for this journey
      */
     private $userId;
 
@@ -54,6 +54,11 @@ class Journey implements ResourceInterface, \JsonSerializable
      * @var string The origin of the journey
      */
     private $origin;
+
+    /**
+     * @var string The sanitized origin of the journey
+     */
+    private $originSanitized;
 
     /**
      * @var float|null The latitude of the origin.
@@ -71,6 +76,11 @@ class Journey implements ResourceInterface, \JsonSerializable
     private $destination;
 
     /**
+     * @var string The sanitized destination of the journey
+     */
+    private $destinationSanitized;
+
+    /**
      * @var float|null The latitude of the destination.
      */
     private $latitudeDestination;
@@ -81,17 +91,17 @@ class Journey implements ResourceInterface, \JsonSerializable
     private $longitudeDestination;
 
     /**
-     * @var int The proposal frequency (1 = punctual; 2 = regular).
+     * @var int|null The proposal frequency (1 = punctual; 2 = regular).
      */
     private $frequency;
 
     /**
-     * @var \DateTimeInterface The starting date.
+     * @var \DateTimeInterface|null The starting date.
      */
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface The end date.
+     * @var \DateTimeInterface|null The end date.
      */
     private $toDate;
 
@@ -106,7 +116,7 @@ class Journey implements ResourceInterface, \JsonSerializable
     private $days;
 
     /**
-     * @var \DateTimeInterface Creation date of the journey.
+     * @var \DateTimeInterface|null Creation date of the journey.
      */
     private $createdDate;
 
@@ -122,7 +132,7 @@ class Journey implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getProposalId(): int
+    public function getProposalId(): ?int
     {
         return $this->proposalId;
     }
@@ -134,7 +144,7 @@ class Journey implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
@@ -170,6 +180,18 @@ class Journey implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getOriginSanitized(): ?string
+    {
+        return $this->originSanitized;
+    }
+    
+    public function setOriginSanitized(string $originSanitized): self
+    {
+        $this->originSanitized = $originSanitized;
+
+        return $this;
+    }
+
     public function getLatitudeOrigin()
     {
         return $this->latitudeOrigin;
@@ -198,6 +220,18 @@ class Journey implements ResourceInterface, \JsonSerializable
     public function setDestination(string $destination): self
     {
         $this->destination = $destination;
+
+        return $this;
+    }
+
+    public function getDestinationSanitized(): ?string
+    {
+        return $this->destinationSanitized;
+    }
+    
+    public function setDestinationSanitized(string $destinationSanitized): self
+    {
+        $this->destinationSanitized = $destinationSanitized;
 
         return $this;
     }
@@ -307,9 +341,11 @@ class Journey implements ResourceInterface, \JsonSerializable
             'userId' => $this->getUserId(),
             'username' => $this->getUsername(),
             'origin' => $this->getOrigin(),
+            'originSanitized' => $this->getOriginSanitized(),
             'latitudeOrigin' => $this->getLatitudeOrigin(),
             'longitudeOrigin' => $this->getLongitudeOrigin(),
             'destination' => $this->getDestination(),
+            'destinationSanitized' => $this->getDestinationSanitized(),
             'latitudeDestination' => $this->getLatitudeDestination(),
             'longitudeDestination' => $this->getLongitudeDestination(),
             'frequency' => $this->getFrequency(),

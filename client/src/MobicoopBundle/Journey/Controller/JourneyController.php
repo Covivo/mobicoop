@@ -47,36 +47,32 @@ class JourneyController extends AbstractController
         ]);
     }
 
-    public function fromCity(string $origin, int $page=1, int $perPage=30)
+    public function fromCity(string $origin)
     {
-        $journeys = $this->journeyManager->getFrom($origin, $page, $perPage);
+        $journeys = $this->journeyManager->getDestinations($origin);
         return $this->render('@Mobicoop/journey/results.html.twig', [
+            "type"=>"origin",
             "journeys"=>$journeys['journeys'],
             "origin"=>$journeys['origin'],
-            "originSanitize"=>$origin,
-            "total"=>$journeys['total'],
-            "page"=>$page,
-            "perPage"=>$perPage
+            "originSanitize"=>$origin
         ]);
     }
 
-    public function toCity(string $destination, int $page=1, int $perPage=30)
+    public function toCity(string $destination)
     {
-        $journeys = $this->journeyManager->getTo($destination, $page, $perPage);
+        $journeys = $this->journeyManager->getOrigins($destination);
         return $this->render('@Mobicoop/journey/results.html.twig', [
+            "type"=>"destination",
             "journeys"=>$journeys['journeys'],
             "destination"=>$journeys['destination'],
-            "destinationSanitize"=>$destination,
-            "total"=>$journeys['total'],
-            "page"=>$page,
-            "perPage"=>$perPage
+            "destinationSanitize"=>$destination
         ]);
     }
 
     public function fromCityToCity(string $origin, string $destination, int $page=1, int $perPage=30)
     {
         $journeys = $this->journeyManager->getFromTo($origin, $destination, $page, $perPage);
-        return $this->render('@Mobicoop/journey/results.html.twig', [
+        return $this->render('@Mobicoop/journey/result.html.twig', [
             "journeys"=>$journeys['journeys'],
             "origin"=>$journeys['origin'],
             "originSanitize"=>$origin,

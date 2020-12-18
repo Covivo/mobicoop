@@ -54,9 +54,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *              "method"="GET",
  *              "path"="/journeys/origin/{origin}"
  *          },
+ *          "destinations"={
+ *              "method"="GET",
+ *              "path"="/journeys/destinations/{origin}"
+ *          },
  *          "destination"={
  *              "method"="GET",
  *              "path"="/journeys/destination/{destination}"
+ *          },
+ *          "origins"={
+ *              "method"="GET",
+ *              "path"="/journeys/origins/{destination}"
  *          },
  *          "originDestination"={
  *              "method"="GET",

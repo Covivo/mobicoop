@@ -157,8 +157,10 @@ class JourneyManager
     /**
      * Get all journeys for the given origin
      *
-     * @param string $origin   The origin
-     * @return Journey[]       The journeys found
+     * @param string $origin        The origin
+     * @param string $operationName The api operation name (needed for pagination)
+     * @param array $context        The api context (needed for pagination)
+     * @return Journey[]            The journeys found
      */
     public function getFrom(string $origin, string $operationName, array $context = [])
     {
@@ -168,7 +170,7 @@ class JourneyManager
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
-        // maybe we will find more tha one city corresponding (accents etc...)
+        // maybe we will find more than one city corresponding (accents etc...)
         $cities = [];
         foreach ($journeys as $journey) {
             if ($this->fileManager->sanitize($journey['origin']) === $origin) {
@@ -180,9 +182,38 @@ class JourneyManager
     }
 
     /**
+     * Get all destinations for the given origin
+     *
+     * @param string $origin        The origin
+     * @param string $operationName The api operation name (needed for pagination)
+     * @param array $context        The api context (needed for pagination)
+     * @return Journey[]            The journeys found
+     */
+    public function getDestinationsForOrigin(string $origin)
+    {
+        // first we search the city in the journeys as origin
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeys = $stmt->fetchAll();
+        // maybe we will find more than one city corresponding (accents etc...)
+        $cities = [];
+        foreach ($journeys as $journey) {
+            if ($this->fileManager->sanitize($journey['origin']) === $origin) {
+                $cities[] = $journey['origin'];
+            }
+        }
+        // then we search the destinations with the 'real' spellings
+        return $this->journeyRepository->getDestinationsForOrigin($cities);
+    }
+
+    /**
      * Get all journeys for the given destination
      *
      * @param string $destination   The destination
+     * @param string $operationName The api operation name (needed for pagination)
+     * @param array $context        The api context (needed for pagination)
      * @return Journey[]            The journeys found
      */
     public function getTo(string $destination, string $operationName, array $context = [])
@@ -205,10 +236,39 @@ class JourneyManager
     }
 
     /**
+     * Get all origins for the given destination
+     *
+     * @param string $destination   The destination
+     * @param string $operationName The api operation name (needed for pagination)
+     * @param array $context        The api context (needed for pagination)
+     * @return Journey[]            The journeys found
+     */
+    public function getOriginsForDestination(string $destination)
+    {
+        // first we search the city in the journeys as destination
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeys = $stmt->fetchAll();
+        // maybe we will find more than one city corresponding (accents etc...)
+        $cities = [];
+        foreach ($journeys as $journey) {
+            if ($this->fileManager->sanitize($journey['destination']) === $destination) {
+                $cities[] = $journey['destination'];
+            }
+        }
+        // then we search the destinations with the 'real' spellings
+        return $this->journeyRepository->getOriginsForDestination($cities);
+    }
+
+    /**
      * Get all journeys for the given origin and destination
      *
      * @param string $origin        The origin
      * @param string $destination   The destination
+     * @param string $operationName The api operation name (needed for pagination)
+     * @param array $context        The api context (needed for pagination)
      * @return Journey[]            The journeys found
      */
     public function getFromTo(string $origin, string $destination, string $operationName, array $context = [])
