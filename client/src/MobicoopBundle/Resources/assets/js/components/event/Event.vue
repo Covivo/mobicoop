@@ -58,7 +58,7 @@
 
                   color="primary"
                   rounded
-                  :href="$t('buttons.widget.route') + event.id"
+                  :href="$t('buttons.widget.route', {'id':event.id,'urlKey':event.urlKey})"
                 >
                   {{ $t('buttons.widget.label') }}
                 </v-btn>

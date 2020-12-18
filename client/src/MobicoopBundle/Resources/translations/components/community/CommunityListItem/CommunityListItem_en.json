@@ -10,7 +10,7 @@
         }
     },
     "routes": {
-        "community": "/communaute/{id}",
+        "community": "/carpool-community/{id}/{urlKey}",
         "communitySecuredRegister": "/community/{id}/secured/register"
     },
     "communityDetails": "Community details",

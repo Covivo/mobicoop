@@ -10,7 +10,7 @@
         },
         "shareAnAd": {
             "label": "Publier une annonce",
-            "route": "/covoiturage/annonce/poster"
+            "route": "/covoiturage/publierannonce"
         },
         "messages": {
             "label": "Messages",

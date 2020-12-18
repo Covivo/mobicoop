@@ -258,7 +258,7 @@ class CommunityManager
     }
 
     /**
-     * Undocumented function
+     * Check if a community with a specific name exists
      *
      * @param string $name
      * @return void

@@ -153,9 +153,9 @@ class CommunityRepository
     * Get communities owned by the user
     *
     * @param Int $userId
-    * @return void
+    * @return array
     */
-    public function getOwnedCommunities(Int $userId)
+    public function getOwnedCommunities(Int $userId): ?array
     {
         $query = $this->repository->createQueryBuilder('c')
          ->where('c.user = :userId')

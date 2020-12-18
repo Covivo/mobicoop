@@ -162,7 +162,7 @@ export default {
       if(item.isSecured && !item.isMember){
         return this.$t('routes.communitySecuredRegister', {id:item.id})
       }
-      return this.$t('routes.community', {id:item.id});
+      return this.$t('routes.community', {id:item.id, urlKey:item.urlKey});
     },
     postLeavingRequest() {
       this.loading = true;

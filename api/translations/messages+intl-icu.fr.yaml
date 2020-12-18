@@ -51,7 +51,7 @@ canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer av
 canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du "
 deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le "
 deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du "
-urlPublish: "/covoiturage/annonce/poster"
+urlPublish: "/covoiturage/publierannonce"
 
 # CARPOOL_MATCHING_NEW
 newCarpoolAdMatchingYourCommute: "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"

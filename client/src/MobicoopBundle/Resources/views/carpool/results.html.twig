@@ -1,6 +1,8 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans from 'ui' %}carpool.results.title{% endtrans %} - {{ app_name }}{% endblock %}
+{% block title %}{% trans with {'CityA': originTitle, 'CityB': destinationTitle} from 'meta' %}meta.results.title{% endtrans %}{% endblock %}
+{% block desc %}{% trans with {'CityA': originTitle, 'CityB': destinationTitle} from 'meta' %}meta.results.description{% endtrans %}{% endblock %}
+
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}
