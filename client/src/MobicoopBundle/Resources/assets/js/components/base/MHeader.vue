@@ -3,13 +3,21 @@
     <v-toolbar
       flat
       color="primary"
+      height="100px"
     >
-      <v-toolbar-title>
-        <a href="/">
+      <v-toolbar-title align="midle">
+        <a
+          href="/"
+          class="d-flex align-center"
+        >
           <img
             class="logo"
-            src="/images/logo.png"
+            :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             alt="Mobicoop"
+            height="50"
+            width="280"
+            contain
+            eager
           >
         </a>
       </v-toolbar-title>
@@ -38,6 +46,7 @@
         class="hidden-md-and-down"
       >
         <v-btn
+          class="white--text"
           rounded
           text
           :href="$t('buttons.signup.route')"
@@ -45,6 +54,8 @@
           {{ $t('buttons.signup.label') }}
         </v-btn>
         <v-btn
+          class="white--text"
+
           rounded
           text
           :href="$t('buttons.logIn.route')"
@@ -56,7 +67,7 @@
         v-if="user"
         rounded
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-md-and-down"
+        class="hidden-md-and-down white--text"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -296,7 +307,9 @@ export default {
       snackbar: false,
       width: 0,
       defaultLocale: 'fr',
-      dlocale: this.locale
+      dlocale: this.locale,
+      imageLink: "/images/pages/home/"
+
     }
   },
   mounted() {

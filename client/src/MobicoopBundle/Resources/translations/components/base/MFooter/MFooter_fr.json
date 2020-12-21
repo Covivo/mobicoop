@@ -2,7 +2,11 @@
     "buttons": {
         "contact": {
             "route": "/contact",
-            "label": "Nous contacter"
+            "label": "Contact us"
         }
-    }
+    },
+    "urlIosLogo": "/images/footer/IOS.svg",
+    "urlIos": "#",
+    "urlAndroidLogo": "/images/footer/android.svg",
+    "urlAndroid": "#"
 }

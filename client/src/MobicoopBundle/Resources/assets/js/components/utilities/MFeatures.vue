@@ -1,61 +1,25 @@
 <template>
-  <v-container
-    fluid
-  >
-    <v-row justify="center">
+  <div>
+    <v-row>
       <v-col
-        cols="0"
-        lg="2"
-        class="backgroundImageColumn"
-        :style="(backgroundImageLeft) ? 'background-image:url(\''+backgroundImageLeft+'\');background-position:top center;' : ''"
-      />
-      <v-col
-        cols="10"
-        lg="8"
+        class="text-left mt-16"
+        cols="6"
       >
-        <v-row
-          justify="center"
-        >
-          <v-col
-            cols="7"
-            class="text-center"
-          >
-            <v-card-text
-              class="text-h4 text-uppercase"
-              :class="(textThin) ? 'text--'+colorTitle+' font-weight-thin' : 'text--'+colorTitle"
-            >
-              {{ title }}
-            </v-card-text>
-            <v-card-text
-              class="text-h5"
-              :class="(textThin) ? 'text--'+colorSubtitle+' font-weight-thin' : 'text--'+colorSubtitle"
-            >
-              {{ subtitle }}
-            </v-card-text>
-          </v-col>
-        </v-row>
-        <v-row
-          justify="center"
-          class="mt-10"
-        >
-          <MFeaturesItem
-            v-for="(item, index) in items"
-            :key="index"
-            :title="item.title"
-            :subtitle="item.subtitle"
-            :image="item.image"
-            :width="210"
-          />
-        </v-row>  
+        <p class="success--text text-h4 font-weight-black">
+          Mobicoop c’est bien plus que du covoiturage
+        </p>
       </v-col>
-      <v-col
-        cols="0"
-        lg="2"
-        class="backgroundImageColumn"
-        :style="(backgroundImageRight) ? 'background-image:url(\''+backgroundImageRight+'\');background-position:top center;' : ''"
+      <v-spacer />
+    </v-row>
+    <v-row justify="center">
+      <MFeaturesItem
+        v-for="(item, index) in items"
+        :key="index"
+        :title="item.title"
+        :text="item.text"
       />
     </v-row>
-  </v-container>  
+  </div>
 </template>
 <script>
 import MFeaturesItem from "@components/utilities/MFeaturesItem";
@@ -68,39 +32,16 @@ export default {
       type: String,
       default: ""
     },
-    subtitle: {
+    text: {
       type: String,
       default: ""
     },
     items:{
       type: Array,
       default: null
-    },
-    backgroundImageLeft:{
-      type:String,
-      default:null
-    },
-    backgroundImageRight:{
-      type:String,
-      default:null
-    },
-    colorTitle:{
-      type:String,
-      default:"primary"
-    },
-    colorSubtitle:{
-      type:String,
-      default:"primary"
-    },
-    textThin:{
-      type:Boolean,
-      default:false
     }
   }    
 }
 </script>
 <style lang="scss" scoped>
-.backgroundImageColumn{
-  background-size:contain;
-}
 </style>

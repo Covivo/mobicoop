@@ -1,11 +1,14 @@
 @import '~vuetify/src/styles/styles.sass';
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,700,900&display=swap');
 
 $primary: var(--v-primary-base);
 $secondary: var(--v-secondary-base);
 $accent: var(--v-accent-base);
 
 // Example : to change font everywhere in the app
-//$body-font-family: Arial;
+// vuetify
+$body-font-family: 'Poppins', sans-serif;
+$heading-font-family: 'Poppins', sans-serif;
 
 // Example : to change themes variables
 // path to material light variables '~vuetify/src/styles/settings/_light.scss';

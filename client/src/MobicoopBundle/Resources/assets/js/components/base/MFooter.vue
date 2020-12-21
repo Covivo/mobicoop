@@ -1,80 +1,181 @@
 <template>
   <v-footer
     height="auto"
+    padless
+    tile
     color="primary"
   >
-    <v-layout
-      justify-center
-      row
+    <v-container
+      fluid
+      class="pa-0"
     >
-      <a
-        href="https://www.facebook.com/Mobicoop/"
-        target="_blank"
+      <v-row
+        justify="center"
       >
-        <img
-          src="/images/footer/facebook.svg"
-          width="50px"
-          height="50px"
+        <a
+          href="/"
+          class="d-flex align-center my-14"
         >
-      </a>
-      <a
-        href="https://twitter.com/MobicoopCovoit?lang=fr"
-        target="_blank"
+          <img
+            class="logo"
+            :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
+            alt="Mobicoop"
+            height="50"
+            width="280"
+            contain
+            eager
+          >
+        </a>
+      </v-row>
+      <v-row
+        justify="center"
+        dense
+        class="pa-5"
       >
-        <img
-          src="/images/footer/twitter.svg"
-          width="50px"
-          height="50px"
-        >
-      </a>
-      <a
-        href="https://www.instagram.com/mobicoopcovoiturage/"
-        target="_blank"
-      >
-        <img
-          src="/images/footer/instagram.svg"
-          width="50px"
-          height="50px"
-        >
-      </a>
-      <a
-        href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
-        target="_blank"
-      >
-        <img
-          href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
-          target="_blank"
-          src="/images/footer/framasphere.svg"
-          width="50px"
-          height="50px"
-        >
-      </a>
-      <v-flex
-        py-4
+        <!-- first col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            La coopérative
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >Qui sommes-nous ? </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >Nous rejoindre </a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-10 pb-0 white--text text-h5 font-weight-bold">
+            Les services Mobicoop
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="https://pro.mobicoop.fr/"
+              style="text-decoration:none;"
+              class="white--text"
+            >pro.mobicoop.fr</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="https://www.covievent.org/"
+              style="text-decoration:none;"
+              class="white--text"
+            >www.covievent.org</a>
+          </v-card-text>
+        </v-col>
+        <!-- end first col -->
+
+        <!-- second col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            Les outils
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >La carte des aires de covoiturage </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >FAQ </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >CGU </a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-3 pb-0 white--text text-h5 font-weight-bold">
+            Contacts
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >Hotline</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >Presse</a>
+          </v-card-text>
+        </v-col>
+        <!-- end second col -->
+
+        <!-- third col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            Besoin d’une solution de covoiturage pour votre structure ?
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              href="#"
+              style="text-decoration:none;"
+              class="white--text"
+            >Créez une communauté sur mobicoop.fr !</a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-10 pb-0 white--text subtitle font-weight-black">
+            TÉLÉCHARGEZ L’APPLICATION MOBICOOP
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <v-row>
+              <a
+                :href="$t('urlIos')"
+                target="_blank"
+              >
+                <v-img
+                  class="ml-2"
+                  contain
+                  :src="$t('urlIosLogo')"
+                  max-width="200px"
+                />
+              </a>
+              <a
+                :href="$t('urlAndroid')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlAndroidLogo')"
+                  max-width="200px"
+                />
+              </a>
+            </v-row>
+          </v-card-text>
+        </v-col>
+        <!-- end third col -->
+      </v-row>
+      <v-row
+        class="my-4"
         text-center
-        xs12
+        justify="center"
+        align="center"
       >
         <strong>Mobicoop</strong> <v-chip
           class="ma-2"
         >
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
-      </v-flex>
-      <v-flex
-        py-4
-        text-center
-        xs12
-      >
-        <v-btn
-          text
-          rounded
-          :href="$t('buttons.contact.route')"
-          class="text-none"
-        >
-          {{ $t('buttons.contact.label') }}
-        </v-btn>
-      </v-flex>
-    </v-layout>
+      </v-row>
+    </v-container>
   </v-footer>
 </template>
 
@@ -96,7 +197,9 @@ export default {
   },
   data() {
     return {
-      version:Package.version
+      version:Package.version,
+      imageLink: "/images/pages/home/"
+
     }
   }
 };

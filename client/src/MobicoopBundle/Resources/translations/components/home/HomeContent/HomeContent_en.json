@@ -19,12 +19,38 @@
         "title": "COVOITURAGE SOLIDAIRE",
         "text": "S'entraider pour l'accès à l'emploi",
         "button": {
-            "label": "Besoin d'un coup de pouce ?",
-            "route": "/#/carpools/solidary/home/request"
-        },
-        "button2": {
-            "label": "Donner un coup de pouce",
+            "label": "Je suis solidaire",
             "route": "/covoiturage/annonce/poster/solidaire"
         }
+    },
+    "cooperative": {
+        "title":"Participez à l’amélioration du service de covoiturage",
+        "text": "Mobicoop.fr est un service gratuit. Grâce au moteur de recherche Lilo, vous pouvez nous financer sans frais en nous donnant les gouttes d'eau que vous gagnez à chaque recherche pour que la mobilité partagée reste un bien commun. Merci pour votre soutien !",
+        "button1": {
+            "label": "Déjà sur Lilo ? Donnez-nous vos gouttes",
+            "route": "#"
+        },
+        "button2": {
+            "label": "Contribuez au projet",
+            "route": "#"
+        }
+    },
+    "items":[
+        {
+            "title":"Un service sans comission",
+            "text":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
+        },
+        {
+            "title":"Un logiciel libre",
+            "text":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
+        },
+        {
+            "title":"La coopérative du covoiturage",
+            "text":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
+        }
+    ],
+    "routes": {
+        "event": "/event/{id}",
+        "getList": "/events/getEventList"
     }
 }

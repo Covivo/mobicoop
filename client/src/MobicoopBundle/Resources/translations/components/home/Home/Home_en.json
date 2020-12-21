@@ -1,6 +1,5 @@
 {
-    "title": "Mobicoop",
-    "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
+    "title": "Le covoiturage libre sans comission et coopératif",
     "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
     "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
@@ -9,5 +8,8 @@
     "myProfile": "Profil",
     "urlArticle": "#",
     "altUrlArticle": "cliquez-ici",
-    "clickHere": "Cliquez-ici"
+    "clickHere": "Cliquez-ici",
+    "urlImageSwap": "/images/PictoInterchanger.svg",
+    "urlBackground": "/images/pages/home/Fond Site BandeauHaut 2.svg",
+    "urlBackground2": "/images/pages/home/Fond Site Milieu.svg"
 }

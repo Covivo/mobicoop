@@ -4,5 +4,9 @@
             "route": "/contact",
             "label": "Contact us"
         }
-    }
+    },
+    "urlIosLogo": "/images/footer/IOS.svg",
+    "urlIos": "#",
+    "urlAndroidLogo": "/images/footer/android.svg",
+    "urlAndroid": "#"
 }

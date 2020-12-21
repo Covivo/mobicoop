@@ -2,6 +2,7 @@
   <v-main color="secondary">
     <v-container
       text-center
+      fluid
     >
       <v-row v-if="displayVerifiedMessage">
         <v-col>
@@ -88,59 +89,73 @@
         </v-col>
       </v-row>
 
-      <!-- Title and subtitle -->
-      <v-row
-        align="center"
-        class="mt-5"
-        justify="center"
+      <div
+        :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;background-position-y:-8em;'"
       >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
-          class="text-center"
+        <!-- Title and subtitle -->
+        <v-row
+          align="center"
+          justify="center"
+          class="py-12 mt-n3"
         >
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-html="$t('subtitle')" />
-          <v-col v-if="additionalTextDisplay">
-            <a
-              :href="$t('urlArticle')"
-              :alt="$t('altUrlArticle')"
-              style="text-decoration:none;"
-              color="secondary"
-            >
-              <h3>{{ $t("clickHere") }}</h3></a>
+          <v-col
+            cols="6"
+            xl="4"
+            lg="5"
+            md="6"
+            class="text-center white--text mt-n2 text-wrap"
+            :style="'font-size: 1.35rem;'"
+          >
+            <h1>{{ $t('title') }}</h1>
           </v-col>
-        </v-col>
-      </v-row>
-      <search
-        :geo-search-url="geoSearchUrl"
-        :user="user"
-        :regular="regular"
-        :punctual-date-optional="punctualDateOptional"
-        :publish-button-always-active="publishButtonAlwaysActive"
-      />
-      <v-row
-        align="center"
-        class="mt-5"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
+        </v-row>
+        <!-- end Title and subtitle -->
+
+
+        <!-- search -->
+        <v-row justify="center">
+          <v-col
+            lg="10"
+            xl="8"
+          >
+            <search
+              :geo-search-url="geoSearchUrl"
+              :user="user"
+              :regular="regular"
+              :punctual-date-optional="punctualDateOptional"
+              :publish-button-always-active="publishButtonAlwaysActive"
+              :image-swap="$t('urlImageSwap')"
+            />
+          </v-col>
+        </v-row>
+        <!-- end search -->
+
+        <div
+          :style="'background-image:url(\''+$t('urlBackground2')+'\');background-size:contain;background-position-y:20em;'"
         >
-          <home-content
-            :community-display="communityDisplay"
-            :event-display="eventDisplay"
-            :solidary-display="solidaryDisplay"
-            :additional-text-display="additionalTextDisplay"
-            :url-mobile="mobileUrl"
-          />
-        </v-col>
-      </v-row>
+          <!-- homeContent -->
+          <v-row
+            align="center"
+            class="mt-5"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              xl="6"
+              lg="9"
+              md="12"
+            >
+              <home-content
+                :community-display="communityDisplay"
+                :event-display="eventDisplay"
+                :solidary-display="solidaryDisplay"
+                :url-mobile="mobileUrl"
+              />
+            </v-col>
+          </v-row>
+          <!-- end homeContent -->
+        </div>
+      </div>
       <Cookies />
     </v-container>
   </v-main>
@@ -215,10 +230,6 @@ export default {
       default: ""
     },
     communityDisplay: {
-      type: Boolean,
-      default: false
-    },
-    additionalTextDisplay: {
       type: Boolean,
       default: false
     },
