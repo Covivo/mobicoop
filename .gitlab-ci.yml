@@ -221,7 +221,7 @@ prod_test_deploy:
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP}:/var/www/prod/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod_test --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
