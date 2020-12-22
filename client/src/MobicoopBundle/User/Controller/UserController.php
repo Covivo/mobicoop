@@ -618,7 +618,7 @@ class UserController extends AbstractController
             return $this->render(
                 '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
                 [
-                        "token" => $token,
+                        "pwdToken" => $token,
                     ]
             );
         }
