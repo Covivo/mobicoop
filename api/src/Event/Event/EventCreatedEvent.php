@@ -27,9 +27,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 use App\Event\Entity\Event as EventEntity;
 
 /**
- * Event sent when an email notification is sent.
+ * Event sent when an event is created.
  */
-class ValidateCreateEventEvent extends Event
+class EventCreatedEvent extends Event
 {
     public const NAME = 'validate_create_event';
 

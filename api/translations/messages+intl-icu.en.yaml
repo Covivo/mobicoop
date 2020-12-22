@@ -393,3 +393,10 @@ passenger: "Passager"
 paymentNotDone: "Paiement non effectué"
 onLinePayment: "Paiement en ligne"
 directPayment: "Paiement à la main"
+
+
+
+
+# GEOGRAPHY SERVICE
+domicile: 'home'
+homeAddress: 'Home'

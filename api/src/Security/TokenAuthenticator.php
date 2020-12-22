@@ -88,6 +88,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        /**
+         * @var User $user
+         */
         $user = $token->getUser();
 
         //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes

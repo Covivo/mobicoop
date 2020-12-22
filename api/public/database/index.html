@@ -53,13 +53,7 @@
 <li><a href="#event">event </a></li>
 <li><a href="#image">image </a></li>
 <li><a href="#zone">zone </a></li>
-<li><a href="#role">role </a></li>
-<li><a href="#user_role">user_role </a></li>
 <li><a href="#app">app </a></li>
-<li><a href="#app_role">app_role </a></li>
-<li><a href="#right">right </a></li>
-<li><a href="#role_right">role_right </a></li>
-<li><a href="#user_right">user_right </a></li>
 <li><a href="#territory">territory </a></li>
 <li><a href="#mass">mass </a></li>
 <li><a href="#mass_person">mass_person </a></li>
@@ -86,7 +80,7 @@
 <li><a href="#subject">subject </a></li>
 <li><a href="#solidary">solidary </a></li>
 <li><a href="#log">log </a></li>
-<li><a href="#solidary_matching">solidary_matching </a></li>
+<li><a href="#solidarySolution">solidarySolution </a></li>
 <li><a href="#diary">diary </a></li>
 <li><a href="#user_notification">user_notification </a></li>
 <li><a href="#icon">icon </a></li>
@@ -98,18 +92,34 @@
 <li><a href="#campaign">campaign </a></li>
 <li><a href="#delivery">delivery </a></li>
 <li><a href="#campaignTemplate">campaignTemplate </a></li>
-<li><a href="#volunteer">volunteer </a></li>
+<li><a href="#solidaryUser">solidaryUser </a></li>
 <li><a href="#language">language </a></li>
 <li><a href="#user_language">user_language </a></li>
 <li><a href="#need">need </a></li>
 <li><a href="#solidary_need">solidary_need </a></li>
-<li><a href="#right_right">right_right </a></li>
 <li><a href="#need_volunteer">need_volunteer </a></li>
 <li><a href="#need_structure">need_structure </a></li>
 <li><a href="#structureProof">structureProof </a></li>
 <li><a href="#proof">proof </a></li>
 <li><a href="#position">position </a></li>
-<li><a href="#carpooProof">carpooProof </a></li>
+<li><a href="#carpoolProof">carpoolProof </a></li>
+<li><a href="#solidaryAsk">solidaryAsk </a></li>
+<li><a href="#solidaryAskHistory">solidaryAskHistory </a></li>
+<li><a href="#solidaryUserStructure">solidaryUserStructure </a></li>
+<li><a href="#authItem">authItem </a></li>
+<li><a href="#authRule">authRule </a></li>
+<li><a href="#authItem_child">authItem_child </a></li>
+<li><a href="#app_authItem">app_authItem </a></li>
+<li><a href="#user_auth_assignment">user_auth_assignment </a></li>
+<li><a href="#solidaryMatching">solidaryMatching </a></li>
+<li><a href="#direction_territory">direction_territory </a></li>
+<li><a href="#address_territory">address_territory </a></li>
+<li><a href="#pushToken">pushToken </a></li>
+<li><a href="#operate">operate </a></li>
+<li><a href="#carpoolItem">carpoolItem </a></li>
+<li><a href="#carpoolPayment">carpoolPayment </a></li>
+<li><a href="#carpoolItem_carpoolPayment">carpoolItem_carpoolPayment </a></li>
+<li><a href="#paymentProfile">paymentProfile </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
 <tr><td>Table Comments</td><td colspan="6">User table</td></tr>
@@ -135,7 +145,7 @@
 3=nc</td></tr>
 <tr><td>nationality</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nationality</td></tr>
 <tr><td>birthDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>B‏irth date</td></tr>
-<tr><td>telephone</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Telephone number</td></tr>
+<tr><td>telephone</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Telephone number</td></tr>
 <tr><td>maxDetourDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>600</td><td>Maximum detour duration (in seconds) as a driver to accept a request proposal</td></tr>
 <tr><td>maxDetourDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum detour length (in metres) as a driver to accept a request proposal</td></tr>
 <tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
@@ -145,10 +155,9 @@
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>pwdToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Token for password modification</td></tr>
 <tr><td>pwdTokenDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of password token generation modification</td></tr>
-<tr><td>geoToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Token for geographical search authorization</td></tr>
 <tr><td>language</td><td>VARCHAR(10)</td><td>No</td><td>No</td><td>No</td><td></td><td>Language</td></tr>
 <tr><td>validatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Email validation date</td></tr>
-<tr><td>validatedDateToken</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email validation token</td></tr>
+<tr><td>emailToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email validation token</td></tr>
 <tr><td>smoke</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Smoking preference : 
 0 = i don't smoke
 1 = i don't smoke in car
@@ -163,15 +172,19 @@
 <tr><td>chatFavorites</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Chat favorite subjects</td></tr>
 <tr><td>newsSubscription</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>News subscription</td></tr>
 <tr><td>phoneToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Phone token validation</td></tr>
-<tr><td>iosAppId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>iOS App ID</td></tr>
-<tr><td>androidAppId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>iOS Android ID</td></tr>
 <tr><td>phoneValidatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Validation date of the phone number</td></tr>
 <tr><td>phoneDisplay</td><td>SMALLINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Phone number display policy : 
 1 = restricted
 2 = all access</td></tr>
+<tr><td>mobile</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Mobile user</td></tr>
 <tr><td>proEmail</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email used for pro context (mass mailing...)</td></tr>
 <tr><td>proName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name used for pro context (mass mailing...)</td></tr>
 <tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Delegate user if the user is created by an admin</td></tr>
+<tr><td>idsolidaryUser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Solidary user</td></tr>
+<tr><td>lastActivityDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of last activity</td></tr>
+<tr><td>facebookId</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Facebook ID</td></tr>
+<tr><td>unsubscribeToken</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Token for news unsubscription</td></tr>
+<tr><td>unsubscribeDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>News unsubscription date</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposal table :
@@ -210,12 +223,15 @@ The proposal is linked with offer or request criteria.
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Request or offer criteria
 </td></tr>
-<tr><td>idproposalLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked proposal for a round trip (return or outward journey)</td></tr>
+<tr><td>idproposalLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked proposal for a round trip (return or outward journey), or linked proposal for dynamic carpooling (new proposal after passenger acceptation)</td></tr>
 <tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User for whom the proposal is submitted (in general the user itself, except when it is a "posting for"). Can be  null for anonymous search.</td></tr>
 <tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Proposal type : 
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
+<tr><td>exposed</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Exposed proposal : can be publicly visible via a link</td></tr>
+<tr><td>externalId</td><td>VARCHAR(20)</td><td>No</td><td>No</td><td>No</td><td></td><td>External ID : used to mask the real id for external requests</td></tr>
+<tr><td>seo</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Proposal well suited for SEO optimization</td></tr>
 <tr><td>dynamic</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Dynamic carpool (real-time)</td></tr>
 <tr><td>active</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The dynamic carpool proposal is active. A passenger proposal is set to inactive when an ask is accepted, a driver proposal is set to inactive when no more passenger can be involved.</td></tr>
 <tr><td>finished</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The dynamic carpool proposal is finished. An ad is set to finished when it is manually stopped, or when the destination is reached.</td></tr>
@@ -226,6 +242,8 @@ The proposal is linked with offer or request criteria.
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User that create the proposal for another user</td></tr>
 <tr><td>idevent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Event linked with the proposal</td></tr>
+<tr><td>external</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>The external origin of this proposal (i.e. for an RDEX request we store the public api key)</td></tr>
+<tr><td>idsubject</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>A proposal can be linked to a specific solidary subject</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ask"></a><table style="width:100%"><caption>Table: ask </caption>
 <tr><td>Table Comments</td><td colspan="6">An ask made by a user (as a driver or passenger) after matching between an offer and a request.
@@ -251,11 +269,13 @@ The user that creates the ask is either the driver or the passenger.</td></tr>
 Used when the ask is created with an undefined role. </td></tr>
 <tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User that create the ask for another user</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
-0 : initiated
-1 : pending with requester as driver
-2 : pending with requester as passenger
-3 : accepted
-4 : declined</td></tr>
+1 : initiated
+2 : pending with requester as driver
+3 : pending with requester as passenger
+4 : accepted with requester as driver
+5 : accepted with requester as passenger
+6 : declined with requester as driver
+7 : declined with requester as passenger</td></tr>
 <tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
 1 : one way trip
 2 : outward of a round trip
@@ -320,6 +340,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ask if the waypoint is an ask waypoint (calculated by the georouting algorythm and potentially modified by the user that creates the ask)</td></tr>
 <tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Position number</td></tr>
 <tr><td>destination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
+<tr><td>floating</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The waypoint is a floating waypoint (for dynamic carpooling).</td></tr>
 <tr><td>reached</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The waypoint has been reached during a dynamic carpooling</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
@@ -349,14 +370,17 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>frequency</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Proposal frequency : 
 1 : punctual
 2 : regular</td></tr>
-<tr><td>seats</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Number of seats available or requested</td></tr>
+<tr><td>seatsDriver</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Number of seats available for a driver</td></tr>
+<tr><td>seatsPassenger</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>The number of requested seats for a passenger.</td></tr>
 <tr><td>fromDate</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Starting date (=proposal date if punctual)</td></tr>
 <tr><td>fromTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time</td></tr>
-<tr><td>marginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Margin time in seconds if punctual</td></tr>
 <tr><td>minTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time min</td></tr>
 <tr><td>maxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time max</td></tr>
-<tr><td>toDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>End date if regular proposal</td></tr>
+<tr><td>marginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Margin duration in seconds if punctual</td></tr>
 <tr><td>strictDate</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>For a punctual proposal, accept only matchings for the define fromDate (no matchings for fluctuant dates)</td></tr>
+<tr><td>strictPunctual</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>For punctual proposals, the user accepts only matchings with punctual trips (no regular trips)</td></tr>
+<tr><td>strictRegular</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>For regular proposals, the user accepts only matchings with regular trips (no punctual trips)</td></tr>
+<tr><td>toDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>End date if regular proposal</td></tr>
 <tr><td>monCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on mondays (if regular)</td></tr>
 <tr><td>tueCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on tuesdays (if regular)</td></tr>
 <tr><td>wedCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on wednesdays (if regular)</td></tr>
@@ -396,31 +420,28 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>maxDetourDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum detour length (in metres) as a driver to accept a request proposal</td></tr>
 <tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
 <tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
-<tr><td>priceKm</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
-<tr><td>price</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price selected by the user : 
-- as a driver if driver and passenger
-- as a passenger only if passenger</td></tr>
-<tr><td>roundedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price rounded using the rounding rules</td></tr>
-<tr><td>computedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total price computed by the system, using the user price per km, not rounded :  
-- as a driver if driver and passenger
-- as a passenger only if passenger</td></tr>
-<tr><td>computedRoundedPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Computed price rounded using the rounding rules</td></tr>
-<tr><td>bike</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Bike accepted / asked.</td></tr>
+<tr><td>priceKm</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
+<tr><td>driverPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The total price selected by the user as a driver.</td></tr>
+<tr><td>driverComputedPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The total price computed by the system, using the user price per km, not rounded, as a driver</td></tr>
+<tr><td>driverComputedRoundedPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The driver computed price rounded using the rounding rules</td></tr>
+<tr><td>driverMasterPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The driver master price to use. It's the price if it's not null, otherwise the computedPrice</td></tr>
+<tr><td>passengerPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The total price selected by the user as a passenger.</td></tr>
+<tr><td>passengerComputedPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The total price computed by the system, using the user price per km, not rounded, as a passenger</td></tr>
+<tr><td>passengerComputedRoundedPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The passenger computed price rounded using the rounding rules</td></tr>
+<tr><td>passengerMasterPrice</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The passenger master price to use. It's the price if it's not null, otherwise the computedPrice</td></tr>
 <tr><td>luggage</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Big luggage accepted / asked.</td></tr>
+<tr><td>bike</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Bike accepted / asked.</td></tr>
 <tr><td>backSeats</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>2 passengers max on the back seats</td></tr>
 <tr><td>solidary</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Solidary request (from a solidary user or via an admin)</td></tr>
 <tr><td>solidaryExclusive</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Solidary exclusive (usually from a driver who wants to make the travel for solidary requests only)</td></tr>
+<tr><td>avoidMotorway</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Avoid motorway</td></tr>
+<tr><td>avoidToll</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Avoid toll</td></tr>
 <tr><td>idcar</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Car used as a driver</td></tr>
 <tr><td>iddirectionDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction calculated by the georouter as a driver</td></tr>
 <tr><td>iddirectionPassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction calculated by the georouter as a passenger</td></tr>
 <tr><td>idptjourney</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Public transport journey in case of combined transport</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
-<tr><td>period</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Period of the day for flexible proposal : 
-0 : 0-6
-1 : 6-12
-2 : 12-18
-3 : 18-24</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="address"></a><table style="width:100%"><caption>Table: address </caption>
 <tr><td>Table Comments</td><td colspan="6">Address table. The address contains the geopoint to keep things simple.</td></tr>
@@ -435,6 +456,9 @@ A waypoint is created by a user who wants to travel by certain points.
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>layer</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The layer identified for the address :
+1 : locality
+2 : full address</td></tr>
 <tr><td>houseNumber</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>House number</td></tr>
 <tr><td>street</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Street</td></tr>
 <tr><td>streetAddress</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Street address</td></tr>
@@ -651,6 +675,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>bearing</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The initial bearing for the direction in degrees related to the north (0°)</td></tr>
 <tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoded detail of the direction</td></tr>
 <tr><td>geoJsonDetail</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>The geoJson representation of the detail</td></tr>
+<tr><td>geoJsonSimplified</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>The simplified geoJson linestring detail of the direction (using the Ramer-Douglas-Peucker algorithm)</td></tr>
 <tr><td>snapped</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Encoded snapped waypoints of the direction</td></tr>
 <tr><td>format</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoding format of the detail</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
@@ -787,40 +812,6 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>thinness</td><td>DECIMAL(9,6)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Precision of the grid in degrees</td></tr>
 <tr><td>zoneid</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Numeric representation of the zone depending on the precision</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="role"></a><table style="width:100%"><caption>Table: role </caption>
-<tr><td>Table Comments</td><td colspan="6">Role table (for permission management)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>title</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
-<tr><td>parent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Parent role</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="user_role"></a><table style="width:100%"><caption>Table: user_role </caption>
-<tr><td>Table Comments</td><td colspan="6">Roles attributes to a user</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
-<tr><td>idrole</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Role</td></tr>
-<tr><td>idterritory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Territory</td></tr>
-</table><a href="#home">Table List </a></br>
 <a id="app"></a><table style="width:100%"><caption>Table: app </caption>
 <tr><td>Table Comments</td><td colspan="6">Apps which can access to the api (front, mobile...)</td></tr>
 <tr><td colspan="7">Columns</td></tr>
@@ -835,76 +826,10 @@ A waypoint is created by a user who wants to travel by certain points.
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>User-friendly name</td></tr>
-<tr><td>username</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Username for authentication</td></tr>
+<tr><td>username</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Username for authentication</td></tr>
 <tr><td>password</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoded password</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="app_role"></a><table style="width:100%"><caption>Table: app_role </caption>
-<tr><td>Table Comments</td><td colspan="6">Roles attributed to apps</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idapp</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>App</td></tr>
-<tr><td>idrole</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Role</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="right"></a><table style="width:100%"><caption>Table: right </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of rights (items) and groups of rights</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>type</td><td>SMALLINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of right : 
-1 = item
-2 = group</td></tr>
-<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the right</td></tr>
-<tr><td>description</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Description of the right</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="role_right"></a><table style="width:100%"><caption>Table: role_right </caption>
-<tr><td>Table Comments</td><td colspan="6">Rights attributes to a role</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idrole</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Role</td></tr>
-<tr><td>idright</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Right</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="user_right"></a><table style="width:100%"><caption>Table: user_right </caption>
-<tr><td>Table Comments</td><td colspan="6">A user can have specific rights</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
-<tr><td>idright</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Right</td></tr>
-<tr><td>idterritory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Territory</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="territory"></a><table style="width:100%"><caption>Table: territory </caption>
 <tr><td>Table Comments</td><td colspan="6">Territory table (geographic area)</td></tr>
@@ -919,8 +844,8 @@ A waypoint is created by a user who wants to travel by certain points.
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the territory</td></tr>
-<tr><td>detail</td><td>MULTIPOLYGON</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Detail of the territory as a multipolygon</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the territory</td></tr>
+<tr><td>geoJsonDetail</td><td>MULTIPOLYGON</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Detail of the territory as a multipolygon</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -949,6 +874,15 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>calculatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the end of the calculation</td></tr>
 <tr><td>analyzingDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the start of the analyze</td></tr>
 <tr><td>analyzedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the end of the analyze</td></tr>
+<tr><td>massType</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of Mass : 
+- 0 : anonymous
+- 1 : qualified</td></tr>
+<tr><td>checkLegitDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>The date of the legitimacy check</td></tr>
+<tr><td>migrationDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of migration's beginning.</td></tr>
+<tr><td>migratedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of migration's end.</td></tr>
+<tr><td>gettingPublicTransportationPotentialDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of getting the public transportation information from external API</td></tr>
+<tr><td>gotPublicTransportationPotentialDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of getting the public transportation information from external API end</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The community created after the migration of this mass users</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="mass_person"></a><table style="width:100%"><caption>Table: mass_person </caption>
 <tr><td>Table Comments</td><td colspan="6">A person involved in a mass import</td></tr>
@@ -966,6 +900,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>givenId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Import id</td></tr>
 <tr><td>givenName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>First name</td></tr>
 <tr><td>familyName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Last name</td></tr>
+<tr><td>email</td><td>VARCHAR(512)</td><td>No</td><td>No</td><td>No</td><td></td><td>The email address of the person</td></tr>
 <tr><td>idmass</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Mass</td></tr>
 <tr><td>personalAddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Personal address</td></tr>
 <tr><td>workAddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Work Address</td></tr>
@@ -980,6 +915,9 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>bearing</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The initial bearing for the direction in degrees related to the north (0°)</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user id when the mass person becomes a user</td></tr>
+<tr><td>driver</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The person accepts to be a driver</td></tr>
+<tr><td>passenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The person accepts to be a passenger</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="mass_matching"></a><table style="width:100%"><caption>Table: mass_matching </caption>
 <tr><td>Table Comments</td><td colspan="6">Matching between mass persons</td></tr>
@@ -1030,6 +968,7 @@ A waypoint is created by a user who wants to travel by certain points.
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>status</td><td>SMALLINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Community status (not used yet)</td></tr>
 <tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The short description</td></tr>
 <tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The full description</td></tr>
 <tr><td>membersHidden</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Members are only visible by the members of the community</td></tr>
@@ -1069,6 +1008,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>acceptedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted date</td></tr>
 <tr><td>refusedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Refused Date</td></tr>
+<tr><td>idadmin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user that validates/invalidates the registration</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="community_proposal"></a><table style="width:100%"><caption>Table: community_proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposals posted for a community</td></tr>
@@ -1163,7 +1103,7 @@ A waypoint is created by a user who wants to travel by certain points.
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>title</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of publication of the article : 
 0 : pending
 1 : published</td></tr>
@@ -1231,10 +1171,6 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
 <tr><td>filename</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the file to check</td></tr>
-<tr><td>field1Name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the first field to check</td></tr>
-<tr><td>field1Type</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of the first field to check</td></tr>
-<tr><td>field2Name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the second field to check</td></tr>
-<tr><td>field2Type</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of the second field to check</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="message"></a><table style="width:100%"><caption>Table: message </caption>
 <tr><td>Table Comments</td><td colspan="6">A message sent between 2 or more users.</td></tr>
@@ -1255,6 +1191,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idmessage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Id of the first message of the thread</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user who sends the message in the name of the creator</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="recipient"></a><table style="width:100%"><caption>Table: recipient </caption>
 <tr><td>Table Comments</td><td colspan="6">Recipient of the message</td></tr>
@@ -1311,12 +1248,13 @@ Some actions can reflect a real action made by a user, some can be automatic act
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the action</td></tr>
+<tr><td>type</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The type of the action</td></tr>
 <tr><td>inLog</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The action has to be logged in the log system</td></tr>
-<tr><td>inDiary</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>The action has to be logged in the user action diary</td></tr>
+<tr><td>inDiary</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The action has to be logged in the user action diary</td></tr>
 <tr><td>progression</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...</td></tr>
+<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Display position in user preferences</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
-<tr><td>position</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Display position in user preferences</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="notification"></a><table style="width:100%"><caption>Table: notification </caption>
 <tr><td>Table Comments</td><td colspan="6">A message sent by the system to a user on a given medium</td></tr>
@@ -1370,6 +1308,7 @@ Some actions can reflect a real action made by a user, some can be automatic act
 <tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns a matching</td></tr>
 <tr><td>idrecipient</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns a recipient of a message</td></tr>
 <tr><td>idaskHistory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns an ask history</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The community if the notified is linked to a community.</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="askHistory"></a><table style="width:100%"><caption>Table: askHistory </caption>
 <tr><td>Table Comments</td><td colspan="6">History of the ask</td></tr>
@@ -1412,8 +1351,15 @@ Some actions can reflect a real action made by a user, some can be automatic act
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the structure</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
-<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>email</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>The email accepting '+' subaddressing and used to build default unique email address for beneficiaries without email address</td></tr>
+<tr><td>createdDate</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>mMinRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning min range time</td></tr>
+<tr><td>mMaxRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning max range time</td></tr>
+<tr><td>aMinRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Afternoon min range time</td></tr>
+<tr><td>aMaxRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Afternoon max range time</td></tr>
+<tr><td>eMinRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Evening min range time</td></tr>
+<tr><td>eMaxRangeTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Evening max range time</td></tr>
 <tr><td>mMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning min time</td></tr>
 <tr><td>mMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning max time</td></tr>
 <tr><td>aMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Afternoon min time</td></tr>
@@ -1442,6 +1388,7 @@ Some actions can reflect a real action made by a user, some can be automatic act
 <tr><td>aSun</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Available on sunday afternoon</td></tr>
 <tr><td>eSun</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Available on sunday evening</td></tr>
 <tr><td>maxDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Max distance allowed in metres</td></tr>
+<tr><td>telephone</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>The telephone number of the structure</td></tr>
 <tr><td>idstructure</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Parent structure</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="subject"></a><table style="width:100%"><caption>Table: subject </caption>
@@ -1487,10 +1434,9 @@ Some actions can reflect a real action made by a user, some can be automatic act
 <tr><td>deadlineDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>Deadline date</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Related user</td></tr>
 <tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal related to the solidary record</td></tr>
-<tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
 <tr><td>idsubject</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Subject</td></tr>
+<tr><td>idsolidaryUserStructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary user structure</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="log"></a><table style="width:100%"><caption>Table: log </caption>
 <tr><td>Table Comments</td><td colspan="6">User action log table</td></tr>
@@ -1506,8 +1452,9 @@ Some actions can reflect a real action made by a user, some can be automatic act
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
-<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
+<tr><td>value</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Value associated with the action</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The user concerned by the action</td></tr>
+<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
 <tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user that makes the action if the action is made for another user</td></tr>
 <tr><td>idproposal</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The proposal if the action concerns a proposal</td></tr>
 <tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The matching if the action concerns a matching</td></tr>
@@ -1520,9 +1467,10 @@ Some actions can reflect a real action made by a user, some can be automatic act
 <tr><td>idcar</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The car if the action concerns a car</td></tr>
 <tr><td>iduserRelated</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The user if the action concerns a user</td></tr>
 <tr><td>idmessage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The message if the action concerns a message</td></tr>
+<tr><td>idcampaign</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The campaign if the action concerns a message</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="solidary_matching"></a><table style="width:100%"><caption>Table: solidary_matching </caption>
-<tr><td>Table Comments</td><td colspan="6">Matchings saved by an admin for a solidary record</td></tr>
+<a id="solidarySolution"></a><table style="width:100%"><caption>Table: solidarySolution </caption>
+<tr><td>Table Comments</td><td colspan="6">Potential solutions for a solidary record</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1535,10 +1483,10 @@ Some actions can reflect a real action made by a user, some can be automatic act
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>idsolidary</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary record</td></tr>
+<tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>A comment about the solution</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
-<tr><td>idvolunteer</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Volunteer if the solidary ask has a volunteer solution</td></tr>
-<tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Matching if the solidary ask has a carpool solution</td></tr>
+<tr><td>idsolidaryMatching</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary matching</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="diary"></a><table style="width:100%"><caption>Table: diary </caption>
 <tr><td>Table Comments</td><td colspan="6">Animation action diary for a user</td></tr>
@@ -1553,16 +1501,17 @@ Some actions can reflect a real action made by a user, some can be automatic act
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>A comment about the action</td></tr>
+<tr><td>progression</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>The progression if the action can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...</td></tr>
+<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The related user</td></tr>
+<tr><td>idauthor</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The author that makes the action</td></tr>
+<tr><td>idsolidary</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The solidary record related to the animation action</td></tr>
+<tr><td>idsolidarySolution</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The solidary solution record related to the animation action</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Update date
 Special need for this entity : we need to know the last action made in a diary for a solidary record, so we have to know the last date between createdDate and updatedDate.
 To do so, we will use the updatedDate, so it is mandatory and will be populated with the createdDate at insert time.</td></tr>
-<tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>A comment about the action</td></tr>
-<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The related user</td></tr>
-<tr><td>idadmin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The admin that makes the action</td></tr>
-<tr><td>idsolidary</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The solidary record related to the animation action</td></tr>
-<tr><td>idsolidaryMatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The matching saved related to the action</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="user_notification"></a><table style="width:100%"><caption>Table: user_notification </caption>
 <tr><td>Table Comments</td><td colspan="6">Notification preferences for a user</td></tr>
@@ -1639,7 +1588,6 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>origin</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Origin database</td></tr>
 <tr><td>communityExternalId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Community external id</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status of the import : 
 0 : imported
@@ -1663,7 +1611,6 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>origin</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Origin database</td></tr>
 <tr><td>eventExternalId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Event external id</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status of the import : 
 0 : imported
@@ -1687,7 +1634,6 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>origin</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Origin database</td></tr>
 <tr><td>relayExternalId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Relay point external id</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status of the import : 
 0 : imported
@@ -1747,8 +1693,12 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 2 : sent
 3 : archived</td></tr>
 <tr><td>email</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Email of the sender</td></tr>
-<tr><td>from</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the sender</td></tr>
+<tr><td>fromName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the sender</td></tr>
 <tr><td>replyTo</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Reply to email</td></tr>
+<tr><td>sendAll</td><td>SMALLINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status to send all campaign :
+- null : send to chosen deleveries
+- 0 : send to all user
+- id community = send to all user in the given community ID</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="delivery"></a><table style="width:100%"><caption>Table: delivery </caption>
 <tr><td>Table Comments</td><td colspan="6">Delivery of a campaign for a given user</td></tr>
@@ -1796,8 +1746,8 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>idmedium</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Medium</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="volunteer"></a><table style="width:100%"><caption>Table: volunteer </caption>
-<tr><td>Table Comments</td><td colspan="6">Solidary volunteer</td></tr>
+<a id="solidaryUser"></a><table style="width:100%"><caption>Table: solidaryUser </caption>
+<tr><td>Table Comments</td><td colspan="6">Solidary volunteer or beneficiary</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1809,6 +1759,8 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>volunteer</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The solidary user is volunteer</td></tr>
+<tr><td>beneficiary</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The solidary user is beneficiary</td></tr>
 <tr><td>mMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning min time</td></tr>
 <tr><td>mMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Morning max time</td></tr>
 <tr><td>aMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Afternoon min time</td></tr>
@@ -1837,12 +1789,9 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>aSun</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Available on sunday afternoon</td></tr>
 <tr><td>eSun</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Available on sunday evening</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Center address of the accepted perimeter</td></tr>
-<tr><td>maxDistance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Max distance allowed in metres</td></tr>
+<tr><td>maxDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Max distance allowed in metres</td></tr>
 <tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Comment</td></tr>
 <tr><td>vehicle</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The volunteer has a vehicle</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
-<tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
-<tr><td>maxDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Max distance allowed in metres</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -1911,23 +1860,8 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>idsolidary</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Solidary record</td></tr>
 <tr><td>idneed</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Need</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="right_right"></a><table style="width:100%"><caption>Table: right_right </caption>
-<tr><td>Table Comments</td><td colspan="6"></td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>right_source</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Parent right</td></tr>
-<tr><td>right_target</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Child right</td></tr>
-</table><a href="#home">Table List </a></br>
 <a id="need_volunteer"></a><table style="width:100%"><caption>Table: need_volunteer </caption>
-<tr><td>Table Comments</td><td colspan="6">List of special needs proposed by a volunteer</td></tr>
+<tr><td>Table Comments</td><td colspan="6">List of special needs proposed by as a volunteer</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1939,7 +1873,7 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Comment</th>
         </tr>
 <tr><td>idneed</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Need</td></tr>
-<tr><td>idvolunteer</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Volunteer</td></tr>
+<tr><td>idsolidaryUser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Volunteer</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="need_structure"></a><table style="width:100%"><caption>Table: need_structure </caption>
 <tr><td>Table Comments</td><td colspan="6">List of special needs for a solidary structure</td></tr>
@@ -1980,6 +1914,7 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>radio</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a radio button</td></tr>
 <tr><td>options</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Text options for radio or select  (separated by semicolon, in the same order than values)</td></tr>
 <tr><td>acceptedValues</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Values for radio or select (separated by semicolon, in the same order than options)</td></tr>
+<tr><td>mandatory</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is mandatory</td></tr>
 <tr><td>file</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The proof is a file</td></tr>
 <tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
@@ -1999,8 +1934,6 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>idstructureProof</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure proof</td></tr>
-<tr><td>idsolidary</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Solidary record if the proof concerns a solidary requester</td></tr>
-<tr><td>idvolunteer</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Volunteer id if the proof concerns a volunteer</td></tr>
 <tr><td>value</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Value</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
@@ -2008,6 +1941,7 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>originalName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Original name</td></tr>
 <tr><td>size</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
 <tr><td>mimeType</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Mime type</td></tr>
+<tr><td>idsolidaryUserStructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary user structure</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="position"></a><table style="width:100%"><caption>Table: position </caption>
 <tr><td>Table Comments</td><td colspan="6">Current geographic position for dynamic carpooling.</td></tr>
@@ -2024,13 +1958,13 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Updated date</td></tr>
+<tr><td>idwaypoint</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Waypoint corresponding to the current position</td></tr>
 <tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Current address (last address saved)</td></tr>
 <tr><td>iddirection</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction related to the dynamic carpool - updated at each position update</td></tr>
 <tr><td>geoJsonPoints</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="carpooProof"></a><table style="width:100%"><caption>Table: carpooProof </caption>
-<tr><td>Table Comments</td><td colspan="6">Carpool certification proof</td></tr>
+<a id="carpoolProof"></a><table style="width:100%"><caption>Table: carpoolProof </caption>
+<tr><td>Table Comments</td><td colspan="6">Carpool certification proof, also used for payment</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -2041,7 +1975,18 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Position of the passenger when certification is asked</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status of the proof : 
+0 = initiated : not ready to be sent, proof still under construction
+1 = pending : ready to be sent
+2 = sent to the register
+3 = error while sending to the register
+4 = cancellation before sending</td></tr>
+<tr><td>type</td><td>VARCHAR(5)</td><td>No</td><td>No</td><td>No</td><td></td><td>Register system proof type</td></tr>
+<tr><td>startDriverDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Start driver date</td></tr>
+<tr><td>endDriverDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>End driver date</td></tr>
+<tr><td>idaddressOriginDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Origin of the driver</td></tr>
+<tr><td>idaddressDestinationDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Destination of the driver</td></tr>
 <tr><td>pickupPassengerDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Passenger pickup certification date</td></tr>
 <tr><td>pickupDriverDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Driver pickup certification date</td></tr>
 <tr><td>dropoffPassengerDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Passenger dropoff certification date</td></tr>
@@ -2051,6 +1996,358 @@ To do so, we will use the updatedDate, so it is mandatory and will be populated 
 <tr><td>idaddressDropoffPassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the passenger when dropoff certification is asked</td></tr>
 <tr><td>idaddressDropoffDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Position of the driver when dropoff certification is asked</td></tr>
 <tr><td>iddirection</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The direction related to the proof</td></tr>
+<tr><td>iddriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Driver user id; used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell)</td></tr>
+<tr><td>idpassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Passenger user id; used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell)</td></tr>
+<tr><td>geoJsonPoints</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.</td></tr>
 <tr><td>idask</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Ask</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="solidaryAsk"></a><table style="width:100%"><caption>Table: solidaryAsk </caption>
+<tr><td>Table Comments</td><td colspan="6">Ask related with a solidary solution</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the ask</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>idsolidarySolution</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary solution</td></tr>
+<tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ask if the solidary ask is related to a carpool solution</td></tr>
+<tr><td>idcriteria</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Criteria if the ask is related to a volunteer</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="solidaryAskHistory"></a><table style="width:100%"><caption>Table: solidaryAskHistory </caption>
+<tr><td>Table Comments</td><td colspan="6">History of the solidary ask</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
+<tr><td>idmessage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Message</td></tr>
+<tr><td>idsolidaryAsk</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary Ask</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="solidaryUserStructure"></a><table style="width:100%"><caption>Table: solidaryUserStructure </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status : 
+0 = pending
+1 = accepted
+2 = refused</td></tr>
+<tr><td>idsolidaryUser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary user</td></tr>
+<tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>acceptedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted date</td></tr>
+<tr><td>refusedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Refused date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="authItem"></a><table style="width:100%"><caption>Table: authItem </caption>
+<tr><td>Table Comments</td><td colspan="6">Authorization item table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Item type : 
+1 = item
+2 = role</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The name of the item</td></tr>
+<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The description</td></tr>
+<tr><td>idauthRule</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Rule</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="authRule"></a><table style="width:100%"><caption>Table: authRule </caption>
+<tr><td>Table Comments</td><td colspan="6">Authorization rule</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="authItem_child"></a><table style="width:100%"><caption>Table: authItem_child </caption>
+<tr><td>Table Comments</td><td colspan="6">Hierarchy of authorization items</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>parent</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Parent item</td></tr>
+<tr><td>child</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Child item</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="app_authItem"></a><table style="width:100%"><caption>Table: app_authItem </caption>
+<tr><td>Table Comments</td><td colspan="6">App authorizations</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idAuthItem</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Auth item</td></tr>
+<tr><td>idapp</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>App</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="user_auth_assignment"></a><table style="width:100%"><caption>Table: user_auth_assignment </caption>
+<tr><td>Table Comments</td><td colspan="6">User authorizations</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>idauthItem</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Auth item</td></tr>
+<tr><td>idterritory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Territory</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="solidaryMatching"></a><table style="width:100%"><caption>Table: solidaryMatching </caption>
+<tr><td>Table Comments</td><td colspan="6">Matchings for solidary records</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Matching for carpools or flexible carpools</td></tr>
+<tr><td>idcriteria</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Criteria for volunteer matching</td></tr>
+<tr><td>idsolidaryUser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Solidary user for volunteer matching</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>idsolidary</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solidary record</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="direction_territory"></a><table style="width:100%"><caption>Table: direction_territory </caption>
+<tr><td>Table Comments</td><td colspan="6">Territories of a direction</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>iddirection</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Direction</td></tr>
+<tr><td>idterritory</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Territory</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="address_territory"></a><table style="width:100%"><caption>Table: address_territory </caption>
+<tr><td>Table Comments</td><td colspan="6">Territories of an address</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>idterritory</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Territory</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="pushToken"></a><table style="width:100%"><caption>Table: pushToken </caption>
+<tr><td>Table Comments</td><td colspan="6">Push device token</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>token</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Token</td></tr>
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Token type : 
+1 = iOS
+2 = Android</td></tr>
+<tr><td>creationDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="operate"></a><table style="width:100%"><caption>Table: operate </caption>
+<tr><td>Table Comments</td><td colspan="6">Structures of a user as operator</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idstructure</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Structure</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="carpoolItem"></a><table style="width:100%"><caption>Table: carpoolItem </caption>
+<tr><td>Table Comments</td><td colspan="6">A carpool journey effectively done</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idask</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The ask related to the carpool item</td></tr>
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Item type related with the ask :
+- 1 : one way trip
+- 2 : outward of a round trip
+- 3 : return of a round trip</td></tr>
+<tr><td>itemStatus</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of the carpool : 
+- 0 : initialized (the carpool was planned but we don't know yet if it has been realized)
+- 1 : the carpool has been realized (planned or dynamic)
+- 2 : the carpool was planned but was not realized
+
+This is necessary as carpool items are auto-generated, and may not reflect the reality.
+This status could be divided in 2 if necessary (if we need the point of view of both the driver and the passenger).</td></tr>
+<tr><td>itemDate</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The date of the carpool (=the date of the start of the carpool)</td></tr>
+<tr><td>amount</td><td>DECIMAL(6,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The amount to be paid</td></tr>
+<tr><td>iduserDebtor</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Debtor user (the user that pays)</td></tr>
+<tr><td>iduserCreditor</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creditor user (the user that is payed)</td></tr>
+<tr><td>debtorStatus</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Debtor payment status : 
+- 0 : waiting for payment
+- 1 : payment pending electronically
+- 2 : payment pending manually
+- 3 : payment done electronically
+- 4 : payment done manually</td></tr>
+<tr><td>creditorStatus</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Debtor payment status : 
+- 0 : waiting for payment
+- 1 : payment pending electronically
+- 3 : payment  received electronically
+- 4 : payment received manually</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>unpaidDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Unpaid notify date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="carpoolPayment"></a><table style="width:100%"><caption>Table: carpoolPayment </caption>
+<tr><td>Table Comments</td><td colspan="6">A carpool payment, for carpool items</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>amount</td><td>DECIMAL(6,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The amount to be paid</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The user that pays</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Payment status : 
+- 0 : initiated
+- 1 : success
+- 2 : failure</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>transactionId</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Id of the electronic transaction if there is an electronic part in this payment.</td></tr>
+<tr><td>transactionDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Datetime of the electronic transaction if there is an electronic part in this payment.</td></tr>
+<tr><td>transactionPostData</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="carpoolItem_carpoolPayment"></a><table style="width:100%"><caption>Table: carpoolItem_carpoolPayment </caption>
+<tr><td>Table Comments</td><td colspan="6">Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idcarpoolItem</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Carpool item</td></tr>
+<tr><td>idcarpoolPayment</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Carpool payment</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="paymentProfile"></a><table style="width:100%"><caption>Table: paymentProfile </caption>
+<tr><td>Table Comments</td><td colspan="6">Payment user profile</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>provider</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Provider name of this payment profile</td></tr>
+<tr><td>identifier</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>provider identifier</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Profile status : 
+- 0 : inactive
+- 1 : active</td></tr>
+<tr><td>electronicallyPayable</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>If the current payment profile is linked to one or several bank accounts</td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>

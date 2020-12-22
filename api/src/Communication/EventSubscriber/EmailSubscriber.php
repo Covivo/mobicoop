@@ -40,18 +40,13 @@ class EmailSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent',
-            ValidateCreateEventEvent::NAME => 'onValidateCreateEvent'
+            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent'
         ];
     }
 
     public function onEmailNotificationSent(EmailNotificationSentEvent $event)
     {
+        // todo : which user ???
         $this->notificationManager->createNotified($event->getNotification(), $event->getUser(), $event->getMedium());
-    }
-
-    public function onValidateCreateEvent(ValidateCreateEventEvent $event)
-    {
-        $this->notificationManager->notifies(ValidateCreateEventEvent::NAME, $event->getEvent()->getUser(), $event->getEvent());
     }
 }

@@ -13,6 +13,7 @@
       >
         <GeoComplete
           name="origin"
+          :token="user ? user.token : ''"
           :label="$t('origin.label')"
           :url="geoSearchUrl"
           :init-address="initOrigin"
@@ -61,6 +62,7 @@
       >
         <GeoComplete
           :name="'etape' + (index + 1)"
+          :token="user ? user.token : ''"
           :label="$t('waypoint' + (index + 1) +'.label')"
           :url="geoSearchUrl"
           :init-address="waypoint.address"
@@ -95,6 +97,7 @@
       >
         <GeoComplete
           name="destination"
+          :token="user ? user.token : ''"
           :label="$t('destination.label')"
           :required-error="$t('destination.error')"
           required

@@ -262,6 +262,7 @@
         "label": {
             "event": {
                 "name": "Nom",
+                "private": "Privé",
                 "resume": "Résumé",
                 "resumefull": "Résumé long * ",
                 "site": "Site internet",
@@ -443,7 +444,8 @@
             },
             "relayPoint": {
                 "invalidLatitude": "La latitude est invalide",
-                "invalidLongitude": "La latitude est invalide"
+                "invalidLongitude": "La latitude est invalide",
+                "territory": "Territoire"
             },
             "article": {
                 "title": {

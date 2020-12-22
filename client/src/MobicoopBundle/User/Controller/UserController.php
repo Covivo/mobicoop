@@ -58,6 +58,7 @@ use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\ReviewManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller class for user related actions.
@@ -86,6 +87,7 @@ class UserController extends AbstractController
     private $validationDocsAuthorizedExtensions;
     private $ssoManager;
     private $required_community;
+    private $loginDelegate;
 
     /**
      * Constructor
@@ -108,7 +110,8 @@ class UserController extends AbstractController
         UserManager $userManager,
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
-        $required_community
+        $required_community,
+        bool $loginDelegate
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -126,6 +129,7 @@ class UserController extends AbstractController
         $this->paymentManager = $paymentManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
+        $this->loginDelegate = $loginDelegate;
 
         $this->ssoManager = $ssoManager;
     }
@@ -552,7 +556,7 @@ class UserController extends AbstractController
             return $this->render(
                 '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
                 [
-                        "token" => $token,
+                        "pwdToken" => $token,
                     ]
             );
         }
@@ -1300,5 +1304,23 @@ class UserController extends AbstractController
             return new JsonResponse($reviewManager->reviewDashboard());
         }
         return new JsonResponse();
+    }
+
+    /**********
+     * ADMIN *
+     *********/
+    /**
+    * Login Admin.
+    */
+    public function loginAdmin(Request $request)
+    {
+        if ($this->loginDelegate) {
+            return $this->render('@Mobicoop/user/loginAdmin.html.twig', [
+                "email"=>$request->get('email'),
+                "delegate_email"=>$request->get('delegateEmail'),
+            ]);
+        } else {
+            throw new AccessDeniedException('Access Denied.');
+        }
     }
 }

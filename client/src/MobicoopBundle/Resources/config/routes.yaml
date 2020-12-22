@@ -81,6 +81,12 @@ user_login_token:
         en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
+user_login_delegate:
+    path:
+        fr: /login-admin/{email}/{delegateEmail}
+        en: /login-admin/{email}/{delegateEmail}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::loginAdmin
+    
 # logout
 user_logout:
     path: /user/logout
@@ -612,6 +618,14 @@ rdex_journey:
         fr: /covoiturage/rdexJourney
         en: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
+
+# rdex journey (POST) (AJAX json)
+rdex_connection:
+    methods: [POST]
+    path:
+        fr: /covoiturage/rdexConnection
+        en: /carpool/rdexConnection
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexConnection
 
 # public transport journey (AJAX)
 public_transport_journey:

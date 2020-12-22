@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,30 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Controller;
+namespace App\Action\EventSubscriber;
 
-use App\Event\Service\EventManager;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
+use App\Action\Service\ActionManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\User\Event\LoginDelegateEvent;
 
-class ValidateCreateEventController
+/**
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ */
+class ActionSubscriber implements EventSubscriberInterface
 {
-    use TranslatorTrait;
+    private $actionManager;
 
-    private $eventManager;
-
-    public function __construct(EventManager $eventManager)
+    public function __construct(ActionManager $actionManager)
     {
-        $this->eventManager = $eventManager;
+        $this->actionManager = $actionManager;
     }
 
-    public function __invoke(int $id)
+    public static function getSubscribedEvents()
     {
-        $event = $this->eventManager->sendValidateEmail($id);
+        return [
+            LoginDelegateEvent::NAME => 'onLoginDelegate'
+        ];
+    }
 
-        if (is_null($event)) {
-            throw new \InvalidArgumentException($this->translator->trans('bad event id is provided'));
-        }
-        return $event;
+    public function onLoginDelegate(LoginDelegateEvent $event)
+    {
+        $this->actionManager->handleAction(LoginDelegateEvent::NAME, $event);
     }
 }

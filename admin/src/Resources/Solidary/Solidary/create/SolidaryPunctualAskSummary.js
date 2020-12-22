@@ -38,6 +38,21 @@ export const SolidaryPunctualAskSummary = ({ regularMode = false }) => {
     return utcDateFormat(date, regularMode ? "HH':'mm':'ss" : "dd'/'MM'/'yyyy HH':'mm':'ss");
   };
 
+  const formatHour = (date) => {
+    if (typeof date !== 'string') {
+      return new Date(date).toLocaleString();
+    }
+    return utcDateFormat(date, "HH':'mm'");
+  };
+
+  const formatOutwardDatetime = (date) => {
+    if (typeof date !== 'string') {
+      return new Date(date).toLocaleString();
+    }
+
+    return marginDuration > 0 ? utcDateFormat(date, "dd'/'MM'/'yyyy") : '';
+  };
+
   if (regularMode) {
     return (
       <SolidaryQuestion question="Récapitulatif">
@@ -55,15 +70,27 @@ export const SolidaryPunctualAskSummary = ({ regularMode = false }) => {
     );
   }
 
+  const getMarginDate = () => {
+    const hour = formatHour(outwardDatetime);
+    if (marginDuration > 0) {
+      if (hour === '11:30')
+        return <p>{`Départ : ${formatOutwardDatetime(outwardDatetime)} 8h-13h `}</p>;
+      if (hour === '15:30')
+        return <p>{`Départ : ${formatOutwardDatetime(outwardDatetime)} 13h-18h `}</p>;
+      if (hour === '19:30')
+        return <p>{`Départ : ${formatOutwardDatetime(outwardDatetime)} 18h-21h `}</p>;
+    }
+    return <p>{`Départ : ${formatDate(outwardDatetime)} `}</p>;
+  };
+
   return (
     <SolidaryQuestion question="Récapitulatif">
       {[
-        outwardDatetime && <p>{`Départ : ${formatDate(outwardDatetime)} `}</p>,
+        outwardDatetime && getMarginDate(),
         outwardDeadlineDatetime && (
           <p>{`Départ limite : ${formatDate(outwardDeadlineDatetime)} `}</p>
         ),
         returnDatetime && <p>{`Retour : ${formatDate(returnDatetime)} `}</p>,
-        (marginDuration>0) && <p>{`Marge +/- : ${parseFloat((marginDuration / 3600).toFixed(2))} heures`}</p>,
       ].filter((x) => x)}
     </SolidaryQuestion>
   );

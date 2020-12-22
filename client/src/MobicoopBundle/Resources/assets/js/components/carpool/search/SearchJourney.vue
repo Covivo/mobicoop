@@ -59,7 +59,7 @@
             id="from"
             :url="geoSearchUrl"
             :label="labelOrigin"
-            :token="user ? user.geoToken : ''"
+            :token="user ? user.token : ''"
             required
             :show-required="showRequired"
             :required-error="requiredErrorOrigin"
@@ -105,7 +105,7 @@
             id="to"
             :url="geoSearchUrl"
             :label="labelDestination"
-            :token="user ? user.geoToken : ''"
+            :token="user ? user.token : ''"
             required
             :show-required="showRequired"
             :required-error="requiredErrorDestination"
@@ -153,7 +153,8 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>{{ $t('switch.regular.help') }}</span>
+            <span v-if="regular">{{ $t('switch.regular.help') }}</span>
+            <span v-else>{{ $t('switch.punctual.help') }}</span>
           </v-tooltip>
         </v-col>
       </v-row>

@@ -32,6 +32,10 @@
             "label": "URL de l'événement",
             "tooltips": "L'adresse du site web de l'événement",
             "error": "Veuillez renseigner un site web au format valide"
+        },
+        "private": {
+            "label": "Evénement privé (n'apparait pas dans la liste des événements)",
+            "tooltip": "Vous pourrez transmettre le lien direct reçu dans l'email de confirmation"
         }
     },
     "redirect": {

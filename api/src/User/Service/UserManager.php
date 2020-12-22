@@ -472,9 +472,6 @@ class UserManager
         $user->setMusic($this->music);
         $user->setSmoke($this->smoke);
 
-        // Create geotoken
-        $user->setGeoToken($this->createToken($user));
-
         // Create token to validate inscription
         $user->setEmailToken($this->createToken($user));
 
@@ -504,9 +501,6 @@ class UserManager
             // deactivate sms notification since the phone is new
             $user = $this->deActivateSmsNotification($user);
         }
-
-        // update of the geotoken
-        $user->setGeoToken($this->createToken($user));
 
         //we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
@@ -577,6 +571,18 @@ class UserManager
     public function encodePassword(User $user, string $password)
     {
         return $this->encoder->encodePassword($user, $password);
+    }
+
+    /**
+     * Check a password for a user
+     *
+     * @param User $user        The user
+     * @param string $password  The password to check
+     * @return bool             The password matches or not
+     */
+    public function isValidPassword(User $user, string $password)
+    {
+        return $this->encoder->isPasswordValid($user, $password);
     }
 
     /**
@@ -828,8 +834,6 @@ class UserManager
         if (!is_null($user)) {
             // Create a password token
             $user->setPwdToken($this->createToken($user));
-            // update of the geotoken
-            $user->setGeoToken($this->createToken($user));
             // persist the user
             $this->entityManager->persist($user);
             $this->entityManager->flush();

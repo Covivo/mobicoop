@@ -130,7 +130,7 @@ class ImportManager
             $sql = "
             INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) 
             SELECT u.id, '" . $origin . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
-            INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = u.id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId . "  ";
+            INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = u.id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId;
         } elseif (!is_null($lowestId)) {
             $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user WHERE id>=" . $lowestId;
         } else {
@@ -182,13 +182,31 @@ class ImportManager
         $q->execute();
 
         // create user_notification rows
-        $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
-        SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
-        FROM user_import i LEFT JOIN user u ON u.id = i.user_id
-        JOIN notification n
-        WHERE n.user_editable=1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        if (!is_null($massId)) {
+            $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
+            SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+            FROM user_import i LEFT JOIN user u ON u.id = i.user_id INNER JOIN mass_person mp ON mp.user_id = u.id 
+            JOIN notification n
+            WHERE n.user_editable=1 AND mp.mass_id = " . $massId;
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        } elseif (!is_null($lowestId)) {
+            $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
+            SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+            FROM user_import i LEFT JOIN user u ON u.id = i.user_id
+            JOIN notification n
+            WHERE n.user_editable=1 and i.user_id>=" . $lowestId;
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        } else {
+            $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
+            SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
+            FROM user_import i LEFT JOIN user u ON u.id = i.user_id
+            JOIN notification n
+            WHERE n.user_editable=1";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status WHERE u.status=:oldStatus')

@@ -46,6 +46,10 @@ export const EventEdit = (props) => {
           required
           formClassName={classes.title}
         />
+        <BooleanInput
+          label={translate('custom.label.event.private')}
+          source="private"
+        />
         <ReferenceField
           reference="images"
           source="images[0].id"

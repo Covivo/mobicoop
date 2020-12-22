@@ -302,6 +302,12 @@ services:
         resource: '../src/Event/Controller'
         tags: ['controller.service_arguments']
 
+    # External Connection
+    App\ExternalJourney\Service\ExternalConnectionManager:
+        arguments:
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:
         arguments:

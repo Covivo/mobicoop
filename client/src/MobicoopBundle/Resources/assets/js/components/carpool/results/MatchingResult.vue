@@ -69,12 +69,15 @@
           <!-- Carpooler detail -->
           <carpooler-summary
             :carpooler="result.carpooler"
-            :carpooler-rate="carpoolerRate"
             :user="user"
             :external-rdex-journeys="externalRdexJourneys"
             :external-url="(result.externalUrl) ? result.externalUrl : null"
             :external-origin="(result.externalOrigin) ? result.externalOrigin : null"
+            :external-provider="(result.externalProvider) ? result.externalProvider : null"
+            :external-journey-id="(result.externalJourneyId) ? result.externalJourneyId : null"
             :communities="result.communities"
+            :origin="result.origin"
+            :destination="result.destination"
             @carpool="carpool"
             @loginOrRegister="loginOrRegister"
           />
@@ -116,10 +119,6 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
-    },
-    carpoolerRate: {
-      type: Boolean,
-      default: true
     },
     externalRdexJourneys: {
       type: Boolean,

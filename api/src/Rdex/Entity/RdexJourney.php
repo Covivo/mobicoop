@@ -148,6 +148,13 @@ class RdexJourney implements \JsonSerializable
     private $origin;
     
     /**
+     * @var string The provider (in .json configuration)
+     *
+     * @Groups("rdex")
+     */
+    private $provider;
+
+    /**
      * @var string The url of the ad.
      *
      * @Groups("rdex")
@@ -315,6 +322,14 @@ class RdexJourney implements \JsonSerializable
     public function getOrigin()
     {
         return $this->origin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider()
+    {
+        return $this->provider;
     }
 
     /**
@@ -499,6 +514,14 @@ class RdexJourney implements \JsonSerializable
     public function setOrigin($origin)
     {
         $this->origin = $origin;
+    }
+
+    /**
+     * @param string $provider
+     */
+    public function setProvider($provider)
+    {
+        $this->provider = $provider;
     }
 
     /**

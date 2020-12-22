@@ -41,6 +41,10 @@ export const EventCreate = (props) => {
           validate={[required()]}
           formClassName={classes.title}
         />
+        <BooleanInput
+          label={translate('custom.label.event.private')}
+          source="private"
+        />
         <EventImageUpload
           label={translate('custom.label.event.uploadImage')}
           formClassName={classes.fullwidth}

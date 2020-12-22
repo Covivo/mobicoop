@@ -757,13 +757,40 @@ class RdexManager
      */
     public function sendConnection(Request $request)
     {
+        // check the mandatory parameters
+        if (is_null($request->get("driver"))) {
+            return new RdexError("driver", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if (is_null($request->get("driver")['state'])) {
+            return new RdexError("driver_state", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if (is_null($request->get("passenger"))) {
+            return new RdexError("passenger", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if (is_null($request->get("passenger")['state'])) {
+            return new RdexError("passenger_state", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if (is_null($request->get("journeys"))) {
+            return new RdexError("journeys", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if (is_null($request->get("details"))) {
+            return new RdexError("details", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+
+        if ($request->get("driver")['state']==RdexConnection::STATE_RECIPIENT && is_null($request->get("driver")['uuid'])) {
+            return new RdexError("driver_uuid", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+        if ($request->get("passenger")['state']==RdexConnection::STATE_RECIPIENT && is_null($request->get("passenger")['uuid'])) {
+            return new RdexError("passenger_uuid", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        }
+
         $rdexConnection = new RdexConnection();
 
         // The message
         $rdexConnection->setDetails($request->get("details"));
 
-        $rdexConnection->setOperator($this->operator->getName());
-        $rdexConnection->setOrigin($this->operator->getOrigin());
+        $rdexConnection->setOperator(!is_null($request->get("operator")) ? $request->get("operator") : $this->operator->getName());
+        $rdexConnection->setOrigin(!is_null($request->get("origin")) ? $request->get("origin") : $this->operator->getOrigin());
 
         // The futur recipient of the message
         $recipient = null;
@@ -774,7 +801,7 @@ class RdexManager
         if (isset($request->get("driver")['alias'])) {
             $rdexDriver->setAlias($request->get("driver")['alias']);
         }
-        if ($request->get("driver")['state']=="recipient") {
+        if ($request->get("driver")['state']==RdexConnection::STATE_RECIPIENT) {
             $rdexDriver->setUuid($request->get("driver")['uuid']);
             $recipient = $this->userManager->getUser($request->get("driver")['uuid']);
         }
@@ -786,7 +813,7 @@ class RdexManager
         if (isset($request->get("passenger")['alias'])) {
             $rdexPassenger->setAlias($request->get("passenger")['alias']);
         }
-        if ($request->get("passenger")['state']=="recipient") {
+        if ($request->get("passenger")['state']==RdexConnection::STATE_RECIPIENT) {
             $rdexPassenger->setUuid($request->get("passenger")['uuid']);
             $recipient = $this->userManager->getUser($request->get("passenger")['uuid']);
         }
@@ -799,7 +826,7 @@ class RdexManager
         if (!is_null($recipient)) {
             $this->notificationManager->notifies(RdexConnectionEvent::NAME, $recipient, $rdexConnection);
         } else {
-            return new RdexError("recipient", RdexError::ERROR_UNKNOWN_USER);
+            return new RdexError(RdexConnection::STATE_RECIPIENT, RdexError::ERROR_UNKNOWN_USER);
         }
 
         return true;

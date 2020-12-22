@@ -51,14 +51,16 @@ class CommunityController extends AbstractController
     const DEFAULT_NB_COMMUNITIES_PER_PAGE = 10; // Nb items per page by default
 
     private $createFromFront;
+    private $communityUserDirectMessage;
 
     /**
      * Constructor
      * @param string $createFromFront
      */
-    public function __construct(bool $createFromFront)
+    public function __construct(bool $createFromFront, bool $communityUserDirectMessage)
     {
         $this->createFromFront = $createFromFront;
+        $this->communityUserDirectMessage = $communityUserDirectMessage;
     }
 
     /**
@@ -206,7 +208,8 @@ class CommunityController extends AbstractController
             'error' => (isset($error)) ? $error : false,
             'points' => $ways,
             'lastUsers' => $lastUsers,
-            'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1
+            'communityUserStatus' => (isset($communityUser) && $communityUser!==null && count($communityUser)>0)?$communityUser[0]->getStatus():-1,
+            'communityUserDirectMessage' => $this->communityUserDirectMessage
         ]);
     }
 

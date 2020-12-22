@@ -80,6 +80,7 @@ use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
+use App\User\Filter\FamillyAndGivenNameFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
@@ -375,6 +376,7 @@ use App\User\Controller\UserCanUseEmail;
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
+ * @ApiFilter(FamillyAndGivenNameFilter::class, properties={"q"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)
@@ -447,7 +449,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -727,14 +729,6 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
-
-    /**
-     * @var string|null Token for geographical search authorization.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
-     */
-    private $geoToken;
 
     /**
      * @var string|null Token for phone validation.
@@ -1242,6 +1236,13 @@ class User implements UserInterface, EquatableInterface
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getStatus(): int
     {
         return $this->status;
@@ -1579,17 +1580,6 @@ class User implements UserInterface, EquatableInterface
     public function setPwdTokenDate(?DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
-        return $this;
-    }
-
-    public function getGeoToken(): ?string
-    {
-        return $this->geoToken;
-    }
-
-    public function setGeoToken(?string $geoToken): self
-    {
-        $this->geoToken = $geoToken;
         return $this;
     }
 

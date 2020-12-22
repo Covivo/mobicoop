@@ -25,4 +25,5 @@ namespace App\Action\Exception;
 class ActionException extends \LogicException
 {
     const INVALID_DATA_PROVIDED = "Invalid data provided";
+    const BAD_ACTION = "Unknown action";
 }

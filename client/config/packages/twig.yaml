@@ -6,6 +6,7 @@ twig:
     strict_variables: '%kernel.debug%'
     cache: false
     globals:
+        token: '@Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider'
         delete_profile: '%env(DELETE_PROFILE)%'
         app_name: '%env(APP_NAME)%'
         assets_prefix: '%env(ASSETS_PREFIX)%'
@@ -32,7 +33,6 @@ twig:
         homeEventDisplay: '%env(resolve:EVENT_DISPLAY)%'
         homeSolidaryDisplay: '%env(resolve:SOLIDARY_DISPLAY)%'
         userAvatarSize: '%env(resolve:USER_AVATAR_SIZE)%'
-        carpoolerRate: '%env(resolve:CARPOOLER_RATE)%'
         eventImageSize : '%env(resolve:EVENT_IMAGE_SIZE)%'
         matomoUrl: '%env(resolve:MATOMO_URL)%'
         matomoSiteId: '%env(resolve:MATOMO_SITE_ID)%'

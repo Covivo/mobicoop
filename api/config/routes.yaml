@@ -4,6 +4,8 @@ api_login_check_server:
 # api authentication for users
 api_login_check_user:
     path: /login
+api_login_check_user_delegate:
+    path: /login-delegate
 api_login_check_user_token:
     path: /login-token
 api_login_check_user_sso:

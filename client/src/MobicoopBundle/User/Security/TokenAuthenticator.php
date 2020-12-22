@@ -2,6 +2,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Security;
 
+use Exception;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     const USER_LOGIN_ROUTE = "user_login";
+    const USER_LOGIN_DELEGATE_ROUTE = "user_login_delegate";
     const USER_LOGIN_RESULT_ROUTE = "user_login_result";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
     const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
@@ -63,6 +64,17 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 ) {
                     $this->dataProvider->setPassword($request->get('password'));
                     $this->dataProvider->setUsername($request->get('email'));
+                    return true;
+                }
+                // no break
+            case self::USER_LOGIN_DELEGATE_ROUTE:
+                if (
+                    $request->isMethod('POST') &&
+                    $request->get('email') != '' && $request->get('emailDelegate') != '' && $request->get('password') != ''
+                ) {
+                    $this->dataProvider->setPassword($request->get('password'));
+                    $this->dataProvider->setUsername($request->get('email'));
+                    $this->dataProvider->setUsernameDelegate($request->get('emailDelegate'));
                     return true;
                 }
                 // no break
@@ -110,7 +122,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         // We set the dataProvider to private => will discard the current JWT token
         $this->dataProvider->setPrivate(true);
 
-        $response = $this->dataProvider->getSpecialCollection("me");
+        try {
+            $response = $this->dataProvider->getSpecialCollection("me");
+        } catch (Exception $e) {
+            return null;
+        }
 
         if (null === $response) {
             // The token header was empty, authentication fails with HTTP Status
@@ -142,6 +158,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         switch ($request->get('_route')) {
             case self::USER_LOGIN_ROUTE:
+            case self::USER_LOGIN_DELEGATE_ROUTE:
                 if ($targetPath = $request->getSession()->get('_security.main.target_path')) {
                     return new RedirectResponse($targetPath);
                 }

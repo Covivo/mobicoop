@@ -16,12 +16,12 @@ security:
             chain:
                 providers: [servers, users]
                 # providers: [jwt, servers, users]
-        # provider for apps authentication (eg. frontend)
+        # provider for apps authentication (eg. unlogged frontend)
         servers:
             entity:
                 class: 'App\App\Entity\App'
                 property: 'username'
-        # provider for users authentication (eg. mobile apps, admin)
+        # provider for users authentication (eg. logged frontend, mobile apps, admin)
         users:
             entity:
                 class: 'App\User\Entity\User'
@@ -67,6 +67,16 @@ security:
                 authenticators:
                     - App\Security\SsoAuthenticator
 
+        # firewall for user to server delegated authentication
+        login_user_delegate:
+            pattern:  ^/login-delegate
+            stateless: true
+            anonymous: true
+            provider: users
+            guard:
+                authenticators:
+                    - App\Security\DelegateAuthenticator
+
         # firewall for user to server authentication
         login_user:
             pattern:  ^/login
@@ -98,13 +108,6 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
-
-        # firewall for geosearch
-        geosearch:
-            pattern:  ^/addresses/search
-            stateless: true
-            anonymous: true
 
         # firewall for reverse geocoding
         reverse:
@@ -157,7 +160,6 @@ security:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/addresses/reverse, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/journeys, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rdex/connections, roles: IS_AUTHENTICATED_ANONYMOUSLY }
