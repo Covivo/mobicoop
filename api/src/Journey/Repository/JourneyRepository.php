@@ -126,6 +126,7 @@ class JourneyRepository
     {
         $query = $this->repository->createQueryBuilder('j')
         ->where("j.origin in (:origins) AND j.destination in (:destinations)")
+        ->orderBy('j.fromDate', 'asc')
         ->setParameter('origins', $origin)
         ->setParameter('destinations', $destination);
         $queryNameGenerator = new QueryNameGenerator();

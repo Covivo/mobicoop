@@ -150,31 +150,38 @@ class JourneyManager
      *
      * @param string $origin        The origin
      * @param string $destination   The destination
-     * @return array The journeys found
+     * @param integer $frequency    The default frequency to display
+     * @param integer $page         The page of results to display for the given frequency
+     * @param integer $perPage      The number of results per page to dislay
+     * @return void
      */
-    public function getFromTo(string $origin, string $destination, int $page=1, int $perPage=30)
+    public function getFromTo(string $origin, string $destination, int $frequency=1, int $page=1, int $perPage=30)
     {
         $response = $this->dataProvider->getSpecialCollection('origin/'.$origin.'/destination/'.$destination, ['page'=>$page,'perPage'=>$perPage]);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
-            // we search the "real" origin and destination => the cities provided as parameter are a sanitized version
+            $journeys = [
+                'punctual' => [],
+                'regular' => []
+            ];
+            $lOrigin = $lDestination = null;
             foreach ($response->getValue()->getMember() as $journey) {
-                if ($journey->getOrigin() !== $origin) {
-                    // we stop as soon as we get a valid origin
-                    $origin = ucfirst(strtolower($journey->getOrigin()));
-                    break;
+                // we search the "real" origin and destination => the cities provided as parameter are a sanitized version
+                if (is_null($lOrigin) && $journey->getOrigin() !== $origin) {
+                    $lOrigin = ucfirst(strtolower($journey->getOrigin()));
                 }
-            }
-            foreach ($response->getValue()->getMember() as $journey) {
-                if ($journey->getDestination() !== $destination) {
-                    // we stop as soon as we get a valid destination
-                    $destination = ucfirst(strtolower($journey->getDestination()));
-                    break;
+                if (is_null($lDestination) && $journey->getDestination() !== $destination) {
+                    $lDestination = ucfirst(strtolower($journey->getDestination()));
+                }
+                if ($journey->getFrequency() == Journey::FREQUENCY_PUNCTUAL) {
+                    $journeys['punctual'][] = $journey;
+                } else {
+                    $journeys['regular'][] = $journey;
                 }
             }
             return [
-                'origin' => $origin,
-                'destination' => $destination,
-                'journeys' => $response->getValue()->getMember(),
+                'origin' => is_null($lOrigin) ? $origin : $lOrigin,
+                'destination' => is_null($lDestination) ? $destination : $lDestination,
+                'journeys' => $journeys,
                 'total' => $response->getValue()->getTotalItems()
             ];
         }

@@ -660,10 +660,10 @@ city_to:
 city_to_city:
     methods: [GET]
     path:
-        fr: /covoiturage/{origin}/{destination}/{page}/{perPage}
-        en: /carpool/{origin}/{destination}/{page}/{perPage}
+        fr: /covoiturage/{origin}/{destination}/{frequency}/{page}/{perPage}
+        en: /carpool/{origin}/{destination}/{frequency}/{page}/{perPage}
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCityToCity
-    defaults: { page: 1, perPage: 30 }
+    defaults: { frequency: 1, page: 1, perPage: 300 }
 
 
 ####################

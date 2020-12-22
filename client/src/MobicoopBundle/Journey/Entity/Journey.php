@@ -30,6 +30,12 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
  */
 class Journey implements ResourceInterface, \JsonSerializable
 {
+    const FREQUENCY_PUNCTUAL = 1;
+    const FREQUENCY_REGULAR = 2;
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+    const ROLE_DRIVER_OR_PASSENGER = 3;
+    
     /**
      * @var int|null The id of this journey.
      */
@@ -49,6 +55,11 @@ class Journey implements ResourceInterface, \JsonSerializable
      * @var string|null The name of the user.
      */
     private $userName;
+
+    /**
+     * @var int|null The age of the user
+     */
+    private $age;
     
     /**
      * @var string The origin of the journey
@@ -96,6 +107,16 @@ class Journey implements ResourceInterface, \JsonSerializable
     private $frequency;
 
     /**
+     * @var int The proposal type (1 = oneway; 2 = return trip).
+     */
+    private $type;
+
+    /**
+     * @var int|null The role for this journey (1 = driver; 2 = passenger; 3 = driver or passenger).
+     */
+    private $role;
+
+    /**
      * @var \DateTimeInterface|null The starting date.
      */
     private $fromDate;
@@ -111,9 +132,19 @@ class Journey implements ResourceInterface, \JsonSerializable
     private $time;
 
     /**
-     * @var string|null The json representation of the possible days and times for a regular journey.
+     * @var string|null The json representation of the possible days for a regular journey.
      */
     private $days;
+
+    /**
+     * @var string|null The json representation of the outward times for a regular journey.
+     */
+    private $outwardTimes;
+
+    /**
+     * @var string|null The json representation of the return times for a regular journey.
+     */
+    private $returnTimes;
 
     /**
      * @var \DateTimeInterface|null Creation date of the journey.
@@ -164,6 +195,18 @@ class Journey implements ResourceInterface, \JsonSerializable
     public function setUserName(?string $userName): self
     {
         $this->userName = $userName;
+
+        return $this;
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+    
+    public function setAge(int $age): self
+    {
+        $this->age = $age;
 
         return $this;
     }
@@ -268,6 +311,30 @@ class Journey implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+
+    public function setRole(int $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
     public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
@@ -307,14 +374,89 @@ class Journey implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function getDays(): ?string
+    public function getOutwardTime()
     {
-        return $this->days;
+        if ($this->outwardTimes) {
+            $times = json_decode($this->outwardTimes);
+            $outwardTime = null;
+            foreach ($times as $time) {
+                if (is_null($time)) {
+                    continue;
+                }
+                if (is_null($outwardTime)) {
+                    $outwardTime = $time;
+                } elseif ($outwardTime !== $time) {
+                    $outwardTime = null;
+                    break;
+                }
+            }
+            if (!is_null($outwardTime)) {
+                return \DateTime::createFromFormat('H:i:s', $outwardTime)->format('Y-m-d H:i:s');
+            }
+        }
+        return null;
+    }
+
+    public function getReturnTime()
+    {
+        if ($this->returnTimes) {
+            $times = json_decode($this->returnTimes);
+            $returnTime = null;
+            foreach ($times as $time) {
+                if (is_null($time)) {
+                    continue;
+                }
+                if (is_null($returnTime)) {
+                    $returnTime = $time;
+                } elseif ($returnTime !== $time) {
+                    $returnTime = null;
+                    break;
+                }
+            }
+            if (!is_null($returnTime)) {
+                return \DateTime::createFromFormat('H:i:s', $returnTime)->format('Y-m-d H:i:s');
+            }
+        }
+        return null;
+    }
+
+    public function getDays()
+    {
+        if (!is_null($this->days)) {
+            return array_map(function ($value) {
+                return $value == "1" ? true : false;
+            }, json_decode($this->days, true));
+        }
+        return null;
     }
 
     public function setDays(?string $days): self
     {
         $this->days = $days;
+
+        return $this;
+    }
+
+    public function getOutwardTimes(): ?string
+    {
+        return $this->outwardTimes;
+    }
+
+    public function setOutwardTimes(?string $outwardTimes): self
+    {
+        $this->outwardTimes = $outwardTimes;
+
+        return $this;
+    }
+
+    public function getReturnTimes(): ?string
+    {
+        return $this->returnTimes;
+    }
+
+    public function setReturnTimes(?string $returnTimes): self
+    {
+        $this->returnTimes = $returnTimes;
 
         return $this;
     }
@@ -340,6 +482,7 @@ class Journey implements ResourceInterface, \JsonSerializable
             'proposalId' => $this->getProposalId(),
             'userId' => $this->getUserId(),
             'username' => $this->getUsername(),
+            'age' => $this->getAge(),
             'origin' => $this->getOrigin(),
             'originSanitized' => $this->getOriginSanitized(),
             'latitudeOrigin' => $this->getLatitudeOrigin(),
@@ -349,10 +492,16 @@ class Journey implements ResourceInterface, \JsonSerializable
             'latitudeDestination' => $this->getLatitudeDestination(),
             'longitudeDestination' => $this->getLongitudeDestination(),
             'frequency' => $this->getFrequency(),
+            'type' => $this->getType(),
+            'role' => $this->getRole(),
             'fromDate' => $this->getFromDate(),
             'toDate' => $this->getToDate(),
             'time' => $this->getTime(),
             'days' => $this->getDays(),
+            'outwardTimes' => $this->getOutwardTimes(),
+            'returnTimes' => $this->getReturnTimes(),
+            'outwardTime' => $this->getOutwardTime(),
+            'returnTime' => $this->getReturnTime(),
             'createdDate' => $this->getCreatedDate()
         ];
     }

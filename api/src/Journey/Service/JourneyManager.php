@@ -68,19 +68,39 @@ class JourneyManager
 
         // insert journeys
         $sql = "
-        insert into journey (proposal_id, user_id, frequency, from_date, origin, latitude_origin, longitude_origin, destination, latitude_destination, longitude_destination, created_date) 
-        select p.id, 0, 0, now(), ao.address_locality, ao.latitude, ao.longitude, ad.address_locality, ad.latitude, ad.longitude, now() from address ao 
+        insert into journey (proposal_id, user_id, frequency, type, role, from_date, origin, latitude_origin, longitude_origin, destination, latitude_destination, longitude_destination, created_date) 
+        select p.id, 0, 0, IF(p.type=1,1,2), 0, now(), ao.address_locality, ao.latitude, ao.longitude, ad.address_locality, ad.latitude, ad.longitude, now() from address ao 
         left join waypoint wo on wo.address_id = ao.id left join proposal p on wo.proposal_id = p.id left join waypoint wd on wd.proposal_id = p.id 
         left join address ad on wd.address_id = ad.id 
-        where p.private <> 1 and ao.address_locality is not null and ad.address_locality is not null and wo.proposal_id is not null and wo.position = 0 and wd.destination = 1;
+        where p.private <> 1 and ao.address_locality is not null and ad.address_locality is not null and wo.proposal_id is not null and wo.position = 0 and wd.destination = 1
+        ;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
-        // add date and time
+        // add days, date and time
         $sql = "
-        update journey j inner join criteria c on c.id = j.proposal_id set j.frequency = c.frequency, j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time, 
+        update journey j 
+        inner join proposal p on p.id = j.proposal_id
+        inner join criteria c on c.id = p.criteria_id 
+        left join proposal pr on pr.id = p.proposal_linked_id
+        left join criteria cr on cr.id = pr.criteria_id
+        set j.frequency = c.frequency, j.role = IF(c.driver=1 AND c.passenger=1,3,IF(c.driver=1,1,2)), j.from_date = c.from_date, j.to_date = c.to_date, j.time = c.from_time, 
         j.days = IF(c.frequency=2, 
+        (
+            CONCAT(
+                '{',
+                CONCAT('\"mon\":\"',IF((c.mon_check=1 AND c.mon_time IS NOT NULL) OR (cr.mon_check=1 AND cr.mon_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"tue\":\"',IF((c.tue_check=1 AND c.tue_time IS NOT NULL) OR (cr.tue_check=1 AND cr.tue_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"wed\":\"',IF((c.wed_check=1 AND c.wed_time IS NOT NULL) OR (cr.wed_check=1 AND cr.wed_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"thu\":\"',IF((c.thu_check=1 AND c.thu_time IS NOT NULL) OR (cr.thu_check=1 AND cr.thu_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"fri\":\"',IF((c.fri_check=1 AND c.fri_time IS NOT NULL) OR (cr.fri_check=1 AND cr.fri_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"sat\":\"',IF((c.sat_check=1 AND c.sat_time IS NOT NULL) OR (cr.sat_check=1 AND cr.sat_time IS NOT NULL),1,0),'\",'),
+                CONCAT('\"sun\":\"',IF((c.sun_check=1 AND c.sun_time IS NOT NULL) OR (cr.sun_check=1 AND cr.sun_time IS NOT NULL),1,0),'\"'),
+                '}'
+            )
+        ),null),
+        j.outward_times = IF(c.frequency=2, 
         (
             CONCAT(
                 '{',
@@ -93,9 +113,23 @@ class JourneyManager
                 CONCAT('\"sun\":',IF(c.sun_check=1 AND c.sun_time IS NOT NULL,CONCAT('\"',c.sun_time,'\"'),'null')),
                 '}'
             )
-        ),
-        null);
+        ),null),
+        j.return_times = IF(c.frequency=2 AND j.type=2, 
+        (
+            CONCAT(
+                '{',
+                CONCAT('\"mon\":',IF(cr.mon_check=1 AND cr.mon_time IS NOT NULL,CONCAT('\"',cr.mon_time,'\"'),'null'),','),
+                CONCAT('\"tue\":',IF(cr.tue_check=1 AND cr.tue_time IS NOT NULL,CONCAT('\"',cr.tue_time,'\"'),'null'),','),
+                CONCAT('\"wed\":',IF(cr.wed_check=1 AND cr.wed_time IS NOT NULL,CONCAT('\"',cr.wed_time,'\"'),'null'),','),
+                CONCAT('\"thu\":',IF(cr.thu_check=1 AND cr.thu_time IS NOT NULL,CONCAT('\"',cr.thu_time,'\"'),'null'),','),
+                CONCAT('\"fri\":',IF(cr.fri_check=1 AND cr.fri_time IS NOT NULL,CONCAT('\"',cr.fri_time,'\"'),'null'),','),
+                CONCAT('\"sat\":',IF(cr.sat_check=1 AND cr.sat_time IS NOT NULL,CONCAT('\"',cr.sat_time,'\"'),'null'),','),
+                CONCAT('\"sun\":',IF(cr.sun_check=1 AND cr.sun_time IS NOT NULL,CONCAT('\"',cr.sun_time,'\"'),'null')),
+                '}'
+            )
+        ),null);
         ";
+        
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
@@ -103,6 +137,15 @@ class JourneyManager
         $sql = "delete from journey where frequency=0;";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
+
+        $sql = "delete from journey where frequency=1 and from_date<CURDATE();";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+       
+        $sql = "delete from journey where frequency<>1 and to_date<CURDATE();";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
 
         // add user
         $sql = "
@@ -113,7 +156,9 @@ class JourneyManager
             ' ',
             UPPER(LEFT(TRIM(u.family_name),1)),
             '.'
-        );
+        ),
+        j.age = TIMESTAMPDIFF(YEAR, u.birth_date, CURDATE())
+        ;
         ";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -177,6 +222,7 @@ class JourneyManager
                 $cities[] = $journey['origin'];
             }
         }
+        $cities = array_unique($cities);
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllFrom($cities, $operationName, $context);
     }
@@ -204,6 +250,7 @@ class JourneyManager
                 $cities[] = $journey['origin'];
             }
         }
+        $cities = array_unique($cities);
         // then we search the destinations with the 'real' spellings
         return $this->journeyRepository->getDestinationsForOrigin($cities);
     }
@@ -231,6 +278,7 @@ class JourneyManager
                 $cities[] = $journey['destination'];
             }
         }
+        $cities = array_unique($cities);
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllTo($cities, $operationName, $context);
     }
@@ -258,6 +306,7 @@ class JourneyManager
                 $cities[] = $journey['destination'];
             }
         }
+        $cities = array_unique($cities);
         // then we search the destinations with the 'real' spellings
         return $this->journeyRepository->getOriginsForDestination($cities);
     }
@@ -296,7 +345,8 @@ class JourneyManager
                 $citiesDestination[] = $journey['destination'];
             }
         }
-
+        $citiesOrigin = array_unique($citiesOrigin);
+        $citiesDestination = array_unique($citiesDestination);
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllFromTo($citiesOrigin, $citiesDestination, $operationName, $context);
     }
