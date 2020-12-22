@@ -62,4 +62,6 @@ toolbox:
 relaypoints:
     title: "Points relais"
 payment:
-    title: "Paiements"    
+    title: "Paiements"
+rssfeeds:
+    title: "Rss feeds"             

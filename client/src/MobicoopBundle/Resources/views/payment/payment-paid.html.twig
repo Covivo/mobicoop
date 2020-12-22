@@ -5,5 +5,9 @@
  
 {% endblock %}
 {% block main %}
-<payment-paid :payment-payment-id="{{ paymentPaymentId }}" />
+    <payment-paid
+        :payment-payment-id="{{ paymentPaymentId }}"
+        :tips-encouragement="{{ tipsEncouragement ? "true" : "false" }}"
+        platform-name="{{ app_name }}"
+    />
 {% endblock %}

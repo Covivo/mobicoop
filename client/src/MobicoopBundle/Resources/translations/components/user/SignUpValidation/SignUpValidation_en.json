@@ -1,7 +1,8 @@
 {
     "title": "Email validation",
     "token": "Your validation code",
-    "urlPost": "/user/signup/validation/{email}/{token}",
+    "urlSignUpValidation": "/user/login-token",
+    "urlEmailValidation": "/user/login-token/email",
     "tokenRequired": "Your validation code is required",
     "errorCredentials": "Unrecognized token",
     "validate": "Sign up validation",

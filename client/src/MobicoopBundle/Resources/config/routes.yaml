@@ -81,6 +81,12 @@ user_login_token:
         en: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
+user_login_token_email:
+    path:
+        fr: /utilisateur/login-token/email
+        en: /user/login-token/email
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userEmailValidationCheck
+
 user_login_delegate:
     path:
         fr: /login-admin/{email}/{delegateEmail}
@@ -183,6 +189,22 @@ user_phone_token:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
+
+# send a validation email AJAX
+user_email_validation:
+    path:    
+        fr: /utilisateur/email/validation
+        en: /user/email/validation
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
+
+#user form email validation
+user_email_form_validation:    
+    path:
+        fr: /utilisateur/email/validation/{email}/{token}
+        en: /user/signup/email/{email}/{token}
+    defaults:
+        token: ""
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # delete avatar
 user_profile_image_delete:
@@ -438,8 +460,8 @@ user_review_write:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/post/
+        fr: /covoiturage/publierannonce
+        en: /carpool/postad
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
 # update an ad
@@ -459,14 +481,14 @@ carpool_ad_delete:
 # post a first ad
 carpool_first_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/premiere
+        fr: /covoiturage/publierannonce/premiere
         en: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a solidary exclusive ad
 carpool_solidary_exclusive_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/solidaire
+        fr: /covoiturage/publierannonce/solidaire
         en: /carpool/ad/post/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
 
@@ -680,8 +702,8 @@ community_create:
 # display communities
 community_list:
     path:
-        fr: /communautes
-        en: /community
+        fr: /covoiturage-communaute
+        en: /carpool-community
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # Get the communities (AJAX)
@@ -695,8 +717,8 @@ community_get_list:
 # display one community
 community_show:
     path:
-        fr: /communaute/{id}
-        en: /community/{id}
+        fr: /covoiturage-communaute/{id}/{urlKey}
+        en: /carpool-community/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
@@ -812,6 +834,14 @@ article:
         fr: /article
         en: /article
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
+
+# Get the rss feeds (AJAX)
+rss_feed_get_list:
+    methods: [POST]
+    path:
+        fr: /articles/home
+        en: /articles/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::getRssFeedList
 
 # display project page
 project:
@@ -1095,8 +1125,8 @@ event_get_list:
 # display events
 event_list:
     path:
-        fr: /evenements/{tabDefault?}
-        en: /events/{tabDefault?}
+        fr: /covoiturages-evenements/{tabDefault?}
+        en: /carpools-events/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # create event
@@ -1109,8 +1139,8 @@ event_create:
 # display one event
 event_show:
     path:
-        fr: /evenement/{id}
-        en: /event/{id}
+        fr: /covoiturages-evenements/{id}/{urlKey}
+        en: /carpools-events/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
@@ -1127,8 +1157,8 @@ event_widget:
 # get widget
 event_get_widget:
     path:
-        fr: /evenement/widget/get/{id}
-        en: /event/widget/get/{id}
+        fr: /evenement/widget/get/{id}/{urlKey}
+        en: /event/widget/get/{id}/{urlKey}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'

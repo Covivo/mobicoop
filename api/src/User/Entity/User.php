@@ -80,6 +80,7 @@ use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
+use App\User\Filter\FamillyAndGivenNameFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
@@ -103,6 +104,7 @@ use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
+use App\User\Controller\UserSendValidationEmail;
 
 /**
  * A user.
@@ -301,6 +303,12 @@ use App\User\Controller\UserCanUseEmail;
  *              "controller"=UserGeneratePhoneToken::class,
  *              "security"="is_granted('user_update',object)"
  *          },
+ *          "send_validation_email"={
+ *              "method"="GET",
+ *              "path"="/users/{id}/sendValidationEmail",
+ *              "controller"=UserSendValidationEmail::class,
+ *              "security"="is_granted('user_update',object)"
+ *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},
@@ -375,6 +383,7 @@ use App\User\Controller\UserCanUseEmail;
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
+ * @ApiFilter(FamillyAndGivenNameFilter::class, properties={"q"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)
@@ -501,6 +510,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
+
+    /**
+     * @var string|null The email of the user.
+     * @Groups({"readUser", "write"})
+     */
+    private $oldEmail;
 
     /**
      * @var string The email of the user in a professional context.
@@ -1301,14 +1316,26 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getOldEmail(): ?string
+    {
+        return $this->oldEmail;
+    }
+
+    public function setOldEmail(?string $oldEmail): self
+    {
+        $this->oldEmail = $oldEmail;
 
         return $this;
     }
@@ -1566,7 +1593,7 @@ class User implements UserInterface, EquatableInterface
     public function setPwdToken(?string $pwdToken): self
     {
         $this->pwdToken = $pwdToken;
-        $this->setPwdTokenDate($pwdToken ? new DateTime() : null);
+        $this->setPwdTokenDate($pwdToken ? new \DateTime() : null);
         return $this;
     }
 

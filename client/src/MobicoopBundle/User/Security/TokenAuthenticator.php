@@ -24,7 +24,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     const USER_LOGIN_DELEGATE_ROUTE = "user_login_delegate";
     const USER_LOGIN_RESULT_ROUTE = "user_login_result";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
+    const USER_LOGIN_TOKEN_ROUTE_EMAIL = "user_login_token_email";
     const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
+    const USER_EMAIL_VALIDATION_ROUTE = "user_email_form_validation";
     const USER_LOGIN_SSO_ROUTE = "user_login_sso";
 
     private $dataProvider;
@@ -88,7 +90,24 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                     return true;
                 }
                 // no break
+            case self::USER_LOGIN_TOKEN_ROUTE_EMAIL:
+                if (
+                    $request->isMethod('POST') &&
+                    $request->get('emailToken') != '' && $request->get('email') != ''
+                ) {
+                    $this->dataProvider->setUsername($request->get('email'));
+                    $this->dataProvider->setEmailToken($request->get('emailToken'));
+                    return true;
+                }
+                // no break
             case self::USER_SIGN_UP_VALIDATION_ROUTE:
+                if (($request->attributes->get('email') != '' &&  $request->attributes->get('token') != '')) {
+                    $this->dataProvider->setUsername($request->attributes->get('email'));
+                    $this->dataProvider->setEmailToken($request->attributes->get('token'));
+                    return true;
+                }
+                // no break
+            case self::USER_EMAIL_VALIDATION_ROUTE:
                 if (($request->attributes->get('email') != '' &&  $request->attributes->get('token') != '')) {
                     $this->dataProvider->setUsername($request->attributes->get('email'));
                     $this->dataProvider->setEmailToken($request->attributes->get('token'));
@@ -167,6 +186,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_RESULT_ROUTE:
                 return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));
+            case self::USER_EMAIL_VALIDATION_ROUTE:
+                return new RedirectResponse($this->router->generate('user_profile_update', ['tabDefault'=>'mon-profil']));
             default:
                 return new RedirectResponse($this->router->generate('carpool_first_ad_post'));
         }

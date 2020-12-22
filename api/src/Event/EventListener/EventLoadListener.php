@@ -21,43 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Controller;
+namespace App\Event\EventListener;
 
-use App\Article\Entity\Article;
-use App\Article\Service\ArticleManager;
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Event\Entity\Event;
+use App\Event\Service\EventManager;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Controller class for getting the external articles
- *
+ * Event Event listener
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ExternalArticlesAction
+class EventLoadListener
 {
-    use TranslatorTrait;
-    
-    private $articleManager;
-    private $request;
+    private $eventManager;
 
-    public function __construct(ArticleManager $articleManager, RequestStack $request)
+    public function __construct(EventManager $eventManager)
     {
-        $this->articleManager = $articleManager;
-        $this->request = $request->getCurrentRequest();
+        $this->eventManager = $eventManager;
     }
 
-    /**
-     * @return Array
-     */
-    public function __invoke(): array
+    public function postLoad(LifecycleEventArgs $args)
     {
-        $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
-        if ($this->request->get("nbArticles")!=="" && is_numeric($this->request->get("nbArticles"))) {
-            $nbArticles = $this->request->get("nbArticles");
-        } else {
-            $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
+        $event = $args->getEntity();
+
+        if ($event instanceof Event) {
+            $event->setUrlKey($this->eventManager->generateUrlKey($event));
         }
-        
-        return $this->articleManager->getLastExternalArticles($nbArticles);
     }
 }

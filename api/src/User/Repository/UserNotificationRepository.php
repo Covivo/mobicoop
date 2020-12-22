@@ -57,6 +57,7 @@ class UserNotificationRepository
      */
     public function findActiveByAction(string $action, int $userId)
     {
+        $userNotifications = [];
         $query = $this->repository->createQueryBuilder('un')
         ->join('un.notification', 'n')
         ->join('n.action', 'a')
@@ -65,7 +66,17 @@ class UserNotificationRepository
         ->setParameter('action', $action)
         ->setParameter('userId', $userId)
         ;
-        return $query->getQuery()->getResult();
+
+        // Safety : If there is several identical userNotifications (it shouldn't but... you know...), we only keep one.
+        $alreadySeenUserNotifications = [];
+        foreach ($query->getQuery()->getResult() as $currentUserNotification) {
+            if (!in_array($currentUserNotification->getNotification()->getId(), $alreadySeenUserNotifications)) {
+                $userNotifications[] = $currentUserNotification;
+                $alreadySeenUserNotifications[] = $currentUserNotification->getNotification()->getId();
+            }
+        }
+
+        return $userNotifications;
     }
 
     /**

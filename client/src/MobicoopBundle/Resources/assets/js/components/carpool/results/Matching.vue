@@ -10,7 +10,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ $t('title', {'cityA':displayOrigin, 'cityB':displayDestination}) }}</h1>
 
           <!-- Matching header -->
           <matching-header
@@ -218,6 +218,7 @@
         :user="user"
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
+        :fraud-warning-display="fraudWarningDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -376,6 +377,10 @@ export default {
     ptSearch: {
       type: Boolean,
       default: false
+    },
+    fraudWarningDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -438,6 +443,12 @@ export default {
     },
     displayTab(){
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
+    },
+    displayOrigin(){
+      return this.origin.addressLocality;
+    },
+    displayDestination(){
+      return this.destination.addressLocality;
     }
   },
   watch:{

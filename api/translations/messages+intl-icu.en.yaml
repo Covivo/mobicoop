@@ -51,7 +51,7 @@ canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer av
 canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du "
 deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le "
 deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du "
-urlPublish: "/covoiturage/annonce/poster"
+urlPublish: "/covoiturage/publierannonce"
 
 # CARPOOL_MATCHING_NEW
 newCarpoolAdMatchingYourCommute: "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
@@ -128,6 +128,10 @@ urlEmailValidation: "/utilisateur/inscription/validation/"
 urlMobileEmailValidation: "/#/confirm-registration/"
 yourPasswordIs: "Votre mot de passe est"
 yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
+
+# USER_SEND_VALIDATION_EMAIL
+emailValidation: "Validation de votre adresse email"
+emailValidationUrl: "/utilisateur/email/validation/"
 
 # USER_UPDATED_SELF
 

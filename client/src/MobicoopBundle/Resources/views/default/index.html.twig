@@ -1,8 +1,8 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}
-    {{ app_name }}
-{% endblock %}
+{% block title %}{% trans from 'meta' %}meta.home.title{% endtrans %}{{ app_name }}{% endblock %}
+
+{% block desc %}{% trans from 'meta' %}meta.home.description{% endtrans %}{% endblock %}
 
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}

@@ -24,6 +24,7 @@
 namespace App\Community\EventListener;
 
 use App\Community\Entity\CommunityUser;
+use App\Community\Service\CommunityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,12 +38,15 @@ class CommunityUserLoadListener
      */
     private $requestStack;
 
+    private $communityManager;
+
     /**
      * CommunityUserLoadListener constructor.
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->requestStack = $requestStack;
+        $this->communityManager = $communityManager;
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -53,10 +57,15 @@ class CommunityUserLoadListener
 
             $request = $this->requestStack->getCurrentRequest();
             $userId = intval($request->get('userId') ?: $request->get('user')); //TODO Homogénéiser les appels
+
+            $community=$communityUser->getCommunity();
             if ($userId > 0) {
                 $isMember = ($communityUser->getUser()->getId() === $userId) && (CommunityUser::STATUS_ACCEPTED_AS_MEMBER === $communityUser->getStatus() || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus());
-                $communityUser->getCommunity()->setMember($isMember);
+                $community->setMember($isMember);
             }
+            
+            // Set url Key
+            $community->setUrlKey($this->communityManager->generateUrlKey($community));
         }
     }
 }

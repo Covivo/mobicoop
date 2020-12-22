@@ -28,6 +28,20 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row justify="center">
+      <v-col
+        v-if="tipsEncouragement"
+        cols="5"
+        class="text-left"
+      >
+        {{ $t('tipsEncouragement.text', {'platformName':platformName}) }}
+        <a
+          :href="tipsEncouragementLink"
+          target="_blank"
+          title="a"
+        >{{ $t('tipsEncouragement.textLink') }}</a>.
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -49,6 +63,14 @@ export default {
     colorLoading: {
       type: String,
       default: "secondary"
+    },
+    platformName: {
+      type: String,
+      default: ""
+    },
+    tipsEncouragement: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

@@ -1,7 +1,8 @@
 {
     "title": "Vérification de votre email",
     "token": "Votre code de vérification",
-    "urlPost": "/utilisateur/inscription/validation/{email}/{token}",
+    "urlSignUpValidation": "/utilisateur/login-token",
+    "urlEmailValidation": "/utilisateur/login-token/email",
     "tokenRequired": "Votre code de vérification est obligatoire",
     "errorCredentials": "Code de vérification non reconnu",
     "validate": "Confirmer votre inscription",

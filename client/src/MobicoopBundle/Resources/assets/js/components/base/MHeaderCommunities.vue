@@ -20,7 +20,7 @@
         :key="index"
       >
         <a
-          :href="$t('urlCommunityDetails',{id:item.id})"
+          :href="$t('urlCommunityDetails',{id:item.id,urlKey:item.urlKey})"
           :alt="item.name"
           :class="linksColorClass"
         ><v-list-item-title>{{ item.name }}</v-list-item-title></a>
