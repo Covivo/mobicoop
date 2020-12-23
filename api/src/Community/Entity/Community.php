@@ -159,7 +159,14 @@ use App\Match\Entity\Mass;
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "security"="is_granted('community_read',object)"
- *          }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('community_update',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
@@ -189,7 +196,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
      */
     private $name;
 
@@ -197,7 +204,7 @@ class Community
      * @var int Community status.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aRead","readCommunity","write","readUserAdmin"})
+     * @Groups({"aRead","aWrite","readCommunity","write","readUserAdmin"})
      */
     private $status;
 
@@ -205,7 +212,7 @@ class Community
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"aRead","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $membersHidden;
 
@@ -213,7 +220,7 @@ class Community
      * @var boolean|null Proposals are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"aRead","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $proposalsHidden;
 
@@ -221,7 +228,7 @@ class Community
      * @var int|null The type of validation (automatic/manual/domain).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"aRead","readCommunity","write", "communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write", "communities"})
      */
     private $validationType;
 
@@ -229,7 +236,7 @@ class Community
      * @var string|null The domain of the community.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $domain;
 
@@ -238,7 +245,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $description;
 
@@ -247,7 +254,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"aRead","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $fullDescription;
 
@@ -285,7 +292,7 @@ class Community
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"aRead","readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      * @MaxDepth(1)
      */
     private $address;
@@ -369,7 +376,7 @@ class Community
 
     /**
      * @var string The referrer
-     * @Groups({"aRead"})
+     * @Groups({"aRead","aWrite"})
      */
     private $referrer;
 
@@ -381,13 +388,13 @@ class Community
 
     /**
      * @var string|null The community main image
-     * @Groups({"aRead"})
+     * @Groups({"aRead","aWrite"})
      */
     private $image;
 
     /**
      * @var string|null The community avatar
-     * @Groups({"aRead"})
+     * @Groups({"aRead","aWrite"})
      */
     private $avatar;
 

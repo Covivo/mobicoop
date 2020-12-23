@@ -23,10 +23,12 @@
 
 namespace App\Community\Admin\Service;
 
+use App\Community\Entity\Community;
 use App\Community\Exception\CommunityException;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
+use App\Geography\Entity\Address;
 
 /**
  * Community manager for admin context.
@@ -66,5 +68,67 @@ class CommunityManager
             return $this->communityUserRepository->findForCommunity($community, $context, $operationName);
         }
         throw new CommunityException("Community not found");
+    }
+
+    /**
+     * Add a community.
+     *
+     * @param Community      $community               The community to add
+     * @return Community     The community created
+     */
+    public function addCommunity(Community $community)
+    {
+        // persist the community
+        $this->entityManager->persist($community);
+        $this->entityManager->flush();
+
+        // check if the address was set
+        if (!is_null($community->getAddress())) {
+            $address = new Address();
+            $address->setStreetAddress($community->getAddress()->getStreetAddress());
+            $address->setPostalCode($community->getAddress()->getPostalCode());
+            $address->setAddressLocality($community->getAddress()->getAddressLocality());
+            $address->setAddressCountry($community->getAddress()->getAddressCountry());
+            $address->setLatitude($community->getAddress()->getLatitude());
+            $address->setLongitude($community->getAddress()->getLongitude());
+            $address->setHouseNumber($community->getAddress()->getHouseNumber());
+            $address->setStreetAddress($community->getAddress()->getStreetAddress());
+            $address->setSubLocality($community->getAddress()->getSubLocality());
+            $address->setLocalAdmin($community->getAddress()->getLocalAdmin());
+            $address->setCounty($community->getAddress()->getCounty());
+            $address->setMacroCounty($community->getAddress()->getMacroCounty());
+            $address->setRegion($community->getAddress()->getRegion());
+            $address->setMacroRegion($community->getAddress()->getMacroRegion());
+            $address->setCountryCode($community->getAddress()->getCountryCode());
+            $address->setHome(true);
+            $address->setCommunity($community);
+            $this->entityManager->persist($address);
+            $this->entityManager->flush();
+        }
+
+        // add members
+
+        return $address;
+    }
+
+    /**
+     * Patch a community.
+     *
+     * @param Community $community  The community to update
+     * @param array $fields         The updated fields
+     * @return Community            The community updated
+     */
+    public function patchCommunity(Community $community, array $fields)
+    {
+        // check if referrer has changed
+
+        // check if members have changed
+
+        // persist the community
+        $this->entityManager->persist($community);
+        $this->entityManager->flush();
+        
+        // return the community
+        return $community;
     }
 }
