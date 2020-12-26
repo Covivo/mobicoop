@@ -31,7 +31,7 @@
           </v-btn>
           <img
             class="mt-6"
-            :src="imageLink + 'Van evenement.svg'"
+            :src="imageLink + 'van_evenement.svg'"
           >
         </v-col>
         <v-col cols="8" />
