@@ -2,13 +2,9 @@
   <div>
     <v-row>
       <v-col
-        class="text-left mt-16"
+        class="text-left"
         cols="6"
-      >
-        <p class="success--text text-h4 font-weight-black">
-          Mobicoop c’est bien plus que du covoiturage
-        </p>
-      </v-col>
+      />
       <v-spacer />
     </v-row>
     <v-row justify="center">

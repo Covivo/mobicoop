@@ -6,7 +6,7 @@
         cols="6"
       >
         <p class="success--text text-h4 font-weight-black">
-          Mobicoop c’est bien plus que du covoiturage
+          {{ $t('title') }}        
         </p>
       </v-col>
       <v-spacer />
@@ -22,8 +22,21 @@
   </div>
 </template>
 <script>
+
+import { merge } from "lodash";
+import {messages_en, messages_fr} from "@translations/components/utilities/MFeatures/";
+
+let MessagesMergedEn = merge(messages_en);
+let MessagesMergedFr = merge(messages_fr);
+
 import MFeaturesItem from "@components/utilities/MFeaturesItem";
 export default {
+  i18n: {
+    messages: {
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
+    }
+  },
   components: {
     MFeaturesItem
   },

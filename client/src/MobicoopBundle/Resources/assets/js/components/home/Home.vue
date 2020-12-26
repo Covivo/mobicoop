@@ -99,24 +99,23 @@
           class="py-12 mt-n3"
         >
           <v-col
-            cols="6"
-            xl="4"
-            lg="5"
-            md="6"
-            class="text-center white--text mt-n2 text-wrap"
-            :style="'font-size: 1.35rem;'"
+            class="text-center white--text mt-n2"
+            :style="'font-size:1.25rem;'"
           >
-            <h1>{{ $t('title') }}</h1>
+            <h1 v-html="$t('title')" />
           </v-col>
         </v-row>
         <!-- end Title and subtitle -->
 
-
         <!-- search -->
-        <v-row justify="center">
+        <v-row
+          justify="center"
+          class="mt-8"
+        >
           <v-col
             lg="10"
             xl="8"
+            class="mt-16"
           >
             <search
               :geo-search-url="geoSearchUrl"
@@ -130,13 +129,13 @@
         </v-row>
         <!-- end search -->
 
+        <!-- homeContent -->
         <div
           :style="'background-image:url(\''+$t('urlBackground2')+'\');background-size:contain;background-position-y:20em;'"
         >
-          <!-- homeContent -->
           <v-row
             align="center"
-            class="mt-5"
+            class="mt-2"
             justify="center"
           >
             <v-col
@@ -154,9 +153,55 @@
             </v-col>
           </v-row>
           <!-- end homeContent -->
+          <v-row
+            align="center"
+            class="mt-2"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              xl="6"
+              lg="9"
+              md="12"
+            >
+              <home-event />
+            </v-col>
+          </v-row>
+
+          <v-row
+            align="center"
+            class="mt-2"
+            justify="center"
+          >
+            <v-col>
+              <home-carpools />
+            </v-col>
+          </v-row>
+
+          <div
+            :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
+            class="mt-n8"
+          >
+            <v-row
+              align="center"
+              class="mt-4"
+              justify="center"
+            >
+              <v-col
+                cols="12"
+                lg="10"
+                md="12"
+                xl="10"
+                class="px-14"
+              >
+                <home-bottom />
+              </v-col>
+            </v-row>
+          </div>
+
+          <Cookies />
         </div>
       </div>
-      <Cookies />
     </v-container>
   </v-main>
 </template>
@@ -168,6 +213,11 @@ import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
+import HomeEvent from "@components/home/HomeEvent";
+import HomeCarpools from "@components/home/HomeCarpools";
+import HomeBottom from "@components/home/HomeBottom";
+
+
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -182,6 +232,9 @@ export default {
   components: {
     Search,
     HomeContent,
+    HomeEvent,
+    HomeCarpools,
+    HomeBottom,
     Cookies
   },
   props: {

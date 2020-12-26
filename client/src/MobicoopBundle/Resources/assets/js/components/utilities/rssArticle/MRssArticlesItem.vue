@@ -29,7 +29,7 @@
           target="_blank"
           rounded
           color="secondary"
-          class="hidden-md-and-down white--text"
+          class="white--text"
         >
           {{ $t("readMore") }}
         </v-btn>
@@ -55,7 +55,7 @@ export default {
   },
   props:{
     article: {
-      type: Array,
+      type: Object,
       default: null
     }
   }

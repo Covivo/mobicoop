@@ -7,25 +7,50 @@
             "route": "/communautes"
         }
     },
-    "event": {
-        "title": "ÉVÉNEMENTS",
-        "text": "Trouver des covoitureurs allant au même événement.",
-        "button": {
-            "label": "Voir les événements",
-            "route": "/evenements"
-        }
+    "news": {
+        "title": "Actualités",
+        "subtitle": "Vous êtes solidaire ? Engagez-vous !",
+        "text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
     },
     "solidary": {
         "title": "COVOITURAGE SOLIDAIRE",
         "text": "S'entraider pour l'accès à l'emploi",
         "button": {
             "label": "Je suis solidaire",
+            "route": "/#/carpools/solidary/home/request"
+        },
+        "button2": {
+            "label": "Donner un coup de pouce",
             "route": "/covoiturage/annonce/poster/solidaire"
+        }
+    },
+    "events": {
+        "title": "Allez en covoiturage à vos prochains événements",
+        "button1": {
+            "label": "Voir les événements",
+            "route": "/evenements"
+        },
+        "button2": {
+            "label": "Ajouter un événement",
+            "route": "/evenements"
+        }
+    },
+    "privateEvent": {
+        "title":"Un événement privé ?",
+        "subtitle":"Laissez vos invités organiser leur covoiturage",
+        "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
+        "button":{
+            "label":"Créer un événement",
+            "route":"#"
+        },
+        "coviEvent":{
+            "text":"Découvrir CoviEvent",
+            "link":"#"
         }
     },
     "cooperative": {
         "title":"Participez à l’amélioration du service de covoiturage",
-        "text": "Mobicoop.fr est un service gratuit. Grâce au moteur de recherche Lilo, vous pouvez nous financer sans frais en nous donnant les gouttes d'eau que vous gagnez à chaque recherche pour que la mobilité partagée reste un bien commun. Merci pour votre soutien !",
+        "text": "Mobicoop.fr est un service gratuit.</br></br> <strong>Grâce au moteur de recherche Lilo, vous pouvez nous financer sans frais</strong> en nous donnant les gouttes d'eau que vous gagnez à chaque recherche pour que la mobilité partagée reste un bien commun.</br></br><strong> Merci pour votre soutien !</strong>",
         "button1": {
             "label": "Déjà sur Lilo ? Donnez-nous vos gouttes",
             "route": "#"
@@ -48,9 +73,5 @@
             "title":"La coopérative du covoiturage",
             "text":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
         }
-    ],
-    "routes": {
-        "event": "/event/{id}",
-        "getList": "/events/getEventList"
-    }
+    ]
 }

@@ -1,5 +1,5 @@
 {
-    "title": "Le covoiturage libre sans comission et coopératif",
+    "title": "Le covoiturage libre </br> sans comission et coopératif",
     "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
     "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
@@ -10,6 +10,7 @@
     "altUrlArticle": "cliquez-ici",
     "clickHere": "Cliquez-ici",
     "urlImageSwap": "/images/PictoInterchanger.svg",
-    "urlBackground": "/images/pages/home/Fond Site BandeauHaut 2.svg",
-    "urlBackground2": "/images/pages/home/Fond Site Milieu.svg"
+    "urlBackground": "/images/pages/home/background_top.svg",
+    "urlBackground2": "/images/pages/home/background_middle.svg",
+    "urlBackground3": "/images/pages/home/background_bottom.svg"
 }
