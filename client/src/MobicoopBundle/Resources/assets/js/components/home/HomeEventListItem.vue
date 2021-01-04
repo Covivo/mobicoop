@@ -17,6 +17,8 @@
           :src="item['images'][0]['versions']['square_100']"
           class="grey lighten-2"
           contain
+          max-width="100"
+          max-height="100"
         />
         <v-img
           v-else

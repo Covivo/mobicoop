@@ -21,7 +21,9 @@
           >
         </a>
       </v-toolbar-title>
+
       <v-spacer />
+
       <!--<accessibility />-->
       <v-toolbar-items
         v-if="user"
@@ -30,15 +32,16 @@
         <v-btn
           text
           rounded
+          class="white--text title text-none"
           :href="$t('buttons.messages.route')"
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
-        <MHeaderCommunities :user-id="user.id" />
         <MHeaderProfile
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
           :show-reviews="showReviews"
+          :text-color-class="textColorClass"
         />
       </v-toolbar-items>
       <v-toolbar-items
@@ -55,7 +58,6 @@
         </v-btn>
         <v-btn
           class="white--text"
-
           rounded
           text
           :href="$t('buttons.logIn.route')"
@@ -66,6 +68,7 @@
       <v-btn
         v-if="user"
         rounded
+        color="secondary"
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-md-and-down white--text"
       >
@@ -146,6 +149,7 @@
                 :avatar="user.avatars[0]"
                 :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
                 :show-reviews="showReviews"
+                :text-color-class="textColorClass"
               />
             </v-list-item-title>
           </v-list-item>
@@ -256,7 +260,6 @@ import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
-import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 
 
@@ -273,7 +276,6 @@ export default {
   components: {
     //Accessibility,
     MHeaderProfile,
-    MHeaderCommunities,
     MHeaderLanguage
   },
   props: {
@@ -308,8 +310,8 @@ export default {
       width: 0,
       defaultLocale: 'fr',
       dlocale: this.locale,
-      imageLink: "/images/pages/home/"
-
+      imageLink: "/images/pages/home/",
+      textColorClass: "white--text title text-none"
     }
   },
   mounted() {

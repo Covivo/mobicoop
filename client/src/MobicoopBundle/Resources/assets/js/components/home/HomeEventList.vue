@@ -1,51 +1,43 @@
 <template>
   <div>
-    <v-row>
-      <!-- events -->
-      <v-col
-        cols="4"
-        md="8"
-        lg="4"
-        xl="4"
-        class="text-left"
+    <!-- events -->
+    <v-col
+      cols="3"
+      class="text-left"
+    >
+      <p class="success--text text-h4 font-weight-black">
+        {{ $t('events.title') }}
+      </p>
+      <v-btn
+        rounded
+        color="secondary"
+        :href="this.$t('events.button1.route')"
+        class="white--text"
       >
-        <p class="success--text text-h4 font-weight-black">
-          {{ $t('events.title') }}
-        </p>
-        <v-btn
-          rounded
-          color="secondary"
-          :href="this.$t('events.button1.route')"
-          class="white--text"
-        >
-          {{ $t('events.button1.label') }}
-        </v-btn>
-        <v-btn
-          rounded
-          color="secondary"
-          :href="this.$t('events.button2.route')"
-          class="white--text mt-4"
-        >
-          {{ $t('events.button2.label') }}
-        </v-btn>
-        <img
-          class="mt-6"
-          :src="imageLink + 'van_evenement.svg'"
-        >
-      </v-col>
-      <v-col
-        v-for="item in eventscoming"
-        :key="item.index"
-        cols="8"
-        outlined
-        tile
-        class=""
+        {{ $t('events.button1.label') }}
+      </v-btn>
+      <v-btn
+        rounded
+        color="secondary"
+        :href="this.$t('events.button2.route')"
+        class="white--text mt-4"
       >
-        <HomeEventListItem
-          :item="item"
-        />
-      </v-col>
-    </v-row>
+        {{ $t('events.button2.label') }}
+      </v-btn>
+      <img
+        class="mt-6"
+        :src="imageLink + 'van_evenement.svg'"
+      >
+    </v-col>
+    <v-col
+      v-for="item in eventscoming"
+      :key="item.index"
+      cols="7"
+    >
+      <HomeEventListItem
+        :item="item"
+      />
+    </v-col>
     <v-row justify="center">
       <v-col
         cols="6"

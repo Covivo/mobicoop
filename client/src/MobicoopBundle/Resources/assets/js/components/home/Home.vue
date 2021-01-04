@@ -1,211 +1,213 @@
 <template>
-  <v-main color="secondary">
-    <v-container
-      text-center
-      fluid
+  <v-container
+    text-center
+    fluid
+    class="pa-0"
+  >
+    <v-row v-if="displayVerifiedMessage">
+      <v-col class="pa-0">
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+          :timeout="10000"
+        >
+          <div>
+            {{ $t('snackbar1') }}
+            <a :href="$t('profileLink')">
+              " {{ $t('myProfile') }} "
+            </a>
+            {{ $t('snackbar2') }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="displayDeleteAccount">
+      <v-col>
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+        >
+          <div>
+            {{ $t('snackbar-account-delete') }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+    <v-row v-if="displayUnsubscribeEmail">
+      <v-col>
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+        >
+          <div>
+            {{ displayUnsubscribeEmail }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+
+    <div
+      :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;background-position-y:-8em;'"
     >
-      <v-row v-if="displayVerifiedMessage">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-            :timeout="10000"
-          >
-            <div>
-              {{ $t('snackbar1') }}
-              <a :href="$t('profileLink')">
-                " {{ $t('myProfile') }} "
-              </a>
-              {{ $t('snackbar2') }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-
-      <v-row v-if="displayDeleteAccount">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-          >
-            <div>
-              {{ $t('snackbar-account-delete') }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-      <v-row v-if="displayUnsubscribeEmail">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-          >
-            <div>
-              {{ displayUnsubscribeEmail }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-
-      <div
-        :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;background-position-y:-8em;'"
+      <!-- Title and subtitle -->
+      <v-row
+        align="center"
+        justify="center"
+        class="py-12 mt-n3"
       >
-        <!-- Title and subtitle -->
-        <v-row
-          align="center"
-          justify="center"
-          class="py-12 mt-n3"
+        <v-col
+          class="text-center white--text mt-n2"
+          :style="'font-size:1.25rem;'"
         >
-          <v-col
-            class="text-center white--text mt-n2"
-            :style="'font-size:1.25rem;'"
-          >
-            <h1 v-html="$t('title')" />
-          </v-col>
-        </v-row>
-        <!-- end Title and subtitle -->
+          <h1 v-html="$t('title')" />
+        </v-col>
+      </v-row>
+      <!-- end Title and subtitle -->
 
-        <!-- search -->
-        <v-row
-          justify="center"
-          class="mt-8"
+      <!-- search -->
+      <v-row
+        justify="center"
+        class="mt-8"
+      >
+        <v-col
+          lg="10"
+          xl="8"
+          class="mt-16"
         >
-          <v-col
-            lg="10"
-            xl="8"
-            class="mt-16"
-          >
-            <search
-              :geo-search-url="geoSearchUrl"
-              :user="user"
-              :regular="regular"
-              :punctual-date-optional="punctualDateOptional"
-              :publish-button-always-active="publishButtonAlwaysActive"
-              :image-swap="$t('urlImageSwap')"
-            />
-          </v-col>
-        </v-row>
-        <!-- end search -->
+          <search
+            :geo-search-url="geoSearchUrl"
+            :user="user"
+            :regular="regular"
+            :punctual-date-optional="punctualDateOptional"
+            :publish-button-always-active="publishButtonAlwaysActive"
+            :image-swap="$t('urlImageSwap')"
+          />
+        </v-col>
+      </v-row>
+      <!-- end search -->
 
-        <!-- homeContent -->
-        <div
-          :style="'background-image:url(\''+$t('urlBackground2')+'\');background-size:contain;background-position-y:20em;'"
-        >
-          <v-row
-            align="center"
-            class="mt-2"
-            justify="center"
-          >
-            <v-col
-              cols="12"
-              xl="6"
-              lg="9"
-              md="12"
-            >
-              <home-content
-                :solidary-display="solidaryDisplay"
-                :url-mobile="mobileUrl"
-              />
-            </v-col>
-          </v-row>
-        </div>
-
-        <!-- end homeContent -->
-
-        <!-- homeEventList -->
-        <v-row>
-          <v-col
-            cols="12"
-            xl="6"
-            lg="10"
-            md="10"
-          >
-            <home-event-list />
-          </v-col>
-        </v-row>
-        <!-- end homeEventList -->
-
-        <!-- homeCarpools -->
+      <!-- homeContent -->
+      <div
+        :style="'background-image:url(\''+$t('urlBackground2')+'\');background-size:contain;background-position-y:20em;'"
+      >
         <v-row
           align="center"
           class="mt-2"
           justify="center"
         >
-          <v-col>
-            <home-carpools />
+          <v-col
+            cols="12"
+            xl="6"
+            lg="9"
+            md="12"
+          >
+            <home-content
+              :solidary-display="solidaryDisplay"
+              :url-mobile="mobileUrl"
+            />
           </v-col>
         </v-row>
-        <!-- end homeCarpools -->
-
-        <!-- homeBottom -->
-        <div
-          :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
-          class="mt-n8"
-        >
-          <v-row
-            align="center"
-            class="mt-4"
-            justify="center"
-          >
-            <v-col
-              cols="12"
-              lg="10"
-              md="12"
-              xl="8"
-              class="px-14"
-            >
-              <home-bottom />
-            </v-col>
-          </v-row>
-        </div>
-        <!-- end homeBottom -->
-
-        <Cookies />
       </div>
-    </v-container>
-  </v-main>
+
+      <!-- end homeContent -->
+
+      <!-- homeEventList -->
+      <v-row
+        dense
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          xl="6"
+          lg="10"
+          md="10"
+        >
+          <home-event-list />
+        </v-col>
+      </v-row>
+      <!-- end homeEventList -->
+
+      <!-- homeCarpools -->
+      <v-row
+        align="center"
+        class="mt-2"
+        justify="center"
+      >
+        <v-col>
+          <home-carpools />
+        </v-col>
+      </v-row>
+      <!-- end homeCarpools -->
+
+      <!-- homeBottom -->
+      <div
+        :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
+        class="mt-n8"
+      >
+        <v-row
+          align="center"
+          class="mt-4"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            lg="10"
+            md="12"
+            xl="8"
+            class="px-14"
+          >
+            <home-bottom />
+          </v-col>
+        </v-row>
+      </div>
+      <!-- end homeBottom -->
+
+      <Cookies />
+    </div>
+  </v-container>
 </template>
 
 <script>
