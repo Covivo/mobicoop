@@ -121,8 +121,8 @@ class CommunityManager
     public function patchCommunity(Community $community, array $fields)
     {
         // check if referrer has changed
-
-        // check if members have changed
+        if (in_array('referrer', array_keys($fields))) {
+        }
 
         // persist the community
         $this->entityManager->persist($community);
