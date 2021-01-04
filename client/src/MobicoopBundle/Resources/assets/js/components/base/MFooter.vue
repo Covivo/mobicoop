@@ -162,6 +162,61 @@
           </v-card-text>
         </v-col>
         <!-- end third col -->
+
+        <!-- fourth col -->
+        <v-col
+          cols="1"
+          justify="center"
+        >
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <v-row justify="center">
+              <a
+                :href="$t('urlInstagram')"
+                target="_blank"
+              >
+                <v-img
+                  class="ml-2"
+                  contain
+                  :src="$t('urlInstagramLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlFacebook')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlFacebookLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlTwitter')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlTwitterLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlFramasphere')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlFramasphereLogo')"
+                  max-width="75px"
+                />
+              </a>
+            </v-row>
+          </v-card-text>
+          <v-col>
+            <!-- end col -->
+          </v-col>
+        </v-col>
       </v-row>
       <v-row
         class="my-4"

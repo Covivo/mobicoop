@@ -145,62 +145,64 @@
               md="12"
             >
               <home-content
-                :community-display="communityDisplay"
-                :event-display="eventDisplay"
                 :solidary-display="solidaryDisplay"
                 :url-mobile="mobileUrl"
               />
             </v-col>
           </v-row>
-          <!-- end homeContent -->
+        </div>
+
+        <!-- end homeContent -->
+
+        <!-- homeEventList -->
+        <v-row>
+          <v-col
+            cols="12"
+            xl="6"
+            lg="10"
+            md="10"
+          >
+            <home-event-list />
+          </v-col>
+        </v-row>
+        <!-- end homeEventList -->
+
+        <!-- homeCarpools -->
+        <v-row
+          align="center"
+          class="mt-2"
+          justify="center"
+        >
+          <v-col>
+            <home-carpools />
+          </v-col>
+        </v-row>
+        <!-- end homeCarpools -->
+
+        <!-- homeBottom -->
+        <div
+          :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
+          class="mt-n8"
+        >
           <v-row
             align="center"
-            class="mt-2"
+            class="mt-4"
             justify="center"
           >
             <v-col
               cols="12"
-              xl="6"
-              lg="9"
+              lg="10"
               md="12"
+              xl="8"
+              class="px-14"
             >
-              <home-event />
+              <home-bottom />
             </v-col>
           </v-row>
-
-          <v-row
-            align="center"
-            class="mt-2"
-            justify="center"
-          >
-            <v-col>
-              <home-carpools />
-            </v-col>
-          </v-row>
-
-          <div
-            :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
-            class="mt-n8"
-          >
-            <v-row
-              align="center"
-              class="mt-4"
-              justify="center"
-            >
-              <v-col
-                cols="12"
-                lg="10"
-                md="12"
-                xl="10"
-                class="px-14"
-              >
-                <home-bottom />
-              </v-col>
-            </v-row>
-          </div>
-
-          <Cookies />
         </div>
+        <!-- end homeBottom -->
+
+        <Cookies />
       </div>
     </v-container>
   </v-main>
@@ -213,7 +215,7 @@ import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
-import HomeEvent from "@components/home/HomeEvent";
+import HomeEventList from "@components/home/HomeEventList";
 import HomeCarpools from "@components/home/HomeCarpools";
 import HomeBottom from "@components/home/HomeBottom";
 
@@ -232,7 +234,7 @@ export default {
   components: {
     Search,
     HomeContent,
-    HomeEvent,
+    HomeEventList,
     HomeCarpools,
     HomeBottom,
     Cookies

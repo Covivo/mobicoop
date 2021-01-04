@@ -73,5 +73,8 @@
             "title":"La coopérative du covoiturage",
             "text":"Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
         }
-    ]
+    ],
+    "routes": {
+        "getList": "/events/getEventList"
+    }
 }

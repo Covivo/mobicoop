@@ -8,5 +8,13 @@
     "urlIosLogo": "/images/footer/IOS.svg",
     "urlIos": "#",
     "urlAndroidLogo": "/images/footer/android.svg",
-    "urlAndroid": "#"
+    "urlAndroid": "#",
+    "urlFacebookLogo": "/images/footer/facebook.svg",
+    "urlFacebook": "#",
+    "urlInstagram": "#",
+    "urlInstagramLogo": "/images/footer/instagram.svg",
+    "urlTwitter": "#",
+    "urlTwitterLogo": "/images/footer/twitter.svg",
+    "urlFramasphere": "#",
+    "urlFramasphereLogo": "/images/footer/framasphere.svg"
 }

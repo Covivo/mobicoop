@@ -233,10 +233,11 @@ class ArticleManager
             $dom->loadHTML($html_string);
             libxml_clear_errors();
 
-            $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
-
-            $rssElement->setImage($image);
-
+            // var_dump($dom->getElementsByTagName('img')->length);
+            if($dom->getElementsByTagName('img')->length > 0){
+                $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+                $rssElement->setImage($image);
+            }
             $rssElements[]=$rssElement;
         }
         

@@ -70,18 +70,7 @@ export default {
       type: Boolean,
       default: false
     },
-    eventDisplay: {
-      type: Boolean,
-      default: false
-    },
-    communityDisplay: {
-      type: Boolean,
-      default: false
-    },
-    urlMobile: {
-      type: String,
-      default: null
-    },
+
     article: {
       type: Object,
       default: null
@@ -89,7 +78,6 @@ export default {
   },
   data () {
     return {
-      mobileUrl: this.urlMobile,
       imageLink: "/images/pages/home/",
       items:this.$t("items")
     }

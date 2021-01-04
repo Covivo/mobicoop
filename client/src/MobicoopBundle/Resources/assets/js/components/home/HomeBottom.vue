@@ -6,7 +6,7 @@
   >
     <!-- cooperative -->
     <v-col
-      cols="6"
+      cols="5"
       class="text-left"
     >
       <p class="success--text text-h4 font-weight-black">
