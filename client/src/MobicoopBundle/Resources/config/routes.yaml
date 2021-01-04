@@ -657,7 +657,7 @@ cities:
     methods: [GET]
     path:
         fr: /covoiturage-par-ville
-        en: /carpool-from-{origin}
+        en: /carpool-from-city
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::cities
 
 # from a city

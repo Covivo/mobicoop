@@ -72,7 +72,7 @@ class JourneyManager
         select p.id, 0, 0, IF(p.type=1,1,2), 0, now(), ao.address_locality, ao.latitude, ao.longitude, ad.address_locality, ad.latitude, ad.longitude, now() from address ao 
         left join waypoint wo on wo.address_id = ao.id left join proposal p on wo.proposal_id = p.id left join waypoint wd on wd.proposal_id = p.id 
         left join address ad on wd.address_id = ad.id 
-        where p.private <> 1 and ao.address_locality is not null and ad.address_locality is not null and wo.proposal_id is not null and wo.position = 0 and wd.destination = 1
+        where p.private <> 1 and ao.address_locality is not null and ao.address_locality <> '' and ad.address_locality is not null and ad.address_locality <> '' and wo.proposal_id is not null and wo.position = 0 and wd.destination = 1
         ;
         ";
         $stmt = $conn->prepare($sql);
