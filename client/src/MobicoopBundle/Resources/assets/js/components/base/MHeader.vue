@@ -37,6 +37,10 @@
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
+        <MHeaderCommunities
+          :user-id="user.id" 
+          :text-color-class="textColorClass"
+        />
         <MHeaderProfile
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
@@ -260,6 +264,7 @@ import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
+import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 
 
@@ -276,6 +281,7 @@ export default {
   components: {
     //Accessibility,
     MHeaderProfile,
+    MHeaderCommunities,
     MHeaderLanguage
   },
   props: {

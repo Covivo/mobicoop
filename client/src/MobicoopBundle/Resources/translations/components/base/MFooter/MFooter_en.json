@@ -5,8 +5,78 @@
             "label": "Contact us"
         }
     },
+    "category":{
+        "cooperative":"La coopérative",
+        "tools":"Les outils",
+        "services":"Les services mobicoop",
+        "contacts":"Contacts",
+        "need":"Besoin d’une solution de covoiturage pour votre structure ?",
+        "download":"TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+    },
+    "cooperative":{
+        "aboutUs": {
+            "title":"Qui sommes-nous ?",
+            "link":"#"
+        },
+        "joinUs":{
+            "title":"Devenir sociétaire",
+            "link":"#"
+        }
+    },
+    "tools":{
+        "mobicoop":{
+            "title":"pro.mobicoop.fr",
+            "link":"https://pro.mobicoop.fr/"
+        },
+        "covievent" :{
+            "title":"www.covievent.org",
+            "link":"www.covievent.org"
+        }
+    },
+    "services":{
+        "map":{
+            "title":"La carte des aires de covoiturage",
+            "link":"#"
+        },
+        "events" :{
+            "title":"Les événements en covoiturage",
+            "link":"#"
+        },
+        "faq":{
+            "title":"FAQ",
+            "link":"#"
+        },
+        "cgu":{
+            "title":"CGU",
+            "link":"#"
+        }
+    },
+    "contacts":{
+        "hotline":{
+            "title":"Hotline",
+            "link":"#"
+        },
+        "presse" :{
+            "title":"Presse",
+            "link":"#"
+        }
+    },
+    "need":{
+        "community":{
+            "title":"Créez une communauté sur mobicoop.fr !",
+            "link":"#"
+        }
+    },
     "urlIosLogo": "/images/footer/IOS.svg",
-    "urlIos": "#",
+    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
     "urlAndroidLogo": "/images/footer/android.svg",
-    "urlAndroid": "#"
+    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+    "urlFacebookLogo": "/images/footer/facebook.svg",
+    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+    "urlInstagramLogo": "/images/footer/instagram.svg",
+    "urlTwitter": "https://twitter.com/Mobicoop",
+    "urlTwitterLogo": "/images/footer/twitter.svg",
+    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+    "urlFramasphereLogo": "/images/footer/framasphere.svg"
 }

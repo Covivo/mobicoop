@@ -35,39 +35,47 @@
         <!-- first col -->
         <v-col cols="3">
           <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            La coopérative
+            {{ $t('category.cooperative') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('cooperative.aboutUs.link')"
               style="text-decoration:none;"
               class="white--text"
-            >Qui sommes-nous ? </a>
+            >              
+              {{ $t('cooperative.aboutUs.title') }}
+            </a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('cooperative.joinUs.link')"
               style="text-decoration:none;"
               class="white--text"
-            >Nous rejoindre </a>
+            >
+              {{ $t('cooperative.joinUs.title') }}
+            </a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text text-h5 font-weight-bold">
-            Les services Mobicoop
+            {{ $t('category.tools') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="https://pro.mobicoop.fr/"
+              :href="$t('tools.mobicoop.link')"
               style="text-decoration:none;"
               class="white--text"
-            >pro.mobicoop.fr</a>
+            >
+              {{ $t('tools.mobicoop.title') }}
+            </a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="https://www.covievent.org/"
+              :href="$t('tools.covievent.link')"
               style="text-decoration:none;"
               class="white--text"
-            >www.covievent.org</a>
+            >
+              {{ $t('tools.covievent.title') }}
+            </a>
           </v-card-text>
         </v-col>
         <!-- end first col -->
@@ -75,46 +83,53 @@
         <!-- second col -->
         <v-col cols="3">
           <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            Les outils
+            {{ $t('category.services') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('services.map.link')"
               style="text-decoration:none;"
               class="white--text"
-            >La carte des aires de covoiturage </a>
+            >{{ $t('services.map.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('services.events.link')"
               style="text-decoration:none;"
               class="white--text"
-            >FAQ </a>
+            >{{ $t('services.events.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('services.faq.link')"
               style="text-decoration:none;"
               class="white--text"
-            >CGU </a>
+            >{{ $t('services.faq.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('services.cgu.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('services.cgu.title') }}</a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text text-h5 font-weight-bold">
-            Contacts
+            {{ $t('category.contacts') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('contacts.hotline.link')"
               style="text-decoration:none;"
               class="white--text"
-            >Hotline</a>
+            >{{ $t('contacts.hotline.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('contacts.presse.link')"
               style="text-decoration:none;"
               class="white--text"
-            >Presse</a>
+            >{{ $t('contacts.presse.title') }}</a>
           </v-card-text>
         </v-col>
         <!-- end second col -->
@@ -122,18 +137,20 @@
         <!-- third col -->
         <v-col cols="3">
           <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            Besoin d’une solution de covoiturage pour votre structure ?
+            {{ $t('category.need') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              href="#"
+              :href="$t('need.community.link')"
               style="text-decoration:none;"
               class="white--text"
-            >Créez une communauté sur mobicoop.fr !</a>
+            >
+              {{ $t('need.community.title') }}
+            </a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text subtitle font-weight-black">
-            TÉLÉCHARGEZ L’APPLICATION MOBICOOP
+            {{ $t('category.download') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <v-row>

@@ -5,7 +5,7 @@
       cols="3"
       class="text-left"
     >
-      <p class="success--text text-h4 font-weight-black">
+      <p class="success--text display-1 font-weight-black">
         {{ $t('events.title') }}
       </p>
       <v-btn
@@ -43,10 +43,10 @@
         cols="6"
         class="text-center mt-16"
       >
-        <p class="success--text text-h4 font-weight-black">
+        <p class="success--text display-1 font-weight-black">
           {{ $t('privateEvent.title') }}
         </p>
-        <p class="success--text text-h6 font-italic mt-n4">
+        <p class="success--text headline font-italic mt-n4">
           {{ $t('privateEvent.subtitle') }}
         </p>
         <p>

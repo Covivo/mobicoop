@@ -7,12 +7,12 @@
     <!-- cooperative -->
     <v-col
       cols="5"
-      class="text-left"
+      class="text-left "
     >
-      <p class="success--text text-h4 font-weight-black">
+      <span class="success--text display-1 font-weight-black">
         {{ $t('cooperative.title') }}
-      </p>
-      <p v-html="$t('cooperative.text')" />
+      </span>
+      <span v-html="$t('cooperative.text')" />
     </v-col>
     <v-spacer />
     <v-col cols="6">
@@ -46,31 +46,15 @@
       </v-btn>
     </v-col>
     <!-- end cooperative -->
-
-    <!-- blog -->
-    <v-col
-      cols="12"
-    >
-      <p class="success--text text-h4 font-weight-black mt-16">
-        Quoi de neuf chez Mobicoop ?
-      </p>
-
-      <m-rss-articles
-        :articles="article"
-      />
-    </v-col>
-    <!-- end blog -->
   </v-row>
 </template>
 <script>
 
 import { merge } from "lodash";
-import MRssArticles from "@components/utilities/rssArticle/MRssArticles";
-import {messages_en, messages_fr} from "@translations/components/home/HomeContent/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/HomeContent/";
+import {messages_en, messages_fr} from "@translations/components/home/HomeCooperative/";
 
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEn = merge(messages_en);
+let MessagesMergedFr = merge(messages_fr);
 
 export default {
   i18n: {
@@ -80,7 +64,6 @@ export default {
     }
   },
   components: {
-    MRssArticles
   },
   props: {
     solidaryDisplay: {
@@ -97,10 +80,6 @@ export default {
     },
     urlMobile: {
       type: String,
-      default: null
-    },
-    article: {
-      type: Object,
       default: null
     }
   },

@@ -3,6 +3,7 @@
     <v-row
       dense
       justify="center"
+      class="mt-10"
     >
       <v-col
         v-if="solidaryDisplay"
@@ -12,7 +13,7 @@
         <h2 class="success--text font-italic">
           {{ $t('news.title') }}
         </h2>
-        <p class="success--text text-h4 font-weight-black">
+        <p class="success--text display-1 font-weight-black">
           {{ $t('news.subtitle') }}
         </p>
         <p>
@@ -34,21 +35,12 @@
           cover
         />
       </v-col>
-
-      <!-- features -->
-      <m-features
-        :title="$t('title')"
-        :subtitle="$t('subtitle')"
-        :items="items"
-      />
-      <!-- end features -->
     </v-row>
   </v-container>
 </template>
 <script>
 
 import { merge } from "lodash";
-import MFeatures from "@components/utilities/MFeatures";
 import {messages_en, messages_fr} from "@translations/components/home/HomeContent/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/HomeContent/";
 
@@ -61,9 +53,6 @@ export default {
       'en': MessagesMergedEn,
       'fr': MessagesMergedFr
     }
-  },
-  components: {
-    MFeatures,
   },
   props: {
     solidaryDisplay: {

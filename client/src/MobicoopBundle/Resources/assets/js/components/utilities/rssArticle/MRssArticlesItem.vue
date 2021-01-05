@@ -13,12 +13,18 @@
         </p>
       </v-card-title>
       <v-img
+        v-if="article.image"
         contain
         min-width="250"
         max-width="600"
         min-height="150"
         max-height="150"
         :src="article.image"
+      />
+      <v-img
+        v-else
+        src="/images/avatarsDefault/avatar.svg"
+        class="grey lighten-2"
       />
       <v-card-text>
         <p class="mt-4 text-left">

@@ -7,7 +7,7 @@
       class="mx-auto my-3 text-left"
       min-height="374px"
     >
-      <v-card-title class="success--text text-h5 font-weight-bold">
+      <v-card-title class="success--text font-weight-bold">
         {{ title }}
       </v-card-title>
 

@@ -130,9 +130,28 @@
       <!-- end search -->
 
       <!-- homeContent -->
-      <div
-        :style="'background-image:url(\''+$t('urlBackground2')+'\');background-size:contain;background-position-y:20em;'"
       >
+      <v-row
+        align="center"
+        class="mt-2"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          xl="6"
+          lg="9"
+          md="12"
+        >
+          <home-content
+            :solidary-display="solidaryDisplay"
+            :url-mobile="mobileUrl"
+          />
+        </v-col>
+      </v-row>
+
+
+      <!-- features -->
+      <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;'">
         <v-row
           align="center"
           class="mt-2"
@@ -144,13 +163,16 @@
             lg="9"
             md="12"
           >
-            <home-content
-              :solidary-display="solidaryDisplay"
-              :url-mobile="mobileUrl"
+            <m-features
+              :title="$t('title')"
+              :subtitle="$t('subtitle')"
+              :items="items"
+              class="mt-10"
             />
           </v-col>
         </v-row>
       </div>
+      <!-- end features -->
 
       <!-- end homeContent -->
 
@@ -158,6 +180,7 @@
       <v-row
         dense
         justify="center"
+        class="mt-10"
       >
         <v-col
           cols="12"
@@ -171,7 +194,7 @@
       <!-- end homeEventList -->
 
       <!-- homeCarpools -->
-      <v-row
+      <!-- <v-row
         align="center"
         class="mt-2"
         justify="center"
@@ -179,7 +202,7 @@
         <v-col>
           <home-carpools />
         </v-col>
-      </v-row>
+      </v-row> -->
       <!-- end homeCarpools -->
 
       <!-- homeBottom -->
@@ -199,12 +222,34 @@
             xl="8"
             class="px-14"
           >
-            <home-bottom />
+            <home-cooperative />
+          </v-col>
+        </v-row>
+        <!-- rssArticle -->
+
+        <v-row
+          align="center"
+          class="mt-4"
+          justify="center"
+        >
+          <v-col
+            cols="12"
+            lg="10"
+            md="12"
+            xl="8"
+            class="px-14"
+          >
+            <p class="success--text text-h4 font-weight-black mt-16">
+              Quoi de neuf chez Mobicoop ?
+            </p>
+
+            <m-rss-articles
+              :articles="article"
+            />
           </v-col>
         </v-row>
       </div>
       <!-- end homeBottom -->
-
       <Cookies />
     </div>
   </v-container>
@@ -218,8 +263,10 @@ import {messages_client_en, messages_client_fr} from "@clientTranslations/compon
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
 import HomeEventList from "@components/home/HomeEventList";
-import HomeCarpools from "@components/home/HomeCarpools";
-import HomeBottom from "@components/home/HomeBottom";
+import MRssArticles from "@components/utilities/rssArticle/MRssArticles";
+import HomeCooperative from "@components/home/HomeCooperative";
+import MFeatures from "@components/utilities/MFeatures";
+
 
 
 
@@ -236,9 +283,10 @@ export default {
   components: {
     Search,
     HomeContent,
+    MFeatures,
     HomeEventList,
-    HomeCarpools,
-    HomeBottom,
+    MRssArticles,
+    HomeCooperative,
     Cookies
   },
   props: {
@@ -302,13 +350,18 @@ export default {
     urlMobile: {
       type: String,
       default: null
+    },
+    article: {
+      type: Object,
+      default: null
     }
   },
   data () {
     return {
       snackbar: true,
       displayVerifiedMessage: false,
-      mobileUrl: this.urlMobile
+      mobileUrl: this.urlMobile,
+      items:this.$t("items")
     }
   },
   mounted() {

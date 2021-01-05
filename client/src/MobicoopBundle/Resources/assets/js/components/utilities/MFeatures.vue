@@ -2,12 +2,10 @@
   <div>
     <v-row>
       <v-col
-        class="text-left mt-16"
+        class="text-left mt-16 success--text display-1 font-weight-bold"
         cols="6"
       >
-        <p class="success--text text-h4 font-weight-black">
-          {{ $t('title') }}        
-        </p>
+        {{ $t('title') }}        
       </v-col>
       <v-spacer />
     </v-row>
