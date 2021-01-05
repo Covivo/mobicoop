@@ -122,6 +122,7 @@
         :publish-button-always-active="publishButtonAlwaysActive"
       />
       <v-row
+        v-if="cityToCity"
         align="center"
         justify="center"
       >
@@ -131,7 +132,7 @@
           lg="9"
           md="12"
         >
-          <JourneyCityToCity v-if="cityToCity" />
+          <JourneyCityToCity />
         </v-col>
       </v-row>
       <v-row
