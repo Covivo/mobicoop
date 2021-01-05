@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * Carpooling : an effective journey.
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
  * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN", columns={"origin"})})
@@ -49,6 +50,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "cities"={
  *              "method"="GET",
  *              "path"="/journeys/cities"
+ *          },
+ *          "popular"={
+ *              "method"="GET",
+ *              "path"="/journeys/popular"
  *          },
  *          "origin"={
  *              "method"="GET",

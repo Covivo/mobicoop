@@ -350,4 +350,15 @@ class JourneyManager
         // then we search with the 'real' spellings
         return $this->journeyRepository->getAllFromTo($citiesOrigin, $citiesDestination, $operationName, $context);
     }
+
+    
+    /**
+     * Return de most popular journeys (see .env for the max number and criteria)
+     *
+     * @return array|null
+     */
+    public function getPopularJourneys(): ?array
+    {
+        return $this->journeyRepository->getPopularJourneys();
+    }
 }

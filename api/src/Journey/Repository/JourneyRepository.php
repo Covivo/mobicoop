@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityRepository;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use App\Journey\Entity\PopularJourney;
 
 class JourneyRepository
 {
@@ -37,12 +38,20 @@ class JourneyRepository
     private $repository;
     private $entityManager;
     private $collectionExtensions;
+    private $popularJourneyMaxNumber;
+    private $popularJourneyMinOccurences;
     
-    public function __construct(EntityManagerInterface $entityManager, iterable $collectionExtensions)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        iterable $collectionExtensions,
+        int $popularJourneyMaxNumber,
+        int $popularJourneyMinOccurences
+    ) {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Journey::class);
         $this->collectionExtensions = $collectionExtensions;
+        $this->popularJourneyMaxNumber = $popularJourneyMaxNumber;
+        $this->popularJourneyMinOccurences = $popularJourneyMinOccurences;
     }
 
     public function find(int $id): ?Journey
@@ -140,5 +149,43 @@ class JourneyRepository
         }
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Get the popular journeys
+     * (see .env for the max number and criteria)
+     *
+     * @return PopularJourney[]
+     */
+    public function getPopularJourneys(): array
+    {
+        $popularJourneys = [];
+        
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT origin, destination, latitude_origin, longitude_origin, latitude_destination, longitude_destination, count(id) as occurences
+                FROM `journey`
+                GROUP BY origin, destination
+                HAVING occurences >= ".$this->popularJourneyMinOccurences."
+                ORDER BY occurences desc
+                LIMIT 0,".$this->popularJourneyMaxNumber;
+                
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $journeys = $stmt->fetchAll();
+        
+        foreach ($journeys as $journey) {
+            $popularJourney = new PopularJourney();
+            $popularJourney->setOrigin($journey['origin']);
+            $popularJourney->setLatitudeOrigin($journey['latitude_origin']);
+            $popularJourney->setLongitudeOrigin($journey['longitude_origin']);
+            $popularJourney->setDestination($journey['destination']);
+            $popularJourney->setLatitudeDestination($journey['latitude_destination']);
+            $popularJourney->setLongitudeDestination($journey['longitude_destination']);
+            $popularJourney->setOccurences($journey['occurences']);
+
+            $popularJourneys[] = $popularJourney;
+        }
+
+        return $popularJourneys;
     }
 }
