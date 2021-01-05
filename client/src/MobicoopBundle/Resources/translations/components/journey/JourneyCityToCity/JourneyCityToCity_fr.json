@@ -12,5 +12,11 @@
             "title":"Les covoiturages par trajets populaires",
             "uri":"/"
         }
-    }
+    },
+    "popularJourneys":{
+        "from":"Covoiturage de",
+        "to":"à",
+        "uri":"/covoiturage/{origin}/{destination}"
+    },
+    "getPopularJourneysUrl":"/covoiturages/populaires"
 }

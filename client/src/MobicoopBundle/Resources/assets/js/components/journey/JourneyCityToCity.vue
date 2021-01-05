@@ -24,7 +24,7 @@
     </v-col>
     <v-col
       cols="6"
-      class="pt-6"
+      class="pt-6 text-left"
     >
       <p
         v-for="(popularJourney,index) in popularJourneys"
@@ -32,14 +32,15 @@
         class="ma-0 pa-0"
       >
         <a
-          :href="popularJourney.uri"
-          :title="popularJourney.label"
-        >{{ popularJourney.label }}</a>
+          :href="$t('popularJourneys.uri', {origin:popularJourney.originSanitize, destination:popularJourney.destinationSanitize})"
+          :title="$t('popularJourneys.from') + ' ' + popularJourney.origin + ' ' + $t('popularJourneys.to') + ' ' + popularJourney.destination"
+        >{{ $t('popularJourneys.from') }} {{ popularJourney.origin }} {{ $t('popularJourneys.to') }} {{ popularJourney.destination }}</a>
       </p>
     </v-col>
   </v-row>
 </template>
 <script>
+import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/journey/JourneyCityToCity/";
 export default {
   i18n: {
@@ -58,13 +59,14 @@ export default {
   },
   methods:{
     getPopularJourneys(){
-      this.popularJourneys = {
-        0:{uri:'/covoiturage/rennes/grenoble',label:'Covoiturage de Rennes à Grenoble'},
-        1:{uri:'/covoiturage/rennes/grenoble',label:'Covoiturage de Rennes à Grenoble'},
-        2:{uri:'/covoiturage/rennes/grenoble',label:'Covoiturage de Rennes à Grenoble'},
-        3:{uri:'/covoiturage/rennes/grenoble',label:'Covoiturage de Rennes à Grenoble'},
-        4:{uri:'/covoiturage/rennes/grenoble',label:'Covoiturage de Rennes à Grenoble'}
-      }
+      axios.post(this.$t("getPopularJourneysUrl"))
+        .then(response => {
+          // console.log(response.data);
+          this.popularJourneys = response.data;
+        })
+        .catch(function (error) {
+          // console.log(error);
+        })
     }
   }    
 }

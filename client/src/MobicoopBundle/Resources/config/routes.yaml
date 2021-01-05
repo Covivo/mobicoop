@@ -687,6 +687,13 @@ city_to_city:
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCityToCity
     defaults: { frequency: 1, page: 1, perPage: 300 }
 
+# cities
+popular_journeys:
+    methods: [POST]
+    path:
+        fr: /covoiturages/populaires
+        en: /carpool/popular
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneys
 
 ####################
 # community routes #

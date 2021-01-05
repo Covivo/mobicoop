@@ -193,6 +193,30 @@ class JourneyManager
         ];
     }
 
+
+    /**
+     * Get the popular journeys
+     *
+     * @return array
+     */
+    public function getPopularJourneys(): array
+    {
+        $popularJourneys = [];
+        
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection('popular');
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            $popularJourneys = $response->getValue();
+            // we add the url-friendly name
+            foreach ($popularJourneys as $key => $popularJourney) {
+                $popularJourneys[$key]["originSanitize"] = $this->sanitize($popularJourney['origin']);
+                $popularJourneys[$key]["destinationSanitize"] = $this->sanitize($popularJourney['destination']);
+            }
+        }
+
+        return $popularJourneys;
+    }
+
     private function getFirstUpperLetter(string $string)
     {
         return strtoupper($this->normalize(mb_substr($string, 0, 1, 'utf-8')));

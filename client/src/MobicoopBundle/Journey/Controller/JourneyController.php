@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Journey\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Journey\Service\JourneyManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controller class for journeys related actions.
@@ -83,5 +85,16 @@ class JourneyController extends AbstractController
             "page"=>$page,
             "perPage"=>$perPage
         ]);
+    }
+
+    /**
+     * Get the popular journeys
+     */
+    public function popularJourneys(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->journeyManager->getPopularJourneys());
+        }
+        return new JsonResponse("Bad request");
     }
 }
