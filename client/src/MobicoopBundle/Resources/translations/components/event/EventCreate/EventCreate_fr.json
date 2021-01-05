@@ -39,7 +39,7 @@
         }
     },
     "redirect": {
-        "route": "/evenements"
+        "route": "/covoiturages-evenements"
     },
     "error": {
         "event": {
