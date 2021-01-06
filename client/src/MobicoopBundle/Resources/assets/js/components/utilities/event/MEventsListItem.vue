@@ -78,11 +78,9 @@
 <script>
 
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/home/HomeEventListItem/";
+import {messages_en, messages_fr} from "@translations/components/utilities/MEventsListItem/";
 
 export default {
-  components:{
-  },
   i18n: {
     messages: {
       'en': messages_en,

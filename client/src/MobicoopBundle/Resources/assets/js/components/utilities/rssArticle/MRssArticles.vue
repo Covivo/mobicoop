@@ -21,13 +21,13 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
+import MRssArticlesItem from "@components/utilities/rssArticle/MRssArticlesItem";
 import {messages_en, messages_fr} from "@translations/components/utilities/rssArticle/RssArticle/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/rssArticle/RssArticle/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
-import MRssArticlesItem from "@components/utilities/rssArticle/MRssArticlesItem";
 export default {
   name: "MRssArticles",
   i18n: {

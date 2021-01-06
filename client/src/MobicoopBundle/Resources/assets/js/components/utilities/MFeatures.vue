@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <v-container fluid>
     <v-row>
       <v-col
         class="text-left mt-16 success--text display-1 font-weight-bold"
-        cols="6"
       >
         {{ $t('title') }}        
       </v-col>
@@ -17,7 +16,7 @@
         :text="item.text"
       />
     </v-row>
-  </div>
+  </v-container>
 </template>
 <script>
 

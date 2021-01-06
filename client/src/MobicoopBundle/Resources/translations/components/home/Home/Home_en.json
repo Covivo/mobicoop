@@ -11,8 +11,6 @@
     "clickHere": "Cliquez-ici",
     "urlImageSwap": "/images/PictoInterchanger.svg",
     "urlBackground": "/images/pages/home/background_top.svg",
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
     "items":[
         {
             "title":"Une plateforme sans commission",

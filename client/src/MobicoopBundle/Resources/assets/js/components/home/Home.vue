@@ -130,125 +130,16 @@
       <!-- end search -->
 
       <!-- homeContent -->
-      >
-      <v-row
-        align="center"
-        class="mt-2"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
-        >
-          <home-content
-            :solidary-display="solidaryDisplay"
-            :url-mobile="mobileUrl"
-          />
-        </v-col>
-      </v-row>
+   
+      <home-content
+        :community-display="communityDisplay"
+        :event-display="eventDisplay"
+        :solidary-display="solidaryDisplay"
+        :url-mobile="mobileUrl"
+      />
 
-
-      <!-- features -->
-      <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;'">
-        <v-row
-          align="center"
-          class="mt-2"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            xl="6"
-            lg="9"
-            md="12"
-          >
-            <m-features
-              :title="$t('title')"
-              :subtitle="$t('subtitle')"
-              :items="items"
-              class="mt-10"
-            />
-          </v-col>
-        </v-row>
-      </div>
-      <!-- end features -->
-
-      <!-- end homeContent -->
-
-      <!-- homeEventList -->
-      <v-row
-        dense
-        justify="center"
-        class="mt-10"
-      >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="10"
-          md="10"
-        >
-          <home-event-list />
-        </v-col>
-      </v-row>
-      <!-- end homeEventList -->
-
-      <!-- homeCarpools -->
-      <!-- <v-row
-        align="center"
-        class="mt-2"
-        justify="center"
-      >
-        <v-col>
-          <home-carpools />
-        </v-col>
-      </v-row> -->
-      <!-- end homeCarpools -->
-
-      <!-- homeBottom -->
-      <div
-        :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
-        class="mt-n8"
-      >
-        <v-row
-          align="center"
-          class="mt-4"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            lg="10"
-            md="12"
-            xl="8"
-            class="px-14"
-          >
-            <home-cooperative />
-          </v-col>
-        </v-row>
-        <!-- rssArticle -->
-
-        <v-row
-          align="center"
-          class="mt-4"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            lg="10"
-            md="12"
-            xl="8"
-            class="px-14"
-          >
-            <p class="success--text text-h4 font-weight-black mt-16">
-              Quoi de neuf chez Mobicoop ?
-            </p>
-
-            <m-rss-articles
-              :articles="article"
-            />
-          </v-col>
-        </v-row>
-      </div>
+      
+   
       <!-- end homeBottom -->
       <Cookies />
     </div>
@@ -262,13 +153,6 @@ import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
-import HomeEventList from "@components/home/HomeEventList";
-import MRssArticles from "@components/utilities/rssArticle/MRssArticles";
-import HomeCooperative from "@components/home/HomeCooperative";
-import MFeatures from "@components/utilities/MFeatures";
-
-
-
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -283,10 +167,6 @@ export default {
   components: {
     Search,
     HomeContent,
-    MFeatures,
-    HomeEventList,
-    MRssArticles,
-    HomeCooperative,
     Cookies
   },
   props: {
@@ -350,10 +230,6 @@ export default {
     urlMobile: {
       type: String,
       default: null
-    },
-    article: {
-      type: Object,
-      default: null
     }
   },
   data () {
@@ -361,7 +237,6 @@ export default {
       snackbar: true,
       displayVerifiedMessage: false,
       mobileUrl: this.urlMobile,
-      items:this.$t("items")
     }
   },
   mounted() {
