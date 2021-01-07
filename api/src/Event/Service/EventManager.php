@@ -28,6 +28,7 @@ use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Geography\Service\GeoTools;
 
 /**
  * Event manager.
@@ -42,15 +43,17 @@ class EventManager
     private $eventRepository;
     private $dispatcher;
     private $entityManager;
+    private $geoTools;
     
     /**
      * Constructor.
      */
-    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository, EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository, EventDispatcherInterface $dispatcher, GeoTools $geoTools)
     {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->dispatcher = $dispatcher;
+        $this->geoTools = $geoTools;
     }
 
     /**
@@ -64,6 +67,9 @@ class EventManager
         $this->entityManager->persist($event);
         $this->entityManager->flush();
 
+        // We set the displayLabel of the event's address
+        $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
+        
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
 
