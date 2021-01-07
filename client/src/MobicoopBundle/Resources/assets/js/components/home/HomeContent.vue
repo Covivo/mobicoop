@@ -1,41 +1,20 @@
 <template>
   <v-container fluid>
     <v-row
-      dense
+      align="center"
+      class="mt-4"
       justify="center"
-      class="mt-10"
     >
       <v-col
-        cols="8"
-        class="text-right"
+        cols="12"
+        xl="6"
+        lg="8"
+        md="12"
+        class="px-14"
       >
-        <h2 class="success--text font-italic">
-          {{ $t('news.title') }}
-        </h2>
-        <p class="success--text display-1 font-weight-black">
-          {{ $t('news.subtitle') }}
-        </p>
-        <p>
-          {{ $t('news.text') }}
-        </p>
-        <v-btn
-          rounded
-          color="secondary"
-          :href="this.$t('solidary.button.route')"
-          class="white--text"
-        >
-          {{ $t('solidary.button.label') }}
-        </v-btn>
-      </v-col>
-      <v-col cols="4">
-        <v-img
-          :src="imageLink + 'solidaire.png'"
-          class="align-self-center"
-          cover
-        />
+        <m-news />
       </v-col>
     </v-row>
-
     <!-- features -->
     <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;'">
       <v-row
@@ -127,6 +106,7 @@
 import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/home/HomeContent/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/HomeContent/";
+import MNews from "@components/utilities/news/MNews";
 import MFeatures from "@components/utilities/MFeatures";
 import MEvents from "@components/utilities/event/MEvents";
 import MCooperative from "@components/utilities/cooperative/MCooperative";
@@ -137,6 +117,7 @@ let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
+    MNews,
     MFeatures,
     MEvents,
     MCooperative,
