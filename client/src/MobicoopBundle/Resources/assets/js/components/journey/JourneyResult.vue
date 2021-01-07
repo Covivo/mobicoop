@@ -79,6 +79,7 @@
               :key="journey.id"
               class="ma-2"
               :journey="journey"
+              @carpool="carpool"
             />
           </v-tab-item>
           <!-- REGULAR -->
@@ -90,6 +91,7 @@
               :key="journey.id"
               class="ma-2"
               :journey="journey"
+              @carpool="carpool"
             />
           </v-tab-item>
         </v-tabs-items>
@@ -162,8 +164,10 @@ export default {
     }
   },
   methods:{
-    carpool(carpool){
-      this.$emit("carpool", carpool);
+    carpool(event){
+      if(undefined !== event.proposalId){
+        console.log(event.proposalId);
+      }
     },
     loginOrRegister(carpool){
       this.$emit("loginOrRegister", carpool);

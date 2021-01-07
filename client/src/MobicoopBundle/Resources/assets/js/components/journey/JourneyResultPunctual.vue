@@ -124,6 +124,7 @@
                 rounded
                 color="secondary"
                 large
+                @click="carpool"
               >
                 <span>
                   {{ $t('carpool') }}
@@ -171,5 +172,10 @@ export default {
   created() {
     moment.locale(this.$i18n.locale); // DEFINE DATE LANGUAGE
   },
+  methods:{
+    carpool(){
+      this.$emit("carpool", {proposalId:this.journey.proposalId});
+    }
+  }
 };
 </script>

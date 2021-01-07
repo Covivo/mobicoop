@@ -124,6 +124,7 @@
                 rounded
                 color="secondary"
                 large
+                @click="carpool"
               >
                 <span>
                   {{ $t('carpool') }}
@@ -156,6 +157,11 @@ export default {
       type: Object,
       default: () => {}
     },
+  },
+  methods:{
+    carpool(){
+      this.$emit("carpool", {proposalId:this.journey.proposalId});
+    }
   }
 };
 </script>
