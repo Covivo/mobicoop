@@ -355,7 +355,7 @@ class JourneyManager
     /**
      * Return de most popular journeys (see .env for the max number and criteria)
      *
-     * @return PopularJourney[]|null
+     * @return Journey[]|null
      */
     public function getPopularJourneys(): ?array
     {

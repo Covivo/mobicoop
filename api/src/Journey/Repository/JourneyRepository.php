@@ -155,12 +155,10 @@ class JourneyRepository
      * Get the popular journeys
      * (see .env for the max number and criteria)
      *
-     * @return PopularJourney[]
+     * @return Journey[]
      */
     public function getPopularJourneys(): array
     {
-        $popularJourneys = [];
-        
         $conn = $this->entityManager->getConnection();
         $sql = "SELECT origin, destination, latitude_origin, longitude_origin, latitude_destination, longitude_destination, count(id) as occurences
                 FROM `journey`
@@ -172,20 +170,7 @@ class JourneyRepository
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
-        
-        foreach ($journeys as $journey) {
-            $popularJourney = new PopularJourney();
-            $popularJourney->setOrigin($journey['origin']);
-            $popularJourney->setLatitudeOrigin($journey['latitude_origin']);
-            $popularJourney->setLongitudeOrigin($journey['longitude_origin']);
-            $popularJourney->setDestination($journey['destination']);
-            $popularJourney->setLatitudeDestination($journey['latitude_destination']);
-            $popularJourney->setLongitudeDestination($journey['longitude_destination']);
-            $popularJourney->setOccurences($journey['occurences']);
 
-            $popularJourneys[] = $popularJourney;
-        }
-
-        return $popularJourneys;
+        return $journeys;
     }
 }

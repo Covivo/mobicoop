@@ -43,7 +43,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"readJourney, readPopularJourney"}, "enable_max_depth"="true"}
  *      },
  *      collectionOperations={
  *          "get",
@@ -53,7 +53,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          },
  *          "popular"={
  *              "method"="GET",
- *              "path"="/journeys/popular"
+ *              "path"="/journeys/popular",
+ *              "normalization_context"={"groups"={"readPopularJourney"}},
  *          },
  *          "origin"={
  *              "method"="GET",
@@ -134,7 +135,7 @@ class Journey
     /**
      * @var string The origin of the journey
      * @ORM\Column(type="string")
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $origin;
 
@@ -142,7 +143,7 @@ class Journey
      * @var float|null The latitude of the origin.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $latitudeOrigin;
 
@@ -150,14 +151,14 @@ class Journey
      * @var float|null The longitude of the origin.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $longitudeOrigin;
 
     /**
      * @var string The destination of the journey
      * @ORM\Column(type="string")
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $destination;
 
@@ -165,7 +166,7 @@ class Journey
      * @var float|null The latitude of the destination.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $latitudeDestination;
 
@@ -173,7 +174,7 @@ class Journey
      * @var float|null The longitude of the destination.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney", "readPopularJourney"})
      */
     private $longitudeDestination;
 
@@ -241,6 +242,13 @@ class Journey
      * @Groups({"readJourney"})
      */
     private $returnTimes;
+
+
+    /**
+     * @var int|null The number of occurences of this journey (for Popular Journey only)
+    * @Groups({"readPopularJourney"})
+    */
+    private $occurences;
 
     /**
      * @var \DateTimeInterface Creation date of the journey.
@@ -481,6 +489,18 @@ class Journey
     public function setReturnTimes(?string $returnTimes): self
     {
         $this->returnTimes = $returnTimes;
+
+        return $this;
+    }
+
+    public function getOccurences(): ?int
+    {
+        return $this->occurences;
+    }
+
+    public function setOccurences(int $occurences): self
+    {
+        $this->occurences = $occurences;
 
         return $this;
     }
