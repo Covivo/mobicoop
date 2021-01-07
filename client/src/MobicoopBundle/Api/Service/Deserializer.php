@@ -322,6 +322,9 @@ class Deserializer
     {
         $ad = new Ad();
         $ad = $this->autoSet($ad, $data);
+        if (isset($data["outwardWaypoints"])) {
+            $ad->setOutwardWaypoints($data["outwardWaypoints"]);
+        }
         return $ad;
     }
 
