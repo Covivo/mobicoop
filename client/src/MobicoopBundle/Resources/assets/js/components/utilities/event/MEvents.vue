@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <v-row
+    dense
+  >
     <!-- events -->
     <v-col
-      cols="3"
+      cols="4"
       class="text-left"
     >
       <p class="success--text display-1 font-weight-black">
@@ -29,15 +31,18 @@
         :src="imageLink + 'van_evenement.svg'"
       >
     </v-col>
-    <v-col
-      v-for="item in eventscoming"
-      :key="item.index"
-      cols="7"
-    >
-      <MEventsListItem
-        :item="item"
-      />
-    </v-col>
+    <v-spacer />
+    <v-row dense>
+      <v-col
+        v-for="item in eventscoming"
+        :key="item.index"
+        cols="7"
+      >
+        <MEventsListItem
+          :item="item"
+        />
+      </v-col>
+    </v-row>
     <v-row justify="center">
       <v-col
         cols="6"
@@ -69,8 +74,9 @@
         </p>
       </v-col>
     </v-row>
+
     <!-- end events -->
-  </div>
+  </v-row>
 </template>
 <script>
 

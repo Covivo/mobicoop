@@ -89,20 +89,21 @@
       </v-col>
     </v-row>
 
+    <!-- Title and subtitle -->
     <div
-      :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;background-position-y:-8em;'"
+      :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;background-position-y:-1em;'"
     >
-      <!-- Title and subtitle -->
       <v-row
         align="center"
         justify="center"
-        class="py-12 mt-n3"
       >
         <v-col
-          class="text-center white--text mt-n2"
-          :style="'font-size:1.25rem;'"
+          class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
+          :style="'font-size:1.25rem;line-height:1.25;'"
         >
-          <h1 v-html="$t('title')" />
+          <h1
+            v-html="$t('title')"
+          />
         </v-col>
       </v-row>
       <!-- end Title and subtitle -->
@@ -110,13 +111,9 @@
       <!-- search -->
       <v-row
         justify="center"
-        class="mt-8"
+        class="mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
       >
-        <v-col
-          lg="10"
-          xl="8"
-          class="mt-16"
-        >
+        <v-col class=" mt-md-10 mt-lg-8">
           <search
             :geo-search-url="geoSearchUrl"
             :user="user"
@@ -130,16 +127,12 @@
       <!-- end search -->
 
       <!-- homeContent -->
-   
       <home-content
         :community-display="communityDisplay"
         :event-display="eventDisplay"
         :solidary-display="solidaryDisplay"
         :url-mobile="mobileUrl"
       />
-
-      
-   
       <!-- end homeBottom -->
       <Cookies />
     </div>

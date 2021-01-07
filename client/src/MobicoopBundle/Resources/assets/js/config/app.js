@@ -27,7 +27,7 @@ import Vuetify, {
   VApp, VContainer, VFlex, VLayout, VMain, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VTimePicker, VIcon,
   VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardSubtitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
   VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
-  VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
+  VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VListItemAction, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
   // header
   VToolbar, VAppBar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg,
@@ -41,7 +41,7 @@ Vue.use(Vuetify, {
     VApp, VContainer, VFlex, VLayout, VMain, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VTimePicker, VIcon,
     VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardSubtitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog, VSlider, VCarousel, VCarouselItem, VSheet, VResponsive,
-    VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
+    VFileInput, VProgressCircular, VProgressLinear, VSimpleTable, VDataTable, VListItemGroup, VListItemAvatar, VListItemAction, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     VExpansionPanels,VExpansionPanel,VExpansionPanelHeader,VExpansionPanelContent, VBadge, VPagination,
     // header
     VToolbar, VToolbarTitle, VToolbarItems, VBtn, VFabTransition, VImg, VAppBar,

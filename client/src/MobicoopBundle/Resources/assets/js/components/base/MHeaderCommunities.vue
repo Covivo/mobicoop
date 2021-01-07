@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    v-if="items.length > 0"
     offset-y
     open-on-hover
   >
@@ -64,7 +65,7 @@ export default {
     linksColorClass: {
       type: String,
       default: ""
-    }     
+    } 
   },
   data(){
     return {
@@ -73,7 +74,7 @@ export default {
   },
   mounted(){
     let params = {
-      'userId':this.userId
+      'userId':this.userId,
     }
     axios.post(this.$t("getCommunities"), params)
       .then(res => {

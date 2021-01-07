@@ -234,7 +234,7 @@ class UserController extends AbstractController
                 "community_show"=>($this->community_show==="true") ? true : false,
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
-                "required_community"=>($this->required_community==="true") ? true : false
+                "required_community"=>($this->required_community==="true") ? true : false,
         ]);
     }
 

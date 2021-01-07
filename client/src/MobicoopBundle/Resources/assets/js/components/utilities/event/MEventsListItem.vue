@@ -4,75 +4,123 @@
     flat
     class="secondary lighten-5"
   >
-    <v-row
-      justify="start"
-      align="center"
+    <!-- <v-avatar
+      size="100"
+      tile
     >
-      <v-col
-        cols="3"
-        class="pa-0"
-      >
-        <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_100']"
-          class="grey lighten-2"
-          contain
-          max-width="100"
-          max-height="100"
-        />
-        <v-img
-          v-else
-          src="/images/avatarsDefault/avatar.svg"
-          class="grey lighten-2"
-          max-width="100"
-          max-height="100"
-        />
-      </v-col>
-      <v-col
-        cols="5"
-        align="left"
-        class="ml-4"
-      >
-        <v-card-title>
-          <h4 class="text-uppercase ml-n4">
-            {{ item.name }}
-          </h4>
-        </v-card-title>
-        <v-card-subtitle class="pa-0">
-          <span class="text-subtitle-1 black--text font-italic">
-            {{ item.address.addressLocality }}
-          </span>
-          <p
-            v-if="dateLine1"
-            class="pa-0 ma-0"
-          >
-            <span class="text-subtitle-1 black--text font-weight-bold">{{ dateLine1 }}</span>
-            <span
-              v-if="dateLine2"
-              class="text-subtitle-1 black--text font-weight-bold"
-            >{{ dateLine2 }}</span>
-          </p>
-        </v-card-subtitle>
-      </v-col>
-      <v-col
-        cols="3"
-        class="text-center align-self-center"
-        justify="center"
-        align="center"
-      >
-        <v-btn
-          icon
-          x-large
-          color="black"
+      <v-img
+        v-if="item['images'][0]"
+        :src="item['images'][0]['versions']['square_100']"
+        class="grey lighten-2"
+        contain
+        max-width="100"
+        max-height="100"
+      />
+      <v-img
+        v-else
+        src="/images/avatarsDefault/avatar.svg"
+        class="grey lighten-2"
+        max-width="100"
+        max-height="100"
+      />
+    </v-avatar>
 
-          :href="linkToEventShow(item)"
+    <v-card-title>
+      <h4 class="text-uppercase">
+        {{ item.name }}
+      </h4>
+    </v-card-title>
+    <v-card-subtitle>
+      <span class="text-subtitle-1 black--text font-italic">
+        {{ item.address.addressLocality }}
+      </span>
+      <p
+        v-if="dateLine1"
+      >
+        <span class="text-subtitle-1 black--text font-weight-bold">{{ dateLine1 }}</span>
+        <span
+          v-if="dateLine2"
+          class="text-subtitle-1 black--text font-weight-bold"
+        >{{ dateLine2 }}</span>
+      </p>
+    </v-card-subtitle>
+    
+    <v-card-actions>
+      <v-btn
+        icon
+        x-large
+        color="black"
+
+        :href="linkToEventShow(item)"
+      >
+        <v-icon>
+          mdi-chevron-right
+        </v-icon>
+      </v-btn>
+    </v-card-actions> -->
+    <v-card
+      v-if="item"
+      flat
+      class="secondary lighten-5"
+    >
+      <v-list-item three-line>
+        <v-list-item-avatar
+          tile
+          size="100"
+          color="grey"
         >
-          <v-icon>
-            mdi-chevron-right
-          </v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+          <v-img
+            v-if="item['images'][0]"
+            :src="item['images'][0]['versions']['square_100']"
+            class="grey lighten-2"
+            contain
+            max-width="100"
+            max-height="100"
+          />
+          <v-img
+            v-else
+            src="/images/avatarsDefault/avatar.svg"
+            class="grey lighten-2"
+            max-width="100"
+            max-height="100"
+          />
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title class="text-left headline mb-1">
+            <h4 class="text-uppercase">
+              {{ item.name }}
+            </h4>
+          </v-list-item-title>
+          <v-list-item-subtitle class="text-left ">
+            <span class="text-subtitle-1 black--text font-italic">
+              {{ item.address.addressLocality }}
+            </span>
+            <p
+              v-if="dateLine1"
+            >
+              <span class="text-left text-subtitle-1 black--text font-weight-bold">{{ dateLine1 }}</span>
+              <span
+                v-if="dateLine2"
+                class="text-subtitle-1 black--text font-weight-bold"
+              >{{ dateLine2 }}</span>
+            </p>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn
+            icon
+            x-large
+            color="black"
+
+            :href="linkToEventShow(item)"
+          >
+            <v-icon>
+              mdi-chevron-right
+            </v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
+    </v-card>
   </v-card>
 </template>
 <script>

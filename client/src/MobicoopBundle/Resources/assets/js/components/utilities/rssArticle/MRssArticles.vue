@@ -52,7 +52,7 @@ export default {
       axios.post(this.$t("externalRoute"))
         .then(response => {
           // console.error(response.data);
-          this.articles = response.data.slice(0, 3);
+          this.articles = response.data;
         });
     }
   }

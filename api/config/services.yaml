@@ -111,6 +111,8 @@ services:
     App\Article\Service\ArticleManager:
         arguments:
             $articleFeed: '%env(string:ARTICLE_FEED)%'
+            $articleFeedNumber: '%env(int:ARTICLE_FEED_NUMBER)%'
+
             
     # Auth
     App\Auth\Controller\:

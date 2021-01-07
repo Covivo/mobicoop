@@ -7,7 +7,7 @@
       class="mt-10"
     >
       <v-col
-        cols="8"
+        cols="7"
         class="text-right"
       >
         <h2 class="success--text font-italic">
@@ -22,12 +22,14 @@
         <v-btn
           rounded
           color="secondary"
-          :href="this.$t('solidary.button.route')"
+          :href="this.$t('news.button.route')"
           class="white--text"
         >
-          {{ $t('solidary.button.label') }}
+          {{ $t('news.button.label') }}
         </v-btn>
       </v-col>
+      <v-spacer />
+
       <v-col cols="4">
         <v-img
           :src="imageLink + 'solidaire.png'"

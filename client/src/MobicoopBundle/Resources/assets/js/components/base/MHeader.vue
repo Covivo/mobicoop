@@ -3,7 +3,7 @@
     <v-toolbar
       flat
       color="primary"
-      height="100px"
+      height="80px"
     >
       <v-toolbar-title align="midle">
         <a
@@ -77,6 +77,14 @@
         class="hidden-md-and-down white--text"
       >
         {{ $t('buttons.shareAnAd.label') }}
+      </v-btn>
+      <v-btn
+        rounded
+        color="secondary"
+        :href="$t('buttons.solidary.route')"
+        class="hidden-md-and-down white--text mr-4"
+      >
+        {{ $t('buttons.solidary.label') }}
       </v-btn>
      
       <div @click="snackbar = true">
@@ -159,7 +167,9 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <MHeaderCommunities :user-id="user.id" />
+              <MHeaderCommunities
+                :user-id="user.id"
+              />
             </v-list-item-title>
           </v-list-item>
           <v-list-item>

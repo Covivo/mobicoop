@@ -55,6 +55,18 @@
     </v-row>
     <!-- end Event -->
 
+    <v-row>
+      <v-col>
+        <v-sheet
+          color="secondary"
+          flat
+          height="136"
+          width="2000"
+        />
+      </v-col>
+    </v-row>
+
+
     <!-- cooperative -->
     <div
       :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"

@@ -2,6 +2,10 @@
     "news": {
         "title": "Actualités",
         "subtitle": "Vous êtes solidaire ? Engagez-vous !",
-        "text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto."
+        "text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto.",
+        "button": {
+            "label":"Je suis solidaire",
+            "route":"/#/carpools/solidary/home/request"
+        }
     }
 }

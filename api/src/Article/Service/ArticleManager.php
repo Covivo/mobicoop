@@ -68,13 +68,14 @@ class ArticleManager
     private $articleRepository;
 
     private $articleFeed;
+    private $articleFeedNumber;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed, $articleFeedNumber)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -82,6 +83,7 @@ class ArticleManager
         $this->paragraphRepository = $paragraphRepository;
         $this->articleRepository = $articleRepository;
         $this->articleFeed = $articleFeed;
+        $this->articleFeedNumber = $articleFeedNumber;
     }
 
     /**
@@ -202,10 +204,13 @@ class ArticleManager
         $rssElements = [];
 
         $articleFeed = $this->articleFeed;
+        $articleFeedNumber = $this->articleFeedNumber;
 
         // transform xml to object
         $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
 
+
+        $counter=-1;
 
         foreach ($feedResult->channel->item as $item) {
             $rssElement = new RssElement();
@@ -237,9 +242,13 @@ class ArticleManager
                 $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
                 $rssElement->setImage($image);
             }
+            $counter++;
+            if( $counter == $articleFeedNumber){
+                break;
+            }
+            
             $rssElements[]=$rssElement;
         }
-        
         return $rssElements;
     }
     
