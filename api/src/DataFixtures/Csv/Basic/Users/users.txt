@@ -1,0 +1,9 @@
+id
+givenName
+familyName
+email
+gender : 1 = female, 2 = male, 3 = other
+birthDate : YYYY-MM-DD
+telephone
+password
+home locality : string
