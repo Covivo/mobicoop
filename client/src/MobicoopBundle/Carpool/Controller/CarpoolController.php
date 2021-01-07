@@ -305,8 +305,13 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAd($id, $filters)) {
+            $origin = $ad->getOutwardWaypoints()[0];
+            $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints())-1];
+
             //$this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json([
+                "origin"=>$origin,
+                "destination"=>$destination,
                 "results"=>$ad->getResults(),
                 "nb"=>$ad->getNbResults()
             ]);

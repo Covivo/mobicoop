@@ -830,9 +830,11 @@ class PaymentManager
                     }
                     $this->entityManager->persist($carpoolItem);
 
-                    // we execute event to inform passenger to pay for the carpool
-                    $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
-                    $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
+                    if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
+                        // we execute event to inform passenger to pay for the carpool only if the deptor status is not null
+                        $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
+                        $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
+                    }
                 }
             } else {
                 // regular, we need to create a carpool item for each day between fromDate (or the ask fromDate if it's after the given fromDate) and toDate
@@ -896,11 +898,14 @@ class PaymentManager
                         }
                         $this->entityManager->persist($carpoolItem);
 
+
                         // We send only one email for the all week
                         // We check in array if we already send an email for the ask
                         if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
-                            $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
-                            $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+                            if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
+                                $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
+                                $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+                            }
                             // we put in array the askId and the askid linked
                             $askIds[] = $carpoolItem->getAsk()->getId();
                             if ($carpoolItem->getAsk()->getAskLinked()) {

@@ -91,7 +91,7 @@ class EventManager
 
         // set event infos
         $event->setName($data->get('name'));
-        $event->setPrivate($data->get('private'));
+        $event->setPrivate(($data->get('private')=="true") ? true : false);
         $event->setDescription($data->get('description'));
         $event->setFullDescription($data->get('fullDescription'));
         $event->setAddress($address);

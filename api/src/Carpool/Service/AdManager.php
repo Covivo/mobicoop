@@ -653,6 +653,23 @@ class AdManager
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
         $ad->setPaused($proposal->isPaused());
+
+        // outward waypoints
+        $outwardWaypoints = [];
+        foreach ($proposal->getWaypoints() as $outwardWaypointP) {
+            $outwardWaypoints[] = $outwardWaypointP->getAddress();
+        }
+        $ad->setOutwardWaypoints($outwardWaypoints);
+
+        // return waypoints
+        if (!is_null($proposal->getProposalLinked())) {
+            $returnWaypoints = [];
+            foreach ($proposal->getProposalLinked()->getWaypoints() as $returnWaypointP) {
+                $returnWaypoints[] = $returnWaypointP->getAddress();
+            }
+            $ad->setReturnWaypoints($returnWaypoints);
+        }
+
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
         }

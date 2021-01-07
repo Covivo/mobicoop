@@ -101,7 +101,7 @@
           @click="emitCarpoolEvent"
         >
           <span>
-            {{ $t('carpool') }}
+            {{ $t('seeDetails') }}
           </span>
         </v-btn>
       </v-col>
