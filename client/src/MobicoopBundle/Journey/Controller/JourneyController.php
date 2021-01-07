@@ -97,4 +97,16 @@ class JourneyController extends AbstractController
         }
         return new JsonResponse("Bad request");
     }
+
+    /**
+     * Create a search Ad from a Proposal
+     *
+     * @param integer $proposalId   The base Proposal
+     * @return int|null The Ad's id created
+     */
+    public function createSearchFromProposal(int $proposalId)
+    {
+        $journey = $this->journeyManager->createSearchFromProposal($proposalId);
+        return new JsonResponse(['proposalId'=>$journey->getProposalId()]);
+    }
 }

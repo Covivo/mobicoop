@@ -154,6 +154,15 @@ export default {
       type: Object,
       default: () => {}
     },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data(){
+    return {
+      loadingBtn:this.loading
+    }
   },
   computed: {
     computedTime() {
@@ -167,6 +176,11 @@ export default {
         return moment(this.journey.fromDate.date).format(this.$t("shortDate"));
       }
       return null;
+    }
+  },
+  watch:{
+    loading(){
+      this.loadingBtn = this.loading;
     }
   },
   created() {

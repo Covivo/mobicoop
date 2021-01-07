@@ -217,6 +217,28 @@ class JourneyManager
         return $popularJourneys;
     }
 
+
+
+    /**
+     * Create a search Ad from a Proposal and get it's Id
+     *
+     * @param integer $proposalId   The base Proposal
+     * @return Journey|null The Journey with the ad's id created
+     */
+    public function createSearchFromProposal(int $proposalId): ?Journey
+    {
+        $journey = new Journey();
+        $journey->setProposalId($proposalId);
+        
+        $response = $this->dataProvider->postSpecial($journey, null, "carpools");
+        if ($response->getCode() >=201) {
+            return $response->getValue();
+        }
+
+        return null;
+    }
+
+
     private function getFirstUpperLetter(string $string)
     {
         return strtoupper($this->normalize(mb_substr($string, 0, 1, 'utf-8')));

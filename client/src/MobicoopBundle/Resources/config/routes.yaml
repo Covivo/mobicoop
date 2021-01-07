@@ -695,6 +695,14 @@ popular_journeys:
         en: /carpool/popular
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneys
 
+# create a search ad from a proposal
+carpool_create_search_from_proposal:
+    methods: [POST]
+    path:
+        fr: /covoiturage/creer-recherche/{proposalId}
+        en: /carpool/create-search/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::createSearchFromProposal
+
 ####################
 # community routes #
 ####################

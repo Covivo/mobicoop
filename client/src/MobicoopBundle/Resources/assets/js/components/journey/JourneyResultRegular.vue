@@ -124,6 +124,7 @@
                 rounded
                 color="secondary"
                 large
+                :loading="loadingBtn"
                 @click="carpool"
               >
                 <span>
@@ -157,6 +158,20 @@ export default {
       type: Object,
       default: () => {}
     },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data(){
+    return {
+      loadingBtn:this.loading
+    }
+  },
+  watch:{
+    loading(){
+      this.loadingBtn = this.loading;
+    }
   },
   methods:{
     carpool(){

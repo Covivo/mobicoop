@@ -79,6 +79,7 @@
               :key="journey.id"
               class="ma-2"
               :journey="journey"
+              :loading="loading"
               @carpool="carpool"
             />
           </v-tab-item>
@@ -91,6 +92,7 @@
               :key="journey.id"
               class="ma-2"
               :journey="journey"
+              :loading="loading"
               @carpool="carpool"
             />
           </v-tab-item>
@@ -101,6 +103,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import JourneyResultPunctual from './JourneyResultPunctual';
 import JourneyResultRegular from './JourneyResultRegular';
 import {messages_en, messages_fr} from "@translations/components/journey/JourneyResult/";
@@ -160,13 +163,26 @@ export default {
   data(){
     return {
       frequencyTab: this.frequency == 1 ? (this.journeys.punctual.length>0 ? 0 : (this.journeys.regular.length>0 ? 1 : 0)) : (this.journeys.regular.length>0 ? 1 : 0),
-      lPage:this.page
+      lPage:this.page,
+      loading:false
     }
   },
   methods:{
-    carpool(event){
-      if(undefined !== event.proposalId){
-        console.log(event.proposalId);
+    carpool(data){
+      if(undefined !== data.proposalId){
+        // Create a "search" with the original proposal parameters
+        this.loading = true;
+        axios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
+          .then(response => {
+            // console.log(response.data);
+            if(undefined !== response.data.proposalId){
+              window.location.href = this.$t('redirectForCarpoolSearch', {proposalId:response.data.proposalId});
+            }
+          })
+          .catch(function (error) {
+            // console.log(error);
+            this.loading = false;
+          })
       }
     },
     loginOrRegister(carpool){

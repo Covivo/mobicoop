@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Journey\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : a journey (carpool summary between 2 cities for a user)
@@ -43,6 +44,7 @@ class Journey implements ResourceInterface, \JsonSerializable
 
     /**
      * @var int|null The proposal id for this journey
+     * @Groups({"post"})
      */
     private $proposalId;
 
