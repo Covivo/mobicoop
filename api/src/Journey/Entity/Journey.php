@@ -43,7 +43,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readJourney, readPopularJourney"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
  *      },
  *      collectionOperations={
  *          "get",
