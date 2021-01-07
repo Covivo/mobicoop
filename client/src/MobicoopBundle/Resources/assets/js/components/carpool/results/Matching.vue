@@ -445,10 +445,10 @@ export default {
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
     },
     displayOrigin(){
-      return this.origin.addressLocality;
+      return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
     },
     displayDestination(){
-      return this.destination.addressLocality;
+      return (this.lDestination) ? this.lDestination.addressLocality : "";
     }
   },
   watch:{
@@ -474,6 +474,8 @@ export default {
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
+    this.lOrigin = this.origin;
+    this.lDestination = this.destination;
   },
   methods :{
     carpool(carpool) {
@@ -528,6 +530,8 @@ export default {
           })
           .then((response) => {
             this.results = response.data.results;
+            this.lOrigin = response.data.origin;
+            this.lDestination = response.data.destination;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
           })
           .catch((error) => {
