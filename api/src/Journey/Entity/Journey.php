@@ -43,7 +43,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"readJourney"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"writeJourney"}}
  *      },
  *      collectionOperations={
  *          "get",
@@ -76,6 +77,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *              "method"="GET",
  *              "path"="/journeys/origin/{origin}/destination/{destination}"
  *          },
+ *          "carpools"={
+ *              "method"="POST",
+ *              "path"="/journeys/carpools",
+ *              "normalization_context"={"groups"={"journeyCarpools"}}
+ *          },
  *      },
  *      itemOperations={
  *          "get",
@@ -88,6 +94,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  */
 class Journey
 {
+    const DEFAULT_ID = 999999999999;
+    
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
     const ROLE_DRIVER = 1;
@@ -107,7 +115,7 @@ class Journey
     /**
      * @var int The proposal id for this journey
      * @ORM\Column(type="integer")
-     * @Groups({"readJourney"})
+     * @Groups({"readJourney","writeJourney","journeyCarpools"})
      */
     private $proposalId;
 
@@ -265,6 +273,13 @@ class Journey
      */
     private $updatedDate;
 
+    public function __construct($id = null)
+    {
+        if (is_null($id)) {
+            $this->id = self::DEFAULT_ID;
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -282,7 +297,7 @@ class Journey
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
@@ -318,7 +333,7 @@ class Journey
         return $this;
     }
 
-    public function getOrigin(): string
+    public function getOrigin(): ?string
     {
         return $this->origin;
     }
@@ -350,7 +365,7 @@ class Journey
         $this->longitudeOrigin = $longitudeOrigin;
     }
 
-    public function getDestination(): string
+    public function getDestination(): ?string
     {
         return $this->destination;
     }

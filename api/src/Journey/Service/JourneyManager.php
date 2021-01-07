@@ -23,9 +23,16 @@
 
 namespace App\Journey\Service;
 
+use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Ressource\Ad;
+use App\Carpool\Service\AdManager;
+use App\Carpool\Service\ProposalManager;
+use App\Journey\Entity\Journey;
 use App\Journey\Repository\JourneyRepository;
 use App\Service\FileManager;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 
 /**
  * Journey manager service.
@@ -37,17 +44,21 @@ class JourneyManager
     private $entityManager;
     private $fileManager;
     private $journeyRepository;
+    private $proposalManager;
+    private $adManager;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, JourneyRepository $journeyRepository)
+    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, JourneyRepository $journeyRepository, ProposalManager $proposalManager, AdManager $adManager)
     {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
         $this->journeyRepository = $journeyRepository;
+        $this->proposalManager = $proposalManager;
+        $this->adManager = $adManager;
     }
 
     /**
@@ -360,5 +371,47 @@ class JourneyManager
     public function getPopularJourneys(): ?array
     {
         return $this->journeyRepository->getPopularJourneys();
+    }
+
+    public function findCarpools(int $proposalId, User $user)
+    {
+        
+        // We get the original Proposal
+        $proposal = $this->proposalManager->get($proposalId);
+        if (!$proposal) {
+            throw new LogicException("Unknown Proposal");
+        }
+
+        
+        // Make a new "search" Ad with this Proposal. Same structure that a simple search.
+        $ad = new Ad();
+        $ad->setUser($user);
+
+        // It's a search without a specific role
+        $ad->setSearch(true);
+        $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        $ad->setFrequency($proposal->getCriteria()->getFrequency());
+        $ad->setOneWay($proposal->getProposalLinked() ? false : true);
+
+        // In a Proposal, we have true waypoint. For an Ad, outwardWaypoints are in fact an array of Address
+        $outwardWaypoint = [];
+        $waypointsProposal = $proposal->getWaypoints();
+        foreach ($waypointsProposal as $waypointP) {
+            $outwardWaypoint[] = clone $waypointP->getAddress();
+        }
+        $ad->setOutwardWaypoints($outwardWaypoint);
+
+
+        // Like in a simple search, we use "now" as outwardDateTime
+        $ad->setOutwardDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+        $ad->setFilters(["page"=>1]);
+        $ad->setPaused(false);
+
+        $ad = $this->adManager->createAd($ad, true, false);
+
+        $journey = new Journey();
+        $journey->setProposalId($ad->getId());
+
+        return $journey;
     }
 }
