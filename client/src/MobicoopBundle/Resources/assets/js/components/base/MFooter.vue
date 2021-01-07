@@ -39,11 +39,11 @@
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('cooperative.aboutUs.link')"
+              :href="$t('cooperative.talkAboutUs.link')"
               style="text-decoration:none;"
               class="white--text"
             >              
-              {{ $t('cooperative.aboutUs.title') }}
+              {{ $t('cooperative.talkAboutUs.title') }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">

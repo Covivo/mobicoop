@@ -14,13 +14,13 @@
         "download":"TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
     },
     "cooperative":{
-        "aboutUs": {
+        "talkAboutUs": {
             "title":"Qui sommes-nous ?",
-            "link":"#"
+            "link":"/about-us"
         },
         "joinUs":{
             "title":"Devenir sociétaire",
-            "link":"#"
+            "link":"https://lacampagne.mobicoop.fr/"
         }
     },
     "tools":{
@@ -36,35 +36,35 @@
     "services":{
         "map":{
             "title":"La carte des aires de covoiturage",
-            "link":"#"
+            "link":"/points-relais"
         },
         "events" :{
             "title":"Les événements en covoiturage",
-            "link":"#"
+            "link":"/events"
         },
         "faq":{
             "title":"FAQ",
-            "link":"#"
+            "link":"/FAQ"
         },
         "cgu":{
             "title":"CGU",
-            "link":"#"
+            "link":"/cgu"
         }
     },
     "contacts":{
         "hotline":{
             "title":"Hotline",
-            "link":"#"
+            "link":"/contact"
         },
         "presse" :{
             "title":"Presse",
-            "link":"#"
+            "link":"/contact"
         }
     },
     "need":{
         "community":{
             "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"#"
+            "link":"/community/create"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",

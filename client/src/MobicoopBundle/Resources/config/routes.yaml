@@ -938,6 +938,13 @@ PrivacyPolicy:
         en: /privacy-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
+# display PrivacyPolicy page
+AboutUs:
+    path:
+        fr: /qui-sommes-nous
+        en: /about-us
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAboutUs
+
 # display Convention page
 Covention:
     path:
