@@ -18,7 +18,12 @@
           <a
             :href="$t('links.byCity.uri')"
             :title="$t('links.byCity.title')"
-          >{{ $t('links.byCity.title') }}</a>
+          >{{ $t('links.byCity.title') }}</a><br>
+          &gt;
+          <a
+            :href="$t('links.popular.uri')"
+            :title="$t('links.popular.title')"
+          >{{ $t('links.popular.title') }}</a>
         </v-col>
       </v-row>
     </v-col>

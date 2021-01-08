@@ -660,7 +660,14 @@ cities:
         en: /carpool-from-city
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::cities
 
-# from a city
+cities_popular:
+    methods: [GET]
+    path:
+        fr: /covoiturage-par-ville/populaires
+        en: /carpool-from-city/popular
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::citiesPopular
+
+    # from a city
 city_from:
     methods: [GET]
     path:

@@ -51,6 +51,11 @@ class JourneyController extends AbstractController
         ]);
     }
 
+    public function citiesPopular()
+    {
+        return $this->render('@Mobicoop/journey/cities-popular.html.twig', []);
+    }
+    
     public function fromCity(string $origin)
     {
         $journeys = $this->journeyManager->getDestinations($origin);

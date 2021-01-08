@@ -10,7 +10,7 @@
         },
         "popular":{
             "title":"Les covoiturages par trajets populaires",
-            "uri":"/"
+            "uri":"/covoiturage-par-ville/populaires"
         }
     },
     "popularJourneys":{

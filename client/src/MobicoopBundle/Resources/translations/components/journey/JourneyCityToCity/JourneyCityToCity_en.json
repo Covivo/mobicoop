@@ -6,11 +6,11 @@
     "links":{
         "byCity":{
             "title":"Les covoiturages par communes",
-            "uri":"/carpool-by-city"
+            "uri":"/carpool-from-city"
         },
         "popular":{
             "title":"Les covoiturages par trajets populaires",
-            "uri":"/"
+            "uri":"/carpool-from-city/popular"
         }
     },
     "popularJourneys":{
