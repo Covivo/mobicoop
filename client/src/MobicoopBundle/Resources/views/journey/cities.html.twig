@@ -1,6 +1,7 @@
 {% extends '@Mobicoop/base.html.twig' %}
 {% block title %}
-  {% trans from 'ui' %}journey.cities.title{% endtrans %} - {{ app_name }}
+{% block title %}{% trans from 'meta' %}meta.cityToCity.title{% endtrans %}{% endblock %}
+{% block desc %}{% trans from 'meta' %}meta.cityToCity.description{% endtrans %}{% endblock %}
 {% endblock %}
 {% block stylesheets %}
 {% endblock %}
