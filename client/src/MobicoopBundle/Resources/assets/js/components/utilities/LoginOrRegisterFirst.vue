@@ -34,7 +34,7 @@
           rounded
           color="secondary"
           large
-          :href="proposalId ? $t('loginUrl') : $t('loginUrlProposalId',{'id':proposalId})"
+          :href="proposalId ? $t('loginUrlProposalId',{'id':proposalId}) : $t('loginUrl')"
         >
           <span>
             {{ $t('login') }}
@@ -45,7 +45,7 @@
           rounded
           color="secondary"
           large
-          :href="proposalId ? $t('registerUrl') : $t('registerUrlProposalId',{'id':proposalId})"
+          :href="proposalId ? $t('registerUrlProposalId',{'id':proposalId}) : $t('registerUrl')"
         >
           <span>
             {{ $t('register') }}
