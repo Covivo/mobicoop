@@ -7,6 +7,14 @@
             "route": "/communautes"
         }
     },
+    "event": {
+        "title": "ÉVÉNEMENTS",
+        "text": "Trouver des covoitureurs allant au même événement.",
+        "button": {
+            "label": "Voir les événements",
+            "route": "/evenements"
+        }
+    },
     "solidary": {
         "title": "COVOITURAGE SOLIDAIRE",
         "text": "S'entraider pour l'accès à l'emploi",
