@@ -1,4 +1,4 @@
-userid : user id
+email : user email
 search : 0 if ad, 1 if search
 oneway : 0 if round trip, 1 if one way trip
 frequency : 1 if punctual, 2 if regular
