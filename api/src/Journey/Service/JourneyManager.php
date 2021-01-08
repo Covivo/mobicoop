@@ -394,7 +394,12 @@ class JourneyManager
      */
     public function getPopularJourneysForHome(): ?array
     {
-        return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber);
+        // We are inducing a little bit of randomization. We take x times (see Journey.php constant) the max home number of items
+        // we shuffle it and return the right amount of journeys
+        $journeys = $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber*Journey::POPULAR_RANDOMIZATION_FACTOR);
+        shuffle($journeys);
+
+        return array_slice($journeys, 0, $this->popularJourneyHomeMaxNumber);
     }
 
     public function findCarpools(int $proposalId, User $user)

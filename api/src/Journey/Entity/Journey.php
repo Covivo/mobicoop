@@ -107,6 +107,8 @@ class Journey
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
+    const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
+
     /**
      * @var int The id of this journey.
      *
