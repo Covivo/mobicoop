@@ -23,13 +23,12 @@
 
 namespace App\DataFixtures\Service;
 
-use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
-use App\Carpool\Service\ProposalManager;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use App\Event\Entity\Event;
 use App\Geography\Service\GeoSearcher;
@@ -304,7 +303,7 @@ class FixturesManager
             // we create the proposal and its related entities
             $ad = $this->adManager->createProposalFromAd($ad);
         } else {
-            echo "User not found !";
+            echo "User not found !" . PHP_EOL;
         }
     }
 
@@ -330,7 +329,7 @@ class FixturesManager
                 $this->entityManager->persist($address);
                 $event->setAddress($address);
             } else {
-                echo "Address not found !";
+                echo "Address not found !" . PHP_EOL;
                 return;
             }
             $event->setName($tab[2]);
@@ -344,10 +343,16 @@ class FixturesManager
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         } else {
-            echo "User not found !";
+            echo "User not found !" . PHP_EOL;
         }
     }
 
+    /**
+     * Create a community from an array
+     *
+     * @param array $tab    The array containing the community informations (model in ../Csv/Communities/communities.txt)
+     * @return void
+     */
     public function createCommunity(array $tab)
     {
         echo "Import community : " . $tab[2] . PHP_EOL;
@@ -365,7 +370,7 @@ class FixturesManager
                     $this->entityManager->persist($address);
                     $community->setAddress($address);
                 } else {
-                    echo "Address not found !";
+                    echo "Address not found !" . PHP_EOL;
                 }
             }
             $community->setName($tab[2]);
@@ -378,7 +383,32 @@ class FixturesManager
             // we use the save method from communityManager to add the right role to the creator
             $this->communityManager->save($community);
         } else {
-            echo "User not found !";
+            echo "User not found !" . PHP_EOL;
+        }
+    }
+
+    /**
+     * Create a community user from an array
+     *
+     * @param array $tab    The array containing the community user informations (model in ../Csv/CommunityUsers/communityUsers.txt)
+     * @return void
+     */
+    public function createCommunityUser(array $tab)
+    {
+        echo "Import user " . $tab[0] . " in community : " . $tab[1] . PHP_EOL;
+        if ($user = $this->userManager->getUserByEmail($tab[0])) {
+            if ($community = $this->communityManager->exists($tab[1])) {
+                $communityUser = new CommunityUser();
+                $communityUser->setUser($user);
+                $communityUser->setCommunity($community[0]);
+                $communityUser->setStatus($tab[2]);
+                $this->entityManager->persist($communityUser);
+                $this->entityManager->flush();
+            } else {
+                echo "Community not found !" . PHP_EOL;
+            }
+        } else {
+            echo "User not found !" . PHP_EOL;
         }
     }
 }

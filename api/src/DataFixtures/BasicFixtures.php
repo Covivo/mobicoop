@@ -108,6 +108,21 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
             }
         }
 
+        // load communities users info from csv file
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Basic/CommunityUsers/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createCommunityUser($tab);
+                }
+            }
+        }
+
         // we compute the directions and default values for the generated proposals
         echo "Creating directions and matchings... ";
         $this->proposalManager->setDirectionsAndDefaultsForAllCriterias(self::BATCH);
