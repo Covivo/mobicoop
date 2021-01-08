@@ -46,19 +46,33 @@ class JourneyManager
     private $journeyRepository;
     private $proposalManager;
     private $adManager;
+    private $popularJourneyHomeMaxNumber;
+    private $popularJourneyMaxNumber;
+    private $popularJourneyMinOccurences;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, JourneyRepository $journeyRepository, ProposalManager $proposalManager, AdManager $adManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        FileManager $fileManager,
+        JourneyRepository $journeyRepository,
+        ProposalManager $proposalManager,
+        AdManager $adManager,
+        int $popularJourneyMaxNumber,
+        int $popularJourneyHomeMaxNumber,
+        int $popularJourneyMinOccurences
+    ) {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
         $this->journeyRepository = $journeyRepository;
         $this->proposalManager = $proposalManager;
         $this->adManager = $adManager;
+        $this->popularJourneyHomeMaxNumber = $popularJourneyHomeMaxNumber;
+        $this->popularJourneyMaxNumber = $popularJourneyMaxNumber;
+        $this->popularJourneyMinOccurences = $popularJourneyMinOccurences;
     }
 
     /**
@@ -370,7 +384,17 @@ class JourneyManager
      */
     public function getPopularJourneys(): ?array
     {
-        return $this->journeyRepository->getPopularJourneys();
+        return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyMaxNumber);
+    }
+
+    /**
+     * Return de most popular journeys for Home (see .env for the max number on home and criteria)
+     *
+     * @return Journey[]|null
+     */
+    public function getPopularJourneysForHome(): ?array
+    {
+        return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber);
     }
 
     public function findCarpools(int $proposalId, User $user)

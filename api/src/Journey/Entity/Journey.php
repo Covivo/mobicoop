@@ -52,6 +52,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *              "method"="GET",
  *              "path"="/journeys/cities"
  *          },
+ *          "popularHome"={
+ *              "method"="GET",
+ *              "path"="/journeys/popular/home",
+ *              "normalization_context"={"groups"={"readPopularJourney"}},
+ *          },
  *          "popular"={
  *              "method"="GET",
  *              "path"="/journeys/popular",
