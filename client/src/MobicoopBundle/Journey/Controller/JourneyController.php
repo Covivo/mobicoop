@@ -24,6 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Journey\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Journey\Service\JourneyManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,8 +73,10 @@ class JourneyController extends AbstractController
         ]);
     }
 
-    public function fromCityToCity(string $origin, string $destination, int $frequency=1, int $page=1, int $perPage=300)
+    public function fromCityToCity(string $origin, string $destination, int $frequency=1, int $page=1, int $perPage=300, UserManager $userManager)
     {
+        $user = $userManager->getLoggedUser();
+
         $journeys = $this->journeyManager->getFromTo($origin, $destination, $frequency, $page, $perPage);
         return $this->render('@Mobicoop/journey/result.html.twig', [
             "journeys"=>$journeys['journeys'],
@@ -83,7 +87,8 @@ class JourneyController extends AbstractController
             "total"=>$journeys['total'],
             "frequency"=>$frequency,
             "page"=>$page,
-            "perPage"=>$perPage
+            "perPage"=>$perPage,
+            "logged" => ($user instanceof User) ? true : false
         ]);
     }
 

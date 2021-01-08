@@ -99,6 +99,7 @@
         </v-tabs-items>
       </v-col>
     </v-row>
+    <LoginOrRegisterFirst :show-dialog="showDialogLoginOrRegister" />
   </v-container>
 </template>
 
@@ -106,12 +107,14 @@
 import axios from "axios";
 import JourneyResultPunctual from './JourneyResultPunctual';
 import JourneyResultRegular from './JourneyResultRegular';
+import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import {messages_en, messages_fr} from "@translations/components/journey/JourneyResult/";
 
 export default {
   components: {
     JourneyResultPunctual,
-    JourneyResultRegular
+    JourneyResultRegular,
+    LoginOrRegisterFirst
   },
   i18n: {
     messages: {
@@ -158,18 +161,23 @@ export default {
     page: {
       type: Number,
       default: 1
+    },
+    logged: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
     return {
       frequencyTab: this.frequency == 1 ? (this.journeys.punctual.length>0 ? 0 : (this.journeys.regular.length>0 ? 1 : 0)) : (this.journeys.regular.length>0 ? 1 : 0),
       lPage:this.page,
-      loading:false
+      loading:false,
+      showDialogLoginOrRegister: false
     }
   },
   methods:{
     carpool(data){
-      if(undefined !== data.proposalId){
+      if(undefined !== data.proposalId && this.logged){
         // Create a "search" with the original proposal parameters
         this.loading = true;
         axios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
@@ -183,6 +191,9 @@ export default {
             // console.log(error);
             this.loading = false;
           })
+      }
+      else{
+        this.showDialogLoginOrRegister = true;
       }
     },
     loginOrRegister(carpool){
