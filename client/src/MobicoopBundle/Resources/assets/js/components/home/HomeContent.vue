@@ -50,7 +50,70 @@
         lg="8"
         md="12"
       >
-        <MEvents />
+        <!-- events -->
+        <v-row justify="center">
+          <v-col
+            cols="4"
+            class="text-left"
+          >
+            <p class="success--text display-1 font-weight-black">
+              {{ $t('events.title') }}
+            </p>
+            <v-btn
+              rounded
+              color="secondary"
+              :href="this.$t('events.button1.route')"
+              class="white--text"
+            >
+              {{ $t('events.button1.label') }}
+            </v-btn>
+            <v-btn
+              rounded
+              color="secondary"
+              :href="this.$t('events.button2.route')"
+              class="white--text mt-4"
+            >
+              {{ $t('events.button2.label') }}
+            </v-btn>
+            <img
+              class="mt-6"
+              :src="imageLink + 'van_evenement.svg'"
+            >
+          </v-col>
+          <v-col cols="6">
+            <MEvents />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col
+        class="text-center mt-16"
+      >
+        <p class="success--text display-1 font-weight-black">
+          {{ $t('privateEvent.title') }}
+        </p>
+        <p class="success--text headline font-italic mt-n4">
+          {{ $t('privateEvent.subtitle') }}
+        </p>
+        <p>
+          {{ $t('privateEvent.text') }}
+        </p>
+        <v-btn
+          rounded
+          color="secondary"
+          :href="this.$t('privateEvent.button.route')"
+          class="white--text mt-4"
+        >
+          {{ $t('privateEvent.button.label') }}
+        </v-btn>
+        <p class="mt-4">
+          <a
+            :href="this.$t('privateEvent.coviEvent.link')"
+          >
+            {{ $t('privateEvent.coviEvent.text') }}
+          </a>
+        </p>
       </v-col>
     </v-row>
     <!-- end Event -->
@@ -69,12 +132,11 @@
 
     <!-- cooperative -->
     <div
-      :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:-50em;'"
+      :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:right;'"
       class="mt-n8"
     >
       <v-row
         align="center"
-        class="mt-4"
         justify="center"
       >
         <v-col

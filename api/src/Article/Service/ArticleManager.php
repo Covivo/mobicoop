@@ -243,7 +243,7 @@ class ArticleManager
                 $rssElement->setImage($image);
             }
             $counter++;
-            if( $counter == $articleFeedNumber){
+            if($counter == $articleFeedNumber){
                 break;
             }
             
