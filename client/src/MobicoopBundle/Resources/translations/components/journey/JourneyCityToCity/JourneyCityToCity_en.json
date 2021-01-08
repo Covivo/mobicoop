@@ -18,5 +18,5 @@
         "to":"à",
         "uri":"/carpool/{origin}/{destination}"
     },
-    "getPopularJourneysUrl":"/carpool/popular"
+    "getPopularJourneysUrl":"/carpool/popular/home"
 }

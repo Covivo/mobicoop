@@ -18,5 +18,5 @@
         "to":"à",
         "uri":"/covoiturage/{origin}/{destination}"
     },
-    "getPopularJourneysUrl":"/covoiturages/populaires"
+    "getPopularJourneysUrl":"/covoiturages/populaires/home"
 }

@@ -379,27 +379,21 @@ class JourneyManager
     
     /**
      * Return de most popular journeys (see .env for the max number and criteria)
-     *
+     * @param bool $home true if it's for home
      * @return Journey[]|null
      */
-    public function getPopularJourneys(): ?array
+    public function getPopularJourneys(bool $home = false): ?array
     {
-        return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyMaxNumber);
-    }
+        if (!$home) {
+            return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyMaxNumber);
+        } else {
+            // For Home, we are inducing a little bit of randomization. We take x times (see Journey.php constant) the max home number of items
+            // we shuffle it and return the right amount of journeys
+            $journeys = $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber*Journey::POPULAR_RANDOMIZATION_FACTOR);
+            shuffle($journeys);
 
-    /**
-     * Return de most popular journeys for Home (see .env for the max number on home and criteria)
-     *
-     * @return Journey[]|null
-     */
-    public function getPopularJourneysForHome(): ?array
-    {
-        // We are inducing a little bit of randomization. We take x times (see Journey.php constant) the max home number of items
-        // we shuffle it and return the right amount of journeys
-        $journeys = $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber*Journey::POPULAR_RANDOMIZATION_FACTOR);
-        shuffle($journeys);
-
-        return array_slice($journeys, 0, $this->popularJourneyHomeMaxNumber);
+            return array_slice($journeys, 0, $this->popularJourneyHomeMaxNumber);
+        }
     }
 
     public function findCarpools(int $proposalId, User $user)

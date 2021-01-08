@@ -104,6 +104,17 @@ class JourneyController extends AbstractController
     }
 
     /**
+     * Get the popular journeys
+     */
+    public function popularJourneysHome(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->journeyManager->getPopularJourneys(true));
+        }
+        return new JsonResponse("Bad request");
+    }
+
+    /**
      * Create a search Ad from a Proposal
      *
      * @param integer $proposalId   The base Proposal

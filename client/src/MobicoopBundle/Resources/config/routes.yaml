@@ -695,6 +695,13 @@ popular_journeys:
         en: /carpool/popular
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneys
 
+popular_journeys_home:
+    methods: [POST]
+    path:
+        fr: /covoiturages/populaires/home
+        en: /carpool/popular/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneysHome
+
 # create a search ad from a proposal
 carpool_create_search_from_proposal:
     methods: [POST]

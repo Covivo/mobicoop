@@ -196,15 +196,15 @@ class JourneyManager
 
     /**
      * Get the popular journeys
-     *
+     * @param bool $home true if it's for home
      * @return array
      */
-    public function getPopularJourneys(): array
+    public function getPopularJourneys(bool $home = false): array
     {
         $popularJourneys = [];
         
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSpecialCollection('popular');
+        $response = $this->dataProvider->getSpecialCollection($home ? 'popular/home' : 'popular');
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             $popularJourneys = $response->getValue();
             // we add the url-friendly name

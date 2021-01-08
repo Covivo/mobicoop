@@ -147,7 +147,8 @@ class JourneyRepository
     /**
      * Get the popular journeys
      * (see .env for the max number and criteria)
-     *
+     * @param int $popularJourneyMinOccurences Minimum occurences of the journey to be considered popular
+     * @param int $popularJourneyHomeMaxNumber Maximum number of returned journeys
      * @return Journey[]
      */
     public function getPopularJourneys(int $popularJourneyMinOccurences, int $popularJourneyHomeMaxNumber): array

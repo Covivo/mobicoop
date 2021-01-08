@@ -49,11 +49,11 @@ final class JourneyPopularCollectionDataProvider implements CollectionDataProvid
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass && $operationName === "popular";
+        return Journey::class === $resourceClass && ($operationName === "popular" || $operationName === "popularHome");
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->journeyManager->getPopularJourneys();
+        return $this->journeyManager->getPopularJourneys($operationName === "popularHome");
     }
 }
