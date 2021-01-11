@@ -2,6 +2,7 @@
   <div
     v-if="buttonIcon"
     :style="'max-width:'+maxWidth+'px;'"
+    class="mx-auto"
   >
     <v-tooltip bottom>
       <template v-slot:activator="{ on, attrs }">
