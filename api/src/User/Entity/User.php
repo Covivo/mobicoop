@@ -1089,7 +1089,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
      *
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest"})
      */
     private $mobileRegistration;
 
