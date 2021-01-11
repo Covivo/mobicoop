@@ -223,11 +223,16 @@ class ArticleManager
             $start = strpos($description, '<p>');
             $end = strpos($description, '</p>', $start);
 
-            if (strlen($description)>255) {
-                $description = substr($description, $start, $end-$start+220)." ...";
+            if (strlen($description)>=255) {
+                $description = substr($description, $start, $end-$start+234)." ...";
+            }else{
+                $description = substr($description, $start, $end-$start+255)." ...";
             }
 
-            $rssElement->setDescription($description);
+            $description = strip_tags($description);
+
+
+            $rssElement->setDescription(html_entity_decode($description));
 
             $dom = new DOMDocument();
             libxml_use_internal_errors(true);
