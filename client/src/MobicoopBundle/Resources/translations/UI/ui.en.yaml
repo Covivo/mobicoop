@@ -23,6 +23,9 @@ carpool:
         title: 'Update your carpool ad'
     results:
         title: 'Carpool results'
+journey:
+    results:
+        title: "Journey by city"
 contact:
     title: "Contact us"
 solidary:

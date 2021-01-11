@@ -138,7 +138,7 @@ class Ad
      * @var int The id of this ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $id;
 

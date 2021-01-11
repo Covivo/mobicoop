@@ -1,0 +1,19 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}
+  {% if type == "origin" %}
+    {% trans from 'ui' %}journey.from.title{% endtrans %} {{ origin }} - {{ app_name }}
+  {% else %}
+    {% trans from 'ui' %}journey.to.title{% endtrans %} {{ destination }} - {{ app_name }}
+  {% endif %}
+{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+{% block main %}
+  <journey-results 
+    :journeys="{{ journeys|json_encode}}"
+    origin="{{ origin is defined ? origin : '' }}"
+    origin-sanitize="{{ originSanitize is defined ? originSanitize : '' }}"
+    destination="{{ destination is defined ? destination : '' }}"
+    destination-sanitize="{{ destinationSanitize is defined ? destinationSanitize : '' }}"
+  />
+{% endblock %}
