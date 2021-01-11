@@ -69,6 +69,16 @@
           />
         </v-col>
       </v-row>
+      <v-row
+        justify="center"
+        class="text-center"
+      >
+        <v-col
+          class="col-4"
+        >
+          <SsoLogins class="justify-self-center" />
+        </v-col>
+      </v-row>
 
       <v-row
         justify="center"
@@ -438,6 +448,7 @@ import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/SignUp/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
+import SsoLogins from '@components/user/SsoLogins';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -452,6 +463,7 @@ export default {
     GeoComplete,
     MFacebookAuth,
     CommunityHelp,
+    SsoLogins
   },
   props: {
     geoSearchUrl: {
