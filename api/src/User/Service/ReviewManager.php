@@ -237,7 +237,11 @@ class ReviewManager
                 if (in_array($reviewed->getId(), $userIdAlreadyReviewed)) {
                     // Already reviewed this user. We break the loop
                     break;
+                } else {
+                    // We need only one review to give by reviewed. We use this array also to store this information
+                    $userIdAlreadyReviewed[] = $reviewed->getId();
                 }
+
 
                 $now = new \DateTime();
                 $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", $now->format("d/m/Y")." 00:00:00");
