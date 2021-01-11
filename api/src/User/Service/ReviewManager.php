@@ -236,7 +236,7 @@ class ReviewManager
                 // We check if the User has already reviewed the other user
                 if (in_array($reviewed->getId(), $userIdAlreadyReviewed)) {
                     // Already reviewed this user. We break the loop
-                    break;
+                    continue;
                 } else {
                     // We need only one review to give by reviewed. We use this array also to store this information
                     $userIdAlreadyReviewed[] = $reviewed->getId();
