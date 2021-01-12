@@ -73,7 +73,9 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
                     // create the ad
-                    $this->fixturesManager->createAd($tab);
+                    if ($ad = $this->fixturesManager->createAd($tab)) {
+                        $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+                    }
                 }
             }
         }
@@ -123,13 +125,13 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
             }
         }
 
-        // we compute the directions and default values for the generated proposals
-        echo "Creating directions and matchings... ";
-        $this->proposalManager->setDirectionsAndDefaultsForAllCriterias(self::BATCH);
+        // // we compute the directions and default values for the generated proposals
+        // echo "Creating directions and matchings... ";
+        // $this->proposalManager->setDirectionsAndDefaultsForAllCriterias(self::BATCH);
 
-        // we generate the matchings
-        $this->proposalManager->createMatchingsForAllProposals();
-        echo "Done !" . PHP_EOL;
+        // // we generate the matchings
+        // $this->proposalManager->createMatchingsForAllProposals();
+        // echo "Done !" . PHP_EOL;
     }
 
     public static function getGroups(): array

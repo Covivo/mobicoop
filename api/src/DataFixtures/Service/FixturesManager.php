@@ -193,7 +193,7 @@ class FixturesManager
      * Create an Ad from an array
      *
      * @param array $tab    The array containing the ad informations (model in ../Csv/Ads/ads.txt)
-     * @return void
+     * @return Ad|null
      */
     public function createAd(array $tab)
     {
@@ -301,9 +301,10 @@ class FixturesManager
                 }
             }
             // we create the proposal and its related entities
-            $ad = $this->adManager->createProposalFromAd($ad);
+            return $this->adManager->createProposalFromAd($ad);
         } else {
             echo "User not found !" . PHP_EOL;
+            return null;
         }
     }
 
