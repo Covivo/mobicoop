@@ -127,6 +127,7 @@ clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
 urlEmailValidation: "/utilisateur/inscription/validation/"
 urlMobileEmailValidation: "/#/confirm-registration/"
+urlMobileSolidaryEmailValidation: "/#/confirm-registration/"
 yourPasswordIs: "Votre mot de passe est"
 yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 
