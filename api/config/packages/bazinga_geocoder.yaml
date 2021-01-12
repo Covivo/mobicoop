@@ -49,4 +49,5 @@ bazinga_geocoder:
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
         services: ['@PeliasAutocomplete','@PeliasSearch','@LocationIQ','@GMaps']
+        # services: ['@LocationIQ','@PeliasAutocomplete','@PeliasSearch','@GMaps']
         
