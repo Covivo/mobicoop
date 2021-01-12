@@ -33,20 +33,25 @@ export const SolidaryChangeProgressPopup = ({ solidary, onClose }) => {
   };
 
   const handleSubmit = () => {
+
+    const data = {
+      actionName: 'solidary_update_progress_manually',
+      progression: progressSteps[currentIndex].percent,
+      solidary: solidary.id,
+    };
+
+    if (solidary && solidary.solidaryUser && solidary.solidaryUser.user) {
+      // @TODO: Use id directly when dataprovider maps to id
+      // I don't known why but actually deep object are not transformed
+      data.user = `/users/${solidary.solidaryUser.user.id}`;
+    }
+
+
     mutate(
       {
         type: 'create',
         resource: 'solidary_animations',
-        payload: {
-          data: {
-            actionName: 'solidary_update_progress_manually',
-            progression: progressSteps[currentIndex].percent,
-            // @TODO: Use id directly when dataprovider maps to id
-            // I don't known why but actually deep object are not transformed
-            user: `/users/${solidary.solidaryUser.user.id}`,
-            solidary: solidary.id,
-          },
-        },
+        payload: {data},
       },
       {
         onSuccess: () => {
