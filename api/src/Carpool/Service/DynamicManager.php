@@ -952,8 +952,8 @@ class DynamicManager
     /**
      * Create a proof for a dynamic ask.
      *
-     * @param DynamicProof    $dynamicProof The proof to create
-     * @return DynamicProof                 The created proof.
+     * @param DynamicProof    $dynamicProof The proof to create (or update if it already exists)
+     * @return DynamicProof                 The created or updated proof.
      */
     public function createDynamicProof(DynamicProof $dynamicProof)
     {

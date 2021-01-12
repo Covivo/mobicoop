@@ -282,10 +282,11 @@ class ProofManager
         // we perform different actions depending on the role and the moment
         switch ($actor) {
             case CarpoolProof::ACTOR_DRIVER:
-                if (!is_null($carpoolProof->getPickUpDriverAddress()) && is_null($carpoolProof->getPickUpPassengerAddress())) {
-                    // the driver can't set the dropoff while the passenger has not certified its pickup
-                    throw new ProofException("The passenger has not sent its pickup certification yet");
-                }
+                // uncomment this if dropoff is authorized only if both pickups has been made
+                // if (!is_null($carpoolProof->getPickUpDriverAddress()) && is_null($carpoolProof->getPickUpPassengerAddress())) {
+                //     // the driver can't set the dropoff while the passenger has not certified its pickup
+                //     throw new ProofException("The passenger has not sent its pickup certification yet");
+                // }
                 if (!is_null($carpoolProof->getPickUpDriverAddress())) {
                     // the driver has set its pickup
                     if (!is_null($carpoolProof->getDropOffDriverAddress())) {
@@ -334,10 +335,11 @@ class ProofManager
                 }
                 break;
             case CarpoolProof::ACTOR_PASSENGER:
-                if (!is_null($carpoolProof->getPickUpPassengerAddress()) && is_null($carpoolProof->getPickUpDriverAddress())) {
-                    // the passenger can't set the dropoff while the driver has not certified its pickup
-                    throw new ProofException("The driver has not sent its pickup certification yet");
-                }
+                // uncomment this if dropoff is authorized only if both pickups has been made
+                // if (!is_null($carpoolProof->getPickUpPassengerAddress()) && is_null($carpoolProof->getPickUpDriverAddress())) {
+                //     // the passenger can't set the dropoff while the driver has not certified its pickup
+                //     throw new ProofException("The driver has not sent its pickup certification yet");
+                // }
                 if (!is_null($carpoolProof->getPickUpPassengerAddress())) {
                     // the passenger has set its pickup
                     if (!is_null($carpoolProof->getDropOffPassengerAddress())) {
