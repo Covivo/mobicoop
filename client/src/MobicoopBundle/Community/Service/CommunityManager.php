@@ -86,7 +86,7 @@ class CommunityManager
         $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
         $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
         $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
-        $showAllCommunities = (isset($data['showAllCommunities']) && !is_null($data['showAllCommunities'])) ? $data['showAllCommunities'] : false;
+        $showAllCommunities= (isset($data['showAllCommunities']) && !is_null($data['showAllCommunities'])) ? $data['showAllCommunities'] : false;
 
         $order = [];
         if (isset($data['order']) && isset($data['orderWay']) && !empty($data['order']) && !empty($data['orderWay'])) {
@@ -139,7 +139,7 @@ class CommunityManager
             $params['page'] = $page;
         }
         if ($showAllCommunities!==null) {
-            $params['showAllCommunities'] = $showAllCommunities;
+            $params['showAllCommunities'] = $showAllCommunities ;
         }
         if (count($search)>0) {
             foreach ($search as $key => $value) {
