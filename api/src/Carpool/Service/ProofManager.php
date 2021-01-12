@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolExport;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
@@ -509,7 +510,11 @@ class ProofManager
             $toDate->setTime(23, 59, 59, 999);
         }
 
-        // we get the pending proofs
+        // first we need to validate the waiting proofs : some proof may be in undeterminate status
+        $this->validateProofs($fromDate, $toDate);
+        exit;
+
+        // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
         $nbSent = 0;
 
@@ -530,6 +535,66 @@ class ProofManager
         }
         $this->entityManager->flush();
         return $nbSent;
+    }
+
+    /**
+     * Validate the pending proofs for the given period.
+     * Used to update pending with undetermined final class.
+     *
+     * @param DateTime $fromDate   The start of the period for which we want to update the proofs
+     * @param DateTime $toDate     The end of the period  for which we want to update the proofs
+     * @return void
+     */
+    private function validateProofs(DateTime $fromDate, DateTime $toDate)
+    {
+        // first we search the undetermined proofs for the given period
+        $carpoolProofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_UNDETERMINED_CLASSIC,CarpoolProof::TYPE_UNDETERMINED_DYNAMIC], $fromDate, $toDate);
+        
+        if (is_array($carpoolProofs) && count($carpoolProofs)>0) {
+            // then we determine the right class depending on the available data
+            foreach ($carpoolProofs as $carpoolProof) {
+                // we change the status to pending
+                $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+                if (
+                    !is_null($carpoolProof->getPickUpDriverAddress()) &&
+                    !is_null($carpoolProof->getPickUpPassengerAddress()) &&
+                    !is_null($carpoolProof->getDropOffDriverAddress()) &&
+                    !is_null($carpoolProof->getDropOffPassengerAddress()) &&
+                    !is_null($carpoolProof->getPickUpDriverDate()) &&
+                    !is_null($carpoolProof->getPickUpPassengerDate()) &&
+                    !is_null($carpoolProof->getDropOffDriverDate()) &&
+                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    // all the possible data is set for both carpoolers => max type
+                    $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                if (
+                    !is_null($carpoolProof->getPickUpDriverAddress()) &&
+                    !is_null($carpoolProof->getDropOffDriverAddress()) &&
+                    !is_null($carpoolProof->getPickUpDriverDate()) &&
+                    !is_null($carpoolProof->getDropOffDriverDate())) {
+                    // all the possible data is set for the driver => middle type
+                    $carpoolProof->setType(CarpoolProof::TYPE_MID);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                if (
+                    !is_null($carpoolProof->getPickUpPassengerAddress()) &&
+                    !is_null($carpoolProof->getDropOffPassengerAddress()) &&
+                    !is_null($carpoolProof->getPickUpPassengerDate()) &&
+                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    // all the possible data is set for the passenger => middle type
+                    $carpoolProof->setType(CarpoolProof::TYPE_MID);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                // if any of the previous is verified, we initialize with the lowest possible type
+                $carpoolProof->setType(CarpoolProof::TYPE_LOW);
+                $this->entityManager->persist($carpoolProof);
+            }
+            $this->entityManager->flush();
+        }
     }
 
     /**

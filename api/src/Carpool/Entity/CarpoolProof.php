@@ -48,6 +48,12 @@ class CarpoolProof
     const ACTOR_DRIVER = 1;
     const ACTOR_PASSENGER = 2;
 
+    const TYPE_LOW = "A";
+    const TYPE_MID = "B";
+    const TYPE_HIGH = "C";
+    const TYPE_UNDETERMINED_CLASSIC = "CX";
+    const TYPE_UNDETERMINED_DYNAMIC = "DX";
+
     /**
      * @var int The id of this proof.
      *
