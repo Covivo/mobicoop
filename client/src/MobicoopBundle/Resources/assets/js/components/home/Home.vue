@@ -110,20 +110,6 @@
 
       <!-- search -->
       <v-row
-        v-if="cityToCity"
-        align="center"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
-        >
-          <JourneyCityToCity />
-        </v-col>
-      </v-row>
-      <v-row
         align="center"
         class="mt-5 mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
         justify="center"
@@ -161,7 +147,6 @@ import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
-import JourneyCityToCity from "@components/journey/JourneyCityToCity";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -177,7 +162,6 @@ export default {
     Search,
     HomeContent,
     Cookies,
-    JourneyCityToCity
   },
   props: {
     geoSearchUrl: {
@@ -240,10 +224,6 @@ export default {
     urlMobile: {
       type: String,
       default: null
-    },
-    cityToCity: {
-      type: Boolean,
-      default: true
     }
   },
   data () {

@@ -56,7 +56,7 @@
             cols="4"
             class="text-left"
           >
-            <p class="success--text display-1 font-weight-black">
+            <p class="primary--text display-1 font-weight-black">
               {{ $t('events.title') }}
             </p>
             <v-btn
@@ -90,10 +90,10 @@
       <v-col
         class="text-center mt-16"
       >
-        <p class="success--text display-1 font-weight-black">
+        <p class="primary--text display-1 font-weight-black">
           {{ $t('privateEvent.title') }}
         </p>
-        <p class="success--text headline font-italic mt-n4">
+        <p class="primary--text headline font-italic mt-n4">
           {{ $t('privateEvent.subtitle') }}
         </p>
         <p>
@@ -117,6 +117,23 @@
       </v-col>
     </v-row>
     <!-- end Event -->
+
+    <!-- cityToCity -->
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        xl="6"
+        lg="9"
+        md="12"
+        class="px-14"
+      >
+        <JourneyCityToCity />
+      </v-col>
+    </v-row>
+    <!-- end cityToCity -->
 
     <v-row>
       <v-col>
@@ -163,7 +180,7 @@
           md="12"
           class="px-14"
         >
-          <p class="success--text text-h4 font-weight-black mt-16">
+          <p class="primary--text text-h4 font-weight-black mt-16">
             Quoi de neuf chez Mobicoop ?
           </p>
 
@@ -183,6 +200,7 @@ import {messages_client_en, messages_client_fr} from "@clientTranslations/compon
 import MNews from "@components/utilities/news/MNews";
 import MFeatures from "@components/utilities/MFeatures";
 import MEvents from "@components/utilities/event/MEvents";
+import JourneyCityToCity from "@components/journey/JourneyCityToCity";
 import MCooperative from "@components/utilities/cooperative/MCooperative";
 import MRssArticles from "@components/utilities/rssArticle/MRssArticles";
 
@@ -194,6 +212,7 @@ export default {
     MNews,
     MFeatures,
     MEvents,
+    JourneyCityToCity,
     MCooperative,
     MRssArticles
   },

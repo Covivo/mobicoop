@@ -74,7 +74,7 @@
         rounded
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-md-and-down white--text"
+        class="hidden-md-and-down white--text mr-4"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
