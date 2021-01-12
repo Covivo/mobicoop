@@ -10,9 +10,9 @@
         cols="5"
         class="text-left "
       >
-        <span class="success--text display-1 font-weight-black">
+        <span class="primary--text display-1 font-weight-black">
           {{ $t('cooperative.title') }}
-        </span>
+        </span><br>
         <span v-html="$t('cooperative.text')" />
       </v-col>
       <v-spacer />

@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-row>
       <v-col
-        class="text-left mt-16 success--text display-1 font-weight-bold"
+        class="text-left mt-16 primary--text display-1 font-weight-bold"
       >
         {{ $t('title') }}        
       </v-col>

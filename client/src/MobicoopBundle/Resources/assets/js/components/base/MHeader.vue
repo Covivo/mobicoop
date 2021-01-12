@@ -74,7 +74,7 @@
         rounded
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-md-and-down white--text"
+        class="hidden-md-and-down white--text mr-4"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -274,6 +274,7 @@ import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
+import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 
 
@@ -290,6 +291,7 @@ export default {
   components: {
     //Accessibility,
     MHeaderProfile,
+    MHeaderCommunities,
     MHeaderLanguage
   },
   props: {

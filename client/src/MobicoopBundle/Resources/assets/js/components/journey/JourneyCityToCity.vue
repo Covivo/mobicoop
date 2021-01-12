@@ -4,7 +4,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="text-left display-1 primary--text"
+          class="primary--text text-left display-1 font-weight-black"
         >
           {{ $t('title.part1') }} <br> {{ $t('title.part2') }}
         </v-col>

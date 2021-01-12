@@ -1,11 +1,11 @@
 {
     "news": {
         "title": "Actualités",
-        "subtitle": "Vous êtes solidaire ? Engagez-vous !",
-        "text": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortisconsequat. Duis autem vel eum iriure dolor in hendrerit, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto.",
+        "subtitle": "Soutenez la 1ère plateforme nationale de covoiturage libre !",
+        "text": "Mobicoop est fière de vous présenter son nouveau site web entièrement conçu en logiciel libre. Nous avons planché de longs mois pour vous proposer de nombreuses améliorations sur l’interface ! Maintenir une plateforme de grande envergure et y ajouter de nouvelles fonctionnalités représentent des coûts. Pour continuer à faire grandir Mobicoop comme solution alternative de mobilité, nous avons besoin de vous !",
         "button": {
-            "label":"Je suis solidaire",
-            "route":"/#/carpools/solidary/home/request"
+            "label":"Faite un don pour nous soutenir",
+            "route":"https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre"
         }
     }
 }

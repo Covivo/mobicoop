@@ -10,10 +10,10 @@
         cols="7"
         class="text-right"
       >
-        <h2 class="success--text font-italic">
+        <h2 class="primary--text font-italic">
           {{ $t('news.title') }}
         </h2>
-        <p class="success--text display-1 font-weight-black">
+        <p class="primary--text display-1 font-weight-black">
           {{ $t('news.subtitle') }}
         </p>
         <p>
