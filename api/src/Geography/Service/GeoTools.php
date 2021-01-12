@@ -268,7 +268,7 @@ class GeoTools
         }
 
         // Better looking when no address but just postal code and addressLocality
-        if(!$streetAddressFound && $postalCodeFound && $addressLocalityFound){
+        if (!$streetAddressFound && $postalCodeFound && $addressLocalityFound) {
             $firstEl = $displayLabelTab[0][count($displayLabelTab[0])-2];
             $secondEl = $displayLabelTab[0][count($displayLabelTab[0])-1];
             $displayLabelTab[0][count($displayLabelTab[0])-2] = $secondEl;

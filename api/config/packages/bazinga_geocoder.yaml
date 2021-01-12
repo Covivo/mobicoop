@@ -18,6 +18,8 @@ bazinga_geocoder:
         - LocationIQ
       options:
         api_key: '%env(GEOCOMPLETE_API_KEY_LOCATION_IQ)%'
+      plugins:
+        - "Georouter.query_data_plugin"
     
     pelias_autocomplete:
       factory: App\Geography\ProviderFactory\PeliasAutocompleteFactory
