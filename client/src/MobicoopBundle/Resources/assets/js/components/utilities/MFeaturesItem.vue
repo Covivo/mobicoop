@@ -1,31 +1,19 @@
 <template>
-  <div
-    class="items mx-4"
-    :style="'width:'+width+'px'"
+  <v-col
+    cols="4"
   >
-    <v-row class="text-center">
-      <v-col class="text-center">
-        <div
-          class="backgroundItemsImages"
-          :style="'background-color:'+backgroundColorImage"
-          align="middle"
-        >
-          <img
-            :src="image"
-            class="itemsImages"
-          >
-        </div>
-      </v-col>
-    </v-row>
-    <v-row class="text-center">
-      <v-col class="font-weight-bold text-h6">
+    <v-card
+      elevation="2"
+      class="mx-auto my-3 text-left"
+      min-height="270px"
+    >
+      <v-card-title class="success--text font-weight-bold">
         {{ title }}
-      </v-col>
-    </v-row>
-    <v-row class="text-center">
-      <v-col>{{ subtitle }}</v-col>
-    </v-row>
-  </div>
+      </v-card-title>
+
+      <v-card-text>{{ text }}</v-card-text>
+    </v-card>
+  </v-col>
 </template>
 <script>
 export default {
@@ -34,31 +22,12 @@ export default {
       type: String,
       default: ""
     },
-    subtitle: {
+    text: {
       type: String,
       default: ""
-    },
-    image:{
-      type: String,
-      default: ""
-    },
-    width:{
-      type:Number,
-      default:400
-    },
-    backgroundColorImage:{
-      type:String,
-      default:"#F4F5F6"
     }
   }    
 }
 </script>
 <style lang="scss" scoped>
-div.backgroundItemsImages{
-    padding:20px;
-    border-radius: 100px;
-    height:150px;
-    width:150px;
-    margin:auto auto;
-}
 </style>

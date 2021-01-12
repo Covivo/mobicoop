@@ -1,0 +1,485 @@
+
+{
+  "header": {
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20210112.094605.135.0.001.json",
+    "dumpEventTime": "2021-01-12T09:46:05Z",
+    "dumpEventTimeStamp": "1610444765757",
+    "processId": 135,
+    "cwd": "/var/www/client",
+    "commandLine": [
+      "node",
+      "/var/www/client/node_modules/.bin/encore",
+      "dev-server",
+      "--public",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "8079",
+      "--disable-host-check",
+      "--hot"
+    ],
+    "nodejsVersion": "v11.15.0",
+    "glibcVersionRuntime": "2.27",
+    "glibcVersionCompiler": "2.12",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "linux",
+    "componentVersions": {
+      "node": "11.15.0",
+      "v8": "7.0.276.38-node.19",
+      "uv": "1.27.0",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "67",
+      "nghttp2": "1.37.0",
+      "napi": "4",
+      "llhttp": "1.1.1",
+      "http_parser": "2.8.0",
+      "openssl": "1.1.1b",
+      "cldr": "34.0",
+      "icu": "63.1",
+      "tz": "2018e",
+      "unicode": "11.0"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v11.15.0/node-v11.15.0-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v11.15.0/node-v11.15.0.tar.gz"
+    },
+    "osName": "Linux",
+    "osRelease": "5.4.0-59-generic",
+    "osVersion": "#65-Ubuntu SMP Thu Dec 10 12:01:51 UTC 2020",
+    "osMachine": "x86_64",
+    "host": "b8e6c355529c"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x0000000000a702fd",
+      "symbol": "report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::string const&, v8::Local<v8::String>) [node]"
+    },
+    {
+      "pc": "0x000000000095ccb3",
+      "symbol": "node::OnFatalError(char const*, char const*) [node]"
+    },
+    {
+      "pc": "0x0000000000b3dbde",
+      "symbol": "v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [node]"
+    },
+    {
+      "pc": "0x0000000000b3de14",
+      "symbol": "v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [node]"
+    },
+    {
+      "pc": "0x0000000000f3ce52",
+      "symbol": " [node]"
+    },
+    {
+      "pc": "0x0000000000f3cf58",
+      "symbol": "v8::internal::Heap::CheckIneffectiveMarkCompact(unsigned long, double) [node]"
+    },
+    {
+      "pc": "0x0000000000f49678",
+      "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [node]"
+    },
+    {
+      "pc": "0x0000000000f4a18b",
+      "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [node]"
+    },
+    {
+      "pc": "0x0000000000f4cec1",
+      "symbol": "v8::internal::Heap::AllocateRawWithRetryOrFail(int, v8::internal::AllocationSpace, v8::internal::AllocationAlignment) [node]"
+    },
+    {
+      "pc": "0x0000000000f170f4",
+      "symbol": "v8::internal::Factory::NewFillerObject(int, bool, v8::internal::AllocationSpace) [node]"
+    },
+    {
+      "pc": "0x00000000011cd3fe",
+      "symbol": "v8::internal::Runtime_AllocateInNewSpace(int, v8::internal::Object**, v8::internal::Isolate*) [node]"
+    },
+    {
+      "pc": "0x00000d9a906cfc5d",
+      "symbol": ""
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 1514078208,
+    "totalCommittedMemory": 1510661112,
+    "usedMemory": 1340725328,
+    "availableMemory": 28798048,
+    "memoryLimit": 1526909922,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 524288,
+        "committedMemory": 42224,
+        "capacity": 515584,
+        "used": 33520,
+        "available": 482064
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 31491960,
+        "capacity": 16498688,
+        "used": 1181240,
+        "available": 15317448
+      },
+      "old_space": {
+        "memorySize": 1226510336,
+        "committedMemory": 1226118800,
+        "capacity": 1127886016,
+        "used": 1127527224,
+        "available": 358792
+      },
+      "code_space": {
+        "memorySize": 8912896,
+        "committedMemory": 8590944,
+        "capacity": 7562784,
+        "used": 7562784,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 50868224,
+        "committedMemory": 50709152,
+        "capacity": 12606240,
+        "used": 12606240,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 193708032,
+        "committedMemory": 193708032,
+        "capacity": 204454064,
+        "used": 191814320,
+        "available": 12639744
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 0,
+        "used": 0,
+        "available": 0
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 379.316,
+    "kernelCpuSeconds": 7.71667,
+    "cpuConsumptionPercent": 6.67067,
+    "maxRss": 1767997440,
+    "pageFaults": {
+      "IORequired": 25,
+      "IONotRequired": 1888048
+    },
+    "fsActivity": {
+      "reads": 182320,
+      "writes": 296
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 179.517,
+    "kernelCpuSeconds": 4.09976,
+    "cpuConsumptionPercent": 3.16471,
+    "fsActivity": {
+      "reads": 108944,
+      "writes": 128
+    }
+  },
+  "libuv": [
+  ],
+  "environmentVariables": {
+    "npm_config_save_dev": "",
+    "npm_config_shrinkwrap": "true",
+    "npm_config_init_license": "ISC",
+    "npm_package_devDependencies_babel_preset_stage_3": "^6.24.1",
+    "npm_package_dependencies_lodash": "^4.17.11",
+    "npm_package_dependencies_vue_loader": "^15.4.2",
+    "npm_package_devDependencies_cypress": "^3.3.1",
+    "npm_config_save": "true",
+    "npm_config_node_gyp": "/usr/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "npm_package_browserslist_3": "Firefox >=68",
+    "npm_package_browserslist_2": "Edge >= 10",
+    "npm_package_browserslist_1": "Safari >= 11",
+    "npm_package_browserslist_0": "> 0.25%",
+    "npm_config_link": "",
+    "npm_config_timing": "",
+    "npm_execpath": "/usr/lib/node_modules/npm/bin/npm-cli.js",
+    "npm_package_dependencies_vue_cookie_law": "^1.11.0",
+    "_": "/var/www/client/node_modules/.bin/encore",
+    "npm_config_user": "",
+    "TZ": "UTC",
+    "npm_config_bin_links": "true",
+    "npm_config_proxy": "",
+    "npm_config_node_options": "",
+    "npm_config_only": "",
+    "HOSTNAME": "b8e6c355529c",
+    "OLDPWD": "/var/www",
+    "npm_config_description": "true",
+    "npm_package_dependencies_core_js": "^3.6.5",
+    "npm_config_ignore_prepublish": "",
+    "npm_config_editor": "vi",
+    "npm_config_tag": "latest",
+    "npm_config_global": "",
+    "npm_package_scripts_compile": "encore production",
+    "npm_package_dependencies_babel_polyfill": "^6.26.0",
+    "npm_package_devDependencies__percy_cypress": "^1.0.9",
+    "npm_config_browser": "",
+    "npm_config_commit_hooks": "true",
+    "npm_package_homepage": "https://gitlab.com/mobicoop/mobicoop#README",
+    "npm_config_if_present": "",
+    "npm_config_local_address": "",
+    "npm_package_repository_url": "git+https://gitlab.com/mobicoop/mobicoop.git",
+    "npm_config_versions": "",
+    "npm_package_devDependencies_eslint": "^5.0.0",
+    "npm_package_scripts_test_and_coverage": "node src/MobicoopBundle/spec/runtests.js -c",
+    "npm_config_access": "",
+    "npm_config_script_shell": "",
+    "npm_package_devDependencies_sass": "^1.22.7",
+    "npm_package_scripts_start": "php bin/console server:run 0.0.0.0:8081 & npm run compile-and-watch-vue",
+    "npm_config_optional": "true",
+    "npm_package_dependencies_cypress_xpath": "^1.6.0",
+    "npm_package_scripts_cypress": "cypress open",
+    "npm_config_user_agent": "npm/6.9.0 node/v11.15.0 linux x64",
+    "npm_config_init_version": "1.0.0",
+    "npm_package_dependencies_leaflet": "^1.5.1",
+    "npm_config_preid": "",
+    "npm_config_registry": "https://registry.npmjs.org/",
+    "npm_package_dependencies_fs_readdir_recursive": "^1.1.0",
+    "npm_package_dependencies_eslint_config_prettier": "^3.0.1",
+    "npm_config_init_module": "/root/.npm-init.js",
+    "npm_package_dependencies_node_sass": "^4.14.1",
+    "npm_package_main": "public/index.php",
+    "npm_config_sso_poll_frequency": "500",
+    "npm_config_loglevel": "notice",
+    "npm_config_sso_type": "oauth",
+    "npm_config_strict_ssl": "true",
+    "npm_config_save_exact": "",
+    "npm_config_production": "",
+    "npm_package_dependencies_axios": "^0.18.1",
+    "npm_package_dependencies_vue_form_wizard": "^0.8.4",
+    "npm_package_license": "AGPL-3.0",
+    "npm_package_scripts_start_ci": "php bin/console server:run -q --no-debug 127.0.0.1:8081 & npm run compile",
+    "npm_package_dependencies_postcss_cli": "^7.1.1",
+    "npm_config_allow_same_version": "",
+    "npm_config_userconfig": "/root/.npmrc",
+    "npm_lifecycle_event": "compile-and-watch-vue",
+    "npm_config_before": "",
+    "npm_config_depth": "Infinity",
+    "npm_config_searchexclude": "",
+    "npm_package_devDependencies_webpack_notifier": "^1.6.0",
+    "npm_config_umask": "0022",
+    "npm_config_onload_script": "",
+    "npm_config_shell": "bash",
+    "npm_package_dependencies__mdi_font": "^5.3.45",
+    "npm_package_dependencies_facebook_login_vuejs": "^2.1.3",
+    "npm_package_description": "Mobicoop front-end app",
+    "npm_config_logs_max": "10",
+    "npm_config_searchlimit": "20",
+    "npm_package_dependencies_underscore": "^1.9.1",
+    "npm_config_cidr": "",
+    "PWD": "/var/www/client",
+    "npm_config_node_version": "11.15.0",
+    "npm_config_searchopts": "",
+    "npm_config_unicode": "",
+    "HOME": "/root",
+    "npm_config_group": "",
+    "npm_config_cache_min": "10",
+    "npm_config_cache": "/root/.npm",
+    "npm_config_save_optional": "",
+    "npm_config_init_author_name": "",
+    "npm_package_devDependencies_vue_eslint_parser": "^3.2.2",
+    "npm_package_devDependencies_sass_loader": "^8.0.0",
+    "npm_config_always_auth": "",
+    "npm_config_argv": "{\"remain\":[],\"cooked\":[\"run\",\"compile-and-watch-vue\"],\"original\":[\"run\",\"compile-and-watch-vue\"]}",
+    "npm_package_dependencies__types_leaflet": "^1.5.12",
+    "npm_config_progress": "true",
+    "npm_package_dependencies_vuetify": "^2.3.10",
+    "npm_package_dependencies_commander": "^2.18.0",
+    "npm_package_scripts_test_fix_and_coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
+    "npm_config_ca": "",
+    "npm_config_scripts_prepend_node_path": "warn-only",
+    "npm_config_package_lock_only": "",
+    "PANTHER_NO_SANDBOX": "1",
+    "npm_config_init_author_url": "",
+    "npm_config_cache_max": "Infinity",
+    "npm_config_noproxy": "",
+    "npm_package_dependencies_remove": "^0.1.5",
+    "npm_config_audit_level": "low",
+    "npm_package_devDependencies__babel_preset_env": "^7.10.3",
+    "npm_package_scripts_test": "node src/MobicoopBundle/spec/runtests.js",
+    "npm_package_dependencies_stylelint": "^13.0.0",
+    "npm_config_cache_lock_wait": "10000",
+    "npm_config_send_metrics": "",
+    "npm_package_dependencies_vue_template_compiler": "^2.5.17",
+    "ZSH_THEME": "agnoster",
+    "npm_config_cert": "",
+    "npm_config_prefer_online": "",
+    "npm_package_devDependencies_sass_lint": "^1.13.1",
+    "npm_config_global_style": "",
+    "npm_package_bugs_url": "https://gitlab.com/mobicoop/mobicoop/issues",
+    "npm_package_dependencies_autoprefixer": "^9.7.4",
+    "npm_package_dependencies_vue2_leaflet": "^2.5.2",
+    "npm_package_dependencies_vue_i18n": "^8.11.2",
+    "npm_config_tag_version_prefix": "v",
+    "npm_config_otp": "",
+    "npm_config_ignore_scripts": "",
+    "npm_config_dry_run": "",
+    "npm_config_usage": "",
+    "npm_config_parseable": "",
+    "npm_config_metrics_registry": "https://registry.npmjs.org/",
+    "npm_config_globalconfig": "/usr/etc/npmrc",
+    "npm_config_cache_lock_retries": "10",
+    "npm_config_cafile": "",
+    "npm_config_fetch_retry_mintimeout": "10000",
+    "npm_config_ham_it_up": "",
+    "npm_config_version": "",
+    "npm_lifecycle_script": "encore dev-server  --public --host 0.0.0.0 --port 8079 --disable-host-check --hot",
+    "npm_config_mobicoop_platform_ghooks_pre_commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src",
+    "npm_config_git": "git",
+    "npm_config_legacy_bundling": "",
+    "npm_package_dependencies_request": "^2.88.0",
+    "npm_config_viewer": "man",
+    "npm_package_dependencies_moment": "^2.24.0",
+    "INIT_CWD": "/var/www/client",
+    "npm_package_scripts_test_functional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run --browser chrome",
+    "TERM": "xterm",
+    "npm_package_devDependencies_stylelint_webpack_plugin": "^2.1.0",
+    "COMPOSER_PROCESS_TIMEOUT": "1200",
+    "npm_config_git_tag_version": "true",
+    "npm_package_scripts_cy": "cypress run --browser chrome",
+    "npm_package_devDependencies_eslint_loader": "2.1.0",
+    "npm_config_update_notifier": "true",
+    "npm_config_https_proxy": "",
+    "npm_config_save_prod": "",
+    "npm_config_fetch_retry_maxtimeout": "60000",
+    "npm_package_scripts_test_functional_ci": "percy exec -- cypress run --record",
+    "npm_package_dependencies__symfony_webpack_encore": "^0.30.2",
+    "npm_config_sign_git_commit": "",
+    "npm_package_dependencies_transform_runtime": "0.0.0",
+    "npm_package_dependencies_stylelint_scss": "^3.18.0",
+    "npm_config_sign_git_tag": "",
+    "npm_config_long": "",
+    "npm_config_key": "",
+    "npm_config_message": "%s",
+    "npm_config_rebuild_bundle": "true",
+    "SHLVL": "4",
+    "npm_config_fetch_retry_factor": "10",
+    "npm_config_prefer_offline": "",
+    "npm_package_directories_doc": "docs",
+    "npm_node_execpath": "/usr/bin/node",
+    "npm_config_prefix": "/usr",
+    "npm_config_also": "",
+    "npm_package_devDependencies_babel_plugin_transform_class_properties": "^6.24.1",
+    "npm_config_maxsockets": "50",
+    "npm_config_init_author_email": "",
+    "npm_config_fetch_retries": "2",
+    "npm_package_devDependencies_fibers": "^4.0.1",
+    "npm_package_author_name": "MatthD",
+    "npm_config_json": "",
+    "npm_package_repository_type": "git",
+    "npm_package_version": "0.0.0",
+    "npm_package_devDependencies_deepmerge": "^4.0.0",
+    "npm_package_dependencies_material_design_icons_iconfont": "^5.0.1",
+    "npm_package_dependencies__babel_polyfill": "^7.4.4",
+    "npm_config_save_bundle": "",
+    "npm_package_scripts_test_functional_ci_cypress": "cypress run",
+    "npm_config_tmp": "/tmp",
+    "npm_config_rollback": "true",
+    "npm_config_mobicoop_platform_ghooks_pre_push": "npm run contributor-checker",
+    "npm_config_globalignorefile": "/usr/etc/npmignore",
+    "npm_config_read_only": "",
+    "npm_config_offline": "",
+    "PATH": "/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/var/www/client/node_modules/.bin:/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/var/www/client/node_modules/.bin:/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/var/www/node_modules/.bin:/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/var/www/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "npm_config_engine_strict": "",
+    "npm_package_dependencies_stylelint_config_standard": "^20.0.0",
+    "npm_config_searchstaleness": "900",
+    "npm_config_save_prefix": "^",
+    "npm_package_scripts_compile_and_watch": "encore dev-server --public --host 0.0.0.0 --port 8079 --disable-host-check",
+    "npm_config_color": "true",
+    "npm_config_scope": "",
+    "npm_config_unsafe_perm": "",
+    "npm_config_audit": "true",
+    "NODE": "/usr/bin/node",
+    "npm_package_dependencies_cypress_file_upload": "^4.0.7",
+    "npm_package_dependencies_browserslist": "^4.8.6",
+    "npm_package_readmeFilename": "README.md",
+    "npm_package_dependencies_kuler": "^1.0.0",
+    "npm_package_devDependencies_postcss_loader": "^3.0.0",
+    "npm_package_scripts_compile_and_watch_vue": "encore dev-server  --public --host 0.0.0.0 --port 8079 --disable-host-check --hot",
+    "npm_config_heading": "npm",
+    "npm_package_dependencies_vue": "^2.6.1",
+    "npm_config_auth_type": "legacy",
+    "npm_package_name": "mobicoop",
+    "npm_config_force": "",
+    "npm_package_dependencies_vuetify_loader": "^1.3.0",
+    "npm_package_devDependencies_eslint_plugin_vue": "^6.2.2",
+    "npm_config_dev": "",
+    "npm_package_devDependencies_babel_eslint": "^10.1.0",
+    "npm_config_cache_lock_stale": "60000",
+    "npm_config_package_lock": "true",
+    "npm_package_devDependencies_sass_lint_webpack": "^1.0.1",
+    "WEBPACK_DEV_SERVER": "true",
+    "NODE_ENV": "development"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": 65536,
+      "hard": 65536
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 1048576,
+      "hard": 1048576
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "linux-vdso.so.1",
+    "/lib/x86_64-linux-gnu/libdl.so.2",
+    "/lib/x86_64-linux-gnu/librt.so.1",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "/lib/x86_64-linux-gnu/libm.so.6",
+    "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "/lib/x86_64-linux-gnu/libpthread.so.0",
+    "/lib/x86_64-linux-gnu/libc.so.6",
+    "/lib64/ld-linux-x86-64.so.2",
+    "/var/www/client/node_modules/fibers/bin/linux-x64-67-glibc/fibers.node"
+  ]
+}

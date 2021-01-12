@@ -9,5 +9,21 @@
     "myProfile": "Profil",
     "urlArticle": "#",
     "altUrlArticle": "cliquez-ici",
-    "clickHere": "Cliquez-ici"
+    "clickHere": "Cliquez-ici",
+    "urlImageSwap": "/images/PictoInterchanger.svg",
+    "urlBackground": "/images/pages/home/background_top.svg",
+    "items":[
+        {
+            "title":"Une plateforme sans commission",
+            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
+        },
+        {
+            "title":"Un logiciel libre",
+            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
+        },
+        {
+            "title":"La coopérative du covoiturage",
+            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
+        }
+    ]
 }
