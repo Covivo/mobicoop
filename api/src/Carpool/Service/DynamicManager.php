@@ -973,7 +973,7 @@ class DynamicManager
             return $this->updateDynamicProof($ask->getCarpoolProofs()[0]->getId(), $dynamicProof);
         }
 
-        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), $this->params['proofType'], $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
+        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_DYNAMIC, $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
 
         $dynamicProof->setId($carpoolProof->getId());
         $dynamicProof->setStatus(

@@ -149,7 +149,6 @@ services:
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
-                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
                 paymentActive: '%env(string:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
@@ -164,7 +163,6 @@ services:
             $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
-            $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
             $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
@@ -179,7 +177,6 @@ services:
                 dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
                 dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
                 dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
-                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
             - { name: monolog.logger, channel: carpool_dynamic }
 

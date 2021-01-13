@@ -24,7 +24,6 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\CarpoolExport;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
@@ -55,7 +54,6 @@ class ProofManager
     private $askRepository;
     private $waypointRepository;
     private $geoSearcher;
-    private $proofType;
     private $geoTools;
     private $duration;
     
@@ -72,7 +70,6 @@ class ProofManager
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
-     * @param string $proofType                                 The proof type for classic ads
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -86,7 +83,6 @@ class ProofManager
         string $provider,
         string $uri,
         string $token,
-        string $proofType,
         int $duration
     ) {
         $this->entityManager = $entityManager;
@@ -96,7 +92,6 @@ class ProofManager
         $this->waypointRepository = $waypointRepository;
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
-        $this->proofType = $proofType;
         $this->duration = $duration;
 
         switch ($provider) {
@@ -425,7 +420,7 @@ class ProofManager
                      */
                     $carpoolProof->setDriver(null);
                     $ask->removeCarpoolProof($carpoolProof);
-                    // if the poof is pending, we set it to canceled
+                    // if the proof is pending, we set it to canceled
                     if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
                         $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
                     }
@@ -441,7 +436,7 @@ class ProofManager
                      */
                     $carpoolProof->setPassenger(null);
                     $ask->removeCarpoolProof($carpoolProof);
-                    // if the poof is pending, we set it to canceled
+                    // if the proof is pending, we set it to canceled
                     if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
                         $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
                     }
@@ -512,7 +507,6 @@ class ProofManager
 
         // first we need to validate the waiting proofs : some proof may be in undeterminate status
         $this->validateProofs($fromDate, $toDate);
-        exit;
 
         // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
@@ -623,7 +617,7 @@ class ProofManager
                     // no carpool for this date, we create it
                     $carpoolProof = new CarpoolProof();
                     $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                    $carpoolProof->setType($this->proofType);
+                    $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                     $carpoolProof->setAsk($ask);
                     $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
                     $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
@@ -781,7 +775,7 @@ class ProofManager
                         if ($carpoolDay) {
                             $carpoolProof = new CarpoolProof();
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            $carpoolProof->setType($this->proofType);
+                            $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                             $carpoolProof->setAsk($ask);
                             $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
                             $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
