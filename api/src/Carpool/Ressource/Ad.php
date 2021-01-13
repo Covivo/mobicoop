@@ -556,6 +556,13 @@ class Ad
      */
     private $unpaidDate;
 
+    /**
+     * @var array|null The current carpool proof id associated to the ad (for ask context)
+     *
+     * @Groups("read")
+     */
+    private $carpoolProofId;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1284,6 +1291,18 @@ class Ad
     public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
+    public function getCarpoolProofId(): ?int
+    {
+        return $this->carpoolProofId;
+    }
+
+    public function setCarpoolProofId(int $carpoolProofId): self
+    {
+        $this->carpoolProofId = $carpoolProofId;
 
         return $this;
     }
