@@ -511,7 +511,7 @@ class ProofManager
         // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
         $nbSent = 0;
-
+        exit;
         // send these proofs
         foreach ($proofs as $proof) {
             /**
@@ -570,6 +570,25 @@ class ProofManager
                     !is_null($carpoolProof->getDropOffDriverDate())) {
                     // all the possible data is set for the driver => middle type
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
+                    // we need to fill/replace the passenger time details with theoretical data and driver data
+                    $pickUpWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($carpoolProof->getAsk(), Waypoint::ROLE_PASSENGER);
+                    $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($carpoolProof->getAsk(), Waypoint::ROLE_PASSENGER);
+                    /**
+                     * @var Datetime $pickUpDate
+                     */
+                    // we init the pickup date with the start date of the driver
+                    $pickUpDate = clone $carpoolProof->getStartDriverDate();
+                    // then we add the duration till the pickup point
+                    $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
+                    /**
+                     * @var Datetime $dropOffDate
+                     */
+                    // we init the dropoff date with the start date of the driver
+                    $dropOffDate = clone $carpoolProof->getStartDriverDate();
+                    // then we add the duration till the dropoff point
+                    $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
+                    $carpoolProof->setPickUpPassengerDate($pickUpDate);
+                    $carpoolProof->setDropOffPassengerDate($dropOffDate);
                     $this->entityManager->persist($carpoolProof);
                     continue;
                 }
@@ -579,6 +598,10 @@ class ProofManager
                     !is_null($carpoolProof->getPickUpPassengerDate()) &&
                     !is_null($carpoolProof->getDropOffPassengerDate())) {
                     // all the possible data is set for the passenger => middle type
+                    // the driver basic information are already filled (they are filled at the carpool proof creation)
+                    // we only keep the time information as the geographical data are not validated
+                    $carpoolProof->setOriginDriverAddress(null);
+                    $carpoolProof->setDestinationDriverAddress(null);
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
                     $this->entityManager->persist($carpoolProof);
                     continue;
