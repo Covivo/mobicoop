@@ -624,8 +624,14 @@ class ProofManager
      */
     private function getProofs(DateTime $fromDate, DateTime $toDate)
     {
-        // first we search the accepted asks for the given period
-        $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
+        // first we search the pending asks for the given period
+        $pendingAsks = $this->askRepository->findPendingAsksForPeriod($fromDate, $toDate);
+
+        // then we search the accepted asks for the given period
+        $acceptedAsks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
+
+        // we merge both arrays
+        $asks = array_merge($pendingAsks, $acceptedAsks);
 
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
