@@ -260,13 +260,13 @@ export default {
   },
   data() {
     return {
-      connected: this.user !== null,
+      connected: null !== this.user,
       dialogExternalContact: false,
       loadingSendContact: false,
       content:"",
       showSendError: false,
       showSendSuccess: false,
-      enabled: Object.keys(this.communities).length > 0
+      enabled: (null !== this.communities) ? Object.keys(this.communities).length > 0 : null
     };
   },
   computed: {
