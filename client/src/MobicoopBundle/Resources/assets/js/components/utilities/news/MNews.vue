@@ -32,7 +32,7 @@
 
       <v-col cols="4">
         <v-img
-          :src="imageLink + 'solidaire.png'"
+          :src="imageLink + '210112_MBP_VisuelSite.png'"
           class="align-self-center"
           cover
         />
