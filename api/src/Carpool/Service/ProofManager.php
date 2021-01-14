@@ -54,7 +54,6 @@ class ProofManager
     private $askRepository;
     private $waypointRepository;
     private $geoSearcher;
-    private $proofType;
     private $geoTools;
     private $duration;
     
@@ -71,7 +70,6 @@ class ProofManager
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
-     * @param string $proofType                                 The proof type for classic ads
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -85,7 +83,6 @@ class ProofManager
         string $provider,
         string $uri,
         string $token,
-        string $proofType,
         int $duration
     ) {
         $this->entityManager = $entityManager;
@@ -95,7 +92,6 @@ class ProofManager
         $this->waypointRepository = $waypointRepository;
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
-        $this->proofType = $proofType;
         $this->duration = $duration;
 
         switch ($provider) {
@@ -282,10 +278,11 @@ class ProofManager
         // we perform different actions depending on the role and the moment
         switch ($actor) {
             case CarpoolProof::ACTOR_DRIVER:
-                if (!is_null($carpoolProof->getPickUpDriverAddress()) && is_null($carpoolProof->getPickUpPassengerAddress())) {
-                    // the driver can't set the dropoff while the passenger has not certified its pickup
-                    throw new ProofException("The passenger has not sent its pickup certification yet");
-                }
+                // uncomment this if dropoff is authorized only if both pickups has been made
+                // if (!is_null($carpoolProof->getPickUpDriverAddress()) && is_null($carpoolProof->getPickUpPassengerAddress())) {
+                //     // the driver can't set the dropoff while the passenger has not certified its pickup
+                //     throw new ProofException("The passenger has not sent its pickup certification yet");
+                // }
                 if (!is_null($carpoolProof->getPickUpDriverAddress())) {
                     // the driver has set its pickup
                     if (!is_null($carpoolProof->getDropOffDriverAddress())) {
@@ -334,10 +331,11 @@ class ProofManager
                 }
                 break;
             case CarpoolProof::ACTOR_PASSENGER:
-                if (!is_null($carpoolProof->getPickUpPassengerAddress()) && is_null($carpoolProof->getPickUpDriverAddress())) {
-                    // the passenger can't set the dropoff while the driver has not certified its pickup
-                    throw new ProofException("The driver has not sent its pickup certification yet");
-                }
+                // uncomment this if dropoff is authorized only if both pickups has been made
+                // if (!is_null($carpoolProof->getPickUpPassengerAddress()) && is_null($carpoolProof->getPickUpDriverAddress())) {
+                //     // the passenger can't set the dropoff while the driver has not certified its pickup
+                //     throw new ProofException("The driver has not sent its pickup certification yet");
+                // }
                 if (!is_null($carpoolProof->getPickUpPassengerAddress())) {
                     // the passenger has set its pickup
                     if (!is_null($carpoolProof->getDropOffPassengerAddress())) {
@@ -422,7 +420,7 @@ class ProofManager
                      */
                     $carpoolProof->setDriver(null);
                     $ask->removeCarpoolProof($carpoolProof);
-                    // if the poof is pending, we set it to canceled
+                    // if the proof is pending, we set it to canceled
                     if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
                         $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
                     }
@@ -438,7 +436,7 @@ class ProofManager
                      */
                     $carpoolProof->setPassenger(null);
                     $ask->removeCarpoolProof($carpoolProof);
-                    // if the poof is pending, we set it to canceled
+                    // if the proof is pending, we set it to canceled
                     if ($carpoolProof->getStatus() == CarpoolProof::STATUS_PENDING) {
                         $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
                     }
@@ -507,10 +505,13 @@ class ProofManager
             $toDate->setTime(23, 59, 59, 999);
         }
 
-        // we get the pending proofs
+        // first we need to validate the waiting proofs : some proof may be in undeterminate status
+        $this->validateProofs($fromDate, $toDate);
+
+        // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
         $nbSent = 0;
-
+        exit;
         // send these proofs
         foreach ($proofs as $proof) {
             /**
@@ -531,6 +532,89 @@ class ProofManager
     }
 
     /**
+     * Validate the pending proofs for the given period.
+     * Used to update pending with undetermined final class.
+     *
+     * @param DateTime $fromDate   The start of the period for which we want to update the proofs
+     * @param DateTime $toDate     The end of the period  for which we want to update the proofs
+     * @return void
+     */
+    private function validateProofs(DateTime $fromDate, DateTime $toDate)
+    {
+        // first we search the undetermined proofs for the given period
+        $carpoolProofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_UNDETERMINED_CLASSIC,CarpoolProof::TYPE_UNDETERMINED_DYNAMIC], $fromDate, $toDate);
+        
+        if (is_array($carpoolProofs) && count($carpoolProofs)>0) {
+            // then we determine the right class depending on the available data
+            foreach ($carpoolProofs as $carpoolProof) {
+                // we change the status to pending
+                $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+                if (
+                    !is_null($carpoolProof->getPickUpDriverAddress()) &&
+                    !is_null($carpoolProof->getPickUpPassengerAddress()) &&
+                    !is_null($carpoolProof->getDropOffDriverAddress()) &&
+                    !is_null($carpoolProof->getDropOffPassengerAddress()) &&
+                    !is_null($carpoolProof->getPickUpDriverDate()) &&
+                    !is_null($carpoolProof->getPickUpPassengerDate()) &&
+                    !is_null($carpoolProof->getDropOffDriverDate()) &&
+                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    // all the possible data is set for both carpoolers => max type
+                    $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                if (
+                    !is_null($carpoolProof->getPickUpDriverAddress()) &&
+                    !is_null($carpoolProof->getDropOffDriverAddress()) &&
+                    !is_null($carpoolProof->getPickUpDriverDate()) &&
+                    !is_null($carpoolProof->getDropOffDriverDate())) {
+                    // all the possible data is set for the driver => middle type
+                    $carpoolProof->setType(CarpoolProof::TYPE_MID);
+                    // we need to fill/replace the passenger time details with theoretical data and driver data
+                    $pickUpWaypoint = $this->waypointRepository->findMinPositionForAskAndRole($carpoolProof->getAsk(), Waypoint::ROLE_PASSENGER);
+                    $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($carpoolProof->getAsk(), Waypoint::ROLE_PASSENGER);
+                    /**
+                     * @var Datetime $pickUpDate
+                     */
+                    // we init the pickup date with the start date of the driver
+                    $pickUpDate = clone $carpoolProof->getStartDriverDate();
+                    // then we add the duration till the pickup point
+                    $pickUpDate->modify('+' . $pickUpWaypoint->getDuration() . ' second');
+                    /**
+                     * @var Datetime $dropOffDate
+                     */
+                    // we init the dropoff date with the start date of the driver
+                    $dropOffDate = clone $carpoolProof->getStartDriverDate();
+                    // then we add the duration till the dropoff point
+                    $dropOffDate->modify('+' . $dropOffWaypoint->getDuration() . ' second');
+                    $carpoolProof->setPickUpPassengerDate($pickUpDate);
+                    $carpoolProof->setDropOffPassengerDate($dropOffDate);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                if (
+                    !is_null($carpoolProof->getPickUpPassengerAddress()) &&
+                    !is_null($carpoolProof->getDropOffPassengerAddress()) &&
+                    !is_null($carpoolProof->getPickUpPassengerDate()) &&
+                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    // all the possible data is set for the passenger => middle type
+                    // the driver basic information are already filled (they are filled at the carpool proof creation)
+                    // we only keep the time information as the geographical data are not validated
+                    $carpoolProof->setOriginDriverAddress(null);
+                    $carpoolProof->setDestinationDriverAddress(null);
+                    $carpoolProof->setType(CarpoolProof::TYPE_MID);
+                    $this->entityManager->persist($carpoolProof);
+                    continue;
+                }
+                // if any of the previous is verified, we initialize with the lowest possible type
+                $carpoolProof->setType(CarpoolProof::TYPE_LOW);
+                $this->entityManager->persist($carpoolProof);
+            }
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
      * Create and return the pending proofs for the given period.
      * Used to generate non-realtime proofs.
      *
@@ -540,8 +624,14 @@ class ProofManager
      */
     private function getProofs(DateTime $fromDate, DateTime $toDate)
     {
-        // first we search the accepted asks for the given period
-        $asks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
+        // first we search the pending asks for the given period
+        $pendingAsks = $this->askRepository->findPendingAsksForPeriod($fromDate, $toDate);
+
+        // then we search the accepted asks for the given period
+        $acceptedAsks = $this->askRepository->findAcceptedAsksForPeriod($fromDate, $toDate);
+
+        // we merge both arrays
+        $asks = array_merge($pendingAsks, $acceptedAsks);
 
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
@@ -556,7 +646,7 @@ class ProofManager
                     // no carpool for this date, we create it
                     $carpoolProof = new CarpoolProof();
                     $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                    $carpoolProof->setType($this->proofType);
+                    $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                     $carpoolProof->setAsk($ask);
                     $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
                     $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());
@@ -714,7 +804,7 @@ class ProofManager
                         if ($carpoolDay) {
                             $carpoolProof = new CarpoolProof();
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
-                            $carpoolProof->setType($this->proofType);
+                            $carpoolProof->setType(CarpoolProof::TYPE_LOW);
                             $carpoolProof->setAsk($ask);
                             $carpoolProof->setDriver($ask->getMatching()->getProposalOffer()->getUser());
                             $carpoolProof->setPassenger($ask->getMatching()->getProposalRequest()->getUser());

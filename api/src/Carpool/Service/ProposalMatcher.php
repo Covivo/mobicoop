@@ -188,6 +188,9 @@ class ProposalMatcher
         $candidateDriver->setId($ask->getMatching()->getProposalOffer()->getUser()->getId());
         $addresses = [];
         foreach ($ask->getMatching()->getProposalOffer()->getWaypoints() as $waypoint) {
+            if ($waypoint->isFloating()) {
+                continue;
+            }
             $addresses[] = $waypoint->getAddress();
         }
         $candidateDriver->setAddresses($addresses);
@@ -203,6 +206,9 @@ class ProposalMatcher
         $candidatePassenger->setId($ask->getMatching()->getProposalRequest()->getUser()->getId());
         $addressesCandidate = [];
         foreach ($ask->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+            if ($waypoint->isFloating()) {
+                continue;
+            }
             $addressesCandidate[] = $waypoint->getAddress();
         }
         $candidatePassenger->setAddresses($addressesCandidate);
