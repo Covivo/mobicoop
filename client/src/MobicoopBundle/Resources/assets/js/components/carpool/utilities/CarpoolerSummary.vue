@@ -123,20 +123,29 @@
             {{ $t('externalResult.go') }}
           </span>
         </v-btn>
-        <v-btn
-          :disabled="user == null"
-          rounded
-          color="primary"
-          type="button"
-          target="_blank"
-          class="mt-1"
-          @click="externalContactModal"
-        >
-          <span>
-            {{ $t('externalResult.contact.button') }}
-          </span>
-        </v-btn>
-        <br>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <div
+              class="ma-0 pa-0"
+              v-on="on"
+            >
+              <v-btn
+                :disabled="user == null"
+                rounded
+                color="primary"
+                type="button"
+                target="_blank"
+                class="mt-1"
+                @click="externalContactModal"
+              >
+                <span>
+                  {{ $t('externalResult.contact.button.label') }}
+                </span>
+              </v-btn>
+            </div>
+          </template>
+          <span>{{ $t('externalResult.contact.button.tooltip') }}</span>
+        </v-tooltip>
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
         </v-card-text>
