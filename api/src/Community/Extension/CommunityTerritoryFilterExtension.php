@@ -69,15 +69,17 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if ($this->request->get("showAllCommunities")=="" || !$this->request->get("showAllCommunities")) {
+            if ($this->request->get("showAllCommunities", false)) {
+                return;
             } else {
                 switch ($operationName) {
                     case "get":
+                    case "manage":
                         $territories = $this->authManager->getTerritoriesForItem("community_list");
                 }
             }
         }
-        
+       
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');

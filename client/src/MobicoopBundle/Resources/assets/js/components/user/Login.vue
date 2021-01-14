@@ -15,21 +15,14 @@
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <div class="pt-12 mt-12">
+    <div class="pt-12">
       <v-row
-        v-if="ssoConnections.length>0"
         class="text-center justify-center"
       >
         <v-col
           class="col-4"
         >
-          <SsoLogin
-            v-for="ssoConnection in ssoConnections"
-            :key="ssoConnection.service"
-            :url="ssoConnection.uri"
-            :button-icon="ssoConnection.buttonIcon"
-            :service="ssoConnection.service"
-          />
+          <SsoLogins />
         </v-col>
       </v-row>
       <v-row
@@ -120,12 +113,11 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
 import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/Login/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/Login/";
 import MFacebookAuth from '@components/user/MFacebookAuth';
-import SsoLogin from '@components/user/SsoLogin';
+import SsoLogins from '@components/user/SsoLogins';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -140,7 +132,7 @@ export default {
   name: "Login",
   components : {
     MFacebookAuth,
-    SsoLogin
+    SsoLogins
   },
   props: {
     errormessage: {
@@ -179,13 +171,11 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
-      ssoConnections:[]
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
     };
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
-    this.getSso();
     //console.log(this.$i18n.messages)
   },
   methods: {
@@ -200,12 +190,6 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
-    },
-    getSso(){
-      axios.post(this.$t("urlGetSsoServices"))
-        .then(response => {
-          this.ssoConnections = response.data;
-        });      
     }
   }
 };

@@ -169,7 +169,7 @@
             <v-tab-item value="carpools">
               <matching-results
                 :results="results"
-                :nb-results="nbCarpoolPlatform"
+                :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
                 :distinguish-regular="distinguishRegular"
                 :user="user"
                 :loading-prop="loading"

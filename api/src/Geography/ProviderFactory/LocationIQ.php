@@ -58,6 +58,11 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
+    const VIEWBOX = '&bounded=1&viewbox=%min_lon%,%min_lat%,%max_lon%,%max_lat%';
+
+    /**
+     * @var string
+     */
     private $apiKey;
 
     /**
@@ -115,9 +120,22 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
     public function geocodeQuery(GeocodeQuery $query): Collection
     {
         $address = $query->getText();
-
         $url = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $query->getLimit());
 
+        // Check if there is a viewbox
+        if (
+            !is_null($query->getData('minLatitude')) &&
+            !is_null($query->getData('maxLatitude')) &&
+            !is_null($query->getData('minLongitude')) &&
+            !is_null($query->getData('maxLongitude'))
+        ) {
+            $url .= self::VIEWBOX;
+            $url = str_replace('%min_lon%', $query->getData('minLongitude'), $url);
+            $url = str_replace('%min_lat%', $query->getData('minLatitude'), $url);
+            $url = str_replace('%max_lon%', $query->getData('maxLongitude'), $url);
+            $url = str_replace('%max_lat%', $query->getData('maxLatitude'), $url);
+        }
+        
         $content = $this->executeQuery($url, $query->getLocale());
 
         $doc = new \DOMDocument();

@@ -1089,6 +1089,13 @@ Accessibility:
         en: /accessibility
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAccessibility
 
+# display mobility package page
+Mobility:
+    path:
+        fr: /forfait-mobilite-durable
+        en: /mobility-package
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobility
+
 # Get the last external articles (AJAX)
 LastExternalArticles:
     methods: [POST]
