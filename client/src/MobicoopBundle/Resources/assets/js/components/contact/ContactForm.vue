@@ -90,19 +90,6 @@
                     :hint="this.$t('message.hint')"
                   />
                 </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-checkbox
-                    v-model="form.consent"
-                    :rules="form.consentRules"
-                    :label="$t('consent.text') + ` *`"
-                    color="success"
-                    name="consent"
-                  />
-                </v-col>
-
                 <!-- Honey pot -->
                 <!-- use of HTML input to have access to required attribute -->
                 <!-- use of website name is arbitrary and can be changed -->
