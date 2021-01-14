@@ -443,7 +443,6 @@ class User implements UserInterface, EquatableInterface
     const MOBILE_APP_WEB = 1;
     const MOBILE_APP_IOS = 2;
     const MOBILE_APP_ANDROID = 3;
-    const MOBILE_SOLIDARY = 4;
 
     const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
@@ -1096,9 +1095,9 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var string|null The link used to validate the email (useful for mobile apps)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest"})
      */
-    private $emailValidationLink;
+    private $backLink;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -2649,14 +2648,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getEmailValidationLink(): ?string
+    public function getBackLink(): ?string
     {
-        return $this->emailValidationLink;
+        return $this->backLink;
     }
 
-    public function setEmailValidationLink(?string $emailValidationLink): self
+    public function setBackLink(?string $backLink): self
     {
-        $this->emailValidationLink = $emailValidationLink;
+        $this->backLink = $backLink;
 
         return $this;
     }
