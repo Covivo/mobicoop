@@ -4,7 +4,10 @@
     "externalResult":{
         "go":"S'y rendre",
         "contact":{
-            "button":"Contacter",
+            "button":{
+                "label":"Contacter",
+                "tooltip":"Vous devez être connecté pour contacter un covoitureur"
+            },
             "popup":{
                 "title":"Contacter",
                 "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
