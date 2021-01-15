@@ -40,7 +40,7 @@
         },
         "events" :{
             "title":"Les événements en covoiturage",
-            "link":"/events"
+            "link":"/covoiturages-evenements"
         },
         "faq":{
             "title":"FAQ",
@@ -64,7 +64,7 @@
     "need":{
         "community":{
             "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"/community/create"
+            "link":"covoiturage-communaute"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",
