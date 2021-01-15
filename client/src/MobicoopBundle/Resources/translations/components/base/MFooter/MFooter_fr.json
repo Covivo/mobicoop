@@ -23,7 +23,7 @@
             "link":"https://lacampagne.mobicoop.fr/"
         }
     },
-    "tools":{
+    "services":{
         "mobicoop":{
             "title":"pro.mobicoop.fr",
             "link":"https://pro.mobicoop.fr/"
@@ -33,7 +33,7 @@
             "link":"www.covievent.org"
         }
     },
-    "services":{
+    "tools":{
         "map":{
             "title":"La carte des aires de covoiturage",
             "link":"/points-relais"
