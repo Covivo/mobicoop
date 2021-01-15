@@ -1,6 +1,6 @@
 {
     "routes": {
-        "event": "/evenement/{id}"
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
     },
     "date": {
         "from": "Du",

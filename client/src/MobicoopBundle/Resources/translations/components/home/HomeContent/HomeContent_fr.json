@@ -31,11 +31,11 @@
         "title": "Allez en covoiturage à vos prochains événements",
         "button1": {
             "label": "Voir les événements",
-            "route": "/evenements"
+            "route": "/covoiturages-evenements/"
         },
         "button2": {
             "label": "Ajouter un événement",
-            "route": "/evenements"
+            "route": "/evenement/creer"
         }
     },
     "privateEvent": {
@@ -44,11 +44,11 @@
         "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
         "button":{
             "label":"Créer un événement",
-            "route":"#"
+            "route":"/evenement/creer"
         },
         "coviEvent":{
             "text":"Découvrir CoviEvent",
-            "link":"#"
+            "link":"https://www.covievent.org/"
         }
     },
     "items":[

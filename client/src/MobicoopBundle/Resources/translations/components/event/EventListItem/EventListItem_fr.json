@@ -1,6 +1,6 @@
 {
     "routes": {
-        "event": "/covoiturages-evenements/{id}/{urlKey}"
+        "event": "/covoiturages-evenements/"
     },
     "eventDetails": "Détails de l'événement",
     "join": "Rejoindre l'événement",

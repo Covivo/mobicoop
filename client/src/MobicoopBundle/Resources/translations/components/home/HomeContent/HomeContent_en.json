@@ -4,7 +4,7 @@
         "text": "Reconnaître les membres de mon club ou de mon entreprise.",
         "button": {
             "label": "Voir les communautés",
-            "route": "/carpool-community"
+            "route": "/covoiturage-communaute"
         }
     },
     "event": {
@@ -12,7 +12,7 @@
         "text": "Trouver des covoitureurs allant au même événement.",
         "button": {
             "label": "Voir les événements",
-            "route": "/carpools-events"
+            "route": "/covoiturages-evenements"
         }
     },
     "solidary": {
@@ -31,11 +31,11 @@
         "title": "Allez en covoiturage à vos prochains événements",
         "button1": {
             "label": "Voir les événements",
-            "route": "/evenements"
+            "route": "/covoiturages-evenements/"
         },
         "button2": {
             "label": "Ajouter un événement",
-            "route": "/evenements"
+            "route": "/evenement/creer"
         }
     },
     "privateEvent": {
@@ -44,11 +44,11 @@
         "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
         "button":{
             "label":"Créer un événement",
-            "route":"#"
+            "route":"/evenement/creer"
         },
         "coviEvent":{
             "text":"Découvrir CoviEvent",
-            "link":"#"
+            "link":"https://www.covievent.org/"
         }
     },
     "items":[

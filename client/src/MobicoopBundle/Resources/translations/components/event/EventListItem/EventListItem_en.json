@@ -1,14 +1,11 @@
 {
     "routes": {
-        "event": "/carpools-events/{id}/{urlKey}"
+        "event": "/covoiturages-evenements/"
     },
-    "eventDetails": "Event details",
-    "join": "Join the event",
     "date": {
-        "from": "From",
-        "to": "To",
-        "at": "at",
-        "the": "The"
+        "from": "Du",
+        "to": "au",
+        "the": "Le"
     },
     "shortCompleteDate": "DD/MM/YYYY",
     "hourMinute": "HH[h]mm"
