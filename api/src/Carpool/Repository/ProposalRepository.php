@@ -915,7 +915,7 @@ class ProposalRepository
         }
 
         $regularAndWhere .= ' and (c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and ';
-        $regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
+        //$regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
         $regularAndWhere .= "c.toDate >= '".$day->format('Y-m-d'). "'))";
 
         return [
