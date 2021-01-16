@@ -3,12 +3,12 @@
     {% block head %}
     <head>
         <meta charset="UTF-8">
-        <title>
-            {% block title %}{{ app_name }}{% endblock %}
-        </title>
+        <title>{% if metaTitle is defined %}{{metaTitle}}{% else %}{% block title %}{% trans from 'meta' %}meta.default.title{% endtrans %}{% endblock %}{% endif %}</title>
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
-        {% block desc %}{% endblock %}
+        
+        <meta name="description" content="{% if metaDescription is defined %}{{metaDescription}}{% else %}{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}{% endif %}">
+
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
         {% block favicon %}
          {% endblock %}

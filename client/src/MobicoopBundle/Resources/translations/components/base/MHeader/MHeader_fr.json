@@ -10,7 +10,7 @@
         },
         "shareAnAd": {
             "label": "Publier une annonce",
-            "route": "/covoiturage/annonce/poster"
+            "route": "/covoiturage/publierannonce"
         },
         "messages": {
             "label": "Messages",
@@ -23,6 +23,10 @@
         "logOut": {
             "label": "Déconnexion",
             "route": "/user/logout"
+        },
+        "solidary": {
+            "label": "Devenir conducteur solidaire",
+            "route": "/covoiturage/annonce/poster/solidaire"
         }
     },
     "snackbar": {

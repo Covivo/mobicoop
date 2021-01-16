@@ -443,12 +443,15 @@ class SolidaryManager
         $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
 
-        $this->entityManager->persist($solidary);
-        $this->entityManager->flush();
+        if ($solidary->isPassenger()) {
+            $this->entityManager->persist($solidary);
+            $this->entityManager->flush();
 
-        // We trigger the event
-        $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+            // We trigger the event
+            $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
+            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+        }
+        
 
         return $solidary;
     }

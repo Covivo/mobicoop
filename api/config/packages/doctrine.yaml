@@ -121,6 +121,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Import/Entity'
                 prefix: 'App\Import\Entity'
                 alias: Import
+            Journey:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Journey/Entity'
+                prefix: 'App\Journey\Entity'
+                alias: Journey
             MassCommunication:
                 is_bundle: false
                 type: annotation

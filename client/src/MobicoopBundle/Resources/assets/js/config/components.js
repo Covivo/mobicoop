@@ -14,6 +14,12 @@ import Contact from '@components/contact/Contact'
 import AdPublish from '@components/carpool/publish/AdPublish'
 import Matching from '@components/carpool/results/Matching'
 
+// JOURNEY
+import JourneyCity from '@components/journey/JourneyCity';
+import JourneyCityPopular from '@components/journey/JourneyCityPopular';
+import JourneyResults from '@components/journey/JourneyResults';
+import JourneyResult from '@components/journey/JourneyResult';
+
 // COMMUNITY
 import CommunityList from "@components/community/CommunityList";
 import CommunityHelp from "@components/community/CommunityHelp";
@@ -48,6 +54,11 @@ import EventGetWidget from "@components/event/EventGetWidget";
 // ARTICLE
 import MArticle from "@components/article/MArticle";
 
+//RSS ARTILCE
+import MRssArticles from "@components/utilities/rssArticle/MRssArticles";
+import MRssArticlesItem from "@components/utilities/rssArticle/MRssArticlesItem";
+
+
 // PLATFORM WIDGET
 import PlatformWidget from "@components/utilities/platformWidget/PlatformWidget";
 import PlatformGetWidget from "@components/utilities/platformWidget/PlatformGetWidget";
@@ -71,6 +82,10 @@ export default {
   Home,
   Contact,
   AdPublish,
+  JourneyCity,
+  JourneyCityPopular,
+  JourneyResults,
+  JourneyResult,
   Matching,
   CommunityList,
   CommunityHelp,
@@ -95,6 +110,8 @@ export default {
   EventWidget,
   EventGetWidget,
   MArticle,
+  MRssArticles,
+  MRssArticlesItem,
   PlatformWidget,
   PlatformGetWidget,
   RelayPoints,

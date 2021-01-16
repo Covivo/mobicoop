@@ -1,0 +1,20 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}
+  {% trans from 'ui' %}journey.from_to.title1{% endtrans %} {{ origin }} {% trans from 'ui' %}journey.from_to.title2{% endtrans %} {{ destination }}  - {{ app_name }}
+{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+{% block main %}
+  <journey-result 
+    :journeys="{{ journeys|json_encode}}"
+    origin="{{ origin is defined ? origin : '' }}"
+    origin-sanitize="{{ originSanitize is defined ? originSanitize : '' }}"
+    destination="{{ destination is defined ? destination : '' }}"
+    destination-sanitize="{{ destinationSanitize is defined ? destinationSanitize : '' }}"
+    :frequency="{{ frequency is defined ? frequency : 1 }}"
+    :total="{{ total is defined ? total : 0 }}"
+    :page="{{ page is defined ? page : 0 }}"
+    :per-page="{{ perPage is defined ? perPage : 0 }}"
+    :logged="{{ logged ? "true" : "false" }}"
+  />
+{% endblock %}

@@ -1,0 +1,8 @@
+{
+    "title": "Carpool from {origin} to {destination}",
+    "nbResults": "No carpool found | 1 carpool found | {nb} carpools found",
+    "punctual": "Punctual journey",
+    "regular": "Regular journey",
+    "createSearchFromProposalUrl": "/carpool/create-search/{proposalId}",
+    "redirectForCarpoolSearch": "/carpool/ad/{proposalId}/results"
+}

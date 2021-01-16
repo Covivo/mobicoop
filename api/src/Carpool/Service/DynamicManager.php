@@ -952,8 +952,8 @@ class DynamicManager
     /**
      * Create a proof for a dynamic ask.
      *
-     * @param DynamicProof    $dynamicProof The proof to create
-     * @return DynamicProof                 The created proof.
+     * @param DynamicProof    $dynamicProof The proof to create (or update if it already exists)
+     * @return DynamicProof                 The created or updated proof.
      */
     public function createDynamicProof(DynamicProof $dynamicProof)
     {
@@ -973,7 +973,7 @@ class DynamicManager
             return $this->updateDynamicProof($ask->getCarpoolProofs()[0]->getId(), $dynamicProof);
         }
 
-        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), $this->params['proofType'], $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
+        $carpoolProof = $this->proofManager->createProof($ask, $dynamicProof->getLongitude(), $dynamicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_DYNAMIC, $dynamicProof->getUser(), $ask->getUserRelated(), $ask->getUser());
 
         $dynamicProof->setId($carpoolProof->getId());
         $dynamicProof->setStatus(

@@ -1,149 +1,143 @@
 <template>
-  <v-main color="secondary">
-    <v-container
-      text-center
+  <v-container
+    text-center
+    fluid
+    class="pa-0"
+  >
+    <v-row v-if="displayVerifiedMessage">
+      <v-col class="pa-0">
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+          :timeout="10000"
+        >
+          <div>
+            {{ $t('snackbar1') }}
+            <a :href="$t('profileLink')">
+              " {{ $t('myProfile') }} "
+            </a>
+            {{ $t('snackbar2') }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="displayDeleteAccount">
+      <v-col>
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+        >
+          <div>
+            {{ $t('snackbar-account-delete') }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+    <v-row v-if="displayUnsubscribeEmail">
+      <v-col>
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+        >
+          <div>
+            {{ displayUnsubscribeEmail }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+
+    <!-- Title and subtitle -->
+    <div
+      :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;background-position-y:-1em;'"
     >
-      <v-row v-if="displayVerifiedMessage">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-            :timeout="10000"
-          >
-            <div>
-              {{ $t('snackbar1') }}
-              <a :href="$t('profileLink')">
-                " {{ $t('myProfile') }} "
-              </a>
-              {{ $t('snackbar2') }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-
-      <v-row v-if="displayDeleteAccount">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-          >
-            <div>
-              {{ $t('snackbar-account-delete') }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-      <v-row v-if="displayUnsubscribeEmail">
-        <v-col>
-          <v-snackbar
-            v-model="snackbar"
-            top
-            multi-line
-            color="info"
-            vertical
-          >
-            <div>
-              {{ displayUnsubscribeEmail }}
-            </div>
-            <v-btn
-              color="info"
-              elevation="0"
-              @click="snackbar = false"
-            >
-              <v-icon
-                color="primary"
-              >
-                mdi-close
-              </v-icon>
-            </v-btn>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-
-      <!-- Title and subtitle -->
       <v-row
         align="center"
-        class="mt-5"
         justify="center"
       >
         <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
-          class="text-center"
+          class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
+          :style="'font-size:1.25rem;line-height:1.25;'"
         >
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-html="$t('subtitle')" />
-          <v-col v-if="additionalTextDisplay">
-            <a
-              :href="$t('urlArticle')"
-              :alt="$t('altUrlArticle')"
-              style="text-decoration:none;"
-              color="secondary"
-            >
-              <h3>{{ $t("clickHere") }}</h3></a>
-          </v-col>
-        </v-col>
-      </v-row>
-      <search
-        :geo-search-url="geoSearchUrl"
-        :user="user"
-        :regular="regular"
-        :punctual-date-optional="punctualDateOptional"
-        :publish-button-always-active="publishButtonAlwaysActive"
-      />
-      <v-row
-        align="center"
-        class="mt-5"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          xl="6"
-          lg="9"
-          md="12"
-        >
-          <home-content
-            :community-display="communityDisplay"
-            :event-display="eventDisplay"
-            :solidary-display="solidaryDisplay"
-            :additional-text-display="additionalTextDisplay"
-            :url-mobile="mobileUrl"
+          <h1
+            v-html="$t('title')"
           />
         </v-col>
       </v-row>
+      <!-- end Title and subtitle -->
+
+      <!-- search -->
+      <v-row
+        align="center"
+        class="mt-5 mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
+        justify="center"
+      >
+        <v-col class=" mt-md-10 mt-lg-8">
+          <search
+            :geo-search-url="geoSearchUrl"
+            :user="user"
+            :regular="regular"
+            :punctual-date-optional="punctualDateOptional"
+            :publish-button-always-active="publishButtonAlwaysActive"
+            :image-swap="$t('urlImageSwap')"
+          />
+        </v-col>
+      </v-row>
+      <!-- end search -->
+
+      <!-- homeContent -->
+      <home-content
+        :community-display="communityDisplay"
+        :event-display="eventDisplay"
+        :solidary-display="solidaryDisplay"
+        :url-mobile="mobileUrl"
+      />
+      <!-- end homeBottom -->
       <Cookies />
-    </v-container>
-  </v-main>
+    </div>
+  </v-container>
 </template>
 
 <script>
@@ -167,7 +161,7 @@ export default {
   components: {
     Search,
     HomeContent,
-    Cookies
+    Cookies,
   },
   props: {
     geoSearchUrl: {
@@ -218,10 +212,6 @@ export default {
       type: Boolean,
       default: false
     },
-    additionalTextDisplay: {
-      type: Boolean,
-      default: false
-    },
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
@@ -231,20 +221,16 @@ export default {
       type: Object,
       default: null
     },
-    rss: {
-      type: Object,
-      default: null
-    },
     urlMobile: {
       type: String,
       default: null
-    },
+    }
   },
   data () {
     return {
       snackbar: true,
       displayVerifiedMessage: false,
-      mobileUrl: this.urlMobile
+      mobileUrl: this.urlMobile,
     }
   },
   mounted() {

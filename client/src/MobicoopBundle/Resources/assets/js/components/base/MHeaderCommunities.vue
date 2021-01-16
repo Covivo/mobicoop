@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    v-if="items.length > 0"
     offset-y
     open-on-hover
   >
@@ -20,7 +21,7 @@
         :key="index"
       >
         <a
-          :href="$t('urlCommunityDetails',{id:item.id})"
+          :href="$t('urlCommunityDetails',{id:item.id,urlKey:item.urlKey})"
           :alt="item.name"
           :class="linksColorClass"
         ><v-list-item-title>{{ item.name }}</v-list-item-title></a>
@@ -64,7 +65,7 @@ export default {
     linksColorClass: {
       type: String,
       default: ""
-    }     
+    } 
   },
   data(){
     return {
@@ -73,7 +74,7 @@ export default {
   },
   mounted(){
     let params = {
-      'userId':this.userId
+      'userId':this.userId,
     }
     axios.post(this.$t("getCommunities"), params)
       .then(res => {

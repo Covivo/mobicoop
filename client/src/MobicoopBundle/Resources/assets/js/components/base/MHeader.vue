@@ -3,17 +3,27 @@
     <v-toolbar
       flat
       color="primary"
+      height="80px"
     >
-      <v-toolbar-title>
-        <a href="/">
+      <v-toolbar-title align="midle">
+        <a
+          href="/"
+          class="d-flex align-center"
+        >
           <img
             class="logo"
-            src="/images/logo.png"
+            :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             alt="Mobicoop"
+            height="50"
+            width="280"
+            contain
+            eager
           >
         </a>
       </v-toolbar-title>
+
       <v-spacer />
+
       <!--<accessibility />-->
       <v-toolbar-items
         v-if="user"
@@ -22,15 +32,20 @@
         <v-btn
           text
           rounded
+          class="white--text title text-none"
           :href="$t('buttons.messages.route')"
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
-        <MHeaderCommunities :user-id="user.id" />
+        <MHeaderCommunities
+          :user-id="user.id" 
+          :text-color-class="textColorClass"
+        />
         <MHeaderProfile
           :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
           :show-reviews="showReviews"
+          :text-color-class="textColorClass"
         />
       </v-toolbar-items>
       <v-toolbar-items
@@ -38,6 +53,7 @@
         class="hidden-md-and-down"
       >
         <v-btn
+          class="white--text"
           rounded
           text
           :href="$t('buttons.signup.route')"
@@ -45,6 +61,7 @@
           {{ $t('buttons.signup.label') }}
         </v-btn>
         <v-btn
+          class="white--text"
           rounded
           text
           :href="$t('buttons.logIn.route')"
@@ -55,10 +72,19 @@
       <v-btn
         v-if="user"
         rounded
+        color="secondary"
         :href="$t('buttons.shareAnAd.route')"
-        class="hidden-md-and-down"
+        class="hidden-md-and-down white--text mr-4"
       >
         {{ $t('buttons.shareAnAd.label') }}
+      </v-btn>
+      <v-btn
+        rounded
+        color="secondary"
+        :href="$t('buttons.solidary.route')"
+        class="hidden-md-and-down white--text mr-4"
+      >
+        {{ $t('buttons.solidary.label') }}
       </v-btn>
      
       <div @click="snackbar = true">
@@ -135,12 +161,15 @@
                 :avatar="user.avatars[0]"
                 :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
                 :show-reviews="showReviews"
+                :text-color-class="textColorClass"
               />
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <MHeaderCommunities :user-id="user.id" />
+              <MHeaderCommunities
+                :user-id="user.id"
+              />
             </v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -296,7 +325,9 @@ export default {
       snackbar: false,
       width: 0,
       defaultLocale: 'fr',
-      dlocale: this.locale
+      dlocale: this.locale,
+      imageLink: "/images/pages/home/",
+      textColorClass: "white--text title text-none"
     }
   },
   mounted() {

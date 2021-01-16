@@ -23,6 +23,9 @@ carpool:
         title: 'Update your carpool ad'
     results:
         title: 'Carpool results'
+journey:
+    results:
+        title: "Journey by city"
 contact:
     title: "Contact us"
 solidary:
@@ -48,4 +51,6 @@ toolsbox:
 relaypoints:
     title: "Relay points"
 payment:
-    title: "Payments"        
+    title: "Payments"
+rssfeeds:
+    title: "Rss feeds"      

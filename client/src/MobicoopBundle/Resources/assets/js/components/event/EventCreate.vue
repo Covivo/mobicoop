@@ -463,7 +463,7 @@ export default {
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
         newEvent.append("description", this.description);
-        newEvent.append("private", this.private);
+        newEvent.append("private", this.isPrivate);
         newEvent.append("avatar", this.avatar);
         newEvent.append("address", JSON.stringify(this.eventAddress));
         newEvent.append("startDate", this.startDate);

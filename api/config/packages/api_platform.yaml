@@ -39,6 +39,7 @@ api_platform:
             '%kernel.project_dir%/src/Geography/Entity',
             '%kernel.project_dir%/src/Image/Entity',
             '%kernel.project_dir%/src/Import/Entity',
+            '%kernel.project_dir%/src/Journey/Entity',
             '%kernel.project_dir%/src/MassCommunication/Entity',
             '%kernel.project_dir%/src/Match/Entity',
             '%kernel.project_dir%/src/Payment/Entity',
@@ -57,6 +58,7 @@ api_platform:
         - '%kernel.project_dir%/src/App/Entity'
         - '%kernel.project_dir%/src/Auth/Entity'
         - '%kernel.project_dir%/src/Article/Entity'
+        - '%kernel.project_dir%/src/Article/Ressource'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Carpool/Ressource'
         - '%kernel.project_dir%/src/Communication/Entity'
@@ -69,6 +71,7 @@ api_platform:
         - '%kernel.project_dir%/src/Image/Entity'
         - '%kernel.project_dir%/src/Import/Entity'
         - '%kernel.project_dir%/src/Import/Ressource'
+        - '%kernel.project_dir%/src/Journey/Entity'
         - '%kernel.project_dir%/src/MassCommunication/Entity'
         - '%kernel.project_dir%/src/Match/Entity'
         - '%kernel.project_dir%/src/Payment/Entity'

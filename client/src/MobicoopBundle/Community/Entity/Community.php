@@ -65,6 +65,11 @@ class Community implements ResourceInterface, \JsonSerializable
     private $name;
 
     /**
+     * @var string UrlKey of the community.
+     */
+    private $urlKey;
+
+    /**
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @Groups({"post","put"})
@@ -221,6 +226,16 @@ class Community implements ResourceInterface, \JsonSerializable
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function getUrlKey(): ?string
+    {
+        return $this->urlKey;
+    }
+
+    public function setUrlKey(?string $urlKey)
+    {
+        $this->urlKey = $urlKey;
     }
 
     public function isMembersHidden(): ?bool
@@ -486,6 +501,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'id'                => $this->getId(),
             'iri'               => $this->getIri(),
             'name'              => $this->getName(),
+            'urlKey'            => $this->getUrlKey(),
             'description'       => $this->getDescription(),
             'images'            => $this->getImages(),
             'fullDescription'   => $this->getFullDescription(),

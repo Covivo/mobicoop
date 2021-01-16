@@ -1,8 +1,7 @@
 {% extends '@Mobicoop/base.html.twig' %}
 {# LOAD  #}
-{% block title %}
-  {% trans from 'ui' %}carpool.ad_create.title{% endtrans %} - {{ app_name }}
-{% endblock %}
+{% block title %}{% trans from 'meta' %}meta.publish.title{% endtrans %}{{ app_name }}{% endblock %}
+{% block desc %}{% trans from 'meta' %}meta.publish.description{% endtrans %}{% endblock %}
 {% block stylesheets %}
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}#}
 {% endblock %}

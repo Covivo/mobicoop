@@ -25,6 +25,7 @@ namespace App\Community\EventListener;
 
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\Community\Service\CommunityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -34,19 +35,22 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class CommunityLoadListener
 {
     private $requestStack;
+    private $communityManager;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->requestStack = $requestStack;
+        $this->communityManager = $communityManager;
     }
 
     public function postLoad(LifecycleEventArgs $args)
     {
         if ($this->requestStack->getCurrentRequest()) {
             $request = $this->requestStack->getCurrentRequest();
-            if ($request->get("userId")) {
-                $community = $args->getEntity();
-                if ($community instanceof Community) {
+
+            $community = $args->getEntity();
+            if ($community instanceof Community) {
+                if ($request->get("userId")) {
                     /** @var CommunityUser[] $communityUsers */
                     $communityUsers = $community->getCommunityUsers();
                     foreach ($communityUsers as $communityUser) {
@@ -58,6 +62,9 @@ class CommunityLoadListener
                         }
                     }
                 }
+                
+                // Url Key of the community
+                $community->setUrlKey($this->communityManager->generateUrlKey($community));
             }
         }
     }

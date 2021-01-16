@@ -1,0 +1,28 @@
+meta:
+    default:
+        title: "Le site de covoiturage libre et gratuit | "
+        description: "Le site de covoiturage libre et gratuit"      
+    cityToCity:
+        title: "Covoiturages par ville | Mobicoop"
+        description: "Tous les covoiturages sans commission et transports en communs selon votre ville de départ ou d'arrivée"
+    cityToCityPopular:
+        title: "Covoiturages par ville | Mobicoop"
+        description: "Tous les covoiturages sans commission et transports en communs selon votre ville de départ ou d'arrivée"
+    community:
+        title: "Covoiturage gratuit pour votre communauté | Mobicoop"
+        description: "Trouvez ou proposez gratuitement des covoiturages au sein d'une communauté. Groupe privé ou public de covoiturage."
+    event:
+        title: "Covoiturage gratuit pour vos événements grands publics et festivals | Mobicoop"
+        description: "Trouvez ou proposez gratuitement des covoiturages pour vos événements et festivals partout en France avec Mobicoop"
+    home:
+        title: "Le site de covoiturage libre et gratuit | "
+        description: "Le site de covoiturage libre et gratuit"
+    publish:
+        title: "Proposer un trajet | "
+        description: " permet aux conducteurs et aux passagers de publier gratuitement une annonce de covoiturage afin de pouvoir trouver un trajet qui vous correspond"
+    relaypoints:
+        title: "Les aires de covoiturages"
+        description: "La carte des aires de covoiturages, points de rendez-vous, parkings et points relais."
+    results:
+        title: "Covoiturages gratuits entre CityA et CityB | Mobicoop"
+        description: "Les covoiturages entre CityA et CityB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."

@@ -1,0 +1,10 @@
+{
+    "loginOrRegisterTitle": "Connexion ou inscription requise",
+    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
+    "login": "Connexion",
+    "register": "Inscription",
+    "loginUrl": "/utilisateur/connexion",
+    "registerUrl": "/utilisateur/inscription",
+    "loginUrlProposalId": "/utilisateur/connexion/{id}",
+    "registerUrlProposalId": "/utilisateur/inscription/{id}"
+}

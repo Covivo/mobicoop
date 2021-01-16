@@ -1,80 +1,254 @@
 <template>
   <v-footer
     height="auto"
+    padless
+    tile
+    class="mt-n4"
     color="primary"
   >
-    <v-layout
-      justify-center
-      row
+    <v-container
+      fluid
+      class="pa-0"
     >
-      <a
-        href="https://www.facebook.com/Mobicoop/"
-        target="_blank"
+      <v-row
+        justify="center"
       >
-        <img
-          src="/images/footer/facebook.svg"
-          width="50px"
-          height="50px"
+        <a
+          href="/"
+          class="d-flex align-center my-14"
         >
-      </a>
-      <a
-        href="https://twitter.com/MobicoopCovoit?lang=fr"
-        target="_blank"
+          <img
+            class="logo"
+            :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
+            alt="Mobicoop"
+            height="50"
+            width="280"
+            contain
+            eager
+          >
+        </a>
+      </v-row>
+      <v-row
+        justify="center"
+        dense
+        class="pa-5"
       >
-        <img
-          src="/images/footer/twitter.svg"
-          width="50px"
-          height="50px"
+        <!-- first col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            {{ $t('category.cooperative') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('cooperative.talkAboutUs.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >              
+              {{ $t('cooperative.talkAboutUs.title') }}
+            </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('cooperative.joinUs.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >
+              {{ $t('cooperative.joinUs.title') }}
+            </a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-10 pb-0 white--text text-h5 font-weight-bold">
+            {{ $t('category.tools') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('tools.mobicoop.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >
+              {{ $t('tools.mobicoop.title') }}
+            </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('tools.covievent.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >
+              {{ $t('tools.covievent.title') }}
+            </a>
+          </v-card-text>
+        </v-col>
+        <!-- end first col -->
+
+        <!-- second col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            {{ $t('category.services') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('services.map.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('services.map.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('services.events.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('services.events.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('services.faq.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('services.faq.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('services.cgu.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('services.cgu.title') }}</a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-3 pb-0 white--text text-h5 font-weight-bold">
+            {{ $t('category.contacts') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('contacts.hotline.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('contacts.hotline.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('contacts.presse.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('contacts.presse.title') }}</a>
+          </v-card-text>
+        </v-col>
+        <!-- end second col -->
+
+        <!-- third col -->
+        <v-col cols="3">
+          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
+            {{ $t('category.need') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <a
+              :href="$t('need.community.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >
+              {{ $t('need.community.title') }}
+            </a>
+          </v-card-text>
+
+          <v-card-text class="my-0 pt-10 pb-0 white--text subtitle font-weight-black">
+            {{ $t('category.download') }}
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <v-row>
+              <a
+                :href="$t('urlIos')"
+                target="_blank"
+              >
+                <v-img
+                  class="ml-2"
+                  contain
+                  :src="$t('urlIosLogo')"
+                  max-width="200px"
+                />
+              </a>
+              <a
+                :href="$t('urlAndroid')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlAndroidLogo')"
+                  max-width="200px"
+                />
+              </a>
+            </v-row>
+          </v-card-text>
+        </v-col>
+        <!-- end third col -->
+
+        <!-- fourth col -->
+        <v-col
+          cols="1"
+          justify="center"
         >
-      </a>
-      <a
-        href="https://www.instagram.com/mobicoopcovoiturage/"
-        target="_blank"
-      >
-        <img
-          src="/images/footer/instagram.svg"
-          width="50px"
-          height="50px"
-        >
-      </a>
-      <a
-        href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
-        target="_blank"
-      >
-        <img
-          href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
-          target="_blank"
-          src="/images/footer/framasphere.svg"
-          width="50px"
-          height="50px"
-        >
-      </a>
-      <v-flex
-        py-4
+          <v-card-text class="my-0 py-0 white--text text-h6">
+            <v-row justify="center">
+              <a
+                :href="$t('urlInstagram')"
+                target="_blank"
+              >
+                <v-img
+                  class="ml-2"
+                  contain
+                  :src="$t('urlInstagramLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlFacebook')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlFacebookLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlTwitter')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlTwitterLogo')"
+                  max-width="75px"
+                />
+              </a>
+              <a
+                :href="$t('urlFramasphere')"
+                target="_blank"
+              >
+                <v-img
+                  contain
+                  :src="$t('urlFramasphereLogo')"
+                  max-width="75px"
+                />
+              </a>
+            </v-row>
+          </v-card-text>
+          <v-col>
+            <!-- end col -->
+          </v-col>
+        </v-col>
+      </v-row>
+      <v-row
+        class="my-4"
         text-center
-        xs12
+        justify="center"
+        align="center"
       >
         <strong>Mobicoop</strong> <v-chip
           class="ma-2"
         >
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
-      </v-flex>
-      <v-flex
-        py-4
-        text-center
-        xs12
-      >
-        <v-btn
-          text
-          rounded
-          :href="$t('buttons.contact.route')"
-          class="text-none"
-        >
-          {{ $t('buttons.contact.label') }}
-        </v-btn>
-      </v-flex>
-    </v-layout>
+      </v-row>
+    </v-container>
   </v-footer>
 </template>
 
@@ -96,7 +270,9 @@ export default {
   },
   data() {
     return {
-      version:Package.version
+      version:Package.version,
+      imageLink: "/images/pages/home/"
+
     }
   }
 };

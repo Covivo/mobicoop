@@ -69,6 +69,16 @@
           />
         </v-col>
       </v-row>
+      <v-row
+        justify="center"
+        class="text-center"
+      >
+        <v-col
+          class="col-4"
+        >
+          <SsoLogins class="justify-self-center" />
+        </v-col>
+      </v-row>
 
       <v-row
         justify="center"
@@ -359,6 +369,22 @@
                     </div>
                   </template>
                 </v-checkbox>
+
+                <!-- checkbox -->
+                <v-checkbox
+                  v-model="form.newsSubscription"
+                  class="check"
+                  color="primary"
+                  required
+                >
+                  <template v-slot:label>
+                    <div>
+                      {{ $t("newsSubscription.text") }}
+                    </div>
+                  </template>
+                </v-checkbox>
+
+
                 <v-row
                   justify="center"
                   align="center"
@@ -422,6 +448,7 @@ import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/user/SignUp/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
+import SsoLogins from '@components/user/SsoLogins';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -436,6 +463,7 @@ export default {
     GeoComplete,
     MFacebookAuth,
     CommunityHelp,
+    SsoLogins
   },
   props: {
     geoSearchUrl: {
@@ -483,6 +511,10 @@ export default {
       default: false
     },
     signupRgpdInfos: {
+      type: Boolean,
+      default: false
+    },
+    newsSubscriptionDefault: {
       type: Boolean,
       default: false
     }
@@ -609,6 +641,7 @@ export default {
           (v) => !!v || this.$t("chart.required"),
         ],
         idFacebook: null,
+        newsSubscription: this.newsSubscriptionDefault
       },
       communities: [],
       selectedCommunity: null,
@@ -695,6 +728,7 @@ export default {
             birthDay: this.form.date,
             address: this.form.homeAddress,
             idFacebook: this.form.idFacebook,
+            newsSubscription: this.form.newsSubscription,
             community: this.selectedCommunity ? this.selectedCommunity : null,
           },
           {

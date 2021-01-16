@@ -22,6 +22,11 @@
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
         </v-col>
       </v-row>
+      <v-row v-if="fraudWarningDisplay">
+        <v-col cols="12">
+          <p>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</p>
+        </v-col>
+      </v-row>
       <v-row>
         <v-col
           class="col-3"
@@ -248,6 +253,10 @@ export default {
     solidaryDisplay: {
       type: Boolean,
       default: true
+    },
+    fraudWarningDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

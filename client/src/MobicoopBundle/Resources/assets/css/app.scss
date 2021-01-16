@@ -1,5 +1,8 @@
 // color hints based on input class
 // todo: est-ce qu'on peut s'en passer en utilisant les variables vuetify ?
+#app {
+  font-family: Poppins, sans-serif;
+}
 .v-input {
   &.success--text {
     .v-messages {

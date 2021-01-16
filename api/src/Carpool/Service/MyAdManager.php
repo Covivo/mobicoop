@@ -99,8 +99,8 @@ class MyAdManager
         $myAd->setPublished(!$proposal->isPrivate());
         $myAd->setPaused($proposal->isPaused());
         $myAd->setFrequency($proposal->getCriteria()->getFrequency());
-        $myAd->setRoleDriver($proposal->getCriteria()->isDriver());
-        $myAd->setRolePassenger($proposal->getCriteria()->isPassenger());
+        $myAd->setRoleDriver(($proposal->getCriteria()->isDriver()===true) ? true : false);
+        $myAd->setRolePassenger(($proposal->getCriteria()->isPassenger()===true) ? true : false);
 
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
@@ -154,17 +154,19 @@ class MyAdManager
             /**
              * @var Waypoint $waypoint
              */
-            $waypoints[] = [
-                'position' => $waypoint->getPosition(),
-                'destination' => $waypoint->isDestination(),
-                'houseNumber' => $waypoint->getAddress()->getHouseNumber(),
-                'street' => $waypoint->getAddress()->getStreet(),
-                'streetAddress' => $waypoint->getAddress()->getStreetAddress(),
-                'postalCode' => $waypoint->getAddress()->getPostalCode(),
-                'addressLocality' => $waypoint->getAddress()->getAddressLocality(),
-                'region' => $waypoint->getAddress()->getRegion(),
-                'addressCountry' => $waypoint->getAddress()->getAddressCountry(),
-            ];
+            if (!$waypoint->isFloating()) {
+                $waypoints[] = [
+                    'position' => $waypoint->getPosition(),
+                    'destination' => $waypoint->isDestination(),
+                    'houseNumber' => $waypoint->getAddress()->getHouseNumber(),
+                    'street' => $waypoint->getAddress()->getStreet(),
+                    'streetAddress' => $waypoint->getAddress()->getStreetAddress(),
+                    'postalCode' => $waypoint->getAddress()->getPostalCode(),
+                    'addressLocality' => $waypoint->getAddress()->getAddressLocality(),
+                    'region' => $waypoint->getAddress()->getRegion(),
+                    'addressCountry' => $waypoint->getAddress()->getAddressCountry(),
+                ];
+            }
         }
         $myAd->setWaypoints($waypoints);
 
@@ -881,11 +883,14 @@ class MyAdManager
         }
 
         // payment
+        $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 // punctual trip, we search if there's a related carpoolItem
                 if ($carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate())) {
-                    if (!is_null($carpoolItem->getUnpaidDate())) {
+                    if ($carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_NULL || $carpoolItem->getCreditorStatus() == CarpoolItem::CREDITOR_STATUS_NULL) {
+                        $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
+                    } elseif (!is_null($carpoolItem->getUnpaidDate())) {
                         $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
                         $driver['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate()->format("Y-m-d");
                         $driver['payment']['itemId'] = $carpoolItem->getId();
@@ -902,8 +907,6 @@ class MyAdManager
                                 break;
                         }
                     }
-                } else {
-                    $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
                 }
                 break;
             case Criteria::FREQUENCY_REGULAR:
@@ -1399,6 +1402,7 @@ class MyAdManager
         }
 
         // payment
+        $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 // punctual trip, we search if there's a related carpoolItem

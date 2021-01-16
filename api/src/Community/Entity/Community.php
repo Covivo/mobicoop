@@ -201,6 +201,13 @@ class Community
     private $name;
 
     /**
+     * @var string UrlKey of the community.
+     *
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
+     */
+    private $urlKey;
+
+    /**
      * @var int Community status.
      *
      * @ORM\Column(type="smallint", nullable=true)
@@ -426,6 +433,16 @@ class Community
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function getUrlKey(): ?string
+    {
+        return $this->urlKey;
+    }
+
+    public function setUrlKey(?string $urlKey)
+    {
+        $this->urlKey = $urlKey;
     }
 
     public function getStatus(): ?int

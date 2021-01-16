@@ -10,7 +10,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ $t('title', {'cityA':displayOrigin, 'cityB':displayDestination}) }}</h1>
 
           <!-- Matching header -->
           <matching-header
@@ -169,7 +169,7 @@
             <v-tab-item value="carpools">
               <matching-results
                 :results="results"
-                :nb-results="nbCarpoolPlatform"
+                :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
                 :distinguish-regular="distinguishRegular"
                 :user="user"
                 :loading-prop="loading"
@@ -218,6 +218,7 @@
         :user="user"
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
+        :fraud-warning-display="fraudWarningDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -227,59 +228,10 @@
     </v-dialog>
     
     <!-- login or register dialog -->
-    <v-dialog
-      v-model="loginOrRegisterDialog"
-      max-width="800"
-    >
-      <v-card>
-        <v-toolbar
-          color="primary"
-        >
-          <v-toolbar-title class="toolbar">
-            {{ $t('loginOrRegisterTitle') }}
-          </v-toolbar-title>
-        
-          <v-spacer />
-
-          <v-btn 
-            icon
-            @click="loginOrRegisterDialog = false"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-
-        <v-card-text>
-          <p class="text--primary ma-1">
-            {{ $t('loginOrRegister') }}
-          </p>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            rounded
-            color="secondary"
-            large
-            :href="$t('loginUrl',{'id':lProposalId})"
-          >
-            <span>
-              {{ $t('login') }}
-            </span>
-          </v-btn>
-          <v-btn
-            rounded
-            color="secondary"
-            large
-            :href="$t('registerUrl',{'id':lProposalId})"
-          >
-            <span>
-              {{ $t('register') }}
-            </span>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <LoginOrRegisterFirst
+      :show-dialog="loginOrRegisterDialog"
+      :proposal-id="lProposalId"
+    />
   </div>
 </template>
 <script>
@@ -291,6 +243,7 @@ import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
+import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import Search from "@components/carpool/search/Search";
 
 export default {
@@ -300,7 +253,8 @@ export default {
     MatchingResults,
     MatchingJourney,
     Search,
-    MatchingPTResults
+    MatchingPTResults,
+    LoginOrRegisterFirst
   },
   i18n: {
     messages: {
@@ -376,6 +330,10 @@ export default {
     ptSearch: {
       type: Boolean,
       default: false
+    },
+    fraudWarningDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -438,6 +396,12 @@ export default {
     },
     displayTab(){
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
+    },
+    displayOrigin(){
+      return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
+    },
+    displayDestination(){
+      return (this.lDestination) ? this.lDestination.addressLocality : "";
     }
   },
   watch:{
@@ -463,6 +427,8 @@ export default {
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
+    this.lOrigin = this.origin;
+    this.lDestination = this.destination;
   },
   methods :{
     carpool(carpool) {
@@ -517,6 +483,8 @@ export default {
           })
           .then((response) => {
             this.results = response.data.results;
+            this.lOrigin = response.data.origin;
+            this.lDestination = response.data.destination;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
           })
           .catch((error) => {

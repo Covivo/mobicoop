@@ -62,8 +62,14 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
             // only for validation or update availabilities
             $data = $this->communityManager->updateCommunityUser($data);
         } elseif (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post') {
-            if (!$this->communityManager->canJoin($data)) {
+            if (!$this->communityManager->canJoin($data, true)) {
                 throw new \InvalidArgumentException("the user don't have a valid domain to join this community");
+            } else {
+                $data = $this->communityManager->saveCommunityUser($data);
+            }
+        } elseif (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'add') {
+            if (!$this->communityManager->canJoin($data, false)) {
+                throw new \InvalidArgumentException("You don't have rights on that secured community");
             } else {
                 $data = $this->communityManager->saveCommunityUser($data);
             }

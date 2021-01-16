@@ -138,14 +138,17 @@ class CarpoolExportManager
        
             $carpoolExports[] = $carpoolExport;
         }
-
+               
         // we put all infos needed in an array to build pdf
         $infoForPdf = [];
         $now = new DateTime();
         $infoForPdf['date'] = $now->format("l d F Y");
         $infoForPdf['year'] = new DateTime();
         $infoForPdf['twigPath'] = 'carpool/export/carpool_export.html.twig';
-        $infoForPdf['fileName'] = $now->format("YmdHis").$user->getGivenName().$user->getFamilyName().'ListeDesCovoiturages.pdf' ;
+        // we sanitize username to use it in the fileName
+        $sanitizeUserName=\Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
+            ->transliterate($user->getGivenName().$user->getFamilyName());
+        $infoForPdf['fileName'] = $now->format("YmdHis").$sanitizeUserName.'ListeDesCovoiturages.pdf' ;
         $infoForPdf['filePath'] = $this->carpoolExportPath;
         $infoForPdf['returnUrl'] = $this->carpoolExportUri . $infoForPdf['filePath'] . $infoForPdf['fileName'];
         $infoForPdf['userName'] = $user->getGivenName() . ' ' . $user->getFamilyName();

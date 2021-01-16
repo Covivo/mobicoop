@@ -70,6 +70,12 @@ class MCommunity
     private $name;
 
     /**
+     * @var string|null The urlKey of the community.
+     * @Groups({"readCommunity"})
+     */
+    private $urlKey;
+
+    /**
      * @var int|null The type of validation (automatic/manual/domain).
      * @Groups({"readCommunity"})
      */
@@ -103,6 +109,18 @@ class MCommunity
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUrlKey(): ?string
+    {
+        return $this->urlKey;
+    }
+
+    public function setUrlKey(?string $urlKey): self
+    {
+        $this->urlKey = $urlKey;
 
         return $this;
     }

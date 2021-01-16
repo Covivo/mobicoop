@@ -9,7 +9,7 @@
         },
         "widget": {
             "label": "Voir le Widget",
-            "route": "/evenement/widget/get/",
+            "route": "/evenement/widget/get/{id}/{urlKey}",
             "externalRoute": "/evenement/widget/{id}",
             "textDetails": {
                 "title": "Intégrer le widget",

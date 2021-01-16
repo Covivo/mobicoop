@@ -27,10 +27,13 @@ use App\Article\Entity\Section;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Article\Entity\Paragraph;
-use App\Article\Entity\Article;
+use App\Article\Entity\Article as ArticleEntity;
+use App\Article\Entity\RssElement;
 use App\Article\Repository\SectionRepository;
 use App\Article\Repository\ParagraphRepository;
 use App\Article\Repository\ArticleRepository;
+use App\Article\Ressource\Article;
+use DOMDocument;
 
 /**
  * Article manager service.
@@ -64,18 +67,23 @@ class ArticleManager
      */
     private $articleRepository;
 
+    private $articleFeed;
+    private $articleFeedNumber;
+
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed, $articleFeedNumber)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->sectionRepository = $sectionRepository;
         $this->paragraphRepository = $paragraphRepository;
         $this->articleRepository = $articleRepository;
+        $this->articleFeed = $articleFeed;
+        $this->articleFeedNumber = $articleFeedNumber;
     }
 
     /**
@@ -147,8 +155,136 @@ class ArticleManager
     /**
      * Get the external articles
      */
-    public function getLastExternalArticles(int $nbArticles=Article::NB_EXTERNAL_ARTICLES_DEFAULT)
+    public function getLastExternalArticles(int $nbArticles=ArticleEntity::NB_EXTERNAL_ARTICLES_DEFAULT)
     {
         return $this->articleRepository->findLastExternal($nbArticles);
+    }
+
+    /**
+     * Make an Article ressource from Article (Page) entity
+     *
+     * @param ArticleEntity $articleEntity
+     * @return Article
+     */
+    private function makeArticleFromEntity(ArticleEntity $articleEntity): Article
+    {
+        $article = new Article($articleEntity->getId());
+
+        $article->setTitle($articleEntity->getTitle());
+
+        return $article;
+    }
+
+
+    /**
+     * Make an article ressource from an RSS element
+     * @param RssElement $rssElement   Rss element to convert
+     *
+     * @return Article
+     */
+    private function makeArticleFromRss(RssElement $rssElement): Article
+    {
+        $article = new Article();
+
+        $article->setTitle($rssElement->getTitle());
+        $article->setDescription($rssElement->getDescription());
+        $article->setImage($rssElement->getImage());
+        $article->setPubDate($rssElement->getPubDate());
+
+        return $article;
+    }
+
+    /**
+     * Get Rss elements from all feeds (in .env ARTICLE_FEEDS)
+     *
+     * @return RssElement[]
+     */
+    private function getRssFeeds(): array
+    {
+        $rssElements = [];
+
+        $articleFeed = $this->articleFeed;
+        $articleFeedNumber = $this->articleFeedNumber;
+
+        // transform xml to object
+        $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+
+        $counter=-1;
+
+        foreach ($feedResult->channel->item as $item) {
+            $rssElement = new RssElement();
+
+            $rssElement->setTitle((string) $item->title);
+            $rssElement->setPubDate(date('d M Y', strtotime($item->pubDate)));
+
+            $description = (string) $item->description;
+
+            $start = strpos($description, '<p>');
+            $end = strpos($description, '</p>', $start);
+
+            if (strlen($description)>=255) {
+                $description = substr($description, $start, $end-$start+234)." ...";
+            } else {
+                $description = substr($description, $start, $end-$start+255)." ...";
+            }
+
+            $description = strip_tags($description);
+
+
+            $rssElement->setDescription(html_entity_decode($description));
+
+            $dom = new DOMDocument();
+            libxml_use_internal_errors(true);
+
+            $content = $item->children('content', true);
+
+            $html_string = $content->encoded;
+            $dom->loadHTML($html_string);
+            libxml_clear_errors();
+
+            if ($dom->getElementsByTagName('img')->length > 0) {
+                $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+                $rssElement->setImage($image);
+            }
+            $counter++;
+            if ($counter == $articleFeedNumber) {
+                break;
+            }
+            
+            $rssElements[]=$rssElement;
+        }
+        return $rssElements;
+    }
+    
+    /**
+     * Get a collection of Article
+     *
+     * @param string $context   (optionnal) : Context to select specific articles
+     * @return Article[]
+     */
+    public function getArticles(string $context=null): array
+    {
+        $articles = [];
+        
+        // Get the articles in database
+        if (is_null($context) || $context==Article::CONTEXT_INTERNAL) {
+            $pages = $this->articleRepository->findAll();
+
+            foreach ($pages as $page) {
+                $articles[] = $this->makeArticleFromEntity($page);
+            }
+        }
+
+        // Get the RSS articles
+        if (is_null($context) || $context==Article::CONTEXT_HOME) {
+            $rssItems = $this->getRssFeeds();
+
+            foreach ($rssItems as $rssItem) {
+                $article[] = $this->makeArticleFromRss($rssItem);
+            }
+        }
+
+        return $article;
     }
 }

@@ -37,6 +37,7 @@ use App\Carpool\Entity\Matching;
 use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Repository\AskRepository;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
@@ -67,6 +68,7 @@ class AskManager
     private $logger;
     private $security;
     private $carpoolItemRepository;
+    private $carpoolProofRepository;
     private $paymentActive;
     private $paymentActiveDate;
     private $blockManager;
@@ -85,6 +87,7 @@ class AskManager
         LoggerInterface $logger,
         Security $security,
         CarpoolItemRepository $carpoolItemRepository,
+        CarpoolProofRepository $carpoolProofRepository,
         BlockManager $blockManager,
         string $paymentActive
     ) {
@@ -96,6 +99,7 @@ class AskManager
         $this->logger = $logger;
         $this->security = $security;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->carpoolProofRepository = $carpoolProofRepository;
         $this->paymentActive = false;
         if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
@@ -772,6 +776,11 @@ class AskManager
             $ad->setPaymentItemId($askWithPaymentStatus->getPaymentItemId());
             $ad->setUnpaidDate($askWithPaymentStatus->getUnpaidDate());
             $ad->setPaymentItemWeek($askWithPaymentStatus->getPaymentItemWeek());
+        }
+
+        // get the current proof id if relevant
+        if ($carpoolProof = $this->carpoolProofRepository->findByAskAndDate($ask, new DateTime())) {
+            $ad->setCarpoolProofId($carpoolProof->getId());
         }
 
         // first pass for role

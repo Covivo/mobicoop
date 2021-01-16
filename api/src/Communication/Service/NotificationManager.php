@@ -414,8 +414,8 @@ class NotificationManager
                 case Review::class:
                     $titleContext = [];
                     $bodyContext = [
-                        'givenName'=>$recipient->getGivenName(),
-                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                        'givenName'=>$object->getReviewer()->getGivenName(),
+                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
                     ];
                     break;
                 default:
@@ -578,8 +578,8 @@ class NotificationManager
                     break;
                 case Review::class:
                     $bodyContext = [
-                        'givenName'=>$recipient->getGivenName(),
-                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                        'givenName'=>$object->getReviewer()->getGivenName(),
+                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
                     ];
                     break;
                 default:
@@ -756,8 +756,8 @@ class NotificationManager
                 case Review::class:
                     $titleContext = [];
                     $bodyContext = [
-                        'givenName'=>$recipient->getGivenName(),
-                        'shortFamilyName'=>$recipient->getShortFamilyName()
+                        'givenName'=>$object->getReviewer()->getGivenName(),
+                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
                     ];
                     break;
                 default:
