@@ -110,6 +110,7 @@
         <p class="mt-4">
           <a
             :href="this.$t('privateEvent.coviEvent.link')"
+            target="_blank"
           >
             {{ $t('privateEvent.coviEvent.text') }}
           </a>

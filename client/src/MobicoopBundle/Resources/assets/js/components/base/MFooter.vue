@@ -74,6 +74,7 @@
               :href="$t('services.covievent.link')"
               style="text-decoration:none;"
               class="white--text"
+              target="_blank"
             >
               {{ $t('services.covievent.title') }}
             </a>
