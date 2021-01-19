@@ -1,28 +1,35 @@
 {
     "buttons": {
         "signup": {
-            "label": "Sign up",
-            "route": "/user/signup"
+            "label": "Inscription",
+            "route": "/utilisateur/inscription"
         },
         "logIn": {
-            "label": "Login",
-            "route": "/user/login"
+            "label": "Connexion",
+            "route": "/utilisateur/connexion"
         },
         "shareAnAd": {
-            "label": "Share an ad",
-            "route": "/carpool/ad/post/"
+            "label": "Publier une annonce",
+            "route": "/covoiturage/annonce/poster"
         },
         "messages": {
             "label": "Messages",
-            "route": "/user/messages"
+            "route": "/utilisateur/messages"
         },
         "myProfile": {
-            "label": "My profile",
-            "route": "/user/profile/update"
+            "label": "Mon profil",
+            "route": "/utilisateur/profil/modifier"
         },
         "logOut": {
-            "label": "Logout",
+            "label": "Déconnexion",
             "route": "/user/logout"
+        },
+        "solidary": {
+            "label": "Devenir conducteur solidaire",
+            "route": "/covoiturage/annonce/poster/solidaire"
         }
+    },
+    "snackbar": {
+        "needConnection": "Veuillez vous connecter ou vous inscrire pour publier une annonce"
     }
 }

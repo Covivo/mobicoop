@@ -858,9 +858,10 @@ class UserManager
        */
     public function updateUserPasswordRequest(User $data)
     {
+        // We get the way the password update was asked (app, android, ios)
+        $mobileRegistration=$data->getMobileRegistration();
         // Get the user
         $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
-
         if (!is_null($user)) {
             // Create a password token
             $user->setPwdToken($this->createToken($user));
@@ -868,6 +869,8 @@ class UserManager
             $this->entityManager->persist($user);
             $this->entityManager->flush();
             // dispatch en event
+            // we set the way the password was asked before to send the event
+            $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
             return $user;

@@ -86,7 +86,8 @@ class CommunityManager
         $perPage = (isset($data['perPage']) && !is_null($data['perPage'])) ? $data['perPage'] : null;
         $page = (isset($data['page']) && !is_null($data['page'])) ? $data['page'] : null;
         $search = (isset($data['search']) && !is_null($data['search'])) ? $data['search'] : [];
-        
+        $showAllCommunities = (isset($data['showAllCommunities']) && !is_null($data['showAllCommunities'])) ? $data['showAllCommunities'] : false;
+
         $order = [];
         if (isset($data['order']) && isset($data['orderWay']) && !empty($data['order']) && !empty($data['orderWay'])) {
             $order[$data['order']] = $data['orderWay'];
@@ -95,7 +96,7 @@ class CommunityManager
         $returnCommunitiesUser = [];
         if ($user) {
             // We get all the communities
-            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order);
+            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order, $showAllCommunities);
             // We get the communities of the user
             $communitiesUser = $this->getAllCommunityUser($user->getId());
             if ($communitiesUser != null) {
@@ -104,7 +105,7 @@ class CommunityManager
                 }
             }
         } else {
-            $communities = $this->getCommunities(null, $perPage, $page, $search, $order);
+            $communities = $this->getCommunities(null, $perPage, $page, $search, $order, $showAllCommunities);
         }
 
         $return['communitiesMember'] = $communities->getMember();
@@ -125,7 +126,7 @@ class CommunityManager
     * @return array|null            The communities found or null if not found.
     *
     */
-    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[], array $order=[])
+    public function getCommunities(?int $userId=null, ?int $perPage=null, ?int $page=null, array $search=[], array $order=[], bool $showAllCommunities=false)
     {
         $params = null;
         if ($userId!==null) {
@@ -136,6 +137,9 @@ class CommunityManager
         }
         if ($page!==null) {
             $params['page'] = $page;
+        }
+        if ($showAllCommunities!==null) {
+            $params['showAllCommunities'] = $showAllCommunities;
         }
         if (count($search)>0) {
             foreach ($search as $key => $value) {

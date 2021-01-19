@@ -2,6 +2,12 @@ meta:
     default:
         title: "Le site de covoiturage libre et gratuit | "
         description: "Le site de covoiturage libre et gratuit"      
+    cityToCity:
+        title: "Covoiturage libre et gratuit par ville | Mobicoop"
+        description: "Tous les covoiturages sans commission et transports en communs selon votre ville de départ ou d'arrivée"
+    cityToCityPopular:
+        title: "Covoiturage libre et gratuit les plus populaires par ville | Mobicoop"
+        description: "Tous les covoiturages sans commission et transports en communs les plus populaires selon votre ville de départ ou d'arrivée"
     community:
         title: "Covoiturage gratuit pour votre communauté | Mobicoop"
         description: "Trouvez ou proposez gratuitement des covoiturages au sein d'une communauté. Groupe privé ou public de covoiturage."
@@ -19,4 +25,4 @@ meta:
         description: "La carte des aires de covoiturages, points de rendez-vous, parkings et points relais."
     results:
         title: "Covoiturages gratuits entre CityA et CityB | Mobicoop"
-        description: "Les covoiturages entre CityA et CityB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."
+        description: "Les covoiturages entre CityA et CityB, sans commission, libre et coopératif pour vos trajets réguliers ou occasionnels."    

@@ -588,14 +588,6 @@ carpool_search_result_community:
         en: /carpool/community/{communityName}/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromCommunityProposal
 
-# search results for city to city (GET) (full page)
-carpool_search_result_city_to_city:
-    methods: [GET]
-    path:
-        fr: /covoiturage/{originLocality}/{destinationLocality}/{proposalId}
-        en: /carpool/{originLocality}/{destinationLocality}/{proposalId}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultForCityToCity
-
 # search matching (POST) (AJAX json)
 carpool_search_matching:
     methods: [POST]
@@ -656,6 +648,74 @@ public_transport_journey:
         fr: /transport-public/recherche
         en: /public-transport/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::PTSearch
+
+# city to city
+#########
+
+# cities
+cities:
+    methods: [GET]
+    path:
+        fr: /covoiturage-par-ville
+        en: /carpool-from-city
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::cities
+
+cities_popular:
+    methods: [GET]
+    path:
+        fr: /covoiturage-par-ville/populaires
+        en: /carpool-from-city/popular
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::citiesPopular
+
+    # from a city
+city_from:
+    methods: [GET]
+    path:
+        fr: /communes/covoiturage/{origin}/{page}/{perPage}
+        en: /carpool-from-{origin}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCity
+    defaults: { page: 1, perPage: 30 }
+
+# to a city
+city_to:
+    methods: [GET]
+    path:
+        fr: /communes/covoiturage-vers-{destination}/{page}/{perPage}
+        en: /carpool-to-{destination}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::toCity
+    defaults: { page: 1, perPage: 30 }
+
+# from a city to a city
+city_to_city:
+    methods: [GET]
+    path:
+        fr: /covoiturage/{origin}/{destination}/{frequency}/{page}/{perPage}
+        en: /carpool/{origin}/{destination}/{frequency}/{page}/{perPage}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCityToCity
+    defaults: { frequency: 1, page: 1, perPage: 300 }
+
+# cities
+popular_journeys:
+    methods: [POST]
+    path:
+        fr: /covoiturages/populaires
+        en: /carpool/popular
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneys
+
+popular_journeys_home:
+    methods: [POST]
+    path:
+        fr: /covoiturages/populaires/home
+        en: /carpool/popular/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneysHome
+
+# create a search ad from a proposal
+carpool_create_search_from_proposal:
+    methods: [POST]
+    path:
+        fr: /covoiturage/creer-recherche/{proposalId}
+        en: /carpool/create-search/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::createSearchFromProposal
 
 ####################
 # community routes #
@@ -938,6 +998,13 @@ PrivacyPolicy:
         en: /privacy-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
+# display PrivacyPolicy page
+AboutUs:
+    path:
+        fr: /qui-sommes-nous
+        en: /about-us
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAboutUs
+
 # display Convention page
 Covention:
     path:
@@ -1021,6 +1088,13 @@ Accessibility:
         fr: /accessibilite
         en: /accessibility
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAccessibility
+
+# display mobility package page
+Mobility:
+    path:
+        fr: /forfait-mobilite-durable
+        en: /mobility-package
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobility
 
 # Get the last external articles (AJAX)
 LastExternalArticles:

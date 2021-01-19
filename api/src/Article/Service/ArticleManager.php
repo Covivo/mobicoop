@@ -68,13 +68,14 @@ class ArticleManager
     private $articleRepository;
 
     private $articleFeed;
+    private $articleFeedNumber;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed, $articleFeedNumber)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -82,6 +83,7 @@ class ArticleManager
         $this->paragraphRepository = $paragraphRepository;
         $this->articleRepository = $articleRepository;
         $this->articleFeed = $articleFeed;
+        $this->articleFeedNumber = $articleFeedNumber;
     }
 
     /**
@@ -202,10 +204,13 @@ class ArticleManager
         $rssElements = [];
 
         $articleFeed = $this->articleFeed;
+        $articleFeedNumber = $this->articleFeedNumber;
 
         // transform xml to object
         $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
 
+
+        $counter=-1;
 
         foreach ($feedResult->channel->item as $item) {
             $rssElement = new RssElement();
@@ -218,11 +223,16 @@ class ArticleManager
             $start = strpos($description, '<p>');
             $end = strpos($description, '</p>', $start);
 
-            if (strlen($description)>255) {
-                $description = substr($description, $start, $end-$start+220)." ...";
+            if (strlen($description)>=255) {
+                $description = substr($description, $start, $end-$start+234)." ...";
+            } else {
+                $description = substr($description, $start, $end-$start+255)." ...";
             }
 
-            $rssElement->setDescription($description);
+            $description = strip_tags($description);
+
+
+            $rssElement->setDescription(html_entity_decode($description));
 
             $dom = new DOMDocument();
             libxml_use_internal_errors(true);
@@ -233,13 +243,17 @@ class ArticleManager
             $dom->loadHTML($html_string);
             libxml_clear_errors();
 
-            $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
-
-            $rssElement->setImage($image);
-
+            if ($dom->getElementsByTagName('img')->length > 0) {
+                $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+                $rssElement->setImage($image);
+            }
+            $counter++;
+            if ($counter == $articleFeedNumber) {
+                break;
+            }
+            
             $rssElements[]=$rssElement;
         }
-        
         return $rssElements;
     }
     

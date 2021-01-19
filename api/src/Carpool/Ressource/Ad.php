@@ -138,7 +138,7 @@ class Ad
      * @var int The id of this ad.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $id;
 
@@ -555,6 +555,13 @@ class Ad
      * @Groups({"read","readPaymentStatus"})
      */
     private $unpaidDate;
+
+    /**
+     * @var array|null The current carpool proof id associated to the ad (for ask context)
+     *
+     * @Groups("read")
+     */
+    private $carpoolProofId;
 
     public function __construct()
     {
@@ -1284,6 +1291,18 @@ class Ad
     public function setUnpaidDate(?\DateTimeInterface $unpaidDate): self
     {
         $this->unpaidDate = $unpaidDate;
+
+        return $this;
+    }
+
+    public function getCarpoolProofId(): ?int
+    {
+        return $this->carpoolProofId;
+    }
+
+    public function setCarpoolProofId(int $carpoolProofId): self
+    {
+        $this->carpoolProofId = $carpoolProofId;
 
         return $this;
     }

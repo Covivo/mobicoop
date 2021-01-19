@@ -1089,15 +1089,15 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
      *
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest"})
      */
     private $mobileRegistration;
 
     /**
      * @var string|null The link used to validate the email (useful for mobile apps)
-     * @Groups({"readUser","write"})
+     * @Groups({"readUser","write","passwordUpdateRequest"})
      */
-    private $emailValidationLink;
+    private $backLink;
 
     /**
      * @var \DateTimeInterface Last user activity date
@@ -2648,14 +2648,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getEmailValidationLink(): ?string
+    public function getBackLink(): ?string
     {
-        return $this->emailValidationLink;
+        return $this->backLink;
     }
 
-    public function setEmailValidationLink(?string $emailValidationLink): self
+    public function setBackLink(?string $backLink): self
     {
-        $this->emailValidationLink = $emailValidationLink;
+        $this->backLink = $backLink;
 
         return $this;
     }

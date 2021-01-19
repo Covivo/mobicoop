@@ -61,6 +61,11 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('community_join',object)"
+ *          },
+ *          "add"={
+ *              "method"="POST",
+ *              "path"="/community_users/add",
+ *              "security_post_denormalize"="is_granted('community_membership',object)"
  *          }
  *      },
  *      itemOperations={
@@ -352,7 +357,7 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && !$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
         } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
             $this->setStatus(self::STATUS_PENDING);

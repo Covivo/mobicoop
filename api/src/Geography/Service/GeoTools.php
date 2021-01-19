@@ -241,24 +241,38 @@ class GeoTools
         }
 
         // street address
+        $streetAddressFound = false;
         if (isset($this->params['displayStreetAddress']) && trim($this->params['displayStreetAddress'])==="true") {
             if (trim($address->getStreetAddress())!=="") {
+                $streetAddressFound = true;
                 $displayLabelTab[0][] = $address->getStreetAddress();
             }
         }
 
         // postal code
+        $postalCodeFound = false;
         if (isset($this->params['displayPostalCode']) && trim($this->params['displayPostalCode'])==="true") {
             if (trim($address->getPostalCode())!=="") {
+                $postalCodeFound = true;
                 $displayLabelTab[0][] = $address->getPostalCode();
             }
         }
 
         // locality
+        $addressLocalityFound = false;
         if (isset($this->params['displayLocality']) && trim($this->params['displayLocality'])==="true") {
             if (trim($address->getAddressLocality())!=="") {
+                $addressLocalityFound = true;
                 $displayLabelTab[0][] = ucfirst(strtolower($address->getAddressLocality()));
             }
+        }
+
+        // Better looking when no address but just postal code and addressLocality
+        if (!$streetAddressFound && $postalCodeFound && $addressLocalityFound) {
+            $firstEl = $displayLabelTab[0][count($displayLabelTab[0])-2];
+            $secondEl = $displayLabelTab[0][count($displayLabelTab[0])-1];
+            $displayLabelTab[0][count($displayLabelTab[0])-2] = $secondEl;
+            $displayLabelTab[0][count($displayLabelTab[0])-1] = $firstEl;
         }
 
         // SECOND LINE

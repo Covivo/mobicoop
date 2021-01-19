@@ -36,3 +36,6 @@
 
 # each day at 2am : create the carpool items for the payment and/or export
 0 2 * * * $1 $2 app:carpool:item-batch --env=$3
+
+# each day at 4am : create the journeys
+0 4 * * * $1 $2 app:journey:hydrate --env=$3
