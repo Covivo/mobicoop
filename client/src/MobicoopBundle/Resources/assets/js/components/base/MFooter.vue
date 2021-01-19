@@ -58,24 +58,24 @@
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.tools') }}
+            {{ $t('category.services') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('tools.mobicoop.link')"
+              :href="$t('services.mobicoop.link')"
               style="text-decoration:none;"
               class="white--text"
             >
-              {{ $t('tools.mobicoop.title') }}
+              {{ $t('services.mobicoop.title') }}
             </a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('tools.covievent.link')"
+              :href="$t('services.covievent.link')"
               style="text-decoration:none;"
               class="white--text"
             >
-              {{ $t('tools.covievent.title') }}
+              {{ $t('services.covievent.title') }}
             </a>
           </v-card-text>
         </v-col>
@@ -84,35 +84,35 @@
         <!-- second col -->
         <v-col cols="3">
           <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.services') }}
+            {{ $t('category.tools') }}
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('services.map.link')"
+              :href="$t('tools.map.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('services.map.title') }}</a>
+            >{{ $t('tools.map.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('services.events.link')"
+              :href="$t('tools.events.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('services.events.title') }}</a>
+            >{{ $t('tools.events.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('services.faq.link')"
+              :href="$t('tools.faq.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('services.faq.title') }}</a>
+            >{{ $t('tools.faq.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-0 white--text text-h6">
             <a
-              :href="$t('services.cgu.link')"
+              :href="$t('tools.cgu.link')"
               style="text-decoration:none;"
               class="white--text"
-            >{{ $t('services.cgu.title') }}</a>
+            >{{ $t('tools.cgu.title') }}</a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text text-h5 font-weight-bold">

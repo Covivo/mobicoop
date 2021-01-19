@@ -23,7 +23,7 @@
             "link":"https://lacampagne.mobicoop.fr/"
         }
     },
-    "tools":{
+    "services":{
         "mobicoop":{
             "title":"pro.mobicoop.fr",
             "link":"https://pro.mobicoop.fr/"
@@ -33,14 +33,14 @@
             "link":"www.covievent.org"
         }
     },
-    "services":{
+    "tools":{
         "map":{
             "title":"La carte des aires de covoiturage",
             "link":"/points-relais"
         },
         "events" :{
             "title":"Les événements en covoiturage",
-            "link":"/events"
+            "link":"/covoiturages-evenements"
         },
         "faq":{
             "title":"FAQ",
@@ -58,13 +58,13 @@
         },
         "presse" :{
             "title":"Presse",
-            "link":"/contact"
+            "link":"https://pro.mobicoop.fr/category/revue-de-presse/"
         }
     },
     "need":{
         "community":{
             "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"/community/create"
+            "link":"covoiturage-communaute"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",
