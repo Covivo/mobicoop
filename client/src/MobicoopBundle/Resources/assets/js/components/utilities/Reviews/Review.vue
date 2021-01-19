@@ -39,7 +39,7 @@ export default {
   },  
   computed:{
     reviewDate(){
-      return moment(this.review.date.moment).format('DD/MM/YYYY');
+      return moment(this.review.date).format('DD/MM/YYYY');
     },
     givenName(){
       return (this.showReviewedInfos) ? this.review.reviewed.givenName : this.review.reviewer.givenName;
