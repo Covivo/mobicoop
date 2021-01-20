@@ -470,11 +470,13 @@ class CarpoolController extends AbstractController
     public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
+        $date = null;
         if (isset($params['date']) && $params['date'] != '') {
             $date = \Datetime::createFromFormat("Y-m-d", $params['date']);
-        } else {
-            $date = new \DateTime();
         }
+        //  else {
+        //     $date = new \DateTime();
+        // }
         $time = null;
         if (isset($params['time']) && $params['time'] != '') {
             $time = \Datetime::createFromFormat("H:i", $params['time']);

@@ -426,8 +426,8 @@ class ProposalRepository
                 //   - to the days after the fromDate and before toDate if it's defined (if the user wants to travel any day within a certain range)
                 //   (@todo limit automatically the search to the x next days if toDate is not defined ?)
                 // - regular candidates, we limit the search :
-                //   - to the week day of the proposal
-                //   - if the date of the proposal is before the endDate of the regular candidates
+                //   - exactly to fromDate if strictDate is true (we verify that the corresponding day is carpooled)
+                //   - to the carpooled days after the fromDate
 
                 // times :
                 // if we use times, we limit the search to the passengers that have their max starting time after the min starting time of the driver :
@@ -474,9 +474,24 @@ class ProposalRepository
                 // 'where' part of regular candidates
                 $regularAndWhere = "";
                 if (!$proposal->getCriteria()->isStrictPunctual()) {
-                    $regularAndWhere = " (";
                     $proposalFromDate = \DateTime::createFromFormat("U", $proposal->getCriteria()->getFromDate()->format('U'));
-    
+                    $regularAndWhere = " (";
+
+                    // we search for regular proposal that have :
+                    // - their fromDate strictly after the proposal fromDate if the proposal fromDate is non strict (the regular proposal is in the future and it's fine !)
+                    // OR
+                    // - their fromDate strictly before the proposal fromDate AND
+                    //   their toDate after or equal the proposal fromDate AND
+                    //   - the day of the proposal fromDate is one carpooled for the regular proposal AND the proposal fromDate is strict
+                    //   OR
+                    //   - the day or one of the 7 next days of the proposal fromDate is one carpooled for the regular proposal AND the proposal fromDate is non strict
+                    if (!$proposal->getCriteria()->isStrictDate()) {
+                        $regularAndWhere .= "c.fromDate > '".$proposalFromDate->format('Y-m-d'). "' or (";
+                    }
+                    $regularAndWhere .= "c.fromDate <= '".$proposalFromDate->format('Y-m-d'). "' and ";
+                                        
+                    // we may loop for a whole week to find a corresponding carpool day
+                    // if we search for a strict date, we will loop only once : this particular day
                     $nbLoop = ($proposal->getCriteria()->isStrictDate()) ? 0 : 7;
                     for ($offset = 0 ; $offset <= $nbLoop ; $offset++) {
                         list($where, $minTime, $maxTime) = $this->buildRegularAndWhere(
@@ -494,6 +509,9 @@ class ProposalRepository
                         if ($maxTime) {
                             $setMaxTime = true;
                         }
+                    }
+                    if (!$proposal->getCriteria()->isStrictDate()) {
+                        $regularAndWhere .= ")";
                     }
                     $regularAndWhere .= ")";
                 }
