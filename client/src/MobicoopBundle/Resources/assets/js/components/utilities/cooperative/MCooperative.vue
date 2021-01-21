@@ -33,6 +33,7 @@
           :href="this.$t('cooperative.button1.route')"
           class="white--text "
           max-width="400px"
+          target="_blank"
         >
           {{ $t('cooperative.button1.label') }}
         </v-btn>

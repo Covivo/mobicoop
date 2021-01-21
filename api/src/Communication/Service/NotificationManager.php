@@ -722,7 +722,7 @@ class NotificationManager
                     $bodyContext = ['user'=>$recipient];
                     break;
                 case Message::class:
-                    $titleContext = [];
+                    $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
                     break;
                 case CarpoolItem::class:

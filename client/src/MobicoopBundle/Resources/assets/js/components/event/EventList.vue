@@ -342,7 +342,6 @@ export default {
   },
   mounted() {
     //this.createMapComing();
-    this.getEventPassed();
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
