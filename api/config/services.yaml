@@ -287,11 +287,8 @@ services:
 
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $contactEmailAddress: '%env(json:MAILER_CONTACT)%'
-            $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
-            $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
-            $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
+            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
     App\Communication\Service\ReportManager:
         arguments:

@@ -63,22 +63,44 @@ class ContactManager
      */
     public function sendContactMail(Contact $contact)
     {
+        // Get the contact type of this contact
+        $contactTypes = $this->getContactTypes();
+        foreach ($contactTypes as $contactType) {
+            if ($contactType->getDemand()==$contact->getDemand()) {
+                $contact->setContactType($contactType);
+            }
+        }
+
+        if (is_null($contact->getContactType())) {
+            throw new \LogicException("Unknown contact demand");
+        }
+
         $event = new ContactEmailEvent($contact);
         $this->eventDispatcher->dispatch(ContactEmailEvent::NAME, $event);
         return $contact;
     }
 
+    /**
+     * Get the ContactTypes
+     *
+     * @return ContactType[]
+     */
     public function getContactTypes(): ?array
     {
         $contactTypes = [];
         foreach ($this->contactItems['contacts'] as $contactItem) {
-            $contactType = new ContactType();
-            $contactType->setDemand($contactItem['label']);
-            $contactType->setTo($contactItem['To']);
-            $contactType->setCc($contactItem['Cc']);
-            $contactType->setBcc($contactItem['Bcc']);
-            $contactTypes[] = $contactType;
+            $contactTypes[] = $this->buildContactType($contactItem);
         }
         return $contactTypes;
+    }
+
+    private function buildContactType(array $item)
+    {
+        $contactType = new ContactType();
+        $contactType->setDemand($item['label']);
+        $contactType->setTo($item['To']);
+        $contactType->setCc($item['Cc']);
+        $contactType->setBcc($item['Bcc']);
+        return $contactType;
     }
 }
