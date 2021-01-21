@@ -35,6 +35,7 @@ use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\User\Service\UserManager;
+use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -231,11 +232,11 @@ class FixturesManager
             $ad->setOutwardDriverPrice(0);
             
             if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                $ad->setOutwardDate(new \DateTime($tab[7]));
+                $ad->setOutwardDate($this->getDateFromModifier($tab[7]));
                 $ad->setOutwardTime($tab[8]);
             } else {
-                $ad->setOutwardDate(new \DateTime($tab[7]));
-                $ad->setOutwardLimitDate(new \DateTime($tab[9]));
+                $ad->setOutwardDate($this->getDateFromModifier($tab[7]));
+                $ad->setOutwardLimitDate($this->getDateFromModifier($tab[9]));
                 $schedules = [];
                 if ($tab[11] == "1") {
                     $schedules[] = [
@@ -293,7 +294,7 @@ class FixturesManager
 
             if (!$ad->isOneWay()) {
                 if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                    $ad->setReturnDate(new \DateTime($tab[9]));
+                    $ad->setReturnDate($this->getDateFromModifier($tab[9]));
                     $ad->setReturnTime($tab[10]);
                 } else {
                     $ad->setReturnDate($ad->getOutwardDate());
@@ -411,5 +412,21 @@ class FixturesManager
         } else {
             echo "User not found !" . PHP_EOL;
         }
+    }
+
+    /**
+     * Return the current date with the applied time modifier;
+     *
+     * @param string $modifier  The modifier
+     * @return DateTime
+     */
+    private function getDateFromModifier(string $modifier)
+    {
+        $date = new DateTime();
+        switch ($modifier[0]) {
+            case '+': return $date->add(new DateInterval(substr($modifier, 1)));
+            case '-': return $date->sub(new DateInterval(substr($modifier, 1)));
+        }
+        return $date;
     }
 }
