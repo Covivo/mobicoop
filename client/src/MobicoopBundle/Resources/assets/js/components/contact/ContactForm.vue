@@ -162,16 +162,11 @@ export default {
     user: {
       type: Object,
       default: null
-    },
-    contactTypes: {
-      type: Object,
-      default: null
     }
-
   },
   data () {
     return {
-      demandItems: null,
+      contactTypes: null,
       snackbar: false,
       loading: false,
       valid: false,
@@ -210,13 +205,15 @@ export default {
     }
   },
   computed: {
-    // demandItems(){
-    //   let contactTypes = [];
-    //   for (let [key, value] of Object.entries(this.contactTypes)) {
-    //     contactTypes.push({text:this.$t('demand.items.'+key), value:key});
-    //   }
-    //   return contactTypes;
-    // }
+    demandItems(){
+      let contactItems = [];
+      if(null !== this.contactTypes){
+        for (let [key, value] of Object.entries(this.contactTypes)) {
+          contactItems.push({text:this.$t('demand.items.'+value.demand), value:value.demand});
+        }
+      }
+      return contactItems;
+    }
   },
   mounted(){
     this.getContactItems();
@@ -277,9 +274,9 @@ export default {
     getContactItems(){
       console.log("je passe par là");
       axios.post(this.$t('getContactItemsUri'))
-        .then(function (response) {
+        .then(response => {
           console.log(response.data);
-          this.demandItems = "yo";
+          this.contactTypes = response.data;
         })
         .catch(function (error) {
           console.error("erreur");

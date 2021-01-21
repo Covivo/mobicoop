@@ -38,9 +38,8 @@ class ContactController extends AbstractController
     private $contactTypes;
     private $contactManager;
 
-    public function __construct(string $contactTypes, ContactManager $contactManager)
+    public function __construct(ContactManager $contactManager)
     {
-        $this->contactTypes = json_decode($contactTypes, true);
         $this->contactManager = $contactManager;
     }
 
@@ -51,10 +50,7 @@ class ContactController extends AbstractController
     {
         $this->denyAccessUnlessGranted('contact_create', new Contact());
         return $this->render(
-            '@Mobicoop/contact/contact.html.twig',
-            [
-                'contactTypes' => json_encode($this->contactTypes)
-            ]
+            '@Mobicoop/contact/contact.html.twig'
         );
     }
 
