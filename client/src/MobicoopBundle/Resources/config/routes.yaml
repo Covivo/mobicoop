@@ -699,6 +699,15 @@ community_show:
     requirements:
         id: '\d+'
 
+# display one community
+community_show_v1:
+    path:
+        fr: /communaute/{id}/{urlKey?}
+        en: /community/{id}/{urlKey?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
+    requirements:
+        id: '\d+'
+
 # display the register form for a secured community
 community_secured_register:
     path:
@@ -1131,6 +1140,15 @@ event_show:
     path:
         fr: /covoiturages-evenements/{id}/{urlKey?}
         en: /carpools-events/{id}/{urlKey?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
+    requirements:
+        id: '\d+'
+
+# display one event
+event_show_v1:
+    path:
+        fr: /evenement/{id}/{urlKey?}
+        en: /event/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
