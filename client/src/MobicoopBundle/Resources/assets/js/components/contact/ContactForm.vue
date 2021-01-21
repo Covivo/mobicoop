@@ -171,6 +171,7 @@ export default {
   },
   data () {
     return {
+      demandItems: null,
       snackbar: false,
       loading: false,
       valid: false,
@@ -209,14 +210,16 @@ export default {
     }
   },
   computed: {
-    demandItems(){
-      let contactTypes = [];
-      for (let [key, value] of Object.entries(this.contactTypes)) {
-        contactTypes.push({text:this.$t('demand.items.'+key), value:key});
-        console.error(this.$t('demand.items.'+value));
-      }
-      return contactTypes;
-    }
+    // demandItems(){
+    //   let contactTypes = [];
+    //   for (let [key, value] of Object.entries(this.contactTypes)) {
+    //     contactTypes.push({text:this.$t('demand.items.'+key), value:key});
+    //   }
+    //   return contactTypes;
+    // }
+  },
+  mounted(){
+    this.getContactItems();
   },
   methods: {
     validate() {
@@ -270,6 +273,17 @@ export default {
         type: "success",
         message: ""
       }
+    },
+    getContactItems(){
+      console.log("je passe par là");
+      axios.post(this.$t('getContactItemsUri'))
+        .then(function (response) {
+          console.log(response.data);
+          this.demandItems = "yo";
+        })
+        .catch(function (error) {
+          console.error("erreur");
+        });
     }
   }
 }

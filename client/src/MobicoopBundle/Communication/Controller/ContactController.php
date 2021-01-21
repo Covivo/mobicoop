@@ -36,10 +36,12 @@ class ContactController extends AbstractController
     use HydraControllerTrait;
 
     private $contactTypes;
+    private $contactManager;
 
-    public function __construct(string $contactTypes)
+    public function __construct(string $contactTypes, ContactManager $contactManager)
     {
         $this->contactTypes = json_decode($contactTypes, true);
+        $this->contactManager = $contactManager;
     }
 
     /**
@@ -132,5 +134,16 @@ class ContactController extends AbstractController
             ["message" => "error"],
             \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
         );
+    }
+
+    /**
+     * Get the contact items
+     */
+    public function getContactItems(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->contactManager->getContactItems());
+        }
+        return new JsonResponse();
     }
 }

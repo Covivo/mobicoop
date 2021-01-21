@@ -52,5 +52,6 @@
         "route": "/data-policy"
     },
     "success": "Your message has been sent successfully",
-    "error": "An error happened"
+    "error": "An error happened",
+    "getContactItemsUri":"/contact/getItems"
 }

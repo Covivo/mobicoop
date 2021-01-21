@@ -21,58 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\Communication\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A Contact Type
- *
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readContactType"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"writeContactType"}}
- *      },
- *      collectionOperations={
- *          "get",
- *          "post"={
- *              "security_post_denormalize"="is_granted('reject',object)"
- *          }
- *      },
- *      itemOperations={
- *          "get"={
- *              "is_granted('reject',object)"
- *          }
- *      }
- * )
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * A contact message.
  */
-class ContactType
+class ContactType implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
-
     /**
      * @var int The id of the contact type
-     *
-     * @ApiProperty(identifier=true)
-     * @Groups({"readContactType"})
      */
     private $id;
 
     /**
      * @var string|null Demand for this contact type
-     * @Assert\NotBlank
-     * @Groups({"readContactType"})
      */
     private $demand;
 
     /**
      * @var array|null Receiving emails for this contact type
-     * @Assert\NotBlank
      */
     private $to;
 
@@ -86,11 +57,6 @@ class ContactType
      */
     private $bcc;
 
-    public function __construct()
-    {
-        $this->id = self::DEFAULT_ID;
-    }
-    
     public function getId(): ?int
     {
         return $this->id;
@@ -149,5 +115,14 @@ class ContactType
         $this->bcc = $bcc;
         
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id'                        => $this->getId(),
+                'demand'                    => $this->getDemand()
+            ];
     }
 }
