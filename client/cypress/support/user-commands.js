@@ -56,7 +56,7 @@ Cypress.Commands.add('delete', () => {
 // Carpool
 
 Cypress.Commands.add('createOccasionalCarpool', (start, destination) => {
-	cy.visit(Cypress.env('baseUrl') + "covoiturage/annonce/poster")
+	cy.visit(Cypress.env('baseUrl') + "covoiturage/publierannonce")
 
 	cy.get('.v-input--radio-group__input > :nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click()
 	cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)
@@ -94,7 +94,7 @@ Cypress.Commands.add('joinOccasionalCarpool', (start, destination) => {
 });
 
 Cypress.Commands.add('createRegularCarpool', (start, destination) => {
-	cy.visit(Cypress.env('baseUrl') + "covoiturage/annonce/poster")
+	cy.visit(Cypress.env('baseUrl') + "covoiturage/publierannonce")
 
 	cy.get('.v-input--radio-group__input > :nth-child(1) > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click()
 	cy.get('#from > .v-input > .v-input__control > .v-input__slot > .v-select__slot > .v-select__selections > #address').type(start)

@@ -61,6 +61,7 @@ services:
             $carpoolRDEXJourneys: '%env(bool:CARPOOL_RDEX_JOURNEYS)%'
             $ptResults: '%env(int:PT_RESULTS)%'
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
+            $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -195,7 +196,7 @@ services:
             $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
             $required_home_address: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
             $required_community: '%env(resolve:REQUIRED_COMMUNITY)%'
-            $news_subscription: '%env(resolve:NEWS_SUBSCRIPTION)%'
+            $news_subscription: '%env(bool:NEWS_SUBSCRIPTION)%'
             $community_show: '%env(resolve:COMMUNITY_SHOW)%'
             $signUpLinkInConnection: '%env(bool:SIGNUP_LINK_IN_CONNECTION)%'
             $loginLinkInConnection: '%env(bool:LOGIN_LINK_IN_SIGNUP)%'
@@ -204,6 +205,7 @@ services:
             $paymentElectronicActive: '%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%'
             $validationDocsAuthorizedExtensions: '%env(string:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
             $loginDelegate: '%env(bool:LOGIN_DELEGATE)%'
+            $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'
@@ -215,3 +217,4 @@ services:
         resource: '@MobicoopBundle/Payment/Controller/*'
         arguments:
             $payment_electronic_active: '%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%'
+            $tipsEncouragement: '%env(bool:PAYMENT_TIPS_ENCOURAGEMENT)%'

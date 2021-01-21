@@ -89,7 +89,13 @@ services:
         arguments: ['@request_stack']
         tags:
             - { name: doctrine.event_listener, event: postLoad }
-    
+
+    # Event Load Listener
+    mobicoop.event.event_load_listener:
+        class: App\Event\EventListener\EventLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # User Load Listener
     mobicoop.user.user_load_listener:
         class: App\User\EventListener\UserLoadListener
@@ -108,6 +114,10 @@ services:
         resource: '../src/Article/Controller'
         tags: ['controller.service_arguments']
 
+    App\Article\Service\ArticleManager:
+        arguments:
+            $articleFeed: '%env(string:ARTICLE_FEED)%'
+            
     # Auth
     App\Auth\Controller\:
         resource: '../src/Auth/Controller'

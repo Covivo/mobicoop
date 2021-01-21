@@ -1,3 +1,16 @@
+# Release 1.20.0
+
+
+## CLIENT
+* Tip encouragement message : can show a message to encourage users to leave a tips before and after payement
+* Can show a fraud warning message (in Mailbox and contact form after a carpool search)
+* News subscription : News subscription checkbox in the signup form. Unchecked by default.
+* SEO optimisation : meta data in translation files, url optimization for events and communities, many other stuffs.
+
+# Release 1.19.0
+
+* External connection : Send a message to an external user via RDEX protocol
+
 # Release 1.18.0
 
 ## API

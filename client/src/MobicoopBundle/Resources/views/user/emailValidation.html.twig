@@ -1,0 +1,13 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block stylesheets %}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
+{% endblock %}
+{% block main %}
+
+<Email-validation 
+  url-token="{{ urlToken }}"
+  url-email="{{ urlEmail }}"
+  error="{{ error }}" />
+
+{% endblock %}

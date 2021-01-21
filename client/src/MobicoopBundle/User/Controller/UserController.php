@@ -88,6 +88,7 @@ class UserController extends AbstractController
     private $ssoManager;
     private $required_community;
     private $loginDelegate;
+    private $fraudWarningDisplay;
 
     /**
      * Constructor
@@ -98,7 +99,7 @@ class UserController extends AbstractController
         $facebook_show,
         $facebook_appid,
         $required_home_address,
-        $news_subscription,
+        bool $news_subscription,
         $community_show,
         UserProvider $userProvider,
         $signUpLinkInConnection,
@@ -111,7 +112,8 @@ class UserController extends AbstractController
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
         $required_community,
-        bool $loginDelegate
+        bool $loginDelegate,
+        bool $fraudWarningDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -130,6 +132,7 @@ class UserController extends AbstractController
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
         $this->loginDelegate = $loginDelegate;
+        $this->fraudWarningDisplay= $fraudWarningDisplay;
 
         $this->ssoManager = $ssoManager;
     }
@@ -170,6 +173,9 @@ class UserController extends AbstractController
 
         $error = false;
 
+        // Default status of the checkbox (.env)
+        $newsSubscription = $this->news_subscription;
+
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
@@ -202,9 +208,15 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
-            //$user->setNewsSubscription by default
 
-            $user->setNewsSubscription(($this->news_subscription==="true") ? true : false);
+            if (isset($data['newsSubscription'])) {
+                $newsSubscription = $data['newsSubscription'];
+            }
+
+            $user->setNewsSubscription($newsSubscription);
+
+
+
             // set phone display by default
             $user->setPhoneDisplay(1);
 
@@ -234,7 +246,8 @@ class UserController extends AbstractController
                 "community_show"=>($this->community_show==="true") ? true : false,
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
-                "required_community"=>($this->required_community==="true") ? true : false
+                "required_community"=>($this->required_community==="true") ? true : false,
+                "newsSubscription" => $newsSubscription
         ]);
     }
 
@@ -255,17 +268,48 @@ class UserController extends AbstractController
         ]);
     }
 
+    // /**
+    //  * User registration email validation
+    //  */
+    public function userEmailValidation($token, $email, Request $request)
+    {
+        $errorMessage =   '';
+        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage =  'Bad credentials.';
+            $request->getSession()->getFlashBag()->clear();
+        }
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', [
+          'emailValidation'=> true,
+          'urlToken'=>$token,
+          'urlEmail'=>$email,
+          'error'=>$errorMessage
+        ]);
+    }
+
     /**
     * User registration email validation check -> we get here if there is an error with $credentials
     * We redirect on  user_sign_up_validation, in message flash there is error
     */
     public function userSignUpValidationCheck(Request $request)
     {
+        return $this->redirectToRoute('user_email_form_validation', array(
+        'token'=>$request->get('emailToken'),
+        'email'=>$request->get('email'),
+      ));
+    }
+
+    /**
+    * User registration email validation check -> we get here if there is an error with $credentials
+    * We redirect on  user_sign_up_validation, in message flash there is error
+    */
+    public function userEmailValidationCheck(Request $request)
+    {
         return $this->redirectToRoute('user_sign_up_validation', array(
         'token'=>$request->get('emailToken'),
         'email'=>$request->get('email'),
       ));
     }
+
 
 
     /**
@@ -331,6 +375,24 @@ class UserController extends AbstractController
     }
 
     /**
+     * Send a validation email
+     *
+     * @return User
+     */
+    public function sendValidationEmail()
+    {
+        $user = $this->userManager->getLoggedUser();
+
+        # Redirect to user_login
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        $this->userManager->sendValidationEmail($user);
+        return new response(json_encode('emailSend'));
+    }
+
+    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
@@ -371,7 +433,7 @@ class UserController extends AbstractController
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
             $user->setGender((int)($data->get('gender')));
-            $user->setBirthDate(new DateTime($data->get('birthDay')));
+            $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
 
@@ -708,7 +770,8 @@ class UserController extends AbstractController
             "idRecipient" => $idRecipient,
             "idAsk" => $idAsk,
             "newThread" => $newThread,
-            "solidaryDisplay" => $this->solidaryDisplay
+            "solidaryDisplay" => $this->solidaryDisplay,
+            "fraudWarningDisplay" => $this->fraudWarningDisplay
         ]);
     }
 

@@ -8,9 +8,9 @@
 {% endblock %}
 {% block main %}
 
-<Signup-validation 
+<Signup-validation
+  email-validation="{{ emailValidation is defined ? emailValidation|json_encode : false|json_encode }}"
   url-token="{{ urlToken }}"
   url-email="{{ urlEmail }}"
   error="{{ error }}" />
-
 {% endblock %}

@@ -1,71 +1,81 @@
 <template>
   <v-row align="center">
-    <v-col
-      cols="4"
-      md="4"
-      justify="center"
-      align="center"
-    >
-      <v-img
-        v-if="event.images[0]"
-        :src="event['images'][0]['versions']['square_250']"
-        alt="avatar"
-        aspect-ratio="1"
-        max-width="225"
-        max-height="225"
-      />
-      <v-img
-        v-else
-        :src="urlAltAvatar"
-        alt="avatar"
-      />
-    </v-col>
-      
-    <v-col
-      cols="8"
-      md="8"
-    >
-      <v-card
-        flat
-        justify="center"
-      >
-        <v-card-text>
-          <h3 class="text-h5  text-left font-weight-bold">
-            {{ event.name }}
-            <v-chip 
-              v-if="event.private" 
-              small
-              color="warning"
-            >
-              {{ $t('private') }}
-            </v-chip>
-          </h3>
-          <p class="text-h5 text-left text-subtitle-1">
-            {{ event.address.addressLocality }}
-          </p>
-          <p
-            v-if="displayDescription && formatedDescription!==''"
-            class="text-body-1"
-            md="6"
-            v-html="formatedDescription"
+    <v-col cols="12">
+      <v-row>
+        <v-col
+          cols="8"
+          md="8"
+          justify="center"
+          align="center"
+        >
+          <v-img
+            v-if="event.images[0]"
+            :src="event['images'][0]['versions']['square_250']"
+            width="225"
+            height="200"
+            :aspect-ratio="1"
+            :alt="event.name"
+            contain
           />
-          <p
-            v-if="displayDescription && formatedFullDescription!==''"
-            class="text-body-2"
-            md="6"
-            v-html="formatedFullDescription"
+          <v-img
+            v-else
+            :src="urlAltAvatar"
+            width="225"
+            height="200"
+            :aspect-ratio="1"
+            :alt="event.name"
+            contain
           />
-          <v-row>
-            <p class="text-body-2 pa-3">
-              <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
-            </p>
-            <v-spacer />
-            <p class="text-body-2 pa-3">
-              <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
-            </p>
-          </v-row>
-        </v-card-text>
-      </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="8"
+          md="8"
+        >
+          <v-card
+            flat
+            justify="center"
+          >
+            <v-card-text>
+              <h3 class="text-h5  text-left font-weight-bold">
+                {{ event.name }}
+                <v-chip 
+                  v-if="event.private" 
+                  small
+                  color="warning"
+                >
+                  {{ $t('private') }}
+                </v-chip>
+              </h3>
+              <p class="text-h5 text-left text-subtitle-1">
+                {{ event.address.addressLocality }}
+              </p>
+              <p
+                v-if="displayDescription && formatedDescription!==''"
+                class="text-body-1"
+                md="6"
+                v-html="formatedDescription"
+              />
+              <p
+                v-if="displayDescription && formatedFullDescription!==''"
+                class="text-body-2"
+                md="6"
+                v-html="formatedFullDescription"
+              />
+              <v-row>
+                <p class="text-body-2 pa-3">
+                  <span class="font-weight-black"> {{ $t('startEvent.label') }} :</span> {{ computedDateFormat(event.fromDate.date) }}
+                </p>
+                <v-spacer />
+                <p class="text-body-2 pa-3">
+                  <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
+                </p>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>

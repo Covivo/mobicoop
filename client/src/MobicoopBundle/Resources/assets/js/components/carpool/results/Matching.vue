@@ -10,7 +10,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ $t('title', {'cityA':displayOrigin, 'cityB':displayDestination}) }}</h1>
 
           <!-- Matching header -->
           <matching-header
@@ -169,7 +169,7 @@
             <v-tab-item value="carpools">
               <matching-results
                 :results="results"
-                :nb-results="nbCarpoolPlatform"
+                :nb-results="isNaN(nbCarpoolPlatform) ? 0 : nbCarpoolPlatform"
                 :distinguish-regular="distinguishRegular"
                 :user="user"
                 :loading-prop="loading"
@@ -218,6 +218,7 @@
         :user="user"
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
+        :fraud-warning-display="fraudWarningDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -376,6 +377,10 @@ export default {
     ptSearch: {
       type: Boolean,
       default: false
+    },
+    fraudWarningDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -438,6 +443,12 @@ export default {
     },
     displayTab(){
       return (this.externalRdexJourneys || this.ptSearch) ? true : false;
+    },
+    displayOrigin(){
+      return (this.lOrigin) ? this.lOrigin.addressLocality :  "";
+    },
+    displayDestination(){
+      return (this.lDestination) ? this.lDestination.addressLocality : "";
     }
   },
   watch:{
@@ -463,6 +474,8 @@ export default {
     this.search();
     if(this.externalRdexJourneys) this.searchExternalJourneys();
     if(this.ptSearch) this.searchPTJourneys();
+    this.lOrigin = this.origin;
+    this.lDestination = this.destination;
   },
   methods :{
     carpool(carpool) {
@@ -517,6 +530,8 @@ export default {
           })
           .then((response) => {
             this.results = response.data.results;
+            this.lOrigin = response.data.origin;
+            this.lDestination = response.data.destination;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-";
           })
           .catch((error) => {

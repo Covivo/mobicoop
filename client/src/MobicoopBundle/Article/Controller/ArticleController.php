@@ -68,6 +68,7 @@ class ArticleController extends AbstractController
     const USEFUL_LINKS = 28;
     const MOBILE_APP = 29;
     const ACCESSIBILITY = 30;
+    const MOBILITY = 32;
 
 
     /**
@@ -343,6 +344,15 @@ class ArticleController extends AbstractController
     }
 
     /**
+    * Display of the ACCESSIBILITY page
+    *
+    */
+    public function showMobility(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOBILITY));
+    }
+
+    /**
      * Show an article
      *
      * @param Article $article The article to show
@@ -407,6 +417,21 @@ class ArticleController extends AbstractController
     {
         if ($article = $articleManager->getArticle($id)) {
             return $this->showArticle($article);
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Rss feeds list controller
+     *
+     * @param string            $context             The context
+     * @param ArticleManager    $articleManager The article manager
+     * @return JsonResponse
+     */
+    public function getRssFeedList(ArticleManager $articleManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($articleManager->getArticles(Article::CONTEXT_HOME));
         }
         return new JsonResponse();
     }

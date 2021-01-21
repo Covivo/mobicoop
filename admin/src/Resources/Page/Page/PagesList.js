@@ -6,7 +6,7 @@ import SectionsField from './SectionsField';
 
 import isAuthorized from '../../../auth/permissions';
 
-export const ArticleList = (props) => {
+export const PagesList = (props) => {
   const translate = useTranslate();
   const statusChoices = [
     { id: 0, name: translate('custom.label.article.label.draft') },

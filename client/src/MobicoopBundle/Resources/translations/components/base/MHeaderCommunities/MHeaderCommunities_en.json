@@ -3,5 +3,5 @@
     "getCommunities": "/user/communities",
     "availableCommunities": "Available communities",
     "urlCommunityList": "/community",
-    "urlCommunityDetails": "/communaute/{id}"
+    "urlCommunityDetails": "/community/{id}/{urlKey}"
 }

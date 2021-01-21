@@ -395,7 +395,7 @@ export default {
         description  : evt.fullDescription,
         date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date),
         date_end   : this.$t('endEvent') +' : '+ this.computedDateFormat(evt.toDate.date),
-        linktoevent  : this.$t('routes.event', {id:evt.id})
+        linktoevent  : this.$t('routes.event', {id:evt.id, urlKey:evt.urlKey})
       };
       return popup;
 

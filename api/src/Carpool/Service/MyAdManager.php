@@ -885,7 +885,9 @@ class MyAdManager
             case Criteria::FREQUENCY_PUNCTUAL:
                 // punctual trip, we search if there's a related carpoolItem
                 if ($carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate())) {
-                    if (!is_null($carpoolItem->getUnpaidDate())) {
+                    if ($carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_NULL || $carpoolItem->getCreditorStatus() == CarpoolItem::CREDITOR_STATUS_NULL) {
+                        $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
+                    } elseif (!is_null($carpoolItem->getUnpaidDate())) {
                         $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
                         $driver['payment']['unpaidDate'] = $carpoolItem->getUnpaidDate()->format("Y-m-d");
                         $driver['payment']['itemId'] = $carpoolItem->getId();
@@ -902,8 +904,6 @@ class MyAdManager
                                 break;
                         }
                     }
-                } else {
-                    $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
                 }
                 break;
             case Criteria::FREQUENCY_REGULAR:
