@@ -26,6 +26,7 @@ namespace App\Communication\Service;
 
 use App\Communication\Event\ContactEmailEvent;
 use App\Communication\Entity\Contact;
+use App\Communication\Ressource\ContactType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -40,15 +41,18 @@ class ContactManager
      */
     private $logger;
 
+    private $contactItems;
+
     /**
      * ContactManager constructor.
      * @param EventDispatcherInterface $eventDispatcher
      * @param LoggerInterface $logger
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger)
+    public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, array $contactItems)
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
+        $this->contactItems = $contactItems;
     }
 
     /**
@@ -62,5 +66,19 @@ class ContactManager
         $event = new ContactEmailEvent($contact);
         $this->eventDispatcher->dispatch(ContactEmailEvent::NAME, $event);
         return $contact;
+    }
+
+    public function getContactTypes(): ?array
+    {
+        $contactTypes = [];
+        foreach ($this->contactItems['contacts'] as $contactItem) {
+            $contactType = new ContactType();
+            $contactType->setDemand($contactItem['label']);
+            $contactType->setTo($contactItem['To']);
+            $contactType->setCc($contactItem['Cc']);
+            $contactType->setBcc($contactItem['Bcc']);
+            $contactTypes[] = $contactType;
+        }
+        return $contactTypes;
     }
 }
