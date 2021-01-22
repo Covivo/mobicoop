@@ -138,7 +138,7 @@ class ReportManager
         }
         if (is_array($contactType->getBcc()) && count($contactType->getBcc())>0) {
             $email->setRecipientEmailBcc($contactType->getBcc());
-        }        
+        }
         
         $email->setObject($this->templating->render(
             $this->emailTitleTemplatePath . $templateTitle.'.html.twig',

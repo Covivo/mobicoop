@@ -59,6 +59,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/modules.json
     fi
 
+    # check Contacts files
+    CONTACTS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
+    if [ ! -f "$CONTACTS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
+    fi
+
     # Migrations
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -120,6 +126,12 @@ else
     MODULES_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/modules.json
     if [ ! -f "$MODULES_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/modules.json
+    fi
+
+    # check Contacts files
+    CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
+    if [ ! -f "$CONTACTS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
     fi
 
     # Migrations
