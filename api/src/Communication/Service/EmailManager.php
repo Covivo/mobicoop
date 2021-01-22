@@ -127,9 +127,9 @@ class EmailManager
             $message->setBcc($mail->getRecipientEmailBcc());
         }
         if ($mail->getRecipientEmailCc()) {
-            $message->setBcc($mail->getRecipientEmailCc());
+            $message->setCc($mail->getRecipientEmailCc());
         }
-    
+
         // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
         if ($this->emailAdditionalHeaders && $mail->getRecipientEmail() == $this->emailSupport) {
             $headers = json_decode($this->emailAdditionalHeaders, true);

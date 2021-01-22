@@ -128,13 +128,13 @@ class ContactSubscriber implements EventSubscriberInterface
 
         $email = new Email();
         // Recipients
-        if (!is_array($contact->getContactType()->getTo()) && count($contact->getContactType()->getTo())>0) {
+        if (is_array($contact->getContactType()->getTo()) && count($contact->getContactType()->getTo())>0) {
             $email->setRecipientEmail($contact->getContactType()->getTo());
         }
-        if (!is_array($contact->getContactType()->getCc()) && count($contact->getContactType()->getCc())>0) {
+        if (is_array($contact->getContactType()->getCc()) && count($contact->getContactType()->getCc())>0) {
             $email->setRecipientEmailCc($contact->getContactType()->getCc());
         }
-        if (!is_array($contact->getContactType()->getBcc()) && count($contact->getContactType()->getBcc())>0) {
+        if (is_array($contact->getContactType()->getBcc()) && count($contact->getContactType()->getBcc())>0) {
             $email->setRecipientEmailBcc($contact->getContactType()->getBcc());
         }
 
@@ -149,9 +149,9 @@ class ContactSubscriber implements EventSubscriberInterface
         $email->setSenderName($contact->getFamilyName());
         
 
-        echo "yoooo";
-        die;
+        // echo $email->getObject();
+        // die;
 
-        //$this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
+        $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }
 }
