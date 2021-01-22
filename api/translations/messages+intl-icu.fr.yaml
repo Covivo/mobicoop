@@ -16,9 +16,10 @@ shortdaySaturday: "Sa"
 shortdaySunday: "Di"
 
 # CONTACT OBJECTS
-contactInfos: "Nouvelle demande de contact"
+contactInfos: "Nouvelle demande de renseignements"
 contactTechnicalIssues: "Nouvelle demande de support"
 contactPartnership: "Nouvelle demande de partenariat"
+contactCommunity: "Demande de création de communauté"
 
 # CARPOOL_AD_RENEWAL
 

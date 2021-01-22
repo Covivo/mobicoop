@@ -228,7 +228,7 @@ export default {
           website: this.form.website // honey pot data
         })
           .then(function (response) {
-            console.log(response.data);
+            // console.log(response.data);
             if (response.data && response.data.message) {
               self.alert = {
                 type: "success",
@@ -266,14 +266,13 @@ export default {
       }
     },
     getContactItems(){
-      console.log("je passe par là");
       axios.post(this.$t('getContactItemsUri'))
         .then(response => {
-          console.log(response.data);
+          // console.log(response.data);
           this.contactTypes = response.data;
         })
         .catch(function (error) {
-          console.error("erreur");
+          console.error(error);
         });
     }
   }

@@ -25,7 +25,7 @@
         "label": "Votre demande",
         "placeholder": "Votre demande",
         "items": {
-            "infos": "Renseignement",
+            "infos": "Renseignements",
             "technicalIssues": "Problème technique",
             "partnership": "Partenariat",
             "community": "Création communauté"
