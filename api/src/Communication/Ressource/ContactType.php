@@ -55,6 +55,8 @@ class ContactType
 {
     const DEFAULT_ID = 999999999999;
 
+    const TYPE_SUPPORT = "technicalIssues";
+
     /**
      * @var int The id of the contact type
      *
@@ -69,6 +71,13 @@ class ContactType
      * @Groups({"readContactType"})
      */
     private $demand;
+
+    /**
+     * @var string|null Object code use to define the object of the email (ref to the yaml translation files)
+     * @Assert\NotBlank
+     * @Groups({"readContactType"})
+     */
+    private $objectCode;
 
     /**
      * @var array|null Receiving emails for this contact type
@@ -111,6 +120,18 @@ class ContactType
     public function setDemand(string $demand): self
     {
         $this->demand = $demand;
+        
+        return $this;
+    }
+
+    public function getObjectCode(): ?string
+    {
+        return $this->objectCode;
+    }
+
+    public function setObjectCode(string $objectCode): self
+    {
+        $this->objectCode = $objectCode;
         
         return $this;
     }

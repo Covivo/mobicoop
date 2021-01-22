@@ -25,6 +25,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
+use App\Communication\Ressource\ContactType;
 use App\Communication\Ressource\Report;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -37,6 +38,7 @@ class ReportManager
     const LANG = "fr_FR";
     
     private $emailManager;
+    private $contactManager;
     private $templating;
     private $supportEmailAddress;
     private $emailTemplatePath;
@@ -47,14 +49,14 @@ class ReportManager
     public function __construct(
         TranslatorInterface $translator,
         EmailManager $emailManager,
+        ContactManager $contactManager,
         Environment $templating,
-        string $supportEmailAddress,
         string $emailTemplatePath,
         string $emailTitleTemplatePath
     ) {
         $this->translator = $translator;
-        $this->supportEmailAddress = $supportEmailAddress;
         $this->emailManager = $emailManager;
+        $this->contactManager = $contactManager;
         $this->templating = $templating;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
@@ -123,7 +125,20 @@ class ReportManager
     private function sendEmailReport(string $templateTitle, string $templateBody, array $titleContext=[], array $bodyContext=[])
     {
         $email = new Email();
-        $email->setRecipientEmail($this->supportEmailAddress);
+
+        // Get the support emails
+        $contactType = $this->contactManager->getEmailsByType(ContactType::TYPE_SUPPORT);
+
+        // Recipients
+        if (is_array($contactType->getTo()) && count($contactType->getTo())>0) {
+            $email->setRecipientEmail($contactType->getTo());
+        }
+        if (is_array($contactType->getCc()) && count($contactType->getCc())>0) {
+            $email->setRecipientEmailCc($contactType->getCc());
+        }
+        if (is_array($contactType->getBcc()) && count($contactType->getBcc())>0) {
+            $email->setRecipientEmailBcc($contactType->getBcc());
+        }        
         
         $email->setObject($this->templating->render(
             $this->emailTitleTemplatePath . $templateTitle.'.html.twig',

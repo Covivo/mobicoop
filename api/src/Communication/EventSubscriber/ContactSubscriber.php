@@ -29,7 +29,8 @@ use App\Communication\Ressource\ContactType;
 use App\Communication\Event\ContactEmailEvent;
 use App\Communication\Service\EmailManager;
 use App\Communication\Service\NotificationManager;
-use App\TranslatorTrait;
+//use App\TranslatorTrait;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -40,19 +41,21 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class ContactSubscriber implements EventSubscriberInterface
 {
-    use TranslatorTrait;
+    //use TranslatorTrait;
 
     private $notificationManager;
     private $emailManager;
     private $emailTemplatePath;
     private $platformName;
+    private $translator;
 
-    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, string $platformName)
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, TranslatorInterface $translator, string $emailTemplatePath, string $platformName)
     {
         $this->notificationManager = $notificationManager;
         $this->emailManager = $emailManager;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->platformName = $platformName;
+        $this->translator = $translator;
     }
 
     public static function getSubscribedEvents()
@@ -139,8 +142,7 @@ class ContactSubscriber implements EventSubscriberInterface
         }
 
         // Object
-        
-        $email->setObject($this->platformName);
+        $email->setObject("[".$this->platformName."] ".$this->translator->trans($contact->getContactType()->getObjectCode()));
         
         // Sender
         $email->setSenderEmail($contact->getEmail());
@@ -148,9 +150,6 @@ class ContactSubscriber implements EventSubscriberInterface
         $email->setSenderFirstName($contact->getGivenName());
         $email->setSenderName($contact->getFamilyName());
         
-
-        // echo $email->getObject();
-        // die;
 
         $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }

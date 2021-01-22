@@ -94,10 +94,35 @@ class ContactManager
         return $contactTypes;
     }
 
+    /**
+     * Return the specific email list of a type
+     *
+     * @return ContactType|null
+     */
+    public function getEmailsByType(string $type): ?ContactType
+    {
+        // Get the contact types and find the support
+        $contactTypes = $this->getContactTypes();
+        foreach ($contactTypes as $contactType) {
+            if ($contactType->getDemand()==$type) {
+                return $contactType;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Build a ContactType from a contact item in config contacts.json
+     *
+     * @param array $item
+     * @return void
+     */
     private function buildContactType(array $item)
     {
         $contactType = new ContactType();
         $contactType->setDemand($item['label']);
+        $contactType->setObjectCode($item['objectCode']);
         $contactType->setTo($item['To']);
         $contactType->setCc($item['Cc']);
         $contactType->setBcc($item['Bcc']);

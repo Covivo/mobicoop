@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
+use App\Communication\Ressource\ContactType;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -61,9 +62,8 @@ class EmailManager
        * @param string $emailReplyToName
        * @param string $templatePath
        * @param string $emailAdditionalHeaders
-       * @param string $emailSupport
        */
-    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $templatePath, string $emailAdditionalHeaders, string $emailSupport)
+    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $templatePath, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -75,7 +75,6 @@ class EmailManager
         $this->logger = $logger;
         $this->translator = $translator;
         $this->emailAdditionalHeaders = $emailAdditionalHeaders;
-        $this->emailSupport = $emailSupport;
     }
 
     /**
@@ -131,7 +130,7 @@ class EmailManager
         }
 
         // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
-        if ($this->emailAdditionalHeaders && $mail->getRecipientEmail() == $this->emailSupport) {
+        if ($this->emailAdditionalHeaders && !is_null($context['contact']->getContactType()) && $context['contact']->getContactType()->getObjectCode() == ContactType::TYPE_SUPPORT) {
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
                 if ($this->translator->trans($value) == "senderEmail") {
