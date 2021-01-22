@@ -5,9 +5,9 @@ frequency : 1 if punctual, 2 if regular
 role : 1 if driver, 2 if passenger, 3 if both
 origin : address string
 destination : address string
-outwardDate : outward date for punctual trip, start date for regular trip (YYYY-MM-DD)
+outwardDate : outward date for punctual trip, start date for regular trip (+ or - followed by a duration, as a php DateInterval format)
 outwardTime : outward time dor punctual trip, empty for regular trip (HH:MM or empty)
-returnDate/limitDate : return date for punctual trip, limit date for regular trip (YYYY-MM-DD or empty)
+returnDate/limitDate : return date for punctual trip, limit date for regular trip (+ or - followed by a duration, as a php DateInterval format; or empty)
 returnTime : return time for punctual trip, empty for regular trip (HH:MM or empty)
 mon : 1 if monday carpooled, 0 if not
 monOutwardTime : monday outward time (HH:MM or empty)

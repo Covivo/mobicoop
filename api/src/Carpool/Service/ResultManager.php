@@ -1592,16 +1592,15 @@ class ResultManager
         
         // we check if the tested day is the current day : if so we will force the time check to avoid presenting a past carpool
         $isToday = (new DateTime())->format('Ymd') == $rdate->format('Ymd');
-        
         $nbLoop++;
         if ($nbLoop > 7) {
             return null;
         } // safeguard to avoid infinite loop
 
         if ($role=="request") {
-            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime() || $isToday, $isToday ? max($searchProposal->getCriteria()->getFromTime(), $rdate) : ($searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null));
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), $isToday ? max($searchProposal->getCriteria()->getFromTime(), $rdate) : ($searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null));
         } else {
-            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, $searchProposal->getUseTime() || $isToday ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, $searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null);
         }
         if (!is_array($result)) {
             $result = $this->getFirstCarpooledRegularDay($searchProposal, $matchingProposal, $role, $nbLoop);
