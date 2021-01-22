@@ -184,15 +184,10 @@ export default {
         givenNameRules: [
           v => !!v || this.$t("firstName.errors.required"),
         ],
-
         demand: null,
         message: null,
         messageRules: [
           v => !!v || this.$t("message.errors.required"),
-        ],
-        consent: false,
-        consentRules: [
-          v => !!v || this.$t("consent.errors.required"),
         ],
         website: "", // honey pot data
       },
@@ -230,7 +225,6 @@ export default {
           familyName: this.form.familyName,
           demand: this.form.demand,
           message: this.form.message,
-          consent: this.form.consent,
           website: this.form.website // honey pot data
         })
           .then(function (response) {
