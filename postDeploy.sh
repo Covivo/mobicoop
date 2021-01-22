@@ -64,7 +64,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    #python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE -php /opt/phpbrew/php/php-7.2.10/bin/php
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/client/public/externalCgu
@@ -75,12 +75,19 @@ then
     cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
 
-    #Admin build
+    # Admin build
     cd /var/www/$VERSION/$INSTANCE/admin;
     rm -Rf node_modules;
     rm package-lock.json;
     npm install;
     npm run build;
+
+    # Fixtures for test
+    if [ $VERSION == "test" ]
+    then
+        cd /var/www/$VERSION/$INSTANCE/api;
+        php bin/console doctrine:fixtures:load -n -v --append --group=basic
+    fi
 
 else
 
@@ -127,7 +134,7 @@ else
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    #python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/client/public/externalCgu
