@@ -56,19 +56,7 @@
           <h1>{{ $t("title") }}</h1>
         </v-col>
       </v-row>
-      <v-row
-        v-if="showFacebookSignUp"
-        justify="center"
-        class="text-center"
-      >
-        <v-col class="col-4">
-          <m-facebook-auth
-            :app-id="facebookLoginAppId"
-            :sign-up="true"
-            @fillForm="fillForm"
-          />
-        </v-col>
-      </v-row>
+     
       <v-row
         justify="center"
         class="text-center"
@@ -415,6 +403,19 @@
               </v-form>
             </v-stepper-content>
           </v-stepper>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="showFacebookSignUp"
+        justify="center"
+        class="text-center mt-n12"
+      >
+        <v-col class="col-4">
+          <m-facebook-auth
+            :app-id="facebookLoginAppId"
+            :sign-up="true"
+            @fillForm="fillForm"
+          />
         </v-col>
       </v-row>
       <v-row
