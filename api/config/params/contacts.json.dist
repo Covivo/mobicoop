@@ -11,7 +11,8 @@
             ],
             "Bcc":[
                 "contact@yourdomain.com","contact2@yourdomain.com"
-            ]
+            ],
+            "objectCode":"contactInfos"
         },
         {        
             "label":"technicalIssues",
@@ -23,7 +24,8 @@
             ],
             "Bcc":[
                 "contact@yourdomain.com","contact2@yourdomain.com"
-            ]
+            ],
+            "objectCode":"contactTechnicalIssues"
         },
         {        
             "label":"partnership",
@@ -35,7 +37,8 @@
             ],
             "Bcc":[
                 "contact@yourdomain.com","contact2@yourdomain.com"
-            ]
+            ],
+            "objectCode":"contactPartnership"
         }
     ]
 }
