@@ -1144,6 +1144,12 @@ contact:
         en: /contact
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:showContact
 
+contact_get_items:
+    path:
+        fr: /contact/getItems
+        en: /contact/getItems
+    controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:getContactItems
+
 contact_send:
     path:
         fr: /contact/send

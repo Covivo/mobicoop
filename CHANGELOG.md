@@ -1,3 +1,6 @@
+# Release 1.22.0
+* New contact recipients system
+
 # Release 1.20.0
 
 

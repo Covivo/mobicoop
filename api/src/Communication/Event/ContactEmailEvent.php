@@ -40,7 +40,7 @@ class ContactEmailEvent extends Event
         $this->contact = $contact;
     }
 
-    public function getContact()
+    public function getContact(): Contact
     {
         return $this->contact;
     }

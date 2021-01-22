@@ -65,6 +65,7 @@ use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\ContactType;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\MCommunity;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
@@ -241,6 +242,9 @@ class Deserializer
                 break;
             case ReviewDashboard::class:
                 return $this->deserializeReviewDashboard($data) ;
+                break;
+            case ContactType::class:
+                return $this->deserializeContactType($data) ;
                 break;
             default:
                 break;
@@ -1003,6 +1007,13 @@ class Deserializer
         $reviewDashboard = new ReviewDashboard();
         $reviewDashboard = $this->autoSet($reviewDashboard, $data);
         return $reviewDashboard;
+    }
+
+    private function deserializeContactType(array $data): ?ContactType
+    {
+        $contactType = new ContactType();
+        $contactType = $this->autoSet($contactType, $data);
+        return $contactType;
     }
 
     private function autoSet($object, $data)

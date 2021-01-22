@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,42 +21,45 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Controller;
+namespace App\Communication\DataPersister;
 
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Communication\Entity\Contact;
 use App\Communication\Service\ContactManager;
-use App\TranslatorTrait;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Controller class for contact message.
- *
+ * Post a Message
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ContactMessage
+final class ContactDataPersister implements ContextAwareDataPersisterInterface
 {
-    use TranslatorTrait;
-
-    /**
-     * @var ContactManager
-     */
     private $contactManager;
+    private $security;
 
-    public function __construct(ContactManager $contactManager, array $params)
+    public function __construct(ContactManager $contactManager, Security $security)
     {
         $this->contactManager = $contactManager;
+        $this->security = $security;
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Contact && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
     }
 
-    /**
-     * This method is invoked when a new contact is posted.
-     *
-     * @param Contact $data
-     * @return Contact
-     */
-    public function __invoke(Contact $data): Contact
+    public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad contact"));
+            throw new \InvalidArgumentException($this->translator->trans("No Contact provided"));
         }
-        $data = $this->contactManager->sendContactMail($data);
-        return $data;
+
+        return $this->contactManager->sendContactMail($data);
+        ;
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
