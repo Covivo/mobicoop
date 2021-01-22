@@ -70,60 +70,6 @@ class ContactSubscriber implements EventSubscriberInterface
      *
      * @param ContactEmailEvent $event
      */
-    // public function onContactSent(ContactEmailEvent $event)
-    // {
-    //     $contact = $event->getContact();
-
-    //     $email = new Email();
-
-    //     // we check if we have also CC and BCC contact emails if yes we set them
-    //     $contactRecipients=$this->contactEmailAddress;
-    //     $contactEmail = null;
-    //     $contactEmailBcc = [];
-    //     $contactEmailCc = [];
-    //     foreach ($contactRecipients as $key => $value) {
-    //         if ($key == Contact::SEND_TO) {
-    //             $contactEmail = $value;
-    //         } elseif ($key == Contact::SEND_CC) {
-    //             $contactEmailCc = $value;
-    //         } elseif ($key == Contact::SEND_BCC) {
-    //             $contactEmailBcc = $value;
-    //         }
-    //     }
-
-    //     // We set the recipient mail according the type
-    //     $type = $contact->getType();
-        
-    //     // Determine the right email according the type
-    //     switch ($type) {
-    //         case Contact::SUPPORT_CONTACT:
-    //             $email->setRecipientEmail($this->supportEmailAddress);
-    //             $email->setObject($this->supportEmailObject);
-    //             break;
-    //         case Contact::SIMPLE_CONTACT:
-    //         default:
-    //             $email->setRecipientEmail($contactEmail);
-    //             if (count($contactEmailCc) > 0) {
-    //                 $email->setRecipientEmailCc($contactEmailCc);
-    //             }
-    //             if (count($contactEmailBcc) > 0) {
-    //                 $email->setRecipientEmailBcc($contactEmailBcc);
-    //             }
-    //             $email->setObject($this->contactEmailObject);
-    //     }
-    //     $email->setSenderEmail($contact->getEmail());
-    //     $email->setReturnEmail($contact->getEmail());
-    //     $email->setSenderFirstName($contact->getGivenName());
-    //     $email->setSenderName($contact->getFamilyName());
-
-    //     $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
-    // }
-
-    /**
-     * Executed when a contact message is sent
-     *
-     * @param ContactEmailEvent $event
-     */
     public function onContactSent(ContactEmailEvent $event)
     {
         /** @var Contact $contact */
