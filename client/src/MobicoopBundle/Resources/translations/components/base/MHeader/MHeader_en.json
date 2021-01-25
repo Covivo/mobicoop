@@ -12,10 +12,6 @@
             "label": "Publier une annonce",
             "route": "/covoiturage/annonce/poster"
         },
-        "messages": {
-            "label": "Messages",
-            "route": "/utilisateur/messages"
-        },
         "myProfile": {
             "label": "Mon profil",
             "route": "/utilisateur/profil/modifier"

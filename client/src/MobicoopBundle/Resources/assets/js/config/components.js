@@ -3,6 +3,7 @@
 // BASE
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
+import MMessageBtn from '@components/base/MMessageBtn'
 
 // HOME
 import Home from '@components/home/Home'
@@ -79,6 +80,7 @@ import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
 export default {
   MHeader,
   MFooter,
+  MMessageBtn,
   Home,
   Contact,
   AdPublish,

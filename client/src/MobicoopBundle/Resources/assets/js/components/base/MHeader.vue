@@ -29,14 +29,7 @@
         v-if="user"
         class="hidden-md-and-down"
       >
-        <v-btn
-          text
-          rounded
-          class="white--text title text-none"
-          :href="$t('buttons.messages.route')"
-        >
-          {{ $t('buttons.messages.label') }}
-        </v-btn>
+        <MMessageBtn :unread-message-number="user.unreadMessageNumber" />
         <MHeaderCommunities
           :user-id="user.id" 
           :text-color-class="textColorClass"
@@ -276,6 +269,7 @@ import {messages_client_en, messages_client_fr} from "@clientTranslations/compon
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
+import MMessageBtn from "@components/base/MMessageBtn.vue";
 
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
@@ -292,7 +286,8 @@ export default {
     //Accessibility,
     MHeaderProfile,
     MHeaderCommunities,
-    MHeaderLanguage
+    MHeaderLanguage,
+    MMessageBtn
   },
   props: {
     user: {
