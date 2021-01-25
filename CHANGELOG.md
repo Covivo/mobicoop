@@ -1,5 +1,6 @@
 # Release 1.22.0
 * New contact recipients system
+* Number of unread messages
 
 # Release 1.20.0
 
