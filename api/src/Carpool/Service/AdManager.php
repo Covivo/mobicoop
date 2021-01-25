@@ -1822,6 +1822,27 @@ class AdManager
      **********/
 
     /**
+     * Get a proof.
+     *
+     * @param integer $carpoolProofId   The id of the carpool proof
+     * @return ClassicProof|null    The classic proof or null if not found
+     */
+    public function getCarpoolProof(int $carpoolProofId)
+    {
+        $classicProof = new ClassicProof();
+        $classicProof->setId($carpoolProofId);
+        if ($carpoolProof = $this->proofManager->getProof($carpoolProofId)) {
+            $classicProof->setStatus(
+                ($carpoolProof->getPickUpPassengerDate() ? '1' : '0') .
+                ($carpoolProof->getPickUpDriverDate() ? '1' : '0') .
+                ($carpoolProof->getDropOffPassengerDate() ? '1' : '0') .
+                ($carpoolProof->getDropOffDriverDate() ? '1' : '0')
+            );
+        }
+        return $classicProof;
+    }
+
+    /**
      * Create a proof for an ask.
      *
      * @param ClassicProof  $classicProof   The proof to create
