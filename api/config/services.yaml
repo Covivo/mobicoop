@@ -258,6 +258,8 @@ services:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\InternalMessageManager:
+        arguments:
+            $storeReadDate: '%env(bool:MESSAGES_STORE_READ_DATE)%'
         tags:
             - { name: monolog.logger, channel: communication }
 

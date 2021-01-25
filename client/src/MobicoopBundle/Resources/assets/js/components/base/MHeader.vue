@@ -29,7 +29,7 @@
         v-if="user"
         class="hidden-md-and-down"
       >
-        <MMessageBtn :unread-message-number="user.unreadMessageNumber" />
+        <MMessageBtn :unread-message-number="unreadMessageNumber" />
         <MHeaderCommunities
           :user-id="user.id" 
           :text-color-class="textColorClass"
@@ -323,6 +323,11 @@ export default {
       dlocale: this.locale,
       imageLink: "/images/pages/home/",
       textColorClass: "white--text title text-none"
+    }
+  },
+  computed:{
+    unreadMessageNumber(){
+      return this.user.unreadCarpoolMessageNumber + this.user.unreadDirectMessageNumber + this.user.unreadSolidaryMessageNumber; 
     }
   },
   mounted() {

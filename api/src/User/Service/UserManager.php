@@ -265,7 +265,7 @@ class UserManager
     public function getMe()
     {
         $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
-        $user->setUnreadMessageNumber($this->getUnreadMessageNumber($user));
+        $user = $this->getUnreadMessageNumber($user);
         return $user;
     }
 
@@ -1618,10 +1618,24 @@ class UserManager
      * Get the number of unread message of a User
      *
      * @param User $user
-     * @return integer
+     * @return User
      */
-    private function getUnreadMessageNumber(User $user): int
+    private function getUnreadMessageNumber(User $user): User
     {
-        return count($this->messageRepository->findUnreadMessages($user));
+        $user->setUnreadCarpoolMessageNumber(0);
+        $user->setUnreadDirectMessageNumber(0);
+        $user->setUnreadSolidaryMessageNumber(0);
+        
+        $recipients = $this->messageRepository->findUnreadMessages($user);
+        foreach ($recipients as $recipient) {
+            if (!is_null($recipient->getMessage()->getSolidaryAskHistory())) {
+                $user->setUnreadSolidaryMessageNumber($user->getUnreadSolidaryMessageNumber()+1);
+            } elseif (!is_null($recipient->getMessage()->getAskHistory())) {
+                $user->setUnreadCarpoolMessageNumber($user->getUnreadCarpoolMessageNumber()+1);
+            } else {
+                $user->setUnreadDirectMessageNumber($user->getUnreadDirectMessageNumber()+1);
+            }
+        }
+        return $user;
     }
 }

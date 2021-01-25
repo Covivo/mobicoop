@@ -57,7 +57,14 @@
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
-                  {{ $t("headersCategories.titleCarpool") }}
+                  <v-badge
+                    :value="(unreadCarpoolMessages>0) ? true : false"
+                    :content="unreadCarpoolMessages"
+                    color="secondary"
+                    inline
+                  >
+                    {{ $t("headersCategories.titleCarpool") }}
+                  </v-badge>
                 </div>
               </div>
             </v-tab>
@@ -78,7 +85,14 @@
                     </v-icon>
                     <br>
                     <div class="mb-2">
-                      {{ $t("headersCategories.titleLive") }}
+                      <v-badge
+                        :value="(unreadDirectMessages>0) ? true : false"
+                        :content="unreadDirectMessages"
+                        color="secondary"
+                        inline
+                      >
+                        {{ $t("headersCategories.titleLive") }}
+                      </v-badge>
                     </div>
                   </div>
                 </v-tab>
@@ -101,7 +115,14 @@
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
-                  {{ $t("headersCategories.titleSolidary") }}
+                  <v-badge
+                    :value="(unreadSolidaryMessages>0) ? true : false"
+                    :content="unreadSolidaryMessages"
+                    color="secondary"
+                    inline
+                  >
+                    {{ $t("headersCategories.titleSolidary") }}
+                  </v-badge>
                 </div>
               </div>
             </v-tab>            
@@ -257,6 +278,18 @@ export default {
     fraudWarningDisplay: {
       type: Boolean,
       default: false
+    },
+    unreadCarpoolMessages: {
+      type: Number,
+      default: null
+    },
+    unreadDirectMessages: {
+      type: Number,
+      default: null
+    },
+    unreadSolidaryMessages: {
+      type: Number,
+      default: null
     }
   },
   data() {

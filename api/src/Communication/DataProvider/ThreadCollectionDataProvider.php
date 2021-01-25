@@ -31,10 +31,9 @@ use App\Communication\Service\InternalMessageManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Matching simple search.
- * Only for punctual and one way trip.
+ * Complet message thread collection DataProvider
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
 final class ThreadCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
@@ -57,6 +56,6 @@ final class ThreadCollectionDataProvider implements CollectionDataProviderInterf
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), false, $this->security->getUser()->getId());
+        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), true, $this->security->getUser()->getId());
     }
 }

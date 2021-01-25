@@ -87,9 +87,9 @@ class MessageRepository
      * Find the unread messages of a User
      *
      * @param User $user
-     * @return void
+     * @return Recipient[]|null
      */
-    public function findUnreadMessages(User $user)
+    public function findUnreadMessages(User $user): ?array
     {
         $this->repository = $this->entityManager->getRepository(Recipient::class);
         $query = $this->repository->createQueryBuilder('r')
