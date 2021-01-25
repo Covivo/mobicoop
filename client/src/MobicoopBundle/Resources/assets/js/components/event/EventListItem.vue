@@ -14,7 +14,6 @@
           v-else
           src="/images/avatarsDefault/avatar.svg"
           aspect-ratio="1"
-          class="grey lighten-2"
           max-width="200"
           max-height="200"
         />
