@@ -170,7 +170,7 @@ class InternalMessageManager
             $this->entityManager->flush();
         }
 
-        return array_merge([$message], $message->getMessages());
+        return $messages;
     }
 
     public function getMessage($idMessage)

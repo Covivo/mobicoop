@@ -691,8 +691,13 @@ class UserManager
 
     public function parseThreadsDirectMessages(User $user, array $threads)
     {
+        // $threads is a Message[]
+        
         $messages = [];
         foreach ($threads as $message) {
+
+
+            
             // To Do : We support only one recipient at this time...
             $currentMessage = [
                 'idMessage' => $message->getId(),
@@ -701,9 +706,20 @@ class UserManager
                 'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
                 'shortFamilyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getShortFamilyName() : $message->getUser('user')->getShortFamilyName(),
                 'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
-                'selected' => false
+                'selected' => false,
+                'unreadMessages' => 0
             ];
 
+            // For each message, we check the all chain to determined the unread messages
+            $completeThreadMessages = $this->internalMessageManager->getCompleteThread($message->getId());
+            foreach ($completeThreadMessages as $message) {
+                foreach ($message->getRecipients() as $recipient) {
+                    if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
+                        $currentMessage['unreadMessages']++;
+                    }
+                }
+            }
+            
             // We check if the user and it's carpooler are involved in a block
             $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser() : $message->getRecipients()[0]->getUser());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
@@ -758,7 +774,8 @@ class UserManager
                     'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
                     'shortFamilyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser('user')->getShortFamilyName(),
                     'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
-                    'selected' => false
+                    'selected' => false,
+                    'unreadMessages' => 0
                 ];
 
                 // The message id : the one linked to the current askHistory or we try to find the last existing one
@@ -774,6 +791,19 @@ class UserManager
                         }
                     }
                 }
+
+                // For each message, we check the all chain to determined the unread messages
+                if ($idMessage !== -99) {
+                    $completeThreadMessages = $this->internalMessageManager->getCompleteThread($idMessage);
+                    foreach ($completeThreadMessages as $currentMessage) {
+                        foreach ($currentMessage->getRecipients() as $recipient) {
+                            if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
+                                $currentThread['unreadMessages']++;
+                            }
+                        }
+                    }
+                }
+                
                 $currentThread['idMessage'] = $idMessage;
                 $waypoints = $ask->getMatching()->getWaypoints();
                 $criteria = $ask->getCriteria();
