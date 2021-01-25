@@ -57,6 +57,6 @@ final class ThreadCollectionDataProvider implements CollectionDataProviderInterf
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), true, $this->security->getUser()->getId());
+        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), false, $this->security->getUser()->getId());
     }
 }

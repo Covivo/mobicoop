@@ -1,11 +1,13 @@
 <template>
   <v-main>
-    <v-container class="window-scroll px-0">
+    <v-container
+      class="window-scroll px-0"
+      :class="unreadMessages>0 ? 'font-italic' : ''"
+    >
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
         :class="selected ? 'primary lighten-5' : ''"
-        outlined
-        tile
+        :outlined="(unreadMessages>0) ? false : true"
         style="border-style:none;"
         @click="click()"
       >
@@ -59,6 +61,18 @@
                 >{{ regularCarpoolDays }}</span>
               </v-col>
             </v-row>
+          </v-col>
+        </v-row>
+        <v-row
+          v-if="unreadMessages>0"
+          class="ma-0 text-center secondary lighten-2"
+          dense
+        >
+          <v-col
+            cols="12"
+            class="subtitle-2"
+          >
+            {{ $t('unread',{nb:unreadMessages}) }}
           </v-col>
         </v-row>
       </v-card>
@@ -132,6 +146,10 @@ export default {
     blockerId:{
       type: Number,
       default: null
+    },
+    unreadMessages:{
+      type: Number,
+      default: 0
     }
   },
   data() {

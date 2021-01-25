@@ -4,8 +4,7 @@
       <v-card
         class="mx-auto mt-2 pt-1 pb-1"
         :class="selected ? 'primary lighten-4' : ''"
-        outlined
-        tile
+        :outlined="(unreadMessages>0) ? false : true"
         style="border-style:none;"
         @click="click()"
       >
@@ -32,14 +31,33 @@
             </v-card-text>
           </v-col>
         </v-row>
+        <v-row
+          v-if="unreadMessages>0"
+          class="ma-0 mt-1 text-center secondary lighten-2"
+          dense
+        >
+          <v-col
+            cols="12"
+            class="subtitle-2"
+          >
+            {{ $t('unread',{nb:unreadMessages}) }}
+          </v-col>
+        </v-row>
       </v-card>
     </v-container>
   </v-main>
 </template>
 <script>
 import moment from "moment";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadDirect/";
 
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
+  },
   props: {
     avatar: {
       type:String,
@@ -72,6 +90,10 @@ export default {
     blockerId:{
       type: Number,
       default: null
+    },
+    unreadMessages:{
+      type: Number,
+      default: 0
     }
   },
   data() {
