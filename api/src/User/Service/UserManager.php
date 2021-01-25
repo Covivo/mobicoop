@@ -265,7 +265,7 @@ class UserManager
     public function getMe()
     {
         $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
-        
+        $user->setUnreadMessageNumber($this->getUnreadMessageNumber($user));
         return $user;
     }
 
@@ -1582,5 +1582,16 @@ class UserManager
         } else {
             throw new UserNotFoundException("Unknow email", 1) ;
         }
+    }
+
+    /**
+     * Get the number of unread message of a User
+     *
+     * @param User $user
+     * @return integer
+     */
+    private function getUnreadMessageNumber(User $user): int
+    {
+        return count($this->messageRepository->findUnreadMessages($user));
     }
 }

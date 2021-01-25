@@ -1204,6 +1204,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $experienced;
 
+    /**
+     * @var int|null Number of unread messages
+     * @Groups({"readUser"})
+     */
+    private $unreadMessageNumber;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2850,6 +2856,18 @@ class User implements UserInterface, EquatableInterface
     public function setExperienced(?bool $experienced): self
     {
         $this->experienced = $experienced;
+
+        return $this;
+    }
+
+    public function getUnreadMessageNumber(): ?int
+    {
+        return $this->unreadMessageNumber;
+    }
+
+    public function setUnreadMessageNumber(?int $unreadMessageNumber): self
+    {
+        $this->unreadMessageNumber = $unreadMessageNumber;
 
         return $this;
     }
