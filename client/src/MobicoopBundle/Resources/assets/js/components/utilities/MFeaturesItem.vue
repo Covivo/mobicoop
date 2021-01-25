@@ -11,7 +11,9 @@
         {{ title }}
       </v-card-title>
 
-      <v-card-text>{{ text }}</v-card-text>
+      <v-card-text class="black--text">
+        {{ text }}
+      </v-card-text>
     </v-card>
   </v-col>
 </template>
