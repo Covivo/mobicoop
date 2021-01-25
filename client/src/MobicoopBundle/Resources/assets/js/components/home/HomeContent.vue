@@ -103,6 +103,7 @@
           rounded
           color="secondary"
           :href="this.$t('privateEvent.button.route')"
+          target="_blank"
           class="white--text mt-4"
         >
           {{ $t('privateEvent.button.label') }}
