@@ -26,6 +26,7 @@
       >
         <carpooler-identity
           :carpooler="carpooler"
+          :age-display="ageDisplay"
         />
       </v-col>
 
@@ -265,6 +266,10 @@ export default {
     communities: {
       type: Object,
       default: null
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
