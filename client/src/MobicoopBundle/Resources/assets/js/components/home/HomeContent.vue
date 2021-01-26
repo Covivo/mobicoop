@@ -122,13 +122,14 @@
     <!-- cityToCity -->
     <v-row
       class="secondary"
+      justify="center"
+      align="center"
     >
       <v-col
         cols="12"
         xl="6"
-        lg="9"
+        lg="10"
         md="12"
-        class="px-14"
       >
         <JourneyCityToCity />
       </v-col>

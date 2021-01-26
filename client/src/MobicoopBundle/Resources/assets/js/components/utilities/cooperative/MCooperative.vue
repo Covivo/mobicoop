@@ -14,7 +14,6 @@
           {{ $t('cooperative.title') }}
         </h2><br>
         <p
-          class="mt-n6"
           v-html="$t('cooperative.text')"
         />
       </v-col>
