@@ -62,6 +62,7 @@ services:
             $ptResults: '%env(int:PT_RESULTS)%'
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
+            $ageDisplay: '%env(bool:AGE_DISPLAY)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
