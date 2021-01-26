@@ -7,7 +7,7 @@
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
         :class="selected ? 'primary lighten-5' : ''"
-        :outlined="(unreadMessages>0) ? false : true"
+        outlined
         style="border-style:none;"
         @click="click()"
       >
@@ -40,7 +40,7 @@
             </v-row>
 
             <v-row>
-              <v-col class="col-8 text-left pa-0 ma-0">
+              <v-col class="col-9 text-left pa-0 ma-0">
                 <span
                   class="font-weight-light"
                 >
@@ -60,19 +60,18 @@
                   class="font-italic"
                 >{{ regularCarpoolDays }}</span>
               </v-col>
+              <v-col
+                v-if="unreadMessages>0"
+                cols="3"
+                class="subtitle-2 pa-0 ma-0 text-right"
+              >
+                <v-chip class="secondary">
+                  {{ unreadMessages }}&nbsp;<v-icon class="white--text">
+                    mdi-eye-off-outline
+                  </v-icon>
+                </v-chip>
+              </v-col>
             </v-row>
-          </v-col>
-        </v-row>
-        <v-row
-          v-if="unreadMessages>0"
-          class="ma-0 text-center secondary lighten-2"
-          dense
-        >
-          <v-col
-            cols="12"
-            class="subtitle-2"
-          >
-            {{ $t('unread',{nb:unreadMessages}) }}
           </v-col>
         </v-row>
       </v-card>
