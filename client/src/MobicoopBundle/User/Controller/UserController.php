@@ -762,9 +762,11 @@ class UserController extends AbstractController
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }
         }
-
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
+            "unreadCarpoolMessages"=>$user->getUnreadCarpoolMessageNumber(),
+            "unreadDirectMessages"=>$user->getUnreadDirectMessageNumber(),
+            "unreadSolidaryMessages"=>$user->getUnreadSolidaryMessageNumber(),
             "idThreadDefault"=>$idThreadDefault,
             "idMessage" => $idMessage,
             "idRecipient" => $idRecipient,
