@@ -5,7 +5,7 @@
     <v-card
       elevation="2"
       class="mx-auto my-3 text-left"
-      min-height="270px"
+      min-height="350px"
     >
       <v-card-title class="primary--text font-weight-bold">
         {{ title }}

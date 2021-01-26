@@ -2,37 +2,38 @@
   <v-card
     v-if="item"
     flat
-    class="secondary lighten-5"
+    class="secondary lighten-5 mx-auto"
+    max-width="500"
+    max-height="125"
   >
-    <v-list-item three-line>
-      <v-list-item-avatar
+    <div
+      class="d-flex flex-no-wrap"
+    >
+      <v-avatar
+        size="125"
         tile
-        size="100"
-        color="grey"
       >
         <v-img
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['square_100']"
           class="grey lighten-2"
-          contain
-          max-width="100"
-          max-height="100"
         />
         <v-img
           v-else
           src="/images/avatarsDefault/avatar.svg"
           class="grey lighten-2"
-          max-width="100"
-          max-height="100"
         />
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title class="text-left headline">
-          <h4 class="text-uppercase">
+      </v-avatar>
+    
+      <div>
+        <v-card-title
+          class="text-left headline"
+        >
+          <h4 class="text-uppercase"> 
             {{ item.name }}
           </h4>
-        </v-list-item-title>
-        <v-list-item-subtitle class="text-left ">
+        </v-card-title>
+        <v-card-subtitle class="text-left">
           <span class="text-subtitle-1 black--text font-italic">
             {{ item.address.addressLocality }}
           </span>
@@ -45,9 +46,9 @@
               class="text-subtitle-1 black--text font-weight-bold"
             >{{ dateLine2 }}</span>
           </p>
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-action>
+        </v-card-subtitle>
+      </div>
+      <v-card-actions>
         <v-btn
           icon
           x-large
@@ -58,8 +59,8 @@
             mdi-chevron-right
           </v-icon>
         </v-btn>
-      </v-list-item-action>
-    </v-list-item>
+      </v-card-actions>
+    </div>
   </v-card>
 </template>
 <script>

@@ -83,7 +83,12 @@
               :src="imageLink + 'van_evenement.svg'"
             >
           </v-col>
-          <v-col cols="6">
+          <v-col
+            cols="6"
+            xl="8"
+            lg="6"
+            md="6"
+          >
             <MEvents />
           </v-col>
         </v-row>
