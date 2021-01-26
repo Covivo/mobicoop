@@ -61,12 +61,12 @@
                 >{{ regularCarpoolDays }}</span>
               </v-col>
               <v-col
-                v-if="unreadMessages>0"
+                v-if="currentUnreadMessages>0"
                 cols="3"
                 class="subtitle-2 pa-0 ma-0 text-right"
               >
                 <v-chip class="secondary">
-                  {{ unreadMessages }}&nbsp;<v-icon class="white--text">
+                  {{ currentUnreadMessages }}&nbsp;<v-icon class="white--text">
                     mdi-eye-off-outline
                   </v-icon>
                 </v-chip>
@@ -154,7 +154,8 @@ export default {
   data() {
     return {
       selected: this.selectedDefault,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      currentUnreadMessages: this.unreadMessages
     }
   },
   computed: {
@@ -197,6 +198,7 @@ export default {
   },
   methods: {
     click(){
+      this.currentUnreadMessages = 0;
       this.emit();
     },
     toggleSelected(){
@@ -212,7 +214,8 @@ export default {
           name:this.name,
           avatar:this.avatar,
           idAsk:this.idAsk,
-          blockerId:this.blockerId
+          blockerId:this.blockerId,
+          formerUnreadMessages:this.unreadMessages
         }
       );
     }

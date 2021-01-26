@@ -58,8 +58,8 @@
                   style="letter-spacing: -0.15px;"
                 >
                   <v-badge
-                    :value="(unreadCarpoolMessages>0) ? true : false"
-                    :content="unreadCarpoolMessages"
+                    :value="(unreadMessages.currentUnreadCarpoolMessages>0) ? true : false"
+                    :content="unreadMessages.currentUnreadCarpoolMessages"
                     color="secondary"
                     inline
                   >
@@ -86,8 +86,8 @@
                     <br>
                     <div class="mb-2">
                       <v-badge
-                        :value="(unreadDirectMessages>0) ? true : false"
-                        :content="unreadDirectMessages"
+                        :value="(unreadMessages.currentUnreadDirectMessages>0) ? trcurrentUe : false"
+                        :content="unreadMessages.currentUnreadDirectMessages"
                         color="secondary"
                         inline
                       >
@@ -116,8 +116,8 @@
                   style="letter-spacing: -0.15px;"
                 >
                   <v-badge
-                    :value="(unreadSolidaryMessages>0) ? true : false"
-                    :content="unreadSolidaryMessages"
+                    :value="(unreadMessages.currentUnreadSolidaryMessages>0) ? true : false"
+                    :content="unreadMessages.currentUSolidaryMessages"
                     color="secondary"
                     inline
                   >
@@ -311,7 +311,12 @@ export default {
       loadingDetails:false,
       loadingBtnAction:false,
       hideClickIcon : false,
-      blockerId: null
+      blockerId: null,
+      unreadMessages:{
+        currentUnreadCarpoolMessages: this.unreadCarpoolMessages,
+        currentUnreadDirectMessages: this.unreadDirectMessages,
+        currentUnreadSolidaryMessages: this.unreadSolidaryMessages
+      }
     };
   },
   mounted() {
@@ -336,7 +341,21 @@ export default {
     updateDetails(data){
       // console.error(data);
       this.hideClickIcon = false;
+      
+      // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
+
+      // Update the number of unread messages in the right tab
+      if(data.type=="Carpool"){
+        this.unreadMessages.currentUnreadCarpoolMessages -= data.formerUnreadMessages
+      }
+      else if(data.type=="Solidary"){
+        this.unreadMessages.currentUnreadSolidaryMessages -= data.formerUnreadMessages
+      }
+      else if(data.type=="Direct"){
+        this.unreadMessages.currentUnreadDirectMessages -= data.formerUnreadMessages
+      }
+
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;
