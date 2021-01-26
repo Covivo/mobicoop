@@ -40,6 +40,7 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Entity\Image;
+use App\Import\Entity\RelayPointImport;
 use App\Solidary\Entity\Structure;
 use App\RelayPoint\Filter\TerritoryFilter;
 
@@ -259,6 +260,13 @@ class RelayPoint
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $relayPointType;
+
+    /**
+     * @var RelayPointImport|null Relay point imported in the platform.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay", cascade={"remove"})
+     */
+    private $relayPointImport;
 
     /**
      * @var ArrayCollection|null The images of the relay point.
@@ -520,6 +528,18 @@ class RelayPoint
     public function setRelayPointType(?RelayPointType $relayPointType): self
     {
         $this->relayPointType = $relayPointType;
+
+        return $this;
+    }
+
+    public function getRelayPointImport(): ?RelayPointImport
+    {
+        return $this->relayPointImport;
+    }
+
+    public function setRelayPointImport(?RelayPointImport $relayPointImport): self
+    {
+        $this->relayPointImport = $relayPointImport;
 
         return $this;
     }
