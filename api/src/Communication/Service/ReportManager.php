@@ -98,6 +98,9 @@ class ReportManager
     private function reportUser(Report $report): Report
     {
         $user = $this->userManager->getUser($report->getUserId());
+        if (is_null($user)) {
+            throw new \LogicException("User unknown");
+        }
 
         $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $user];
 
@@ -115,6 +118,9 @@ class ReportManager
     private function reportEvent(Report $report): Report
     {
         $event = $this->eventManager->getEvent($report->getEventId());
+        if (is_null($event)) {
+            throw new \LogicException("Event unknown");
+        }
 
         $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'eventName' => $event->getName()];
 
