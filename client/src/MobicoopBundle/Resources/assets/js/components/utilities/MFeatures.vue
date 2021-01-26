@@ -59,7 +59,8 @@ export default {
 </script>
 <style lang="scss" scoped>
   h2{
-    font-size: 30px;
+        font-size: 2rem;
+
     line-height: 1.2;
   }
 </style>
