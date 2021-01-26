@@ -1,5 +1,7 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+  >
     <v-row
       align="center"
       class="mt-4"
@@ -119,7 +121,7 @@
     </v-row>
     <!-- end Event -->
 
-    <!-- cityToCity -->
+    <!-- journeyCityToCity -->
     <v-row
       class="secondary"
       justify="center"
@@ -128,13 +130,13 @@
       <v-col
         cols="12"
         xl="6"
-        lg="10"
+        lg="8"
         md="12"
       >
         <JourneyCityToCity />
       </v-col>
     </v-row>
-    <!-- end cityToCity -->
+    <!-- end journeyCityToCity -->
     
     <!-- cooperative -->
     <div

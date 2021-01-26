@@ -3,6 +3,7 @@
     text-center
     fluid
     :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"
+    class="pa-0"  
   >
     <v-row v-if="displayVerifiedMessage">
       <v-col class="pa-0">
