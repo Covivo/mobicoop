@@ -1,6 +1,7 @@
 <template>
   <v-container
     fluid
+    pa-0
   >
     <v-row
       align="center"
