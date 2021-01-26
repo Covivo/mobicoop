@@ -2,9 +2,13 @@
   <v-container fluid>
     <v-row>
       <v-col
-        class="text-left mt-16 primary--text display-1 font-weight-bold"
+        class="text-left mt-16"
       >
-        {{ $t('title') }}        
+        <h2
+          class="primary--text font-weight-bold"
+        >
+          {{ $t('title') }}
+        </h2>       
       </v-col>
       <v-spacer />
     </v-row>
@@ -54,4 +58,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  h2{
+    font-size: 30px;
+    line-height: 1.2;
+  }
 </style>

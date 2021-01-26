@@ -56,14 +56,14 @@
             cols="4"
             class="text-left"
           >
-            <p class="primary--text display-1 font-weight-black">
+            <h2 class="primary--text font-weight-bold">
               {{ $t('events.title') }}
-            </p>
+            </h2>
             <v-btn
               rounded
               color="secondary"
               :href="this.$t('events.button1.route')"
-              class="white--text"
+              class="white--text mt-2"
             >
               {{ $t('events.button1.label') }}
             </v-btn>
@@ -90,12 +90,12 @@
       <v-col
         class="text-center mt-16"
       >
-        <p class="primary--text display-1 font-weight-black">
+        <h2 class="primary--text font-weight-bold">
           {{ $t('privateEvent.title') }}
-        </p>
-        <p class="primary--text headline font-italic mt-n4">
+        </H2>
+        <h3 class="primary--text font-italic">
           {{ $t('privateEvent.subtitle') }}
-        </p>
+        </h3>
         <p>
           {{ $t('privateEvent.text') }}
         </p>
@@ -168,9 +168,9 @@
           md="12"
           class="px-14"
         >
-          <p class="primary--text text-h4 font-weight-black mt-16">
-            Quoi de neuf chez Mobicoop ?
-          </p>
+          <h2 class="primary--text  font-weight-bold mt-16">
+            {{ $t('articles.title') }}
+          </h2>
 
           <m-rss-articles
             :articles="article"
@@ -231,4 +231,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  h2{
+    font-size: 30px;
+    line-height: 1.2;
+  }
 </style>
