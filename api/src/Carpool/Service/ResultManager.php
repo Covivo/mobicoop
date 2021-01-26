@@ -1576,24 +1576,31 @@ class ResultManager
      */
     private function getFirstCarpooledRegularDay(Proposal $searchProposal, Proposal $matchingProposal, string $role='request', int $nbLoop = 0): ?array
     {
-        $today = (new \DateTime())->format('w');
-        $pday = $searchProposal->getCriteria()->getFromDate()->format('w');
-        $day = $nbLoop+$pday;
+        // we search the first possible compatible day => the max fromDate between the 2 proposals
+        $firstDate = max($searchProposal->getCriteria()->getFromDate(), $matchingProposal->getCriteria()->getFromDate());
+
+        // we will loop for 7 times max to find the first compatible day
+        $curDay = $firstDate->format('w');
+
+        $day = $nbLoop+$curDay;
         if ($day >= 7) {
             $day = $day - 7;
         }
         $rdate = new \DateTime();
-        $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
+        $rdate->setTimestamp($firstDate->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
+        
+        // we check if the tested day is the current day : if so we will force the time check to avoid presenting a past carpool
+        $isToday = (new DateTime())->format('Ymd') == $rdate->format('Ymd');
         $nbLoop++;
         if ($nbLoop > 7) {
             return null;
         } // safeguard to avoid infinite loop
 
         if ($role=="request") {
-            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), ($nbLoop==1 && $today == $pday) ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), $isToday ? max($searchProposal->getCriteria()->getFromTime(), $rdate) : ($searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null));
         } else {
-            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, ($nbLoop==1 && $today == $pday) ? $searchProposal->getCriteria()->getFromTime() : null);
+            $result = $this->getValidCarpoolAsOffer($day, $matchingProposal, $searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null);
         }
         if (!is_array($result)) {
             $result = $this->getFirstCarpooledRegularDay($searchProposal, $matchingProposal, $role, $nbLoop);

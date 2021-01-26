@@ -1886,7 +1886,7 @@ class AdManager
      *
      * @param Ad $ad        The source Ad
      * @param bool $persist Persist the Proposal and related entities
-     * @return Proposal The proposal created
+     * @return Ad The ad created
      */
     public function createProposalFromAd(Ad $ad, bool $persist = true)
     {

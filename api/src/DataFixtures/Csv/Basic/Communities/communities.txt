@@ -1,0 +1,9 @@
+user email : the creator email
+address : string or empty
+name
+description
+full description
+members hidden : 1 if members are hidden, 0 if not
+proposals hidden : 1 if proposals are hidden, 0 if not
+validation type : 0 = auto, 1 = manual, 2 = domain
+domain restriction : string or empty

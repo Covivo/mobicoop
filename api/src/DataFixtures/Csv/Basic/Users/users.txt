@@ -1,0 +1,9 @@
+email
+givenName
+familyName
+gender : 1 = female, 2 = male, 3 = other
+birthDate : YYYY-MM-DD
+telephone
+password
+home locality : string
+role : 1 = super admin, 2 = admin, 3 = user with full registration

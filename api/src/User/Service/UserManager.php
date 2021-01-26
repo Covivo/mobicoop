@@ -447,13 +447,11 @@ class UserManager
      */
     public function prepareUser(User $user, bool $encodePassword=false)
     {
-
         // We add the default roles we set in User Entity
         $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
         $userAuthAssignment = new UserAuthAssignment();
         $userAuthAssignment->setAuthItem($authItem);
         $user->addUserAuthAssignment($userAuthAssignment);
-
 
         // No password given, we generate one
         if (is_null($user->getPassword())) {
@@ -480,6 +478,23 @@ class UserManager
         $user->setUnsubscribeToken($this->createToken($user));
 
         // return the user
+        return $user;
+    }
+
+    /**
+     * Add an auth item to a user
+     *
+     * @param User $user            The user
+     * @param integer $authItemId   The auth item id
+     * @return User                 The user with the new auth item added
+     */
+    public function addAuthItem(User $user, int $authItemId)
+    {
+        if ($authItem = $this->authItemRepository->find($authItemId)) {
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+        }
         return $user;
     }
 
