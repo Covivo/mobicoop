@@ -1,7 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
-{% block title %}
-  {% trans from 'ui' %}journey.from_to.title1{% endtrans %} {{ origin }} {% trans from 'ui' %}journey.from_to.title2{% endtrans %} {{ destination }}  - {{ app_name }}
-{% endblock %}
+{% block title %}{% trans with {'CityA': origin, 'CityB':destination} from 'meta' %}meta.journeyResultsCityToCity.title{% endtrans %} | {{ app_name }}{% endblock %}
+{% block desc %}{% trans with {'CityA': origin, 'CityB':destination} from 'meta' %}meta.journeyResultsCityToCity.description{% endtrans %}{% endblock %}
 {% block stylesheets %}
 {% endblock %}
 {% block main %}
