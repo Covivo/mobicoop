@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -254,8 +255,11 @@ class CarpoolController extends AbstractController
      * Ad results.
      * (POST)
      */
-    public function carpoolAdResults($id)
+    public function carpoolAdResults($id, AdManager $adManager)
     {
+        $ad = $adManager->getAd($id);
+        $origin = $ad->getOutwardWaypoints()[0]['addressLocality'];
+        $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints())-1]['addressLocality'];
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'proposalId' => $id,
             'platformName' => $this->platformName,
@@ -263,8 +267,8 @@ class CarpoolController extends AbstractController
             'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
-            'originTitle' => "",
-            'destinationTitle' => ""
+            'originTitle' => $origin,
+            'destinationTitle' => $destination
         ]);
     }
 
@@ -276,6 +280,9 @@ class CarpoolController extends AbstractController
     {
         // we need to claim the source proposal, as it should be anonymous
         if ($adManager->claimAd($id)) {
+            $ad = $adManager->getAd($id);
+            $origin = $ad->getOutwardWaypoints()[0]['addressLocality'];
+            $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints())-1]['addressLocality'];
             return $this->render('@Mobicoop/carpool/results.html.twig', [
                 'proposalId' => $id,
                 'platformName' => $this->platformName,
@@ -283,8 +290,8 @@ class CarpoolController extends AbstractController
                 'ptSearch' => false, // No PT Results, this not a new search
                 'defaultRole'=>$this->defaultRole,
                 'fraudWarningDisplay' => $this->fraudWarningDisplay,
-                'originTitle' => "",
-                'destinationTitle' => ""
+                'originTitle' => $origin,
+                'destinationTitle' => $destination
             ]);
         }
         // for now if the claim fails we redirect to home !
