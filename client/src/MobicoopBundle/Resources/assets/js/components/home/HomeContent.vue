@@ -138,7 +138,6 @@
     <!-- cooperative -->
     <div
       :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:right;'"
-      class="mt-n8"
     >
       <v-row
         align="center"
