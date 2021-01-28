@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace DoctrineMigrations; // For dev
-// namespace App\Migrations; // For test/prod
+// namespace DoctrineMigrations; // For dev
+namespace App\Migrations; // For test/prod
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;

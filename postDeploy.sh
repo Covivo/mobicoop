@@ -63,6 +63,10 @@ then
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
+    # Migrations instance
+    cd /var/www/$VERSION/$INSTANCE/;
+    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
+
     # Crontab update
     #python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
@@ -124,6 +128,10 @@ else
 
     # Migrations
     cd /var/www/$INSTANCE/$VERSION/api;
+    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
+
+    # Migrations instance
+    cd /var/www/$INSTANCE/$VERSION/;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
