@@ -301,7 +301,6 @@ class CarpoolController extends AbstractController
                 'originTitle' => $origin,
                 'destinationTitle' => $destination,
                 'ageDisplay' => $this->ageDisplay
-
             ]);
         }
         // for now if the claim fails we redirect to home !
