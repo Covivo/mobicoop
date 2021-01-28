@@ -35,10 +35,10 @@
       >
         <!-- first col -->
         <v-col cols="3">
-          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.cooperative') }}
+          <v-card-text class="my-0 py-0 white--text font-weight-bold">
+            <span>{{ $t('category.cooperative') }}<span /></span>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('cooperative.talkAboutUs.link')"
               style="text-decoration:none;"
@@ -48,7 +48,7 @@
               {{ $t('cooperative.talkAboutUs.title') }}
             </a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-0 white--text">
             <a
               :href="$t('cooperative.joinUs.link')"
               style="text-decoration:none;"
@@ -59,10 +59,10 @@
             </a>
           </v-card-text>
 
-          <v-card-text class="my-0 pt-10 pb-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.services') }}
+          <v-card-text class="my-0 pt-10 pb-0 white--text font-weight-bold">
+            <span>{{ $t('category.services') }}</span>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('services.mobicoop.link')"
               style="text-decoration:none;"
@@ -72,7 +72,7 @@
               {{ $t('services.mobicoop.title') }}
             </a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('services.covievent.link')"
               style="text-decoration:none;"
@@ -87,24 +87,24 @@
 
         <!-- second col -->
         <v-col cols="3">
-          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.tools') }}
+          <v-card-text class="my-0 py-0 white--text font-weight-bold">
+            <span>{{ $t('category.tools') }}<span /></span>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.map.link')"
               style="text-decoration:none;"
               class="white--text"
             >{{ $t('tools.map.title') }}</a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.events.link')"
               style="text-decoration:none;"
               class="white--text"
             >{{ $t('tools.events.title') }}</a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.dataPolicy.link')"
               style="text-decoration:none;"
@@ -118,7 +118,7 @@
               class="white--text"
             >{{ $t('tools.faq.title') }}</a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('tools.cgu.link')"
               style="text-decoration:none;"
@@ -126,17 +126,17 @@
             >{{ $t('tools.cgu.title') }}</a>
           </v-card-text>
 
-          <v-card-text class="my-0 pt-3 pb-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.contacts') }}
+          <v-card-text class="my-0 pt-3 pb-0 white--text font-weight-bold">
+            <span>{{ $t('category.contacts') }}</span>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('contacts.hotline.link')"
               style="text-decoration:none;"
               class="white--text"
             >{{ $t('contacts.hotline.title') }}</a>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('contacts.presse.link')"
               style="text-decoration:none;"
@@ -148,10 +148,10 @@
 
         <!-- third col -->
         <v-col cols="3">
-          <v-card-text class="my-0 py-0 white--text text-h5 font-weight-bold">
-            {{ $t('category.need') }}
+          <v-card-text class="my-0 py-0 white--text font-weight-bold">
+            <span>{{ $t('category.need') }}<span /></span>
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-1">
             <a
               :href="$t('need.community.link')"
               style="text-decoration:none;"
@@ -164,17 +164,17 @@
           <v-card-text class="my-0 pt-10 pb-0 white--text subtitle font-weight-black">
             {{ $t('category.download') }}
           </v-card-text>
-          <v-card-text class="my-0 py-0 white--text text-h6">
+          <v-card-text class="my-0 py-0">
             <v-row>
               <a
                 :href="$t('urlIos')"
                 target="_blank"
               >
                 <v-img
-                  class="ml-2"
                   contain
                   :src="$t('urlIosLogo')"
                   max-width="200px"
+                  class="ml-2"
                 />
               </a>
               <a
@@ -185,6 +185,7 @@
                   contain
                   :src="$t('urlAndroidLogo')"
                   max-width="200px"
+                  class="ml-2"
                 />
               </a>
             </v-row>
@@ -248,13 +249,13 @@
         </v-col>
       </v-row>
       <v-row
-        class="my-4"
+        class="my-4 white--text"
         text-center
         justify="center"
         align="center"
       >
         <strong>Mobicoop</strong> <v-chip
-          class="ma-2"
+          class="ma-2 black--text"
         >
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
@@ -288,3 +289,14 @@ export default {
   }
 };
 </script>
+
+
+<style lang="scss" scoped>
+  span{
+    font-size: 1.3rem;
+  }
+  a{
+    font-size: 1.1rem;
+  }
+</style>
+

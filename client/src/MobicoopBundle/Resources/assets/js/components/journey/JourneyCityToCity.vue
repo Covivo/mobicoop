@@ -4,25 +4,29 @@
       <v-row>
         <v-col
           cols="12"
-          class="primary--text text-left display-1 font-weight-black"
+          class="white--text text-left ml-md-14"
         >
-          {{ $t('title.part1') }} <br> {{ $t('title.part2') }}
+          <h2 class="font-weight-bold">
+            {{ $t('title.part1') }} <br> {{ $t('title.part2') }}<h2 />
+          </h2>
         </v-col>
       </v-row>
       <v-row>
         <v-col
           cols="12"
-          class="text-left"
+          class="text-left white--text ml-md-14"
         >
           &gt;
           <a
             :href="$t('links.byCity.uri')"
             :title="$t('links.byCity.title')"
+            class="white--text"
           >{{ $t('links.byCity.title') }}</a><br>
           &gt;
           <a
             :href="$t('links.popular.uri')"
             :title="$t('links.popular.title')"
+            class="white--text"
           >{{ $t('links.popular.title') }}</a>
         </v-col>
       </v-row>
@@ -56,7 +60,7 @@ export default {
   },
   data () {
     return {
-      popularJourneys:null
+      popularJourneys:"cc"
     }
   },
   mounted(){
@@ -79,6 +83,12 @@ export default {
 <style scoped lang="scss">
   a{
     text-decoration:none;
-    color: rgba(0, 0, 0, 0.87) !important;
+    color: white !important;
   }
+  h2{
+        font-size: 2rem;
+
+    line-height: 1.2;
+  }
+
 </style>

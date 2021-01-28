@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    pa-0
+  >
     <v-row
       align="center"
       class="mt-4"
@@ -56,14 +59,14 @@
             cols="4"
             class="text-left"
           >
-            <p class="primary--text display-1 font-weight-black">
+            <h2 class="primary--text font-weight-bold">
               {{ $t('events.title') }}
-            </p>
+            </h2>
             <v-btn
               rounded
               color="secondary"
               :href="this.$t('events.button1.route')"
-              class="white--text"
+              class="white--text mt-2"
             >
               {{ $t('events.button1.label') }}
             </v-btn>
@@ -80,7 +83,12 @@
               :src="imageLink + 'van_evenement.svg'"
             >
           </v-col>
-          <v-col cols="6">
+          <v-col
+            cols="6"
+            xl="8"
+            lg="6"
+            md="6"
+          >
             <MEvents />
           </v-col>
         </v-row>
@@ -90,12 +98,12 @@
       <v-col
         class="text-center mt-16"
       >
-        <p class="primary--text display-1 font-weight-black">
+        <h2 class="primary--text font-weight-bold">
           {{ $t('privateEvent.title') }}
-        </p>
-        <p class="primary--text headline font-italic mt-n4">
+        </H2>
+        <h3 class="primary--text font-italic">
           {{ $t('privateEvent.subtitle') }}
-        </p>
+        </h3>
         <p>
           {{ $t('privateEvent.text') }}
         </p>
@@ -120,39 +128,26 @@
     </v-row>
     <!-- end Event -->
 
-    <!-- cityToCity -->
+    <!-- journeyCityToCity -->
     <v-row
-      align="center"
+      class="secondary"
       justify="center"
+      align="center"
     >
       <v-col
         cols="12"
         xl="6"
-        lg="9"
+        lg="8"
         md="12"
-        class="px-14"
       >
         <JourneyCityToCity />
       </v-col>
     </v-row>
-    <!-- end cityToCity -->
-
-    <v-row>
-      <v-col>
-        <v-sheet
-          color="secondary"
-          flat
-          height="136"
-          width="2000"
-        />
-      </v-col>
-    </v-row>
-
-
+    <!-- end journeyCityToCity -->
+    
     <!-- cooperative -->
     <div
       :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:right;'"
-      class="mt-n8"
     >
       <v-row
         align="center"
@@ -182,9 +177,9 @@
           md="12"
           class="px-14"
         >
-          <p class="primary--text text-h4 font-weight-black mt-16">
-            Quoi de neuf chez Mobicoop ?
-          </p>
+          <h2 class="primary--text  font-weight-bold mt-16">
+            {{ $t('articles.title') }}
+          </h2>
 
           <m-rss-articles
             :articles="article"
@@ -245,4 +240,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  h2{
+    font-size: 2rem;
+    line-height: 1.2;
+  }
 </style>

@@ -705,7 +705,7 @@ class UserManager
             ];
 
             // We check if the user and it's carpooler are involved in a block
-            $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser()->getId() : $message->getRecipients()[0]->getUser()->getId());
+            $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser() : $message->getRecipients()[0]->getUser());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
             $currentMessage['blockerId'] = null;
             if (is_array($blocks) && count($blocks)>0) {
