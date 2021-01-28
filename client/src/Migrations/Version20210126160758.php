@@ -1,14 +1,13 @@
 <?php declare(strict_types=1);
 
 namespace DoctrineMigrations; // For dev
-
 // namespace App\Migrations; // For test/prod
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Ticket #22547
+ * Ticket #25319
  */
 final class Version20210126160758 extends AbstractMigration
 {
