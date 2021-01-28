@@ -1,14 +1,19 @@
 <template>
-  <v-row>
-    <v-col
-      v-for="item in eventscoming"
-      :key="item.index"
+  <v-container>
+    <v-row
+      dense
     >
-      <MEventsListItem
-        :item="item"
-      />
-    </v-col>
-  </v-row>
+      <v-col
+        v-for="item in eventscoming"
+        :key="item.index"
+        cols="12"
+      >
+        <MEventsListItem
+          :item="item"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 
