@@ -67,6 +67,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "path"="/pages/{id}",
  *              "security"="is_granted('article_read',object)"
  *          },
+ *          "getArticle"={
+ *              "method"="GET",
+ *              "path"="/articles/{id}",
+ *              "security"="is_granted('article_read',object)"
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/pages/{id}",

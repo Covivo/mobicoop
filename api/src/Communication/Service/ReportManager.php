@@ -27,6 +27,8 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Email;
 use App\Communication\Ressource\ContactType;
 use App\Communication\Ressource\Report;
+use App\Event\Service\EventManager;
+use App\User\Service\UserManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -39,6 +41,8 @@ class ReportManager
     
     private $emailManager;
     private $contactManager;
+    private $userManager;
+    private $eventManager;
     private $templating;
     private $supportEmailAddress;
     private $emailTemplatePath;
@@ -50,6 +54,8 @@ class ReportManager
         TranslatorInterface $translator,
         EmailManager $emailManager,
         ContactManager $contactManager,
+        UserManager $userManager,
+        EventManager $eventManager,
         Environment $templating,
         string $emailTemplatePath,
         string $emailTitleTemplatePath
@@ -57,6 +63,8 @@ class ReportManager
         $this->translator = $translator;
         $this->emailManager = $emailManager;
         $this->contactManager = $contactManager;
+        $this->userManager = $userManager;
+        $this->eventManager = $eventManager;
         $this->templating = $templating;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
@@ -73,10 +81,10 @@ class ReportManager
      */
     public function createReport(Report $report): Report
     {
-        if (!is_null($report->getUser())) {
+        if (!is_null($report->getUserId())) {
             $this->reportUser($report);
         }
-        if (!is_null($report->getEvent())) {
+        if (!is_null($report->getEventId())) {
             $this->reportEvent($report);
         }
         
@@ -91,7 +99,12 @@ class ReportManager
      */
     private function reportUser(Report $report): Report
     {
-        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $report->getUser()];
+        $user = $this->userManager->getUser($report->getUserId());
+        if (is_null($user)) {
+            throw new \LogicException("User unknown");
+        }
+
+        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $user];
 
         $this->sendEmailReport("reportUser", "reportUser", [], $bodyContext);
 
@@ -106,7 +119,12 @@ class ReportManager
      */
     private function reportEvent(Report $report): Report
     {
-        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'eventName' => $report->getEvent()->getName()];
+        $event = $this->eventManager->getEvent($report->getEventId());
+        if (is_null($event)) {
+            throw new \LogicException("Event unknown");
+        }
+
+        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'eventName' => $event->getName()];
 
         $this->sendEmailReport("reportEvent", "reportEvent", [], $bodyContext);
 
