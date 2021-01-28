@@ -64,7 +64,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Migrations instance
-    cd /var/www/$VERSION/$INSTANCE/;
+    cd /var/www/$VERSION/$INSTANCE/client;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
@@ -131,7 +131,7 @@ else
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Migrations instance
-    cd /var/www/$INSTANCE/$VERSION/;
+    cd /var/www/$INSTANCE/$VERSION/client;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
