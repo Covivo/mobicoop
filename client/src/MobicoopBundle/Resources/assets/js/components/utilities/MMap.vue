@@ -12,47 +12,53 @@
           :url="url"
           :attribution="attributionWithLinks"
         />
-        <l-marker
-          v-for="(point, index) in points"
-          :key="index"
-          :lat-lng="point.latLng"
-          :draggable="markersDraggable"
-          @update:latLng="updateLatLng"
-          @click="clickOnPoint(point.address)"
+        <v-marker-cluster
+          :options="clusterOptions"
+          @clusterclick="clickClusters"
+          @ready="readyClusters"
         >
-          <l-icon
-            v-if="point.icon.url!==undefined"
-            :icon-size="point.icon.size"
-            :icon-anchor="point.icon.anchor"
-            :icon-url="point.icon.url"
-          />
-          <l-tooltip
-            v-if="point.title!==''"
+          <l-marker
+            v-for="(point, index) in points"
+            :key="index"
+            :lat-lng="point.latLng"
+            :draggable="markersDraggable"
+            @update:latLng="updateLatLng"
+            @click="clickOnPoint(point.address)"
           >
-            <p
-              class="font-weight-bold"
-              v-html="point.title"
+            <l-icon
+              v-if="point.icon.url!==undefined"
+              :icon-size="point.icon.size"
+              :icon-anchor="point.icon.anchor"
+              :icon-url="point.icon.url"
             />
-            <p
-              v-if="point.popup"
-              id="description-tooltip"
-              v-html="point.popup.description"
-            />
-          </l-tooltip>
-
-          <l-popup v-if="point.popup">
-            <h3 v-html="point.popup.title" />
-            <img
-              v-if="point.popup.images && point.popup.images[0]"
-              :src="point.popup.images[0]['versions']['square_100']"
-              alt="avatar"
+            <l-tooltip
+              v-if="point.title!==''"
             >
-            <p v-html="point.popup.description" />
-            <p v-if="point.popup.date_begin && point.popup.date_end">
-              {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
-            </p>
-          </l-popup>
-        </l-marker>
+              <p
+                class="font-weight-bold"
+                v-html="point.title"
+              />
+              <p
+                v-if="point.popup"
+                id="description-tooltip"
+                v-html="point.popup.description"
+              />
+            </l-tooltip>
+
+            <l-popup v-if="point.popup">
+              <h3 v-html="point.popup.title" />
+              <img
+                v-if="point.popup.images && point.popup.images[0]"
+                :src="point.popup.images[0]['versions']['square_100']"
+                alt="avatar"
+              >
+              <p v-html="point.popup.description" />
+              <p v-if="point.popup.date_begin && point.popup.date_end">
+                {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
+              </p>
+            </l-popup>
+          </l-marker>
+        </v-marker-cluster>
         <v-dialog
           v-model="dialog"
           max-width="400"
@@ -104,6 +110,7 @@
 
 <script>
 import L from "leaflet";
+import VMarkerCluster from 'vue2-leaflet-markercluster'
 import {messages_en, messages_fr} from "@translations/components/utilities/MMap/";
 
 export default {
@@ -112,6 +119,9 @@ export default {
       'en': messages_en,
       'fr': messages_fr
     }
+  },
+  components: {
+    VMarkerCluster
   },
   props: {
     provider: {
@@ -167,7 +177,8 @@ export default {
       attribution:this.attributionCopyright,
       markers:this.points,
       dialog: false,
-      address: null
+      address: null,
+      clusterOptions: {}
     };
   },
   computed: {
@@ -225,7 +236,9 @@ export default {
         this.dialog= false;
 
       }
-    }
+    },
+    clickClusters: (e) => console.log("clusterclick", e),
+    readyClusters: (e) => console.log('ready', e)
   }
 };
 </script>
