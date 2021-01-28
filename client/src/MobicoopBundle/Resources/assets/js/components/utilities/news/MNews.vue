@@ -13,9 +13,9 @@
         <h2 class="primary--text font-italic">
           {{ $t('news.title') }}
         </h2>
-        <p class="primary--text display-1 font-weight-black">
+        <h2 class="primary--text font-weight-bold">
           {{ $t('news.subtitle') }}
-        </p>
+        </h2>
         <p>
           {{ $t('news.text') }}
         </p>
@@ -71,4 +71,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  h2{
+        font-size: 2rem;
+
+    line-height: 1.2;
+  }
 </style>

@@ -50,7 +50,11 @@ class CarpoolProof
 
     const TYPE_LOW = "A";
     const TYPE_MID = "B";
-    const TYPE_HIGH = "C";
+    
+    // as long as identity control is not implemented
+    //const TYPE_HIGH = "C";
+    const TYPE_HIGH = "B";
+
     const TYPE_UNDETERMINED_CLASSIC = "CX";
     const TYPE_UNDETERMINED_DYNAMIC = "DX";
 

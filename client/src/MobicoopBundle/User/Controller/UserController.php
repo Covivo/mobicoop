@@ -1311,9 +1311,6 @@ class UserController extends AbstractController
 
             $success = false;
 
-            // Get the User
-            $user = $this->userManager->getUser($id);
-
             // Post the Report
             if (
                 isset($data['email']) && isset($data['text']) &&
@@ -1322,7 +1319,7 @@ class UserController extends AbstractController
                 $dataProvider->setClass(Report::class);
 
                 $report = new Report();
-                $report->setUser($user);
+                $report->setUserId($id);
                 $report->setReporterEmail($data['email']);
                 $report->setText($data['text']);
 

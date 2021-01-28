@@ -52,16 +52,16 @@ class Report implements ResourceInterface
     private $text;
 
     /**
-     * @var User|null If the report is about a User
+     * @var int|null userId If the report is about a User
      * @Groups({"post"})
      */
-    private $user;
+    private $userId;
 
     /**
-     * @var Event|null If the report is about an Event
+     * @var int|null eventId If the report is about an Event
      * @Groups({"post"})
      */
-    private $event;
+    private $eventId;
 
     public function getId(): ?int
     {
@@ -75,26 +75,26 @@ class Report implements ResourceInterface
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUserId(): ?int
     {
-        return $this->user;
+        return $this->userId;
     }
 
-    public function setUser(User $user): self
+    public function setUserId(int $userId): self
     {
-        $this->user = $user;
+        $this->userId = $userId;
         
         return $this;
     }
 
-    public function getEvent(): ?Event
+    public function getEventId(): ?int
     {
-        return $this->event;
+        return $this->eventId;
     }
 
-    public function setEvent(Event $event): self
+    public function setEventId(int $eventId): self
     {
-        $this->event = $event;
+        $this->eventId = $eventId;
         
         return $this;
     }
