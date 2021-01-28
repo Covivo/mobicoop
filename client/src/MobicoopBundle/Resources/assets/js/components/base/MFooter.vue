@@ -42,7 +42,8 @@
             <a
               :href="$t('cooperative.talkAboutUs.link')"
               style="text-decoration:none;"
-              class=" white--text"
+              class="white--text"
+              target="_blank"
             >              
               {{ $t('cooperative.talkAboutUs.title') }}
             </a>
@@ -52,6 +53,7 @@
               :href="$t('cooperative.joinUs.link')"
               style="text-decoration:none;"
               class="white--text"
+              target="_blank"
             >
               {{ $t('cooperative.joinUs.title') }}
             </a>
@@ -65,6 +67,7 @@
               :href="$t('services.mobicoop.link')"
               style="text-decoration:none;"
               class="white--text"
+              target="_blank"
             >
               {{ $t('services.mobicoop.title') }}
             </a>
@@ -102,6 +105,13 @@
             >{{ $t('tools.events.title') }}</a>
           </v-card-text>
           <v-card-text class="my-0 py-1">
+            <a
+              :href="$t('tools.dataPolicy.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('tools.dataPolicy.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-0 white--text text-h6">
             <a
               :href="$t('tools.faq.link')"
               style="text-decoration:none;"

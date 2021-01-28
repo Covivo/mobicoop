@@ -8,7 +8,7 @@
         },
         "button2": {
             "label": "Contribuez au projet",
-            "route": "#"
+            "route": "/devenir-partenaire"
         }
     }
 }
