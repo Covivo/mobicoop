@@ -497,8 +497,8 @@ class ProposalRepository
                         list($where, $minTime, $maxTime) = $this->buildRegularAndWhere(
                             $proposalFromDate,
                             $offset,
-                            $proposal->getCriteria()->isDriver(),
-                            $proposal->getCriteria()->isPassenger(),
+                            $proposal->getCriteria()->isDriver() === true ? true : false,
+                            $proposal->getCriteria()->isPassenger() === true ? true : false,
                             $driversOnly,
                             $proposal->getCriteria()->getFromTime() && $proposal->getUseTime()
                         );
