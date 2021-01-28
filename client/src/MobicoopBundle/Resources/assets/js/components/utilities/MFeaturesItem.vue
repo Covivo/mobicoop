@@ -5,13 +5,15 @@
     <v-card
       elevation="2"
       class="mx-auto my-3 text-left"
-      min-height="270px"
+      min-height="350px"
     >
       <v-card-title class="primary--text font-weight-bold">
         {{ title }}
       </v-card-title>
 
-      <v-card-text>{{ text }}</v-card-text>
+      <v-card-text class="black--text">
+        {{ text }}
+      </v-card-text>
     </v-card>
   </v-col>
 </template>

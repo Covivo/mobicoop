@@ -16,7 +16,7 @@
     "cooperative":{
         "talkAboutUs": {
             "title":"Qui sommes-nous ?",
-            "link":"/about-us"
+            "link":"https://pro.mobicoop.fr/cooperative/"
         },
         "joinUs":{
             "title":"Devenir sociétaire",
@@ -49,6 +49,10 @@
         "cgu":{
             "title":"CGU",
             "link":"/cgu"
+        },
+        "dataPolicy":{
+            "title":"Protection des données",
+            "link":"/protection-donnees"
         }
     },
     "contacts":{
