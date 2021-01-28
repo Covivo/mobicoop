@@ -14,8 +14,6 @@
         />
         <v-marker-cluster
           :options="clusterOptions"
-          @clusterclick="clickClusters"
-          @ready="readyClusters"
         >
           <l-marker
             v-for="(point, index) in points"
@@ -236,9 +234,7 @@ export default {
         this.dialog= false;
 
       }
-    },
-    clickClusters: (e) => console.log("clusterclick", e),
-    readyClusters: (e) => console.log('ready', e)
+    }
   }
 };
 </script>
