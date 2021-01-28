@@ -82,7 +82,6 @@ class CarpoolController extends AbstractController
         int $ptResults,
         bool $fraudWarningDisplay,
         bool $ageDisplay
-
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
