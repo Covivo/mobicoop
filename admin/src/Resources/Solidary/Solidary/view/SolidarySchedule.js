@@ -25,6 +25,20 @@ const SolidarySchedule = ({
   sunCheck,
   marginDuration,
 }) => {
+  const formatOutwardDatetime = (date) => {
+    return marginDuration > 0 ? utcDateFormat(date, "dd'/'MM'/'yyyy") : '';
+  };
+
+  const getMarginDate = () => {
+    const hour = formatHour(outwardDatetime);
+    if (marginDuration > 0) {
+      if (hour === '10h30') return `${formatOutwardDatetime(outwardDatetime)} 8h-13h`;
+      if (hour === '14h30') return `${formatOutwardDatetime(outwardDatetime)} 13h-18h`;
+      if (hour === '18h30') return `${formatOutwardDatetime(outwardDatetime)} 18h-21h`;
+    }
+    return `${formatDateTime(outwardDatetime)}`;
+  };
+
   if (frequency === 2) {
     // Regular
     return (
@@ -84,7 +98,7 @@ const SolidarySchedule = ({
           ? `entre le ${formatDateTime(outwardDatetime)} et le ${formatDate(
               outwardDeadlineDatetime
             )}`
-          : formatDateTime(outwardDatetime)}
+          : getMarginDate(outwardDatetime)}
       </Grid>
       {returnDatetime && (
         <>
@@ -100,7 +114,7 @@ const SolidarySchedule = ({
           </Grid>
         </>
       )}
-      {marginDuration && (
+      {/* marginDuration && (
         <>
           <Grid item xs={4}>
             Marge :
@@ -109,7 +123,7 @@ const SolidarySchedule = ({
             {Math.round(marginDuration / 3600)} heures
           </Grid>
         </>
-      )}
+      ) */}
     </Grid>
   );
 };
