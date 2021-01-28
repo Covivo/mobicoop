@@ -1,0 +1,32 @@
+email : user email
+search : 0 if ad, 1 if search
+oneway : 0 if round trip, 1 if one way trip
+frequency : 1 if punctual, 2 if regular
+role : 1 if driver, 2 if passenger, 3 if both
+origin : address string
+destination : address string
+outwardDate : outward date for punctual trip, start date for regular trip (+ or - followed by a duration, as a php DateInterval format)
+outwardTime : outward time dor punctual trip, empty for regular trip (HH:MM or empty)
+returnDate/limitDate : return date for punctual trip, limit date for regular trip (+ or - followed by a duration, as a php DateInterval format; or empty)
+returnTime : return time for punctual trip, empty for regular trip (HH:MM or empty)
+mon : 1 if monday carpooled, 0 if not
+monOutwardTime : monday outward time (HH:MM or empty)
+monReturnTime : monday return time (HH:MM or empty)
+tue : 1 if tuesday carpooled, 0 if not
+tueOutwardTime : tuesday outward time (HH:MM or empty)
+tueReturnTime : tuesday return time (HH:MM or empty)
+wed : 1 if wednesday carpooled, 0 if not
+wedOutwardTime : wednesday outward time (HH:MM or empty)
+wedReturnTime : wednesday return time (HH:MM or empty)
+thu : 1 if thursday carpooled, 0 if not
+thuOutwardTime : thursday outward time (HH:MM or empty)
+thuReturnTime : thursday return time (HH:MM or empty)
+fri : 1 if friday carpooled, 0 if not
+friOutwardTime : friday outward time (HH:MM or empty)
+friReturnTime : friday return time (HH:MM or empty)
+sat : 1 if saturday carpooled, 0 if not
+satOutwardTime : saturday outward time (HH:MM or empty)
+satReturnTime : saturday return time (HH:MM or empty)
+sun : 1 if sunday carpooled, 0 if not
+sunOutwardTime : sunday outward time (HH:MM or empty)
+sunReturnTime : sunday return time (HH:MM or empty)

@@ -57,7 +57,14 @@
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
-                  {{ $t("headersCategories.titleCarpool") }}
+                  <v-badge
+                    :value="(unreadMessages.currentUnreadCarpoolMessages>0) ? true : false"
+                    :content="unreadMessages.currentUnreadCarpoolMessages"
+                    color="secondary"
+                    inline
+                  >
+                    {{ $t("headersCategories.titleCarpool") }}
+                  </v-badge>
                 </div>
               </div>
             </v-tab>
@@ -78,7 +85,14 @@
                     </v-icon>
                     <br>
                     <div class="mb-2">
-                      {{ $t("headersCategories.titleLive") }}
+                      <v-badge
+                        :value="(unreadMessages.currentUnreadDirectMessages>0) ? trcurrentUe : false"
+                        :content="unreadMessages.currentUnreadDirectMessages"
+                        color="secondary"
+                        inline
+                      >
+                        {{ $t("headersCategories.titleLive") }}
+                      </v-badge>
                     </div>
                   </div>
                 </v-tab>
@@ -101,7 +115,14 @@
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
-                  {{ $t("headersCategories.titleSolidary") }}
+                  <v-badge
+                    :value="(unreadMessages.currentUnreadSolidaryMessages>0) ? true : false"
+                    :content="unreadMessages.currentUSolidaryMessages"
+                    color="secondary"
+                    inline
+                  >
+                    {{ $t("headersCategories.titleSolidary") }}
+                  </v-badge>
                 </div>
               </div>
             </v-tab>            
@@ -257,6 +278,18 @@ export default {
     fraudWarningDisplay: {
       type: Boolean,
       default: false
+    },
+    unreadCarpoolMessages: {
+      type: Number,
+      default: null
+    },
+    unreadDirectMessages: {
+      type: Number,
+      default: null
+    },
+    unreadSolidaryMessages: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -278,7 +311,12 @@ export default {
       loadingDetails:false,
       loadingBtnAction:false,
       hideClickIcon : false,
-      blockerId: null
+      blockerId: null,
+      unreadMessages:{
+        currentUnreadCarpoolMessages: this.unreadCarpoolMessages,
+        currentUnreadDirectMessages: this.unreadDirectMessages,
+        currentUnreadSolidaryMessages: this.unreadSolidaryMessages
+      }
     };
   },
   mounted() {
@@ -303,7 +341,21 @@ export default {
     updateDetails(data){
       // console.error(data);
       this.hideClickIcon = false;
+      
+      // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
+
+      // Update the number of unread messages in the right tab
+      if(data.type=="Carpool"){
+        this.unreadMessages.currentUnreadCarpoolMessages -= data.formerUnreadMessages
+      }
+      else if(data.type=="Solidary"){
+        this.unreadMessages.currentUnreadSolidaryMessages -= data.formerUnreadMessages
+      }
+      else if(data.type=="Direct"){
+        this.unreadMessages.currentUnreadDirectMessages -= data.formerUnreadMessages
+      }
+
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
       this.recipientName = data.name;

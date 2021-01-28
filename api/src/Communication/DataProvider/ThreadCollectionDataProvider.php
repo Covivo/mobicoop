@@ -28,23 +28,25 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Communication\Entity\Message;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Communication\Service\InternalMessageManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection data provider for Matching simple search.
- * Only for punctual and one way trip.
+ * Complet message thread collection DataProvider
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
 final class ThreadCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
+    private $security;
     private $internalMessageManager;
     
-    public function __construct(RequestStack $requestStack, InternalMessageManager $internalMessageManager)
+    public function __construct(RequestStack $requestStack, Security $security, InternalMessageManager $internalMessageManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->internalMessageManager = $internalMessageManager;
+        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,6 +56,6 @@ final class ThreadCollectionDataProvider implements CollectionDataProviderInterf
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"));
+        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), true, $this->security->getUser()->getId());
     }
 }

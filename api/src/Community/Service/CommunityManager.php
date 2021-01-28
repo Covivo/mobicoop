@@ -188,7 +188,7 @@ class CommunityManager
      * Check if a community already exists with this name
      *
      * @param Community $community
-     * @return void
+     * @return Community|null
      */
     public function exists(?string $name)
     {

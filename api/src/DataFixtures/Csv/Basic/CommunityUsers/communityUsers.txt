@@ -1,0 +1,3 @@
+user email : the user email
+name : the community name
+status : 0 = pending, 1 = accepted as member, 2 = accepted as moderator, 3 = refused

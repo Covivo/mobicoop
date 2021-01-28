@@ -174,6 +174,7 @@
                 :user="user"
                 :loading-prop="loading"
                 :page="page"
+                :age-display="ageDisplay"
                 @carpool="carpool"
                 @loginOrRegister="loginOrRegister"
                 @paginate="paginate"
@@ -332,6 +333,10 @@ export default {
       default: false
     },
     fraudWarningDisplay: {
+      type: Boolean,
+      default: false
+    },
+    ageDisplay: {
       type: Boolean,
       default: false
     }

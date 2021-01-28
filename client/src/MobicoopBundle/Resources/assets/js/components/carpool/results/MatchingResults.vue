@@ -45,6 +45,7 @@
             :user="user"
             :distinguish-regular="distinguishRegular"
             :external-rdex-journeys="externalRdexJourneys"
+            :age-display="ageDisplay"
             @carpool="carpool(result)"
             @loginOrRegister="loginOrRegister(result)"
           />
@@ -114,6 +115,10 @@ export default {
     perPage: {
       type: Number,
       default:10
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data(){

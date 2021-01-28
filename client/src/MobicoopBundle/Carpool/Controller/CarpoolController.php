@@ -67,6 +67,7 @@ class CarpoolController extends AbstractController
     private $publicTransportManager;
     private $participationText;
     private $fraudWarningDisplay;
+    private $ageDisplay;
 
 
     public function __construct(
@@ -80,7 +81,8 @@ class CarpoolController extends AbstractController
         string $platformName,
         bool $carpoolRDEXJourneys,
         int $ptResults,
-        bool $fraudWarningDisplay
+        bool $fraudWarningDisplay,
+        bool $ageDisplay
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -93,6 +95,7 @@ class CarpoolController extends AbstractController
         $this->publicTransportManager = $publicTransportManager;
         $this->participationText = $participationText;
         $this->fraudWarningDisplay = $fraudWarningDisplay;
+        $this->ageDisplay = $ageDisplay;
     }
     
     /**
@@ -123,6 +126,7 @@ class CarpoolController extends AbstractController
                 "forbidden" => $this->forbiddenPrice
             ],
             "participationText"=>$this->participationText,
+            "ageDisplay"=>$this->ageDisplay
         ]);
     }
 
@@ -173,6 +177,7 @@ class CarpoolController extends AbstractController
             ],
             "regular" => $this->defaultRegular,
             "participationText"=>$this->participationText,
+            "ageDisplay"=>$this->ageDisplay
         ]);
     }
         
@@ -195,6 +200,7 @@ class CarpoolController extends AbstractController
                 ],
                 "regular" => $this->defaultRegular,
                 "participationText"=>$this->participationText,
+                "ageDisplay"=>$this->ageDisplay
             ]
         );
     }
@@ -223,6 +229,7 @@ class CarpoolController extends AbstractController
                     "forbidden" => $this->forbiddenPrice,
                 ],
                 "participationText"=>$this->participationText,
+                "ageDisplay"=>$this->ageDisplay
             ]
         );
     }
@@ -268,7 +275,8 @@ class CarpoolController extends AbstractController
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => $origin,
-            'destinationTitle' => $destination
+            'destinationTitle' => $destination,
+            'ageDisplay' => $this->ageDisplay
         ]);
     }
 
@@ -291,7 +299,8 @@ class CarpoolController extends AbstractController
                 'defaultRole'=>$this->defaultRole,
                 'fraudWarningDisplay' => $this->fraudWarningDisplay,
                 'originTitle' => $origin,
-                'destinationTitle' => $destination
+                'destinationTitle' => $destination,
+                'ageDisplay' => $this->ageDisplay
             ]);
         }
         // for now if the claim fails we redirect to home !
@@ -375,7 +384,8 @@ class CarpoolController extends AbstractController
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => $originTitle,
-            'destinationTitle' => $destinationTitle
+            'destinationTitle' => $destinationTitle,
+            'ageDisplay' => $this->ageDisplay
         ]);
     }
 
@@ -412,7 +422,8 @@ class CarpoolController extends AbstractController
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => $originTitle,
-            'destinationTitle' => $destinationTitle
+            'destinationTitle' => $destinationTitle,
+            'ageDisplay' => $this->ageDisplay
         ]);
     }
 
@@ -477,11 +488,13 @@ class CarpoolController extends AbstractController
     public function carpoolSearchMatching(Request $request, AdManager $adManager)
     {
         $params = json_decode($request->getContent(), true);
+        $date = null;
         if (isset($params['date']) && $params['date'] != '') {
             $date = \Datetime::createFromFormat("Y-m-d", $params['date']);
-        } else {
-            $date = new \DateTime();
         }
+        //  else {
+        //     $date = new \DateTime();
+        // }
         $time = null;
         if (isset($params['time']) && $params['time'] != '') {
             $time = \Datetime::createFromFormat("H:i", $params['time']);

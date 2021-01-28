@@ -403,6 +403,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $experienced;
 
+    /**
+     * @var int|null Number of unread messages
+     */
+    private $unreadMessageNumber;
+    
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -421,6 +426,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
+        $this->unreadMessageNumber = 0;
     }
 
     public function getId(): ?int
@@ -1196,6 +1202,44 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getUnreadCarpoolMessageNumber(): ?int
+    {
+        return $this->unreadCarpoolMessageNumber;
+    }
+
+    public function setUnreadCarpoolMessageNumber(?int $unreadCarpoolMessageNumber): self
+    {
+        $this->unreadCarpoolMessageNumber = $unreadCarpoolMessageNumber;
+
+        return $this;
+    }
+
+
+    public function getUnreadDirectMessageNumber(): ?int
+    {
+        return $this->unreadDirectMessageNumber;
+    }
+
+    public function setUnreadDirectMessageNumber(?int $unreadDirectMessageNumber): self
+    {
+        $this->unreadDirectMessageNumber = $unreadDirectMessageNumber;
+
+        return $this;
+    }
+
+
+    public function getUnreadSolidaryMessageNumber(): ?int
+    {
+        return $this->unreadSolidaryMessageNumber;
+    }
+
+    public function setUnreadSolidaryMessageNumber(?int $unreadSolidaryMessageNumber): self
+    {
+        $this->unreadSolidaryMessageNumber = $unreadSolidaryMessageNumber;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1230,7 +1274,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'canReceiveReview'      => $this->getCanReceiveReview(),
             'userReviewsActive'     => $this->isUserReviewsActive(),
             'experienced'           => $this->isExperienced(),
-            'validatedDate'         => $this->getValidatedDate()
+            'validatedDate'         => $this->getValidatedDate(),
+            'unreadCarpoolMessageNumber'    => $this->getUnreadCarpoolMessageNumber(),
+            'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
+            'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

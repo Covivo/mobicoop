@@ -556,7 +556,7 @@
                       class="text-h6"
                     >
                       {{ user.givenName }} {{ user.shortFamilyName }}
-                      <v-card-text>
+                      <v-card-text v-if="ageDisplay">
                         {{ birthDate }} ans
                       </v-card-text>
                     </v-card-text>
@@ -675,6 +675,10 @@ export default {
       type: Boolean,
       default: false
     },
+    ageDisplay: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
