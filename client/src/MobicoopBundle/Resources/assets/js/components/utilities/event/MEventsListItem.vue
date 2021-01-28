@@ -25,25 +25,25 @@
         />
       </v-avatar>
     
-      <div>
+      <div style="min-width:250px;">
         <v-card-title
-          class="text-left headline"
+          class="text-left"
         >
-          <h4 class="text-uppercase"> 
+          <h3 class="text-uppercase"> 
             {{ item.name }}
-          </h4>
+          </h3>
         </v-card-title>
         <v-card-subtitle class="text-left">
-          <span class="text-subtitle-1 black--text font-italic">
+          <span class="black--text font-italic">
             {{ item.address.addressLocality }}
           </span>
           <p
             v-if="dateLine1"
           >
-            <span class="text-left text-subtitle-1 black--text font-weight-bold">{{ dateLine1 }}</span>
+            <span class="text-left black--text font-weight-bold">{{ dateLine1 }}</span>
             <span
               v-if="dateLine2"
-              class="text-subtitle-1 black--text font-weight-bold"
+              class="black--text font-weight-bold"
             >{{ dateLine2 }}</span>
           </p>
         </v-card-subtitle>

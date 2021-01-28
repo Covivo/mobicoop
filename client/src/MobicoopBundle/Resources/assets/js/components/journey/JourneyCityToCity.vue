@@ -4,7 +4,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="white--text text-left"
+          class="white--text text-left ml-md-14"
         >
           <h2 class="font-weight-bold">
             {{ $t('title.part1') }} <br> {{ $t('title.part2') }}<h2 />
@@ -14,7 +14,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="text-left white--text"
+          class="text-left white--text ml-md-14"
         >
           &gt;
           <a
