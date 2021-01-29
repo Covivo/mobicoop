@@ -522,7 +522,7 @@ export default {
             }
           })
           .then((response) => {
-            this.results = response.data.results;
+            this.results = response.data;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
