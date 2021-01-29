@@ -446,8 +446,8 @@ class CarpoolController extends AbstractController
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
             'originTitle' => "",
-            'destinationTitle' => ""
-
+            'destinationTitle' => "",
+            'ageDisplay' => $this->ageDisplay
         ]);
     }
 
