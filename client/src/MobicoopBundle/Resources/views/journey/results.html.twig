@@ -1,0 +1,26 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}
+  {% if type == "origin" %}
+    {% trans with {'CityA': origin} from 'meta' %}meta.journeyResultsFrom.title{% endtrans %} | {{ app_name }}
+  {% else %}
+    {% trans with {'CityB': destination} from 'meta' %}meta.journeyResultsTo.title{% endtrans %} | {{ app_name }}
+  {% endif %}
+{% endblock %}
+{% block desc %}
+  {% if type == "origin" %}
+    {% trans with {'CityA': origin} from 'meta' %}meta.journeyResultsFrom.description{% endtrans %}
+  {% else %}
+    {% trans with {'CityB': destination} from 'meta' %}meta.journeyResultsTo.description{% endtrans %}
+  {% endif %}
+{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+{% block main %}
+  <journey-results 
+    :journeys="{{ journeys|json_encode}}"
+    origin="{{ origin is defined ? origin : '' }}"
+    origin-sanitize="{{ originSanitize is defined ? originSanitize : '' }}"
+    destination="{{ destination is defined ? destination : '' }}"
+    destination-sanitize="{{ destinationSanitize is defined ? destinationSanitize : '' }}"
+  />
+{% endblock %}

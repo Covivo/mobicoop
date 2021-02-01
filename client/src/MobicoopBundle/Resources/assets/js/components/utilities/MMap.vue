@@ -120,7 +120,7 @@ export default {
     },
     urlTiles: {
       type: String,
-      default: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+      default: "https://{s}.tile.osm.org/{z}/{x}/{y}.png"
     },
     providerKey: {
       // unused for the moment
@@ -129,7 +129,7 @@ export default {
     },
     attributionCopyright: {
       type: String,
-      default: '{"OpenStreetMap":"http://osm.org/copyright"}'
+      default: '{"OpenStreetMap":"https://osm.org/copyright"}'
     },
     centerDefault: {
       type: Array,

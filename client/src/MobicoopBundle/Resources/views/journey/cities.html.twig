@@ -1,0 +1,10 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}{% trans from 'meta' %}meta.cityToCity.title{% endtrans %}{% endblock %}
+{% block desc %}{% trans from 'meta' %}meta.cityToCity.description{% endtrans %}{% endblock %}
+{% block stylesheets %}
+{% endblock %}
+{% block main %}
+  <journey-city 
+    :cities="{{ cities|json_encode}}"
+  />
+{% endblock %}

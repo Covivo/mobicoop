@@ -32,6 +32,7 @@ use App\Community\Entity\CommunityUser;
 class CommunityUserVoter extends Voter
 {
     const COMMUNITY_JOIN = 'community_join';
+    const COMMUNITY_MEMBERSHIP= 'community_membership';
 
     private $authManager;
 
@@ -45,6 +46,7 @@ class CommunityUserVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::COMMUNITY_JOIN,
+            self::COMMUNITY_MEMBERSHIP
             ])) {
             return false;
         }
@@ -52,7 +54,8 @@ class CommunityUserVoter extends Voter
         // only vote on CommunityUser objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::COMMUNITY_JOIN
+            self::COMMUNITY_JOIN,
+            self::COMMUNITY_MEMBERSHIP
             ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
@@ -65,6 +68,8 @@ class CommunityUserVoter extends Voter
         switch ($attribute) {
             case self::COMMUNITY_JOIN:
                 return $this->canJoin($subject);
+            case self::COMMUNITY_MEMBERSHIP:
+                return $this->canAddCommunityUser();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -73,5 +78,10 @@ class CommunityUserVoter extends Voter
     private function canJoin($subject)
     {
         return $this->authManager->isAuthorized(self::COMMUNITY_JOIN);
+    }
+
+    private function canAddCommunityUser()
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_MEMBERSHIP);
     }
 }

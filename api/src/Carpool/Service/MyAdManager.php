@@ -154,17 +154,19 @@ class MyAdManager
             /**
              * @var Waypoint $waypoint
              */
-            $waypoints[] = [
-                'position' => $waypoint->getPosition(),
-                'destination' => $waypoint->isDestination(),
-                'houseNumber' => $waypoint->getAddress()->getHouseNumber(),
-                'street' => $waypoint->getAddress()->getStreet(),
-                'streetAddress' => $waypoint->getAddress()->getStreetAddress(),
-                'postalCode' => $waypoint->getAddress()->getPostalCode(),
-                'addressLocality' => $waypoint->getAddress()->getAddressLocality(),
-                'region' => $waypoint->getAddress()->getRegion(),
-                'addressCountry' => $waypoint->getAddress()->getAddressCountry(),
-            ];
+            if (!$waypoint->isFloating()) {
+                $waypoints[] = [
+                    'position' => $waypoint->getPosition(),
+                    'destination' => $waypoint->isDestination(),
+                    'houseNumber' => $waypoint->getAddress()->getHouseNumber(),
+                    'street' => $waypoint->getAddress()->getStreet(),
+                    'streetAddress' => $waypoint->getAddress()->getStreetAddress(),
+                    'postalCode' => $waypoint->getAddress()->getPostalCode(),
+                    'addressLocality' => $waypoint->getAddress()->getAddressLocality(),
+                    'region' => $waypoint->getAddress()->getRegion(),
+                    'addressCountry' => $waypoint->getAddress()->getAddressCountry(),
+                ];
+            }
         }
         $myAd->setWaypoints($waypoints);
 
@@ -881,6 +883,7 @@ class MyAdManager
         }
 
         // payment
+        $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 // punctual trip, we search if there's a related carpoolItem
@@ -1399,6 +1402,7 @@ class MyAdManager
         }
 
         // payment
+        $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 // punctual trip, we search if there's a related carpoolItem

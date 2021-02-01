@@ -149,6 +149,13 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Import\Service\:
         resource: '@MobicoopBundle/Import/Service/*'
 
+    # Journey
+    Mobicoop\Bundle\MobicoopBundle\Journey\Controller\:
+        resource: '@MobicoopBundle/Journey/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Journey\Service\:
+        resource: '@MobicoopBundle/Journey/Service/*'
+
     # Mass
     Mobicoop\Bundle\MobicoopBundle\Match\Service\:
         resource: '@MobicoopBundle/Match/Service/*'

@@ -101,9 +101,10 @@ class CommunityManager
      * even if they represent other kind of information (id, date of birth...).
      *
      * @param CommunityUser $communityUser
+     * @param boolean $checkDomain say if we check the domain or not
      * @return bool
      */
-    public function canJoin(CommunityUser $communityUser)
+    public function canJoin(CommunityUser $communityUser, bool $checkDomain)
     {
         $authorized = true;
         // we check if the community is secured
@@ -123,13 +124,13 @@ class CommunityManager
         if (!$authorized) {
             return false;
         }
-        // check validation domain
-        if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
-        ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
-            $authorized = false;
+        if ($checkDomain) {
+            // check validation domain
+            if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
+            ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
+                $authorized = false;
+            }
         }
-
-         
         return $authorized;
     }
 

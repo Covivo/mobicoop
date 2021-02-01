@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Journey\Entity\Journey;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAd;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
@@ -132,6 +133,9 @@ class Deserializer
                 break;
             case Proposal::class:
                 return $this->deserializeProposal($data);
+                break;
+            case Journey::class:
+                return $this->deserializeJourney($data);
                 break;
             case PTJourney::class:
                 return $this->deserializePTJourney($data);
@@ -350,6 +354,13 @@ class Deserializer
             $proposal->setProposalLinked($this->deserializeProposal($data['proposalLinked']));
         }
         return $proposal;
+    }
+
+    private function deserializeJourney(array $data): ?Journey
+    {
+        $journey = new Journey();
+        $journey = $this->autoSet($journey, $data);
+        return $journey;
     }
 
     private function deserializeTravelMode(array $data): ?TravelMode

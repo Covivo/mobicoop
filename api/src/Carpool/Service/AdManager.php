@@ -48,6 +48,7 @@ use App\Rdex\Entity\RdexError;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
+use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\MatchingRepository;
@@ -580,6 +581,7 @@ class AdManager
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
+        // var_dump($schedules);die;
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
@@ -1856,7 +1858,7 @@ class AdManager
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
 
-        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), $this->params['proofType'], $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
         $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;

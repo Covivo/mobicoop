@@ -117,6 +117,8 @@ services:
     App\Article\Service\ArticleManager:
         arguments:
             $articleFeed: '%env(string:ARTICLE_FEED)%'
+            $articleFeedNumber: '%env(int:ARTICLE_FEED_NUMBER)%'
+
             
     # Auth
     App\Auth\Controller\:
@@ -149,7 +151,6 @@ services:
                 defaultSeatsDriver: '%env(int:CARPOOL_DEFAULT_SEATS_DRIVER)%'
                 defaultSeatsPassenger: '%env(int:CARPOOL_DEFAULT_SEATS_PASSENGER)%'
                 carpoolProofDistance: '%env(int:CARPOOL_PROOF_DISTANCE)%'
-                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
                 paymentActive: '%env(string:PAYMENT_ACTIVE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
@@ -164,7 +165,6 @@ services:
             $provider: '%env(string:CARPOOL_PROOF_PROVIDER)%'
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
-            $proofType: '%env(string:CARPOOL_PROOF_CLASSIC_TYPE)%'
             $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
@@ -179,7 +179,6 @@ services:
                 dynamicDestinationDistance: '%env(int:DYNAMIC_CARPOOL_DESTINATION_DISTANCE)%'
                 dynamicMaxSpeed: '%env(int:DYNAMIC_CARPOOL_MAX_SPEED)%'
                 dynamicEnableMaxSpeed: '%env(bool:DYNAMIC_CARPOOL_ENABLE_MAX_SPEED)%'
-                proofType: '%env(string:CARPOOL_PROOF_DYNAMIC_TYPE)%'
         tags:
             - { name: monolog.logger, channel: carpool_dynamic }
 
@@ -407,16 +406,6 @@ services:
         arguments:
             $types: '%images%'
             $dataUri: '%env(string:DATA_URI)%'
-
-    # RelayPoint
-    App\RelayPoint\EntityListener\RelayPointTypeListener:
-        arguments:
-            $dataUri: '%env(string:DATA_URI)%'
-        tags:
-            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
-    App\RelayPoint\Repository\RelayPointRepository:
-        arguments:
-            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
             
     # Import
     App\Import\Controller\:
@@ -433,7 +422,18 @@ services:
     App\Import\Service\FakeManager:
         tags:
             - { name: monolog.logger, channel: faker }
+
+    # Journey
+    App\Journey\Service\JourneyManager:
+        arguments:
+            $popularJourneyMaxNumber: '%env(int:POPULAR_JOURNEY_MAX_NUMBER)%'
+            $popularJourneyHomeMaxNumber: '%env(int:POPULAR_JOURNEY_HOME_MAX_NUMBER)%'
+            $popularJourneyMinOccurences: '%env(int:POPULAR_JOURNEY_MINIMAL_OCCURENCES)%'
     
+    App\Journey\Repository\JourneyRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # Mass Communication
     App\MassCommunication\Controller\:
         resource: '../src/MassCommunication/Controller'
@@ -540,7 +540,43 @@ services:
         arguments:
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
-    
+
+    # RelayPoint
+    App\RelayPoint\EntityListener\RelayPointTypeListener:
+        arguments:
+            $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+    App\RelayPoint\Repository\RelayPointRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Solidary\Service\SolidaryMatcher:
+        arguments:
+            $params:
+                solidaryMMinRangeTime: '%env(string:SOLIDARY_M_MIN_RANGE_TIME)%'
+                solidaryMMaxRangeTime: '%env(string:SOLIDARY_M_MAX_RANGE_TIME)%'
+                solidaryAMinRangeTime: '%env(string:SOLIDARY_A_MIN_RANGE_TIME)%'
+                solidaryAMaxRangeTime: '%env(string:SOLIDARY_A_MAX_RANGE_TIME)%'
+                solidaryEMinRangeTime: '%env(string:SOLIDARY_E_MIN_RANGE_TIME)%'
+                solidaryEMaxRangeTime: '%env(string:SOLIDARY_E_MAX_RANGE_TIME)%'
+
+    App\Solidary\Service\SolidaryContactManager:
+        arguments:
+            $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
+
+    App\Solidary\Service\SolidaryUserManager:
+        arguments:
+            $params:
+                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'  
+
     # User
     App\User\Controller\:
         resource: '../src/User/Controller'
@@ -584,33 +620,7 @@ services:
         arguments:
             $params:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
-                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'
-
-    # Solidary
-    App\Solidary\Controller\:
-        resource: '../src/Solidary/Controller'
-        tags: ['controller.service_arguments']
-
-    App\Solidary\Service\SolidaryMatcher:
-        arguments:
-            $params:
-                solidaryMMinRangeTime: '%env(string:SOLIDARY_M_MIN_RANGE_TIME)%'
-                solidaryMMaxRangeTime: '%env(string:SOLIDARY_M_MAX_RANGE_TIME)%'
-                solidaryAMinRangeTime: '%env(string:SOLIDARY_A_MIN_RANGE_TIME)%'
-                solidaryAMaxRangeTime: '%env(string:SOLIDARY_A_MAX_RANGE_TIME)%'
-                solidaryEMinRangeTime: '%env(string:SOLIDARY_E_MIN_RANGE_TIME)%'
-                solidaryEMaxRangeTime: '%env(string:SOLIDARY_E_MAX_RANGE_TIME)%'
-
-    App\Solidary\Service\SolidaryContactManager:
-        arguments:
-            $notificationsEnabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
-
-    App\Solidary\Service\SolidaryUserManager:
-        arguments:
-            $params:
-                chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
-                music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
-                smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'            
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
 
     # Utility
     App\Utility\Service\VersionManager:
