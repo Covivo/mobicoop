@@ -87,4 +87,27 @@ class CarpoolProofRepository
 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find proofs with given types and given period
+     *
+     * @param array $types          The possible types
+     * @param DateTime $startDate   The start date of the period
+     * @param DateTime $endDate     The end date of the period
+     * @return CarpoolProof[] The carpool proofs found
+     */
+    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate)
+    {
+        $startDate->setTime(0, 0);
+        $endDate->setTime(23, 59, 59, 999);
+
+        $query = $this->repository->createQueryBuilder('cp')
+        ->where('cp.type in (:types)')
+        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
+        ->setParameter('types', $types)
+        ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
+        ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
+
+        return $query->getQuery()->getResult();
+    }
 }

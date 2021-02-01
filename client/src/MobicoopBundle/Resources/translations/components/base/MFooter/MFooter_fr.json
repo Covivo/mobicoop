@@ -2,7 +2,85 @@
     "buttons": {
         "contact": {
             "route": "/contact",
-            "label": "Nous contacter"
+            "label": "Contact us"
         }
-    }
+    },
+    "category":{
+        "cooperative":"La coopérative",
+        "tools":"Les outils",
+        "services":"Les services mobicoop",
+        "contacts":"Contacts",
+        "need":"Besoin d’une solution de covoiturage pour votre structure ?",
+        "download":"TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+    },
+    "cooperative":{
+        "talkAboutUs": {
+            "title":"Qui sommes-nous ?",
+            "link":"https://pro.mobicoop.fr/cooperative/"
+        },
+        "joinUs":{
+            "title":"Devenir sociétaire",
+            "link":"https://lacampagne.mobicoop.fr/"
+        }
+    },
+    "services":{
+        "mobicoop":{
+            "title":"pro.mobicoop.fr",
+            "link":"https://pro.mobicoop.fr/"
+        },
+        "covievent" :{
+            "title":"www.covievent.org",
+            "link":"https://www.covievent.org/"
+        }
+    },
+    "tools":{
+        "map":{
+            "title":"La carte des aires de covoiturage",
+            "link":"/points-relais"
+        },
+        "events" :{
+            "title":"Les événements en covoiturage",
+            "link":"/covoiturages-evenements"
+        },
+        "faq":{
+            "title":"FAQ",
+            "link":"/FAQ"
+        },
+        "cgu":{
+            "title":"CGU",
+            "link":"/cgu"
+        },
+        "dataPolicy":{
+            "title":"Protection des données",
+            "link":"/protection-donnees"
+        }
+    },
+    "contacts":{
+        "hotline":{
+            "title":"Hotline",
+            "link":"/contact"
+        },
+        "presse" :{
+            "title":"Presse",
+            "link":"https://pro.mobicoop.fr/category/revue-de-presse/"
+        }
+    },
+    "need":{
+        "community":{
+            "title":"Créez une communauté sur mobicoop.fr !",
+            "link":"covoiturage-communaute"
+        }
+    },
+    "urlIosLogo": "/images/footer/IOS.svg",
+    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
+    "urlAndroidLogo": "/images/footer/android.svg",
+    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+    "urlFacebookLogo": "/images/footer/facebook.svg",
+    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+    "urlInstagramLogo": "/images/footer/instagram.svg",
+    "urlTwitter": "https://twitter.com/Mobicoop",
+    "urlTwitterLogo": "/images/footer/twitter.svg",
+    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+    "urlFramasphereLogo": "/images/footer/framasphere.svg"
 }

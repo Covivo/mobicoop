@@ -1,0 +1,10 @@
+{
+    "title": "Les covoiturages par commune",
+    "subtitle": "Accédez aux covoiturages de votre commune",
+    "fromCity": "De commune...",
+    "toCity": "... à commune",
+    "journeyFromCity": "Covoiturage de {city}",
+    "journeyToCity": "Covoiturage vers {city}",
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "routeToCity": "/communes/covoiturage-vers-{city}"
+}

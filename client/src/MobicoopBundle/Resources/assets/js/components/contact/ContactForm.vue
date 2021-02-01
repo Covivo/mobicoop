@@ -90,19 +90,6 @@
                     :hint="this.$t('message.hint')"
                   />
                 </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-checkbox
-                    v-model="form.consent"
-                    :rules="form.consentRules"
-                    :label="$t('consent.text') + ` *`"
-                    color="success"
-                    name="consent"
-                  />
-                </v-col>
-
                 <!-- Honey pot -->
                 <!-- use of HTML input to have access to required attribute -->
                 <!-- use of website name is arbitrary and can be changed -->
@@ -201,15 +188,10 @@ export default {
         givenNameRules: [
           v => !!v || this.$t("firstName.errors.required"),
         ],
-
         demand: null,
         message: null,
         messageRules: [
           v => !!v || this.$t("message.errors.required"),
-        ],
-        consent: false,
-        consentRules: [
-          v => !!v || this.$t("consent.errors.required"),
         ],
         website: "", // honey pot data
       },
@@ -243,7 +225,6 @@ export default {
           familyName: this.form.familyName,
           demand: this.form.demand,
           message: this.form.message,
-          consent: this.form.consent,
           website: this.form.website // honey pot data
         })
           .then(function (response) {

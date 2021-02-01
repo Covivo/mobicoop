@@ -195,6 +195,90 @@ class AskRepository
         return $query->getQuery()->getResult();
     }
 
+    /**
+     * Find pending asks between the given dates, for an optional given user
+     *
+     * @param DateTime $fromDate    The start date
+     * @param DateTime $toDate      The end date
+     * @param User|null $user       The user
+     * @return Ask[]|null           The asks if found
+     */
+    public function findPendingAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    {
+        // we will need the different week number days between fromDate and toDate
+        $days = [];
+        $curDate = clone $fromDate;
+        $continue = true;
+        while ($continue) {
+            if (!in_array($curDate->format('w'), $days)) {
+                $days[] = $curDate->format('w');
+            }
+            if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || count($days) == 7) {
+                $continue = false;
+            } else {
+                $curDate->modify('+1 day');
+            }
+        }
+        // we create the regular where clause
+        $regularWhereArray = [];
+        foreach ($days as $day) {
+            switch ($day) {
+                case 0:
+                    $regularWhereArray[$day] = "(c.sunCheck = 1)";
+                    break;
+                case 1:
+                    $regularWhereArray[$day] = "(c.monCheck = 1)";
+                    break;
+                case 2:
+                    $regularWhereArray[$day] = "(c.tueCheck = 1)";
+                    break;
+                case 3:
+                    $regularWhereArray[$day] = "(c.wedCheck = 1)";
+                    break;
+                case 4:
+                    $regularWhereArray[$day] = "(c.thuCheck = 1)";
+                    break;
+                case 5:
+                    $regularWhereArray[$day] = "(c.friCheck = 1)";
+                    break;
+                case 6:
+                    $regularWhereArray[$day] = "(c.satCheck = 1)";
+                    break;
+            }
+        }
+        $regularWhere = implode(' or ', $regularWhereArray);
+        // note : for regular proposals, we need to get the pending asks that can have days in the given range
+        // => pending asks that have their fromDate <= max date of the range and their toDate >= min date of the range (trust me, that's it :))
+        // we will eventually check later for each day in the range if it's really carpooled
+        $query = $this->repository->createQueryBuilder('a')
+        ->join('a.criteria', 'c')
+        ->where('(a.status = :pending_driver or a.status = :pending_passenger)')
+        ->andWhere('(
+            (
+                c.frequency = :punctual and c.fromDate between :fromDate and :toDate
+            ) 
+            or 
+            (
+                c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
+                (' . $regularWhere . ')
+            )
+        )')
+        ->setParameter('pending_driver', Ask::STATUS_PENDING_AS_DRIVER)
+        ->setParameter('pending_passenger', Ask::STATUS_PENDING_AS_PASSENGER)
+        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+        ->setParameter('fromDate', $fromDate->format('Y-m-d'))
+        ->setParameter('toDate', $toDate->format('Y-m-d'))
+        ;
+
+        if (!is_null($user)) {
+            $query->andWhere('(a.user = :user or a.userRelated = :user)')
+            ->setParameter('user', $user);
+        }
+                
+        return $query->getQuery()->getResult();
+    }
+
 
     /**
      * Find accepted asks for a given user (or between two specific users)

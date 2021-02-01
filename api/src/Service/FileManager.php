@@ -38,16 +38,17 @@ class FileManager
      * @param string $string
      * @param boolean $force_lowercase
      * @param boolean $anal
+     * @param string $replace The replacement char for forbidden chars
      * @return string
      */
-    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false)
+    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false, string $replace = "")
     {
         $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
             "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
             "â€”", "â€“", ",", "<", ".", ">", "/", "?");
-        $clean = trim(str_replace($strip, "", strip_tags($string)));
+        $clean = trim(str_replace($strip, $replace, strip_tags($string)));
         $clean = preg_replace('/\s+/', "-", $clean);
-        $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
+        $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", $replace, $clean) : $clean ;
         if ($force_lowercase) {
             if (function_exists('mb_strtolower')) {
                 $clean = mb_strtolower($clean, 'UTF-8');

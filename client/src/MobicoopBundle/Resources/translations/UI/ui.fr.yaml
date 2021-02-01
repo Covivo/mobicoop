@@ -23,6 +23,16 @@ carpool:
         title: 'Modifier votre annonce de covoiturage'
     results:
         title: 'Résultats de covoiturage'
+journey:
+    cities:
+        title: 'Covoiturages par ville'
+    from:
+        title: 'Covoiturages au départ de '
+    to:
+        title: "Covoiturage à l'arrivée de "
+    from_to:
+        title1: "Covoiturage sans commission de "
+        title2: " à "
 contact:
     title: "Nous contacter"
 solidary:

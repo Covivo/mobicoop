@@ -68,6 +68,7 @@ class ArticleController extends AbstractController
     const USEFUL_LINKS = 28;
     const MOBILE_APP = 29;
     const ACCESSIBILITY = 30;
+    const ABOUT_US = 31;
     const MOBILITY = 32;
 
 
@@ -296,6 +297,17 @@ class ArticleController extends AbstractController
     public function showTalkAboutUs(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::TALK_ABOUT_US));
+    }
+
+    
+
+    /**
+    * Display of the ABOUT_US page
+    *
+    */
+    public function showAboutUs(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::ABOUT_US));
     }
 
     /**

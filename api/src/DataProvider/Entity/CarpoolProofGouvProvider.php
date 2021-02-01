@@ -71,6 +71,11 @@ class CarpoolProofGouvProvider implements ProviderInterface
         ];
         
         // creation of the journey
+        $over18 = null;
+        if (!is_null($carpoolProof->getPassenger()->getBirthDate())) {
+            $over18 = $carpoolProof->getPassenger()->getBirthDate()->diff(new DateTime('now'))->y>=18;
+        }
+
         // note : the casts are mandatory as the register checks for types
         $journey = [
             "journey_id" => (string)((!is_null($this->prefix) ? $this->prefix : "") . (string)$carpoolProof->getId()),
@@ -78,17 +83,14 @@ class CarpoolProofGouvProvider implements ProviderInterface
             "passenger" => [
                 "identity" => [
                     "email" => $carpoolProof->getPassenger()->getEmail(),
-                    "phone" => $carpoolProof->getPassenger()->getTelephone()
+                    "phone" => $carpoolProof->getPassenger()->getTelephone(),
+                    "over_18" => $over18
                 ],
                 "start" => [
-                    "datetime" => $carpoolProof->getPickUpPassengerDate()->format(self::ISO6801),
-                    "lon" => (float)$carpoolProof->getPickUpPassengerAddress()->getLongitude(),
-                    "lat" => (float)$carpoolProof->getPickUpPassengerAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getPickUpPassengerDate()->format(self::ISO6801)
                 ],
                 "end" => [
-                    "datetime" => $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801),
-                    "lon" => (float)$carpoolProof->getDropOffPassengerAddress()->getLongitude(),
-                    "lat" => (float)$carpoolProof->getDropOffPassengerAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801)
                 ],
                 "seats" => $carpoolProof->getAsk()->getCriteria()->getSeatsPassenger(),
                 "contribution" => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice()*100,
@@ -100,20 +102,33 @@ class CarpoolProofGouvProvider implements ProviderInterface
                     "phone" => $carpoolProof->getDriver()->getTelephone()
                 ],
                 "start" => [
-                    "datetime" => $carpoolProof->getStartDriverDate()->format(self::ISO6801),
-                    "lon" => (float)$carpoolProof->getOriginDriverAddress()->getLongitude(),
-                    "lat" => (float)$carpoolProof->getOriginDriverAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getStartDriverDate()->format(self::ISO6801)
                 ],
                 "end" => [
-                    "datetime" => $carpoolProof->getEndDriverDate()->format(self::ISO6801),
-                    "lon" => (float)$carpoolProof->getDestinationDriverAddress()->getLongitude(),
-                    "lat" => (float)$carpoolProof->getDestinationDriverAddress()->getLatitude()
+                    "datetime" => $carpoolProof->getEndDriverDate()->format(self::ISO6801)
                 ],
                 "revenue" => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice()*100,
                 "incentives" => []
             ]
         ];
-
+        // additional properties
+        if (!is_null($carpoolProof->getPickUpPassengerAddress())) {
+            $journey["passenger"]["start"]["lon"] = (float)$carpoolProof->getPickUpPassengerAddress()->getLongitude();
+            $journey["passenger"]["start"]["lat"] = (float)$carpoolProof->getPickUpPassengerAddress()->getLatitude();
+        }
+        if (!is_null($carpoolProof->getDropOffPassengerAddress())) {
+            $journey["passenger"]["end"]["lon"] = (float)$carpoolProof->getDropOffPassengerAddress()->getLongitude();
+            $journey["passenger"]["end"]["lat"] = (float)$carpoolProof->getDropOffPassengerAddress()->getLatitude();
+        }
+        if (!is_null($carpoolProof->getOriginDriverAddress())) {
+            $journey["driver"]["start"]["lon"] = (float)$carpoolProof->getOriginDriverAddress()->getLongitude();
+            $journey["driver"]["start"]["lat"] = (float)$carpoolProof->getOriginDriverAddress()->getLatitude();
+        }
+        if (!is_null($carpoolProof->getDestinationDriverAddress())) {
+            $journey["driver"]["end"]["lon"] = (float)$carpoolProof->getDestinationDriverAddress()->getLongitude();
+            $journey["driver"]["end"]["lat"] = (float)$carpoolProof->getDestinationDriverAddress()->getLatitude();
+        }
+        
         return $dataProvider->postCollection($journey, $headers);
     }
 

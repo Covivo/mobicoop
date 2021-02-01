@@ -227,10 +227,6 @@ class EventController extends AbstractController
 
             $success = false;
 
-            // Get the Event
-            $event = $eventManager->getEvent($id);
-            $this->denyAccessUnlessGranted('report', $event);
-
             // Post the Report
             if (
                 isset($data['email']) && isset($data['text']) &&
@@ -239,7 +235,7 @@ class EventController extends AbstractController
                 $dataProvider->setClass(Report::class);
 
                 $report = new Report();
-                $report->setEvent($event);
+                $report->setEventId($id);
                 $report->setReporterEmail($data['email']);
                 $report->setText($data['text']);
 
