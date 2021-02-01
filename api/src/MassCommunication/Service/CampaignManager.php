@@ -28,9 +28,9 @@ use App\User\Entity\User;
 use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignNotFoundException;
-use App\MassCommunication\MassEmailProvider\MandrillProvider;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\Community\Repository\CommunityRepository;
+use App\MassCommunication\MassEmailProvider\SendinblueProvider;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
@@ -51,13 +51,26 @@ class CampaignManager
     private $campaignRepository;
     private $translator;
 
-    const MAIL_PROVIDER_MANDRILL = 'mandrill';
+    const MAIL_PROVIDER_SENDINBLUE = 'sendinblue';
 
     /**
      * Constructor.
      */
-    public function __construct(Environment $templating, EntityManagerInterface $entityManager, string $mailerProvider, string $mailerApiUrl, string $mailerApiKey, string $smsProvider, string $mailTemplate, CampaignRepository $campaignRepository, TranslatorInterface $translator, UserRepository $userRepository, CommunityRepository $communityRepository)
-    {
+    public function __construct(
+        Environment $templating,
+        EntityManagerInterface $entityManager,
+        string $mailerProvider,
+        string $mailerApiKey,
+        string $mailerClientName,
+        string $mailerIp,
+        string $mailerDomain,
+        string $smsProvider,
+        string $mailTemplate,
+        CampaignRepository $campaignRepository,
+        TranslatorInterface $translator,
+        UserRepository $userRepository,
+        CommunityRepository $communityRepository
+    ) {
         $this->entityManager = $entityManager;
         $this->communityRepository = $communityRepository;
         $this->userRepository = $userRepository;
@@ -66,8 +79,8 @@ class CampaignManager
         $this->campaignRepository = $campaignRepository;
         $this->translator = $translator;
         switch ($mailerProvider) {
-            case self::MAIL_PROVIDER_MANDRILL:
-                $this->massEmailProvider = new MandrillProvider($mailerApiKey);
+            case self::MAIL_PROVIDER_SENDINBLUE:
+                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientName, $mailerDomain, $mailerIp);
                 break;
         }
     }
