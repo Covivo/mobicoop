@@ -824,7 +824,7 @@ class PaymentManager
                     $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                     $carpoolItem->setItemDate($ask->getCriteria()->getFromDate());
                     // we check if the payment is active for the carpool date
-                    if ($carpoolItem->getItemDate()<$this->paymentActiveDate) {
+                    if ($carpoolItem->getItemDate()<$this->paymentActiveDate || !$this->paymentActiveDate) {
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                     }
@@ -892,7 +892,7 @@ class PaymentManager
                         $carpoolItem->setCreditorUser($ask->getMatching()->getProposalOffer()->getUser());
                         $carpoolItem->setItemDate(clone $curDate);
                         // we check if the payment is active for the carpool date
-                        if ($carpoolItem->getItemDate()<$this->paymentActiveDate) {
+                        if ($carpoolItem->getItemDate()<$this->paymentActiveDate || !$this->paymentActiveDate) {
                             $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                             $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                         }
