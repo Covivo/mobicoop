@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Security\AdVoter;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
@@ -435,8 +437,11 @@ class CarpoolController extends AbstractController
      * @param string $externalId        The external ID of the proposal that was generated for the external search
      * @return Response|null            The response
      */
-    public function carpoolSearchResultFromRdexLink(Request $request, UserManager $userManager, string $externalId)
+    public function carpoolSearchResultFromRdexLink(Request $request, UserManager $userManager, string $externalId, AdManager $adManager, Deserializer $deserializer)
     {
+        $ad = $adManager->getAdFromExternalId($externalId);
+        $origin = $ad->getResults()[0]['origin'];
+        $destination = $ad->getResults()[0]['destination'];
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'externalId' => $externalId,
             'user' => $userManager->getLoggedUser(),
@@ -445,9 +450,11 @@ class CarpoolController extends AbstractController
             'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
-            'originTitle' => "",
-            'destinationTitle' => ""
-
+            'originTitle' => $origin['addressLocality'],
+            'originLiteral' => $origin['addressLocality'],
+            'destinationTitle' => $destination['addressLocality'],
+            'destinationLiteral' => $destination['addressLocality'],
+            'ageDisplay' => $this->ageDisplay
         ]);
     }
 
