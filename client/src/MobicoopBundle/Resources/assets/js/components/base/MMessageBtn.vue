@@ -1,0 +1,34 @@
+<template>
+  <v-btn
+    text
+    rounded
+    class="white--text title text-none"
+    depressed
+    :href="$t('route')"
+  >
+    <v-badge
+      :value="unreadMessageNumber>0 ? true : false"
+      color="secondary"
+      :content="unreadMessageNumber"
+    >
+      {{ $t('label') }}
+    </v-badge>
+  </v-btn>
+</template>
+<script>
+import {messages_en, messages_fr} from "@translations/components/base/MMessageBtn/";
+export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
+  },
+  props:{
+    unreadMessageNumber:{
+      type: Number,
+      default: 0
+    }
+  }
+}
+</script>

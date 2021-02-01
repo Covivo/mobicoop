@@ -148,7 +148,7 @@ class AdManager
     public function getResultsForSearch(
         array $origin,
         array $destination,
-        \Datetime $date,
+        ?\Datetime $date,
         ?\Datetime $time,
         bool $regular,
         ?bool $strictDate = null,
@@ -354,7 +354,7 @@ class AdManager
             $data['userId'] = $poster->getId();
         }
         if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
-            $data['outwardDate'] = new \DateTime();
+            //$data['outwardDate'] = new \DateTime();
         } elseif (is_string($data['outwardDate'])) {
             $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
         }

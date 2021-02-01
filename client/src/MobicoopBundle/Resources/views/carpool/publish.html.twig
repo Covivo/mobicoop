@@ -25,6 +25,7 @@
     :default-prices-ranges = "{{ pricesRange|json_encode }}"  
     :default-time-precision="{{ timePrecision }}"
     :participation-text = "{{ participationText ? "true" : "false" }}"
+    :age-display  = "{{ ageDisplay ? "true" : "false" }}"
   />
 
 {% endblock %}

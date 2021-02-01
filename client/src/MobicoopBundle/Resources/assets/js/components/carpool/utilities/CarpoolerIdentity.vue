@@ -11,7 +11,10 @@
       <v-list-item-title class="font-weight-bold">
         {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
       </v-list-item-title>
-      <v-list-item-title>{{ age }} </v-list-item-title>
+      
+      <v-list-item-title v-if="ageDisplay">
+        {{ age }}
+      </v-list-item-title>
     </v-list-item-content>
   </v-list-item>
 </template>
@@ -35,6 +38,10 @@ export default {
     carpooler: {
       type: Object,
       required: true
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

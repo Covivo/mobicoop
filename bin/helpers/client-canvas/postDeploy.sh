@@ -59,6 +59,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/modules.json
     fi
 
+    # check Contacts files
+    CONTACTS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/contacts.json
+    if [ ! -f "$CONTACTS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/contacts.json
+    fi
+
     # check env files
     python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
 
@@ -141,6 +147,12 @@ else
     MODULES_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
     if [ ! -f "$MODULES_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/modules.json
+    fi
+
+    # check Contacts files
+    CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json
+    if [ ! -f "$CONTACTS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json
     fi
 
     # check env files

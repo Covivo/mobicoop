@@ -17,7 +17,19 @@
     </v-row>
     <v-row>
       <v-col>
+        <v-progress-linear
+          v-if="loading"
+          indeterminate
+          color="secondary darken-2"
+        />
+        <v-skeleton-loader
+          v-if="loading"
+          class="mx-auto"
+          max-width="100%"
+          type="card"
+        />        
         <m-map
+          v-show="!loading"
           ref="mmap"
           :points="pointsToMap"
           :provider="mapProvider"
@@ -114,7 +126,8 @@ export default {
       pointsToMap:[],
       directionWay:[],
       selectedDestination: null,
-      selectedOrigin: null
+      selectedOrigin: null,
+      loading:true
     }
   },
   mounted() {
@@ -145,6 +158,7 @@ export default {
           this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));
         });
       }
+      this.loading = false;
       this.$refs.mmap.redrawMap();
     },
     buildPoint: function(lat,lng,title="",address="", icon=null){

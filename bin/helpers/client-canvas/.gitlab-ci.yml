@@ -52,7 +52,7 @@ test_deploy:
     name: test
     url: https://test.$$INSTANCE$$.mobicoop.io
   only:
-    - test
+    - /^*.-next$/
   # variables:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:

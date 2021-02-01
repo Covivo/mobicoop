@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Communication\Controller\ContactMessage;
+use App\Communication\Ressource\ContactType;
 
 /**
  * A contact message.
@@ -46,7 +47,6 @@ use App\Communication\Controller\ContactMessage;
  *          "post"={
  *              "method"="POST",
  *              "path"="/contacts",
- *              "controller"=ContactMessage::class,
  *              "security_post_denormalize"="is_granted('communication_contact',object)"
  *          },
  *      },
@@ -112,10 +112,10 @@ class Contact
     private $datetime;
 
     /**
-     * @var int|null The type of contact
+     * @var ContactType|null The type of contact
      * @Groups({"write"})
      */
-    private $type;
+    private $contactType;
 
     public function __construct($id = null)
     {
@@ -246,18 +246,18 @@ class Contact
     /**
      * @return int|null
      */
-    public function getType(): ?int
+    public function getContactType(): ?ContactType
     {
-        return $this->type;
+        return $this->contactType;
     }
 
     /**
-     * @param int|null $type
+     * @param int|null $contactType
      * @return Contact
      */
-    public function setType(?int $type): self
+    public function setContactType(?ContactType $contactType): self
     {
-        $this->type = $type;
+        $this->contactType = $contactType;
         return $this;
     }
 }

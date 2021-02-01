@@ -10,6 +10,9 @@
 {% block main %}
       <Messages 
         :id-user="{{ idUser }}"
+        :unread-carpool-messages="{{ unreadCarpoolMessages }}"
+        :unread-direct-messages="{{ unreadDirectMessages }}"
+        :unread-solidary-messages="{{ unreadSolidaryMessages }}"
         :id-thread-default="{{ (idThreadDefault) ? idThreadDefault : 'null' }}"
         :new-thread="{{ newThread|json_encode }}"
         :given-id-message="{{ idMessage ? idMessage : 'null' }}"

@@ -25,6 +25,7 @@ namespace App\RelayPoint\Service;
 
 use App\Community\Service\CommunityManager;
 use App\RelayPoint\Resource\RelayPointMap;
+use App\User\Entity\User;
 
 /**
  * RelayPointMap manager service.
@@ -34,6 +35,7 @@ use App\RelayPoint\Resource\RelayPointMap;
 class RelayPointMapManager
 {
     private $communityManager;
+    private $relayPointManager;
     
 
 
@@ -43,9 +45,38 @@ class RelayPointMapManager
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        CommunityManager $communityManager
+        CommunityManager $communityManager,
+        RelayPointManager $relayPointManager
     ) {
         $this->communityManager = $communityManager;
+        $this->relayPointManager = $relayPointManager;
+    }
+
+    /**
+     * Method to get all RelayPointsMap
+     *
+     * @param User|null $user
+     * @param array $context
+     * @return array
+     */
+    public function getRelayPointsMap(?User $user, array $context): array
+    {
+        $relayPointsMap = [];
+        $relayPoints = $this->relayPointManager->getRelayPoints($user, $context, "");
+        foreach ($relayPoints as $relayPoint) {
+            /**
+             * @var RelayPoint $relayPoint
+             */
+            $relayPointMap = new RelayPointMap();
+            $relayPointMap->setId($relayPoint->getId());
+            $relayPointMap->setName($relayPoint->getName());
+            $relayPointMap->setRelayPointType($relayPoint->getRelayPointType());
+            $relayPointMap->setAddress($relayPoint->getAddress());
+
+            $relayPointsMap[] = $relayPointMap;
+        }
+        
+        return $relayPointsMap;
     }
 
     /**
