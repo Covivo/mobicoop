@@ -212,6 +212,7 @@ services:
             $validationDocsAuthorizedExtensions: '%env(string:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
             $loginDelegate: '%env(bool:LOGIN_DELEGATE)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
+            $ageDisplay: '%env(bool:AGE_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

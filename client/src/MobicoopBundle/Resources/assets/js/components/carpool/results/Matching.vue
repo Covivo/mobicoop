@@ -220,6 +220,7 @@
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
         :fraud-warning-display="fraudWarningDisplay"
+        :age-display="ageDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"

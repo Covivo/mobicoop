@@ -89,6 +89,7 @@ class UserController extends AbstractController
     private $required_community;
     private $loginDelegate;
     private $fraudWarningDisplay;
+    private $ageDisplay;
 
     /**
      * Constructor
@@ -113,7 +114,8 @@ class UserController extends AbstractController
         PaymentManager $paymentManager,
         $required_community,
         bool $loginDelegate,
-        bool $fraudWarningDisplay
+        bool $fraudWarningDisplay,
+        bool $ageDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -133,6 +135,7 @@ class UserController extends AbstractController
         $this->required_community = $required_community;
         $this->loginDelegate = $loginDelegate;
         $this->fraudWarningDisplay= $fraudWarningDisplay;
+        $this->ageDisplay = $ageDisplay;
 
         $this->ssoManager = $ssoManager;
     }
@@ -478,6 +481,7 @@ class UserController extends AbstractController
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
+            "ageDisplay"=>$this->ageDisplay
         ]);
     }
 
