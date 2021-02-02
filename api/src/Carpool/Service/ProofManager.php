@@ -57,6 +57,7 @@ class ProofManager
     private $geoSearcher;
     private $geoTools;
     private $duration;
+    private $minIdentityDistance;
     
     /**
      * Constructor.
@@ -71,6 +72,8 @@ class ProofManager
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
+     * @param int $duration                                     Number of days to send by default to the carpool register
+     * @param int $minIdentityDistance                          Minimal distance in meters between origin and destination/dropoff to determine distinct identities (C Class proof)
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -84,7 +87,8 @@ class ProofManager
         string $provider,
         string $uri,
         string $token,
-        int $duration
+        int $duration,
+        int $minIdentityDistance
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -94,6 +98,7 @@ class ProofManager
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->duration = $duration;
+        $this->minIdentityDistance = $minIdentityDistance;
 
         switch ($provider) {
             case 'BetaGouv':
@@ -512,7 +517,7 @@ class ProofManager
         // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
         $nbSent = 0;
-        exit;
+        // exit;
         // send these proofs
         foreach ($proofs as $proof) {
             /**
@@ -542,7 +547,6 @@ class ProofManager
      */
     private function validateProofs(DateTime $fromDate, DateTime $toDate)
     {
-        echo "validateProofs\n";
         // first we search the undetermined proofs for the given period
         $carpoolProofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_UNDETERMINED_CLASSIC,CarpoolProof::TYPE_UNDETERMINED_DYNAMIC], $fromDate, $toDate);
         
@@ -565,8 +569,6 @@ class ProofManager
                     !is_null($carpoolProof->getDropOffPassengerDate())
                     && $this->checkDistinctIdentities($carpoolProof)) {
                     // all the possible data is set for both carpoolers => max type
-                    echo "ouip!";
-                    die;
                     $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
                     $this->entityManager->persist($carpoolProof);
                     continue;
@@ -576,8 +578,6 @@ class ProofManager
                     !is_null($carpoolProof->getDropOffDriverAddress()) &&
                     !is_null($carpoolProof->getPickUpDriverDate()) &&
                     !is_null($carpoolProof->getDropOffDriverDate())) {
-                    echo "Ce sera B!";
-                    die;
                     // all the possible data is set for the driver => middle type
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
                     // we need to fill/replace the passenger time details with theoretical data and driver data
@@ -626,13 +626,16 @@ class ProofManager
 
     /**
      * Check if the two carpoolProof's actors are not the same person
+     * The actors' origins must be distant enough Or The driver's destination and the passenger's drop off must be distant enough
      *
      * @param CarpoolProof $carpoolProof
      * @return boolean
      */
     private function checkDistinctIdentities(CarpoolProof $carpoolProof): bool
     {
-        // The actors' origins must be distant enough
+        $originsDistantEnough = $destinationsDistantEnough = false;
+
+        // The actors' origins
 
         $originDriverAddress = $carpoolProof->getOriginDriverAddress();
 
@@ -644,11 +647,19 @@ class ProofManager
             throw new DynamicException("Passenger can't be found");
         }
 
-        if ($this->geoTools->haversineGreatCircleDistance($originDriverAddress->getLatitude(), $originDriverAddress->getLongitude(), $originPassengerAddress->getAddress()->getLatitude(), $originPassengerAddress->getAddress()->getLongitude())<100) {
-            return false;
+        if ($this->geoTools->haversineGreatCircleDistance($originDriverAddress->getLatitude(), $originDriverAddress->getLongitude(), $originPassengerAddress->getAddress()->getLatitude(), $originPassengerAddress->getAddress()->getLongitude())>=$this->minIdentityDistance) {
+            $originsDistantEnough = true;
         }
 
-        return false;
+        // The driver's destination and the passenger's drop off
+        $destinationDriverAddress = $carpoolProof->getDestinationDriverAddress();
+        $dropOffPassengerAddress = $carpoolProof->getDropOffPassengerAddress();
+        if ($this->geoTools->haversineGreatCircleDistance($destinationDriverAddress->getLatitude(), $destinationDriverAddress->getLongitude(), $dropOffPassengerAddress->getLatitude(), $dropOffPassengerAddress->getLongitude())>=$this->minIdentityDistance) {
+            $destinationsDistantEnough = true;
+        }
+
+        // The actors' origins must be distant enough Or The driver's destination and the passenger's drop off must be distant enough
+        return ($originsDistantEnough || $destinationsDistantEnough);
     }
     
     /**
