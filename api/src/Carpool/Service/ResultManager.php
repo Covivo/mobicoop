@@ -1586,10 +1586,9 @@ class ResultManager
         $rdate->setTimestamp($searchProposal->getCriteria()->getFromDate()->getTimestamp());
         $rdate->modify('+' . $nbLoop . 'days');
         $nbLoop++;
-        if ($nbLoop > 7) {
+        if ($nbLoop > 8) {
             return null;
         } // safeguard to avoid infinite loop
-
         if ($role=="request") {
             $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), ($nbLoop==1 && $today == $pday) ? $searchProposal->getCriteria()->getFromTime() : null);
         } else {
@@ -1600,7 +1599,6 @@ class ResultManager
         } else {
             $result['date'] = $rdate;
         }
-        
         return $result;
     }
 
@@ -1881,6 +1879,7 @@ class ResultManager
     {
         $proposal = $matching->getProposalRequest();
         $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalOffer(), 'request');
+        
         $item->setDate($result["date"]);
         switch ($result["numday"]) {
             case 0: {
