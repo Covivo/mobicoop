@@ -42,7 +42,9 @@
             cols="12"
             class="text-center body-2"
           >
-            {{ profileSummary.age }} {{ $t('yearsOld') }}<br>
+            <span v-if="ageDisplay">
+              {{ profileSummary.age }} {{ $t('yearsOld') }}<br>
+            </span>
             <span v-if="profileSummary && profileSummary.phoneDisplay == 2">{{ profileSummary.telephone }}</span>
           </v-col>
         </v-row>
@@ -87,6 +89,10 @@ export default {
       default: true
     },
     refresh:{
+      type: Boolean,
+      default: false
+    },
+    ageDisplay: {
       type: Boolean,
       default: false
     }

@@ -156,6 +156,7 @@
           <PublicProfile
             :user="user"
             :show-report-button="false"
+            :age-display="ageDisplay"
           />
         </v-card-text>
 
@@ -260,7 +261,11 @@ export default {
     showReviews: {
       type: Boolean,
       default: false
-    }    
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: true
+    },
   },
   data(){
     return{
