@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Exception\DynamicException;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
@@ -541,6 +542,7 @@ class ProofManager
      */
     private function validateProofs(DateTime $fromDate, DateTime $toDate)
     {
+        echo "validateProofs\n";
         // first we search the undetermined proofs for the given period
         $carpoolProofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_UNDETERMINED_CLASSIC,CarpoolProof::TYPE_UNDETERMINED_DYNAMIC], $fromDate, $toDate);
         
@@ -549,7 +551,10 @@ class ProofManager
             foreach ($carpoolProofs as $carpoolProof) {
                 // we change the status to pending
                 $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+                
+                // For now, TYPE_HIGH is only for dynamique because on organized trip we use declarative origin and destination not GPS given
                 if (
+                    $carpoolProof->getType() == CarpoolProof::TYPE_UNDETERMINED_DYNAMIC &&
                     !is_null($carpoolProof->getPickUpDriverAddress()) &&
                     !is_null($carpoolProof->getPickUpPassengerAddress()) &&
                     !is_null($carpoolProof->getDropOffDriverAddress()) &&
@@ -557,8 +562,11 @@ class ProofManager
                     !is_null($carpoolProof->getPickUpDriverDate()) &&
                     !is_null($carpoolProof->getPickUpPassengerDate()) &&
                     !is_null($carpoolProof->getDropOffDriverDate()) &&
-                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    !is_null($carpoolProof->getDropOffPassengerDate())
+                    && $this->checkDistinctIdentities($carpoolProof)) {
                     // all the possible data is set for both carpoolers => max type
+                    echo "ouip!";
+                    die;
                     $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
                     $this->entityManager->persist($carpoolProof);
                     continue;
@@ -568,6 +576,8 @@ class ProofManager
                     !is_null($carpoolProof->getDropOffDriverAddress()) &&
                     !is_null($carpoolProof->getPickUpDriverDate()) &&
                     !is_null($carpoolProof->getDropOffDriverDate())) {
+                    echo "Ce sera B!";
+                    die;
                     // all the possible data is set for the driver => middle type
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
                     // we need to fill/replace the passenger time details with theoretical data and driver data
@@ -614,6 +624,33 @@ class ProofManager
         }
     }
 
+    /**
+     * Check if the two carpoolProof's actors are not the same person
+     *
+     * @param CarpoolProof $carpoolProof
+     * @return boolean
+     */
+    private function checkDistinctIdentities(CarpoolProof $carpoolProof): bool
+    {
+        // The actors' origins must be distant enough
+
+        $originDriverAddress = $carpoolProof->getOriginDriverAddress();
+
+        if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+            $originPassengerAddress = $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getWaypoints()[0];
+        } elseif ($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+            $originPassengerAddress = $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getWaypoints()[0];
+        } else {
+            throw new DynamicException("Passenger can't be found");
+        }
+
+        if ($this->geoTools->haversineGreatCircleDistance($originDriverAddress->getLatitude(), $originDriverAddress->getLongitude(), $originPassengerAddress->getAddress()->getLatitude(), $originPassengerAddress->getAddress()->getLongitude())<100) {
+            return false;
+        }
+
+        return false;
+    }
+    
     /**
      * Create and return the pending proofs for the given period.
      * Used to generate non-realtime proofs.
