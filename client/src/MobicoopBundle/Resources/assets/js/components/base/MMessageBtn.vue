@@ -2,9 +2,9 @@
   <v-btn
     text
     rounded
-    class="white--text title text-none"
     depressed
     :href="$t('route')"
+    :class="textColorClass"
   >
     <v-badge
       :value="unreadMessageNumber>0 ? true : false"
@@ -28,7 +28,11 @@ export default {
     unreadMessageNumber:{
       type: Number,
       default: 0
-    }
+    },
+    textColorClass: {
+      type: String,
+      default: "white--text title text-none"
+    },
   }
 }
 </script>
