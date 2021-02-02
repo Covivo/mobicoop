@@ -291,7 +291,7 @@ class SolidaryMatcher
         ];
 
         foreach ($hoursSlots as $slot => $hoursSlot) {
-            if ($hoursSlot['min']<=$mintime && $maxtime<=$hoursSlot['max']) {
+            if ($hoursSlot['min']<=$mintime || $maxtime<=$hoursSlot['max']) {
                 return $slot;
             }
         }
