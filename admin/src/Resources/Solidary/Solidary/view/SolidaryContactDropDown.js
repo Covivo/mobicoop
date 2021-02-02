@@ -7,6 +7,7 @@ import { SolidarySMSModal } from '../SolidarySMSModal';
 import { SolidaryFormalResponseModal } from './SolidaryFormalResponseModal';
 import { useSolidary } from '../hooks/useSolidary';
 import { SOLIDARYASK_STATUS_ASKED } from '../../../../constants/solidaryAskStatus';
+import { utcDateFormat } from '../../../../utils/date';
 
 const SMS_CONTACT_OPTION = 'Envoyer directement un SMS';
 const MESSAGE_CONTACT_OPTION = 'Écrire vers sa messagerie';
@@ -23,6 +24,23 @@ const resolveOptions = (solidary, ask) => {
     ask && ask.status === SOLIDARYASK_STATUS_ASKED && ASKFORRESPONSE_OPTION,
   ].filter((x) => x);
 };
+
+const isDayOfTheWeek = (scheduleDate, dayNumberToCheck = 0) =>
+  new Date(scheduleDate).getDay() === dayNumberToCheck ? 1 : 0;
+
+const buildSchedule = (scheduleDate, isReturn = false) => [
+  {
+    outwardTime: isReturn ? null : utcDateFormat(scheduleDate, "HH':'mm"),
+    returnTime: isReturn ? utcDateFormat(scheduleDate, "HH':'mm") : null,
+    mon: isDayOfTheWeek(scheduleDate, 1),
+    tue: isDayOfTheWeek(scheduleDate, 2),
+    wed: isDayOfTheWeek(scheduleDate, 3),
+    thu: isDayOfTheWeek(scheduleDate, 4),
+    fri: isDayOfTheWeek(scheduleDate, 5),
+    sat: isDayOfTheWeek(scheduleDate, 6),
+    sun: isDayOfTheWeek(scheduleDate, 0),
+  },
+];
 
 const SolidaryPunctualFormalResponse = ({ outwardDate, solidarySolutionId, onClose }) => {
   const notify = useNotify();
@@ -45,6 +63,8 @@ const SolidaryPunctualFormalResponse = ({ outwardDate, solidarySolutionId, onClo
           solidarySolution: `/solidary_solutions/${solidarySolutionId}`,
           outwardDate,
           returnDate: outwardDate, // return value = outward one
+          outwardSchedule: buildSchedule(outwardDate),
+          returnSchedule: buildSchedule(outwardDate, true),
         },
       },
     });
@@ -56,6 +76,7 @@ const SolidaryPunctualFormalResponse = ({ outwardDate, solidarySolutionId, onClo
 export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...props }) => {
   const [contactType, setContactType] = useState(null);
   const { solidary, refresh } = useSolidary(`/solidaries/${solidaryId}`);
+  console.log('solidary:', solidary);
 
   const ask =
     solidary && solidary.asksList.find((i) => i.solidarySolutionId === solidarySolutionId);
