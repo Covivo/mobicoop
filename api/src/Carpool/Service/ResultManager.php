@@ -1593,7 +1593,7 @@ class ResultManager
         // we check if the tested day is the current day : if so we will force the time check to avoid presenting a past carpool
         $isToday = (new DateTime())->format('Ymd') == $rdate->format('Ymd');
         $nbLoop++;
-        if ($nbLoop > 7) {
+        if ($nbLoop > 8) {
             return null;
         } // safeguard to avoid infinite loop
 
