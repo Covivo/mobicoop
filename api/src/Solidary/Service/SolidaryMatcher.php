@@ -290,7 +290,7 @@ class SolidaryMatcher
             "e" => ["min" => (!is_null($structure->getEMinRangeTime())) ? new \DateTime($structure->getEMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["min"],"max" => (!is_null($structure->getEMaxRangeTime())) ? new \DateTime($structure->getEMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["max"]]
         ];
         foreach ($hoursSlots as $slot => $hoursSlot) {
-            if ($hoursSlot['min']<=$mintime || $maxtime<=$hoursSlot['max']) {
+            if ($hoursSlot['min']<=$mintime && $mintime<=$hoursSlot['max']) {
                 return $slot;
             }
         }
