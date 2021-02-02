@@ -511,7 +511,7 @@ class ProofManager
         // then we get the pending proofs
         $proofs = $this->getProofs($fromDate, $toDate);
         $nbSent = 0;
-        exit;
+        // exit;
         // send these proofs
         foreach ($proofs as $proof) {
             /**
