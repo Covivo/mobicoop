@@ -76,7 +76,6 @@ const SolidaryPunctualFormalResponse = ({ outwardDate, solidarySolutionId, onClo
 export const SolidaryContactDropDown = ({ solidaryId, solidarySolutionId, ...props }) => {
   const [contactType, setContactType] = useState(null);
   const { solidary, refresh } = useSolidary(`/solidaries/${solidaryId}`);
-  console.log('solidary:', solidary);
 
   const ask =
     solidary && solidary.asksList.find((i) => i.solidarySolutionId === solidarySolutionId);
