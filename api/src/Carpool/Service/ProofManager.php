@@ -653,7 +653,13 @@ class ProofManager
 
         // The driver's destination and the passenger's drop off
         $destinationDriverAddress = $carpoolProof->getDestinationDriverAddress();
+        if (is_null($destinationDriverAddress)) {
+            throw new DynamicException("No destination driver address");
+        }
         $dropOffPassengerAddress = $carpoolProof->getDropOffPassengerAddress();
+        if (is_null($dropOffPassengerAddress)) {
+            throw new DynamicException("No dropoff passenger address");
+        }
         if ($this->geoTools->haversineGreatCircleDistance($destinationDriverAddress->getLatitude(), $destinationDriverAddress->getLongitude(), $dropOffPassengerAddress->getLatitude(), $dropOffPassengerAddress->getLongitude())>=$this->minIdentityDistance) {
             $destinationsDistantEnough = true;
         }
