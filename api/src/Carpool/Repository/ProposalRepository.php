@@ -991,7 +991,8 @@ class ProposalRepository
         ->join('p.user', 'u')
         ->join('u.import', 'i')
         ->where('i.status = :status and d.distance>0')
-        ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
+        ->andwhere('((c.frequency = 1 and c.fromDate>=:limitDate) or (c.toDate >= :limitDate and c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
+        ->setParameter('limitDate', (new \DateTime())->format('Y-m-d'))
         ->setParameter('status', $status);
         return $query->getQuery()->getResult();
     }
