@@ -1926,7 +1926,7 @@ class ResultManager
         if (is_array($order) && isset($order['order']) && is_array($order['order']) && isset($order['order']['value'])) {
             $value = $order['order']['value'];
         }
-        usort($results, function ($a, $b) use ($criteria,$value) {
+        usort($results, function ($a, $b) use ($criteria, $value) {
             $return = -1;
             switch ($criteria) {
                 case "date":
@@ -1953,7 +1953,7 @@ class ResultManager
                 if (is_null($value)) {
                     continue;
                 }
-                $results = array_filter($results, function ($a) use ($field,$value) {
+                $results = array_filter($results, function ($a) use ($field, $value) {
                     $return = true;
                     switch ($field) {
                         // Filter on Time (the hour)
