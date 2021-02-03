@@ -102,8 +102,8 @@ class ImportManager
      */
     public function treatUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
     {
-        $this->prepareUserImport($origin, $massId, $lowestId);
-        //$this->matchUserImport();
+        //$this->prepareUserImport($origin, $massId, $lowestId);
+        $this->matchUserImport();
         return [];
     }
 

@@ -170,10 +170,16 @@ class GeoMatcher
                 }
             }
 
+            $this->logger->info("GeoMatcher : start multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $ownerRoutes = $this->geoRouter->getMultipleAsyncRoutes($addressesForRoutes, true, false, GeorouterInterface::RETURN_TYPE_ARRAY);
+            $this->logger->info("GeoMatcher : end multipleAsync " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     
             // we treat the routes to check if they match
+            $this->logger->info("GeoMatcher : before check loop " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $loopcheck = 0;
             foreach ($ownerRoutes as $ownerId=>$routes) {
+                $loopcheck++;
+                $this->logger->info("GeoMatcher : check loop " . $loopcheck . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 if ($match = $this->checkMatch(
                     $variants[$ownerId]['candidate'],
                     $variants[$ownerId]['candidateToMatch'],

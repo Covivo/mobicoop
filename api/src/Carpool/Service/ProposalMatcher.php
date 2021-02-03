@@ -1649,6 +1649,7 @@ class ProposalMatcher
                     $this->logger->info('Match # ' . $key2 . ', Passengers : ' . count($match['passengers']) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 }
                 if ($matches = $this->geoMatcher->multiMatch($batch)) {
+                    $this->logger->info('After multimatch batch #' . $key . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     foreach ($matches as $candidateDriverId => $candidatePassengers) {
                         foreach ($candidatePassengers as $candidatePassengerId => $cmatches) {
                             // we sort each possible matches as many matches can be found for 2 candidates : if multiple routes satisfy the criteria

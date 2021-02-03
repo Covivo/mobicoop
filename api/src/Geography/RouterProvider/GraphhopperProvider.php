@@ -395,6 +395,7 @@ class GraphhopperProvider implements GeorouterInterface
                 $this->print_mem(7);
                 $this->logger->debug('Multiple Async | Exchange file deletion | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 unlink($filename);
+                $this->logger->debug('Multiple Async | Exchange file deletion done | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 break;
             }
         }
