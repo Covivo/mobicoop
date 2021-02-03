@@ -770,12 +770,16 @@ class ProposalManager
             $iterableResult = $qCriteria->iterate();
             $this->logger->info('Start treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $pool = 0;
+            $iteration = 0;
             foreach ($iterableResult as $row) {
                 $criteria = $row[0];
+                $iteration++;
+                $this->logger->info('Iteration ' . $iteration . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 // foreach ($criterias as $criteria) {
                 if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
                     //$direction = $this->zoneManager->createZonesForDirection($direction);
+                    $this->logger->info('Iteration ' . $iteration . ' for driver, distance ' . $direction->getDistance() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionDriver($direction);
                     $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
@@ -784,9 +788,11 @@ class ProposalManager
                 if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
                     //$direction = $this->zoneManager->createZonesForDirection($direction);
+                    $this->logger->info('Iteration ' . $iteration . ' for passenger, distance ' . $direction->getDistance() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionPassenger($direction);
                 }
+                $this->logger->info('Iteration ' . $iteration . ' after set direction | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
                 if (is_null($criteria->getAnyRouteAsPassenger())) {
                     $criteria->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
@@ -893,8 +899,11 @@ class ProposalManager
                 if ($pool>=$batch) {
                     $this->logger->info('Batch ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $this->entityManager->flush();
+                    $this->logger->info('Batch after flush ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $this->entityManager->clear();
+                    $this->logger->info('Batch after clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     gc_collect_cycles();
+                    $this->logger->info('Batch after gc_collect_cycles()' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $pool = 0;
                 }
             }
