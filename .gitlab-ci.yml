@@ -192,12 +192,12 @@ test_deploy:
 #
 staging_deploy:
   stage: prod_deploy
-  only:     # job executed only on master branch
+  only:     # job executed only on staging branch
     - staging
   # variables:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   environment:
-    name: staging
+    name: prod_deploy
     url: https://staging.mobicoop.io
   before_script: # This is required to send the prod type no dev, since it creates errors
   #dependencies:
