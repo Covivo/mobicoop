@@ -658,7 +658,7 @@ class ProposalManager
     {
         $this->logger->info('Start setDirectionsAndDefaultsForImport | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // we search the criterias that need calculation
-        $criteriasFound = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED);
+        $criteriasFound = $this->criteriaRepository->findByUserImportStatus(UserImport::STATUS_USER_TREATED, new \DateTime());
         $this->setDirectionsAndDefaultsForCriterias($criteriasFound, $batch);
         $this->logger->info('End setDirectionsAndDefaultsForImport | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
