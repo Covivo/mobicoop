@@ -11,7 +11,7 @@
           class="justify-center mt-10"
         >
           <iframe
-            :src="$t('externalRoute')"
+            :src="$t('widget.externalRoute')"
             width="100%"
             height="540px"
             frameborder="0"
@@ -24,13 +24,13 @@
           class="mt-12"
         >
           <v-row class="mt-12">
-            <h4>{{ $t('textDetails.title') }}</h4>
+            <h4>{{ $t('widget.textDetails.title') }}</h4>
             <p
               class="mt-8"
-              v-html="$t('textDetails.p1')"
+              v-html="$t('widget.textDetails.p1')"
             />
-            <p v-html="$t('textDetails.p2', {'url':getUrl()})" />
-            <p v-html="$t('textDetails.p3')" />
+            <p v-html="$t('widget.textDetails.p2', {'url':getUrl()})" />
+            <p v-html="$t('widget.textDetails.p3')" />
           </v-row>
         </v-col>
       </v-row>
