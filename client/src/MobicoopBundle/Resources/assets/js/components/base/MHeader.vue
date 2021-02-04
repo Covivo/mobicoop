@@ -25,7 +25,7 @@
       <v-spacer />
 
       <!--<accessibility />-->
-      <v-toolbar-items
+      <div
         v-if="user"
         class="hidden-md-and-down"
       >
@@ -47,7 +47,7 @@
           :show-reviews="showReviews"
           :text-color-class="textColorClass"
         />
-      </v-toolbar-items>
+      </div>
       <v-toolbar-items
         v-else
         class="hidden-md-and-down"
