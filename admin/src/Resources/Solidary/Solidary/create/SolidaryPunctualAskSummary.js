@@ -46,23 +46,6 @@ export const SolidaryPunctualAskSummary = ({ regularMode = false }) => {
     return marginDuration > 0 ? utcDateFormat(date, "dd'/'MM'/'yyyy") : '';
   };
 
-  if (regularMode) {
-    return (
-      <SolidaryQuestion question="Récapitulatif">
-        {[
-          outwardDatetime && <p>{`Départ : ${formatDate(outwardDatetime)} `}</p>,
-          returnDatetime && <p>{`Retour : ${formatDate(returnDatetime)} `}</p>,
-          days && (
-            <p>{`Jour : ${Object.keys(days)
-              .filter((d) => !!days[d])
-              .map((d) => translate(`custom.days.${d}`))
-              .join(', ')} `}</p>
-          ),
-        ].filter((x) => x)}
-      </SolidaryQuestion>
-    );
-  }
-
   const getMarginDate = () => {
     const hour = formatHour(outwardDatetime);
     if (marginDuration > 0) {
@@ -75,6 +58,23 @@ export const SolidaryPunctualAskSummary = ({ regularMode = false }) => {
     }
     return <p>{`Départ : ${formatDate(outwardDatetime)} `}</p>;
   };
+
+  if (regularMode) {
+    return (
+      <SolidaryQuestion question="Récapitulatif">
+        {[
+          outwardDatetime && getMarginDate(),
+          returnDatetime && <p>{`Retour : ${formatDate(returnDatetime)} `}</p>,
+          days && (
+            <p>{`Jour : ${Object.keys(days)
+              .filter((d) => !!days[d])
+              .map((d) => translate(`custom.days.${d}`))
+              .join(', ')} `}</p>
+          ),
+        ].filter((x) => x)}
+      </SolidaryQuestion>
+    );
+  }
 
   return (
     <SolidaryQuestion question="Récapitulatif">
