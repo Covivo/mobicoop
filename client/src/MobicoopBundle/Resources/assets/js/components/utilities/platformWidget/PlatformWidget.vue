@@ -20,7 +20,7 @@
         >
           <img
             class="logo"
-            :src="$t('urlLogo')"
+            :src="$t('widget.urlLogo')"
             alt="Mobicoop"
           >
         </v-col>
@@ -51,9 +51,14 @@
 </template>
 <script>
 
+import {merge} from "lodash";
 import {messages_en, messages_fr} from "@translations/components/utilities/PlatformWidget/";
+import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/PlatformWidget/";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 
 export default {
   components: {
@@ -61,8 +66,8 @@ export default {
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'fr': messages_fr
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr
     }
   },
   props:{
