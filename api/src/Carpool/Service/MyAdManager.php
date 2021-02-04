@@ -901,6 +901,9 @@ class MyAdManager
                             case CarpoolItem::DEBTOR_STATUS_ONLINE:
                                 $driver['payment']['status'] = MyAd::PAYMENT_STATUS_PAID;
                                 break;
+                            case CarpoolItem::DEBTOR_STATUS_NULL:
+                                $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
+                                break;
                             default:
                                 $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
                                 $driver['payment']['itemId'] = $carpoolItem->getId();
@@ -1416,6 +1419,9 @@ class MyAdManager
                             case CarpoolItem::CREDITOR_STATUS_ONLINE:
                             case CarpoolItem::CREDITOR_STATUS_DIRECT:
                                 $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_PAID;
+                                break;
+                            case CarpoolItem::CREDITOR_STATUS_NULL:
+                                $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
                                 break;
                             default:
                                 $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;
