@@ -1241,6 +1241,27 @@ class User implements UserInterface, EquatableInterface
     private $experienced;
 
     /**
+     * @var int|null Number of unread carpool messages
+     * @Groups({"readUser"})
+     */
+    private $unreadCarpoolMessageNumber;
+
+    /**
+     * @var int|null Number of unread direct messages
+     * @Groups({"readUser"})
+     */
+    private $unreadDirectMessageNumber;
+
+    /**
+     * @var int|null Number of unread solidary messages
+     * @Groups({"readUser"})
+     */
+    private $unreadSolidaryMessageNumber;
+
+
+    // ADMIN
+
+    /**
      * @var Address
      * @Groups({"aRead","aWrite"})
      */
@@ -1251,6 +1272,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
+
 
     public function __construct($status = null)
     {
@@ -2913,7 +2935,42 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUnreadCarpoolMessageNumber(): ?int
+    {
+        return $this->unreadCarpoolMessageNumber;
+    }
 
+    public function setUnreadCarpoolMessageNumber(?int $unreadCarpoolMessageNumber): self
+    {
+        $this->unreadCarpoolMessageNumber = $unreadCarpoolMessageNumber;
+
+        return $this;
+    }
+
+
+    public function getUnreadDirectMessageNumber(): ?int
+    {
+        return $this->unreadDirectMessageNumber;
+    }
+
+    public function setUnreadDirectMessageNumber(?int $unreadDirectMessageNumber): self
+    {
+        $this->unreadDirectMessageNumber = $unreadDirectMessageNumber;
+
+        return $this;
+    }
+
+    public function getUnreadSolidaryMessageNumber(): ?int
+    {
+        return $this->unreadSolidaryMessageNumber;
+    }
+
+    public function setUnreadSolidaryMessageNumber(?int $unreadSolidaryMessageNumber): self
+    {
+        $this->unreadSolidaryMessageNumber = $unreadSolidaryMessageNumber;
+
+        return $this;
+    }
 
     // ADMIN
 
@@ -2950,7 +3007,7 @@ class User implements UserInterface, EquatableInterface
         return $this->rolesTerritory;
     }
 
-
+    
     // DOCTRINE EVENTS
 
     /**

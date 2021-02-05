@@ -16,31 +16,31 @@
     "cooperative":{
         "talkAboutUs": {
             "title":"Qui sommes-nous ?",
-            "link":"/about-us"
+            "link":"https://pro.mobicoop.fr/cooperative/"
         },
         "joinUs":{
             "title":"Devenir sociétaire",
             "link":"https://lacampagne.mobicoop.fr/"
         }
     },
-    "tools":{
+    "services":{
         "mobicoop":{
             "title":"pro.mobicoop.fr",
             "link":"https://pro.mobicoop.fr/"
         },
         "covievent" :{
             "title":"www.covievent.org",
-            "link":"www.covievent.org"
+            "link":"https://www.covievent.org/"
         }
     },
-    "services":{
+    "tools":{
         "map":{
             "title":"La carte des aires de covoiturage",
             "link":"/points-relais"
         },
         "events" :{
             "title":"Les événements en covoiturage",
-            "link":"/events"
+            "link":"/covoiturages-evenements"
         },
         "faq":{
             "title":"FAQ",
@@ -49,6 +49,10 @@
         "cgu":{
             "title":"CGU",
             "link":"/cgu"
+        },
+        "dataPolicy":{
+            "title":"Protection des données",
+            "link":"/protection-donnees"
         }
     },
     "contacts":{
@@ -58,13 +62,13 @@
         },
         "presse" :{
             "title":"Presse",
-            "link":"/contact"
+            "link":"https://pro.mobicoop.fr/category/revue-de-presse/"
         }
     },
     "need":{
         "community":{
             "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"/community/create"
+            "link":"covoiturage-communaute"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",

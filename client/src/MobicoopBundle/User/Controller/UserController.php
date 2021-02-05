@@ -762,9 +762,11 @@ class UserController extends AbstractController
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }
         }
-
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
+            "unreadCarpoolMessages"=>$user->getUnreadCarpoolMessageNumber(),
+            "unreadDirectMessages"=>$user->getUnreadDirectMessageNumber(),
+            "unreadSolidaryMessages"=>$user->getUnreadSolidaryMessageNumber(),
             "idThreadDefault"=>$idThreadDefault,
             "idMessage" => $idMessage,
             "idRecipient" => $idRecipient,
@@ -1309,9 +1311,6 @@ class UserController extends AbstractController
 
             $success = false;
 
-            // Get the User
-            $user = $this->userManager->getUser($id);
-
             // Post the Report
             if (
                 isset($data['email']) && isset($data['text']) &&
@@ -1320,7 +1319,7 @@ class UserController extends AbstractController
                 $dataProvider->setClass(Report::class);
 
                 $report = new Report();
-                $report->setUser($user);
+                $report->setUserId($id);
                 $report->setReporterEmail($data['email']);
                 $report->setText($data['text']);
 

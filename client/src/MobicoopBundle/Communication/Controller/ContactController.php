@@ -36,10 +36,11 @@ class ContactController extends AbstractController
     use HydraControllerTrait;
 
     private $contactTypes;
+    private $contactManager;
 
-    public function __construct(string $contactTypes)
+    public function __construct(ContactManager $contactManager)
     {
-        $this->contactTypes = json_decode($contactTypes, true);
+        $this->contactManager = $contactManager;
     }
 
     /**
@@ -49,10 +50,7 @@ class ContactController extends AbstractController
     {
         $this->denyAccessUnlessGranted('contact_create', new Contact());
         return $this->render(
-            '@Mobicoop/contact/contact.html.twig',
-            [
-                'contactTypes' => json_encode($this->contactTypes)
-            ]
+            '@Mobicoop/contact/contact.html.twig'
         );
     }
 
@@ -80,13 +78,6 @@ class ContactController extends AbstractController
             if (!empty($data["website"])) {
                 return new JsonResponse(
                     ["message" => "error"],
-                    \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-                );
-            }
-            
-            if (empty($data["consent"]) || (!empty($data["consent"] && !$data["consent"]))) {
-                return new JsonResponse(
-                    ["message" => "consent.errors.required"],
                     \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
                 );
             }
@@ -132,5 +123,16 @@ class ContactController extends AbstractController
             ["message" => "error"],
             \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
         );
+    }
+
+    /**
+     * Get the contact items
+     */
+    public function getContactItems(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->contactManager->getContactItems());
+        }
+        return new JsonResponse();
     }
 }

@@ -11,6 +11,7 @@
       :id-recipient="message.idRecipient"
       :selected-default="message.selected"
       :blocker-id="message.blockerId"
+      :unread-messages="message.unreadMessages"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />

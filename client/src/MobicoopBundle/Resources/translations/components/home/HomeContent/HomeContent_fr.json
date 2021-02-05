@@ -44,12 +44,15 @@
         "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
         "button":{
             "label":"Créer un événement",
-            "route":"#"
+            "route":"https://www.covievent.org/evenement/nouveau"
         },
         "coviEvent":{
             "text":"Découvrir CoviEvent",
-            "link":"#"
+            "link":"https://www.covievent.org/"
         }
+    },
+    "articles": {
+        "title":"Quoi de neuf chez Mobicoop ?"
     },
     "items":[
         {

@@ -541,6 +541,7 @@
                       :origin="origin"
                       :destination="destination"
                       :solidary-exclusive="solidaryExclusive"
+                      :age-display="ageDisplay"
                     />
                   </v-col>
                 </v-row>
@@ -811,6 +812,10 @@ export default {
       default: null
     },
     participationText: {
+      type: Boolean,
+      default: false
+    },
+    ageDisplay: {
       type: Boolean,
       default: false
     }

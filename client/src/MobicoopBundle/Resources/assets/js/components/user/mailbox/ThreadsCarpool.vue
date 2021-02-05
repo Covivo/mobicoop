@@ -16,6 +16,7 @@
       :id-ask="message.idAsk"
       :id-ask-selected="idAskSelected"
       :blocker-id="message.blockerId"
+      :unread-messages="message.unreadMessages"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />

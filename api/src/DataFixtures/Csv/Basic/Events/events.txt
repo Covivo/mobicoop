@@ -1,0 +1,10 @@
+user email : the creator email
+address : string
+name
+description
+full description
+start date : YYYY-MM-DD HH:MM
+end date : YYYY-MM-DD HH:MM
+use time : 1 if use time, 0 if not
+web link
+private : 1 if private, 0 if not

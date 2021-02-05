@@ -1,11 +1,13 @@
 <template>
   <v-main>
-    <v-container class="window-scroll px-0">
+    <v-container
+      class="window-scroll px-0"
+      :class="unreadMessages>0 ? 'font-italic' : ''"
+    >
       <v-card
         class="mx-0 mt-2 pt-1 pb-1"
         :class="selected ? 'primary lighten-5' : ''"
         outlined
-        tile
         style="border-style:none;"
         @click="click()"
       >
@@ -38,7 +40,7 @@
             </v-row>
 
             <v-row>
-              <v-col class="col-8 text-left pa-0 ma-0">
+              <v-col class="col-9 text-left pa-0 ma-0">
                 <span
                   class="font-weight-light"
                 >
@@ -57,6 +59,17 @@
                   v-else
                   class="font-italic"
                 >{{ regularCarpoolDays }}</span>
+              </v-col>
+              <v-col
+                v-if="currentUnreadMessages>0"
+                cols="3"
+                class="subtitle-2 pa-0 ma-0 text-right"
+              >
+                <v-chip class="secondary">
+                  {{ currentUnreadMessages }}&nbsp;<v-icon class="white--text">
+                    mdi-eye-off-outline
+                  </v-icon>
+                </v-chip>
               </v-col>
             </v-row>
           </v-col>
@@ -132,12 +145,17 @@ export default {
     blockerId:{
       type: Number,
       default: null
+    },
+    unreadMessages:{
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       selected: this.selectedDefault,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      currentUnreadMessages: this.unreadMessages
     }
   },
   computed: {
@@ -180,6 +198,7 @@ export default {
   },
   methods: {
     click(){
+      this.currentUnreadMessages = 0;
       this.emit();
     },
     toggleSelected(){
@@ -195,7 +214,8 @@ export default {
           name:this.name,
           avatar:this.avatar,
           idAsk:this.idAsk,
-          blockerId:this.blockerId
+          blockerId:this.blockerId,
+          formerUnreadMessages:this.unreadMessages
         }
       );
     }

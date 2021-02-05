@@ -78,6 +78,7 @@
             :communities="result.communities"
             :origin="result.origin"
             :destination="result.destination"
+            :age-display="ageDisplay"
             @carpool="carpool"
             @loginOrRegister="loginOrRegister"
           />
@@ -127,6 +128,10 @@ export default {
     communities: {
       type: Object,
       default: null
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {

@@ -228,6 +228,10 @@ services:
                     smsSender: '%env(string:SMS_SENDER)%'
         tags: ['controller.service_arguments']
 
+    App\Communication\Service\ContactManager: 
+        arguments:
+                $contactItems: '%env(json:file:resolve:CONTACT_ITEMS)%'
+
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
@@ -250,11 +254,12 @@ services:
             $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
-            $emailSupport: '%env(resolve:MAILER_SUPPORT)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\InternalMessageManager:
+        arguments:
+            $storeReadDate: '%env(bool:MESSAGES_STORE_READ_DATE)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
@@ -283,15 +288,11 @@ services:
 
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $contactEmailAddress: '%env(json:MAILER_CONTACT)%'
-            $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
-            $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
-            $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
+            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
     App\Communication\Service\ReportManager:
         arguments:
-            $supportEmailAddress: '%env(string:MAILER_SUPPORT)%'
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
 

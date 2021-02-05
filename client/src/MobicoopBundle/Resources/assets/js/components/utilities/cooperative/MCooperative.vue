@@ -10,10 +10,12 @@
         cols="5"
         class="text-left "
       >
-        <span class="primary--text display-1 font-weight-black">
+        <h2 class="primary--text font-weight-bold">
           {{ $t('cooperative.title') }}
-        </span><br>
-        <span v-html="$t('cooperative.text')" />
+        </h2><br>
+        <p
+          v-html="$t('cooperative.text')"
+        />
       </v-col>
       <v-spacer />
       <v-col cols="6">
@@ -33,6 +35,7 @@
           :href="this.$t('cooperative.button1.route')"
           class="white--text "
           max-width="400px"
+          target="_blank"
         >
           {{ $t('cooperative.button1.label') }}
         </v-btn>
@@ -96,4 +99,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  h2{
+        font-size: 2rem;
+
+    line-height: 1.2;
+  }
 </style>
+

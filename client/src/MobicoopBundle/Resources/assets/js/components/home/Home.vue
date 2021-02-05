@@ -2,7 +2,8 @@
   <v-container
     text-center
     fluid
-    class="pa-0"
+    :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"
+    pa-0
   >
     <v-row v-if="displayVerifiedMessage">
       <v-col class="pa-0">
@@ -90,53 +91,50 @@
     </v-row>
 
     <!-- Title and subtitle -->
-    <div
-      :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;background-position-y:-1em;'"
+   
+    <v-row
+      align="center"
+      justify="center"
     >
-      <v-row
-        align="center"
-        justify="center"
+      <v-col
+        class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
+        :style="'font-size:1.25rem;line-height:1.25;'"
       >
-        <v-col
-          class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
-          :style="'font-size:1.25rem;line-height:1.25;'"
-        >
-          <h1
-            v-html="$t('title')"
-          />
-        </v-col>
-      </v-row>
-      <!-- end Title and subtitle -->
+        <h1
+          v-html="$t('title')"
+        />
+      </v-col>
+    </v-row>
+    <!-- end Title and subtitle -->
 
-      <!-- search -->
-      <v-row
-        align="center"
-        class="mt-5 mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
-        justify="center"
-      >
-        <v-col class=" mt-md-10 mt-lg-8">
-          <search
-            :geo-search-url="geoSearchUrl"
-            :user="user"
-            :regular="regular"
-            :punctual-date-optional="punctualDateOptional"
-            :publish-button-always-active="publishButtonAlwaysActive"
-            :image-swap="$t('urlImageSwap')"
-          />
-        </v-col>
-      </v-row>
-      <!-- end search -->
+    <!-- search -->
+    <v-row
+      align="center"
+      class="mt-5 mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
+      justify="center"
+    >
+      <v-col class=" mt-md-10 mt-lg-8">
+        <search
+          :geo-search-url="geoSearchUrl"
+          :user="user"
+          :regular="regular"
+          :punctual-date-optional="punctualDateOptional"
+          :publish-button-always-active="publishButtonAlwaysActive"
+          :image-swap="$t('urlImageSwap')"
+        />
+      </v-col>
+    </v-row>
+    <!-- end search -->
 
-      <!-- homeContent -->
-      <home-content
-        :community-display="communityDisplay"
-        :event-display="eventDisplay"
-        :solidary-display="solidaryDisplay"
-        :url-mobile="mobileUrl"
-      />
-      <!-- end homeBottom -->
-      <Cookies />
-    </div>
+    <!-- homeContent -->
+    <home-content
+      :community-display="communityDisplay"
+      :event-display="eventDisplay"
+      :solidary-display="solidaryDisplay"
+      :url-mobile="mobileUrl"
+    />
+    <!-- end homeBottom -->
+    <Cookies />
   </v-container>
 </template>
 

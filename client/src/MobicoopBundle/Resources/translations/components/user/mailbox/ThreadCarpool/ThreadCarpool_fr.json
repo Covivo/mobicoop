@@ -7,5 +7,6 @@
     "Fri": "Ven",
     "Sat": "Sam",
     "Sun": "Dim",
-    "userDelete": "Utilisateur désinscrit"
+    "userDelete": "Utilisateur désinscrit",
+    "unread":"{nb} non lus"
 }
