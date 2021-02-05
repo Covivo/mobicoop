@@ -642,7 +642,12 @@ class ProposalMatcher
                 $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
                 $matchingCriteria->setFromTime($proposal->getCriteria()->getFromTime());
                 if (is_null($proposal->getCriteria()->getFromTime()) || !$proposal->getUseTime()) {
-                    // We need to find the first day after the current day carpooled by the drivers
+                    // We don't need to adjust the time to include pickup duration
+                    // We do it when the Ask is made so if we do it here, there will be a double offset
+                    // $pickUpDropOffInfos = $this->getPickUpDropOffDurations($matching->getFilters()['route']);
+                    // $pickUpDuration = round($pickUpDropOffInfos[0]);
+
+                    // We need to find the first day after the current day carpooled by the driver and set the correct time because the request had no time
                     $currentDate = new \DateTime();
                     $currentDate->setTimestamp($matching->getProposalRequest()->getCriteria()->getFromDate()->getTimestamp());
                     $cptLoop = 0; // safeguard for infinity loop
@@ -693,6 +698,14 @@ class ProposalMatcher
                                 break;
                         }
                         if ($foundDay) {
+                            // We don't need to adjust the time to include pickup duration
+                            // We do it when the Ask is made so if we do it here, there will be a double offset
+
+                            // $timeAdjustedWithPickUp = clone $matchingCriteria->getFromTime();
+                            // $timeAdjustedWithPickUp->modify('+'.$pickUpDuration.' seconds');
+                            // $matchingCriteria->setFromTime($timeAdjustedWithPickUp);
+                            
+                            // We set the real matching day. The first carpooled day by the driver
                             $matchingCriteria->setFromDate($currentDate);
                         }
                         $currentDate->modify("+1 days");
