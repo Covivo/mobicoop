@@ -13,6 +13,7 @@
 /api/templates/email_client/
 /api/translations_client/
 /api/var/log/
+/api/var/cache/
 + /api/public/upload/icons/address-any.svg
 + /api/public/upload/icons/address-personal.svg
 + /api/public/upload/icons/community.svg
