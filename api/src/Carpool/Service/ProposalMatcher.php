@@ -641,29 +641,62 @@ class ProposalMatcher
             } else {
                 $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
                 $matchingCriteria->setFromTime($proposal->getCriteria()->getFromTime());
-                if (is_null($proposal->getCriteria()->getFromTime())) {
-                    switch ($matching->getProposalRequest()->getCriteria()->getFromDate()->format('w')) {
-                        case 0:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
-                            break;
-                        case 1:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
-                            break;
-                        case 2:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
-                            break;
-                        case 3:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
-                            break;
-                        case 4:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
-                            break;
-                        case 5:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
-                            break;
-                        case 6:
-                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
-                            break;
+                if (is_null($proposal->getCriteria()->getFromTime()) || !$proposal->getUseTime()) {
+                    // We need to find the first day after the current day carpooled by the drivers
+                    $currentDate = new \DateTime();
+                    $currentDate->setTimestamp($matching->getProposalRequest()->getCriteria()->getFromDate()->getTimestamp());
+                    $cptLoop = 0; // safeguard for infinity loop
+                    $foundDay = false;
+                    while ($cptLoop<7 && $foundDay == false) {
+                        switch ($currentDate->format('w')) {
+                            case 0:
+                                if ($matching->getProposalOffer()->getCriteria()->isSunCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 1:
+                                if ($matching->getProposalOffer()->getCriteria()->isMonCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 2:
+                                if ($matching->getProposalOffer()->getCriteria()->isTueCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 3:
+                                if ($matching->getProposalOffer()->getCriteria()->isWedCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 4:
+                                if ($matching->getProposalOffer()->getCriteria()->isThuCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 5:
+                                if ($matching->getProposalOffer()->getCriteria()->isFriCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                            case 6:
+                                if ($matching->getProposalOffer()->getCriteria()->isSatCheck()) {
+                                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+                                    $foundDay = true;
+                                }
+                                break;
+                        }
+                        if ($foundDay) {
+                            $matchingCriteria->setFromDate($currentDate);
+                        }
+                        $currentDate->modify("+1 days");
+                        $cptLoop++;
                     }
                 }
             }
