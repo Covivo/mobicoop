@@ -43,7 +43,7 @@
               />
               <MMapRelayPointDescription
                 v-if="relayPoints"
-                :point="point"
+                :data="point.misc"
               />
             </l-tooltip>
 
@@ -114,7 +114,7 @@
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
 import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
-import {messages_en, messages_fr} from "@translations/components/utilities/MMap/";
+import {messages_en, messages_fr} from "@translations/components/utilities/MMap/MMap";
 
 export default {
   i18n: {
