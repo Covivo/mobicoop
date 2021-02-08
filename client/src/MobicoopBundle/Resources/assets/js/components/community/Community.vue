@@ -375,7 +375,7 @@ import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
-import MMap from "@components/utilities/MMap";
+import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
 
 export default {

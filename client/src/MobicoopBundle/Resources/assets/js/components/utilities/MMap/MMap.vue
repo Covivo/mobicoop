@@ -41,6 +41,10 @@
                 id="description-tooltip"
                 v-html="point.popup.description"
               />
+              <MMapRelayPointDescription
+                v-if="relayPoints"
+                :data="point.misc"
+              />
             </l-tooltip>
 
             <l-popup v-if="point.popup">
@@ -109,7 +113,8 @@
 <script>
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
-import {messages_en, messages_fr} from "@translations/components/utilities/MMap/";
+import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
+import {messages_en, messages_fr} from "@translations/components/utilities/MMap/MMap";
 
 export default {
   i18n: {
@@ -119,7 +124,8 @@ export default {
     }
   },
   components: {
-    VMarkerCluster
+    VMarkerCluster,
+    MMapRelayPointDescription
   },
   props: {
     provider: {
