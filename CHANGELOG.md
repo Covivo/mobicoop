@@ -1,6 +1,7 @@
 # Release 1.22.0
 * New contact recipients system
 * Number of unread messages
+* More informations about relaypoints in the popup
 
 # Release 1.20.0
 
