@@ -1,6 +1,7 @@
 # Release 1.22.0
 * New contact recipients system
 * Number of unread messages
+* A community moderator can access to the administration of it's community via the front button in community's details
 
 # Release 1.20.0
 
