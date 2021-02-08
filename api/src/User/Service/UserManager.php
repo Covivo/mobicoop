@@ -873,7 +873,7 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
         if (!is_null($user)) {
-            $user->setPassword($data->getPassword());
+            $user->setPassword($this->encoder->encodePassword($user, $data->getPassword()));
             // we reset tokens
             $user->setPwdTokenDate(null);
             $user->setPwdToken(null);
