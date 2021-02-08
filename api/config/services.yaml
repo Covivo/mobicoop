@@ -166,6 +166,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
+            $minIdentityDistance: '%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 

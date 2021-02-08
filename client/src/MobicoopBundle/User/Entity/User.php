@@ -404,9 +404,19 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $experienced;
 
     /**
-     * @var int|null Number of unread messages
+     * @var int|null Number of unread carpool messages
      */
-    private $unreadMessageNumber;
+    private $unreadCarpoolMessageNumber;
+
+    /**
+     * @var int|null Number of unread direct messages
+     */
+    private $unreadDirectMessageNumber;
+
+    /**
+     * @var int|null Number of unread solidary messages
+     */
+    private $unreadSolidaryMessageNumber;
     
     public function __construct($id=null, $status=null)
     {
