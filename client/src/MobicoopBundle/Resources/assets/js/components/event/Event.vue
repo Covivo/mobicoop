@@ -139,7 +139,7 @@ import {messages_en, messages_fr} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import Report from "@components/utilities/Report";
 import Search from "@components/carpool/search/Search";
-import MMap from "@components/utilities/MMap"
+import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 import moment from "moment";
 

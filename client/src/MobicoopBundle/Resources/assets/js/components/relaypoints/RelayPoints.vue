@@ -76,7 +76,7 @@
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
-import MMap from "@components/utilities/MMap"
+import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 
 export default {

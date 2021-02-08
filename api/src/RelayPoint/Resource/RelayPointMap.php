@@ -166,7 +166,7 @@ class RelayPointMap
 
     public function isPrivate(): ?bool
     {
-        return is_null($this->private) ? false : $this->private;
+        return $this->private;
     }
     
     public function setPrivate(?bool $isPrivate): self
@@ -178,7 +178,7 @@ class RelayPointMap
     
     public function getPlaces()
     {
-        return is_null($this->places) ? 0 : $this->places;
+        return $this->places;
     }
     
     public function setPlaces(?int $places)
@@ -188,7 +188,7 @@ class RelayPointMap
 
     public function getPlacesDisabled()
     {
-        return is_null($this->placesDisabled) ? 0 : $this->placesDisabled;
+        return $this->placesDisabled;
     }
     
     public function setPlacesDisabled(?int $placesDisabled)
@@ -198,7 +198,7 @@ class RelayPointMap
 
     public function isFree(): ?bool
     {
-        return is_null($this->free) ? false : $this->free;
+        return $this->free;
     }
     
     public function setFree(?bool $isFree): self
@@ -210,7 +210,7 @@ class RelayPointMap
 
     public function isSecured(): ?bool
     {
-        return is_null($this->secured) ? false : $this->secured;
+        return $this->secured;
     }
     
     public function setSecured(?bool $isSecured): self
@@ -222,7 +222,7 @@ class RelayPointMap
 
     public function isOfficial(): ?bool
     {
-        return is_null($this->official) ? false : $this->official;
+        return $this->official;
     }
     
     public function setOfficial(?bool $isOfficial): self
