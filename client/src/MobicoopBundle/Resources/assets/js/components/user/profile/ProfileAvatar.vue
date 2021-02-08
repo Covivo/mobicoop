@@ -11,6 +11,7 @@
       <v-img
         :src="avatar"
         class="align-self-center"
+        :width="minimized ? '70' : '70%'"
       />
     </v-avatar>
     <v-btn
