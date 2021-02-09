@@ -20,13 +20,24 @@ final class Version20210208163000 extends AbstractMigration
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (260, NULL, '1', 'interop_user_update', 'Update a User via interoperability');");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (261, NULL, '1', 'interop_user_delete', 'Delete a User via interoperability');");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (262, NULL, '1', 'interop_user_list', 'List Users via interoperability');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (263, NULL, '1', 'interop_ad_create', 'Create an Ad via interoperability');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (264, NULL, '1', 'interop_ad_read', 'Read an Ad via interoperability');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (265, NULL, '1', 'interop_ad_update', 'Update an Ad via interoperability');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (266, NULL, '1', 'interop_ad_delete', 'Delete an Ad via interoperability');");
+        $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (267, NULL, '1', 'interop_ad_list', 'List Ads via interoperability');");
 
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '258');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '259');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '260');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '261');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '262');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '263');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '264');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '265');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '266');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '267');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('258', '14');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('263', '39');");
     }
 
     public function down(Schema $schema) : void
