@@ -25,7 +25,7 @@ namespace App\Carpool\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Interoperability\Ressource\Ad;
-use App\Carpool\Service\AdManager;
+use App\Carpool\Interoperability\Service\AdManager;
 
 final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -43,9 +43,7 @@ final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        echo "yo!";
-        die;
-        // return $this->adManager->createAd($data, true, false);
+        return $this->adManager->createAd($data);
     }
 
     public function remove($data, array $context = [])
