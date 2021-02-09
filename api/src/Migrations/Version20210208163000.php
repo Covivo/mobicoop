@@ -12,7 +12,7 @@ final class Version20210208163000 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
-        // Add the interoperability right for User resource
+        // Add the interoperability rights for User resource
 
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (257, NULL, '2', 'ROLE_INTEROPERABILITY', 'Interoperability platform');");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (258, NULL, '1', 'interop_user_create', 'Create a User via interoperability');");
@@ -21,12 +21,12 @@ final class Version20210208163000 extends AbstractMigration
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (261, NULL, '1', 'interop_user_delete', 'Delete a User via interoperability');");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (262, NULL, '1', 'interop_user_list', 'List Users via interoperability');");
 
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '22');");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('22', '258');");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('22', '259');");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('22', '260');");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('22', '261');");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('22', '262');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '258');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '259');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '260');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '261');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('257', '262');");
+        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('258', '14');");
     }
 
     public function down(Schema $schema) : void

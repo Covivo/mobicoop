@@ -23,10 +23,9 @@
 namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\User\Exception\InteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use App\User\Service\UserManager;
+use App\User\Interoperability\Service\UserManager;
 
 final class UserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -34,10 +33,8 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     private $security;
     private $userManager;
 
-    public function __construct(RequestStack $requestStack, Security $security, UserManager $userManager)
+    public function __construct(UserManager $userManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->security = $security;
         $this->userManager = $userManager;
     }
 
@@ -50,10 +47,14 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException("No user provided");
+            throw new InteroperabilityUserException(InteroperabilityUserException::NO_USER_PROVIDED);
         }
 
-        return $data;
+        if (!in_array($data->getGender(), User::GENDERS)) {
+            throw new InteroperabilityUserException(InteroperabilityUserException::INVALID_GENDER);
+        }
+
+        return $this->userManager->registerUser($data);
     }
 
     public function remove($data, array $context = [])

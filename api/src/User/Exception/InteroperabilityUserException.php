@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,31 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Interoperability\DataProvider;
+namespace App\User\Exception;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Interoperability\Ressource\User;
 
-/**
- * Interoperability User DataProvider
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+class InteroperabilityUserException extends \LogicException
 {
-    public function __construct()
-    {
-    }
-
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return User::class === $resourceClass && $operationName == "interop_get";
-    }
-
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
-    {
-        // For now, not GET item has been implemented (reject by security)
-        return new User($id);
-    }
+    const NO_USER_PROVIDED = "No user provided";
+    const INVALID_GENDER = "Gender must be a valid value : ".User::GENDER_FEMALE." (female), ".User::GENDER_MALE." (male), ".User::GENDER_OTHER." (other)";
 }
