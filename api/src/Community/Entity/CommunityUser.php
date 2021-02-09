@@ -85,7 +85,14 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *          "delete"={
  *              "controller"=LeaveCommunityAction::class
- *          }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/community_members/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('community_update',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
@@ -137,7 +144,7 @@ class CommunityUser
      * @var int The status of the membership.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"aRead","readCommunity","readCommunityUser","write","readUserAdmin"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","readUserAdmin"})
      */
     private $status;
 
@@ -420,8 +427,13 @@ class CommunityUser
     {
         if ($this->status == self::STATUS_ACCEPTED_AS_MEMBER && is_null($this->acceptedDate)) {
             $this->setAcceptedDate(new \Datetime());
+            $this->setRefusedDate(null);
         } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
             $this->setRefusedDate(new \Datetime());
+            $this->setAcceptedDate(null);
+        } elseif ($this->status == self::STATUS_PENDING) {
+            $this->setAcceptedDate(null);
+            $this->setRefusedDate(null);
         }
     }
 }

@@ -24,6 +24,7 @@
 namespace App\Community\Admin\Service;
 
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Community\Exception\CommunityException;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Repository\CommunityRepository;
@@ -106,7 +107,7 @@ class CommunityManager
             $this->entityManager->flush();
         }
 
-        // add members
+        // add members ?
 
         return $address;
     }
@@ -130,5 +131,22 @@ class CommunityManager
         
         // return the community
         return $community;
+    }
+
+    /**
+     * Patch a community user.
+     *
+     * @param CommunityUser $communityUser  The community user to update
+     * @param array $fields                 The updated fields
+     * @return CommunityUser                The community user updated
+     */
+    public function patchCommunityUser(CommunityUser $communityUser, array $fields)
+    {
+        // persist the community user
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+        
+        // return the community
+        return $communityUser;
     }
 }
