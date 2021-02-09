@@ -30,6 +30,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\Community\Repository\CommunityRepository;
+use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\MassEmailProvider\SendinblueProvider;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,8 +61,12 @@ class CampaignManager
         Environment $templating,
         EntityManagerInterface $entityManager,
         string $mailerProvider,
+        string $mailerApiUrl,
         string $mailerApiKey,
         string $mailerClientName,
+        int $mailerClientId,
+        int $mailerClientTemplateId,
+        string $mailerReplyTo,
         string $mailerIp,
         string $mailerDomain,
         string $smsProvider,
@@ -78,13 +83,21 @@ class CampaignManager
         $this->templating = $templating;
         $this->campaignRepository = $campaignRepository;
         $this->translator = $translator;
+        $this->mailerProvider = $mailerProvider;
+        $this->mailerApiUrl = $mailerApiUrl;
+        $this->mailerApiKey = $mailerApiKey;
+        $this->mailerClientName = $mailerClientName;
+        $this->mailerClientId = $mailerClientId;
+        $this->mailerClientTemplateId = $mailerClientTemplateId;
+        $this->mailerReplyTo = $mailerReplyTo;
+        $this->mailerIp = $mailerIp;
+        $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientName, $mailerDomain, $mailerIp);
+                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerClientTemplateId, $mailerReplyTo, $mailerDomain, $mailerIp);
                 break;
         }
     }
-
     /**
      * Send messages for a campaign.
      *
@@ -175,18 +188,25 @@ class CampaignManager
      */
     private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
-        $this->translator->setLocale($lang);
+       
+        // we set the sender
+        $sender = new Sender;
+        $sender->setUser($campaign->getUser());
 
-        // call the service
-        $this->massEmailProvider->send(
-            $campaign->getSubject(),
-            $campaign->getFromName(),
-            $campaign->getEmail(),
-            $campaign->getReplyTo(),
-            $this->getFormedEmailBody($campaign->getBody()),
-            $this->setRecipientsIsOwner($campaign->getUser())
-        );
+        // we get the list of recipients
+        $list = [];
+        foreach ($campaign->getDeliveries() as $delivery) {
+            $list[] = $delivery->getUser()->getEmail();
+        }
+       
+        $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $campaign->getBody(), $list);
 
+        $campaign->setProviderCampaignId($providerCampaign['id']);
+       
+        $testEmail = ["qualite@mobicoop.org"];
+
+        $this->massEmailProvider->sendCampaignTest($campaign->getName(), $providerCampaign['id'], $testEmail);
+       
 
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);

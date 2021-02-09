@@ -36,23 +36,6 @@ use App\MassCommunication\Entity\Sender;
 interface CampaignProviderInterface
 {
     /**
-     * Set the contact list
-     *
-     * @param string $name      The name of the list
-     * @return void
-     */
-    public function setList(string $name);
-
-    /**
-     * Set contacts to contact lists
-     *
-     * @param array $ids    An array of User ids
-     * @param array $lists  The contact list names in which to set the contacts (an array of string)
-     * @return void
-     */
-    public function setContacts(array $ids, array $lists);
-
-    /**
      * Create an email campaign
      *
      * @param string $name      The name of the campaign
@@ -70,7 +53,7 @@ interface CampaignProviderInterface
      * @param string $name  The name of the campaign
      * @return void
      */
-    public function sendCampaign(string $name);
+    public function sendCampaign(string $name, int $id);
 
     /**
      * Send an email test for an email campaign
@@ -79,5 +62,5 @@ interface CampaignProviderInterface
      * @param array $emails The emails to send the test to
      * @return void
      */
-    public function sendCampaignTest(string $name, array $emails);
+    public function sendCampaignTest(string $name, int $id, array $emails);
 }
