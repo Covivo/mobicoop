@@ -30,4 +30,5 @@ class BadRequestInteroperabilityUserException extends BadRequestHttpException
 {
     const NO_USER_PROVIDED = "No user provided";
     const INVALID_GENDER = "Gender must be a valid value : ".User::GENDER_FEMALE." (female), ".User::GENDER_MALE." (male), ".User::GENDER_OTHER." (other)";
+    const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
 }

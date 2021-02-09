@@ -25,6 +25,7 @@ namespace App\User\Interoperability\Service;
 
 use App\User\Interoperability\Ressource\User;
 use App\User\Entity\User as UserEntity;
+use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Service\UserManager as UserEntityManager;
 use Symfony\Component\Security\Core\Security;
 
@@ -52,6 +53,9 @@ class UserManager
      */
     public function registerUser(User $user): User
     {
+        if (!is_null($this->userEntityManager->getUserByEmail($user->getEmail()))) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::USER_ALREADY_EXISTS);
+        }
         $userEntity = $this->buildUserEntityFromUser($user);
         $userEntity = $this->userEntityManager->registerUser($userEntity);
 

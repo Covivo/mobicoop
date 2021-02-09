@@ -47,7 +47,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "interop_post"={
  *              "method"="POST",
  *              "path"="/carpools",
- *              "normalization_context"={"groups"={"results"}},
  *              "security_post_denormalize"="is_granted('ad_search_create',object)"
  *          }
  *      },
