@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Interoperability\Service;
 
+use App\Carpool\Exception\BadRequestInteroperabilityCarpoolException;
 use App\Carpool\Interoperability\Ressource\Ad;
 use App\Carpool\Ressource\Ad as ClassicAd;
 use App\Carpool\Service\AdManager as ClassicAdManager;
@@ -55,6 +56,8 @@ class AdManager
      */
     public function createAd(Ad $ad): Ad
     {
+        $this->valid($ad); // Validity check
+
         $classicAd = $this->buildClassicAdFromAd($ad);
         $classicAd = $this->classicAdManager->createAd($classicAd, true, false, false);
 
@@ -97,7 +100,6 @@ class AdManager
         $classicAd->setOutwardLimitDate($ad->getOutwardLimitDate());
         $classicAd->setReturnDate($ad->getReturnDate());
         $classicAd->setReturnLimitDate($ad->getReturnLimitDate());
-        $classicAd->setOutwardDate($ad->getOutwardDate());
         $classicAd->setSchedule($ad->getSchedule());
         
         // Punctual
@@ -118,5 +120,75 @@ class AdManager
         $classicAd->setPriceKm(round((((float)$ad->getPrice() / 100) / $distance), 2));
 
         return $classicAd;
+    }
+
+    /**
+     * Make several validity check before trying to register this Ad
+     * Throw exceptions so it does'nt return any boolean
+     *
+     * @param Ad $ad    The Interoperability Ad to check
+     * @return void
+     */
+    private function valid(Ad $ad)
+    {
+        // A few general validity checks
+        if (!in_array($ad->getFrequency(), Ad::FREQUENCIES)) {
+            throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_FREQUENCY);
+        }
+        if (!in_array($ad->getRole(), Ad::ROLES)) {
+            throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_ROLE);
+        }
+        if (is_null($ad->getOutwardWaypoints()) || (is_array($ad->getOutwardWaypoints()) && count($ad->getOutwardWaypoints())==0)) {
+            throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_OUTWARD_WAYPOINTS);
+        } else {
+            // Validity check of the waypoints
+            if (count($ad->getOutwardWaypoints())<2) {
+                throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_NUMBER_OUTWARD_WAYPOINT);
+            }
+            foreach ($ad->getOutwardWaypoints() as $outwardWaypoint) {
+                if (!isset($outwardWaypoint['latitude']) || $outwardWaypoint['latitude']=="" || !isset($outwardWaypoint['longitude']) || $outwardWaypoint['longitude']=="") {
+                    throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_OUTWARD_WAYPOINT);
+                }
+            }
+        }
+
+        // A few validity checks for regular journeys
+        if ($ad->getFrequency()==Ad::FREQUENCY_REGULAR) {
+            // Need to have a schedule
+            if (is_null($ad->getSchedule()) || (is_array($ad->getSchedule()) && count($ad->getSchedule())==0)) {
+                throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_SCHEDULE_FOR_REGULAR);
+            }
+        }
+        // A few validity checks for punctual journeys
+        if ($ad->getFrequency()==Ad::FREQUENCY_PUNCTUAL) {
+            if (is_null($ad->getOutwardTime())) {
+                throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_OUTWARDTIME_FOR_PUNTUAL);
+            }
+        }
+        
+        // A few validity checks for round journeys
+        if (!$ad->isOneWay()) {
+            if (is_null($ad->getReturnWaypoints()) || (is_array($ad->getReturnWaypoints()) && count($ad->getReturnWaypoints())==0)) {
+                throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_RETURN_WAYPOINTS);
+            }
+            if ($ad->getFrequency()==Ad::FREQUENCY_PUNCTUAL) {
+                if (is_null($ad->getReturnTime())) {
+                    throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_RETURNTIME_FOR_PUNTUAL);
+                }
+            }
+            if (is_null($ad->getReturnWaypoints()) || (is_array($ad->getReturnWaypoints()) && count($ad->getReturnWaypoints())==0)) {
+                throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::NO_RETURN_WAYPOINTS);
+            } else {
+                // Validity check of the waypoints
+                if (count($ad->getReturnWaypoints())<2) {
+                    throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_NUMBER_RETURN_WAYPOINT);
+                }
+                foreach ($ad->getReturnWaypoints() as $returnWaypoints) {
+                    if (!isset($returnWaypoints['latitude']) || $returnWaypoints['latitude']=="" || !isset($returnWaypoints['longitude']) || $returnWaypoints['longitude']=="") {
+                        throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_RETURN_WAYPOINT);
+                    }
+                }
+            }
+        }
     }
 }

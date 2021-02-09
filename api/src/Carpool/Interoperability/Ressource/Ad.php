@@ -26,10 +26,7 @@ namespace App\Carpool\Interoperability\Ressource;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Controller\AdAskPost;
-use App\Carpool\Controller\AdAskGet;
-use App\User\Entity\User;
-use App\Carpool\Controller\UpdateCarpoolsLimits;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : an Interoperability Ad.
@@ -72,6 +69,20 @@ class Ad
     const ROLE_PASSENGER = 2;
     const ROLE_DRIVER_OR_PASSENGER = 3;
 
+    const ROLES = [
+        self::ROLE_DRIVER,
+        self::ROLE_PASSENGER,
+        self::ROLE_DRIVER_OR_PASSENGER
+    ];
+
+    const FREQUENCY_PUNCTUAL = 1;
+    const FREQUENCY_REGULAR = 2;
+
+    const FREQUENCIES = [
+        self::FREQUENCY_PUNCTUAL,
+        self::FREQUENCY_REGULAR
+    ];
+
     /**
      * @var int The id of this ad.
      *
@@ -83,6 +94,7 @@ class Ad
     /**
      * @var int The role for this ad.
      *
+     * @Assert\NotBlank
      * @Groups({"adWrite"})
      */
     private $role;
@@ -97,6 +109,7 @@ class Ad
     /**
      * @var int|null The frequency for this ad.
      *
+     * @Assert\NotBlank
      * @Groups({"adWrite"})
      */
     private $frequency;
@@ -104,6 +117,7 @@ class Ad
     /**
      * @var array|null The waypoints for the outward.
      *
+     * @Assert\NotBlank
      * @Groups({"adWrite"})
      */
     private $outwardWaypoints;
@@ -118,6 +132,8 @@ class Ad
     /**
      * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
      *
+     * @Assert\NotBlank
+     * @Assert\DateTime
      * @Groups({"adWrite"})
      */
     private $outwardDate;
@@ -203,6 +219,7 @@ class Ad
     /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
+     * @Assert\NotBlank
      * @Groups({"adWrite"})
      */
     private $userId;
