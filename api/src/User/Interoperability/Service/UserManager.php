@@ -64,10 +64,11 @@ class UserManager
     private function buildUserFromUserEntity(UserEntity $userEntity): User
     {
         $user = new User($userEntity->getId());
-        $userEntity->setGivenName($user->getGivenName());
-        $userEntity->setFamilyName($user->getFamilyName());
-        $userEntity->setGender($user->getGender());
-        $userEntity->setEmail($user->getEmail());
+        $user->setGivenName($userEntity->getGivenName());
+        $user->setFamilyName($userEntity->getFamilyName());
+        $user->setGender($userEntity->getGender());
+        $user->setEmail($userEntity->getEmail());
+        $user->setNewsSubscription($userEntity->hasNewsSubscription());
 
         return $user;
     }
@@ -87,6 +88,7 @@ class UserManager
         $userEntity->setGender($user->getGender());
         $userEntity->setEmail($user->getEmail());
         $userEntity->setPassword($user->getPassword());
+        $userEntity->setNewsSubscription($user->hasNewsSubscription());
 
         return $userEntity;
     }

@@ -118,6 +118,13 @@ class User
      */
     private $gender;
 
+    /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     *
+     * @Groups({"writeUser"})
+     */
+    private $newsSubscription;
+
     public function __construct(int $id = null)
     {
         if (!is_null($id)) {
@@ -195,6 +202,18 @@ class User
     public function setGender($gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
 
         return $this;
     }
