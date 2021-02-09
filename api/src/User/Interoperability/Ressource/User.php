@@ -45,7 +45,48 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "interop_post"={
  *             "method"="POST",
- *             "security_post_denormalize"="is_granted('user_register',object)"
+ *             "security_post_denormalize"="is_granted('user_register',object)",
+ *             "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "givenName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's given name"
+ *                      },
+ *                      {
+ *                          "name" = "familyName",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's family name"
+ *                      },
+ *                      {
+ *                          "name" = "email",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "User's email"
+ *                      },
+ *                      {
+ *                          "name" = "password",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Clear version of the password"
+ *                      },
+ *                      {
+ *                          "name" = "gender",
+ *                          "type" = "int",
+ *                          "enum" = {1,2,3},
+ *                          "required" = true,
+ *                          "description" = "User's gender (1 : female, 2 : male, 3 : other)"
+ *                      },
+ *                      {
+ *                          "name" = "newsSubscription",
+ *                          "type" = "boolean",
+ *                          "required" = false,
+ *                          "description" = "News subscription"
+ *                      }
+ *                  }
+ *              }
  *          }
  *      },
  *      itemOperations={
