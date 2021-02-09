@@ -23,7 +23,7 @@
 namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Exception\InteroperabilityUserException;
+use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
 
@@ -47,11 +47,11 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new InteroperabilityUserException(InteroperabilityUserException::NO_USER_PROVIDED);
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
         }
 
         if (!in_array($data->getGender(), User::GENDERS)) {
-            throw new InteroperabilityUserException(InteroperabilityUserException::INVALID_GENDER);
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::INVALID_GENDER);
         }
 
         return $this->userManager->registerUser($data);

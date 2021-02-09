@@ -26,6 +26,7 @@ namespace App\User\Interoperability\Service;
 use App\User\Interoperability\Ressource\User;
 use App\User\Entity\User as UserEntity;
 use App\User\Service\UserManager as UserEntityManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Interoperability User manager service.
@@ -35,10 +36,12 @@ use App\User\Service\UserManager as UserEntityManager;
 class UserManager
 {
     private $userEntityManager;
+    private $security;
 
-    public function __construct(UserEntityManager $userEntityManager)
+    public function __construct(UserEntityManager $userEntityManager, Security $security)
     {
         $this->userEntityManager = $userEntityManager;
+        $this->security = $security;
     }
 
     /**
@@ -89,7 +92,7 @@ class UserManager
         $userEntity->setEmail($user->getEmail());
         $userEntity->setPassword($user->getPassword());
         $userEntity->setNewsSubscription($user->hasNewsSubscription());
-
+        $userEntity->setAppDelegate($this->security->getUser());
         return $userEntity;
     }
 }

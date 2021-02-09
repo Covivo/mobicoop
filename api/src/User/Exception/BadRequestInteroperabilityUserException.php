@@ -23,9 +23,10 @@
 
 namespace App\User\Exception;
 
+use \Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\User\Interoperability\Ressource\User;
 
-class InteroperabilityUserException extends \LogicException
+class BadRequestInteroperabilityUserException extends BadRequestHttpException
 {
     const NO_USER_PROVIDED = "No user provided";
     const INVALID_GENDER = "Gender must be a valid value : ".User::GENDER_FEMALE." (female), ".User::GENDER_MALE." (male), ".User::GENDER_OTHER." (other)";
