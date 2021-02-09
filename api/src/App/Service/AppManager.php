@@ -45,6 +45,17 @@ class AppManager
     }
 
     /**
+     * Get an app by its id
+     *
+     * @param int $appId  The appId
+     * @return App|null The app found
+     */
+    public function getApp(int $appId)
+    {
+        return $this->appRepository->find($appId);
+    }
+
+    /**
      * Get an app by its username
      *
      * @param string $username  The username

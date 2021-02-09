@@ -1028,7 +1028,7 @@ class Ad
         return $this;
     }
 
-    public function getappPosterId(): ?int
+    public function getAppPosterId(): ?int
     {
         return $this->appPosterId;
     }
