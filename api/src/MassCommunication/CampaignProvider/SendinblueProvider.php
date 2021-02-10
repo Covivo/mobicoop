@@ -42,24 +42,33 @@ class SendinblueProvider implements CampaignProviderInterface
     private $key;
     private $folderId;
     private $replyTo;
+    private $senderEmail;
     private $templateId;
     private $contactsApi;
     private $emailCampaignApi;
 
+    const CAMPAIGN_NAME="Campaign";
+    const CONTACT_EMAIL="EMAIL";
+    const CONTACT_FAMILYNAME="FAMILYNAME";
+    const CONTACT_GIVENNAME="GIVENNAME";
 
+
+    
     /**
      * Constructor
      *
      * @param string $key           The api key
-     * @param string $folderPrefix  The prefix for the Sendinblue folder
-     * @param string $domain        The domain for the senders
-     * @param string $ip            The ip for the senders
+     * @param integer $folderId     The ID for the Sendinblue folder
+     * @param string $replyTo       The replayTo email
+     * @param string $sender        The sender Email
+     * @param integer $templateId   The ID for the SendinBlue template
      */
-    public function __construct(string $key, int $folderId, string $replyTo, int $templateId)
+    public function __construct(string $key, int $folderId, string $replyTo, string $senderEmail, int $templateId)
     {
         $this->key = $key;
         $this->folderId = $folderId;
         $this->replyTo = $replyTo;
+        $this->senderEmail = $senderEmail;
         $this->templateId = $templateId;
         // implement sendinBlue php library
         $config = SendinBlueClient\Configuration::getDefaultConfiguration()->setApiKey('api-key', $key);
@@ -88,7 +97,7 @@ class SendinblueProvider implements CampaignProviderInterface
         // we create a campaign
         //  we create the list
         $createList = new SendinBlueClient\Model\CreateList();
-        $createList['name'] = 'Campaign'.date_format(new DateTime(), 'YmdHis');
+        $createList['name'] = self::CAMPAIGN_NAME.date_format(new DateTime(), 'YmdHis');
         $createList['folderId'] = $this->folderId;
         try {
             $result = $this->contactsApi->createList($createList);
@@ -98,7 +107,7 @@ class SendinblueProvider implements CampaignProviderInterface
         }
 
         // we import contacts
-        $contactsList[0] = ['EMAIL','FAMILYNAME','GIVENNAME'];
+        $contactsList[0] = [self::CONTACT_EMAIL,self::CONTACT_FAMILYNAME,self::CONTACT_GIVENNAME];
         // we add the sender infos because the sender need to be in the list to receive the test email
         $contactsList[1] = [$sender->getUser()->getEmail(), $sender->getUser()->getFamilyName(), $sender->getUser()->getGivenName()];
         $i = 2;
@@ -129,7 +138,7 @@ class SendinblueProvider implements CampaignProviderInterface
         }
         // We create the campaign
         $emailCampaigns = new SendinBlueClient\Model\CreateEmailCampaign();
-        $emailCampaigns['sender'] = ['name' => $sender->getUser()->getGivenName().' '.$sender->getUser()->getShortFamilyName(), 'email' => 'qualite@mobicoop.org'];
+        $emailCampaigns['sender'] = ['name' => $sender->getUser()->getGivenName().' '.$sender->getUser()->getShortFamilyName(), 'email' => $this->senderEmail];
         $emailCampaigns['name'] = $createList['name'];
         $emailCampaigns['htmlContent'] = $body;
         // Keep it in case client want to use a temlplate
@@ -185,85 +194,4 @@ class SendinblueProvider implements CampaignProviderInterface
             echo 'Exception when calling EmailCampaignsApi->sendTestEmail: ', $e->getMessage(), PHP_EOL;
         }
     }
-
-
-    // /**
-    //  * {@inheritdoc}
-    //  */
-    // public function send(string $subject, string $fromName, string $fromEmail, string $replyTo, string $body, array $recipients)
-    // {
-    //     // todo : check the best method to send a email from send in blue, and how to get the results (sync / async ? webhook ?)
-    //     $to = [];
-    //     $merge = [];
-
-    //     foreach ($recipients as $email=>$context) {
-    //         $to[] = [
-    //             'email' => $email,
-    //             'type' => 'bcc'
-    //         ];
-    //         $vars = [];
-    //         foreach ($context as $key=>$value) {
-    //             $vars[] = [
-    //                 'name' => $key,
-    //                 'content' => $value
-    //             ];
-    //         }
-    //         $merge[] = [
-    //             'rcpt' => $email,
-    //             'vars' => $vars
-    //         ];
-    //     }
-    //     try {
-    //         $mandrill = new Mandrill($this->key);
-    //         $message = [
-    //             'html' => $body,
-    //             'text' => '',
-    //             'subject' => $subject,
-    //             'from_email' => $fromEmail,
-    //             'from_name' => $fromName,
-    //             'to' => $to,
-    //             'headers' => ['Reply-To' => $replyTo],
-    //             'important' => false,
-    //             'track_opens' => true,
-    //             'track_clicks' => null,
-    //             'auto_text' => null,
-    //             'auto_html' => null,
-    //             'inline_css' => null,
-    //             'url_strip_qs' => null,
-    //             'preserve_recipients' => true,
-    //             'view_content_link' => null,
-    //             'bcc_address' => null,
-    //             'tracking_domain' => null,
-    //             'signing_domain' => null,
-    //             'return_path_domain' => null,
-    //             'merge' => true,
-    //             'merge_language' => 'mailchimp',
-    //             'global_merge_vars' => null,
-    //             'merge_vars' => $merge,
-    //             'tags' => null,
-    //             'subaccount' => null,
-    //             'google_analytics_domains' => null,
-    //             'google_analytics_campaign' => null,
-    //             'metadata' => null,
-    //             'recipient_metadata' => null,
-    //             'attachments' => null,
-    //             'images' => null
-    //         ];
-    //         $async = true;
-    //         $ip_pool = 'Main Pool';
-    //         $send_at = new \DateTime();
-            
-    //         $result = $mandrill->messages->send($message, $async, $ip_pool, $send_at->format('YmdHis'));
-
-    //         //Format des données retournées
-    //         // $resultTest = array();
-    //         // $resultTest[0]= array('email' => "julien.deschampt@mobicoop.org","status"=>"sent","_id" => "5d40ea17e5b64a1d93179026a87f17d2","reject_reason" => NULL);
-    //         return $result;
-    //     } catch (Mandrill_Error $e) {
-    //         // Mandrill errors are thrown as exceptions
-    //         echo 'A mandrill error occurred: ' . get_class($e) . ' - ' . $e->getMessage();
-    //         // A mandrill error occurred: Mandrill_Unknown_Subaccount - No subaccount exists with the id 'customer-123'
-    //         throw $e;
-    //     }
-    // }
 }

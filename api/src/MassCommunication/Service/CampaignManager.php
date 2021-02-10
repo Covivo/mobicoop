@@ -67,6 +67,7 @@ class CampaignManager
         int $mailerClientId,
         int $mailerClientTemplateId,
         string $mailerReplyTo,
+        string $mailerSenderEmail,
         string $mailerIp,
         string $mailerDomain,
         string $smsProvider,
@@ -90,11 +91,12 @@ class CampaignManager
         $this->mailerClientId = $mailerClientId;
         $this->mailerClientTemplateId = $mailerClientTemplateId;
         $this->mailerReplyTo = $mailerReplyTo;
+        $this->mailerSenderEmail = $mailerSenderEmail;
         $this->mailerIp = $mailerIp;
         $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerClientTemplateId);
+                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
                 break;
         }
     }
@@ -190,7 +192,7 @@ class CampaignManager
         }
         
         // We send the test email with as reciepient the email of the creator of the campaign
-        $this->massEmailProvider->sendCampaignTest($campaign->getName(), $providerCampaign['id'], [$campaign->getUser()->getEmail()]);
+        $this->massEmailProvider->sendCampaignTest($campaign->getName(), $campaign->getProviderCampaignId(), [$campaign->getUser()->getEmail()]);
         
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);

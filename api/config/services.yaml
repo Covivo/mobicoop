@@ -449,6 +449,7 @@ services:
             $mailerClientId: '%env(resolve:MASS_MAILER_CLIENT_ID)%'
             $mailerClientTemplateId: '%env(resolve:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
             $mailerReplyTo: '%env(resolve:MASS_MAILER_REPLYTO)%'
+            $mailerSenderEmail: '%env(resolve:MASS_MAILER_SENDER_EMAIL)%'
             $mailerDomain: '%env(resolve:MASS_MAILER_DOMAIN)%'
             $mailerIp: '%env(resolve:MASS_MAILER_IP)%'
             $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
