@@ -11,6 +11,9 @@ meta:
     community:
         title: "Covoiturage gratuit pour votre communauté | Mobicoop"
         description: "Trouvez ou proposez gratuitement des covoiturages au sein d'une communauté. Groupe privé ou public de covoiturage."
+    error:
+        title: "Une erreur s'est produite | "
+        description: "Une erreur s'est produite"
     journeyResultsFrom:
         title: "Covoiturages gratuits depuis CityA"
         description: "Trouvez ou proposez gratuitement des covoiturages depuis CityA. Covoiturage sans commission, libre et coopératif pour vos trajets réguliers et occasionnels."

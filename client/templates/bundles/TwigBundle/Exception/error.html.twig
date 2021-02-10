@@ -1,20 +1,9 @@
-{# templates/bundles/TwigBundle/Exception/error.html.twig #}
+{#can be seen in dev mode on /_error/{errorNumber} when there is no specifics pages on this error number#}
 {% extends '@Mobicoop/base.html.twig' %}
-{% block title %}{{ "Une erreur est survenue!"|trans }}: {{ status_text }}{% endblock %}
-{% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
-{% endblock %}
-{% block main %}
-<div class="container">
-    <h1>Oops! {{ "Une erreur est survenue!"|trans }} </h1>
-    <h2>{{ "le serveur a retourné:"|trans }}"{{ status_code }} {{ status_text }}".</h2>
+{% block title %}{% trans from 'meta' %}meta.error.title{% endtrans %}{{ app_name }}{% endblock %}
 
-    <p>
-        {{ "Quelque chose est cassé. S'il vous plaît laissez-nous savoir ce que vous faisiez lorsque cette erreur s'est produite.
-        Nous allons le réparer dès que possible. Désolé pour tout inconvénient causé."|trans }}
-    </p>
-</div>
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
+{% block desc %}{% trans from 'meta' %}meta.error.description{% endtrans %}{% endblock %}
+
+{% block main %}
+    <error-page :code="{{status_code}}"/>
 {% endblock %}

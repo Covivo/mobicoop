@@ -1,0 +1,14 @@
+{
+    "default":{
+        "title":"Une erreur s'est produite",
+        "desc":"Quelque chose s'est mal passé."
+    },
+    "404":{
+        "title":"Page non trouvée",
+        "desc":"La page recherchée est introuvable."
+    },
+    "returnHome":{
+        "text":"Vous pouvez revenir",
+        "link":"en page d'accueil"
+    }
+}
