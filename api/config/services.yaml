@@ -447,7 +447,6 @@ services:
             $mailerApiUrl: '%env(resolve:MASS_MAILER_API_URL)%'
             $mailerClientName: '%env(resolve:MASS_MAILER_CLIENT_NAME)%'
             $mailerClientId: '%env(resolve:MASS_MAILER_CLIENT_ID)%'
-            $mailerClientTemplateId: '%env(resolve:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
             $mailerReplyTo: '%env(resolve:MASS_MAILER_REPLYTO)%'
             $mailerDomain: '%env(resolve:MASS_MAILER_DOMAIN)%'
             $mailerIp: '%env(resolve:MASS_MAILER_IP)%'

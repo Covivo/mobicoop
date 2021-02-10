@@ -65,7 +65,6 @@ class CampaignManager
         string $mailerApiKey,
         string $mailerClientName,
         int $mailerClientId,
-        int $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerIp,
         string $mailerDomain,
@@ -88,13 +87,12 @@ class CampaignManager
         $this->mailerApiKey = $mailerApiKey;
         $this->mailerClientName = $mailerClientName;
         $this->mailerClientId = $mailerClientId;
-        $this->mailerClientTemplateId = $mailerClientTemplateId;
         $this->mailerReplyTo = $mailerReplyTo;
         $this->mailerIp = $mailerIp;
         $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerClientTemplateId, $mailerReplyTo, $mailerDomain, $mailerIp);
+                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerDomain, $mailerIp);
                 break;
         }
     }
@@ -193,21 +191,21 @@ class CampaignManager
         $sender = new Sender;
         $sender->setUser($campaign->getUser());
 
-        // we get the list of recipients
-        $list = [];
+        // we create an array with recipients infos
+        $list[0] = ['EMAIL','FAMILYNAME','GIVENNAME'];
+        $list[1] = [$campaign->getUser()->getEmail(), $campaign->getUser()->getFamilyName(), $campaign->getUser()->getGivenName()];
+        $i = 2;
         foreach ($campaign->getDeliveries() as $delivery) {
-            $list[] = $delivery->getUser()->getEmail();
+            $list[$i++] = [$delivery->getUser()->getEmail(), $delivery->getUser()->getFamilyName(), $delivery->getUser()->getGivenName()];
         }
        
+        // we create the campaign on provider side
         $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $campaign->getBody(), $list);
-
+        // We ad to the campaign the campaign provider id associated
         $campaign->setProviderCampaignId($providerCampaign['id']);
-       
-        $testEmail = ["qualite@mobicoop.org"];
-
-        $this->massEmailProvider->sendCampaignTest($campaign->getName(), $providerCampaign['id'], $testEmail);
-       
-
+        // We send the test email
+        $this->massEmailProvider->sendCampaignTest($campaign->getName(), $providerCampaign['id'], [$campaign->getUser()->getEmail()]);
+        
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();

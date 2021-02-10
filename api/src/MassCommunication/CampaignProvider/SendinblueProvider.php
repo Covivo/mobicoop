@@ -29,6 +29,7 @@ use SendinBlue\Client as SendinBlueClient;
 use GuzzleHttp\Client;
 use App\MassCommunication\Exception\MassMailingException;
 use DateTime;
+use Exception;
 
 /**
  * Sendinblue mass email sender service.
@@ -41,7 +42,6 @@ class SendinblueProvider implements CampaignProviderInterface
 {
     private $key;
     private $folderId;
-    private $templateId;
     private $replyTo;
     private $accountApi;
     private $contactsApi;
@@ -56,11 +56,10 @@ class SendinblueProvider implements CampaignProviderInterface
      * @param string $domain        The domain for the senders
      * @param string $ip            The ip for the senders
      */
-    public function __construct(string $key, int $folderId, int $templateId, string $replyTo)
+    public function __construct(string $key, int $folderId, string $replyTo)
     {
         $this->key = $key;
         $this->folderId = $folderId;
-        $this->templateId = $templateId;
         $this->replyTo = $replyTo;
         // implement sendinBlue php library
         $config = SendinBlueClient\Configuration::getDefaultConfiguration()->setApiKey('api-key', $key);
@@ -88,8 +87,8 @@ class SendinblueProvider implements CampaignProviderInterface
         try {
             $result = $this->accountApi->getAccount();
             $account = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Account not found");
+        } catch (Exception $e) {
+            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
         }
         //  we create the list
         $createList = new SendinBlueClient\Model\CreateList();
@@ -98,26 +97,37 @@ class SendinblueProvider implements CampaignProviderInterface
         try {
             $result = $this->contactsApi->createList($createList);
             $list = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("List creation failed");
+        } catch (Exception $e) {
+            echo 'Exception when calling ContactsApi->createList: ', $e->getMessage(), PHP_EOL;
         }
 
-        // we add contacts in that list
-        foreach ($lists as $contact) {
-            $createContact = new SendinBlueClient\Model\CreateContact(); // Values to create a contact
-            $createContact['email'] =  $contact;
-            $createContact['listIds'] = [$list['id']];
-            try {
-                $result = $this->contactsApi->createContact($createContact);
-            } catch (MassMailingException $massMailingException) {
-                throw new MassMailingException("Contact import failed");
-            }
+        // we import contacts
+        // we format contacts 
+        $contacts=[];
+        foreach ($lists as $line) {
+            $contact = implode(";",$line);
+            $contacts[]=$contact;
+        }
+        $formatedContacts = "'".implode("\n",$contacts)."'";
+       
+        $requestContactImport = new SendinBlueClient\Model\RequestContactImport();
+        $requestContactImport['fileBody'] = $formatedContacts;
+        $requestContactImport['listIds'] = [$list['id']];
+        $requestContactImport['emailBlacklist'] = false;
+        $requestContactImport['smsBlacklist'] = false;
+        $requestContactImport['updateExistingContacts'] = true;
+        $requestContactImport['emptyContactsAttributes'] = false;
+
+        try {
+            $result = $this->contactsApi->importContacts($requestContactImport);
+        } catch (Exception $e) {
+            echo 'Exception when calling ContactsApi->importContacts: ', $e->getMessage(), PHP_EOL;
         }
         // We create the campaign
         $emailCampaigns = new SendinBlueClient\Model\CreateEmailCampaign();
         $emailCampaigns['sender'] = ['name' => $sender->getUser()->getGivenName().' '.$sender->getUser()->getShortFamilyName(), 'email' => 'qualite@mobicoop.org'];
         $emailCampaigns['name'] = $createList['name'];
-        $emailCampaigns['templateId'] = $this->templateId;
+        $emailCampaigns['htmlContent'] = $body;
         $emailCampaigns['subject'] = $subject;
         $emailCampaigns['replyTo'] = $this->replyTo;
         $emailCampaigns['recipients'] =  ['listIds' => [$list['id']]];
@@ -126,8 +136,8 @@ class SendinblueProvider implements CampaignProviderInterface
         try {
             $result = $this->emailCampaignApi->createEmailCampaign($emailCampaigns);
             $campaign = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Campaign creation failed");
+        } catch (Exception $e) {
+            echo 'Exception when calling EmailCampaignsApi->createEmailCampaign: ', $e->getMessage(), PHP_EOL;
         }
       
         return $campaign;
@@ -142,8 +152,8 @@ class SendinblueProvider implements CampaignProviderInterface
         try {
             $result = $this->accountApi->getAccount();
             $account = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Account not found");
+        } catch (Exception $e) {
+            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
         }
 
         $campaignId = 1;
@@ -151,8 +161,8 @@ class SendinblueProvider implements CampaignProviderInterface
         try {
             $result = $this->emailCampaignApi->sendEmailCampaignNow($campaignId);
             $campaign = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Test failed");
+        } catch (Exception $e) {
+            echo 'Exception when calling EmailCampaignsApi->sendEmailCampaignNow: ', $e->getMessage(), PHP_EOL;
         }
 
         return $campaign;
@@ -163,25 +173,27 @@ class SendinblueProvider implements CampaignProviderInterface
      */
     public function sendCampaignTest(string $name, int $campaignId, array $emails)
     {
+        var_dump($emails);
+        var_dump($campaignId);
         $account=null;
         try {
             $result = $this->accountApi->getAccount();
             $account = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Account not found");
+        } catch (Exception $e) {
+            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
         }
-        $campaignId = 1;
         $emailTo = new SendinBlueClient\Model\SendTestEmail();
         $emailTo['emailTo'] = $emails;
 
         try {
             $result = $this->emailCampaignApi->sendTestEmail($campaignId, $emailTo);
             $test = $result;
-        } catch (MassMailingException $massMailingException) {
-            throw new MassMailingException("Test failed");
+        } catch (Exception $e) {
+            echo 'Exception when calling EmailCampaignsApi->sendTestEmail: ', $e->getMessage(), PHP_EOL;
         }
 
         return $test;
+        var_dump($test);die;
     }
 
 
