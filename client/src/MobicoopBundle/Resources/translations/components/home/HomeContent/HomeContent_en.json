@@ -19,7 +19,7 @@
         "title": "COVOITURAGE SOLIDAIRE",
         "text": "S'entraider pour l'accès à l'emploi",
         "button": {
-            "label": "Je suis solidaire",
+            "label": "Je demande un coup de pouce",
             "route": "/#/carpools/solidary/home/request"
         },
         "button2": {

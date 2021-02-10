@@ -25,7 +25,9 @@
                 class="text-right"
               >
                 {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
-                {{ publicProfile.age }} {{ $t('yearsOld') }}
+                <span v-if="ageDisplay">
+                  {{ publicProfile.age }} {{ $t('yearsOld') }}
+                </span>
               </v-col>
             </v-row>
           </v-col>
@@ -154,6 +156,10 @@ export default {
     refresh:{
       type: Boolean,
       default: false
+    },
+    ageDisplay: {
+      type: Boolean,
+      default: true
     }
   },
   data(){

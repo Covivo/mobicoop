@@ -30,13 +30,16 @@ const SolidarySchedule = ({
   };
 
   const getMarginDate = () => {
-    const hour = formatHour(outwardDatetime);
-    if (marginDuration > 0) {
-      if (hour === '10h30') return `${formatOutwardDatetime(outwardDatetime)} 8h-13h`;
-      if (hour === '14h30') return `${formatOutwardDatetime(outwardDatetime)} 13h-18h`;
-      if (hour === '18h30') return `${formatOutwardDatetime(outwardDatetime)} 18h-21h`;
+    if (outwardDatetime) {
+      const hour = formatHour(outwardDatetime);
+      if (marginDuration > 900) {
+        if (hour === '10h30' || hour === '11h30') return `${formatOutwardDatetime(outwardDatetime)} 8h-13h`;
+        if (hour === '14h30' || hour === '15h30') return `${formatOutwardDatetime(outwardDatetime)} 13h-18h`;
+        if (hour === '18h30' || hour === '19h30') return `${formatOutwardDatetime(outwardDatetime)} 18h-21h`;
+      }
+      return `${formatDateTime(outwardDatetime)}`;
     }
-    return `${formatDateTime(outwardDatetime)}`;
+    return 'Non spécifié';
   };
 
   if (frequency === 2) {
@@ -76,10 +79,10 @@ const SolidarySchedule = ({
           <Grid item>
             <Grid container direction="row" justify="space-between">
               <Grid item>
-                <b>Aller:</b> {formatHour(outwardDatetime)}
+                <b>Aller:</b> {outwardDatetime ? formatHour(outwardDatetime) : 'Non spécifié'}
               </Grid>
               <Grid item>
-                <b>Retour:</b> {formatHour(returnDatetime)}
+                <b>Retour:</b> {returnDatetime ? formatHour(returnDatetime) : 'Non spécifié'}
               </Grid>
             </Grid>
           </Grid>
