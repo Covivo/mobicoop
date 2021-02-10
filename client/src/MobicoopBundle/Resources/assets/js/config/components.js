@@ -72,6 +72,7 @@ import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
+import ErrorPage from "@components/utilities/ErrorPage";
 
 // PAYMENT
 import Payment from "@components/payment/Payment"
@@ -121,5 +122,6 @@ export default {
   DayListChips,
   Payment,
   PaymentPaid,
-  SsoLoginReturn
+  SsoLoginReturn,
+  ErrorPage
 }
