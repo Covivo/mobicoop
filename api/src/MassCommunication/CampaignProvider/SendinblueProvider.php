@@ -42,6 +42,7 @@ class SendinblueProvider implements CampaignProviderInterface
     private $key;
     private $folderId;
     private $replyTo;
+    private $templateId;
     private $contactsApi;
     private $emailCampaignApi;
 
@@ -54,11 +55,12 @@ class SendinblueProvider implements CampaignProviderInterface
      * @param string $domain        The domain for the senders
      * @param string $ip            The ip for the senders
      */
-    public function __construct(string $key, int $folderId, string $replyTo)
+    public function __construct(string $key, int $folderId, string $replyTo, int $templateId)
     {
         $this->key = $key;
         $this->folderId = $folderId;
         $this->replyTo = $replyTo;
+        $this->templateId = $templateId;
         // implement sendinBlue php library
         $config = SendinBlueClient\Configuration::getDefaultConfiguration()->setApiKey('api-key', $key);
         $this->contactsApi = new SendinBlueClient\Api\ContactsApi(
@@ -130,6 +132,8 @@ class SendinblueProvider implements CampaignProviderInterface
         $emailCampaigns['sender'] = ['name' => $sender->getUser()->getGivenName().' '.$sender->getUser()->getShortFamilyName(), 'email' => 'qualite@mobicoop.org'];
         $emailCampaigns['name'] = $createList['name'];
         $emailCampaigns['htmlContent'] = $body;
+        // Keep it in case client want to use a temlplate
+        // $emailCampaigns['templateId'] = $this->templateId;
         $emailCampaigns['subject'] = $subject;
         $emailCampaigns['replyTo'] = $this->replyTo;
         $emailCampaigns['recipients'] =  ['listIds' => [$list['id']]];

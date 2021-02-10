@@ -65,6 +65,7 @@ class CampaignManager
         string $mailerApiKey,
         string $mailerClientName,
         int $mailerClientId,
+        int $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerIp,
         string $mailerDomain,
@@ -87,12 +88,13 @@ class CampaignManager
         $this->mailerApiKey = $mailerApiKey;
         $this->mailerClientName = $mailerClientName;
         $this->mailerClientId = $mailerClientId;
+        $this->mailerClientTemplateId = $mailerClientTemplateId;
         $this->mailerReplyTo = $mailerReplyTo;
         $this->mailerIp = $mailerIp;
         $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerDomain, $mailerIp);
+                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerClientTemplateId);
                 break;
         }
     }
