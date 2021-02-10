@@ -24,6 +24,7 @@
 namespace App\Carpool\Interoperability\Service;
 
 use App\Carpool\Exception\BadRequestInteroperabilityCarpoolException;
+use App\Carpool\Interoperability\Entity\Schedule;
 use App\Carpool\Interoperability\Entity\Waypoint;
 use App\Carpool\Interoperability\Ressource\Ad;
 use App\Carpool\Ressource\Ad as ClassicAd;
@@ -118,7 +119,13 @@ class AdManager
         $classicAd->setOutwardLimitDate($ad->getOutwardLimitDate());
         $classicAd->setReturnDate($ad->getReturnDate());
         $classicAd->setReturnLimitDate($ad->getReturnLimitDate());
-        $classicAd->setSchedule($ad->getSchedule());
+
+
+        $schedules = [];
+        foreach ($ad->getSchedule() as $currentSchedule) {
+            $schedules[] = $this->buildArraySchedule($currentSchedule);
+        }
+        $classicAd->setSchedule($schedules);
         
         // Punctual
         $classicAd->setOutwardTime($ad->getOutwardTime());
@@ -176,6 +183,26 @@ class AdManager
         return $address;
     }
     
+    /**
+     * Build the array schedule from the interoperability Schedule
+     *
+     * @param Schedule $schedule
+     * @return array
+     */
+    private function buildArraySchedule(Schedule $schedule): array
+    {
+        $arraySchedule = [];
+        $arraySchedule['mon'] = $schedule->hasMon();
+        $arraySchedule['tue'] = $schedule->hasTue();
+        $arraySchedule['wed'] = $schedule->hasWed();
+        $arraySchedule['thu'] = $schedule->hasThu();
+        $arraySchedule['fri'] = $schedule->hasFri();
+        $arraySchedule['sat'] = $schedule->hasSat();
+        $arraySchedule['sun'] = $schedule->hasSun();
+        $arraySchedule['outwardTime'] = $schedule->getOutwardTime()->format("H:i");
+        $arraySchedule['returnTime'] = $schedule->getReturnTime()->format("H:i");
+        return $arraySchedule;
+    }
     
     /**
      * Make several validity check before trying to register this Ad

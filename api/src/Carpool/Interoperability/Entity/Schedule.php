@@ -23,6 +23,8 @@
 
 namespace App\Carpool\Interoperability\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
  * Regular schedule item for an Interoperability Ad.
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -32,129 +34,138 @@ class Schedule
     
     /**
      * @var boolean|null The journey is available on mondays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $monCheck;
+    private $mon;
 
     /**
      * @var boolean|null The journey is available on tuesdays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $tueCheck;
+    private $tue;
 
     /**
      * @var boolean|null The journey is available on wednesdays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $wedCheck;
+    private $wed;
 
     /**
      * @var boolean|null The journey is available on thursdays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $thuCheck;
+    private $thu;
 
     /**
      * @var boolean|null The journey is available on fridays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $friCheck;
+    private $fri;
 
     /**
      * @var boolean|null The journey is available on saturdays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $satCheck;
+    private $sat;
 
     /**
      * @var boolean|null The journey is available on sundays (if regular).
+     * @Groups({"adWrite"})
      */
-    private $sunCheck;
+    private $sun;
 
     /**
      * @var \DateTimeInterface|null The outward time to display (if regular and unique).
+     * @Groups({"adWrite"})
      */
     private $outwardTime;
 
     /**
      * @var \DateTimeInterface|null The return time to display (if regular and unique).
+     * @Groups({"adWrite"})
      */
     private $returnTime;
 
-    public function isMonCheck(): ?bool
+    public function hasMon(): ?bool
     {
-        return $this->monCheck;
+        return $this->mon;
     }
 
-    public function setMonCheck(?bool $monCheck): self
+    public function setMon(?bool $mon): self
     {
-        $this->monCheck = $monCheck;
+        $this->mon = $mon;
 
         return $this;
     }
 
-    public function isTueCheck(): ?bool
+    public function hasTue(): ?bool
     {
-        return $this->tueCheck;
+        return $this->tue;
     }
 
-    public function setTueCheck(?bool $tueCheck): self
+    public function setTue(?bool $tue): self
     {
-        $this->tueCheck = $tueCheck;
+        $this->tue = $tue;
 
         return $this;
     }
 
-    public function isWedCheck(): ?bool
+    public function hasWed(): ?bool
     {
-        return $this->wedCheck;
+        return $this->wed;
     }
 
-    public function setWedCheck(?bool $wedCheck): self
+    public function setWed(?bool $wed): self
     {
-        $this->wedCheck = $wedCheck;
+        $this->wed = $wed;
 
         return $this;
     }
 
-    public function isThuCheck(): ?bool
+    public function hasThu(): ?bool
     {
-        return $this->thuCheck;
+        return $this->thu;
     }
 
-    public function setThuCheck(?bool $thuCheck): self
+    public function setThu(?bool $thu): self
     {
-        $this->thuCheck = $thuCheck;
+        $this->thu = $thu;
 
         return $this;
     }
 
-    public function isFriCheck(): ?bool
+    public function hasFri(): ?bool
     {
-        return $this->friCheck;
+        return $this->fri;
     }
 
-    public function setFriCheck(?bool $friCheck): self
+    public function setFri(?bool $fri): self
     {
-        $this->friCheck = $friCheck;
+        $this->fri = $fri;
 
         return $this;
     }
 
-    public function isSatCheck(): ?bool
+    public function hasSat(): ?bool
     {
-        return $this->satCheck;
+        return $this->sat;
     }
 
-    public function setSatCheck(?bool $satCheck): self
+    public function setSat(?bool $sat): self
     {
-        $this->satCheck = $satCheck;
+        $this->sat = $sat;
 
         return $this;
     }
 
-    public function isSunCheck(): ?bool
+    public function hasSun(): ?bool
     {
-        return $this->sunCheck;
+        return $this->sun;
     }
 
-    public function setSunCheck(?bool $sunCheck): self
+    public function setSun(?bool $sun): self
     {
-        $this->sunCheck = $sunCheck;
+        $this->sun = $sun;
 
         return $this;
     }
