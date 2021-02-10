@@ -27,7 +27,6 @@ use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Interfaces\CampaignProviderInterface;
 use SendinBlue\Client as SendinBlueClient;
 use GuzzleHttp\Client;
-use App\MassCommunication\Exception\MassMailingException;
 use DateTime;
 use Exception;
 
@@ -43,7 +42,6 @@ class SendinblueProvider implements CampaignProviderInterface
     private $key;
     private $folderId;
     private $replyTo;
-    private $accountApi;
     private $contactsApi;
     private $emailCampaignApi;
 
@@ -63,10 +61,6 @@ class SendinblueProvider implements CampaignProviderInterface
         $this->replyTo = $replyTo;
         // implement sendinBlue php library
         $config = SendinBlueClient\Configuration::getDefaultConfiguration()->setApiKey('api-key', $key);
-        $this->accountApi = new SendinBlueClient\Api\AccountApi(
-            new Client(),
-            $config
-        );
         $this->contactsApi = new SendinBlueClient\Api\ContactsApi(
             new Client(),
             $config
@@ -78,18 +72,18 @@ class SendinblueProvider implements CampaignProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Method to create a SendinBlue mailing campaign
+     *
+     * @param string $name
+     * @param Sender $sender
+     * @param string $subject
+     * @param string $body
+     * @param array $lists of teh recipients (deliveries)
+     * @return void
      */
     public function createCampaign(string $name, Sender $sender, string $subject, string $body, array $lists)
     {
-        $account=null;
-        $list=null;
-        try {
-            $result = $this->accountApi->getAccount();
-            $account = $result;
-        } catch (Exception $e) {
-            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
-        }
+        // we create a campaign
         //  we create the list
         $createList = new SendinBlueClient\Model\CreateList();
         $createList['name'] = 'Campaign'.date_format(new DateTime(), 'YmdHis');
@@ -102,14 +96,22 @@ class SendinblueProvider implements CampaignProviderInterface
         }
 
         // we import contacts
-        // we format contacts 
+        $contactsList[0] = ['EMAIL','FAMILYNAME','GIVENNAME'];
+        // we add the sender infos because the sender need to be in the list to receive the test email
+        $contactsList[1] = [$sender->getUser()->getEmail(), $sender->getUser()->getFamilyName(), $sender->getUser()->getGivenName()];
+        $i = 2;
+        // We add reciepients to the contacts list
+        foreach ($lists as $contact) {
+            $contactsList[$i++] = [$contact->getUser()->getEmail(), $contact->getUser()->getFamilyName(), $contact->getUser()->getGivenName()];
+        }
+        //  We format the contacts list
         $contacts=[];
-        foreach ($lists as $line) {
-            $contact = implode(";",$line);
+        foreach ($contactsList as $line) {
+            $contact = implode(";", $line);
             $contacts[]=$contact;
         }
-        $formatedContacts = "'".implode("\n",$contacts)."'";
-       
+        $formatedContacts = "'".implode("\n", $contacts)."'";
+        // we import contacts
         $requestContactImport = new SendinBlueClient\Model\RequestContactImport();
         $requestContactImport['fileBody'] = $formatedContacts;
         $requestContactImport['listIds'] = [$list['id']];
@@ -135,65 +137,49 @@ class SendinblueProvider implements CampaignProviderInterface
 
         try {
             $result = $this->emailCampaignApi->createEmailCampaign($emailCampaigns);
-            $campaign = $result;
+            return $result;
         } catch (Exception $e) {
             echo 'Exception when calling EmailCampaignsApi->createEmailCampaign: ', $e->getMessage(), PHP_EOL;
         }
-      
-        return $campaign;
     }
 
     /**
-     * {@inheritdoc}
+     * Method to send the campaign now
+     *
+     * @param string $name (not usefull for sendinBlue)
+     * @param integer $campaignId
+     * @return void
      */
     public function sendCampaign(string $name, int $campaignId)
     {
-        $account=null;
-        try {
-            $result = $this->accountApi->getAccount();
-            $account = $result;
-        } catch (Exception $e) {
-            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
-        }
-
-        $campaignId = 1;
-
+        // We send the campaign
         try {
             $result = $this->emailCampaignApi->sendEmailCampaignNow($campaignId);
-            $campaign = $result;
+            return $result;
         } catch (Exception $e) {
             echo 'Exception when calling EmailCampaignsApi->sendEmailCampaignNow: ', $e->getMessage(), PHP_EOL;
         }
-
-        return $campaign;
     }
 
     /**
-     * {@inheritdoc}
+     * Method to send a test email
+     *
+     * @param string $name (not usefull for sendinBlue)
+     * @param integer $campaignId
+     * @param array $emails
+     * @return void
      */
     public function sendCampaignTest(string $name, int $campaignId, array $emails)
     {
-        var_dump($emails);
-        var_dump($campaignId);
-        $account=null;
-        try {
-            $result = $this->accountApi->getAccount();
-            $account = $result;
-        } catch (Exception $e) {
-            echo 'Exception when calling AccountApi->getAccount: ', $e->getMessage(), PHP_EOL;
-        }
         $emailTo = new SendinBlueClient\Model\SendTestEmail();
         $emailTo['emailTo'] = $emails;
 
         try {
             $result = $this->emailCampaignApi->sendTestEmail($campaignId, $emailTo);
-            $test = $result;
+            return $result;
         } catch (Exception $e) {
             echo 'Exception when calling EmailCampaignsApi->sendTestEmail: ', $e->getMessage(), PHP_EOL;
         }
-
-        return $test;
-        var_dump($test);die;
     }
 
 

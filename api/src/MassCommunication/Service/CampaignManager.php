@@ -156,19 +156,7 @@ class CampaignManager
             }
         }
         // call the service
-        $this->massEmailProvider->send(
-            $campaign->getSubject(),
-            $campaign->getFromName(),
-            $campaign->getEmail(),
-            $campaign->getReplyTo(),
-            $this->getFormedEmailBody($campaign->getBody()),
-            $this->getRecipientsFromDeliveries($campaign->getDeliveries())
-        );
-
-        // if the result of the send is returned here
-        // foreach ($campaign->getDeliveries() as $delivery) {
-        //     $delivery->setStatus(Delivery::STATUS_SENT);
-        // }
+        $this->massEmailProvider->sendCampaign($campaign->getName(), $campaign->getProviderCampaignId());
 
         // persist the result depending of the status
         $campaign->setStatus(Campaign::STATUS_SENT);
@@ -191,19 +179,11 @@ class CampaignManager
         $sender = new Sender;
         $sender->setUser($campaign->getUser());
 
-        // we create an array with recipients infos
-        $list[0] = ['EMAIL','FAMILYNAME','GIVENNAME'];
-        $list[1] = [$campaign->getUser()->getEmail(), $campaign->getUser()->getFamilyName(), $campaign->getUser()->getGivenName()];
-        $i = 2;
-        foreach ($campaign->getDeliveries() as $delivery) {
-            $list[$i++] = [$delivery->getUser()->getEmail(), $delivery->getUser()->getFamilyName(), $delivery->getUser()->getGivenName()];
-        }
-       
         // we create the campaign on provider side
-        $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $campaign->getBody(), $list);
+        $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $campaign->getBody(), $campaign->getDeliveries());
         // We ad to the campaign the campaign provider id associated
         $campaign->setProviderCampaignId($providerCampaign['id']);
-        // We send the test email
+        // We send the test email with as reciepient the email of the creator of the campaign
         $this->massEmailProvider->sendCampaignTest($campaign->getName(), $providerCampaign['id'], [$campaign->getUser()->getEmail()]);
         
         $campaign->setStatus(Campaign::STATUS_CREATED);
