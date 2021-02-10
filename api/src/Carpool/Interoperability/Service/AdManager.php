@@ -24,9 +24,11 @@
 namespace App\Carpool\Interoperability\Service;
 
 use App\Carpool\Exception\BadRequestInteroperabilityCarpoolException;
+use App\Carpool\Interoperability\Entity\Waypoint;
 use App\Carpool\Interoperability\Ressource\Ad;
 use App\Carpool\Ressource\Ad as ClassicAd;
 use App\Carpool\Service\AdManager as ClassicAdManager;
+use App\Geography\Entity\Address;
 use App\Geography\Service\GeoTools;
 use Symfony\Component\Security\Core\Security;
 
@@ -94,8 +96,24 @@ class AdManager
         $classicAd->setRole($ad->getRole());
         $classicAd->setOneWay($ad->isOneWay());
         $classicAd->setFrequency($ad->getFrequency());
-        $classicAd->setOutwardWaypoints($ad->getOutwardWaypoints());
-        $classicAd->setReturnWaypoints($ad->getReturnWaypoints());
+        
+        
+        // Build the waypoints
+        $outwardWaypoints = [];
+        foreach ($ad->getOutwardWaypoints() as $currentWaypoint) {
+            $outwardWaypoints[] = $this->buildAddressFromWaypoint($currentWaypoint);
+        }
+        $classicAd->setOutwardWaypoints($outwardWaypoints);
+
+        if (!is_null($ad->getReturnWaypoints())) {
+            $returnWaypoints = [];
+            foreach ($ad->getReturnWaypoints() as $currentWaypoint) {
+                $returnWaypoints[] = $this->buildAddressFromWaypoint($currentWaypoint);
+            }
+            $classicAd->setReturnWaypoints($returnWaypoints);
+        }
+        
+        
         $classicAd->setOutwardDate($ad->getOutwardDate());
         $classicAd->setOutwardLimitDate($ad->getOutwardLimitDate());
         $classicAd->setReturnDate($ad->getReturnDate());
@@ -111,10 +129,10 @@ class AdManager
         
         // We need to compute the price by kilometers
         $waypoints = $ad->getOutwardWaypoints();
-        $latitudeFrom = $waypoints[0]['latitude'];
-        $longitudeFrom = $waypoints[0]['longitude'];
-        $latitudeTo = $waypoints[count($waypoints)-1]['latitude'];
-        $longitudeTo = $waypoints[count($waypoints)-1]['longitude'];
+        $latitudeFrom = $waypoints[0]->getLatitude();
+        $longitudeFrom = $waypoints[0]->getLongitude();
+        $latitudeTo = $waypoints[count($waypoints)-1]->getLatitude();
+        $longitudeTo = $waypoints[count($waypoints)-1]->getLongitude();
         
         $distance = round(($this->geoTools->haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo) / 1000), 2);
         $classicAd->setPriceKm(round((((float)$ad->getPrice() / 100) / $distance), 2));
@@ -122,6 +140,43 @@ class AdManager
         return $classicAd;
     }
 
+    /**
+     * Build an Address from a point
+     *
+     * @param array $point  The point
+     * @return Address  The builded address
+     */
+    private function buildAddressFromWaypoint(Waypoint $point): Address
+    {
+        $address = new Address();
+        if (!is_null($point->getStreetNumber())) {
+            $address->setHouseNumber($point["streetNumber"]);
+        }
+        if (!is_null($point->getStreet())) {
+            $address->setStreet($point->getStreet());
+        }
+        if (!is_null($point->getStreetNumber()) && !is_null($point->getStreet())) {
+            $address->setStreetAddress($point->getStreetNumber()." ".$point->getStreet());
+        }
+        if (!is_null($point->getPostalCode())) {
+            $address->setPostalCode($point->getPostalCode());
+        }
+        if (!is_null($point->getAddressLocality())) {
+            $address->setAddressLocality($point->getAddressLocality());
+        }
+        if (!is_null($point->getCountry())) {
+            $address->setAddressCountry($point->getCountry());
+        }
+        if (!is_null($point->getLatitude())) {
+            $address->setLatitude($point->getLatitude());
+        }
+        if (!is_null($point->getLongitude())) {
+            $address->setLongitude($point->getLongitude());
+        }
+        return $address;
+    }
+    
+    
     /**
      * Make several validity check before trying to register this Ad
      * Throw exceptions so it does'nt return any boolean
@@ -146,7 +201,7 @@ class AdManager
                 throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_NUMBER_OUTWARD_WAYPOINT);
             }
             foreach ($ad->getOutwardWaypoints() as $outwardWaypoint) {
-                if (!isset($outwardWaypoint['latitude']) || $outwardWaypoint['latitude']=="" || !isset($outwardWaypoint['longitude']) || $outwardWaypoint['longitude']=="") {
+                if (is_null($outwardWaypoint->getLatitude()) || is_null($outwardWaypoint->getLongitude())) {
                     throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_OUTWARD_WAYPOINT);
                 }
             }
@@ -183,8 +238,8 @@ class AdManager
                 if (count($ad->getReturnWaypoints())<2) {
                     throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_NUMBER_RETURN_WAYPOINT);
                 }
-                foreach ($ad->getReturnWaypoints() as $returnWaypoints) {
-                    if (!isset($returnWaypoints['latitude']) || $returnWaypoints['latitude']=="" || !isset($returnWaypoints['longitude']) || $returnWaypoints['longitude']=="") {
+                foreach ($ad->getReturnWaypoints() as $returnWaypoint) {
+                    if (is_null($returnWaypoint->getLatitude()) || is_null($returnWaypoint->getLongitude())) {
                         throw new BadRequestInteroperabilityCarpoolException(BadRequestInteroperabilityCarpoolException::INVALID_RETURN_WAYPOINT);
                     }
                 }

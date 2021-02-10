@@ -25,13 +25,13 @@ namespace App\Carpool\Interoperability\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Carpool\Interoperability\Entity\Schedule;
+use App\Carpool\Interoperability\Entity\Waypoint;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : an Interoperability Ad.
- * All actions related to a carpooling should be related to this entity.
- *
  * @ApiResource(
  *      routePrefix="/interoperability",
  *      attributes={
@@ -58,7 +58,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *       }
  * )
- *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Ad
 {
@@ -114,7 +114,7 @@ class Ad
     private $frequency;
 
     /**
-     * @var array|null The waypoints for the outward.
+     * @var Waypoint[]|null The waypoints for the outward.
      *
      * @Assert\NotBlank
      * @Groups({"adWrite"})
@@ -122,7 +122,7 @@ class Ad
     private $outwardWaypoints;
 
     /**
-     * @var array|null The waypoints for the return.
+     * @var Waypoint[]|null The waypoints for the return.
      *
      * @Groups({"adWrite"})
      */
@@ -173,7 +173,7 @@ class Ad
     private $returnTime;
 
     /**
-     * @var array|null The schedule if the frequency is regular.
+     * @var Schedule[]|null The schedule if the frequency is regular.
      * The schedule contains the outward and return elements.
      *
      * @Groups({"adWrite"})
