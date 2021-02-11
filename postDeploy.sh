@@ -96,7 +96,7 @@ then
     if [ $VERSION == "test" ]
     then
         cd /var/www/$VERSION/$INSTANCE/api;
-        php bin/console doctrine:fixtures:load -n -v --append --group=basic
+        php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=$VERSION_MIGRATE
     fi
 
 else
