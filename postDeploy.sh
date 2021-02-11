@@ -94,9 +94,9 @@ then
 
     # clear cache
     cd /var/www/$VERSION/$INSTANCE/api;
-    php bin/console cache:clear --env=$VERSION_MIGRATE
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
     cd /var/www/$VERSION/$INSTANCE/client;
-    php bin/console cache:clear --env=$VERSION_MIGRATE
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
 
     # Fixtures for test
     if [ $VERSION == "test" ]
@@ -173,9 +173,9 @@ else
 
      # clear cache
     cd /var/www/$INSTANCE/$VERSION/api;
-    php bin/console cache:clear --env=$VERSION_MIGRATE
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
     cd /var/www/$INSTANCE/$VERSION/client;
-    php bin/console cache:clear --env=$VERSION_MIGRATE
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;
