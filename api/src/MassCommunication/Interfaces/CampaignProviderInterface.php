@@ -23,26 +23,44 @@
 
 namespace App\MassCommunication\Interfaces;
 
+use App\MassCommunication\Entity\Sender;
+
 /**
- * Mass email provider interface.
+ * Campaign provider interface.
  *
- * A mass email provider entity class must implement all these methods in order to be used by campaign services.
+ * A campaign provider entity class must implement all these methods in order to be used by campaign services.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-interface MassEmailProviderInterface
+interface CampaignProviderInterface
 {
     /**
-     * Send an email to multiple recipients.
+     * Create an email campaign
      *
+     * @param string $name      The name of the campaign
+     * @param Sender $sender    The sender of the campaign
      * @param string $subject   The subject of the email
-     * @param string $fromName  The name of the sender
-     * @param string $fromEmail The email of the sender
-     * @param string $replyTo   The reply to email
-     * @param string $body      The body of the message
-     * @param array $recipients The array of recipients email, with its context variables (under the form [$email => [$context]])
-     * @return mixed
+     * @param string $body      The body of the email
+     * @param array $lists      The lists of contacts to send the email to
+     * @return void
      */
-    public function send(string $subject, string $fromName, string $fromEmail, string $replyTo, string $body, array $recipients);
+    public function createCampaign(string $name, Sender $sender, string $subject, string $body, array $lists);
+
+    /**
+     * Send an email campaign
+     *
+     * @param string $name  The name of the campaign
+     * @return void
+     */
+    public function sendCampaign(string $name, int $id);
+
+    /**
+     * Send an email test for an email campaign
+     *
+     * @param string $name  The name of the campaign
+     * @param array $emails The emails to send the test to
+     * @return void
+     */
+    public function sendCampaignTest(string $name, int $id, array $emails);
 }

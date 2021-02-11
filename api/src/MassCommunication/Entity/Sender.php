@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,46 @@
  *    LICENSE
  **************************/
 
-namespace App\MassCommunication\Exception;
+namespace App\MassCommunication\Entity;
 
-class CampaignNotFoundException extends \LogicException
+use App\User\Entity\User;
+
+/**
+ * A campaign sender.
+ */
+class Sender
 {
+    /**
+     * @var User The user as a sender.
+     */
+    private $user;
+
+    /**
+     * @var string The domain of the sender.
+     */
+    private $domain;
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(string $domain): self
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
 }
