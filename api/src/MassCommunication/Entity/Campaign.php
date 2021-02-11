@@ -160,6 +160,14 @@ class Campaign
     private $status;
 
     /**
+     * @var int provider campaign id associated to the campaign.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     */
+    private $providerCampaignId;
+
+    /**
      * @var Medium The medium used for the campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
@@ -229,6 +237,7 @@ class Campaign
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $sendAll;
+
 
     public function __construct()
     {
@@ -331,6 +340,18 @@ class Campaign
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getProviderCampaignId(): ?int
+    {
+        return $this->providerCampaignId;
+    }
+
+    public function setProviderCampaignId(int $providerCampaignId): self
+    {
+        $this->providerCampaignId = $providerCampaignId;
 
         return $this;
     }
