@@ -433,6 +433,7 @@ class AdManager
                     $address= $this->addressManager->reverseGeocodeAddress($address);
                 }
 
+                $waypoint->setAddress($address);
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);
