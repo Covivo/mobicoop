@@ -89,6 +89,7 @@ use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
+use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
 use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
@@ -1043,6 +1044,15 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $userDelegate;
+
+    /**
+     * @var App|null App that create the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $appDelegate;
 
     /**
      * @var ArrayCollection|null The carpool proofs of the user as a driver.
@@ -2613,6 +2623,18 @@ class User implements UserInterface, EquatableInterface
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
+
+        return $this;
+    }
+
+    public function getAppDelegate(): ?App
+    {
+        return $this->appDelegate;
+    }
+
+    public function setAppDelegate(?App $appDelegate): self
+    {
+        $this->appDelegate = $appDelegate;
 
         return $this;
     }

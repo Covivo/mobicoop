@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,48 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\App\Service;
+namespace App\Carpool\Interoperability\DataPersister;
 
-use App\App\Entity\App;
-use App\App\Repository\AppRepository;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Carpool\Interoperability\Ressource\Ad;
+use App\Carpool\Interoperability\Service\AdManager;
 
-/**
- * App manager service.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- */
-class AppManager
+final class AdPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $appRepository;
+    private $adManager;
 
-    /**
-     * Constructor.
-     */
-    public function __construct(
-        AppRepository $appRepository
-    ) {
-        $this->appRepository = $appRepository;
+    public function __construct(AdManager $adManager)
+    {
+        $this->adManager = $adManager;
+    }
+  
+    public function supports($data, array $context = []): bool
+    {
+        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'interop_post';
     }
 
-    /**
-     * Get an app by its id
-     *
-     * @param int $appId  The appId
-     * @return App|null The app found
-     */
-    public function getApp(int $appId)
+    public function persist($data, array $context = [])
     {
-        return $this->appRepository->find($appId);
+        return $this->adManager->createAd($data);
     }
 
-    /**
-     * Get an app by its username
-     *
-     * @param string $username  The username
-     * @return App|null The app found
-     */
-    public function getAppByUsername(string $username)
+    public function remove($data, array $context = [])
     {
-        return $this->appRepository->findOneBy(['username'=>$username]);
+        // call your persistence layer to delete $data
     }
 }

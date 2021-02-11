@@ -31,6 +31,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use App\App\Entity\App;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -217,6 +218,15 @@ class Proposal
      */
     private $userDelegate;
 
+    /**
+     * @var App|null App that create the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $appDelegate;
+    
     /**
      * @var ArrayCollection The waypoints of the proposal.
      *
@@ -574,6 +584,18 @@ class Proposal
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
+
+        return $this;
+    }
+
+    public function getAppDelegate(): ?App
+    {
+        return $this->appDelegate;
+    }
+
+    public function setAppDelegate(?App $appDelegate): self
+    {
+        $this->appDelegate = $appDelegate;
 
         return $this;
     }
