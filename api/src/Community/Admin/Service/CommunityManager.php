@@ -147,6 +147,29 @@ class CommunityManager
     }
 
     /**
+     * Add a community user.
+     *
+     * @param CommunityUser $communityUser  The community user to update
+     * @return CommunityUser                The community user updated
+     */
+    public function addCommunityUser(CommunityUser $communityUser)
+    {
+        $status = $communityUser->getStatus();
+
+        // persist the community user
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+        
+        // we update the status as it can be automatically erased by doctrine events
+        $communityUser->setStatus($status);
+        $this->entityManager->persist($communityUser);
+        $this->entityManager->flush();
+
+        // return the community
+        return $communityUser;
+    }
+
+    /**
      * Patch a community user.
      *
      * @param CommunityUser $communityUser  The community user to update

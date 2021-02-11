@@ -62,7 +62,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "post"={
  *              "security_post_denormalize"="is_granted('community_join',object)"
  *          },
- *          "ADMIN_get_members"={
+ *          "ADMIN_get"={
  *              "path"="/admin/communities/{id}/members",
  *              "method"="GET",
  *              "normalization_context"={
@@ -70,6 +70,13 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "skip_null_values"=false
  *              },
  *              "security"="is_granted('admin_community_read',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/community_members",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_membership',object)"
  *          },
  *          "add"={
  *              "method"="POST",
@@ -91,7 +98,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('community_update',object)"
+ *              "security"="is_granted('admin_community_member_update',object)"
  *          },
  *      }
  * )
@@ -122,7 +129,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
+     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -134,7 +141,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
+     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -410,7 +417,7 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && !$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION) {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() != Community::MANUAL_VALIDATION) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
         } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
             $this->setStatus(self::STATUS_PENDING);
@@ -426,6 +433,9 @@ class CommunityUser
     public function setAutoAcceptedOrRefusedDate()
     {
         if ($this->status == self::STATUS_ACCEPTED_AS_MEMBER && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \Datetime());
+            $this->setRefusedDate(null);
+        } elseif ($this->status == self::STATUS_ACCEPTED_AS_MODERATOR && is_null($this->acceptedDate)) {
             $this->setAcceptedDate(new \Datetime());
             $this->setRefusedDate(null);
         } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {

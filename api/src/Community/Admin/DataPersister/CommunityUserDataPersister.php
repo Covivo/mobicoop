@@ -48,7 +48,9 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
+        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
+            $data = $this->communityManager->addCommunityUser($data);
+        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->communityManager->patchCommunityUser($data, json_decode($this->request->getContent(), true));
         }

@@ -28,7 +28,7 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
-use App\Community\Service\CommunityManager;
+use App\Community\Repository\CommunityRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunityVoter extends Voter
@@ -38,20 +38,23 @@ class CommunityVoter extends Voter
     const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
     const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
     const ADMIN_COMMUNITY_LIST = 'admin_community_list';
+    const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
     const COMMUNITY_CREATE = 'community_create';
     const COMMUNITY_READ = 'community_read';
     const COMMUNITY_UPDATE = 'community_update';
     const COMMUNITY_DELETE = 'community_delete';
     const COMMUNITY_LIST = 'community_list';
+    const COMMUNITY_MEMBERSHIP= 'community_membership';
 
+    private $authManager;
     private $request;
-    private $communityManager;
+    private $communityRepository;
 
-    public function __construct(AuthManager $authManager, RequestStack $requestStack, CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, CommunityRepository $communityRepository)
     {
         $this->authManager = $authManager;
         $this->request = $requestStack->getCurrentRequest();
-        $this->communityManager = $communityManager;
+        $this->communityRepository = $communityRepository;
     }
 
     protected function supports($attribute, $subject)
@@ -62,7 +65,8 @@ class CommunityVoter extends Voter
             self::ADMIN_COMMUNITY_READ,
             self::ADMIN_COMMUNITY_UPDATE,
             self::ADMIN_COMMUNITY_DELETE,
-            self::ADMIN_COMMUNITY_LIST
+            self::ADMIN_COMMUNITY_LIST,
+            self::ADMIN_COMMUNITY_MEMBERSHIP
             ])) {
             return false;
         }
@@ -73,7 +77,8 @@ class CommunityVoter extends Voter
             self::ADMIN_COMMUNITY_READ,
             self::ADMIN_COMMUNITY_UPDATE,
             self::ADMIN_COMMUNITY_DELETE,
-            self::ADMIN_COMMUNITY_LIST
+            self::ADMIN_COMMUNITY_LIST,
+            self::ADMIN_COMMUNITY_MEMBERSHIP
             ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
             return false;
         }
@@ -86,27 +91,23 @@ class CommunityVoter extends Voter
             case self::ADMIN_COMMUNITY_CREATE:
                 return $this->canCreateCommunity();
             case self::ADMIN_COMMUNITY_READ:
-                // here we don't have the denormalized event, we need to get it from the request
-                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
+                // this voter is used for direct community read, or for community member list, we have to check the type of subject
+                if ($subject instanceof Community) {
+                    return $this->canReadCommunity($subject);
+                }
+                if ($community = $this->communityRepository->find($this->request->get('id'))) {
                     return $this->canReadCommunity($community);
                 }
-                // no break
+                return false;
             case self::ADMIN_COMMUNITY_UPDATE:
-                // here we don't have the denormalized event, we need to get it from the request
-                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
-                    return $this->canUpdateCommunity($community);
-                }
-                // no break
+                return $this->canUpdateCommunity($subject);
             case self::ADMIN_COMMUNITY_DELETE:
-                // here we don't have the denormalized event, we need to get it from the request
-                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
-                    return $this->canDeleteCommunity($community);
-                }
-                // no break
+                return $this->canDeleteCommunity($subject);
             case self::ADMIN_COMMUNITY_LIST:
                 return $this->canListCommunity();
+            case self::ADMIN_COMMUNITY_MEMBERSHIP:
+                return $this->canAddMember();
         }
-
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -133,5 +134,10 @@ class CommunityVoter extends Voter
     private function canListCommunity()
     {
         return $this->authManager->isAuthorized(self::COMMUNITY_LIST);
+    }
+
+    private function canAddMember()
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_MEMBERSHIP);
     }
 }

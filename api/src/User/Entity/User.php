@@ -80,7 +80,7 @@ use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
-use App\User\Filter\FamillyAndGivenNameFilter;
+use App\User\Filter\FamilyAndGivenNameFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
@@ -278,14 +278,14 @@ use App\User\Controller\UserSendValidationEmail;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('user_list',object)"
+ *              "security"="is_granted('admin_user_list',object)"
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/users",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('user_create',object)"
+ *              "security"="is_granted('admin_user_create',object)"
  *          },
  *      },
  *      itemOperations={
@@ -399,27 +399,27 @@ use App\User\Controller\UserSendValidationEmail;
  *              "path"="/admin/users/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('admin_user_read',object)"
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/users/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('admin_user_update',object)"
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/users/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('user_delete',object)"
+ *              "security"="is_granted('admin_user_delete',object)"
  *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
- * @ApiFilter(FamillyAndGivenNameFilter::class, properties={"q"})
+ * @ApiFilter(FamilyAndGivenNameFilter::class, properties={"q"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)

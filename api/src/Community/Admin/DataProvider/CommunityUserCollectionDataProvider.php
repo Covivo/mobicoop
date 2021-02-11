@@ -51,7 +51,7 @@ final class CommunityUserCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CommunityUser::class === $resourceClass && $operationName === "ADMIN_get_members";
+        return CommunityUser::class === $resourceClass && $operationName === "ADMIN_get";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
