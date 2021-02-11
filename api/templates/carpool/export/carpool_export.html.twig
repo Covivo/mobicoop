@@ -57,65 +57,81 @@
 				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "taxInfo"|trans }}</p>
 				{% endif %}
 
-				<h3>Année {{ dataToPdf.year|date("Y") }}</h3>
+	 			{% set refYear = null %}
+			    {% set alreadyOpen = false %}
+			    {% for carpoolExport in dataToPdf.carpoolExports %}
+				
+					{% if refYear != carpoolExport.date|date("Y") %}
 
-				<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
+						{#Not the first loop, we have to close the previous table#}
+						{% if alreadyOpen == true %}
+							</table>
+						{% endif %}
+					
+						<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
 
-						{# thead #}
-						<tr>
-							<th>{{ "date"|trans }}</th>
-							<th>{{ "role"|trans }}</th>
-							<th>{{ "carpooler"|trans }}</th>
-							<th>{{ "pickUpLocality"|trans }}</th>
-							<th>{{ "dropOffLocality"|trans }}</th>
-							<th>{{ "amount"|trans }}</th>
-							{% if dataToPdf.paymentActive %}
-								<th>{{ "typeOfpayment"|trans }}</th>
-							{% endif %}
-							<th>{{ "certified"|trans }}</th>
-						</tr>
-						{# tbody #}
-						{% for carpoolExport in dataToPdf.carpoolExports %}
+						<h3>{{ carpoolExport.date|date("Y") }}</h3>
+							{# thead #}
 							<tr>
-								{# Date #}
-								<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
-								{# Role #}
-								{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
-									<td>{{ "driver"|trans }}</td>
-								{% else  %}
-									<td>{{ "passenger"|trans }}</td>
-								{% endif %}
-                                {# carpooler name #}
-								<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
-								{# pickup locality #}
-								<td>{{ carpoolExport.pickUp.addressLocality }}</td>
-                                {# dropOff locality #}
-                                <td>{{ carpoolExport.dropOff.addressLocality }}</td>
-                                {# amount paid/received #}
-								{% if carpoolExport.Amount %}
-									<td>{{ carpoolExport.Amount }}€</td>
-								{% else %}
-									<td></td>		
-								{% endif %}
-								{# type of payment #}
+								<th>{{ "date"|trans }}</th>
+								<th>{{ "role"|trans }}</th>
+								<th>{{ "carpooler"|trans }}</th>
+								<th>{{ "pickUpLocality"|trans }}</th>
+								<th>{{ "dropOffLocality"|trans }}</th>
+								<th>{{ "amount"|trans }}</th>
 								{% if dataToPdf.paymentActive %}
-									{% if (carpoolExport.mode == 1) %}
-										<td>{{ "onLinePayment"|trans }}</td>
-									{% elseif (carpoolExport.mode == 2) %}
-										<td>{{ "directPayment"|trans }}</td>  
-									{% else %}
-										<td>{{ "paymentNotDone"|trans }}</td>	       
-									{% endif %}
-                                {% endif %}
-                                {# certification #}
-                                {% if (carpoolExport.certification) %}
-								    <td> {{ carpoolExport.certification }} </td>
-                                {% else %}
-                                    <td></td>
-                                {% endif %}        
+								<th>{{ "typeOfpayment"|trans }}</th>
+								{% endif %}
+								<th>{{ "certified"|trans }}</th>
 							</tr>
-						{% endfor %}
-				</table>
+							{# tbody #}
+
+							{% set refYear = carpoolExport.date|date("Y") %}
+							{% set alreadyOpen = true %}
+					{% endif %}
+
+						<tr>
+							{# Date #}
+							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
+							{# Role #}
+							{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
+								<td>{{ "driver"|trans }}</td>
+							{% else  %}
+								<td>{{ "passenger"|trans }}</td>
+							{% endif %}
+							{# carpooler name #}
+							<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
+							{# pickup locality #}
+							<td>{{ carpoolExport.pickUp.addressLocality }}</td>
+							{# dropOff locality #}
+							<td>{{ carpoolExport.dropOff.addressLocality }}</td>
+							{# amount paid/received #}
+							{% if carpoolExport.Amount %}
+								<td>{{ carpoolExport.Amount }}€</td>
+							{% else %}
+								<td></td>		
+							{% endif %}
+							{# type of payment #}
+							{% if dataToPdf.paymentActive %}
+								{% if (carpoolExport.mode == 1) %}
+									<td>{{ "onLinePayment"|trans }}</td>
+								{% elseif (carpoolExport.mode == 2) %}
+									<td>{{ "directPayment"|trans }}</td>  
+								{% else %}
+									<td>{{ "paymentNotDone"|trans }}</td>	       
+								{% endif %}
+							{% endif %}
+							{# certification #}
+							{% if (carpoolExport.certification) %}
+								<td> {{ carpoolExport.certification }} </td>
+							{% else %}
+								<td></td>
+							{% endif %}        
+						</tr>
+				{% endfor %}
+			</table>
+
+
 			</div>
 
     	</div>
