@@ -49,8 +49,9 @@ class SendinblueProvider implements CampaignProviderInterface
 
     const CAMPAIGN_NAME="Campaign";
     const CONTACT_EMAIL="EMAIL";
-    const CONTACT_FAMILYNAME="FAMILYNAME";
-    const CONTACT_GIVENNAME="GIVENNAME";
+    const CONTACT_FAMILYNAME="NOM";
+    const CONTACT_GIVENNAME="PRENOM";
+    const SIZE_LIMIT_CONTACT_IMPORT=8388608;
 
 
     
@@ -121,7 +122,13 @@ class SendinblueProvider implements CampaignProviderInterface
             $contact = implode(";", $line);
             $contacts[]=$contact;
         }
-        $formatedContacts = "'".implode("\n", $contacts)."'";
+        $formatedContacts = implode("\n", $contacts);
+
+        // we check if the contact list doesn't exceed size limit
+        if (strlen($formatedContacts) > self::SIZE_LIMIT_CONTACT_IMPORT) {
+            throw new Exception("Your contact list exceed size limit");
+        }
+        
         // we import contacts
         $requestContactImport = new SendinBlueClient\Model\RequestContactImport();
         $requestContactImport['fileBody'] = $formatedContacts;
