@@ -135,8 +135,15 @@ use App\Match\Entity\Mass;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('community_list',object)"
- *          }
+ *              "security"="is_granted('admin_community_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/communities",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -158,14 +165,21 @@ use App\Match\Entity\Mass;
  *              "path"="/admin/communities/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('community_read',object)"
+ *              "security"="is_granted('admin_community_read',object)"
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/communities/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('community_update',object)"
+ *              "security"="is_granted('admin_community_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_delete',object)"
  *          },
  *      }
  * )
@@ -285,7 +299,7 @@ class Community
      * @var User The creator of the community.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
@@ -386,6 +400,12 @@ class Community
      * @Groups({"aRead","aWrite"})
      */
     private $referrer;
+
+    /**
+     * @var int The referrer id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $referrerId;
 
     /**
      * @var string|null The referrer avatar
@@ -749,6 +769,19 @@ class Community
     public function getReferrer(): string
     {
         return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getReferrerId(): int
+    {
+        if (is_null($this->referrerId)) {
+            return $this->getUser()->getId();
+        }
+        return $this->referrerId;
+    }
+
+    public function setReferrerId(?int $referrerId)
+    {
+        $this->referrerId = $referrerId;
     }
 
     public function getReferrerAvatar(): ?string

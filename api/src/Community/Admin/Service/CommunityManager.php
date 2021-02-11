@@ -30,6 +30,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
 use App\Geography\Entity\Address;
+use App\User\Repository\UserRepository;
 
 /**
  * Community manager for admin context.
@@ -41,6 +42,7 @@ class CommunityManager
     private $entityManager;
     private $communityUserRepository;
     private $communityRepository;
+    private $userRepository;
 
     /**
      * Constructor
@@ -50,11 +52,13 @@ class CommunityManager
     public function __construct(
         EntityManagerInterface $entityManager,
         CommunityRepository $communityRepository,
-        CommunityUserRepository $communityUserRepository
+        CommunityUserRepository $communityUserRepository,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->communityUserRepository = $communityUserRepository;
         $this->communityRepository = $communityRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -79,6 +83,12 @@ class CommunityManager
      */
     public function addCommunity(Community $community)
     {
+        if ($referrer = $this->userRepository->find($community->getReferrerId())) {
+            $community->setUser($referrer);
+        } else {
+            throw new CommunityException("Referrer not found");
+        }
+
         // persist the community
         $this->entityManager->persist($community);
         $this->entityManager->flush();
@@ -107,9 +117,7 @@ class CommunityManager
             $this->entityManager->flush();
         }
 
-        // add members ?
-
-        return $address;
+        return $community;
     }
 
     /**
@@ -122,7 +130,12 @@ class CommunityManager
     public function patchCommunity(Community $community, array $fields)
     {
         // check if referrer has changed
-        if (in_array('referrer', array_keys($fields))) {
+        if (in_array('referrerId', array_keys($fields))) {
+            if ($referrer = $this->userRepository->find($fields['referrerId'])) {
+                $community->setUser($referrer);
+            } else {
+                throw new CommunityException("Referrer not found");
+            }
         }
 
         // persist the community
@@ -148,5 +161,17 @@ class CommunityManager
         
         // return the community
         return $communityUser;
+    }
+
+    /**
+     * Delete a community
+     *
+     * @param Community $community  The community to delete
+     * @return void
+     */
+    public function deleteCommunity(Community $community)
+    {
+        $this->entityManager->remove($community);
+        $this->entityManager->flush();
     }
 }

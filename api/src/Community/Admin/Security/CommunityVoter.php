@@ -28,14 +28,21 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
-use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunityVoter extends Voter
 {
+    const ADMIN_COMMUNITY_CREATE = 'admin_community_create';
     const ADMIN_COMMUNITY_READ = 'admin_community_read';
+    const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
+    const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
+    const ADMIN_COMMUNITY_LIST = 'admin_community_list';
+    const COMMUNITY_CREATE = 'community_create';
     const COMMUNITY_READ = 'community_read';
+    const COMMUNITY_UPDATE = 'community_update';
+    const COMMUNITY_DELETE = 'community_delete';
+    const COMMUNITY_LIST = 'community_list';
 
     private $request;
     private $communityManager;
@@ -51,14 +58,22 @@ class CommunityVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::ADMIN_COMMUNITY_READ
+            self::ADMIN_COMMUNITY_CREATE,
+            self::ADMIN_COMMUNITY_READ,
+            self::ADMIN_COMMUNITY_UPDATE,
+            self::ADMIN_COMMUNITY_DELETE,
+            self::ADMIN_COMMUNITY_LIST
             ])) {
             return false;
         }
 
         // only vote on Community objects inside this voter
         if (!in_array($attribute, [
-            self::ADMIN_COMMUNITY_READ
+            self::ADMIN_COMMUNITY_CREATE,
+            self::ADMIN_COMMUNITY_READ,
+            self::ADMIN_COMMUNITY_UPDATE,
+            self::ADMIN_COMMUNITY_DELETE,
+            self::ADMIN_COMMUNITY_LIST
             ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
             return false;
         }
@@ -68,18 +83,55 @@ class CommunityVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {
+            case self::ADMIN_COMMUNITY_CREATE:
+                return $this->canCreateCommunity();
             case self::ADMIN_COMMUNITY_READ:
                 // here we don't have the denormalized event, we need to get it from the request
                 if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
                     return $this->canReadCommunity($community);
                 }
+                // no break
+            case self::ADMIN_COMMUNITY_UPDATE:
+                // here we don't have the denormalized event, we need to get it from the request
+                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
+                    return $this->canUpdateCommunity($community);
+                }
+                // no break
+            case self::ADMIN_COMMUNITY_DELETE:
+                // here we don't have the denormalized event, we need to get it from the request
+                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
+                    return $this->canDeleteCommunity($community);
+                }
+                // no break
+            case self::ADMIN_COMMUNITY_LIST:
+                return $this->canListCommunity();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
+    private function canCreateCommunity()
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_CREATE);
+    }
+
     private function canReadCommunity(Community $community)
     {
         return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community'=>$community]);
+    }
+
+    private function canUpdateCommunity(Community $community)
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$community]);
+    }
+
+    private function canDeleteCommunity(Community $community)
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community'=>$community]);
+    }
+
+    private function canListCommunity()
+    {
+        return $this->authManager->isAuthorized(self::COMMUNITY_LIST);
     }
 }
