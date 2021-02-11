@@ -60,19 +60,24 @@
 
 				{# set l'année de référence à null #}
 	 			{% set refYear = null %}
-
-				{% for carpoolExport in dataToPdf.carpoolExports %}
+			    {% set alreadyOpen = false %}
+			    {% for carpoolExport in dataToPdf.carpoolExports %}
 					{# si l'année de référence est différente de carpoolExport|date("Y") #}
 				
+					{% if refYear != carpoolExport.date|date("Y") %}
 
+						
+						{#Not the first loop, we have to close the previous table#}
+						{% if alreadyOpen == true %}
+							</table>
+						{% endif %}
+					
 						{# j'ouvre ma table #}
 						<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
-							{% if refYear != carpoolExport.date|date("Y") %}
 
 						{# j'ouvre h3 #}
 						<h3>{{ carpoolExport.date|date("Y") }}</h3>
 						{# je set refYear avec la nouvelle année que je viens de trouver #}
-							{% set refYear = carpoolExport.date|date("Y") %}
 							{# thead #}
 							<tr>
 								<th>{{ "date"|trans }}</th>
@@ -88,12 +93,13 @@
 							</tr>
 							{# tbody #}
 
+							{% set refYear = carpoolExport.date|date("Y") %}
+							{% set alreadyOpen = true %}
 					{# fin de mon if #}
 					{% endif %}
 
 
 						{# je dois fermer l'ancien tableau donc je set alreadyOpen à true #}
-						{% set alreadyOpen = false %}
 						<tr>
 							{# Date #}
 							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
