@@ -21,48 +21,24 @@
  *    LICENSE
  **************************/
 
-namespace App\App\Service;
+namespace App\Auth\Rule;
 
-use App\App\Entity\App;
-use App\App\Repository\AppRepository;
+use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- * App manager service.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ *  Check that the requester is the user himself
  */
-class AppManager
+class InteropUserSelf implements AuthRuleInterface
 {
-    private $appRepository;
-
     /**
-     * Constructor.
+     * {@inheritdoc}
      */
-    public function __construct(
-        AppRepository $appRepository
-    ) {
-        $this->appRepository = $appRepository;
-    }
-
-    /**
-     * Get an app by its id
-     *
-     * @param int $appId  The appId
-     * @return App|null The app found
-     */
-    public function getApp(int $appId)
+    public function execute($requester, $item, $params)
     {
-        return $this->appRepository->find($appId);
-    }
-
-    /**
-     * Get an app by its username
-     *
-     * @param string $username  The username
-     * @return App|null The app found
-     */
-    public function getAppByUsername(string $username)
-    {
-        return $this->appRepository->findOneBy(['username'=>$username]);
+        return true;
+        if (!isset($params['user'])) {
+            return false;
+        }
+        return $params['user']->getId() == $requester->getId();
     }
 }
