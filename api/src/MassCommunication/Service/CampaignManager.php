@@ -31,7 +31,7 @@ use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\Community\Repository\CommunityRepository;
 use App\MassCommunication\Entity\Sender;
-use App\MassCommunication\MassEmailProvider\SendinblueProvider;
+use App\MassCommunication\CampaignProvider\SendinblueProvider;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;

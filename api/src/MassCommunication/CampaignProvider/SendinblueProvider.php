@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\MassCommunication\MassEmailProvider;
+namespace App\MassCommunication\CampaignProvider;
 
 use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Interfaces\CampaignProviderInterface;
