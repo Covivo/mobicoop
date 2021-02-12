@@ -34,8 +34,10 @@ use App\Event\Entity\Event;
 use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Territory;
 use App\Solidary\Entity\Structure;
 use App\User\Service\UserManager;
+use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,6 +56,8 @@ class FixturesManager
     private $geoSearcher;
     private $adManager;
     private $communityManager;
+    private $fixturesSolidary;
+    private $fixturesBasic;
 
     /**
      * Constructor
@@ -64,13 +68,15 @@ class FixturesManager
      * @param AdManager $adManager
      * @param CommunityManager $communityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoSearcher $geoSearcher, AdManager $adManager, CommunityManager $communityManager)
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoSearcher $geoSearcher, AdManager $adManager, CommunityManager $communityManager, bool $fixturesBasic, bool $fixturesSolidary)
     {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->geoSearcher = $geoSearcher;
         $this->adManager = $adManager;
         $this->communityManager = $communityManager;
+        $this->fixturesBasic = $fixturesBasic;
+        $this->fixturesSolidary = $fixturesSolidary;
     }
 
     /**
@@ -80,69 +86,82 @@ class FixturesManager
      */
     public function clearData()
     {
-        echo "Clearing database... " . PHP_EOL;
+        echo "Clearing basic database... " . PHP_EOL;
         $conn = $this->entityManager->getConnection();
         $sql = "SET FOREIGN_KEY_CHECKS = 0;";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        $sql = "
-        TRUNCATE `address`;
-        TRUNCATE `address_territory`;
-        TRUNCATE `ask`;
-        TRUNCATE `ask_history`;
-        TRUNCATE `block`;
-        TRUNCATE `campaign`;
-        TRUNCATE `car`;
-        TRUNCATE `carpool_item`;
-        TRUNCATE `carpool_payment`;
-        TRUNCATE `carpool_payment_carpool_item`;
-        TRUNCATE `carpool_proof`;
-        TRUNCATE `community`;
-        TRUNCATE `community_import`;
-        TRUNCATE `community_security`;
-        TRUNCATE `community_user`;
-        TRUNCATE `criteria`;
-        TRUNCATE `delivery`;
-        TRUNCATE `diary`;
-        TRUNCATE `direction`;
-        TRUNCATE `direction_territory`;
-        TRUNCATE `event`;
-        TRUNCATE `event_import`;
-        TRUNCATE `matching`;
-        TRUNCATE `message`;
-        TRUNCATE `notified`;
-        TRUNCATE `operate`;
-        TRUNCATE `payment_profile`;
-        TRUNCATE `position`;
-        TRUNCATE `proof`;
-        TRUNCATE `proposal`;
-        TRUNCATE `proposal_community`;
-        TRUNCATE `push_token`;    
-        TRUNCATE `recipient`;
-        TRUNCATE `refresh_tokens`;
-        TRUNCATE `relay_point`;
-        TRUNCATE `relay_point_import`;
-        TRUNCATE `review`;
-        TRUNCATE `solidary`;
-        TRUNCATE `solidary_ask`;
-        TRUNCATE `solidary_ask_history`;
-        TRUNCATE `solidary_matching`;
-        TRUNCATE `solidary_need`;
-        TRUNCATE `solidary_solution`;
-        TRUNCATE `solidary_user`;
-        TRUNCATE `solidary_user_need`;
-        TRUNCATE `solidary_user_structure`;
-        TRUNCATE `structure`;
-        TRUNCATE `structure_need`;
-        TRUNCATE `structure_proof`;
-        TRUNCATE `structure_territory`;
-        TRUNCATE `user`;
-        TRUNCATE `user_auth_assignment`;
-        TRUNCATE `user_import`;
-        TRUNCATE `user_notification`;
-        TRUNCATE `waypoint`;";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        
+        if ($this->fixturesBasic) {
+            $sql = "
+            TRUNCATE `address`;
+            TRUNCATE `address_territory`;
+            TRUNCATE `ask`;
+            TRUNCATE `ask_history`;
+            TRUNCATE `block`;
+            TRUNCATE `campaign`;
+            TRUNCATE `car`;
+            TRUNCATE `carpool_item`;
+            TRUNCATE `carpool_payment`;
+            TRUNCATE `carpool_payment_carpool_item`;
+            TRUNCATE `carpool_proof`;
+            TRUNCATE `community`;
+            TRUNCATE `community_import`;
+            TRUNCATE `community_security`;
+            TRUNCATE `community_user`;
+            TRUNCATE `criteria`;
+            TRUNCATE `delivery`;
+            TRUNCATE `diary`;
+            TRUNCATE `direction`;
+            TRUNCATE `direction_territory`;
+            TRUNCATE `event`;
+            TRUNCATE `event_import`;
+            TRUNCATE `matching`;
+            TRUNCATE `message`;
+            TRUNCATE `notified`;
+            TRUNCATE `operate`;
+            TRUNCATE `payment_profile`;
+            TRUNCATE `position`;
+            TRUNCATE `proof`;
+            TRUNCATE `proposal`;
+            TRUNCATE `proposal_community`;
+            TRUNCATE `push_token`;    
+            TRUNCATE `recipient`;
+            TRUNCATE `refresh_tokens`;
+            TRUNCATE `relay_point`;
+            TRUNCATE `relay_point_import`;
+            TRUNCATE `review`;
+            TRUNCATE `territory`;
+            TRUNCATE `user`;
+            TRUNCATE `user_auth_assignment`;
+            TRUNCATE `user_import`;
+            TRUNCATE `user_notification`;
+            TRUNCATE `waypoint`;";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+
+        if ($this->fixturesSolidary) {
+            echo "Clearing Solidary database... " . PHP_EOL;
+            $sql = "
+            TRUNCATE `solidary`;
+            TRUNCATE `solidary_ask`;
+            TRUNCATE `solidary_ask_history`;
+            TRUNCATE `solidary_matching`;
+            TRUNCATE `solidary_need`;
+            TRUNCATE `solidary_solution`;
+            TRUNCATE `solidary_user`;
+            TRUNCATE `solidary_user_need`;
+            TRUNCATE `solidary_user_structure`;
+            TRUNCATE `structure`;
+            TRUNCATE `structure_need`;
+            TRUNCATE `structure_proof`;
+            TRUNCATE `structure_territory`;";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+
+
         $sql = "
         SET FOREIGN_KEY_CHECKS = 1;";
         $stmt = $conn->prepare($sql);
@@ -416,6 +435,20 @@ class FixturesManager
     }
 
     /**
+     * Create territories (direct SQL request because of geographical data)
+     *
+     * @param string $sqlRequest    The sql request for this territory
+     * @return void
+     */
+    public function createTerritories(string $sqlRequest)
+    {
+        echo "Import a territory" . PHP_EOL;
+        $conn = $this->entityManager->getConnection();
+        $stmt = $conn->prepare($sqlRequest);
+        $stmt->execute();
+    }
+
+    /**
      * Return the current date with the applied time modifier;
      *
      * @param string $modifier  The modifier
@@ -436,9 +469,9 @@ class FixturesManager
     /************************************************************************* */
 
     /**
-     * Create a community user from an array
+     * Create structure from an array
      *
-     * @param array $tab    The array containing the community user informations (model in ../Csv/CommunityUsers/communityUsers.txt)
+     * @param array $tab    The array containing the structure (model in ../Csv/Solidary/Structures/structures.txt)
      * @return void
      */
     public function createStructures(array $tab)

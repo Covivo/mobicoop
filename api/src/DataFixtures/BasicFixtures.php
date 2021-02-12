@@ -71,6 +71,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         }
 
         if ($this->fixturesBasic) {
+
             // load users info from csv file
             $finder = new Finder();
             $finder->in(__DIR__ . '/Csv/Basic/Users/');
@@ -144,6 +145,21 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     while ($tab = fgetcsv($file, 4096, ';')) {
                         // create the community user
                         $this->fixturesManager->createCommunityUser($tab);
+                    }
+                }
+            }
+
+            // Territories (direct SQL requests in the file because of geographic data)
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Territories/');
+            $finder->name('*.sql');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while (!feof($file)) {
+                        // create the community user
+                        $this->fixturesManager->createTerritories(fgets($file));
                     }
                 }
             }
