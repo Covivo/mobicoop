@@ -39,6 +39,7 @@ use App\Geography\Service\TerritoryManager;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
+use App\Solidary\Entity\Subject;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Service\SolidaryManager;
 use App\Solidary\Service\StructureManager;
@@ -147,7 +148,6 @@ class FixturesManager
             TRUNCATE `operate`;
             TRUNCATE `payment_profile`;
             TRUNCATE `position`;
-            TRUNCATE `proof`;
             TRUNCATE `proposal`;
             TRUNCATE `proposal_community`;
             TRUNCATE `push_token`;    
@@ -169,6 +169,7 @@ class FixturesManager
         if ($this->fixturesSolidary) {
             echo "Clearing Solidary database... " . PHP_EOL;
             $sql = "
+            TRUNCATE `proof`;
             TRUNCATE `solidary`;
             TRUNCATE `solidary_ask`;
             TRUNCATE `solidary_ask_history`;
@@ -181,7 +182,10 @@ class FixturesManager
             TRUNCATE `structure`;
             TRUNCATE `structure_need`;
             TRUNCATE `structure_proof`;
-            TRUNCATE `structure_territory`;";
+            TRUNCATE `structure_territory`;
+            TRUNCATE `subject`;
+            ";
+            
             $stmt = $conn->prepare($sql);
             $stmt->execute();
         }
@@ -643,4 +647,25 @@ class FixturesManager
             echo "Structure not found !" . PHP_EOL;
         }
     }
+
+    /**
+     * Create the subjects
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Subjects/subjects.txt)
+     * @return void
+     */
+    public function createSubjects(array $tab)
+    {
+        echo "Import subjects " . $tab[0] . " for structure " . $tab[1] . PHP_EOL;
+        if ($structure = $this->structureManager->getStructure($tab[1])) {
+            $subject = new Subject();
+            $subject->setStructure($structure);
+            $subject->setLabel($tab[0]);
+            $structure->addSubject($subject);
+            $this->entityManager->persist($structure);
+            $this->entityManager->flush();
+        } else {
+            echo "Structure not found !" . PHP_EOL;
+        }
+    }    
 }
