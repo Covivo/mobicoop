@@ -34,6 +34,7 @@ use App\Event\Entity\Event;
 use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
+use App\Solidary\Entity\Structure;
 use App\User\Service\UserManager;
 use DateInterval;
 use DateTime;
@@ -428,5 +429,60 @@ class FixturesManager
             case '-': return $date->sub(new DateInterval(substr($modifier, 1)));
         }
         return $date;
+    }
+
+    /************************************************************************* */
+    /*************************** SOLIDARY ************************************ */
+    /************************************************************************* */
+
+    /**
+     * Create a community user from an array
+     *
+     * @param array $tab    The array containing the community user informations (model in ../Csv/CommunityUsers/communityUsers.txt)
+     * @return void
+     */
+    public function createStructures(array $tab)
+    {
+        echo "Import Structure " . $tab[0]." - " . $tab[1] . PHP_EOL;
+        $structure = new Structure();
+        $structure->setId($tab[0]);
+        $structure->setName($tab[1]);
+        $structure->setMMinTime(\Datetime::createFromFormat("H:i:s", $tab[2]));
+        $structure->setMMaxTime(\Datetime::createFromFormat("H:i:s", $tab[3]));
+        $structure->setAMinTime(\Datetime::createFromFormat("H:i:s", $tab[4]));
+        $structure->setAMaxTime(\Datetime::createFromFormat("H:i:s", $tab[5]));
+        $structure->setEMinTime(\Datetime::createFromFormat("H:i:s", $tab[6]));
+        $structure->setEMaxTime(\Datetime::createFromFormat("H:i:s", $tab[7]));
+        $structure->setMMon($tab[8]);
+        $structure->setAMon($tab[9]);
+        $structure->setEMon($tab[10]);
+        $structure->setMTue($tab[11]);
+        $structure->setATue($tab[12]);
+        $structure->setETue($tab[13]);
+        $structure->setMWed($tab[14]);
+        $structure->setAWed($tab[15]);
+        $structure->setEWed($tab[16]);
+        $structure->setMThu($tab[17]);
+        $structure->setAThu($tab[18]);
+        $structure->setEThu($tab[19]);
+        $structure->setMFri($tab[20]);
+        $structure->setAFri($tab[21]);
+        $structure->setEFri($tab[22]);
+        $structure->setMSat($tab[23]);
+        $structure->setASat($tab[24]);
+        $structure->setESat($tab[25]);
+        $structure->setMSun($tab[26]);
+        $structure->setASun($tab[27]);
+        $structure->setESun($tab[28]);
+        $structure->setMMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[29]));
+        $structure->setMMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[30]));
+        $structure->setAMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[31]));
+        $structure->setAMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[32]));
+        $structure->setEMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[33]));
+        $structure->setEMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[34]));
+        $structure->setEmail($tab[35]);
+        $structure->setTelephone($tab[36]);
+        $this->entityManager->persist($structure);
+        $this->entityManager->flush();
     }
 }
