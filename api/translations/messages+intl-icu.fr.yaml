@@ -169,6 +169,7 @@ eventDetail: "Voici les détails de votre événement :"
 eventName: "Nom: "
 eventLocation: "Adresse: "
 eventDescription: "Description: "
+eventUrl: "/covoiturages-evenements/"
 
 # EVENT REPORT
 
