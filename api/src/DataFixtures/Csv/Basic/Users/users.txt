@@ -12,4 +12,6 @@ role :
     3 = user with full registration,
     10 = solidary manager,
     11 = solidary volunteer,
-    12 = solidary beneficiary
+    12 = solidary beneficiary,
+    171 = solidary volunteer candidate,
+    172 = solidary beneficiary candidate

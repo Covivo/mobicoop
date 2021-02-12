@@ -38,6 +38,7 @@ use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Operate;
+use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Entity\Subject;
@@ -58,7 +59,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class FixturesManager
 {
     const PRICE_KM = 0.06;              // km price
-
+    const FULL_REGISTERED_USERS = 3;
+    
     private $entityManager;
     private $userManager;
     private $geoSearcher;
@@ -219,7 +221,7 @@ class FixturesManager
         $user = $this->userManager->prepareUser($user);
         
         // add role if needed
-        if ($tab[8] !== "3") {
+        if ($tab[8] !== self::FULL_REGISTERED_USERS) {
             $user = $this->userManager->addAuthItem($user, $tab[8]);
         }
 
@@ -691,6 +693,131 @@ class FixturesManager
             }
         } else {
             echo "Structure not found !" . PHP_EOL;
+        }
+    }
+
+    /**
+     * Create the SolidaryUsers
+     *
+     * @param array $tab    The array containing the solidaryUsers (model in ../Csv/Solidary/SolidaryUsers/solidaryUsers.txt)
+     * @return void
+     */
+    public function createSolidaryUsers(array $tab)
+    {
+        echo "SolidaryUser of User : " . $tab[39] . PHP_EOL;
+        if ($user = $this->userManager->getUser($tab[39])) {
+            $solidaryUser = new SolidaryUser();
+            
+            // Address of the solidary User
+            $address = new Address();
+            $address->setHouseNumber($tab[0]);
+            $address->setStreet($tab[1]);
+            $address->setPostalCode($tab[2]);
+            $address->setAddressLocality($tab[3]);
+            $address->setAddressCountry($tab[4]);
+            $address->setLatitude($tab[5]);
+            $address->setLongitude($tab[6]);
+            $solidaryUser->setAddress($address);
+
+            $solidaryUser->setBeneficiary($tab[7]);
+            $solidaryUser->setVolunteer($tab[8]);
+            if ("NULL" !== $tab[9]) {
+                $solidaryUser->setMMinTime(\Datetime::createFromFormat("H:i:s", $tab[9]));
+            }
+            if ("NULL" !== $tab[10]) {
+                $solidaryUser->setMMaxTime(\Datetime::createFromFormat("H:i:s", $tab[10]));
+            }
+            if ("NULL" !== $tab[11]) {
+                $solidaryUser->setAMinTime(\Datetime::createFromFormat("H:i:s", $tab[11]));
+            }
+            if ("NULL" !== $tab[12]) {
+                $solidaryUser->setAMaxTime(\Datetime::createFromFormat("H:i:s", $tab[12]));
+            }
+            if ("NULL" !== $tab[13]) {
+                $solidaryUser->setEMinTime(\Datetime::createFromFormat("H:i:s", $tab[13]));
+            }
+            if ("NULL" !== $tab[14]) {
+                $solidaryUser->setEMaxTime(\Datetime::createFromFormat("H:i:s", $tab[14]));
+            }
+            
+            if ("NULL" !== $tab[15]) {
+                $solidaryUser->setMMon($tab[15]);
+            }
+            if ("NULL" !== $tab[16]) {
+                $solidaryUser->setAMon($tab[16]);
+            }
+            if ("NULL" !== $tab[17]) {
+                $solidaryUser->setEMon($tab[17]);
+            }
+            if ("NULL" !== $tab[18]) {
+                $solidaryUser->setMTue($tab[18]);
+            }
+            if ("NULL" !== $tab[19]) {
+                $solidaryUser->setATue($tab[19]);
+            }
+            if ("NULL" !== $tab[20]) {
+                $solidaryUser->setETue($tab[20]);
+            }
+            if ("NULL" !== $tab[21]) {
+                $solidaryUser->setMWed($tab[21]);
+            }
+            if ("NULL" !== $tab[22]) {
+                $solidaryUser->setAWed($tab[22]);
+            }
+            if ("NULL" !== $tab[23]) {
+                $solidaryUser->setEWed($tab[23]);
+            }
+            if ("NULL" !== $tab[24]) {
+                $solidaryUser->setMThu($tab[24]);
+            }
+            if ("NULL" !== $tab[25]) {
+                $solidaryUser->setAThu($tab[25]);
+            }
+            if ("NULL" !== $tab[26]) {
+                $solidaryUser->setEThu($tab[26]);
+            }
+            if ("NULL" !== $tab[27]) {
+                $solidaryUser->setMFri($tab[27]);
+            }
+            if ("NULL" !== $tab[28]) {
+                $solidaryUser->setAFri($tab[28]);
+            }
+            if ("NULL" !== $tab[29]) {
+                $solidaryUser->setEFri($tab[29]);
+            }
+            if ("NULL" !== $tab[30]) {
+                $solidaryUser->setMSat($tab[30]);
+            }
+            if ("NULL" !== $tab[31]) {
+                $solidaryUser->setASat($tab[31]);
+            }
+            if ("NULL" !== $tab[32]) {
+                $solidaryUser->setESat($tab[32]);
+            }
+            if ("NULL" !== $tab[33]) {
+                $solidaryUser->setMSun($tab[33]);
+            }
+            if ("NULL" !== $tab[34]) {
+                $solidaryUser->setASun($tab[34]);
+            }
+            if ("NULL" !== $tab[35]) {
+                $solidaryUser->setESun($tab[35]);
+            }
+
+            if ("NULL" !== $tab[36]) {
+                $solidaryUser->setMaxDistance($tab[36]);
+            }
+            
+            if ("NULL" !== $tab[37]) {
+                $solidaryUser->setVehicle($tab[37]);
+            }
+            $solidaryUser->setComment($tab[38]);
+
+            $user->setSolidaryUser($solidaryUser);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        } else {
+            echo "User not found !" . PHP_EOL;
         }
     }
 }
