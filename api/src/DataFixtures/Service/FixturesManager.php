@@ -36,7 +36,11 @@ use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
+use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\StructureProof;
+use App\Solidary\Repository\NeedRepository;
+use App\Solidary\Service\SolidaryManager;
 use App\Solidary\Service\StructureManager;
 use App\User\Service\UserManager;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
@@ -59,9 +63,11 @@ class FixturesManager
     private $adManager;
     private $communityManager;
     private $territoryManager;
+    private $needRepository;
     private $fixturesSolidary;
     private $fixturesBasic;
     private $structureManager;
+    private $solidaryManager;
 
     /**
      * Constructor
@@ -80,6 +86,8 @@ class FixturesManager
         CommunityManager $communityManager,
         TerritoryManager $territoryManager,
         StructureManager $structureManager,
+        SolidaryManager $solidaryManager,
+        NeedRepository $needRepository,
         bool $fixturesBasic,
         bool $fixturesSolidary
     ) {
@@ -92,6 +100,8 @@ class FixturesManager
         $this->fixturesSolidary = $fixturesSolidary;
         $this->territoryManager = $territoryManager;
         $this->structureManager= $structureManager;
+        $this->solidaryManager = $solidaryManager;
+        $this->needRepository = $needRepository;
     }
 
     /**
@@ -101,13 +111,13 @@ class FixturesManager
      */
     public function clearData()
     {
-        echo "Clearing basic database... " . PHP_EOL;
         $conn = $this->entityManager->getConnection();
         $sql = "SET FOREIGN_KEY_CHECKS = 0;";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         
         if ($this->fixturesBasic) {
+            echo "Clearing basic database... " . PHP_EOL;
             $sql = "
             TRUNCATE `address`;
             TRUNCATE `address_territory`;
@@ -550,6 +560,84 @@ class FixturesManager
                 $this->entityManager->flush();
             } else {
                 echo "Territory not found !" . PHP_EOL;
+            }
+        } else {
+            echo "Structure not found !" . PHP_EOL;
+        }
+    }
+
+    /**
+     * Create the structure proofs
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
+     * @return void
+     */
+    public function createStructureProofs(array $tab)
+    {
+        echo "Import structureProof " . $tab[0] . " " . $tab[1] . PHP_EOL;
+        if ($structure = $this->structureManager->getStructure($tab[0])) {
+            $structureProof = new StructureProof();
+            $structureProof->setStructure($structure);
+            $structureProof->setLabel($tab[1]);
+            $structureProof->setType($tab[2]);
+            $structureProof->setPosition($tab[3]);
+            $structureProof->setCheckbox($tab[4]);
+            $structureProof->setInput($tab[5]);
+            $structureProof->setSelectbox($tab[6]);
+            $structureProof->setRadio($tab[7]);
+            $structureProof->setOptions($tab[8]);
+            $structureProof->setAcceptedValues($tab[9]);
+            $structureProof->setFile($tab[10]);
+            $structureProof->setMandatory($tab[11]);
+            $this->entityManager->persist($structureProof);
+            $this->entityManager->flush();
+        } else {
+            echo "Structure not found !" . PHP_EOL;
+        }
+    }
+
+    /**
+     * Create the needs
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Needs/needs.txt)
+     * @return void
+     */
+    public function createNeeds(array $tab)
+    {
+        echo "Import need " . $tab[0] . " " . $tab[2] . PHP_EOL;
+        $need = new Need();
+        $need->setId($tab[0]);
+        
+        if ($tab[1] !== "NULL") {
+            if (!is_null($solidary = $this->solidaryManager->getSolidary($tab[1]))) {
+                $need->setSolidary($solidary);
+            } else {
+                echo "Solidary not found !" . PHP_EOL;
+            }
+        }
+        
+        $need->setLabel($tab[2]);
+        $need->setPrivate($tab[3]);
+        $this->entityManager->persist($need);
+        $this->entityManager->flush();
+    }
+    
+    /**
+     * Link the structure and the needs
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureNeeds/structureNeeds.txt)
+     * @return void
+     */
+    public function createStructureNeeds(array $tab)
+    {
+        echo "Link structure " . $tab[0] . " with Need : " . $tab[1] . PHP_EOL;
+        if ($structure = $this->structureManager->getStructure($tab[0])) {
+            if ($need = $this->needRepository->find($tab[1])) {
+                $structure->addNeed($need);
+                $this->entityManager->persist($structure);
+                $this->entityManager->flush();
+            } else {
+                echo "Need not found !" . PHP_EOL;
             }
         } else {
             echo "Structure not found !" . PHP_EOL;

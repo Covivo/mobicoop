@@ -210,6 +210,50 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                 }
             }
         }
+
+        // Structure proofs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/StructureProofs/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructureProofs($tab);
+                }
+            }
+        }
+        // Needs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Needs/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createNeeds($tab);
+                }
+            }
+        }
+
+        // Link structure and needs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/StructureNeeds/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructureNeeds($tab);
+                }
+            }
+        }
     }
     
     public static function getGroups(): array

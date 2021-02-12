@@ -1,0 +1,4 @@
+id
+solidary_id
+label
+private
