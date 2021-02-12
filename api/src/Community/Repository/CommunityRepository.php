@@ -152,10 +152,10 @@ class CommunityRepository
     /**
     * Get communities owned by the user
     *
-    * @param Int $userId
+    * @param int $userId    The user id
     * @return array
     */
-    public function getOwnedCommunities(Int $userId): ?array
+    public function getOwnedCommunities(int $userId): ?array
     {
         $query = $this->repository->createQueryBuilder('c')
          ->where('c.user = :userId')
@@ -206,5 +206,23 @@ class CommunityRepository
             return true;
         }
         return false;
+    }
+
+    /**
+    * Check if a user is a referrer
+    *
+    * @param User       $user       The user id
+    * @param Community  $community  The community to exclude from the check
+    * @return bool      True if the user is referrer, false otherwise
+    */
+    public function isReferrer(User $user, Community $community): bool
+    {
+        $query = $this->repository->createQueryBuilder('c')
+         ->where('c.user = :user')
+         ->andWhere('c.id <> :id')
+         ->setParameter('user', $user)
+         ->setParameter('id', $community->getId());
+        $communities = $query->getQuery()->getResult();
+        return count($communities)>0;
     }
 }

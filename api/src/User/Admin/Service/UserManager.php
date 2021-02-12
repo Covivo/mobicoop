@@ -23,6 +23,7 @@
 
 namespace App\User\Admin\Service;
 
+use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\User\Entity\User;
@@ -254,5 +255,22 @@ class UserManager
         
         // return the user
         return $user;
+    }
+
+    /**
+     * Check if a user have a specific AuthItem
+     *
+     * @param User      $user       The user
+     * @param AuthItem  $authItem   The authItem
+     * @return boolean  True if the user have the authItem, false otherwise
+     */
+    public function userHaveAuthItem(User $user, AuthItem $authItem)
+    {
+        foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+            if ($userAuthAssignment->getAuthItem() == $authItem) {
+                return true;
+            }
+        }
+        return false;
     }
 }

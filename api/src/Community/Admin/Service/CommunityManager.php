@@ -23,6 +23,9 @@
 
 namespace App\Community\Admin\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Exception\CommunityException;
@@ -30,6 +33,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
 use App\Geography\Entity\Address;
+use App\User\Admin\Service\UserManager;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 
 /**
@@ -43,6 +48,8 @@ class CommunityManager
     private $communityUserRepository;
     private $communityRepository;
     private $userRepository;
+    private $userManager;
+    private $authItemRepository;
 
     /**
      * Constructor
@@ -53,12 +60,16 @@ class CommunityManager
         EntityManagerInterface $entityManager,
         CommunityRepository $communityRepository,
         CommunityUserRepository $communityUserRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        UserManager $userManager,
+        AuthItemRepository $authItemRepository
     ) {
         $this->entityManager = $entityManager;
         $this->communityUserRepository = $communityUserRepository;
         $this->communityRepository = $communityRepository;
         $this->userRepository = $userRepository;
+        $this->userManager = $userManager;
+        $this->authItemRepository = $authItemRepository;
     }
 
     /**
@@ -85,6 +96,8 @@ class CommunityManager
     {
         if ($referrer = $this->userRepository->find($community->getReferrerId())) {
             $community->setUser($referrer);
+            // add the community manager role to the referrer
+            $this->addCommunityManagerRole($referrer);
         } else {
             throw new CommunityException("Referrer not found");
         }
@@ -132,7 +145,14 @@ class CommunityManager
         // check if referrer has changed
         if (in_array('referrerId', array_keys($fields))) {
             if ($referrer = $this->userRepository->find($fields['referrerId'])) {
+                // keep the previous referrer for further use
+                $previousReferrer = $community->getUser();
+                // set the new referrer
                 $community->setUser($referrer);
+                // add the community manager role to the referrer
+                $this->addCommunityManagerRole($referrer);
+                // check if the previous referrer is still community manager
+                $this->checkUserIsReferrer($previousReferrer, $community);
             } else {
                 throw new CommunityException("Referrer not found");
             }
@@ -196,5 +216,50 @@ class CommunityManager
     {
         $this->entityManager->remove($community);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Add community manager role to the given user if needed
+     *
+     * @param User $user    The user
+     * @return void
+     */
+    private function addCommunityManagerRole(User $user)
+    {
+        $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+
+        if (!$this->userManager->userHaveAuthItem($user, $authItem)) {
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $user->addUserAuthAssignment($userAuthAssignment);
+            $this->entityManager->persist($user);
+        }
+    }
+
+    /**
+     * Check if a user is a community referrer, for communities other than the one provided
+     * If not, remove the community manager role
+     * Used to remove the community manager role to a user that is not effectively community manager anymore
+     *
+     * @param User      $user       The user to check
+     * @param Community $community  The current community that leads to the check
+     * @return void
+     */
+    private function checkUserIsReferrer(User $user, Community $community)
+    {
+        if (!$this->communityRepository->isReferrer($user, $community)) {
+            // the user is not referrer anymore => we remove the role
+            $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
+            foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+                /**
+                 * @var UserAuthAssignment $userAuthAssignment
+                 */
+                if ($userAuthAssignment->getAuthItem() == $authItem) {
+                    $user->removeUserAuthAssignment($userAuthAssignment);
+                    $this->entityManager->persist($user);
+                    break;
+                }
+            }
+        }
     }
 }
