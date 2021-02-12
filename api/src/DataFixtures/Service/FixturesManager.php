@@ -35,7 +35,9 @@ use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Territory;
+use App\Geography\Service\TerritoryManager;
 use App\Solidary\Entity\Structure;
+use App\Solidary\Service\StructureManager;
 use App\User\Service\UserManager;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
 use DateInterval;
@@ -56,8 +58,10 @@ class FixturesManager
     private $geoSearcher;
     private $adManager;
     private $communityManager;
+    private $territoryManager;
     private $fixturesSolidary;
     private $fixturesBasic;
+    private $structureManager;
 
     /**
      * Constructor
@@ -68,8 +72,17 @@ class FixturesManager
      * @param AdManager $adManager
      * @param CommunityManager $communityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoSearcher $geoSearcher, AdManager $adManager, CommunityManager $communityManager, bool $fixturesBasic, bool $fixturesSolidary)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserManager $userManager,
+        GeoSearcher $geoSearcher,
+        AdManager $adManager,
+        CommunityManager $communityManager,
+        TerritoryManager $territoryManager,
+        StructureManager $structureManager,
+        bool $fixturesBasic,
+        bool $fixturesSolidary
+    ) {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->geoSearcher = $geoSearcher;
@@ -77,6 +90,8 @@ class FixturesManager
         $this->communityManager = $communityManager;
         $this->fixturesBasic = $fixturesBasic;
         $this->fixturesSolidary = $fixturesSolidary;
+        $this->territoryManager = $territoryManager;
+        $this->structureManager= $structureManager;
     }
 
     /**
@@ -517,5 +532,27 @@ class FixturesManager
         $structure->setTelephone($tab[36]);
         $this->entityManager->persist($structure);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Link structure and territories
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
+     * @return void
+     */
+    public function createStructureTerritories(array $tab)
+    {
+        echo "Link structure " . $tab[0] . " with territory : " . $tab[1] . PHP_EOL;
+        if ($structure = $this->structureManager->getStructure($tab[0])) {
+            if ($territory = $this->territoryManager->getTerritory($tab[1])) {
+                $structure->addTerritory($territory);
+                $this->entityManager->persist($structure);
+                $this->entityManager->flush();
+            } else {
+                echo "Territory not found !" . PHP_EOL;
+            }
+        } else {
+            echo "Structure not found !" . PHP_EOL;
+        }
     }
 }
