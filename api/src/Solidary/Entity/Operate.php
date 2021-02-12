@@ -109,9 +109,9 @@ class Operate
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date
+     * @var \DateTimeInterface|null Updated date
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
      */
     private $updatedDate;
@@ -146,7 +146,7 @@ class Operate
         return $this->updatedDate;
     }
 
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
 

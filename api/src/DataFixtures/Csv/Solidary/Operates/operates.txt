@@ -1,0 +1,2 @@
+structure_id
+user_id

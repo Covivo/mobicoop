@@ -37,6 +37,7 @@ use App\Geography\Entity\Address;
 use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
 use App\Solidary\Entity\Need;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Entity\Subject;
@@ -145,7 +146,6 @@ class FixturesManager
             TRUNCATE `matching`;
             TRUNCATE `message`;
             TRUNCATE `notified`;
-            TRUNCATE `operate`;
             TRUNCATE `payment_profile`;
             TRUNCATE `position`;
             TRUNCATE `proposal`;
@@ -169,6 +169,7 @@ class FixturesManager
         if ($this->fixturesSolidary) {
             echo "Clearing Solidary database... " . PHP_EOL;
             $sql = "
+            TRUNCATE `operate`;
             TRUNCATE `proof`;
             TRUNCATE `solidary`;
             TRUNCATE `solidary_ask`;
@@ -667,5 +668,29 @@ class FixturesManager
         } else {
             echo "Structure not found !" . PHP_EOL;
         }
-    }    
+    }
+
+    /**
+     * Link the user and the structure in Operate
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Operates/operates.txt)
+     * @return void
+     */
+    public function createOperates(array $tab)
+    {
+        echo "Link structure " . $tab[0] . " with User : " . $tab[1] . PHP_EOL;
+        if ($structure = $this->structureManager->getStructure($tab[0])) {
+            if ($user = $this->userManager->getUser($tab[1])) {
+                $operate = new Operate();
+                $operate->setStructure($structure);
+                $operate->setUser($user);
+                $this->entityManager->persist($operate);
+                $this->entityManager->flush();
+            } else {
+                echo "User not found !" . PHP_EOL;
+            }
+        } else {
+            echo "Structure not found !" . PHP_EOL;
+        }
+    }
 }

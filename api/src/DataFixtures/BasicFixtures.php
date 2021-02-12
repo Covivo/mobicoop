@@ -268,7 +268,22 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     $this->fixturesManager->createSubjects($tab);
                 }
             }
-        }        
+        }
+
+        // Operate (define where solidary managers can operate)
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Operates/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createOperates($tab);
+                }
+            }
+        }
     }
     
     public static function getGroups(): array
