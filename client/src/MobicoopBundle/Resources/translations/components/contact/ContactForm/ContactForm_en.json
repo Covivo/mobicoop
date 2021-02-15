@@ -30,6 +30,9 @@
             "technicalIssues": "Technical issue",
             "partnership": "Partnership",
             "community": "Community creation"
+        },
+        "errors": {
+            "required": "L'objet de votre demande est requis"
         }
     },
     "message": {
