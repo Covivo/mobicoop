@@ -23,6 +23,9 @@
       class="mx-auto"
       :hidden="SkeletonHidden"
     />
+    <p v-if="messages.length <= 0 && SkeletonHidden">
+      {{ $t("noMessage") }}
+    </p>
   </v-main>
 </template>
 <script>
