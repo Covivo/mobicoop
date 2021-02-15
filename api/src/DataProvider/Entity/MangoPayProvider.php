@@ -358,15 +358,14 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Register a User to the provider and create a PaymentProfile
+     * Update a User to the provider and create a PaymentProfile
      *
      * @param User $user
-     * @param Address|null $address The address to use
      * @return string The identifier
      */
-    public function updateUser(User $user, Address $address=null)
+    public function updateUser(User $user)
     {
-        // We check first if the user have already a payment profile
+        // We check first if the user have an identifier
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();
         
