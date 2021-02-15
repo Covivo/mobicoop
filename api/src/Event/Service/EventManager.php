@@ -66,10 +66,12 @@ class EventManager
     {
         $this->entityManager->persist($event);
         $this->entityManager->flush();
-
+        
         // We set the displayLabel of the event's address
         $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
-        
+        // we set the urlKey
+        $event->setUrlKey($this->generateUrlKey($event));
+
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
 
