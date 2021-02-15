@@ -21,33 +21,24 @@
  *    LICENSE
  **************************/
 
-namespace App\Image\Controller;
+namespace App\Image\Admin\Controller;
 
-use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 use App\Image\Service\ImageManager;
 use App\Image\Entity\Image;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-final class CreateImageAction
+final class PostImageAction
 {
-    use TranslatorTrait;
     private $imageManager;
-    private $logger;
     
-    public function __construct(ImageManager $imageManager, LoggerInterface $logger)
+    public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
-        $this->logger = $logger;
     }
     
     public function __invoke(Request $request): Image
     {
-        if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("Bad request"));
-        }
-
         $image = new Image();
 
         // check if file is present
@@ -92,18 +83,20 @@ final class CreateImageAction
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the owner and the image
             $owner->addImage($image);
-            // we search the position of the image if not provided
-            if (is_null($image->getPosition())) {
-                $image->setPosition($this->imageManager->getNextPosition($image));
-            } else {
-                // the image position is provided, we remove the existing image at this position
-                $this->imageManager->removeImageAtPosition($owner, $image->getPosition());
-            }
             
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image));
             if (is_null($image->getName())) {
                 $image->setName($image->getFileName());
+            }
+
+            // we search the position of the image if not provided
+            if (is_null($request->request->get('position'))) {
+                $image->setPosition($this->imageManager->getNextPosition($image));
+            } else {
+                // the image position is provided, we remove the existing image at this position
+                $image->setPosition($request->request->get('position'));
+                $this->imageManager->removeImageAtPosition($owner, $request->request->get('position'));
             }
         }
 

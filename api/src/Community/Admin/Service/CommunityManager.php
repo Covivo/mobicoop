@@ -98,6 +98,12 @@ class CommunityManager
             $community->setUser($referrer);
             // add the community manager role to the referrer
             $this->addCommunityManagerRole($referrer);
+            // add the referrer as moderator of the community
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($referrer);
+            $communityUser->setCommunity($community);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MODERATOR);
+            $this->entityManager->persist($communityUser);
         } else {
             throw new CommunityException("Referrer not found");
         }

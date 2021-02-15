@@ -395,6 +395,10 @@ services:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
 
+    App\Image\Admin\Controller\:
+        resource: '../src/Image/Admin/Controller'
+        tags: ['controller.service_arguments']
+
     App\Image\EntityListener\ImageListener:
         arguments: ['@App\Image\Service\ImageManager']
         tags:
