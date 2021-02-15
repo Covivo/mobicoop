@@ -592,6 +592,19 @@ class UserManager
     }
 
     /**
+     * Undocumented function
+     *
+     * @param User $user
+     * @return void
+     */
+    public function updatePaymentProviderUser($user)
+    {
+        $this->paymentProvider->updateUser($user);
+        return $user;
+    }
+
+
+    /**
      * Encode a password for a user
      *
      * @param User $user        The user

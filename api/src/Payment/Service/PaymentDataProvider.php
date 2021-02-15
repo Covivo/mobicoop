@@ -43,6 +43,7 @@ use Symfony\Component\Security\Core\Security;
  * This service contains methods related to payment.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class PaymentDataProvider
 {
@@ -220,6 +221,19 @@ class PaymentDataProvider
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->registerUser($user, $address);
+    }
+
+
+    /**
+     * Update a User on the payment provider platform
+     *
+     * @param User $user
+     * @return string The identifier
+     */
+    public function updateUser(User $user)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->updateUser($user);
     }
 
     /**
