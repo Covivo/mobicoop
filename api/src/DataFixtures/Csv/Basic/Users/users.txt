@@ -6,4 +6,12 @@ birthDate : YYYY-MM-DD
 telephone
 password
 home locality : string
-role : 1 = super admin, 2 = admin, 3 = user with full registration
+role : 
+    1 = super admin,
+    2 = admin,
+    3 = user with full registration,
+    10 = solidary manager,
+    11 = solidary volunteer,
+    12 = solidary beneficiary,
+    171 = solidary volunteer candidate,
+    172 = solidary beneficiary candidate

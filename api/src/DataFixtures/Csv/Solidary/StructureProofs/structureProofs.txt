@@ -1,0 +1,12 @@
+structure_id
+label
+type
+position
+checkbox
+input
+selectbox
+radio
+options
+accepted_values
+file
+mandatory

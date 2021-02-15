@@ -37,92 +37,136 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     private $fixturesManager;
     private $proposalManager;
 
-    public function __construct(FixturesManager $fixturesManager, ProposalManager $proposalManager)
-    {
+    private $fixturesEnabled;
+    private $fixturesClearBase;
+    private $fixturesBasic;
+    private $fixturesSolidary;
+
+    public function __construct(
+        FixturesManager $fixturesManager,
+        ProposalManager $proposalManager,
+        bool $fixturesEnabled,
+        bool $fixturesClearBase,
+        bool $fixturesBasic,
+        bool $fixturesSolidary
+    ) {
         $this->fixturesManager = $fixturesManager;
         $this->proposalManager = $proposalManager;
+        $this->fixturesEnabled = $fixturesEnabled;
+        $this->fixturesClearBase = $fixturesClearBase;
+        $this->fixturesBasic = $fixturesBasic;
+        $this->fixturesSolidary = $fixturesSolidary;
     }
 
     public function load(ObjectManager $manager)
     {
+        if (!$this->fixturesEnabled) {
+            echo "Fixtures disabled". PHP_EOL;
+            exit;
+        }
+        
         // clear database
-        $this->fixturesManager->clearData();
-
-        // load users info from csv file
-        $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Basic/Users/');
-        $finder->name('*.csv');
-        $finder->files();
-        foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
-                while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the user
-                    $this->fixturesManager->createUser($tab);
-                }
-            }
+        if ($this->fixturesClearBase) {
+            $this->fixturesManager->clearData();
         }
 
-        // load ads info from csv file
-        $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Basic/Ads/');
-        $finder->name('*.csv');
-        $finder->files();
-        foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
-                while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the ad
-                    if ($ad = $this->fixturesManager->createAd($tab)) {
-                        $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+        if ($this->fixturesBasic) {
+
+            // load users info from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Users/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the user
+                        $this->fixturesManager->createUser($tab);
+                    }
+                }
+            }
+
+            // load ads info from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Ads/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the ad
+                        if ($ad = $this->fixturesManager->createAd($tab)) {
+                            $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+                        }
+                    }
+                }
+            }
+
+            // load events info from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Events/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the event
+                        $this->fixturesManager->createEvent($tab);
+                    }
+                }
+            }
+
+            // load communities info from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Communities/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the community
+                        $this->fixturesManager->createCommunity($tab);
+                    }
+                }
+            }
+
+            // load communities users info from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/CommunityUsers/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the community user
+                        $this->fixturesManager->createCommunityUser($tab);
+                    }
+                }
+            }
+
+            // Territories (direct SQL requests in the file because of geographic data)
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Territories/');
+            $finder->name('*.sql');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while (!feof($file)) {
+                        // create the community user
+                        $this->fixturesManager->createTerritories(fgets($file));
                     }
                 }
             }
         }
-
-        // load events info from csv file
-        $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Basic/Events/');
-        $finder->name('*.csv');
-        $finder->files();
-        foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
-                while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the event
-                    $this->fixturesManager->createEvent($tab);
-                }
-            }
-        }
-
-        // load communities info from csv file
-        $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Basic/Communities/');
-        $finder->name('*.csv');
-        $finder->files();
-        foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
-                while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community
-                    $this->fixturesManager->createCommunity($tab);
-                }
-            }
-        }
-
-        // load communities users info from csv file
-        $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Basic/CommunityUsers/');
-        $finder->name('*.csv');
-        $finder->files();
-        foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
-                while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
-                    $this->fixturesManager->createCommunityUser($tab);
-                }
-            }
+        
+        if ($this->fixturesSolidary) {
+            $this->solidaryFixtures();
         }
 
         // // we compute the directions and default values for the generated proposals
@@ -134,6 +178,129 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         // echo "Done !" . PHP_EOL;
     }
 
+    private function solidaryFixtures()
+    {
+
+        // Structures
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Structures/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructures($tab);
+                }
+            }
+        }
+
+        // Link structures and territories
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/StructureTerritories/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructureTerritories($tab);
+                }
+            }
+        }
+
+        // Structure proofs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/StructureProofs/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructureProofs($tab);
+                }
+            }
+        }
+        // Needs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Needs/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createNeeds($tab);
+                }
+            }
+        }
+
+        // Link structure and needs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/StructureNeeds/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createStructureNeeds($tab);
+                }
+            }
+        }
+
+        // Subjects
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Subjects/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createSubjects($tab);
+                }
+            }
+        }
+
+        // Operate (define where solidary managers can operate)
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Operates/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createOperates($tab);
+                }
+            }
+        }
+
+        // SolidaryUsers
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/SolidaryUsers/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createSolidaryUsers($tab);
+                }
+            }
+        }
+    }
+    
     public static function getGroups(): array
     {
         return ['basic'];
