@@ -1262,13 +1262,19 @@ class User implements UserInterface, EquatableInterface
     // ADMIN
 
     /**
-     * @var Address
+     * @var string|null The user main image
+     * @Groups({"aRead","aWrite"})
+     */
+    private $image;
+
+    /**
+     * @var Address The user home address
      * @Groups({"aRead","aWrite"})
      */
     private $homeAddress;
 
     /**
-     * @var array
+     * @var array The user roles
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
@@ -2973,6 +2979,14 @@ class User implements UserInterface, EquatableInterface
     }
 
     // ADMIN
+
+    public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
 
     public function getHomeAddress(): ?Address
     {
