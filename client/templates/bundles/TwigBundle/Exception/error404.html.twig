@@ -1,16 +1,9 @@
-{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{#can be seen in dev mode on /_error/404 #}
 {% extends '@Mobicoop/base.html.twig' %}
-{% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
-{% endblock %}
-{% block main %}
-    <h1>{{ "Page non trouvé"|trans }}</h1>
+{% block title %}{% trans from 'meta' %}meta.error.title{% endtrans %}{{ app_name }}{% endblock %}
 
-    <p>
-        {{ "La page recherché est introuvable, vérifier l'url ou"|trans }}
-        <a href="{{ path('home') }}">{{ "Revenez à la page d'acceuil"|trans }}</a>.
-    </p>
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
+{% block desc %}{% trans from 'meta' %}meta.error.description{% endtrans %}{% endblock %}
+
+{% block main %}
+    <error-page :code="{{status_code}}"/>
 {% endblock %}

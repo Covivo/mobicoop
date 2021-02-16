@@ -134,6 +134,7 @@
                   <ProfileSummary
                     :user-id="result.carpooler.id"
                     :refresh="profileSummaryRefresh"
+                    :age-display="ageDisplay"
                     @showProfile="step=4"
                     @profileSummaryRefresh="refreshProfileSummary"
                   />
@@ -333,6 +334,7 @@
           <PublicProfile
             :user="result.carpooler"
             :refresh="refreshPublicProfile"
+            :age-display="ageDisplay"
             @publicProfileRefresh="publicProfileRefresh"
           />
         </v-stepper-content>
@@ -605,6 +607,10 @@ export default {
       default: false
     },
     fraudWarningDisplay: {
+      type: Boolean,
+      default: false
+    },
+    ageDisplay: {
       type: Boolean,
       default: false
     }

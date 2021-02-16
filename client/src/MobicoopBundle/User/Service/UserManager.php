@@ -377,7 +377,7 @@ class UserManager
     {
         $user = new User();
         $user->setPwdToken($token);
-        $user->setPassword($this->encoder->encodePassword($user, $password));
+        $user->setPassword($password);
         return $this->dataProvider->postSpecial($user, ['passwordUpdate'], "password_update")->getValue();
     }
 

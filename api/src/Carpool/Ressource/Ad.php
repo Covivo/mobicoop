@@ -382,6 +382,13 @@ class Ad
     private $posterId;
 
     /**
+     * @var int|null The app id of the poster (used for delegation).
+     *
+     *@Groups({"read","write"})
+     */
+    private $appPosterId;
+    
+    /**
      * @var array|null The communities associated with the ad.
      *
      * @Groups({"read","write"})
@@ -1017,6 +1024,18 @@ class Ad
     public function setPosterId(?int $posterId): self
     {
         $this->posterId = $posterId;
+
+        return $this;
+    }
+
+    public function getAppPosterId(): ?int
+    {
+        return $this->appPosterId;
+    }
+
+    public function setAppPosterId(?int $appPosterId): self
+    {
+        $this->appPosterId = $appPosterId;
 
         return $this;
     }

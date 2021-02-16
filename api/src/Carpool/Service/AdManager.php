@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\App\Service\AppManager;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
@@ -52,6 +53,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\MatchingRepository;
+use App\Geography\Service\AddressManager;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use DateTime;
@@ -82,6 +84,8 @@ class AdManager
     private $authManager;
     private $proofManager;
     private $subjectRepository;
+    private $addressManager;
+    private $appManager;
 
     private $currentMargin = null;
 
@@ -91,7 +95,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository, AddressManager $addressManager, AppManager $appManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -111,6 +115,8 @@ class AdManager
         $this->authManager = $authManager;
         $this->proofManager = $proofManager;
         $this->subjectRepository = $subjectRepository;
+        $this->addressManager = $addressManager;
+        $this->appManager = $appManager;
         if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
             $this->params["paymentActiveDate"]->setTime(0, 0);
             $this->params["paymentActive"] = true;
@@ -158,6 +164,15 @@ class AdManager
                 $outwardProposal->setUserDelegate($poster);
             } else {
                 throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
+            }
+        }
+
+        // we check if the ad is posted from an Interoperability app
+        if ($ad->getAppPosterId()) {
+            if ($poster = $this->appManager->getApp($ad->getAppPosterId())) {
+                $outwardProposal->setAppDelegate($poster);
+            } else {
+                throw new UserNotFoundException('Poster App ' . $ad->getAppPosterId() . ' not found');
             }
         }
 
@@ -305,7 +320,16 @@ class AdManager
         // waypoints
         foreach ($ad->getOutwardWaypoints() as $position => $point) {
             $waypoint = new Waypoint();
-            $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
+            
+            
+            $address = ($point instanceof Address) ? $point : $this->createAddressFromPoint($point);
+            
+            if (is_null($address->getAddressLocality())) {
+                // No address locality given. We need to reverse geocode this address
+                $address= $this->addressManager->reverseGeocodeAddress($address);
+            }
+
+            $waypoint->setAddress($address);
             $waypoint->setPosition($position);
             $waypoint->setDestination($position == count($ad->getOutwardWaypoints())-1);
             $outwardProposal->addWaypoint($waypoint);
@@ -413,7 +437,15 @@ class AdManager
             }
             foreach ($ad->getReturnWaypoints() as $position => $point) {
                 $waypoint = new Waypoint();
-                $waypoint->setAddress(($point instanceof Address) ? $point : $this->createAddressFromPoint($point));
+                
+                $address = ($point instanceof Address) ? $point : $this->createAddressFromPoint($point);
+            
+                if (is_null($address->getAddressLocality())) {
+                    // No address locality given. We need to reverse geocode this address
+                    $address= $this->addressManager->reverseGeocodeAddress($address);
+                }
+
+                $waypoint->setAddress($address);
                 $waypoint->setPosition($position);
                 $waypoint->setDestination($position == count($ad->getReturnWaypoints())-1);
                 $returnProposal->addWaypoint($waypoint);

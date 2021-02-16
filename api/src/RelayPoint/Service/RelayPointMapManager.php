@@ -24,6 +24,7 @@
 namespace App\RelayPoint\Service;
 
 use App\Community\Service\CommunityManager;
+use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Resource\RelayPointMap;
 use App\User\Entity\User;
 
@@ -64,16 +65,7 @@ class RelayPointMapManager
         $relayPointsMap = [];
         $relayPoints = $this->relayPointManager->getRelayPoints($user, $context, "");
         foreach ($relayPoints as $relayPoint) {
-            /**
-             * @var RelayPoint $relayPoint
-             */
-            $relayPointMap = new RelayPointMap();
-            $relayPointMap->setId($relayPoint->getId());
-            $relayPointMap->setName($relayPoint->getName());
-            $relayPointMap->setRelayPointType($relayPoint->getRelayPointType());
-            $relayPointMap->setAddress($relayPoint->getAddress());
-
-            $relayPointsMap[] = $relayPointMap;
+            $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
         }
         
         return $relayPointsMap;
@@ -92,17 +84,30 @@ class RelayPointMapManager
         $community = $this->communityManager->getCommunity($id);
 
         foreach ($community->getRelayPoints() as $relayPoint) {
-            /**
-             * @var RelayPoint $relayPoint
-             */
-            $relayPointMap = new RelayPointMap();
-            $relayPointMap->setId($relayPoint->getId());
-            $relayPointMap->setName($relayPoint->getName());
-            $relayPointMap->setRelayPointType($relayPoint->getRelayPointType());
-            $relayPointMap->setAddress($relayPoint->getAddress());
-
-            $relayPointsMap[] = $relayPointMap;
+            $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
         }
         return $relayPointsMap;
+    }
+
+    /**
+     * Build a RelayPointMap from a RelayPoint
+     *
+     * @param RelayPoint $relayPoint The base RelayPoint
+     * @return RelayPointMap    The builded RelayPointMap
+     */
+    private function buildRelayPointMap(RelayPoint $relayPoint): RelayPointMap
+    {
+        $relayPointMap = new RelayPointMap();
+        $relayPointMap->setId($relayPoint->getId());
+        $relayPointMap->setName($relayPoint->getName());
+        $relayPointMap->setRelayPointType($relayPoint->getRelayPointType());
+        $relayPointMap->setAddress($relayPoint->getAddress());
+        $relayPointMap->setPrivate($relayPoint->isPrivate());
+        $relayPointMap->setPlaces($relayPoint->getPlaces());
+        $relayPointMap->setPlacesDisabled($relayPoint->getPlacesDisabled());
+        $relayPointMap->setFree($relayPoint->isFree());
+        $relayPointMap->setSecured($relayPoint->isSecured());
+        $relayPointMap->setOfficial($relayPoint->isOfficial());
+        return $relayPointMap;
     }
 }

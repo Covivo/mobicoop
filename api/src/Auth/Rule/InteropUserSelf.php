@@ -21,28 +21,24 @@
  *    LICENSE
  **************************/
 
-namespace App\MassCommunication\Interfaces;
+namespace App\Auth\Rule;
+
+use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- * Mass email provider interface.
- *
- * A mass email provider entity class must implement all these methods in order to be used by campaign services.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
+ *  Check that the requester is the user himself
  */
-interface MassEmailProviderInterface
+class InteropUserSelf implements AuthRuleInterface
 {
     /**
-     * Send an email to multiple recipients.
-     *
-     * @param string $subject   The subject of the email
-     * @param string $fromName  The name of the sender
-     * @param string $fromEmail The email of the sender
-     * @param string $replyTo   The reply to email
-     * @param string $body      The body of the message
-     * @param array $recipients The array of recipients email, with its context variables (under the form [$email => [$context]])
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function send(string $subject, string $fromName, string $fromEmail, string $replyTo, string $body, array $recipients);
+    public function execute($requester, $item, $params)
+    {
+        return true;
+        if (!isset($params['user'])) {
+            return false;
+        }
+        return $params['user']->getId() == $requester->getId();
+    }
 }

@@ -700,7 +700,7 @@ import SearchJourney from "@components/carpool/search/SearchJourney";
 import AdPlanification from "@components/carpool/publish/AdPlanification";
 import AdRoute from "@components/carpool/publish/AdRoute";
 import AdSummary from "@components/carpool/publish/AdSummary";
-import MMap from '@components/utilities/MMap'
+import MMap from '@components/utilities/MMap/MMap'
 import L from "leaflet";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);

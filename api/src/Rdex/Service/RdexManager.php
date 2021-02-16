@@ -404,7 +404,7 @@ class RdexManager
             // We get some datas that relies on being passenger or driver
             $fromAddress = $resultItem->getOutward()->getOrigin();
             $toAddress = $resultItem->getOutward()->getDestination();
-            $distance = $resultItem->getOutward()->getCommonDistance()+$result->getResultPassenger()->getOutward()->getDetourDistance();
+            $distance = $resultItem->getOutward()->getCommonDistance()+$resultItem->getOutward()->getDetourDistance();
             $kilometersPrice = $resultItem->getOutward()->getDriverPriceKm();
 
 

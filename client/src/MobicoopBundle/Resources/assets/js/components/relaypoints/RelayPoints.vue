@@ -76,7 +76,7 @@
 import axios from "axios";
 import {messages_en, messages_fr} from "@translations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
-import MMap from "@components/utilities/MMap"
+import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 
 export default {
@@ -155,18 +155,29 @@ export default {
               icon = relayPoint.relayPointType.icon.url;
             }
           }
-          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));
+
+          let misc = {
+            official:relayPoint.official,
+            private:relayPoint.private,
+            secured:relayPoint.secured,
+            free:relayPoint.free,
+            places:relayPoint.places,
+            placesDisabled:relayPoint.placesDisabled
+          }
+
+          this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon,misc));
         });
       }
       this.loading = false;
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",address="", icon=null){
+    buildPoint: function(lat,lng,title="",address="", icon=null, misc=null){
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
         icon: {},
-        address:address
+        address:address,
+        misc:misc
       };
 
       if(icon){
@@ -200,5 +211,3 @@ export default {
 }
 
 </style>
-
-

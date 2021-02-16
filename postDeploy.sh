@@ -92,11 +92,17 @@ then
     npm install;
     npm run build;
 
+    # clear cache
+    cd /var/www/$VERSION/$INSTANCE/api;
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
+    cd /var/www/$VERSION/$INSTANCE/client;
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
+
     # Fixtures for test
     if [ $VERSION == "test" ]
     then
         cd /var/www/$VERSION/$INSTANCE/api;
-        php bin/console doctrine:fixtures:load -n -v --append --group=basic
+        php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=$VERSION_MIGRATE
     fi
 
 else
@@ -164,6 +170,12 @@ else
     fi
     cd /var/www/$INSTANCE/$VERSION/client/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+
+     # clear cache
+    cd /var/www/$INSTANCE/$VERSION/api;
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
+    cd /var/www/$INSTANCE/$VERSION/client;
+    php bin/console cache:clear --env=$VERSION_MIGRATE;
 
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;

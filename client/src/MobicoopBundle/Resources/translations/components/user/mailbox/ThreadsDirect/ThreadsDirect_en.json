@@ -1,3 +1,4 @@
 {
-    "urlGet": "/user/messages/direct"
+    "urlGet": "/user/messages/direct",
+    "noMessage": "Vous n'avez pas encore échangé avec un autre inscrit."
 }
