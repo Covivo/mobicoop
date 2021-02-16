@@ -114,10 +114,9 @@ class RelayPointMapManager
         $relayPointMap->setOfficial($relayPoint->isOfficial());
 
         if (!is_null($relayPoint->getImages()) && count($relayPoint->getImages())>0 &&
-            file_exists("/upload/".RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName())) {
+            file_exists("upload/".RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName())) {
             $relayPointMap->setImage($this->dataPath.RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName());
         }
-
         return $relayPointMap;
     }
 }

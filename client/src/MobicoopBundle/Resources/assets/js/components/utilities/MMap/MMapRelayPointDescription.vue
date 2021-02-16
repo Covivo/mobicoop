@@ -71,6 +71,17 @@
       <v-row no-gutters>
         <v-col>{{ $t('places') }} {{ data.places ? data.places : '?' }}<br>{{ $t('placesDisabled') }} {{ data.placesDisabled ? data.placesDisabled : '?' }}</v-col>
       </v-row>
+      <v-row
+        v-if="data.image"
+        no-gutters
+      >
+        <v-col
+          cols="12"
+          class="text-center"
+        >
+          <v-img :src="data.image" />
+        </v-col>
+      </v-row>
     </v-card>
   </div>
 </template>

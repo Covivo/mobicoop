@@ -49,7 +49,7 @@ class RelayPointMap
 {
     const DEFAULT_ID = 999999999999;
     const IMAGE_PATH = "relaypoints/images/versions";
-    const IMAGE_VERSION = 250;
+    const IMAGE_VERSION = 100;
 
     /**
      * @var int The id of this  relay point map
@@ -113,7 +113,7 @@ class RelayPointMap
     private $private;
 
     /**
-     * @var string|null
+     * @var string|null Image of the RelayPointMap
      * @Groups({"readRelayPoint"})
      */
     private $image;
