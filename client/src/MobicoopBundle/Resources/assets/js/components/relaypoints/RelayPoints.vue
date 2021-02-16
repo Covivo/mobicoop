@@ -162,7 +162,8 @@ export default {
             secured:relayPoint.secured,
             free:relayPoint.free,
             places:relayPoint.places,
-            placesDisabled:relayPoint.placesDisabled
+            placesDisabled:relayPoint.placesDisabled,
+            image:relayPoint.image
           }
 
           this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon,misc));

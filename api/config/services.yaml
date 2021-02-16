@@ -564,6 +564,10 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
 
     # RelayPoint
+    App\RelayPoint\Service\RelayPointMapManager:
+        arguments:
+            $dataPath: '%env(resolve:DATA_URI)%'    
+
     App\RelayPoint\EntityListener\RelayPointTypeListener:
         arguments:
             $dataUri: '%env(string:DATA_URI)%'
