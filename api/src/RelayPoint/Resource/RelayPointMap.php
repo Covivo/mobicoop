@@ -48,6 +48,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class RelayPointMap
 {
     const DEFAULT_ID = 999999999999;
+    const IMAGE_PATH = "relaypoints/images/versions";
+    const IMAGE_VERSION = 250;
 
     /**
      * @var int The id of this  relay point map
@@ -109,6 +111,12 @@ class RelayPointMap
      * @Groups({"readRelayPoint"})
      */
     private $private;
+
+    /**
+     * @var string|null
+     * @Groups({"readRelayPoint"})
+     */
+    private $image;
 
     public function __construct($id = null)
     {
@@ -228,6 +236,18 @@ class RelayPointMap
     public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial;
+        
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+    
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
         
         return $this;
     }
