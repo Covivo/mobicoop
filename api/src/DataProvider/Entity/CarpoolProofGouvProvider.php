@@ -24,6 +24,7 @@
 namespace App\DataProvider\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Criteria;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
 use DateTime;
@@ -87,10 +88,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
                     "over_18" => $over18
                 ],
                 "start" => [
-                    "datetime" => $carpoolProof->getPickUpPassengerDate()->format(self::ISO6801)
+                    "datetime" => (!is_null($carpoolProof->getPickUpPassengerDate())) ? $carpoolProof->getPickUpPassengerDate()->format(self::ISO6801) : null
                 ],
                 "end" => [
-                    "datetime" => $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801)
+                    "datetime" => (!is_null($carpoolProof->getDropOffPassengerDate())) ? $carpoolProof->getDropOffPassengerDate()->format(self::ISO6801) : null
                 ],
                 "seats" => $carpoolProof->getAsk()->getCriteria()->getSeatsPassenger(),
                 "contribution" => $carpoolProof->getAsk()->getCriteria()->getPassengerComputedRoundedPrice()*100,
@@ -127,14 +128,45 @@ class CarpoolProofGouvProvider implements ProviderInterface
             !isset($journey["passenger"]["start"]["lon"]) && !isset($journey["passenger"]["end"]["lon"])
         ) {
             if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
-                $passengerWaypoints = $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+                $passengerProposal = $carpoolProof->getAsk()->getMatching()->getProposalRequest();
+                $passengerWaypoints = $passengerProposal->getWaypoints();
             } elseif ($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
-                $passengerWaypoints = $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getWaypoints();
+                $passengerProposal = $carpoolProof->getAsk()->getMatching()->getProposalOffer();
+                $passengerWaypoints = $passengerProposal->getWaypoints();
             }
             $journey["passenger"]["start"]["lon"] = (float)$passengerWaypoints[0]->getAddress()->getLongitude();
             $journey["passenger"]["start"]["lat"] = (float)$passengerWaypoints[0]->getAddress()->getLatitude();
             $journey["passenger"]["end"]["lon"] = (float)$passengerWaypoints[count($passengerWaypoints)-1]->getAddress()->getLongitude();
             $journey["passenger"]["end"]["lat"] = (float)$passengerWaypoints[count($passengerWaypoints)-1]->getAddress()->getLatitude();
+
+            // In organized, we need to use the driver's date and we search for the ask's criteria time for the passenger
+            if (is_null($journey["passenger"]["start"]["datetime"])) {
+                $fromDate = $carpoolProof->getStartDriverDate();
+                if ($carpoolProof->getAsk()->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+                    $fromTime = $carpoolProof->getAsk()->getCriteria()->getFromTime();
+                } else {
+                    // Need to find the right time
+                    switch ($fromDate->format('w')) {
+                        case 0: $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();break;
+                        case 1: $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();break;
+                        case 2: $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();break;
+                        case 3: $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();break;
+                        case 4: $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();break;
+                        case 5: $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();break;
+                        case 6: $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();break;
+                    }
+                }
+
+                // We compute the pickup time
+                $pickUpTime = $fromTime->modify("+ ".$carpoolProof->getAsk()->getMatching()->getPickUpDuration()." second");
+                $passengerStartDate = clone $fromDate;
+                $journey["passenger"]["start"]["datetime"] = $passengerStartDate->setTime($pickUpTime->format('H'), $pickUpTime->format('i'), $pickUpTime->format('s'));
+
+                // We compute the drop off time
+                $dropOffTime = $fromTime->modify("+ ".$carpoolProof->getAsk()->getMatching()->getDropOffDuration()." second");
+                $passengerEndDate = clone $fromDate;
+                $journey["passenger"]["end"]["datetime"] = $passengerEndDate->setTime($dropOffTime->format('H'), $dropOffTime->format('i'), $dropOffTime->format('s'));
+            }
         }
         
         if (!is_null($carpoolProof->getOriginDriverAddress())) {
