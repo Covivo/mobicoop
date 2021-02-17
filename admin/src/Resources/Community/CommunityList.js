@@ -35,7 +35,7 @@ export const CommunityList = (props) => {
       {...props}
       hasCreate={isAdmin()}
       title="Communautés > liste"
-      perPage={25}
+      perPage={10}
       filters={<CommunityFilter />}
       exporter={isAuthorized('export') ? undefined : false}
       sort={{ field: 'originId', order: 'DESC' }}
