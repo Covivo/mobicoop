@@ -598,9 +598,9 @@ class UserManager
      * Update the user infos on the payment provider platform
      *
      * @param User $user
-     * @return void
+     * @return User
      */
-    public function updatePaymentProviderUser($user)
+    public function updatePaymentProviderUser(User $user)
     {
         // We check if the user have a payment profile
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
