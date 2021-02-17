@@ -237,6 +237,7 @@ export const CommunityEdit = (props) => {
               fullWidth
               source="communityUsers"
               reference="community_users"
+              perPage={50}
               label="Tags"
             >
               <List
