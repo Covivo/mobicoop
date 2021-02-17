@@ -150,19 +150,19 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
             }
 
             // Territories (direct SQL requests in the file because of geographic data)
-            $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Territories/');
-            $finder->name('*.sql');
-            $finder->files();
-            foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
-                    while (!feof($file)) {
-                        // create the community user
-                        $this->fixturesManager->createTerritories(fgets($file));
-                    }
-                }
-            }
+            // $finder = new Finder();
+            // $finder->in(__DIR__ . '/Csv/Basic/Territories/');
+            // $finder->name('*.sql');
+            // $finder->files();
+            // foreach ($finder as $file) {
+            //     echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            //     if ($file = fopen($file, "r")) {
+            //         while (!feof($file)) {
+            //             // create the community user
+            //             $this->fixturesManager->createTerritories(fgets($file));
+            //         }
+            //     }
+            // }
         }
         
         if ($this->fixturesSolidary) {
