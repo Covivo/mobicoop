@@ -160,12 +160,12 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 // We compute the pickup time
                 $pickUpTime = $fromTime->modify("+ ".$carpoolProof->getAsk()->getMatching()->getPickUpDuration()." second");
                 $passengerStartDate = clone $fromDate;
-                $journey["passenger"]["start"]["datetime"] = $passengerStartDate->setTime($pickUpTime->format('H'), $pickUpTime->format('i'), $pickUpTime->format('s'));
+                $journey["passenger"]["start"]["datetime"] = $passengerStartDate->setTime($pickUpTime->format('H'), $pickUpTime->format('i'), $pickUpTime->format('s'))->format(self::ISO6801);
 
                 // We compute the drop off time
                 $dropOffTime = $fromTime->modify("+ ".$carpoolProof->getAsk()->getMatching()->getDropOffDuration()." second");
                 $passengerEndDate = clone $fromDate;
-                $journey["passenger"]["end"]["datetime"] = $passengerEndDate->setTime($dropOffTime->format('H'), $dropOffTime->format('i'), $dropOffTime->format('s'));
+                $journey["passenger"]["end"]["datetime"] = $passengerEndDate->setTime($dropOffTime->format('H'), $dropOffTime->format('i'), $dropOffTime->format('s'))->format(self::ISO6801);
             }
         }
         
