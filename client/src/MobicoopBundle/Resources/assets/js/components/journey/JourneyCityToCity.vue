@@ -6,9 +6,9 @@
           cols="12"
           class="white--text text-left ml-md-14"
         >
-          <h2 class="font-weight-bold">
+          <h3 class="font-weight-bold">
             {{ $t('title.part1') }} <br> {{ $t('title.part2') }}<h2 />
-          </h2>
+          </h3>
         </v-col>
       </v-row>
       <v-row>
@@ -85,9 +85,8 @@ export default {
     text-decoration:none;
     color: white !important;
   }
-  h2{
-        font-size: 2rem;
-
+h3{
+    font-size: 1.8rem;
     line-height: 1.2;
   }
 
