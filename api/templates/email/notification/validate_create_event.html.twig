@@ -28,7 +28,7 @@
                     <td>
                         <p>{{ "eventDetail"|trans }}</p>
                         <ul>
-                            <li>{{ "eventName"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ context.event.name }} </b></li>
+                            <li>{{ "eventName"|trans }}<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}{{"eventUrl"|trans}}{{context.event.id}}/{{context.event.urlKey}}">{{ context.event.name }} </a></li>
                             <li>{{ "eventLocation"|trans }}{{ context.event.address.displayLabel[0] }} </li>
                             <li>{{ "eventDescription"|trans }}{{ context.event.description }} </li>
                         </ul>

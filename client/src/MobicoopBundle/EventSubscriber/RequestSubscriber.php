@@ -30,6 +30,7 @@ class RequestSubscriber implements EventSubscriberInterface
             || 'user_update_password_reset' === $request->attributes->get('_route')
             || 'user_password_forgot' === $request->attributes->get('_route')
             || 'user_password_reset' === $request->attributes->get('_route')
+            || 'home_logout' === $request->attributes->get('_route')
         ) {
             return;
         }

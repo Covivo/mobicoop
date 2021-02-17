@@ -84,6 +84,11 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
      */
     private $private;
     
+    /**
+     * @var string|null Image of the RelayPointMap
+     */
+    private $image;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -203,6 +208,18 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+    
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+        
+        return $this;
+    }
+    
     public function jsonSerialize()
     {
         return
@@ -216,7 +233,8 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
             'placesDisabled'    => $this->getPlacesDisabled(),
             'free'              => $this->isFree(),
             'secured'           => $this->isSecured(),
-            'official'          => $this->isOfficial()
+            'official'          => $this->isOfficial(),
+            'image'             => $this->getImage()
         ];
     }
 }

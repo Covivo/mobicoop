@@ -326,6 +326,19 @@ services:
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
 
+    # Fixtures
+    App\DataFixtures\BasicFixtures:
+        arguments:
+            $fixturesEnabled: '%env(bool:FIXTURES_ENABLED)%'
+            $fixturesClearBase: '%env(bool:FIXTURES_CLEAR_BASE)%'
+            $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+    
+    App\DataFixtures\Service\FixturesManager:
+        arguments:
+            $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+    
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
@@ -551,6 +564,10 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
 
     # RelayPoint
+    App\RelayPoint\Service\RelayPointMapManager:
+        arguments:
+            $dataPath: '%env(resolve:DATA_URI)%'    
+
     App\RelayPoint\EntityListener\RelayPointTypeListener:
         arguments:
             $dataUri: '%env(string:DATA_URI)%'

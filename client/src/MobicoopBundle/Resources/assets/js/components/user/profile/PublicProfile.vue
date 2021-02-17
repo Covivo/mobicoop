@@ -25,7 +25,7 @@
                 class="text-right"
               >
                 {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
-                <span v-if="ageDisplay">
+                <span v-if="ageDisplay && publicProfile.age">
                   {{ publicProfile.age }} {{ $t('yearsOld') }}
                 </span>
               </v-col>
@@ -36,7 +36,9 @@
             class="text-center"
           >
             <p>{{ $t('carpoolRealized') }}<br><span class="headline">{{ publicProfile.carpoolRealized }}</span></p>
-            <p>{{ $t('lastConnection') }}<br>{{ lastConnection }}</p>
+            <p v-if="lastConnection">
+              {{ $t('lastConnection') }}<br>{{ lastConnection }}
+            </p>
           </v-col>
           <v-col
             cols="3"
@@ -116,7 +118,7 @@
             />
           </v-col>
         </v-row>
-        <v-row v-if="publicProfile && publicProfile.reviewActive">
+        <v-row v-if="publicProfile && publicProfile.reviewActive && publicProfile.reviews.length > 0">
           <v-col cols="12">
             <Reviews :reviews="publicProfile.reviews" />
           </v-col>
@@ -171,7 +173,11 @@ export default {
   },
   computed:{
     lastConnection(){
-      return moment(this.publicProfile.lastActivityDate.date).format('DD/MM/YYYY');
+      if (this.publicProfile.lastActivityDate) {
+        return moment(this.publicProfile.lastActivityDate.date).format('DD/MM/YYYY');
+      }
+      return null;
+      
     },
     subscribedOn(){
       return moment(this.publicProfile.createdDate.date).format('DD/MM/YYYY');

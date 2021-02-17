@@ -37,7 +37,7 @@ class RelayPointMapManager
 {
     private $communityManager;
     private $relayPointManager;
-    
+    private $dataPath;
 
 
     /**
@@ -47,10 +47,12 @@ class RelayPointMapManager
      */
     public function __construct(
         CommunityManager $communityManager,
-        RelayPointManager $relayPointManager
+        RelayPointManager $relayPointManager,
+        string $dataPath
     ) {
         $this->communityManager = $communityManager;
         $this->relayPointManager = $relayPointManager;
+        $this->dataPath = $dataPath;
     }
 
     /**
@@ -65,7 +67,9 @@ class RelayPointMapManager
         $relayPointsMap = [];
         $relayPoints = $this->relayPointManager->getRelayPoints($user, $context, "");
         foreach ($relayPoints as $relayPoint) {
-            $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
+            if (!is_null($this->buildRelayPointMap($relayPoint))) {
+                $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
+            }
         }
         
         return $relayPointsMap;
@@ -95,7 +99,7 @@ class RelayPointMapManager
      * @param RelayPoint $relayPoint The base RelayPoint
      * @return RelayPointMap    The builded RelayPointMap
      */
-    private function buildRelayPointMap(RelayPoint $relayPoint): RelayPointMap
+    private function buildRelayPointMap(RelayPoint $relayPoint): ?RelayPointMap
     {
         $relayPointMap = new RelayPointMap();
         $relayPointMap->setId($relayPoint->getId());
@@ -108,6 +112,11 @@ class RelayPointMapManager
         $relayPointMap->setFree($relayPoint->isFree());
         $relayPointMap->setSecured($relayPoint->isSecured());
         $relayPointMap->setOfficial($relayPoint->isOfficial());
+
+        if (!is_null($relayPoint->getImages()) && count($relayPoint->getImages())>0 &&
+            file_exists("upload/".RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName())) {
+            $relayPointMap->setImage($this->dataPath.RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName());
+        }
         return $relayPointMap;
     }
 }
