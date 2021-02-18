@@ -538,26 +538,30 @@ class ImportManager
     private function importUserIfNotMigrate()
     {
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        $conn = $this->entityManager->getConnection();
+
         if (($handle = fopen("../public/import/csv/user_id_corresp.csv", "r")) !== false) {
+            $cpt = 0;
+            $query = "";
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-
-                // Since the import of avatars is only made after the migration of the accounts
-                // we need to get the actual UserImport created by the migration and link it by externalid
-                
-                $user = $this->userRepository->find($data[0]);
-                $importUser = $this->userImportRepository->findOneBy(array('user' =>  $user));
-                if (!is_null($importUser)) {
-                    //$importUser->setUser($this->userRepository->find($data[0]));
-                    $importUser->setUserExternalId($data[1]);
-                    //$importUser->setStatus(0);
-                    //$importUser->setOrigin('import-csv');
-                    //$importUser->setCreatedDate(new \DateTime());
-
-                    $this->entityManager->persist($importUser);
+                $query .= "update user_import set user_external_id =".$data[1]." where user_id = ".$data[0].";";
+                $cpt++;
+                if ($cpt==50) {
+                    $stmt = $conn->prepare($query);
+                    $stmt->execute();
+                    $cpt = 0;
+                    $query = "";
                 }
             }
+
+            if ($query!=="") {
+                $stmt = $conn->prepare($query);
+                $stmt->execute();
+                $cpt = 0;
+                $query = "";
+            }
+
             fclose($handle);
-            $this->entityManager->flush();
         }
     }
 }

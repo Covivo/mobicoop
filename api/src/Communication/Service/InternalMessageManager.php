@@ -51,14 +51,16 @@ class InternalMessageManager
     private $messageRepository;
     private $eventDispatcher;
     private $logger;
+    private $storeReadDate;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger, MessageRepository $messageRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger, MessageRepository $messageRepository, bool $storeReadDate)
     {
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
         $this->messageRepository = $messageRepository;
+        $this->storeReadDate = $storeReadDate;
     }
 
     /**
@@ -138,15 +140,39 @@ class InternalMessageManager
     }
 
     /**
-     * Get a complete message
+     * Get a complete message thread
+     * @param int $idMessage    The message we want the thread
+     * @param bool $checkRead   If true, we check the current message as read (can be override in .env)
+     * @param int $userId       Id of the requester. Usefull if checkRead is true
      */
-    public function getCompleteThread($idMessage)
+    public function getCompleteThread(int $idMessage, bool $checkRead=false, int $userId=null)
     {
         $message = $this->messageRepository->find($idMessage);
         if (empty($message)) {
             throw new MessageNotFoundException("Message not found");
         }
-        return  array_merge([$message], $message->getMessages());
+        $messages = array_merge([$message], $message->getMessages());
+        
+        // getCompleteThread is called in various ways that does'nt require that the read status be updated.
+        // For example in, UserManager -> getProfileSummary
+        if ($this->storeReadDate && $checkRead) {
+            foreach ($messages as $currentMessage) {
+                foreach ($currentMessage->getRecipients() as $recipient) {
+                    if (is_null($userId)) {
+                        throw new \LogicException("No user specified");
+                    }
+                    $userRecipientId = $recipient->getUser()->getId();
+                    // We set a read date only if the recipient userid is the requester id
+                    if ($userId == $userRecipientId) {
+                        $recipient->setReadDate(new \DateTime("now"));
+                    }
+                    $this->entityManager->persist($currentMessage);
+                }
+            }
+            $this->entityManager->flush();
+        }
+
+        return $messages;
     }
 
     public function getMessage($idMessage)

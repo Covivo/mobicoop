@@ -79,7 +79,7 @@
                   {{ $t("buttons.publish.label") }}
                 </v-btn>
                 <!-- button for access to the admin : only for creator -->
-                <div v-if="isCreator && canAccessAdminFromCommunity !== false">
+                <div v-if="canAdmin && canAccessAdminFromCommunity !== false">
                   <v-btn
                     class="mt-5"
                     color="secondary"
@@ -375,7 +375,7 @@ import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
-import MMap from "@components/utilities/MMap";
+import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
 
 export default {
@@ -506,6 +506,11 @@ export default {
       selectedDestination: null,
       selectedOrigin: null
     };
+  },
+  computed:{
+    canAdmin(){
+      return this.isCreator || (this.userCommunityStatus==2)
+    }
   },
   mounted() {
     if (this.userCommunityStatus >= 0) {

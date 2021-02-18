@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Exception\DynamicException;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
@@ -56,6 +57,7 @@ class ProofManager
     private $geoSearcher;
     private $geoTools;
     private $duration;
+    private $minIdentityDistance;
     
     /**
      * Constructor.
@@ -70,6 +72,8 @@ class ProofManager
      * @param string $provider                                  The provider for proofs
      * @param string $uri                                       The uri of the provider
      * @param string $token                                     The token for the provider
+     * @param int $duration                                     Number of days to send by default to the carpool register
+     * @param int $minIdentityDistance                          Minimal distance in meters between origin and destination/dropoff to determine distinct identities (C Class proof)
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -83,7 +87,8 @@ class ProofManager
         string $provider,
         string $uri,
         string $token,
-        int $duration
+        int $duration,
+        int $minIdentityDistance
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -93,6 +98,7 @@ class ProofManager
         $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->duration = $duration;
+        $this->minIdentityDistance = $minIdentityDistance;
 
         switch ($provider) {
             case 'BetaGouv':
@@ -549,7 +555,10 @@ class ProofManager
             foreach ($carpoolProofs as $carpoolProof) {
                 // we change the status to pending
                 $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
+                
+                // For now, TYPE_HIGH is only for dynamique because on organized trip we use declarative origin and destination not GPS given
                 if (
+                    $carpoolProof->getType() == CarpoolProof::TYPE_UNDETERMINED_DYNAMIC &&
                     !is_null($carpoolProof->getPickUpDriverAddress()) &&
                     !is_null($carpoolProof->getPickUpPassengerAddress()) &&
                     !is_null($carpoolProof->getDropOffDriverAddress()) &&
@@ -557,7 +566,8 @@ class ProofManager
                     !is_null($carpoolProof->getPickUpDriverDate()) &&
                     !is_null($carpoolProof->getPickUpPassengerDate()) &&
                     !is_null($carpoolProof->getDropOffDriverDate()) &&
-                    !is_null($carpoolProof->getDropOffPassengerDate())) {
+                    !is_null($carpoolProof->getDropOffPassengerDate())
+                    && $this->checkDistinctIdentities($carpoolProof)) {
                     // all the possible data is set for both carpoolers => max type
                     $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
                     $this->entityManager->persist($carpoolProof);
@@ -614,6 +624,50 @@ class ProofManager
         }
     }
 
+    /**
+     * Check if the two carpoolProof's actors are not the same person
+     * The actors' origins must be distant enough Or The driver's destination and the passenger's drop off must be distant enough
+     *
+     * @param CarpoolProof $carpoolProof
+     * @return boolean
+     */
+    private function checkDistinctIdentities(CarpoolProof $carpoolProof): bool
+    {
+        $originsDistantEnough = $destinationsDistantEnough = false;
+
+        // The actors' origins
+
+        $originDriverAddress = $carpoolProof->getOriginDriverAddress();
+
+        if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+            $originPassengerAddress = $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getWaypoints()[0];
+        } elseif ($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+            $originPassengerAddress = $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getWaypoints()[0];
+        } else {
+            throw new DynamicException("Passenger can't be found");
+        }
+
+        if ($this->geoTools->haversineGreatCircleDistance($originDriverAddress->getLatitude(), $originDriverAddress->getLongitude(), $originPassengerAddress->getAddress()->getLatitude(), $originPassengerAddress->getAddress()->getLongitude())>=$this->minIdentityDistance) {
+            $originsDistantEnough = true;
+        }
+
+        // The driver's destination and the passenger's drop off
+        $destinationDriverAddress = $carpoolProof->getDestinationDriverAddress();
+        if (is_null($destinationDriverAddress)) {
+            throw new DynamicException("No destination driver address");
+        }
+        $dropOffPassengerAddress = $carpoolProof->getDropOffPassengerAddress();
+        if (is_null($dropOffPassengerAddress)) {
+            throw new DynamicException("No dropoff passenger address");
+        }
+        if ($this->geoTools->haversineGreatCircleDistance($destinationDriverAddress->getLatitude(), $destinationDriverAddress->getLongitude(), $dropOffPassengerAddress->getLatitude(), $dropOffPassengerAddress->getLongitude())>=$this->minIdentityDistance) {
+            $destinationsDistantEnough = true;
+        }
+
+        // The actors' origins must be distant enough Or The driver's destination and the passenger's drop off must be distant enough
+        return ($originsDistantEnough || $destinationsDistantEnough);
+    }
+    
     /**
      * Create and return the pending proofs for the given period.
      * Used to generate non-realtime proofs.

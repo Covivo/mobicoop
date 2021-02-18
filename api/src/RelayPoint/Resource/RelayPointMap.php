@@ -74,6 +74,42 @@ class RelayPointMap
      */
     private $address;
 
+    /**
+     * @var int|null The number of places.
+     * @Groups({"readRelayPoint"})
+     */
+    private $places;
+
+    /**
+     * @var int|null The number of places for disabled people.
+     * @Groups({"readRelayPoint"})
+     */
+    private $placesDisabled;
+
+    /**
+    * @var boolean|null The relay point is free.
+     * @Groups({"readRelayPoint"})
+    */
+    private $free;
+
+    /**
+    * @var boolean|null The relay point is secured.
+     * @Groups({"readRelayPoint"})
+    */
+    private $secured;
+
+    /**
+    * @var boolean|null The relay point is official.
+     * @Groups({"readRelayPoint"})
+    */
+    private $official;
+    
+    /**
+     * @var boolean|null The relay point is private to a community or a solidary structure.
+     * @Groups({"readRelayPoint"})
+     */
+    private $private;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -125,6 +161,74 @@ class RelayPointMap
     {
         $this->address = $address;
 
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+    
+    public function setPrivate(?bool $isPrivate): self
+    {
+        $this->private = $isPrivate;
+        
+        return $this;
+    }
+    
+    public function getPlaces()
+    {
+        return $this->places;
+    }
+    
+    public function setPlaces(?int $places)
+    {
+        $this->places = $places;
+    }
+
+    public function getPlacesDisabled()
+    {
+        return $this->placesDisabled;
+    }
+    
+    public function setPlacesDisabled(?int $placesDisabled)
+    {
+        $this->placesDisabled = $placesDisabled;
+    }
+
+    public function isFree(): ?bool
+    {
+        return $this->free;
+    }
+    
+    public function setFree(?bool $isFree): self
+    {
+        $this->free = $isFree;
+        
+        return $this;
+    }
+
+    public function isSecured(): ?bool
+    {
+        return $this->secured;
+    }
+    
+    public function setSecured(?bool $isSecured): self
+    {
+        $this->secured = $isSecured;
+        
+        return $this;
+    }
+
+    public function isOfficial(): ?bool
+    {
+        return $this->official;
+    }
+    
+    public function setOfficial(?bool $isOfficial): self
+    {
+        $this->official = $isOfficial;
+        
         return $this;
     }
 }

@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <sitemap>
-<loc>https://www.mobicoop.fr/sitemap_covoiturages.xml</loc>
-<lastmod>2021-02-03 </lastmod>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_1.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_2.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_3.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_4.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_5.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_6.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_villeA.xml</loc>
+<lastmod>2021-02-11 </lastmod>
+</sitemap>
+<sitemap>
+<loc>https://www.mobicoop.fr/sitemap_covoiturages_villeB.xml</loc>
+<lastmod>2021-02-11 </lastmod>
 </sitemap>
 <sitemap>
 <loc>https://www.mobicoop.fr/sitemap_articles.xml</loc>
-<lastmod>2021-02-03 </lastmod>
+<lastmod>2021-02-11 </lastmod>
 </sitemap>
 <sitemap>
 <loc>https://www.mobicoop.fr/sitemap_evenements.xml</loc>
-<lastmod>2021-02-03 </lastmod>
+<lastmod>2021-02-11 </lastmod>
 </sitemap>
 <sitemap>
 <loc>https://www.mobicoop.fr/sitemap_communautes.xml</loc>
-<lastmod>2021-02-03 </lastmod>
+<lastmod>2021-02-11 </lastmod>
 </sitemap>
+</sitemapindex>

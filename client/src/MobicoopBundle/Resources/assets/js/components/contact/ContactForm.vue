@@ -162,15 +162,11 @@ export default {
     user: {
       type: Object,
       default: null
-    },
-    contactTypes: {
-      type: Object,
-      default: null
     }
-
   },
   data () {
     return {
+      contactTypes: null,
       snackbar: false,
       loading: false,
       valid: false,
@@ -205,13 +201,17 @@ export default {
   },
   computed: {
     demandItems(){
-      let contactTypes = [];
-      for (let [key, value] of Object.entries(this.contactTypes)) {
-        contactTypes.push({text:this.$t('demand.items.'+key), value:key});
-        console.error(this.$t('demand.items.'+value));
+      let contactItems = [];
+      if(null !== this.contactTypes){
+        for (let [key, value] of Object.entries(this.contactTypes)) {
+          contactItems.push({text:this.$t('demand.items.'+value.demand), value:value.demand});
+        }
       }
-      return contactTypes;
+      return contactItems;
     }
+  },
+  mounted(){
+    this.getContactItems();
   },
   methods: {
     validate() {
@@ -228,7 +228,7 @@ export default {
           website: this.form.website // honey pot data
         })
           .then(function (response) {
-            console.log(response.data);
+            // console.log(response.data);
             if (response.data && response.data.message) {
               self.alert = {
                 type: "success",
@@ -264,6 +264,16 @@ export default {
         type: "success",
         message: ""
       }
+    },
+    getContactItems(){
+      axios.post(this.$t('getContactItemsUri'))
+        .then(response => {
+          // console.log(response.data);
+          this.contactTypes = response.data;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     }
   }
 }

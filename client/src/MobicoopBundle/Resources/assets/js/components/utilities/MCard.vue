@@ -91,7 +91,7 @@ export default {
     },
     sizeButton: {
       type: String,
-      default: "90%"
+      default: "95%"
     }, 
     alignButton: {
       type: String,

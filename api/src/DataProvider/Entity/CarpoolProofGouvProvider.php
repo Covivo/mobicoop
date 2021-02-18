@@ -120,6 +120,23 @@ class CarpoolProofGouvProvider implements ProviderInterface
             $journey["passenger"]["end"]["lon"] = (float)$carpoolProof->getDropOffPassengerAddress()->getLongitude();
             $journey["passenger"]["end"]["lat"] = (float)$carpoolProof->getDropOffPassengerAddress()->getLatitude();
         }
+        
+        // Passenger or driver start and end need to be filled with lat/lon to be valid
+        // In organized journey, we don't have pickup or dropoff for passengers. We use it's origin/destination
+        if (($carpoolProof->getType() == CarpoolProof::TYPE_LOW || $carpoolProof->getType() == CarpoolProof::TYPE_MID) &&
+            !isset($journey["passenger"]["start"]["lon"]) && !isset($journey["passenger"]["end"]["lon"])
+        ) {
+            if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+                $passengerWaypoints = $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
+            } elseif ($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
+                $passengerWaypoints = $carpoolProof->getAsk()->getMatching()->getProposalOffer()->getWaypoints();
+            }
+            $journey["passenger"]["start"]["lon"] = (float)$passengerWaypoints[0]->getAddress()->getLongitude();
+            $journey["passenger"]["start"]["lat"] = (float)$passengerWaypoints[0]->getAddress()->getLatitude();
+            $journey["passenger"]["end"]["lon"] = (float)$passengerWaypoints[count($passengerWaypoints)-1]->getAddress()->getLongitude();
+            $journey["passenger"]["end"]["lat"] = (float)$passengerWaypoints[count($passengerWaypoints)-1]->getAddress()->getLatitude();
+        }
+        
         if (!is_null($carpoolProof->getOriginDriverAddress())) {
             $journey["driver"]["start"]["lon"] = (float)$carpoolProof->getOriginDriverAddress()->getLongitude();
             $journey["driver"]["start"]["lat"] = (float)$carpoolProof->getOriginDriverAddress()->getLatitude();

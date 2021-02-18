@@ -62,6 +62,7 @@ services:
             $ptResults: '%env(int:PT_RESULTS)%'
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
+            $ageDisplay: '%env(bool:AGE_DISPLAY)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -70,8 +71,6 @@ services:
     # Communication
     Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
         resource: '@MobicoopBundle/Communication/Controller/*'
-        arguments:
-            $contactTypes: '%env(resolve:CONTACT_TYPES)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
         resource: '@MobicoopBundle/Communication/Service/*'
@@ -213,6 +212,7 @@ services:
             $validationDocsAuthorizedExtensions: '%env(string:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%'
             $loginDelegate: '%env(bool:LOGIN_DELEGATE)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
+            $ageDisplay: '%env(bool:AGE_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

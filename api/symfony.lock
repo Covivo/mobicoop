@@ -164,12 +164,6 @@
     "jms/metadata": {
         "version": "1.7.0"
     },
-    "laminas/laminas-code": {
-        "version": "3.4.1"
-    },
-    "laminas/laminas-eventmanager": {
-        "version": "3.2.1"
-    },
     "knplabs/knp-snappy": {
         "version": "v1.2.1"
     },
@@ -184,6 +178,12 @@
         "files": [
             "config/packages/knp_snappy.yaml"
         ]
+    },
+    "laminas/laminas-code": {
+        "version": "3.4.1"
+    },
+    "laminas/laminas-eventmanager": {
+        "version": "3.2.1"
     },
     "laminas/laminas-zendframework-bridge": {
         "version": "1.0.4"
@@ -286,6 +286,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
+    },
+    "sendinblue/api-v3-sdk": {
+        "version": "v7.4.0"
     },
     "sensio/framework-extra-bundle": {
         "version": "5.2",

@@ -12,7 +12,9 @@
         external-id = "{{ externalId is defined ? externalId : '' }}"
         :community-proposal-id = "{{ communityProposalId is defined ? (communityProposalId ? communityProposalId : 'null') : 'null' }}"
         :origin = "{{ origin is defined ? origin : 'null' }}"
+        origin-literal = "{{ originLiteral is defined ? originLiteral : 'null' }}"
         :destination = "{{ destination is defined ? destination : 'null' }}"
+        destination-literal = "{{ destinationLiteral is defined ? destinationLiteral : 'null' }}"
         date = "{{ date is defined ? date : '' }}"
         time = "{{ time is defined ? time : '' }}"
         :community-id = "{{ communityId is defined ? (communityId ? communityId : 'null') : 'null' }}"
@@ -25,6 +27,7 @@
         :pt-search="{{ (ptSearch) ? 'true' : 'false' }}"
         :default-role="{{ defaultRole }}"
         :fraud-warning-display="{{ (fraudWarningDisplay) ? 'true' : 'false' }}"
+        :age-display="{{ (ageDisplay) ? 'true' : 'false' }}"
     />
 
 

@@ -3,6 +3,7 @@
 // BASE
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
+import MMessageBtn from '@components/base/MMessageBtn'
 
 // HOME
 import Home from '@components/home/Home'
@@ -71,6 +72,7 @@ import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
+import ErrorPage from "@components/utilities/ErrorPage";
 
 // PAYMENT
 import Payment from "@components/payment/Payment"
@@ -79,6 +81,7 @@ import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
 export default {
   MHeader,
   MFooter,
+  MMessageBtn,
   Home,
   Contact,
   AdPublish,
@@ -119,5 +122,6 @@ export default {
   DayListChips,
   Payment,
   PaymentPaid,
-  SsoLoginReturn
+  SsoLoginReturn,
+  ErrorPage
 }

@@ -4,8 +4,7 @@
       <v-card
         class="mx-auto mt-2 pt-1 pb-1"
         :class="selected ? 'primary lighten-4' : ''"
-        outlined
-        tile
+        :outlined="(unreadMessages>0) ? false : true"
         style="border-style:none;"
         @click="click()"
       >
@@ -24,12 +23,23 @@
               </span>
             </v-card-text>
           </v-col>
-          <v-col class="col-5 ma-0 pa-0">
+          <v-col class="col-3 ma-0 pa-0">
             <v-card-text
               class="pa-0 ma-0 text-right pr-2 font-italic"
             >
               {{ formateDate }}
             </v-card-text>
+          </v-col>
+          <v-col
+            v-if="currentUnreadMessages>0"
+            cols="3"
+            class="subtitle-2 pa-0 ma-0 text-right"
+          >
+            <v-chip class="secondary">
+              {{ currentUnreadMessages }}&nbsp;<v-icon class="white--text">
+                mdi-eye-off-outline
+              </v-icon>
+            </v-chip>
           </v-col>
         </v-row>
       </v-card>
@@ -38,8 +48,15 @@
 </template>
 <script>
 import moment from "moment";
+import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadDirect/";
 
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr
+    }
+  },
   props: {
     avatar: {
       type:String,
@@ -72,12 +89,17 @@ export default {
     blockerId:{
       type: Number,
       default: null
+    },
+    unreadMessages:{
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
       selected: this.selectedDefault,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      currentUnreadMessages: this.unreadMessages
     }
   },
   computed: {
@@ -98,6 +120,7 @@ export default {
   },
   methods: {
     click(){
+      this.currentUnreadMessages = 0;
       this.emit();
     },
     // toggleSelected(){
@@ -112,7 +135,8 @@ export default {
           idRecipient:this.idRecipient,
           avatar:this.avatar,
           name:this.name,
-          blockerId:this.blockerId
+          blockerId:this.blockerId,
+          formerUnreadMessages:this.unreadMessages
         }
       );
     }
