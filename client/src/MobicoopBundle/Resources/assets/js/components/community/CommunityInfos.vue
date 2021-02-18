@@ -65,10 +65,6 @@ export default {
     avatarVersion: {
       type: String,
       default: null,
-    },
-    isWidget: {
-      type: Boolean,
-      default: false
     }
   },
 };
