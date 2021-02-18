@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
+use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointMap;
 
 /**
  * Relay point management service.
@@ -83,7 +84,8 @@ class RelayPointManager
             'address.longitude[between]' => $this->bbox_min_lon . ".." . $this->bbox_max_lon,
             'perPage' => 999999
         ];
-        $response = $this->dataProvider->getSpecialCollection('public', $params);
+        $this->dataProvider->setClass(RelayPointMap::class);
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }

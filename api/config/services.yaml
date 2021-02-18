@@ -166,6 +166,7 @@ services:
             $uri: '%env(string:CARPOOL_PROOF_URI)%'
             $token: '%env(string:CARPOOL_PROOF_TOKEN)%'
             $duration: '%env(int:CARPOOL_PROOF_RANGE_DURATION)%'
+            $minIdentityDistance: '%env(int:CARPOOL_PROOF_MIN_IDENTITY_DISTANCE)%'
         tags:
             - { name: monolog.logger, channel: carpool_proof }
 
@@ -228,6 +229,10 @@ services:
                     smsSender: '%env(string:SMS_SENDER)%'
         tags: ['controller.service_arguments']
 
+    App\Communication\Service\ContactManager: 
+        arguments:
+                $contactItems: '%env(json:file:resolve:CONTACT_ITEMS)%'
+
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
@@ -250,11 +255,12 @@ services:
             $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
-            $emailSupport: '%env(resolve:MAILER_SUPPORT)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\InternalMessageManager:
+        arguments:
+            $storeReadDate: '%env(bool:MESSAGES_STORE_READ_DATE)%'
         tags:
             - { name: monolog.logger, channel: communication }
 
@@ -283,15 +289,11 @@ services:
 
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $contactEmailAddress: '%env(json:MAILER_CONTACT)%'
-            $contactEmailObject: '%env(resolve:MAILER_CONTACT_OBJECT)%'
-            $supportEmailAddress: '%env(resolve:MAILER_SUPPORT)%'
-            $supportEmailObject: '%env(resolve:MAILER_SUPPORT_OBJECT)%'
+            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
     App\Communication\Service\ReportManager:
         arguments:
-            $supportEmailAddress: '%env(string:MAILER_SUPPORT)%'
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
 
@@ -443,6 +445,13 @@ services:
         arguments:
             $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
             $mailerApiUrl: '%env(resolve:MASS_MAILER_API_URL)%'
+            $mailerClientName: '%env(resolve:MASS_MAILER_CLIENT_NAME)%'
+            $mailerClientId: '%env(resolve:MASS_MAILER_CLIENT_ID)%'
+            $mailerClientTemplateId: '%env(resolve:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
+            $mailerReplyTo: '%env(resolve:MASS_MAILER_REPLYTO)%'
+            $mailerSenderEmail: '%env(resolve:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerDomain: '%env(resolve:MASS_MAILER_DOMAIN)%'
+            $mailerIp: '%env(resolve:MASS_MAILER_IP)%'
             $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
             $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
             $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'

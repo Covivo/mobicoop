@@ -23,6 +23,8 @@
 
 namespace App\DataFixtures;
 
+use App\Carpool\Service\ProposalManager;
+use App\DataFixtures\Service\FixturesManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -30,24 +32,106 @@ use Symfony\Component\Finder\Finder;
 
 class BasicFixtures extends Fixture implements FixtureGroupInterface
 {
+    const BATCH = 50;                   // batch number for multi treatment
+
+    private $fixturesManager;
+    private $proposalManager;
+
+    public function __construct(FixturesManager $fixturesManager, ProposalManager $proposalManager)
+    {
+        $this->fixturesManager = $fixturesManager;
+        $this->proposalManager = $proposalManager;
+    }
+
     public function load(ObjectManager $manager)
     {
-        // Bundle to manage file and directories
+        // clear database
+        $this->fixturesManager->clearData();
+
+        // load users info from csv file
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Sql/Basic');
-        $finder->name('*.sql');
+        $finder->in(__DIR__ . '/Csv/Basic/Users/');
+        $finder->name('*.csv');
         $finder->files();
-        $finder->sortByName();
-
         foreach ($finder as $file) {
-            print "Importing: {$file->getBasename()} " . PHP_EOL;
-
-            $sql = $file->getContents();
-
-            $manager->getConnection()->exec($sql);  // Execute native SQL
-
-            $manager->flush();
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the user
+                    $this->fixturesManager->createUser($tab);
+                }
+            }
         }
+
+        // load ads info from csv file
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Basic/Ads/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the ad
+                    if ($ad = $this->fixturesManager->createAd($tab)) {
+                        $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+                    }
+                }
+            }
+        }
+
+        // load events info from csv file
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Basic/Events/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the event
+                    $this->fixturesManager->createEvent($tab);
+                }
+            }
+        }
+
+        // load communities info from csv file
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Basic/Communities/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community
+                    $this->fixturesManager->createCommunity($tab);
+                }
+            }
+        }
+
+        // load communities users info from csv file
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Basic/CommunityUsers/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    // create the community user
+                    $this->fixturesManager->createCommunityUser($tab);
+                }
+            }
+        }
+
+        // // we compute the directions and default values for the generated proposals
+        // echo "Creating directions and matchings... ";
+        // $this->proposalManager->setDirectionsAndDefaultsForAllCriterias(self::BATCH);
+
+        // // we generate the matchings
+        // $this->proposalManager->createMatchingsForAllProposals();
+        // echo "Done !" . PHP_EOL;
     }
 
     public static function getGroups(): array

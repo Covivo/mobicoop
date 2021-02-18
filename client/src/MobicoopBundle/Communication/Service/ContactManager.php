@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Communication\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\ContactType;
 
 /**
  * Contact management service.
@@ -49,6 +50,19 @@ class ContactManager
         $response = $this->dataProvider->post($contact);
         if ($response->getCode() == 201) {
             return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get the contact items
+     */
+    public function getContactItems()
+    {
+        $this->dataProvider->setClass(ContactType::class);
+        $response = $this->dataProvider->getCollection();
+        if ($response->getCode() == 200) {
+            return $response->getValue()->getMember();
         }
         return null;
     }

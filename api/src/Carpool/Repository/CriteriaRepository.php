@@ -71,7 +71,7 @@ class CriteriaRepository
         ->where('i.status = :status')
         ->setParameter('status', $status);
         if (!is_null($date)) {
-            $query->andWhere('((c.frequency = 1 and c.fromDate>=:date) or (c.frequency=2 and c.toDate>=:date))')
+            $query->andWhere('((c.frequency = 1 and c.fromDate >= :date) or (c.frequency=2 and c.toDate >= :date))')
             ->setParameter('date', $date->format('Y-m-d'));
         }
         

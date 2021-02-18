@@ -27,6 +27,7 @@ use App\Carpool\Entity\AskHistory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
 use App\User\Entity\User;
 
 class MessageRepository
@@ -35,9 +36,11 @@ class MessageRepository
      * @var EntityRepository
      */
     private $repository;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Message::class);
     }
     
@@ -77,6 +80,23 @@ class MessageRepository
         ->where('m.message is null and ah.id is not null and (m.user = :user or r.user = :user)')
         ->setParameter('user', $user);
 
+        return $query->getQuery()->getResult();
+    }
+    
+    /**
+     * Find the unread messages of a User
+     *
+     * @param User $user
+     * @return Recipient[]|null
+     */
+    public function findUnreadMessages(User $user): ?array
+    {
+        $this->repository = $this->entityManager->getRepository(Recipient::class);
+        $query = $this->repository->createQueryBuilder('r')
+        ->join('r.message', 'm')
+        ->where('r.user = :user')
+        ->andWhere('r.readDate is null')
+        ->setParameter('user', $user);
         return $query->getQuery()->getResult();
     }
 }

@@ -24,7 +24,6 @@
         <v-img
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['original']"
-          class="grey lighten-2"
           contain
           max-width="200"
           max-height="150"

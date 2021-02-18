@@ -902,7 +902,7 @@ class MyAdManager
                                 $driver['payment']['status'] = MyAd::PAYMENT_STATUS_PAID;
                                 break;
                             case CarpoolItem::DEBTOR_STATUS_NULL:
-                                $passenger['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
+                                $driver['payment']['status'] = MyAd::PAYMENT_STATUS_NULL;
                                 break;
                             default:
                                 $driver['payment']['status'] = MyAd::PAYMENT_STATUS_TODO;

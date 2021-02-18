@@ -253,7 +253,7 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import moment from "moment";
 import {messages_en, messages_fr} from "@translations/components/event/EventList/";
-import MMap from "@components/utilities/MMap"
+import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
 

@@ -13,6 +13,7 @@
 /api/templates/email_client/
 /api/translations_client/
 /api/var/log/
+/api/var/cache/
 + /api/public/upload/icons/address-any.svg
 + /api/public/upload/icons/address-personal.svg
 + /api/public/upload/icons/community.svg
@@ -87,6 +88,7 @@
 /client/.env.test.local
 /client/.env.prod.local
 /client/var/log/
+/client/var/cache/
 /client/public/externalCgu/*.*
 /client/public/google*.html
 /client/public/robots.txt

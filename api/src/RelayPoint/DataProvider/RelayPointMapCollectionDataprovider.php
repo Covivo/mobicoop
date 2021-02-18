@@ -27,7 +27,9 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\RelayPoint\Resource\RelayPointMap;
 use App\RelayPoint\Service\RelayPointMapManager;
+use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for RelayPointMap resource.
@@ -39,11 +41,13 @@ final class RelayPointMapCollectionDataprovider implements CollectionDataProvide
 {
     protected $request;
     private $relayPointMapManager;
+    private $security;
     
-    public function __construct(RequestStack $requestStack, RelayPointMapManager $relayPointMapManager)
+    public function __construct(RequestStack $requestStack, RelayPointMapManager $relayPointMapManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->relayPointMapManager = $relayPointMapManager;
+        $this->security = $security;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -51,11 +55,13 @@ final class RelayPointMapCollectionDataprovider implements CollectionDataProvide
         return RelayPointMap::class === $resourceClass && $operationName === "get";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
     {
         if ($this->request->get("communityId")!== null) {
             return $this->relayPointMapManager->getRelayPointsMapCommunity($this->request->get("communityId"));
         }
-        return [];
+
+        $user = ($this->security->getUser() instanceof User) ? $this->security->getUser() : null;
+        return $this->relayPointMapManager->getRelayPointsMap($user, $context);
     }
 }

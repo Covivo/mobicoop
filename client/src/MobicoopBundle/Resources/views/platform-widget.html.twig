@@ -5,5 +5,6 @@
     <platform-widget
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
+        token="{{token.getToken}}"
     ></platform-widget>
 {% endblock %}

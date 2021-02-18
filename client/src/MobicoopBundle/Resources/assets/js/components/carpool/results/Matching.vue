@@ -174,6 +174,7 @@
                 :user="user"
                 :loading-prop="loading"
                 :page="page"
+                :age-display="ageDisplay"
                 @carpool="carpool"
                 @loginOrRegister="loginOrRegister"
                 @paginate="paginate"
@@ -219,6 +220,7 @@
         :reset-step="resetStepMatchingJourney"
         :profile-summary-refresh="profileSummaryRefresh"
         :fraud-warning-display="fraudWarningDisplay"
+        :age-display="ageDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -283,8 +285,16 @@ export default {
       type: Object,
       default: null
     },
+    originLiteral: {
+      type: String,
+      default: null
+    },
     destination: {
       type: Object,
+      default: null
+    },
+    destinationLiteral: {
+      type: String,
       default: null
     },
     date: {
@@ -332,6 +342,10 @@ export default {
       default: false
     },
     fraudWarningDisplay: {
+      type: Boolean,
+      default: false
+    },
+    ageDisplay: {
       type: Boolean,
       default: false
     }
@@ -517,8 +531,14 @@ export default {
             }
           })
           .then((response) => {
-            this.results = response.data.results;
+            this.results = response.data;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
+            this.lOrigin = {
+              addressLocality:this.originLiteral
+            }
+            this.lDestination = {
+              addressLocality:this.destinationLiteral
+            }
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
             }            

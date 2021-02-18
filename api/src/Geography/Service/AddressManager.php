@@ -148,31 +148,44 @@ class AddressManager
         // first we search all addresses that have only latitude and longitude filled
         if ($addresses = $this->addressRepository->findMinimalAddresses()) {
             foreach ($addresses as $address) {
-                $reversedGeocodeAddress = null;
-                if ($foundAddresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
-                    $reversedGeocodeAddress = $foundAddresses[0];
-                }
-                if (!is_null($reversedGeocodeAddress)) {
-                    $address->setLayer($reversedGeocodeAddress->getLayer());
-                    $address->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
-                    $address->setPostalCode($reversedGeocodeAddress->getPostalCode());
-                    $address->setAddressLocality($reversedGeocodeAddress->getAddressLocality());
-                    $address->setAddressCountry($reversedGeocodeAddress->getAddressCountry());
-                    $address->setElevation($reversedGeocodeAddress->getElevation());
-                    $address->setHouseNumber($reversedGeocodeAddress->getHouseNumber());
-                    $address->setStreet($reversedGeocodeAddress->getStreet());
-                    $address->setSubLocality($reversedGeocodeAddress->getSubLocality());
-                    $address->setLocalAdmin($reversedGeocodeAddress->getLocalAdmin());
-                    $address->setCounty($reversedGeocodeAddress->getCounty());
-                    $address->setMacroCounty($reversedGeocodeAddress->getMacroCounty());
-                    $address->setRegion($reversedGeocodeAddress->getRegion());
-                    $address->setMacroRegion($reversedGeocodeAddress->getMacroRegion());
-                    $address->setCountryCode($reversedGeocodeAddress->getCountryCode());
-                    $address->setVenue($reversedGeocodeAddress->getVenue());
-                    $this->entityManager->persist($address);
-                    $this->entityManager->flush();
-                }
+                $address = $this->reverseGeocodeAddress($address);
+                $this->entityManager->persist($address);
             }
+            $this->entityManager->flush();
         }
+    }
+
+    /**
+     * Reverse geocoding on a partial Address (using Lat/Lon)
+     *
+     * @param Address $address  Address to complete
+     * @return Address  Completed address
+     */
+    public function reverseGeocodeAddress(Address $address): Address
+    {
+        $reversedGeocodeAddress = null;
+        if ($foundAddresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
+            $reversedGeocodeAddress = $foundAddresses[0];
+        }
+        if (!is_null($reversedGeocodeAddress)) {
+            $address->setLayer($reversedGeocodeAddress->getLayer());
+            $address->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
+            $address->setPostalCode($reversedGeocodeAddress->getPostalCode());
+            $address->setAddressLocality($reversedGeocodeAddress->getAddressLocality());
+            $address->setAddressCountry($reversedGeocodeAddress->getAddressCountry());
+            $address->setElevation($reversedGeocodeAddress->getElevation());
+            $address->setHouseNumber($reversedGeocodeAddress->getHouseNumber());
+            $address->setStreet($reversedGeocodeAddress->getStreet());
+            $address->setSubLocality($reversedGeocodeAddress->getSubLocality());
+            $address->setLocalAdmin($reversedGeocodeAddress->getLocalAdmin());
+            $address->setCounty($reversedGeocodeAddress->getCounty());
+            $address->setMacroCounty($reversedGeocodeAddress->getMacroCounty());
+            $address->setRegion($reversedGeocodeAddress->getRegion());
+            $address->setMacroRegion($reversedGeocodeAddress->getMacroRegion());
+            $address->setCountryCode($reversedGeocodeAddress->getCountryCode());
+            $address->setVenue($reversedGeocodeAddress->getVenue());
+        }
+
+        return $address;
     }
 }

@@ -2,6 +2,7 @@ import pick from 'lodash.pick';
 import omit from 'lodash.omit';
 import { fetchJson } from './fetchJson';
 import { formatISO, isValid } from 'date-fns';
+import { fetchUtils } from 'react-admin';
 
 /**
  * This file aims to fix some API weaknesses
@@ -337,6 +338,16 @@ export const dataProviderAdapter = (originalProvider) => ({
   create: (resource, params) => {
     if (resource === 'users') {
       return createUser(originalProvider, params);
+    }
+    if (resource === 'community_users') {
+      console.log('COMMUNITY_USER: DATA:', params.data);
+      return fetchJson(`${process.env.REACT_APP_API}/community_users/add`, {
+          method: 'POST',
+          body: JSON.stringify(params.data),
+        })
+        .then(({ json, status }) => ({
+          data: { ...params.data, id: json.id },
+        }));
     }
 
     const newParams = { ...params };
