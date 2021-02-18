@@ -112,6 +112,7 @@ class UserManager
     private $blockManager;
     private $internalMessageManager;
     private $reviewManager;
+    private $paymentActive;
 
     // Default carpool settings
     private $chat;
@@ -162,6 +163,7 @@ class UserManager
         array $domains,
         array $profile,
         $passwordTokenValidity,
+        string $paymentActive,
         PaymentProfileRepository $paymentProfileRepository
     ) {
         $this->entityManager = $entityManager;
@@ -196,6 +198,7 @@ class UserManager
         $this->profile = $profile;
         $this->passwordTokenValidity = $passwordTokenValidity;
         $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->paymentActive = $paymentActive;
     }
 
     /**
@@ -603,11 +606,13 @@ class UserManager
     public function updatePaymentProviderUser(User $user)
     {
         // We check if the user have a payment profile
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
-        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
-            return $user;
+        if ($this->paymentActive) {
+            $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+            if (is_null($paymentProfiles) || count($paymentProfiles)==0 || is_null($paymentProfiles[0]->getIdentifier())) {
+                return $user;
+            }
+            $this->paymentProvider->updateUser($user);
         }
-        $this->paymentProvider->updateUser($user);
         return $user;
     }
 
