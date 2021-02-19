@@ -13,3 +13,49 @@ EmailsAlerts: Zure e-mezu alertak kudeatu
 FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
+youHaveAMessage: Mezu berri bat jaso duzu
+updatedCarpoolDetails: Zure autokidetzaren {origin}-tik {destination} -rako xehetasunak
+  aldatuak izan dira
+clickNewSearch: Zure mezua berriz abiarazteko estekan klika dezakezu
+ownerMessage: 'Hona abisu-jabearen mezua:'
+cancelledCarpool: Autokidetza ezeztatua izan da
+no: Ez
+yes: Bai
+new: Berria
+old: Zaharra
+comment: Oharrak
+seatsDriver: Libro diren lekuak
+luggage: Ekipaje lodiak
+backSeats: 2 gibelean
+bike: Bizikleta
+field: Eremu
+updateFieldsListTitle: 'Hona aldatuak izan diren informazioen xehetasunak:'
+hasBeenUpdated: Aldatua izan da
+updatedCarpool: Autokidetza aldatua
+carpoolProposalUpdated: Zure eskaerari loturiko abisua aldatua izan da
+justPublished: Argitaratu berri da
+toConsultCorrespondingAdsAndMakeContact: Honi dagozkion abisuak kontsultatzeko eta
+  harremanetan ezartzeko
+linkMyAds: /Erabiltzaile/profila/aldatu/nire-abisuak
+myAds: Nire abisuak
+askForCarpool: Autokidetza baten egiteko dei egiten dizut.
+return: ETORRI
+outward: JOAN
+beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barru, atxiki dituzun bidaiak
+  ez dira gehiago bali izanen zure profilan eta ondorioz, beste autokideek ez dituzte
+  ikusiko
+contactInfos: Informazio eskaera berria
+canceledCarpool: ZURE AUTOKIDETZA EZEZTATUA DA.
+noPanic: Ez kexa, bidaia berri bat xerka dezakezu edo abisu bat jarri dezakezu.
+refusedCarpool: ZURE AUTOKIDETZA EZ DA BAIEZTATUA IZAN.
+newCarpoolAsk: AUTOKIDETZA ESKAERA BAT BADUZU!
+indicativePrice: 'Prezio indikatiboa '
+seatsSelected: 'Atxikia(k) d(ir)en lekua(k) '
+multipleShedules: Ordutegi anitza
+regularCarpool: Zure bidaia erregularraren laburbilduma
+occasionalCarpool: Zure noiztenkako bidaiaren laburdilduma
+isConfirmed: baieztatua!
+acceptedCarpool: ZURE AUTOKIDETZA BAIEZTATUA DA!
+contactCommunity: Komunitatea sortzeko eskaera
+contactPartnership: Partaidetza eskaera berri bat
+contactTechnicalIssues: Sostengo eskaera berri bat
