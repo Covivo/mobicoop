@@ -23,6 +23,7 @@
 
 namespace App\Event\Service;
 
+use App\DataProvider\Entity\ApidaeProvider;
 use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
@@ -44,16 +45,36 @@ class EventManager
     private $dispatcher;
     private $entityManager;
     private $geoTools;
+    private $eventsProvider;
+
+    const EVENT_PROVIDER_APIDAE = 'apidae';
     
     /**
      * Constructor.
      */
-    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository, EventDispatcherInterface $dispatcher, GeoTools $geoTools)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventRepository $eventRepository,
+        EventDispatcherInterface $dispatcher,
+        GeoTools $geoTools,
+        String $eventProvider,
+        String $eventProviderApiKey,
+        String $eventProviderProjectId,
+        String $eventProviderSelectionId
+    ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->dispatcher = $dispatcher;
         $this->geoTools = $geoTools;
+        $this->eventProvider = $eventProvider;
+        $this->eventProviderApiKey = $eventProviderApiKey;
+        $this->eventProviderProjectId = $eventProviderProjectId;
+        $this->eventProviderSelectionId = $eventProviderSelectionId;
+        switch ($eventProvider) {
+            case self::EVENT_PROVIDER_APIDAE:
+                $this->eventsProvider = new ApidaeProvider($this->eventProviderApiKey);
+                break;
+        }
     }
 
     /**
@@ -128,5 +149,13 @@ class EventManager
         }
         
         return $urlKey;
+    }
+
+    public function importEvents()
+    {
+        $eventsToImport = $this->eventsProvider->getEvents();
+
+        var_dump($eventsToImport);
+        die;
     }
 }

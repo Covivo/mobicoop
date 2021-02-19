@@ -267,6 +267,22 @@ class Event
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
+
+    /**
+     * @var int The id of this external event.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalId;
+    
+    /**
+     * @var string The source of the external event.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalSource;
     
     public function __construct($id=null)
     {
@@ -468,6 +484,26 @@ class Event
         }
         
         return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->externalId;
+    }
+    
+    public function setExternalId(?int $externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    public function getExternalSource(): ?string
+    {
+        return $this->externalSource;
+    }
+    
+    public function setExternalSource(?string $externalSource)
+    {
+        $this->externalSource = $externalSource;
     }
     
     // DOCTRINE EVENTS
