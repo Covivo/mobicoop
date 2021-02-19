@@ -1886,7 +1886,6 @@ class ResultManager
     {
         $proposal = $matching->getProposalRequest();
         $result = $this->getFirstCarpooledRegularDay($proposal, $matching->getProposalOffer(), 'request');
-        
         $item->setDate($result["date"]);
         switch ($result["numday"]) {
             case 0: {
