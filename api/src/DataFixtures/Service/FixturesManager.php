@@ -158,7 +158,6 @@ class FixturesManager
             TRUNCATE `relay_point`;
             TRUNCATE `relay_point_import`;
             TRUNCATE `review`;
-            TRUNCATE `territory`;
             TRUNCATE `user`;
             TRUNCATE `user_auth_assignment`;
             TRUNCATE `user_import`;

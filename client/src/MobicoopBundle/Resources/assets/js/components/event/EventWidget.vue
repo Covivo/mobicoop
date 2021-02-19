@@ -95,6 +95,10 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    token: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -115,6 +119,7 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
+    this.$root.token = this.token;
   }
 }
 </script>

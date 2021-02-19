@@ -1,8 +1,8 @@
 {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans from 'ui' %}communities.community.title{% endtrans %} - {{ app_name }}
-{% endblock %}
+{% block title %}{% trans with {'CommunityName': community.name} from 'meta' %}meta.community.title{% endtrans %}{% endblock %}
+{% block desc %}{% trans with {'CommunityName': community.name} from 'meta' %}meta.community.description{% endtrans %}{% endblock %}
 {% block stylesheets %}
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
 {% endblock %}
