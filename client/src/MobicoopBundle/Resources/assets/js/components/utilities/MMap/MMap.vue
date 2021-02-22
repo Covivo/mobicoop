@@ -37,7 +37,7 @@
                 v-html="point.title"
               />
               <p
-                v-if="point.popup"
+                v-if="point.popup && point.misc"
                 id="description-tooltip"
                 v-html="point.popup.description"
               />
