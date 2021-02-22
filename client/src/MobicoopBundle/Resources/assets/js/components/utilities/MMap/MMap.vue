@@ -42,7 +42,7 @@
                 v-html="point.popup.description"
               />
               <MMapRelayPointDescription
-                v-if="relayPoints"
+                v-if="relayPoints && point.misc"
                 :data="point.misc"
               />
             </l-tooltip>

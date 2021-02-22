@@ -771,24 +771,6 @@ community_get_list:
         en: /community/getCommunityList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
 
-# display one community
-community_show:
-    path:
-        fr: /covoiturage-communaute/{id}/{urlKey?}
-        en: /carpool-community/{id}/{urlKey?}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
-    requirements:
-        id: '\d+'
-
-# display one community
-community_show_v1:
-    path:
-        fr: /communaute/{id}/{urlKey?}
-        en: /community/{id}/{urlKey?}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
-    requirements:
-        id: '\d+'
-
 # display the register form for a secured community
 community_secured_register:
     path:
@@ -813,6 +795,24 @@ community_leave:
         fr: /communaute/{id}/quitter
         en: /community/{id}/leave
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLeave
+    requirements:
+        id: '\d+'
+
+# display one community
+community_show:
+    path:
+        fr: /covoiturage-communaute/{id}/{urlKey?}
+        en: /carpool-community/{id}/{urlKey?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
+    requirements:
+        id: '\d+'
+
+# display one community
+community_show_v1:
+    path:
+        fr: /communaute/{id}/{urlKey?}
+        en: /community/{id}/{urlKey?}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
 

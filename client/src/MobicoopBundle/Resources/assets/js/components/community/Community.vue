@@ -480,6 +480,7 @@ export default {
         { text: "Prenom", value: "givenName" },
       ],
       pointsToMap: [],
+      relayPointsMap: [],
       directionWay: [],
       leaveCommunityDialog: false,
       joinCommunityDialog: false,
@@ -563,7 +564,6 @@ export default {
         });
     },
     showRelayPointsMap() {
-      this.pointsToMap.length >= 0;
       // add relay point address to display on the map
       if (this.relayPointsMap.length > 0) {
         this.relayPointsMap.forEach(relayPoint => {
@@ -814,6 +814,7 @@ export default {
       address="",
       icon=null
     ) {
+      console.log("buildRelayPoint");
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
