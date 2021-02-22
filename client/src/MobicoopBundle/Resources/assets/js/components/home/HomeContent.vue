@@ -227,6 +227,10 @@ export default {
     article: {
       type: Object,
       default: null
+    },
+    userId: {
+      type: Number,
+      default: null
     }
   },
   data () {

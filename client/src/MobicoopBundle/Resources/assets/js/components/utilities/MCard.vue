@@ -48,13 +48,41 @@
               >
                 {{ cardTextButton }}
               </v-btn>
+              <v-tooltip
+                v-if="mustBeLoggedButtonTwo && !userId"
+                bottom
+              >
+                <template v-slot:activator="{ on }">
+                  <div
+                    style="width:100%;"
+                    v-on="on"
+                  >
+                    <v-btn
+                      v-if="cardTextButtonTwo!==''"
+                      :disabled="mustBeLoggedButtonTwo && !userId ? true : false"
+                      text
+                      rounded
+                      class="ma-0 text-body-2"
+                      :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
+                      :href="hrefButtonTwo"
+                      width="95%"
+                    >
+                      {{ cardTextButtonTwo }}
+                    </v-btn>
+                  </div>
+                </template>
+                <span>{{ mustBeLoggedButtonTextTwo }}</span>
+              </v-tooltip>
               <v-btn
-                v-if="cardTextButtonTwo!==''"
+                v-else-if="cardTextButtonTwo!==''"
+                text
                 rounded
                 class="ma-0 text-body-2"
                 :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
                 :href="hrefButtonTwo"
-                :width="sizeButton"
+                width="95%"
+                v-bind="attrs"
+                v-on="on"
               >
                 {{ cardTextButtonTwo }}
               </v-btn>
@@ -97,6 +125,14 @@ export default {
       type: String,
       default:"center"
     },
+    mustBeLoggedButton:{
+      type: Boolean,
+      default: false
+    },
+    mustBeLoggedButtonText:{
+      type: String,
+      default: null
+    },
     cardTextButton: {
       type: String,
       default: ""
@@ -112,6 +148,14 @@ export default {
     hrefButton: {
       type: String,
       default: "#"
+    },
+    mustBeLoggedButtonTwo:{
+      type: Boolean,
+      default: false
+    },
+    mustBeLoggedButtonTextTwo:{
+      type: String,
+      default: null
     },
     cardTextButtonTwo: {
       type: String,
@@ -160,6 +204,10 @@ export default {
     image: {
       type: String,
       default:""
+    },
+    userId: {
+      type: Number,
+      default: null
     }
   },
   data() {
