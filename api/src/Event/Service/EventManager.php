@@ -30,6 +30,7 @@ use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
+use App\User\Repository\UserRepository;
 
 /**
  * Event manager.
@@ -46,6 +47,7 @@ class EventManager
     private $entityManager;
     private $geoTools;
     private $eventsProvider;
+    private $userRepository;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
     
@@ -57,6 +59,7 @@ class EventManager
         EventRepository $eventRepository,
         EventDispatcherInterface $dispatcher,
         GeoTools $geoTools,
+        UserRepository $userRepository,
         String $eventProvider,
         String $eventProviderApiKey,
         String $eventProviderProjectId,
@@ -70,9 +73,10 @@ class EventManager
         $this->eventProviderApiKey = $eventProviderApiKey;
         $this->eventProviderProjectId = $eventProviderProjectId;
         $this->eventProviderSelectionId = $eventProviderSelectionId;
+        $this->userRepository = $userRepository;
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
-                $this->eventsProvider = new ApidaeProvider($this->eventProviderApiKey);
+                $this->eventsProvider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
                 break;
         }
     }
@@ -151,11 +155,43 @@ class EventManager
         return $urlKey;
     }
 
+    /**
+     * method to import external events
+     *
+     * @return void
+     */
     public function importEvents()
     {
         $eventsToImport = $this->eventsProvider->getEvents();
-
-        var_dump($eventsToImport);
-        die;
+        foreach ($eventsToImport as $eventToImport) {
+            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
+            if (isset($event) && !is_null($event)) {
+                $event->setName($eventToImport->getName());
+                $event->setFromDate($eventToImport->getFromDate());
+                $event->setToDate($eventToImport->getToDate());
+                $event->setDescription($eventToImport->getDescription());
+                $event->setFullDescription($eventToImport->getFullDescription());
+                $event->setAddress($eventToImport->getAddress());
+            } else {
+                $event = new Event();
+                $event->setExternalId($eventToImport->getExternalId());
+                $event->setExternalSource($eventToImport->getExternalSource());
+                $event->setName($eventToImport->getName());
+                $event->setFromDate($eventToImport->getFromDate());
+                $event->setToDate($eventToImport->getToDate());
+                $event->setDescription($eventToImport->getDescription());
+                $event->setFullDescription($eventToImport->getFullDescription());
+                $event->setAddress($eventToImport->getAddress());
+                $event->setStatus(1);
+                $event->setPrivate(0);
+                $event->setUseTime(0);
+                $event->setUser($this->userRepository->find(1));
+            }
+            
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+        }
+        
+        return 'top';
     }
 }

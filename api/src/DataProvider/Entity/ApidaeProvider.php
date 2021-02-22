@@ -24,7 +24,9 @@
 namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
+use App\Event\Entity\Event;
 use App\Event\Interfaces\EventProviderInterface;
+use App\Geography\Entity\Address;
 
 /**
  * Event Provider for Apidae
@@ -33,18 +35,83 @@ use App\Event\Interfaces\EventProviderInterface;
  */
 class ApidaeProvider implements EventProviderInterface
 {
-    private $apikey;
+    const SERVER_URL = "https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques";
+    const ID = "id";
+    const NAME = "nom";
+    const INFORMATIONS = "informations.moyensCommunication";
+    const PICTURE = "illustrations";
+    const SHORT_DESCRIPTION = "presentation.descriptifCourt";
+    const FULL_DESCRIPTION = "presentation.descriptifDetaille";
+    const START_DATE = "ouverture.periodesOuvertures.dateDebut";
+    const END_DATE = "ouverture.periodesOuvertures.dateFin";
+    const ADDRESS = "localisation.adresse";
+    const GEOLOCATION = "localisation.geolocalisation";
+    const PROVIDER = "Apidae";
 
-    public function __construct(string $apikey)
+    private $apiKey;
+    private $projectId;
+    private $serverUrl;
+    private $selectionIds;
+
+    public function __construct(string $apiKey, string $projectId, string $selectionIds)
     {
-        $this->apiKey = $apikey;
+        $this->apiKey = $apiKey;
+        $this->projectId = $projectId;
+        $this->selectionIds = $selectionIds;
+        $this->serverUrl = self::SERVER_URL;
     }
-    
-
 
     public function getEvents()
     {
-        $apiKey = $this->apikey;
+        $dataProvider = new DataProvider($this->serverUrl);
+
+        $query = [];
+        $query['apiKey'] = $this->apiKey;
+        $query["projetId" ] = $this->projectId;
+        $query["selectionIds" ] = [$this->selectionIds];
+        $query["count" ] = 20;
+        $query["first" ] = 1;
+        $query["asc" ] = true;
+        $query["responseFields" ] = [self::ID, self::NAME, self::INFORMATIONS, self::PICTURE, self::SHORT_DESCRIPTION, self::FULL_DESCRIPTION, self::START_DATE, self::END_DATE, self::ADDRESS, self::GEOLOCATION];
+
+        $params = [
+            "query" => json_encode($query)
+        ];
+        $response = $dataProvider->getItem($params);
+        $events = json_decode($response->getValue(), true)["objetsTouristiques"];
+        
+        $newEvents = [];
+        foreach ($events as $event) {
+            $newEvent = new Event();
+            $newEvent->setExternalId($event["id"]);
+            $newEvent->setExternalSource(self::PROVIDER);
+            $newEvent->setName($event["nom"]["libelleFr"]);
+            
+            $newEvent->setFromDate(new \DateTime($event["ouverture"]["periodesOuvertures"][0]["dateDebut"]));
+            $newEvent->setToDate(new \DateTime($event["ouverture"]["periodesOuvertures"][0]["dateFin"]));
+
+            $newEvent->setDescription($event["presentation"]["descriptifCourt"]["libelleFr"]);
+            $newEvent->setFullDescription(isset($event["presentation"]["descriptifDetaille"][0]) ? $event["presentation"]["descriptifDetaille"]["libelleFr"] : $event["presentation"]["descriptifCourt"]["libelleFr"]);
+
+            foreach ($event["informations"]["moyensCommunication"] as $communication) {
+                if ($communication["type"]["libelleFr"] == "Site web (URL)") {
+                    $newEvent->setUrl($communication["coordonnees"]["fr"]);
+                }
+            }
+            
+            $address = new Address();
+            $address->setLatitude($event["localisation"]["geolocalisation"]["geoJson"]["coordinates"][1]);
+            $address->setLongitude($event["localisation"]["geolocalisation"]["geoJson"]["coordinates"][0]);
+            $address->setStreetAddress(isset($event["localisation"]["adresse"]["adresse1"]) ? $event["localisation"]["adresse"]["adresse1"] : $event["localisation"]["adresse"]["nomDuLieu"]);
+            $address->setAddressLocality($event["localisation"]["adresse"]["commune"]["nom"]);
+            $address->setPostalCode($event["localisation"]["adresse"]["codePostal"]);
+            $address->setAddressCountry($event["localisation"]["adresse"]["commune"]["pays"]["libelleFr"]);
+        
+            $newEvent->setAddress($address);
+            $newEvents[] = $newEvent;
+        }
+        
+        return $newEvents;
     }
 
     public function getEvent()
