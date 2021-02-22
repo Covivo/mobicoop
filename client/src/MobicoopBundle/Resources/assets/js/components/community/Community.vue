@@ -814,7 +814,6 @@ export default {
       address="",
       icon=null
     ) {
-      console.log("buildRelayPoint");
       let point = {
         title:title,
         latLng:L.latLng(lat, lng),
