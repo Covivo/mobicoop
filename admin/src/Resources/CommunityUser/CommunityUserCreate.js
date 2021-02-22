@@ -29,6 +29,7 @@ const SaveWithNoteButton = (props) => {
   const redirectTo = useRedirect();
   const notify = useNotify();
   const { basePath, userEmail, communityDomain } = props;
+  const [canCreate, setCanCreate] = useState(false);
 
   const handleSave = useCallback(
     (values, redirect) => {
@@ -49,15 +50,13 @@ const SaveWithNoteButton = (props) => {
       if (!shouldTriggerAlert || (shouldTriggerAlert && value)) {
         create(
           {
-            payload: { data: { ...values } },
+            payload: { data: { ...values, fromInReactAdmin: 'custom' } },
           }
         );
         notify('Utilisateur ajoute avec succès', 'success');
         redirectTo(redirect, basePath);
       }
-    },
-    [create, notify, redirectTo, basePath, communityDomain, userEmail]
-  );
+    }, [create, notify, redirectTo, basePath, communityDomain, userEmail]);
   // set onSave props instead of handleSubmitWithRedirect
   return <SaveButton {...props} onSuccess={handleSave} />;
 };
