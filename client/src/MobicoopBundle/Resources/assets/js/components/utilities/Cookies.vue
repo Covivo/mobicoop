@@ -190,6 +190,10 @@ export default {
         this.checkboxes.social = this.defaultSettings.social;
         this.disableProgressBar();
       }
+      else{
+        // If no data in local storage, we need to show the popup
+        this.dialog = true;
+      }
     },
     store(){
       // Store settings in local storage

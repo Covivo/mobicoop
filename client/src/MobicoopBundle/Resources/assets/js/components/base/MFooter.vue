@@ -306,7 +306,7 @@ export default {
     return {
       version:Package.version,
       imageLink: "/images/pages/home/",
-      showCookies: true
+      showCookies: false
     }
   },
   methods:{
