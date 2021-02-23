@@ -134,7 +134,6 @@
       :url-mobile="mobileUrl"
     />
     <!-- end homeBottom -->
-    <Cookies />
   </v-container>
 </template>
 
@@ -158,8 +157,7 @@ export default {
   },
   components: {
     Search,
-    HomeContent,
-    Cookies,
+    HomeContent
   },
   props: {
     geoSearchUrl: {

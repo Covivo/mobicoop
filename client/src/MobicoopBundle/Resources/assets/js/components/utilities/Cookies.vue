@@ -1,5 +1,5 @@
 <template>
-  <cookie-law
+  <!-- <cookie-law
     theme="custom-theme"
     :button-text="$t('iUnderstand')"
   >
@@ -9,11 +9,12 @@
         {{ $t('privacyPolicy') }}
       </a>
     </div>
-  </cookie-law>
+  </cookie-law> -->
+  <div />
 </template>
  
 <script>
-import CookieLaw from 'vue-cookie-law';
+//import CookieLaw from 'vue-cookie-law';
 import {messages_en, messages_fr} from "@translations/components/utilities/Cookies/";
 
 export default {
@@ -24,7 +25,7 @@ export default {
     }
   },
   components: { 
-    CookieLaw
+    
   }
 }
 </script>
