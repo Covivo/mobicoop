@@ -51,6 +51,7 @@ class MessageRepository
 
     public function findThreads(User $user)
     {
+        $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
         ->join('m.recipients', 'r')
         ->where('m.message is null and (m.user = :user or r.user = :user)')
