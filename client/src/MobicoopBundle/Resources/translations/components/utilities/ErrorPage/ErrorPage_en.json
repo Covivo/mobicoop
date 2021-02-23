@@ -1,11 +1,11 @@
 {
     "default":{
-        "title":"Une erreur s'est produite",
-        "desc":"Quelque chose s'est mal passé."
+        "title":"Houston, nous avons un problème...",
+        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
     },
     "404":{
-        "title":"Page non trouvée",
-        "desc":"La page recherchée est introuvable."
+        "title":"Houston, nous avons un problème...",
+        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
     },
     "returnHome":{
         "text":"Vous pouvez revenir",
