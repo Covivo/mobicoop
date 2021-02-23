@@ -131,10 +131,12 @@ class AdManager
      * @param Ad $ad                    The ad to create
      * @param bool $doPrepare           When we prepare the Proposal
      * @param bool $withSolidaries      Return also the matching solidary asks
+     * @param bool $withResults
+     * @param bool $forceNotUseTime     For to set useTime at false
      * @return Ad
      * @throws \Exception
      */
-    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -308,7 +310,7 @@ class AdManager
             // $outwardCriteria->setFromTime($ad->getOutwardTime() ? \DateTime::createFromFormat('H:i', $ad->getOutwardTime()) : (!$ad->isSearch() ? new \DateTime() : null));
             if ($ad->getOutwardTime()) {
                 $outwardCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
-                $outwardProposal->setUseTime(true);
+                ($forceNotUseTime) ? $outwardProposal->setUseTime(false) : $outwardProposal->setUseTime(true);
             } else {
                 $outwardCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
                 $outwardProposal->setUseTime(false);
@@ -421,7 +423,7 @@ class AdManager
                 
                 if ($ad->getReturnTime()) {
                     $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
-                    $returnProposal->setUseTime(true);
+                    ($forceNotUseTime) ? $returnProposal->setUseTime(false) : $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
                     $returnProposal->setUseTime(false);
@@ -1647,7 +1649,7 @@ class AdManager
             $ad->setMarginDuration($this->params['defaultMarginDuration']);
         }
 
-        return $this->createAd($ad);
+        return $this->createAd($ad, true, true, true, true);
     }
 
     /**
