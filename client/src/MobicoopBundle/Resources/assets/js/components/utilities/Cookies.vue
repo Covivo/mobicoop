@@ -178,6 +178,13 @@ export default {
       this.progressBarActive = false;
     },
     store(){
+      // Store settings in local storage
+      let prefs = {
+        connectionActive:this.checkboxes.connectionActive,
+        stats:this.checkboxes.stats,
+        social:this.checkboxes.social
+      }
+      localStorage.setItem('mobicoop_platform_cookie_prefs',JSON.stringify(prefs));
       this.close();
     },
     close(){
