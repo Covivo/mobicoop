@@ -62,42 +62,39 @@
           </v-col>
           <v-col
             cols="2"
-            class="caption"
           >
             <v-checkbox
               v-model="checkboxes.connectionActive"
-              class="ma-0"
+              class="ma-0 subtitle-2"
               :label="$t('checkboxes.connectionActive.desc')"
               @click="disableProgressBar()"
             />
-            <span class="font-italic"><strong>{{ $t('checkboxes.connectionActive.mandatoryOrNot') }}</strong></span>
+            <span class="font-italic subtitle-2"><strong>{{ $t('checkboxes.connectionActive.mandatoryOrNot') }}</strong></span>
           </v-col>
           <v-col
             cols="3"
-            class="caption"
           >
             <v-checkbox
               v-model="checkboxes.stats"
-              class="ma-0"
+              class="ma-0 subtitle-2"
               :label="$t('checkboxes.stats.desc')"
               @click="disableProgressBar()"
             />
-            <span class="font-italic">{{ $t('checkboxes.stats.mandatoryOrNot') }}</span>
-            <p class="mt-2">
+            <span class="font-italic subtitle-2">{{ $t('checkboxes.stats.mandatoryOrNot') }}</span>
+            <p class="mt-2 subtitle-2">
               {{ $t('checkboxes.stats.details.part1') }} <strong>{{ $t('checkboxes.stats.details.part2') }}</strong>.
             </p>
           </v-col>
           <v-col
             cols="3"
-            class="caption"
           >
             <v-checkbox
               v-model="checkboxes.social"
-              class="ma-0"
+              class="ma-0 subtitle-2"
               :label="$t('checkboxes.social.desc')"
               @click="disableProgressBar()"
             />
-            <span class="font-italic">{{ $t('checkboxes.social.mandatoryOrNot') }}</span>
+            <span class="font-italic subtitle-2">{{ $t('checkboxes.social.mandatoryOrNot') }}</span>
           </v-col>
         </v-row>
       </v-card-text>
