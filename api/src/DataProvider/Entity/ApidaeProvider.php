@@ -146,6 +146,7 @@ class ApidaeProvider implements EventProviderInterface
             } else {
                 throw new Exception("Description is mandatory", 1);
             }
+            $newEvent->setExternalImageUrl(isset($event->illustrations[0]) ? $event->illustrations[0]->traductionFichiers[0]->url : null);
 
             foreach ($event->informations->moyensCommunication as $communication) {
                 if ($communication->type->libelleFr == self::WEB_URL) {

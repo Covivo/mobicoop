@@ -37,11 +37,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EventImportCommand extends Command
 {
     private $eventManager;
+    private $eventImportEnabled;
     
-    public function __construct(EventManager $eventManager)
+    public function __construct(EventManager $eventManager, Bool $eventImportEnabled)
     {
         $this->eventManager = $eventManager;
-        
+        $this->eventImportEnabled = $eventImportEnabled;
+
         parent::__construct();
     }
     
@@ -56,6 +58,10 @@ class EventImportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($this->eventImportEnabled == false) {
+            return 0;
+        }
+        
         $this->eventManager->importEvents();
         return 0;
     }

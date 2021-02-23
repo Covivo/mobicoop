@@ -288,6 +288,14 @@ class Event
      * @Groups({"readEvent","write"})
      */
     private $externalSource;
+
+    /**
+     * @var string The url of the image of the external event.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalImageUrl;
     
     public function __construct($id=null)
     {
@@ -509,6 +517,16 @@ class Event
     public function setExternalSource(?string $externalSource)
     {
         $this->externalSource = $externalSource;
+    }
+
+    public function getExternalImageUrl(): ?string
+    {
+        return $this->externalImageUrl;
+    }
+    
+    public function setExternalImageUrl(?string $externalImageUrl)
+    {
+        $this->externalImageUrl = $externalImageUrl;
     }
     
     // DOCTRINE EVENTS

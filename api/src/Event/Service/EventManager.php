@@ -46,7 +46,7 @@ class EventManager
     private $dispatcher;
     private $entityManager;
     private $geoTools;
-    private $eventsProvider;
+    private $provider;
     private $userRepository;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
@@ -76,7 +76,7 @@ class EventManager
         $this->userRepository = $userRepository;
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
-                $this->eventsProvider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
+                $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
                 break;
         }
     }
@@ -162,7 +162,7 @@ class EventManager
      */
     public function importEvents()
     {
-        $eventsToImport = $this->eventsProvider->getEvents();
+        $eventsToImport = $this->provider->getEvents();
 
         foreach ($eventsToImport as $eventToImport) {
             $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
@@ -174,6 +174,7 @@ class EventManager
                 $event->setFullDescription($eventToImport->getFullDescription());
                 $event->setAddress($eventToImport->getAddress());
                 $event->setUrl($eventToImport->getUrl());
+                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
             } else {
                 $event = new Event();
                 $event->setExternalId($eventToImport->getExternalId());
@@ -185,6 +186,7 @@ class EventManager
                 $event->setFullDescription($eventToImport->getFullDescription());
                 $event->setAddress($eventToImport->getAddress());
                 $event->setUrl($eventToImport->getUrl());
+                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
                 $event->setStatus(1);
                 $event->setPrivate(0);
                 $event->setUseTime(0);
