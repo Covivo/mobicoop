@@ -2,10 +2,24 @@
   <v-dialog
     v-model="dialog"
     width="80%"
+    @click:outside="close"
   >
     <v-card>
       <v-card-title class="headline grey lighten-2">
-        {{ $t('title') }}
+        <v-row dense>
+          <v-col>
+            {{ $t('title') }}
+          </v-col>
+          <v-col class="text-right">
+            <v-btn
+              class="text"
+              icon
+              @click="close"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-title>
 
       <v-card-text>
@@ -31,8 +45,9 @@
             <v-btn
               color="secondary"
               :disabled="!recordValid"
+              @click="store"
             >
-              {{ $t('record') }}
+              {{ $t('store') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -148,6 +163,13 @@ export default {
     },
     disableProgressBar(){
       this.progressBarActive = false;
+    },
+    store(){
+      this.close();
+    },
+    close(){
+      this.dialog = false;
+      this.$emit("dialogClosed");
     }
   }
 }

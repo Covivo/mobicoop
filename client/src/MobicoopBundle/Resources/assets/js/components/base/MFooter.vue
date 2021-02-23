@@ -267,7 +267,10 @@
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
       </v-row>
-      <cookies :show="showCookies" />
+      <cookies
+        :show="showCookies"
+        @dialogClosed="dialogCookiesClosed"
+      />
     </v-container>
   </v-footer>
 </template>
@@ -302,6 +305,9 @@ export default {
   methods:{
     showCookiesAction(){
       this.showCookies = true;
+    },
+    dialogCookiesClosed(){
+      this.showCookies = false;
     }
   }
 };
