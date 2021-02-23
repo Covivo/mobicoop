@@ -24,7 +24,7 @@
 
       <v-card-text>
         <v-row>
-          <v-col>{{ $t('privateLife') }} : <strong>{{ $t('yourBrowseryourChoice') }}</strong></v-col>
+          <v-col>{{ $t('privateLife') }} : <strong>{{ $t('yourBrowseryourChoice', {appName:appName}) }}</strong></v-col>
         </v-row>
         <v-row>
           <v-col cols="4">
@@ -120,6 +120,10 @@ export default {
     
   },
   props:{
+    appName:{
+      type: String,
+      default:null
+    },
     show:{
       type: Boolean,
       default: false

@@ -1,7 +1,7 @@
 {
     "title": "Gestion des cookies",
     "privateLife": "Vie privée",
-    "yourBrowseryourChoice": "Vous avez le choix",
+    "yourBrowseryourChoice": "{appName} vous donne le choix",
     "store":"Enregister",
     "working":{
         "line1":"Pour son fonctionnement, ce site utilise des cookies",

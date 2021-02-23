@@ -269,6 +269,7 @@
       </v-row>
       <cookies
         :show="showCookies"
+        :app-name="appName"
         @dialogClosed="dialogCookiesClosed"
       />
     </v-container>
@@ -294,6 +295,12 @@ export default {
   },
   components:{
     Cookies
+  },
+  props:{
+    appName:{
+      type: String,
+      default:null
+    }
   },
   data() {
     return {
