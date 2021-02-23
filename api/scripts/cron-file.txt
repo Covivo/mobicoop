@@ -39,3 +39,6 @@
 
 # each day at 4am : create the journeys
 0 4 * * * $1 $2 app:journey:hydrate --env=$3
+
+# each day at 3am : import events from provider
+0 3 * * * $1 $2 app:events:import --env=$3

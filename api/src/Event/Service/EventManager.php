@@ -163,6 +163,7 @@ class EventManager
     public function importEvents()
     {
         $eventsToImport = $this->eventsProvider->getEvents();
+
         foreach ($eventsToImport as $eventToImport) {
             $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
             if (isset($event) && !is_null($event)) {
@@ -172,6 +173,7 @@ class EventManager
                 $event->setDescription($eventToImport->getDescription());
                 $event->setFullDescription($eventToImport->getFullDescription());
                 $event->setAddress($eventToImport->getAddress());
+                $event->setUrl($eventToImport->getUrl());
             } else {
                 $event = new Event();
                 $event->setExternalId($eventToImport->getExternalId());
@@ -182,6 +184,7 @@ class EventManager
                 $event->setDescription($eventToImport->getDescription());
                 $event->setFullDescription($eventToImport->getFullDescription());
                 $event->setAddress($eventToImport->getAddress());
+                $event->setUrl($eventToImport->getUrl());
                 $event->setStatus(1);
                 $event->setPrivate(0);
                 $event->setUseTime(0);
@@ -192,6 +195,6 @@ class EventManager
             $this->entityManager->flush();
         }
         
-        return 'top';
+        return;
     }
 }

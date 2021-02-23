@@ -21,33 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Interfaces;
+namespace App\Event\Command;
+
+use App\Event\Service\EventManager;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Event Provider interface.
+ * Generate carpool payment items from the accepted asks.
  *
- * An event provider entity class
- *
- * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
- *
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-interface EventProviderInterface
+
+class EventImportCommand extends Command
 {
-    /**
-     * Get events from external sources
-     *
-     */
-    public function getEvents();
+    private $eventManager;
+    
+    public function __construct(EventManager $eventManager)
+    {
+        $this->eventManager = $eventManager;
+        
+        parent::__construct();
+    }
+    
+    protected function configure()
+    {
+        $this
+        ->setName('app:events:import')
+        ->setDescription('Import events from provider')
+        ->setHelp('Create events from external provider')
+        ;
+    }
 
-    /**
-    * Get details of an event from external sources
-    *
-    */
-    public function getEvent();
-
-    /**
-    * Get details of an event from external sources
-    *
-    */
-    public function createEvents(array $events);
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->eventManager->importEvents();
+        return 0;
+    }
 }
