@@ -134,6 +134,7 @@ export default {
       dialog:this.show,
       level:0,
       progressBarActive:true,
+      defaultSettings:null,
       checkboxes:{
         connectionActive:false,
         stats:false,
@@ -153,6 +154,9 @@ export default {
     show(){
       this.dialog = this.show;
     }
+  },
+  mounted(){
+    this.getDefault();
   },
   methods:{
     updatePrefs(){
@@ -176,6 +180,16 @@ export default {
     },
     disableProgressBar(){
       this.progressBarActive = false;
+    },
+    getDefault(){
+      // Get the default settings in local storage in exists
+      this.defaultSettings = JSON.parse(localStorage.getItem("mobicoop_platform_cookie_prefs"));
+      if(this.defaultSettings){
+        this.checkboxes.connectionActive = this.defaultSettings.connectionActive;
+        this.checkboxes.stats = this.defaultSettings.stats;
+        this.checkboxes.social = this.defaultSettings.social;
+        this.disableProgressBar();
+      }
     },
     store(){
       // Store settings in local storage
