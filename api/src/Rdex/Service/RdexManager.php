@@ -327,6 +327,39 @@ class RdexManager
          * @var Result $result
          */
         foreach ($ad->getResults() as $result) {
+
+            // For each result we need to check if the times matching the requested min and max time (if specified)
+
+            if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                // For punctual, we check the requested date
+                $resultDay = strtolower($result->getDate()->format('l'));
+            } else {
+                // For regular, we check the start date
+                $resultDay = strtolower($result->getStartDate()->format('l'));
+            }
+
+            if (isset($parameters["outward"][$resultDay])) {
+                // The search has a data parameter. We need to check if there is a minitime, maxtime or both
+                if (isset($parameters["outward"][$resultDay]['mintime'])) {
+                    // There is a mintime parameter, the result time must be superior
+                    $minDateTime = \DateTime::createFromFormat("H:i:s", $parameters["outward"][$resultDay]['mintime']);
+
+                    if ($result->getTime() < $minDateTime) {
+                        // Invalid, we ignore this result
+                        continue;
+                    }
+                }
+                if (isset($parameters["outward"][$resultDay]['maxtime'])) {
+                    // There is a maxtime parameter, the result time must be superior
+                    $maxDateTime = \DateTime::createFromFormat("H:i:s", $parameters["outward"][$resultDay]['maxtime']);
+
+                    if ($result->getTime() > $maxDateTime) {
+                        // Invalid, we ignore this result
+                        continue;
+                    }
+                }
+            }
+
             $carpoolerIsDriver = false;
             $carpoolerIsPassenger = false;
             $resultItem = null;
