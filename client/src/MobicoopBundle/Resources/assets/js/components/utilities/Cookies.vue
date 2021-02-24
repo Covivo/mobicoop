@@ -103,7 +103,6 @@
 </template>
  
 <script>
-//import CookieLaw from 'vue-cookie-law';
 import {messages_en, messages_fr} from "@translations/components/utilities/Cookies/";
 
 export default {
@@ -180,7 +179,7 @@ export default {
     },
     getDefault(){
       // Get the default settings in local storage in exists
-      this.defaultSettings = JSON.parse(localStorage.getItem("mobicoop_platform_cookie_prefs"));
+      this.defaultSettings = JSON.parse(localStorage.getItem("cookies_prefs"));
       if(this.defaultSettings){
         this.checkboxes.connectionActive = this.defaultSettings.connectionActive;
         this.checkboxes.stats = this.defaultSettings.stats;
@@ -199,7 +198,7 @@ export default {
         stats:this.checkboxes.stats,
         social:this.checkboxes.social
       }
-      localStorage.setItem('mobicoop_platform_cookie_prefs',JSON.stringify(prefs));
+      localStorage.setItem('cookies_prefs',JSON.stringify(prefs));
       this.close();
     },
     close(){

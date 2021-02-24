@@ -204,7 +204,7 @@ export default {
       this.loading = false;
     },
     getConsent(){
-      let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
+      let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
       this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
       this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
