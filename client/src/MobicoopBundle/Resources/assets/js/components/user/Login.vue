@@ -17,6 +17,7 @@
     </v-row>
     <div class="pt-12">
       <v-row
+        v-if="consent"
         class="text-center justify-center"
       >
         <v-col
