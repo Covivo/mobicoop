@@ -121,7 +121,7 @@ class ApidaeProvider implements EventProviderInterface
      */
     public function createEvents($apidaeEvents)
     {
-        // you can found apidae data structuration here http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets
+        // apidae data structuration : http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets
         // http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets/types-dobjet-touristique
         $newEvents = [];
        
