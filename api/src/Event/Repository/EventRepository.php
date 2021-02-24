@@ -92,4 +92,16 @@ class EventRepository
         ->getQuery()->getResult();
         return $query;
     }
+
+
+    /**
+     * Find One event by criteria
+     *
+     * @param array $criteria
+     * @return Event|null
+     */
+    public function findOneBy(array $criteria): ?Event
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }
