@@ -1,9 +1,10 @@
 <script>
     let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
     let sendStats = (cookiesPrefs && cookiesPrefs.stats)
+    
+    /*  /!\ Without consent, we dont send any informations */
     if(sendStats){
         var _paq = window._paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
         (function() {
