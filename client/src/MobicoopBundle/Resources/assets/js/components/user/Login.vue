@@ -66,8 +66,16 @@
               @click:append="show1 = !show1"
             />
 
+            <v-alert
+              v-if="!consent"
+              class="warning white--text"
+            >
+              <v-icon class="white--text">
+                mdi-information-outline
+              </v-icon> {{ $t('consent') }}
+            </v-alert>
             <v-btn
-              :disabled="!valid"
+              :disabled="!valid || !consent"
               :loading="loading"
               color="secondary"
               type="submit"
@@ -171,12 +179,14 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
+      consent: false
     };
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
     //console.log(this.$i18n.messages)
+    this.getConsent();
   },
   methods: {
     validate() {
@@ -190,6 +200,10 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
+    },
+    getConsent(){
+      let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
+      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
     }
   }
 };

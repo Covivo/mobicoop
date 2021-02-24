@@ -15,5 +15,6 @@
     "email": "Email",
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email",
-    "passwordRequired": "Password is required"
+    "passwordRequired": "Password is required",
+    "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de Gestion des cookies accessible par un lien en pied de page."
 }
