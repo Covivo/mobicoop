@@ -106,7 +106,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="showFacebookLogin"
+        v-if="showFacebookLogin && consentSocial"
         justify="center"
       
         class="text-center align-start"
@@ -181,7 +181,8 @@ export default {
       ],
       errorDisplay: "",
       action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
-      consent: false
+      consent: false,
+      consentSocial: false
     };
   },
   mounted() {
@@ -205,6 +206,7 @@ export default {
     getConsent(){
       let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
       this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
+      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   }
 };

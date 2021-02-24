@@ -426,7 +426,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="showFacebookSignUp"
+        v-if="showFacebookSignUp && consentSocial"
         justify="center"
         class="text-center mt-n12"
       >
@@ -667,7 +667,8 @@ export default {
       communities: [],
       selectedCommunity: null,
       locale: this.$i18n.locale,
-      consent:false
+      consent:false,
+      consentSocial: false
     };
   },
   computed: {
@@ -877,6 +878,7 @@ export default {
     getConsent(){
       let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
       this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
+      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   },
 };
