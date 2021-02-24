@@ -83,6 +83,7 @@ class ApidaeProvider implements EventProviderInterface
             $query["projetId" ] = $this->projectId;
             $query["selectionIds" ] = [$this->selectionIds];
             $query["count" ] = self::NUMBER_OF_EVENTS;
+            // first indicate the index of the first event to get
             $query["first" ] = self::NUMBER_OF_EVENTS * $i;
             $query["asc" ] = true;
             $query["dateDebut"] = (new \DateTime('now'))->format("Y-m-d");
