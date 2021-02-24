@@ -56,8 +56,28 @@
           <h1>{{ $t("title") }}</h1>
         </v-col>
       </v-row>
-     
       <v-row
+        v-if="!consent"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="left"
+        >
+          <v-alert
+              
+            class="warning white--text"
+          >
+            <v-icon class="white--text">
+              mdi-information-outline
+            </v-icon> {{ $t('rgpd.consent') }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="consent"
         justify="center"
         class="text-center"
       >
@@ -160,7 +180,7 @@
                   class="my-13"
                   color="secondary"
                   type="submit"
-                  :disabled="!step1"
+                  :disabled="!step1 || !consent"
                   @click="nextStep(1)"
                 >
                   {{ $t("button.next") }}
@@ -263,7 +283,7 @@
                     class="my-13"
                     color="secondary"
                     type="submit"
-                    :disabled="!step2"
+                    :disabled="!step2 || !consent"
                     @click="nextStep(2)"
                   >
                     {{ $t("button.next") }}
@@ -647,6 +667,7 @@ export default {
       communities: [],
       selectedCommunity: null,
       locale: this.$i18n.locale,
+      consent:false
     };
   },
   computed: {
@@ -698,6 +719,7 @@ export default {
     },
   },
   mounted: function() {
+    this.getConsent();
     //get scroll target
     (this.container = document.getElementById("scroll-target")),
     this.getCommunities();
@@ -852,6 +874,10 @@ export default {
         this.communities = res.data;
       });
     },
+    getConsent(){
+      let cookiesPrefs = JSON.parse(localStorage.getItem('mobicoop_platform_cookie_prefs'));
+      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
+    }
   },
 };
 </script>
