@@ -441,7 +441,7 @@ use App\User\Controller\UserSendValidationEmail;
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {

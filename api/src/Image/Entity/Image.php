@@ -264,7 +264,7 @@ class Image
     
     /**
      * @var int|null The community id associated with the image.
-     * @Groups({"read","write","aWrite"})
+     * @Groups({"read","write"})
      */
     private $communityId;
     
