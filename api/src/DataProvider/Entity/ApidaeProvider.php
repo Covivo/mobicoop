@@ -85,6 +85,7 @@ class ApidaeProvider implements EventProviderInterface
             $query["count" ] = self::NUMBER_OF_EVENTS;
             $query["first" ] = self::NUMBER_OF_EVENTS * $i;
             $query["asc" ] = true;
+            $query["dateDebut"] = (new \DateTime('now'))->format("Y-m-d");
             $query["responseFields" ] = [self::ID, self::NAME, self::INFORMATIONS, self::PICTURE, self::SHORT_DESCRIPTION, self::FULL_DESCRIPTION, self::START_DATE, self::END_DATE, self::ADDRESS, self::GEOLOCATION];
 
             $params = [
@@ -134,8 +135,18 @@ class ApidaeProvider implements EventProviderInterface
             }
             
             if (isset($event->ouverture->periodesOuvertures[0])) {
-                $newEvent->setFromDate(new \DateTime($event->ouverture->periodesOuvertures[0]->dateDebut));
-                $newEvent->setToDate(new \DateTime($event->ouverture->periodesOuvertures[0]->dateFin));
+                // some events are annual so we check first if the year is up to date if not we set the actual year
+                $year = (new \DateTime($event->ouverture->periodesOuvertures[0]->dateDebut))->format('Y');
+                $startDate = new \DateTime($event->ouverture->periodesOuvertures[0]->dateDebut);
+                $endDate = new \DateTime($event->ouverture->periodesOuvertures[0]->dateFin);
+                $actualYear = (new \DateTime('now'))->format('Y');
+                if ($year < $actualYear) {
+                    $newEvent->setFromDate($startDate->setDate($actualYear, $startDate->format('m'), $startDate->format('d')));
+                    $newEvent->setToDate($endDate->setDate($actualYear, $endDate->format('m'), $endDate->format('d')));
+                } else {
+                    $newEvent->setFromDate($startDate);
+                    $newEvent->setToDate($endDate);
+                }
             } else {
                 throw new Exception("Start and end dates are mandatory", 1);
             }

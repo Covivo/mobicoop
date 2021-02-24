@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 namespace App\Event\Service;
 
+use App\App\Repository\AppRepository;
 use App\DataProvider\Entity\ApidaeProvider;
 use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
@@ -30,7 +31,7 @@ use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
-use App\User\Repository\UserRepository;
+use Exception;
 
 /**
  * Event manager.
@@ -47,9 +48,10 @@ class EventManager
     private $entityManager;
     private $geoTools;
     private $provider;
-    private $userRepository;
+    private $appRepository;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
+    const APP_ID = 1;
     
     /**
      * Constructor.
@@ -59,7 +61,7 @@ class EventManager
         EventRepository $eventRepository,
         EventDispatcherInterface $dispatcher,
         GeoTools $geoTools,
-        UserRepository $userRepository,
+        AppRepository $appRepository,
         String $eventProvider,
         String $eventProviderApiKey,
         String $eventProviderProjectId,
@@ -73,7 +75,7 @@ class EventManager
         $this->eventProviderApiKey = $eventProviderApiKey;
         $this->eventProviderProjectId = $eventProviderProjectId;
         $this->eventProviderSelectionId = $eventProviderSelectionId;
-        $this->userRepository = $userRepository;
+        $this->appRepository = $appRepository;
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
                 $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
@@ -89,6 +91,9 @@ class EventManager
      */
     public function createEvent(Event $event)
     {
+        if (is_null($event->getUser()) && is_null($event->getApp())) {
+            throw new Exception("User or App are mandatory", 1);
+        }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
         
@@ -190,13 +195,15 @@ class EventManager
                 $event->setStatus(1);
                 $event->setPrivate(0);
                 $event->setUseTime(0);
-                $event->setUser($this->userRepository->find(1));
+                $event->setApp($this->appRepository->find(self::APP_ID));
             }
             
+            if (is_null($event->getUser()) && is_null($event->getApp())) {
+                throw new Exception("User or App are mandatory", 1);
+            }
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         }
-        
         return;
     }
 }

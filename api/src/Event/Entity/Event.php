@@ -43,6 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Filter\TerritoryFilter;
+use App\App\Entity\App;
 
 /**
  * An event : a social occasion or activity.
@@ -232,13 +233,23 @@ class Event
      * @var User The creator of the event.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var App The app creator of the event.
+     *
+     * @ApiProperty(push=true)
+     * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"readEvent","write"})
+     * @MaxDepth(1)
+     */
+    private $app;
 
     /**
      * @var Event Event related for the proposal
@@ -446,7 +457,7 @@ class Event
         return $this;
     }
     
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -454,6 +465,18 @@ class Event
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getApp(): ?App
+    {
+        return $this->app;
+    }
+    
+    public function setApp(?App $app): self
+    {
+        $this->app = $app;
         
         return $this;
     }
