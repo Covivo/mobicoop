@@ -132,6 +132,7 @@
       :event-display="eventDisplay"
       :solidary-display="solidaryDisplay"
       :url-mobile="mobileUrl"
+      :user-id="(user && user.id) ? user.id : null"
     />
     <!-- end homeBottom -->
   </v-container>
