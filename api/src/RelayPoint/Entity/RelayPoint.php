@@ -118,7 +118,7 @@ use App\RelayPoint\Filter\TerritoryFilter;
  *      }
  * )
  * @ApiFilter(BooleanFilter::class, properties={"official"})
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "relayPointTypeName"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointType.id":"exact"})
  * @ApiFilter(RangeFilter::class, properties={"address.longitude","address.latitude"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
@@ -293,7 +293,7 @@ class RelayPoint
     /**
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups({"aRead","readRelayPoint","writeRelayPoint"})
+     * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $relayPointType;
 
@@ -314,6 +314,42 @@ class RelayPoint
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
+
+    /**
+     * @var int|null The relay point type id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $relayPointTypeId;
+
+    /**
+     * @var string The relay point type name
+     * @Groups({"aRead","aWrite"})
+     */
+    private $relayPointTypeName;
+
+    /**
+     * @var int|null The community id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityId;
+
+    /**
+     * @var string The community name
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityName;
+
+    /**
+     * @var int|null The structure id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $structureId;
+
+    /**
+     * @var string The structure name
+     * @Groups({"aRead","aWrite"})
+     */
+    private $structureName;
 
     /**
      * @var string The creator
@@ -608,6 +644,69 @@ class RelayPoint
         $this->relayPointImport = $relayPointImport;
 
         return $this;
+    }
+
+    public function getRelayPointTypeId(): ?int
+    {
+        if (is_null($this->relayPointTypeId)) {
+            return $this->getRelayPointType() ? $this->getRelayPointType()->getId() : null;
+        }
+        return $this->relayPointTypeId;
+    }
+
+    public function setRelayPointTypeId(?int $relayPointTypeId)
+    {
+        $this->relayPointTypeId = $relayPointTypeId;
+    }
+
+    public function getRelayPointTypeName(): string
+    {
+        if ($this->getRelayPointType()) {
+            return $this->getRelayPointType()->getName();
+        }
+        return '';
+    }
+
+    public function getCommunityId(): ?int
+    {
+        if (is_null($this->communityId)) {
+            return $this->getCommunity() ? $this->getCommunity()->getId() : null;
+        }
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
+    public function getCommunityName(): string
+    {
+        if ($this->getCommunity()) {
+            return $this->getCommunity()->getName();
+        }
+        return '';
+    }
+
+    public function getStructureId(): ?int
+    {
+        if (is_null($this->structureId)) {
+            return $this->getStructure() ? $this->getStructure()->getId() : null;
+        }
+        return $this->structureId;
+    }
+
+    public function setStructureId(?int $structureId)
+    {
+        $this->structureId = $structureId;
+    }
+
+    public function getStructureName(): string
+    {
+        if ($this->getStructure()) {
+            return $this->getStructure()->getName();
+        }
+        return '';
     }
 
     public function getCreator(): string
