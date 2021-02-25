@@ -16,5 +16,6 @@
     "email": "Email",
     "emailRequired": "L'adresse email est requise",
     "emailInvalid": "L'adresse email doit être valide",
-    "passwordRequired": "Le mot de passe est requis"
+    "passwordRequired": "Le mot de passe est requis",
+    "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de Gestion des cookies accessible par un lien en pied de page."
 }

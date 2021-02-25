@@ -100,6 +100,7 @@
         "link": {
             "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
             "route": "/cgu"
-        }
+        },
+        "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de Gestion des cookies accessible par un lien en pied de page."
     }
 }
