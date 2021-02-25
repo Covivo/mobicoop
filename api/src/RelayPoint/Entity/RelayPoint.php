@@ -328,6 +328,12 @@ class RelayPoint
     private $relayPointTypeName;
 
     /**
+     * @var string|null The relay point type avatar
+     * @Groups({"aRead"})
+     */
+    private $relayPointTypeAvatar;
+
+    /**
      * @var int|null The community id
      * @Groups({"aRead","aWrite"})
      */
@@ -665,6 +671,14 @@ class RelayPoint
             return $this->getRelayPointType()->getName();
         }
         return '';
+    }
+
+    public function getRelayPointTypeAvatar(): ?string
+    {
+        if ($this->getRelayPointType() && $this->getRelayPointType()->getIcon()) {
+            return $this->getRelayPointType()->getIcon()->getUrl();
+        }
+        return null;
     }
 
     public function getCommunityId(): ?int

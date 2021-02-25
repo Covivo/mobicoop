@@ -82,7 +82,7 @@ class Icon
     /**
      * @var string The url of the icon.
      *
-     * @Groups({"read","readRelayPoint"})
+     * @Groups({"aRead","read","readRelayPoint"})
      */
     private $url;
 
