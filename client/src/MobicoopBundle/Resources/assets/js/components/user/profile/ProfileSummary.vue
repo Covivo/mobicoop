@@ -58,7 +58,8 @@
             class="text-left"
           >
             <v-icon>mdi-car</v-icon> {{ $t('infos.carpoolRealized') }} : {{ profileSummary.carpoolRealized }}<br>
-            <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%
+            <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%<br>
+            <v-icon>mdi-account-clock</v-icon> {{ $t('infos.lastConnection') }} : {{ lastConnection }}
           </v-col>
         </v-row>
       </div>
@@ -67,6 +68,7 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import {messages_en, messages_fr} from "@translations/components/user/profile/ProfileSummary/";
 export default {
@@ -103,6 +105,15 @@ export default {
       loading:true,
       experienced:false
     }
+  },
+  computed:{
+    lastConnection(){
+      if (this.profileSummary.lastActivityDate) {
+        return moment(this.profileSummary.lastActivityDate.date).format('DD/MM/YYYY');
+      }
+      return "-";
+      
+    },
   },
   watch:{
     refresh(){
