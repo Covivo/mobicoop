@@ -78,6 +78,14 @@ class RelayPointManager
             throw new RelayPointException("creator not found");
         }
 
+        if ($relayPoint->getRelayPointTypeId()) {
+            if ($type = $this->relayPointTypeRepository->find($relayPoint->getRelayPointTypeId())) {
+                $relayPoint->setRelayPointType($type);
+            } else {
+                throw new RelayPointException("Relay point type not found");
+            }
+        }
+
         // persist the relay point
         $this->entityManager->persist($relayPoint);
         $this->entityManager->flush();

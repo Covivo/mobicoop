@@ -156,17 +156,17 @@ class RelayPoint
     private $private;
     
     /**
-     * @var string The short description of the relay point.
+     * @var string|null The short description of the relay point.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $description;
     
     /**
-     * @var string The full description of the relay point.
+     * @var string|null The full description of the relay point.
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $fullDescription;
@@ -413,22 +413,22 @@ class RelayPoint
         return $this;
     }
     
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
     
-    public function setDescription(string $description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
     
-    public function getFullDescription(): string
+    public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
     
-    public function setFullDescription(string $fullDescription)
+    public function setFullDescription(?string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
     }
