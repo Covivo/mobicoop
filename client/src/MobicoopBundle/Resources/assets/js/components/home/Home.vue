@@ -132,15 +132,14 @@
       :event-display="eventDisplay"
       :solidary-display="solidaryDisplay"
       :url-mobile="mobileUrl"
+      :user-id="(user && user.id) ? user.id : null"
     />
     <!-- end homeBottom -->
-    <Cookies />
   </v-container>
 </template>
 
 <script>
 import {merge} from "lodash";
-import Cookies from "@components/utilities/Cookies";
 import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
@@ -158,8 +157,7 @@ export default {
   },
   components: {
     Search,
-    HomeContent,
-    Cookies,
+    HomeContent
   },
   props: {
     geoSearchUrl: {

@@ -74,8 +74,10 @@
                   <v-select
                     v-model="form.demand"
                     :items="demandItems"
-                    :label="$t('demand.placeholder')"
+                    :rules="form.demandRules"
+                    :label="$t('demand.placeholder') + ` *`"
                     name="demand"
+                    required
                   />
                 </v-col>
 
@@ -88,6 +90,7 @@
                     :label="$t('message.label') + ` *`"
                     name="message"
                     :hint="this.$t('message.hint')"
+                    required
                   />
                 </v-col>
                 <!-- Honey pot -->
@@ -185,6 +188,9 @@ export default {
           v => !!v || this.$t("firstName.errors.required"),
         ],
         demand: null,
+        demandRules: [
+          v => !!v || this.$t("demand.errors.required"),
+        ],
         message: null,
         messageRules: [
           v => !!v || this.$t("message.errors.required"),

@@ -57,6 +57,18 @@ class StructureManager
     }
 
     /**
+     * Get a Structure
+     *
+     * @param integer $structureId
+     * @return Structure
+     */
+    public function getStructure(int $structureId): ?Structure
+    {
+        return $this->structureRepository->find($structureId);
+    }
+
+
+    /**
      * Get the StructureProofs of a Structure
      *
      * @param integer $structureId

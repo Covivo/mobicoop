@@ -316,6 +316,15 @@ services:
     App\Event\Controller\:
         resource: '../src/Event/Controller'
         tags: ['controller.service_arguments']
+    App\Event\Service\EventManager:
+        arguments:
+            $eventProvider: '%env(resolve:EVENT_PROVIDER)%'
+            $eventProviderApiKey: '%env(resolve:EVENT_PROVIDER_API_KEY)%'
+            $eventProviderProjectId: '%env(resolve:EVENT_PROVIDER_PROJECT_ID)%'
+            $eventProviderSelectionId: '%env(resolve:EVENT_PROVIDER_SELECTION_ID)%'
+    App\Event\Command\EventImportCommand:
+        arguments:
+            $eventImportEnabled: '%env(bool:EVENT_IMPORT_ENABLED)%'
 
     # External Connection
     App\ExternalJourney\Service\ExternalConnectionManager:
@@ -330,6 +339,19 @@ services:
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
 
+    # Fixtures
+    App\DataFixtures\BasicFixtures:
+        arguments:
+            $fixturesEnabled: '%env(bool:FIXTURES_ENABLED)%'
+            $fixturesClearBase: '%env(bool:FIXTURES_CLEAR_BASE)%'
+            $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+    
+    App\DataFixtures\Service\FixturesManager:
+        arguments:
+            $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+    
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
@@ -559,6 +581,10 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
 
     # RelayPoint
+    App\RelayPoint\Service\RelayPointMapManager:
+        arguments:
+            $dataPath: '%env(resolve:DATA_URI)%'    
+
     App\RelayPoint\EntityListener\RelayPointTypeListener:
         arguments:
             $dataUri: '%env(string:DATA_URI)%'
@@ -628,7 +654,8 @@ services:
                 experiencedTagMinAnswerPct : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT)%'
                 experiencedTagMinAnswerPctDefault : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT_DEFAULT)%'
                 userReview: '%env(bool:USER_REVIEW)%'
-            $passwordTokenValidity: '%env(int:PASSWORD_TOKEN_VALIDITY)%'    
+            $passwordTokenValidity: '%env(int:PASSWORD_TOKEN_VALIDITY)%'
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'    
     
     App\User\Service\ReviewManager:
         arguments:

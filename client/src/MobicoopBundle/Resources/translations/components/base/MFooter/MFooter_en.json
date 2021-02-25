@@ -53,8 +53,12 @@
         "dataPolicy":{
             "title":"Data policy",
             "link":"/data-policy"
+        },
+        "cookies":{
+            "title":"Gestion des cookies",
+            "link":"#"
         }
-    },
+   },
     "contacts":{
         "hotline":{
             "title":"Hotline",

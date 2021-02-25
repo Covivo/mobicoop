@@ -19,7 +19,7 @@
           />
           <v-img
             v-else
-            :src="urlAltAvatar"
+            :src="event.externalImageUrl ? event.externalImageUrl : urlAltAvatar"
             width="225"
             height="200"
             :aspect-ratio="1"

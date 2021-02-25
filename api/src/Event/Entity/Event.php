@@ -43,6 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Filter\TerritoryFilter;
+use App\App\Entity\App;
 
 /**
  * An event : a social occasion or activity.
@@ -263,13 +264,23 @@ class Event
      * @var User The creator of the event.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank(groups={"write"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var App The app creator of the event.
+     *
+     * @ApiProperty(push=true)
+     * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
+     * @ORM\JoinColumn(nullable=true)
+     * @Groups({"readEvent","write"})
+     * @MaxDepth(1)
+     */
+    private $app;
 
     /**
      * @var Event Event related for the proposal
@@ -303,6 +314,29 @@ class Event
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
+
+    /** @var int The id of this external event.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalId;
+    
+    /**
+     * @var string The source of the external event.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalSource;
+
+    /**
+     * @var string The url of the image of the external event.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readEvent","write"})
+     */
+    private $externalImageUrl;
 
     /**
      * @var string The creator
@@ -483,7 +517,7 @@ class Event
         return $this;
     }
     
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -491,6 +525,18 @@ class Event
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getApp(): ?App
+    {
+        return $this->app;
+    }
+    
+    public function setApp(?App $app): self
+    {
+        $this->app = $app;
         
         return $this;
     }
@@ -534,6 +580,36 @@ class Event
         }
         
         return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->externalId;
+    }
+    
+    public function setExternalId(?int $externalId)
+    {
+        $this->externalId = $externalId;
+    }
+
+    public function getExternalSource(): ?string
+    {
+        return $this->externalSource;
+    }
+    
+    public function setExternalSource(?string $externalSource)
+    {
+        $this->externalSource = $externalSource;
+    }
+
+    public function getExternalImageUrl(): ?string
+    {
+        return $this->externalImageUrl;
+    }
+    
+    public function setExternalImageUrl(?string $externalImageUrl)
+    {
+        $this->externalImageUrl = $externalImageUrl;
     }
 
     public function getCreator(): string

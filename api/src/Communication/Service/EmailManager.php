@@ -130,7 +130,7 @@ class EmailManager
         }
 
         // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
-        if ($this->emailAdditionalHeaders && !is_null($context['contact']->getContactType()) && $context['contact']->getContactType()->getObjectCode() == ContactType::TYPE_SUPPORT) {
+        if ($this->emailAdditionalHeaders && isset($context['contact']) && !is_null($context['contact']) && !is_null($context['contact']->getContactType()) && $context['contact']->getContactType()->getDemand() == ContactType::TYPE_SUPPORT) {
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
                 if ($this->translator->trans($value) == "senderEmail") {

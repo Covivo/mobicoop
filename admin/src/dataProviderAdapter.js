@@ -341,6 +341,7 @@ export const dataProviderAdapter = (originalProvider) => ({
     }
     if (resource === 'community_users') {
       console.log('COMMUNITY_USER: DATA:', params.data);
+      if (params.data.fromInReactAdmin !== 'custom') return new Promise((resolve) => {resolve({ ...params.data, data: { ...params.data } })});
       return fetchJson(`${process.env.REACT_APP_API}/community_users/add`, {
           method: 'POST',
           body: JSON.stringify(params.data),

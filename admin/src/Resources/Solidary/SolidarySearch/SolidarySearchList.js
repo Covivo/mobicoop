@@ -64,26 +64,26 @@ const SolidarySearchFilter = (props) => {
   );
 };
 
-const ActionsDropDown = ({ record, onRefresh, ...props }) => {
+const ActionsDropDown = ({ record, onRefresh, type, ...props }) => {
   // @TODO: Will work when authorId is available on the API
   // Moreover, shouldn't we retrieve the corresponding solution matchin instead of checking user ?
   const isAlreadySelected =
     props.solidary &&
     Array.isArray(props.solidary.solutions) &&
-    props.solidary.solutions.find((s) => s.UserId === record.solidaryResultCarpool.authorId);
+    props.solidary.solutions.find((s) => s.UserId === (record.solidaryResultCarpool?.authorId || record.solidaryResultTransport?.volunteerId));
 
   return (
     <SolidaryUserVolunteerActionDropDown
       {...props}
       omittedOptions={[isAlreadySelected && ADDPOTENTIAL_OPTION].filter((x) => x)}
-      userId={record.solidaryResultCarpool.authorId}
+      userId={record.solidaryResultCarpool?.authorId || record.solidaryResultTransport?.volunteerId}
       onActionFinished={onRefresh}
-      type="carpool"
+      type={type}
     />
   );
 };
 
-const CarpoolDatagrid = ({ solidary, onRefresh, ...props }) => (
+const CarpoolDatagrid = ({ solidary, onRefresh, type, ...props }) => (
   <Datagrid {...props}>
     <TextField
       source="solidaryResultCarpool.author"
@@ -109,12 +109,12 @@ const CarpoolDatagrid = ({ solidary, onRefresh, ...props }) => (
       source="solidaryResultCarpool.solidaryExlusive"
       label="resources.solidary_searches.fields.exclusive"
     />
-    <ActionsDropDown label="Action" solidary={solidary} onRefresh={onRefresh} />
+    <ActionsDropDown label="Action" solidary={solidary} onRefresh={onRefresh} type={type} />
   </Datagrid>
 );
 
-const TransportDatagrid = (
-  <Datagrid>
+const TransportDatagrid = ({ solidary, onRefresh, type, ...props }) => (
+  <Datagrid {...props}>
     <TextField
       source="solidaryResultTransport.home"
       label="resources.solidary_searches.fields.origin"
@@ -130,6 +130,7 @@ const TransportDatagrid = (
     <DayField label="custom.days.fri" source="solidaryResultTransport.schedule.fri" />
     <DayField label="custom.days.sat" source="solidaryResultTransport.schedule.sat" />
     <DayField label="custom.days.sun" source="solidaryResultTransport.schedule.sun" />
+    <ActionsDropDown label="Action" solidary={solidary} onRefresh={onRefresh} type={type} />
   </Datagrid>
 );
 
@@ -142,9 +143,9 @@ export const SolidarySearchListGuesser = (props) => {
   // if solidaryResultTransport is not null => it's a transport list
   const dynamicDatagrid = props.loading ? null : props.ids.length > 0 &&
     props.data[props.ids[0]].solidaryResultCarpool !== null ? (
-    <CarpoolDatagrid solidary={solidary} onRefresh={refresh} />
+    <CarpoolDatagrid solidary={solidary} onRefresh={refresh} type={props.filterValues.type} />
   ) : (
-    TransportDatagrid
+    <TransportDatagrid solidary={solidary} onRefresh={refresh} type={props.filterValues.type} />
   );
 
   return (

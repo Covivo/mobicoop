@@ -219,6 +219,7 @@ export const CommunityShow = (props) => {
             <ReferenceArrayField
               source="communityUsers"
               reference="community_users"
+              perPage={50}
               addLabel={false}
             >
               <List

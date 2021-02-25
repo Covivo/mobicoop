@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,15 @@
 
 namespace App\Event\Service;
 
+use App\App\Repository\AppRepository;
+use App\DataProvider\Entity\ApidaeProvider;
 use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
+use Exception;
 
 /**
  * Event manager.
@@ -44,16 +47,40 @@ class EventManager
     private $dispatcher;
     private $entityManager;
     private $geoTools;
+    private $provider;
+    private $appRepository;
+
+    const EVENT_PROVIDER_APIDAE = 'apidae';
+    const APP_ID = 1;
     
     /**
      * Constructor.
      */
-    public function __construct(EntityManagerInterface $entityManager, EventRepository $eventRepository, EventDispatcherInterface $dispatcher, GeoTools $geoTools)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventRepository $eventRepository,
+        EventDispatcherInterface $dispatcher,
+        GeoTools $geoTools,
+        AppRepository $appRepository,
+        String $eventProvider,
+        String $eventProviderApiKey,
+        String $eventProviderProjectId,
+        String $eventProviderSelectionId
+    ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
         $this->dispatcher = $dispatcher;
         $this->geoTools = $geoTools;
+        $this->eventProvider = $eventProvider;
+        $this->eventProviderApiKey = $eventProviderApiKey;
+        $this->eventProviderProjectId = $eventProviderProjectId;
+        $this->eventProviderSelectionId = $eventProviderSelectionId;
+        $this->appRepository = $appRepository;
+        switch ($eventProvider) {
+            case self::EVENT_PROVIDER_APIDAE:
+                $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
+                break;
+        }
     }
 
     /**
@@ -64,12 +91,17 @@ class EventManager
      */
     public function createEvent(Event $event)
     {
+        if (is_null($event->getUser()) && is_null($event->getApp())) {
+            throw new Exception("User or App are mandatory", 1);
+        }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
-
+        
         // We set the displayLabel of the event's address
         $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
-        
+        // we set the urlKey
+        $event->setUrlKey($this->generateUrlKey($event));
+
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
 
@@ -126,5 +158,52 @@ class EventManager
         }
         
         return $urlKey;
+    }
+
+    /**
+     * method to import external events
+     *
+     * @return void
+     */
+    public function importEvents()
+    {
+        $eventsToImport = $this->provider->getEvents();
+
+        foreach ($eventsToImport as $eventToImport) {
+            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
+            if (isset($event) && !is_null($event)) {
+                $event->setName($eventToImport->getName());
+                $event->setFromDate($eventToImport->getFromDate());
+                $event->setToDate($eventToImport->getToDate());
+                $event->setDescription($eventToImport->getDescription());
+                $event->setFullDescription($eventToImport->getFullDescription());
+                $event->setAddress($eventToImport->getAddress());
+                $event->setUrl($eventToImport->getUrl());
+                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
+            } else {
+                $event = new Event();
+                $event->setExternalId($eventToImport->getExternalId());
+                $event->setExternalSource($eventToImport->getExternalSource());
+                $event->setName($eventToImport->getName());
+                $event->setFromDate($eventToImport->getFromDate());
+                $event->setToDate($eventToImport->getToDate());
+                $event->setDescription($eventToImport->getDescription());
+                $event->setFullDescription($eventToImport->getFullDescription());
+                $event->setAddress($eventToImport->getAddress());
+                $event->setUrl($eventToImport->getUrl());
+                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
+                $event->setStatus(1);
+                $event->setPrivate(0);
+                $event->setUseTime(0);
+                $event->setApp($this->appRepository->find(self::APP_ID));
+            }
+            
+            if (is_null($event->getUser()) && is_null($event->getApp())) {
+                throw new Exception("User or App are mandatory", 1);
+            }
+            $this->entityManager->persist($event);
+            $this->entityManager->flush();
+        }
+        return;
     }
 }

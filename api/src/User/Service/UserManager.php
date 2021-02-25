@@ -79,6 +79,7 @@ use App\User\Entity\SsoUser;
 use App\User\Exception\UserNotFoundException;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
+use App\Payment\Repository\PaymentProfileRepository;
 
 /**
  * User manager service.
@@ -111,6 +112,7 @@ class UserManager
     private $blockManager;
     private $internalMessageManager;
     private $reviewManager;
+    private $paymentActive;
 
     // Default carpool settings
     private $chat;
@@ -160,7 +162,9 @@ class UserManager
         ReviewManager $reviewManager,
         array $domains,
         array $profile,
-        $passwordTokenValidity
+        $passwordTokenValidity,
+        string $paymentActive,
+        PaymentProfileRepository $paymentProfileRepository
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -193,6 +197,8 @@ class UserManager
         $this->reviewManager = $reviewManager;
         $this->profile = $profile;
         $this->passwordTokenValidity = $passwordTokenValidity;
+        $this->paymentProfileRepository = $paymentProfileRepository;
+        $this->paymentActive = $paymentActive;
     }
 
     /**
@@ -590,6 +596,26 @@ class UserManager
         // return the user
         return $user;
     }
+
+    /**
+     * Update the user infos on the payment provider platform
+     *
+     * @param User $user
+     * @return User
+     */
+    public function updatePaymentProviderUser(User $user)
+    {
+        // We check if the user have a payment profile
+        if ($this->paymentActive) {
+            $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
+            if (is_null($paymentProfiles) || count($paymentProfiles)==0 || is_null($paymentProfiles[0]->getIdentifier())) {
+                return $user;
+            }
+            $this->paymentProvider->updateUser($user);
+        }
+        return $user;
+    }
+
 
     /**
      * Encode a password for a user
