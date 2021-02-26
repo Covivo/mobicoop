@@ -77,7 +77,7 @@ class PTOperator
         $this->name = $name;
         
         return $this;
-    }    
+    }
 
     public function getCode(): string
     {
@@ -89,6 +89,5 @@ class PTOperator
         $this->code = $code;
         
         return $this;
-    }    
-
+    }
 }
