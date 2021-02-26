@@ -235,6 +235,7 @@
                   required
                 />
                 <v-menu
+                  v-if="birthDateDisplay"
                   ref="menu"
                   v-model="menu"
                   :close-on-content-click="false"
@@ -358,8 +359,23 @@
 
                 <!-- checkbox -->
                 <v-checkbox
-                  v-model="form.validation"
+                  v-if="!birthDateDisplay"
                   class="check mt-12"
+                  color="primary"
+                  :rules="form.checkboxLegalAgeRules"
+                  required
+                >
+                  <template v-slot:label>
+                    <div>
+                      {{ $t("legalAge.text") }}
+                    </div>
+                  </template>
+                </v-checkbox>
+
+
+                <!-- checkbox -->
+                <v-checkbox
+                  v-model="form.validation"
                   color="primary"
                   :rules="form.checkboxRules"
                   required
@@ -538,6 +554,10 @@ export default {
     newsSubscriptionDefault: {
       type: Boolean,
       default: false
+    },
+    birthDateDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -660,6 +680,9 @@ export default {
         homeAddress: null,
         checkboxRules: [
           (v) => !!v || this.$t("chart.required"),
+        ],
+        checkboxLegalAgeRules: [
+          (v) => !!v || this.$t("legalAge.required"),  
         ],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault
@@ -856,7 +879,11 @@ export default {
       return this.form.email && this.form.password && this.form.telephone != null 
     },
     step2Valid() {
-      return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
+      if (this.birthDateDisplay){
+        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
+      } else {
+        return this.form.familyName && this.form.givenName && this.form.gender != null
+      }
     },
     emitEvent: function() {
       this.$emit("change", {
