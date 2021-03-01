@@ -42,6 +42,7 @@ use App\PublicTransport\Service\PTDataProvider;
 use App\Geography\Entity\Address;
 use App\Match\Exception\MassException;
 use App\PublicTransport\Entity\PTCompany;
+use App\PublicTransport\Entity\PTOperator;
 
 /**
  * Cityway data provider.
@@ -676,6 +677,14 @@ class CitywayProvider implements ProviderInterface
 
             if (is_null($travelMode)) {
                 throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
+            }
+
+            // Operator
+            if(!is_null($data["PTRide"]["Operator"])){
+                $operator = new PTOperator($data["PTRide"]["Operator"]["id"]);
+                $operator->setName($data["PTRide"]["Operator"]["Name"]);
+                $operator->setCode($data["PTRide"]["Operator"]["Code"]);
+                $leg->setPtOperator($operator);
             }
 
             if (isset($data["PTRide"]["Departure"])) {
