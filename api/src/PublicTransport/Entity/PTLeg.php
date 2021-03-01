@@ -170,12 +170,6 @@ class PTLeg
      */
     private $ptsteps;
     
-    /**
-     * @var PTOperator Operator of this leg
-     * @Groups("pt")
-     */
-    private $ptOperator;
-
     public function __construct($id)
     {
         $this->id = $id;
@@ -382,18 +376,6 @@ class PTLeg
                 $ptstep->setPTLeg(null);
             }
         }
-        
-        return $this;
-    }
-
-    public function getPtOperator(): ?PTOperator
-    {
-        return $this->ptOperator;
-    }
-    
-    public function setPtOperator(?PTOperator $ptOperator): self
-    {
-        $this->ptOperator = $ptOperator;
         
         return $this;
     }

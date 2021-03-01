@@ -52,6 +52,7 @@ class PTCompany
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
+     * @Groups("pt")
      */
     private $id;
     

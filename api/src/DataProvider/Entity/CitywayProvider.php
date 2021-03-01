@@ -42,7 +42,6 @@ use App\PublicTransport\Service\PTDataProvider;
 use App\Geography\Entity\Address;
 use App\Match\Exception\MassException;
 use App\PublicTransport\Entity\PTCompany;
-use App\PublicTransport\Entity\PTOperator;
 
 /**
  * Cityway data provider.
@@ -679,13 +678,6 @@ class CitywayProvider implements ProviderInterface
                 throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
             }
 
-            // Operator
-            if(!is_null($data["PTRide"]["Operator"])){
-                $operator = new PTOperator($data["PTRide"]["Operator"]["id"]);
-                $operator->setName($data["PTRide"]["Operator"]["Name"]);
-                $operator->setCode($data["PTRide"]["Operator"]["Code"]);
-                $leg->setPtOperator($operator);
-            }
 
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -761,10 +753,11 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) {
                     $leg->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
                 }
-                if (isset($data["PTRide"]["PTNetwork"])) {
-                    $ptcompany = new PTCompany(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+
+                if (isset($data["PTRide"]["Operator"])) {
+                    $ptcompany = new PTCompany($data["PTRide"]["Operator"]["id"]); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                     if (isset($data["PTRide"]["PTNetwork"]["Name"])) {
-                        $ptcompany->setName($data["PTRide"]["PTNetwork"]["Name"]);
+                        $ptcompany->setName($data["PTRide"]["Operator"]["Name"]);
                     }
                     $ptline->setPTCompany($ptcompany);
                 }
