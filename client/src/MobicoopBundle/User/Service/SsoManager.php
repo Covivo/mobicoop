@@ -41,6 +41,7 @@ class SsoManager
         if (isset($params['state'])) {
             switch ($params['state']) {
                 case "GLConnect":
+                case "PassMobilite":
                     $return = ['ssoId'=>$params['code'], 'ssoProvider'=>$params['state']];
                 break;
             }
