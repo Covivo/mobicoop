@@ -208,6 +208,21 @@ services:
         tags:
             - { name: monolog.logger, channel: carpool }
     
+    App\Carpool\Repository\ProposalRepository:
+        arguments:
+            $params:
+                bearingRange: '%env(int:ALGORITHM_BEARING_RANGE)%'
+                useBearing: '%env(bool:ALGORITHM_USE_BEARING)%'
+                useBbox: '%env(bool:ALGORITHM_USE_BBOX)%'
+                usePassengerProportion: '%env(bool:ALGORITHM_USE_PASSENGER_PROPORTION)%'
+                useDistance: '%env(bool:ALGORITHM_USE_DISTANCE)%'
+                passengerProportion: '%env(float:ALGORITHM_PASSENGER_PROPORTION)%'
+                maxDistancePunctual: '%env(float:ALGORITHM_MAX_DISTANCE_PUNCTUAL)%'
+                maxDistanceRegular: '%env(float:ALGORITHM_MAX_DISTANCE_REGULAR)%'
+                distanceRatio: '%env(int:ALGORITHM_DISTANCE_RATIO)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\CarpoolExportManager:
         arguments:
             $carpoolExportUri: '%env(string:CARPOOL_EXPORT_URI)%'
