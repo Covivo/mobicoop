@@ -38,40 +38,55 @@
         {{ $t("userDelete") }}
       </v-card-text>
 
-      <div v-if="infosComplete.carpooler && !loading">
-        <v-btn
-          v-if="dataBlockerId==null"
-          class="ma-2"
-          rounded
-          text
-          color="error"
-          :loading="loadingBlock"
-          @click="block"
+      <v-row dense>
+        <v-col
+          cols="6"
+          class="text-right align-center"
         >
-          <v-icon left>
-            mdi-account-cancel-outline
-          </v-icon>
-          {{ $t('block') }}
-        </v-btn>
-        <v-btn
-          v-else
-          class="ma-2"
-          rounded
-          color="error"
-          :loading="loadingBlock"
-          @click="block"
+          <div v-if="infosComplete.carpooler && !loading">
+            <v-btn
+              v-if="dataBlockerId==null"
+              class="ma-2"
+              rounded
+              text
+              color="error"
+              :loading="loadingBlock"
+              @click="block"
+            >
+              <v-icon left>
+                mdi-account-cancel-outline
+              </v-icon>
+              {{ $t('block') }}
+            </v-btn>
+            <v-btn
+              v-else
+              class="ma-2"
+              rounded
+              color="error"
+              :loading="loadingBlock"
+              @click="block"
+            >
+              <v-icon left>
+                mdi-account-cancel
+              </v-icon> {{ $t('blocked') }}
+            </v-btn>        
+          </div>
+        </v-col>
+        <v-col
+          cols="6"
+          class="text-left align-center"
         >
-          <v-icon left>
-            mdi-account-cancel
-          </v-icon> {{ $t('blocked') }}
-        </v-btn>        
-      </div>
-      <div v-if="idRecipient">
-        <Report
-          :user-id="idRecipient"
-          :default-email="emailUser"
-        />
-      </div>
+          <div
+            v-if="idRecipient"
+            class="pa-2"
+          >
+            <Report
+              :user-id="idRecipient"
+              :default-email="emailUser"
+            />
+          </div>
+        </v-col>
+      </v-row>
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
