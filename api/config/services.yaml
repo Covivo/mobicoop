@@ -205,6 +205,10 @@ services:
                 dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
                 importChunkSize: '%env(int:IMPORT_PROPOSALS_CHUNK_SIZE)%'
                 importBatchMatchSize: '%env(int:IMPORT_PROPOSALS_BATCH_MATCH_SIZE)%'
+                maxDetourDistancePercent: '%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%'
+                maxDetourDurationPercent: '%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%'
+                minCommonDistanceCheck: '%env(int:ALGORITHM_MIN_COMMON_DISTANCE_CHECK)%'
+                minCommonDistancePercent: '%env(int:ALGORITHM_MIN_COMMON_DISTANCE_PERCENT)%'
         tags:
             - { name: monolog.logger, channel: carpool }
     
