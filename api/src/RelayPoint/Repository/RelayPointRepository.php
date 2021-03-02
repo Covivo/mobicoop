@@ -117,11 +117,13 @@ class RelayPointRepository
         
         if (!is_null($user) && $operationName == "public") {
             // for public list, we filter to get only publi relay points, or the ones related to a community where the user is a member
-            $query->where("rp.private is null or rp.private = 0")
+            $query->where("(rp.private is null or rp.private = 0) and rp.status = ".RelayPoint::STATUS_ACTIVE)
             ->leftJoin('rp.community', 'c')
             ->leftJoin('c.communityUsers', 'cu')
             ->orWhere("cu.user = :user")
             ->setParameter('user', $user);
+        } else {
+            $query->where("rp.status = ".RelayPoint::STATUS_ACTIVE);
         }
         $queryNameGenerator = new QueryNameGenerator();
 
