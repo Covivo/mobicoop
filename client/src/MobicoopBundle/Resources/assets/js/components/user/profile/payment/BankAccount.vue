@@ -43,13 +43,19 @@
               cols="12"
               md="10"
             >
-              <v-text-field
-                v-model="form.iban"
-                :counter="34"
-                :label="$t('form.label.iban')"
-                :rules="form.rules.ibanRules"
-                required
-              />        
+              <v-tooltip right>
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="form.iban"
+                    :counter="34"
+                    :label="$t('form.label.iban')"
+                    :rules="form.rules.ibanRules"
+                    required
+                    v-on="on"
+                  />  
+                </template>
+                <span>{{ $t('form.tooltip.iban') }}</span>
+              </v-tooltip>      
             </v-col>
           </v-row>
           <v-row justify="center">

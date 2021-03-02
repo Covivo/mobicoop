@@ -15,9 +15,8 @@
         cols="12"
         class="text-justify pt-4 font-italic"
         :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
-      >
-        {{ $t('text') }}
-      </v-col>
+        v-html="$t('text')"
+      />
     </v-row>
     <v-row v-if="validationAskedDate!=null || validationStatus > 0">
       <v-col cols="12">
@@ -80,10 +79,18 @@
           <v-file-input
             v-model="document"
             :accept="validationDocsAuthorizedExtensions"
-            :label="$t('fileInput')"
+            :label="$t('fileInput.label')"
             :disabled="!formActive"
+            :rules="identityProofRules"
+            counter
           />
         </template>
+        <p
+          class="text-justify font-italic ml-6"
+          :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
+        >
+          {{ $t('fileInput.tooltip') }}
+        </p>
       </v-col>
       <v-col cols="2">
         <v-btn 
@@ -135,7 +142,10 @@ export default {
   data () {
     return {
       document:null,
-      loading:false
+      loading:false,
+      identityProofRules: [
+        value => !value ||  value.size < 5000000 || this.$t("fileInput.error")
+      ],
     }
   },
   computed:{
@@ -159,21 +169,22 @@ export default {
   },
   methods: {
     send(){
-      let sendDocument = new FormData();
-      sendDocument.append("document", this.document);
-      this.loading = true;
-      axios
-        .post(this.$t('sendUrl'), sendDocument,
-          {
-            headers:{
-              'content-type': 'multipart/form-data'
-            }
-          })
-        .then(res => {
-          this.document = null;
-          this.loading = false;
-          this.$emit("identityDocumentSent",res.data);
-        });
+      console.log(this.document.size);
+      // let sendDocument = new FormData();
+      // sendDocument.append("document", this.document);
+      // this.loading = true;
+      // axios
+      //   .post(this.$t('sendUrl'), sendDocument,
+      //     {
+      //       headers:{
+      //         'content-type': 'multipart/form-data'
+      //       }
+      //     })
+      //   .then(res => {
+      //     this.document = null;
+      //     this.loading = false;
+      //     this.$emit("identityDocumentSent",res.data);
+      //   });
 
     }
   }
