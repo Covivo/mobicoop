@@ -66,7 +66,12 @@
           </v-icon> {{ $t('blocked') }}
         </v-btn>        
       </div>
-
+      <div v-if="idRecipient">
+        <Report
+          :user-id="idRecipient"
+          :default-email="emailUser"
+        />
+      </div>
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
@@ -221,10 +226,11 @@
 <script>
 
 import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadActions/";
-import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
-import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
-import VJourney from '@components/carpool/utilities/VJourney'
-import MatchingJourney from '@components/carpool/results/MatchingJourney'
+import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
+import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
+import VJourney from '@components/carpool/utilities/VJourney';
+import MatchingJourney from '@components/carpool/results/MatchingJourney';
+import Report from "@components/utilities/Report";
 import axios from "axios";
 import moment from "moment";
 
@@ -239,7 +245,8 @@ export default {
     ThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
-    MatchingJourney
+    MatchingJourney,
+    Report
   },
   props: {
     idAsk: {
@@ -248,6 +255,10 @@ export default {
     },
     idUser: {
       type: Number,
+      default: null
+    },
+    emailUser: {
+      type: String,
       default: null
     },
     idRecipient: {
