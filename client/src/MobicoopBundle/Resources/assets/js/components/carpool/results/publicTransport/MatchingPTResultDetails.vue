@@ -23,6 +23,7 @@
         <MatchingPTResultLeg
           :pt-leg="ptLeg"
           :arrow="false"
+          :show-company="true"
         />
       </v-col>
       <v-col :cols="nbColumn2">
