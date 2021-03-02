@@ -108,6 +108,10 @@ export default {
       type: Object,
       default: null
     },
+    userId:{
+      type: Number,
+      default: null
+    },
     defaultEmail:{
       type: String,
       default:null
@@ -166,6 +170,9 @@ export default {
       }
       else if(this.user){
         url = this.$t("routes.userReport", {id: this.user.id});
+      }
+      else if(this.userId){
+        url = this.$t("routes.userReport", {id: this.userId});
       }
       else{
         return;

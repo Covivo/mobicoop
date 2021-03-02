@@ -204,6 +204,7 @@
           <thread-actions
             :id-ask="currentIdAsk"
             :id-user="idUser"
+            :email-user="emailUser"
             :id-recipient="idRecipient"
             :loading-init="loadingDetails"
             :refresh="refreshActions"
@@ -249,6 +250,10 @@ export default {
   props: {
     idUser:{
       type: Number,
+      default:null
+    },
+    emailUser:{
+      type: String,
       default:null
     },
     idThreadDefault:{
