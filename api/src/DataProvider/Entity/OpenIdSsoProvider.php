@@ -119,12 +119,22 @@ class OpenIdSsoProvider implements SsoProviderInterface
             $data = json_decode($response->getValue(), true);
             $ssoUser = new SsoUser();
             $ssoUser->setSub($data['sub']);
-            $ssoUser->setEmail($data['email']);
-            $ssoUser->setFirstname($data['first_name']);
-            $ssoUser->setLastname($data['last_name']);
+            $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);
+            $ssoUser->setFirstname((isset($data['first_name'])) ? $data['first_name'] : ((isset($data['given_name'])) ? $data['given_name'] : null));
+            $ssoUser->setLastname((isset($data['last_name'])) ? $data['last_name'] : ((isset($data['family_name'])) ? $data['family_name'] : null));
             $ssoUser->setProvider($this->serviceName);
-            $ssoUser->setGender($data['gender']);
-            $ssoUser->setBirthdate($data['birthdate']);
+            $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
+            $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
+            
+
+            if (
+                is_null($ssoUser->getFirstname()) ||
+                is_null($ssoUser->getLastname()) ||
+                is_null($ssoUser->getEmail())
+            ) {
+                throw new \LogicException("Not enough infos about the User");
+            }
+
             return $ssoUser;
         } else {
             throw new \LogicException("Error get Token");
