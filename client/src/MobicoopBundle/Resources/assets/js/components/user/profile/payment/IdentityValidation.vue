@@ -52,7 +52,7 @@
             <v-icon class="error--text">
               mdi-close-circle-outline
             </v-icon>
-            {{ $t('status.refused') }}
+            {{ $t('status.refused.'+refusalReason) }}
           </v-card-text>          
           <!-- Outdated -->
           <v-card-text
@@ -82,6 +82,7 @@
             :label="$t('fileInput.label')"
             :disabled="!formActive"
             :rules="identityProofRules"
+            :show-size="1000"
             counter
           />
         </template>
@@ -137,6 +138,10 @@ export default {
     validationAskedDate: {
       type: Object,
       default: null
+    },
+    refusalReason: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -169,22 +174,21 @@ export default {
   },
   methods: {
     send(){
-      console.log(this.document.size);
-      // let sendDocument = new FormData();
-      // sendDocument.append("document", this.document);
-      // this.loading = true;
-      // axios
-      //   .post(this.$t('sendUrl'), sendDocument,
-      //     {
-      //       headers:{
-      //         'content-type': 'multipart/form-data'
-      //       }
-      //     })
-      //   .then(res => {
-      //     this.document = null;
-      //     this.loading = false;
-      //     this.$emit("identityDocumentSent",res.data);
-      //   });
+      let sendDocument = new FormData();
+      sendDocument.append("document", this.document);
+      this.loading = true;
+      axios
+        .post(this.$t('sendUrl'), sendDocument,
+          {
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
+        .then(res => {
+          this.document = null;
+          this.loading = false;
+          this.$emit("identityDocumentSent",res.data);
+        });
 
     }
   }

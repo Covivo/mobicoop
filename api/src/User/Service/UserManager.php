@@ -1453,6 +1453,8 @@ class UserManager
                     $bankaccount->setIban($iban);
                     $bankaccount->setBic($bic);
                     
+                    $bankaccount->setRefusalReason($paymentProfile->getRefusalReason());
+
                     $bankAccounts[] = $bankaccount;
                 }
             }

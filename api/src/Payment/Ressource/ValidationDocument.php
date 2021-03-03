@@ -66,6 +66,15 @@ use App\Payment\Controller\UploadValidationDocumentAction;
 class ValidationDocument
 {
     const DEFAULT_ID = "999999999999";
+    const OUT_OF_DATE = 1;
+    const UNDERAGE_PERSON = 2;
+    const DOCUMENT_FALSIFIED = 3;
+    const DOCUMENT_MISSING = 4;
+    const DOCUMENT_HAS_EXPIRED = 5;
+    const DOCUMENT_NOT_ACCEPTED = 6;
+    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    const DOCUMENT_UNREADABLE = 8;
+    const DOCUMENT_INCOMPLETE = 9;
 
     /**
      * @var int The id of this document
@@ -129,6 +138,12 @@ class ValidationDocument
      * @Groups({"readPayment","writePayment"})
      */
     private $identifier;
+
+    /**
+     * @var int The status of the validation document
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $status;
 
     public function __construct()
     {
@@ -229,5 +244,17 @@ class ValidationDocument
     public function setIdentifier(?string $identifier)
     {
         $this->identifier = $identifier;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(String $status): self
+    {
+        $this->status = $status;
+        
+        return $this;
     }
 }

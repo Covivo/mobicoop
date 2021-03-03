@@ -184,6 +184,7 @@
             :payment-profile-status="(bankCoordinates) ? bankCoordinates.status : 0"
             :validation-status="(bankCoordinates) ? bankCoordinates.validationStatus : 0"
             :validation-asked-date="(bankCoordinates) ? bankCoordinates.validationAskedDate : null"
+            :refusal-reason="(bankCoordinates) ? bankCoordinates.refusalReason : null"
             @identityDocumentSent="identityDocumentSent"
           />
         </v-col>

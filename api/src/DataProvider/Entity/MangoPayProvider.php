@@ -73,6 +73,17 @@ class MangoPayProvider implements PaymentProviderInterface
     const VALIDATION_DOC_TYPE = "IDENTITY_PROOF";
     const VALIDATION_ASKED = "VALIDATION_ASKED";
 
+    const OUT_OF_DATE = "OUT_OF_DATE";
+    const UNDERAGE_PERSON = "UNDERAGE_PERSON";
+    const DOCUMENT_FALSIFIED = "DOCUMENT_FALSIFIED";
+    const DOCUMENT_MISSING = "DOCUMENT_MISSING";
+    const DOCUMENT_HAS_EXPIRED = "DOCUMENT_HAS_EXPIRED";
+    const DOCUMENT_NOT_ACCEPTED = "DOCUMENT_NOT_ACCEPTED";
+    const DOCUMENT_DO_NOT_MATCH_USER_DATA = "DOCUMENT_DO_NOT_MATCH_USER_DATA";
+    const DOCUMENT_UNREADABLE = "DOCUMENT_UNREADABLE";
+    const DOCUMENT_INCOMPLETE = "DOCUMENT_INCOMPLETE";
+
+
     private $user;
     private $serverUrl;
     private $authChain;
@@ -742,5 +753,50 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $wallet;
+    }
+
+    public function getDocument($validationDocumentId)
+    {
+        $dataProvider = new DataProvider($this->serverUrl."kyc/documents/".$validationDocumentId."/");
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $validationDocument = new ValidationDocument;
+        $response = $dataProvider->getCollection(null, $headers);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            switch ($data['RefusedReasonType']) {
+                case self::OUT_OF_DATE:
+                    $validationDocument->setStatus(ValidationDocument::OUT_OF_DATE);
+                    break;
+                case self::UNDERAGE_PERSON:
+                    $validationDocument->setStatus(ValidationDocument::UNDERAGE_PERSON);
+                    break;
+                case self::DOCUMENT_FALSIFIED:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_FALSIFIED);
+                    break;
+                case self::DOCUMENT_MISSING:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_MISSING);
+                    break;
+                case self::DOCUMENT_HAS_EXPIRED:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_HAS_EXPIRED);
+                    break;
+                case self::DOCUMENT_NOT_ACCEPTED:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_NOT_ACCEPTED);
+                    break;
+                case self::DOCUMENT_DO_NOT_MATCH_USER_DATA:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_DO_NOT_MATCH_USER_DATA);
+                    break;
+                case self::DOCUMENT_UNREADABLE:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_UNREADABLE);
+                    break;
+                case self::DOCUMENT_INCOMPLETE:
+                    $validationDocument->setStatus(ValidationDocument::DOCUMENT_INCOMPLETE);
+                    break;
+            }
+        } else {
+            throw new PaymentException(PaymentException::ERROR_DOC);
+        }
+        return $validationDocument;
     }
 }
