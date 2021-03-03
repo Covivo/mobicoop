@@ -88,7 +88,7 @@ class Paragraph
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","read"})
      */
     private $id;
             
@@ -96,7 +96,7 @@ class Paragraph
      * @var string The text of the paragraph.
      *
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $text;
 
@@ -104,7 +104,7 @@ class Paragraph
      * @var int The position of the paragraph in the section.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $position;
 
@@ -112,7 +112,7 @@ class Paragraph
      * @var int The status of publication of the paragraph.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $status;
 
