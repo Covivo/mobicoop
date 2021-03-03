@@ -4,7 +4,7 @@
     "fileInput": {
         "label" : "Document d'identité à jour",
         "error": "Le document ne doit pas dépasser 7MB",
-        "tooltip": "Le document doit être au format jpg, jpeg, png, gif ou pdf et ne doit pas excéder 7MB"
+        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf et ne doit pas excéder 7MB"
     },
     "send": "Envoyer",
     "status": {
@@ -13,12 +13,12 @@
         "outdated": "Document expiré",
         "refused": {
             "0" : "Document refusé",
-            "1" : "Document refusé car date dépassée",
+            "1" : "Vos données personnelles ont changé veuillez valider à nouveau votre identité",
             "2" : "Document refusé car vous devez être majeur",
             "3" : "Document refusé car falsifié",
             "4" : "Document refusé car le fichier est vide",
             "5" : "Document refusé car le document a expiré",
-            "6" : "Document refusé car document non accepté",
+            "6" : "Document refusé car type de document non accepté",
             "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
             "8" : "Document refusé car illisible",
             "9" : "Document refusé car incomplet"
