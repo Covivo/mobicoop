@@ -41,7 +41,15 @@ use App\RelayPoint\Entity\RelayPointType;
  *          "force_eager"=false,
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get",
+ *          "ADMIN_get"={
+ *              "path"="/admin/icons",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *          },
  *      },
  *      itemOperations={
  *          "get"
@@ -58,7 +66,7 @@ class Icon
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readRelayPoint"})
+     * @Groups({"aRead","read","readRelayPoint"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -67,7 +75,7 @@ class Icon
      * @var string The name of the icon.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readRelayPoint"})
+     * @Groups({"aRead","read","readRelayPoint"})
      */
     private $name;
 
@@ -104,6 +112,18 @@ class Icon
      * @MaxDepth(1)
      */
     private $privateIconLinked;
+
+    /**
+    * @var string|null The private icon name
+    * @Groups("aRead")
+    */
+    private $privateName;
+
+    /**
+     * @var string|null The private icon url
+     * @Groups("aRead")
+     */
+    private $privateUrl;
 
     public function __construct()
     {
@@ -194,5 +214,21 @@ class Icon
         }
         
         return $this;
+    }
+
+    public function getPrivateName(): ?string
+    {
+        if ($this->getPrivateIconLinked()) {
+            return $this->getPrivateIconLinked()->getName();
+        }
+        return null;
+    }
+
+    public function getPrivateUrl(): ?string
+    {
+        if ($this->getPrivateIconLinked()) {
+            return $this->getPrivateIconLinked()->getUrl();
+        }
+        return null;
     }
 }

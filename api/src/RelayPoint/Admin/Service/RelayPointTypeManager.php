@@ -23,9 +23,11 @@
 
 namespace App\RelayPoint\Admin\Service;
 
+use App\Image\Repository\IconRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use Doctrine\ORM\EntityManagerInterface;
 use App\RelayPoint\Entity\RelayPointType;
+use App\RelayPoint\Exception\RelayPointTypeException;
 
 /**
  * Relay point type manager for admin context.
@@ -35,6 +37,7 @@ use App\RelayPoint\Entity\RelayPointType;
 class RelayPointTypeManager
 {
     private $entityManager;
+    private $iconRepository;
 
     /**
      * Constructor
@@ -42,9 +45,11 @@ class RelayPointTypeManager
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        IconRepository $iconRepository
     ) {
         $this->entityManager = $entityManager;
+        $this->iconRepository = $iconRepository;
     }
 
     /**
@@ -55,6 +60,14 @@ class RelayPointTypeManager
      */
     public function addRelayPointType(RelayPointType $relayPointType)
     {
+        if ($relayPointType->getIconId()) {
+            if ($icon = $this->iconRepository->find($relayPointType->getIconId())) {
+                $relayPointType->setIcon($icon);
+            } else {
+                throw new RelayPointTypeException("Relay point type icon not found");
+            }
+        }
+
         // persist the relay point type
         $this->entityManager->persist($relayPointType);
         $this->entityManager->flush();
@@ -71,6 +84,18 @@ class RelayPointTypeManager
      */
     public function patchRelayPointType(RelayPointType $relayPointType, array $fields)
     {
+        // check if icon has changed
+        if (in_array('iconId', array_keys($fields))) {
+            if ($fields['iconId'] === null) {
+                $relayPointType->setIcon(null);
+            } elseif ($icon = $this->iconRepository->find($fields['iconId'])) {
+                // set the new icon
+                $relayPointType->setIcon($icon);
+            } else {
+                throw new RelayPointTypeException("Relay point type icon not found");
+            }
+        }
+
         // persist the relay point type
         $this->entityManager->persist($relayPointType);
         $this->entityManager->flush();

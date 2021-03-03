@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,39 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Image\Repository;
+namespace App\Image\Admin\DataProvider;
 
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Image\Admin\Service\IconManager;
 use App\Image\Entity\Icon;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Icon|null find($id, $lockMode = null, $lockVersion = null)
+ * Collection data provider for icons in administration context.
+ *
  */
-class IconRepository
+final class IconCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
+    protected $iconManager;
+
+    public function __construct(IconManager $iconManager)
+    {
+        $this->iconManager = $iconManager;
+    }
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        $this->repository = $entityManager->getRepository(Icon::class);
+        return Icon::class === $resourceClass && $operationName === "ADMIN_get";
     }
-
-    public function find(int $id): ?Icon
+    
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->repository->find($id);
-    }
-
-    public function findAll(): array
-    {
-        return $this->repository->findAll();
-    }
-
-    public function findBy(array $criteria): array
-    {
-        return $this->repository->findBy($criteria);
+        return $this->iconManager->getIcons();
     }
 }

@@ -146,7 +146,7 @@ class RelayPointType
      * @var Icon|null The icon related to the relayPointType.
      *
      * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
-     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     * @Groups({"readRelayPoint","writeRelayPoint"})
      * @MaxDepth(1)
      */
     private $icon;
@@ -166,6 +166,37 @@ class RelayPointType
      * @Groups({"readRelayPoint"})
      */
     private $updatedDate;
+
+    /**
+     * @var int|null The relay point type icon id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $iconId;
+
+    /**
+     * @var string|null The relay point type icon name
+     * @Groups("aRead")
+     */
+    private $iconName;
+
+    /**
+     * @var string|null The relay point type private icon name
+     * @Groups("aRead")
+     */
+    private $iconPrivateName;
+
+    /**
+     * @var string|null The relay point type icon url
+     * @Groups("aRead")
+     */
+    private $iconUrl;
+
+    /**
+     * @var string|null The relay point type private icon url
+     * @Groups("aRead")
+     */
+    private $iconPrivateUrl;
+
 
     public function __construct()
     {
@@ -259,6 +290,52 @@ class RelayPointType
 
         return $this;
     }
+
+    public function getIconId(): int
+    {
+        if (is_null($this->iconId)) {
+            return $this->getIcon()->getId();
+        }
+        return $this->iconId;
+    }
+
+    public function setIconId(?int $iconId)
+    {
+        $this->iconId = $iconId;
+    }
+
+    public function getIconName(): ?string
+    {
+        if ($this->getIcon()) {
+            return $this->getIcon()->getName();
+        }
+        return null;
+    }
+
+    public function getIconPrivateName(): ?string
+    {
+        if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
+            return $this->getIcon()->getPrivateIconLinked()->getName();
+        }
+        return null;
+    }
+
+    public function getIconUrl(): ?string
+    {
+        if ($this->getIcon()) {
+            return $this->getIcon()->getUrl();
+        }
+        return null;
+    }
+
+    public function getIconPrivateUrl(): ?string
+    {
+        if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
+            return $this->getIcon()->getPrivateIconLinked()->getUrl();
+        }
+        return null;
+    }
+
 
     // DOCTRINE EVENTS
     
