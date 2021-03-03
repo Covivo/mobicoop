@@ -1305,6 +1305,12 @@ class PaymentManager
         }
     }
 
+    /**
+     * Get the reason why the document is refused
+     *
+     * @param PaymentProfile $paymentProfile
+     * @return PaymentProfile
+     */
     public function getRefusalReason(PaymentProfile $paymentProfile)
     {
         $validationDocument = $this->paymentProvider->getDocument($paymentProfile->getValidationId());
