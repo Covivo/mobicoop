@@ -140,6 +140,12 @@ class ProfileSummary
      */
     private $experienced;
 
+    /**
+     * @var int|null The savedCo2 of this user in grams
+     * @Groups({"readProfileSummary","readPublicProfile"})
+     */
+    private $savedCo2;
+
     public function __construct($id=null)
     {
         if (!is_null($id)) {
@@ -290,4 +296,16 @@ class ProfileSummary
 
         return $this;
     }
+
+    public function getSavedCo2(): ?int
+    {
+        return $this->savedCo2;
+    }
+
+    public function setSavedCo2(?int $savedCo2): self
+    {
+        $this->savedCo2 = $savedCo2;
+
+        return $this;
+    }    
 }
