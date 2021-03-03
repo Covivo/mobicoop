@@ -1,6 +1,6 @@
 # Release 1.26.0
 * Display public transport operator in results. Show duration of the journey.
-
+* CO2 economy is computed by the API and visible in user's public profile and user's profile
 
 # Release 1.24.0
 * New RGPD compliant Cookie component. There is mandatory and optionnal cookie consent to give. Some features won't be available without consent.
