@@ -307,5 +307,5 @@ class ProfileSummary
         $this->savedCo2 = $savedCo2;
 
         return $this;
-    }    
+    }
 }

@@ -1712,16 +1712,15 @@ class UserManager
 
         // The saved distance depends if you're the driver or the passenger
         
-        if($driver){
-            // ********* If you are the driver : 
+        if ($driver) {
+            // ********* If you are the driver :
             // Without carpool you would've traveled $originalDriverDistance
             // Without carpool your passenger would've traveled $originalPassengerDistance
             // By taking a carpooler you made did $newDistance
             // So, the economie was : $originalDriverDistance + $originalPassengerDistance - $newDistance
             $savedDistance = $originalDriverDistance + $originalPassengerDistance - $newDistance;
-        }
-        else{
-            // ********* If you are the passenger : 
+        } else {
+            // ********* If you are the passenger :
             // Without carpool you would've traveled $originalPassengerDistance
             // By asking for a driver you cost extra $detourDistance in addition of the driver's original trip
             // So for you, the economie is $originalPassengerDistance - $detour
@@ -1729,7 +1728,7 @@ class UserManager
         }
 
         // If the is a Ask linked, it's twice the economy (round trip)
-        if(!is_null($ask->getAskLinked())){
+        if (!is_null($ask->getAskLinked())) {
             $savedDistance = $savedDistance * 2;
         }
 
