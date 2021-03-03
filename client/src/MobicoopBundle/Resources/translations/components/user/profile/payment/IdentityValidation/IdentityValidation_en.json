@@ -18,10 +18,10 @@
             "3" : "Document refusé car falsifié",
             "4" : "Document refusé car le fichier est vide",
             "5" : "Document refusé car le document a expiré",
-            "6" : "Document refusé car document non accépté",
+            "6" : "Document refusé car document non accepté",
             "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
             "8" : "Document refusé car illisible",
-            "9" : "Document refusé car imcomplet"
+            "9" : "Document refusé car incomplet"
         }
     },
     "sendUrl": "/utilisateur/document-validation-identite/envoyer"
