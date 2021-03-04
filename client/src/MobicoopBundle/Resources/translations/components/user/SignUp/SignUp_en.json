@@ -77,6 +77,10 @@
     "newsSubscription":{
         "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
     },
+    "legalAge": {
+        "text": "Je confirme être âgé d'au moins 18 ans",
+        "required": "Requis"
+    },
     "communities": {
         "route": "/user/register/community-list"
     },
