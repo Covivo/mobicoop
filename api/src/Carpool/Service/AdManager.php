@@ -1483,8 +1483,8 @@ class AdManager
          * @var Criteria $criterion
          */
         foreach ($criteria as $criterion) {
-            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
+            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
             $this->entityManager->persist($criterion);
         }
         $this->entityManager->flush();

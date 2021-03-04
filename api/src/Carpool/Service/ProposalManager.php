@@ -400,8 +400,8 @@ class ProposalManager
                 //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
-                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
+                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
             }
         }
         if ($proposal->getCriteria()->isPassenger()) {
@@ -778,8 +778,8 @@ class ProposalManager
                     //$direction = $this->zoneManager->createZonesForDirection($direction);
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionDriver($direction);
-                    $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-                    $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+                    $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
+                    $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
                 }
                 if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
