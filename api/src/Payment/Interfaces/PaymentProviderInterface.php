@@ -39,6 +39,7 @@ use App\Payment\Ressource\ValidationDocument;
  * A payment provider entity class must implement all these methods in order to perform all possible payment related actions
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  *
  */
 interface PaymentProviderInterface
@@ -52,6 +53,14 @@ interface PaymentProviderInterface
      * @return string The identifier
      */
     public function registerUser(User $user, Address $address=null);
+
+    /**
+     * Update a User on the platform
+     *
+     * @param User $user            The User to update
+     * @return string The identifier
+     */
+    public function updateUser(User $user);
 
     /**
      * Returns a collection of Bank accounts.

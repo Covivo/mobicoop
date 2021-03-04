@@ -90,7 +90,7 @@ export default {
     token: {
       type: String,
       default: ''
-    }    
+    }
   },
   data () {
     return {

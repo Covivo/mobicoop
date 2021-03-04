@@ -98,9 +98,9 @@
       <v-col
         class="text-center mt-16"
       >
-        <h2 class="primary--text font-weight-bold">
+        <h3 class="primary--text font-weight-bold">
           {{ $t('privateEvent.title') }}
-        </H2>
+        </h3>
         <h3 class="primary--text font-italic">
           {{ $t('privateEvent.subtitle') }}
         </h3>
@@ -177,9 +177,9 @@
           md="12"
           class="px-14"
         >
-          <h2 class="primary--text  font-weight-bold mt-16">
+          <h3 class="primary--text  font-weight-bold mt-16">
             {{ $t('articles.title') }}
-          </h2>
+          </h3>
 
           <m-rss-articles
             :articles="article"
@@ -227,6 +227,10 @@ export default {
     article: {
       type: Object,
       default: null
+    },
+    userId: {
+      type: Number,
+      default: null
     }
   },
   data () {
@@ -242,6 +246,11 @@ export default {
 <style lang="scss" scoped>
   h2{
     font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  h3{
+    font-size: 1.8rem;
     line-height: 1.2;
   }
 </style>

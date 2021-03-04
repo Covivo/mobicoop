@@ -182,6 +182,9 @@ else
     cd /var/www/$INSTANCE/$VERSION/client;
     php bin/console cache:clear --env=$VERSION_MIGRATE;
 
+    # Remove maintenance page
+    rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
+
     #Admin build
     cd /var/www/$INSTANCE/$VERSION/admin;
     rm -Rf node_modules;

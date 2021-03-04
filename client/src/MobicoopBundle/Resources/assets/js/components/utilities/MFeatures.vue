@@ -4,11 +4,11 @@
       <v-col
         class="text-left mt-16"
       >
-        <h2
+        <h3
           class="primary--text font-weight-bold"
         >
           {{ $t('title') }}
-        </h2>       
+        </h3>       
       </v-col>
       <v-spacer />
     </v-row>
@@ -58,9 +58,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-  h2{
-        font-size: 2rem;
-
+h3{
+    font-size: 1.8rem;
     line-height: 1.2;
   }
 </style>

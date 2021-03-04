@@ -57,8 +57,39 @@
             cols="12"
             class="text-left"
           >
-            <v-icon>mdi-car</v-icon> {{ $t('infos.carpoolRealized') }} : {{ profileSummary.carpoolRealized }}<br>
-            <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%
+            <v-row dense>
+              <v-col>
+                <v-icon>mdi-car</v-icon> {{ $t('infos.carpoolRealized') }} : {{ profileSummary.carpoolRealized }}
+              </v-col>
+            </v-row>
+            <v-row dense>
+              <v-col>
+                <v-icon>mdi-chat-processing</v-icon> {{ $t('infos.answerPct') }} : {{ profileSummary.answerPct }}%
+              </v-col>
+            </v-row>
+            <v-row
+              v-if="lastConnection"
+              dense
+            >
+              <v-col
+                cols="1"
+                class="mr-2"
+              >
+                <v-icon>mdi-account-clock</v-icon>
+              </v-col>
+              <v-col>
+                <v-row dense>
+                  <v-col>
+                    {{ $t('infos.lastConnection') }} :
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col>
+                    {{ lastConnection }}
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </div>
@@ -67,6 +98,7 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import {messages_en, messages_fr} from "@translations/components/user/profile/ProfileSummary/";
 export default {
@@ -103,6 +135,15 @@ export default {
       loading:true,
       experienced:false
     }
+  },
+  computed:{
+    lastConnection(){
+      if (this.profileSummary.lastActivityDate) {
+        return moment(this.profileSummary.lastActivityDate.date).format('DD/MM/YYYY');
+      }
+      return "-";
+      
+    },
   },
   watch:{
     refresh(){

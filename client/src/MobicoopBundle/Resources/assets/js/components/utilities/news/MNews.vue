@@ -10,12 +10,12 @@
         cols="7"
         class="text-right"
       >
-        <h2 class="primary--text font-italic">
+        <h3 class="primary--text font-italic">
           {{ $t('news.title') }}
-        </h2>
-        <h2 class="primary--text font-weight-bold">
+        </h3>
+        <h3 class="primary--text font-weight-bold">
           {{ $t('news.subtitle') }}
-        </h2>
+        </h3>
         <p>
           {{ $t('news.text') }}
         </p>
@@ -71,9 +71,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  h2{
-        font-size: 2rem;
-
+h3{
+    font-size: 1.8rem;
     line-height: 1.2;
   }
 </style>

@@ -8,9 +8,9 @@
       min-height="628px"
     >
       <v-card-title>
-        <p class="font-weight-bold black--text text-left text-h5 mt-4">
+        <h3 class="font-weight-bold black--text text-left mt-4">
           {{ article.title }}
-        </p>
+        </h3>
       </v-card-title>
       <v-img
         v-if="article.image"
@@ -68,3 +68,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  h3{
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+</style>
+
