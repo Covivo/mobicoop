@@ -418,6 +418,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $unreadSolidaryMessageNumber;
     
+    /**
+     * @var int|null The savedCo2 of this user in grams
+     */
+    private $savedCo2;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1250,6 +1255,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getSavedCo2(): ?int
+    {
+        return $this->savedCo2;
+    }
+
+    public function setSavedCo2(?int $savedCo2): self
+    {
+        $this->savedCo2 = $savedCo2;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1287,7 +1304,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'validatedDate'         => $this->getValidatedDate(),
             'unreadCarpoolMessageNumber'    => $this->getUnreadCarpoolMessageNumber(),
             'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
-            'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber()
+            'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
+            'savedCo2'   => $this->getSavedCo2()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

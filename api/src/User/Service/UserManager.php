@@ -52,6 +52,7 @@ use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Communication\Service\InternalMessageManager;
 use App\Community\Entity\Community;
+use App\Geography\Service\GeoTools;
 use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
@@ -125,6 +126,8 @@ class UserManager
     private $profile;
     private $passwordTokenValidity;
 
+    private $geoTools;
+
     /**
         * Constructor.
         *
@@ -164,7 +167,8 @@ class UserManager
         array $profile,
         $passwordTokenValidity,
         string $paymentActive,
-        PaymentProfileRepository $paymentProfileRepository
+        PaymentProfileRepository $paymentProfileRepository,
+        GeoTools $geoTools
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -199,6 +203,7 @@ class UserManager
         $this->passwordTokenValidity = $passwordTokenValidity;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->paymentActive = $paymentActive;
+        $this->geoTools = $geoTools;
     }
 
     /**
@@ -1560,12 +1565,16 @@ class UserManager
         $asks = $this->askRepository->findAcceptedAsksForUser($user);
         // We count only one way and outward of a round trip
         $nbAsks = 0;
+        $totalSavedCo2 = 0;
         foreach ($asks as $ask) {
             if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+                // Compute the saved Co2 for this Ask
+                $totalSavedCo2 += $this->computeSavedCo2($ask, $user->getId());
                 $nbAsks++;
             }
         }
         $profileSummary->setCarpoolRealized($nbAsks);
+        $profileSummary->setSavedCo2($totalSavedCo2);
 
         // Get the first messages of every threads the user is involved in
         $threads = $this->messageRepository->findThreads($user);
@@ -1678,5 +1687,51 @@ class UserManager
             }
         }
         return $user;
+    }
+
+    /**
+     * Compute the saved Co2 on a Ask by a user
+     *
+     * @param Ask $ask          The Ask
+     * @param integer $userId   The User id
+     * @return integer
+     */
+    public function computeSavedCo2(Ask $ask, int $userId): int
+    {
+        $driver = ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId);
+
+        // Original driver distance
+        $originalDriverDistance = $ask->getMatching()->getOriginalDistance();
+
+        // Original passenger distance
+        $originalPassengerDistance = $ask->getMatching()->getProposalRequest()->getCriteria()->getDirectionPassenger()->getDistance();
+
+        // Get the carpooled distance and the detour distance
+        $newDistance = $ask->getMatching()->getNewDistance();
+        $detourDistance = $ask->getMatching()->getDetourDistance();
+
+        // The saved distance depends if you're the driver or the passenger
+        
+        if ($driver) {
+            // ********* If you are the driver :
+            // Without carpool you would've traveled $originalDriverDistance
+            // Without carpool your passenger would've traveled $originalPassengerDistance
+            // By taking a carpooler you made did $newDistance
+            // So, the economie was : $originalDriverDistance + $originalPassengerDistance - $newDistance
+            $savedDistance = $originalDriverDistance + $originalPassengerDistance - $newDistance;
+        } else {
+            // ********* If you are the passenger :
+            // Without carpool you would've traveled $originalPassengerDistance
+            // By asking for a driver you cost extra $detourDistance in addition of the driver's original trip
+            // So for you, the economie is $originalPassengerDistance - $detour
+            $savedDistance = $originalPassengerDistance - $detourDistance;
+        }
+
+        // If the is a Ask linked, it's twice the economy (round trip)
+        if (!is_null($ask->getAskLinked())) {
+            $savedDistance = $savedDistance * 2;
+        }
+
+        return $this->geoTools->getCO2($savedDistance);
     }
 }
