@@ -91,6 +91,9 @@
               />
             </v-col>
           </v-row>
+          <v-row class="text-left">
+            <v-col cols="6"><v-alert type="success">{{ $t('savedCo2',{savedCo2:savedCo2}) }} CO<sup>2</sup></v-alert></v-col>
+          </v-row>
           <v-row class="text-left title font-weight-bold">
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
@@ -680,6 +683,9 @@ export default {
         return moment.utc(this.birthDay).format("YYYY-MM-DD");
       }
       return null;
+    },
+    savedCo2(){
+      return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
     }
   },
   mounted() {
@@ -897,7 +903,7 @@ export default {
       let maxDate = new Date();
       maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
-    },
+    }
   }
 }
 </script>

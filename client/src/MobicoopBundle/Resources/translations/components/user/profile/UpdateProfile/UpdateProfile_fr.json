@@ -164,5 +164,6 @@
     },
     "save": "Enregistrer",
     "yes": "oui",
-    "no": "non"
+    "no": "non",
+    "savedCo2":"Vous avez économisé {savedCo2} t de"
 }
