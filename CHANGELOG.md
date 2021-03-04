@@ -1,9 +1,12 @@
 # Release 1.26.0
 * Display public transport operator in results. Show duration of the journey.
 
+# Release 1.25.0
+* Give the reason of the refusal when an identity document is refused.
 
 # Release 1.24.0
 * New RGPD compliant Cookie component. There is mandatory and optionnal cookie consent to give. Some features won't be available without consent.
+* Can import event from APIDAE api.
 
 # Release 1.22.0
 * New contact recipients system
