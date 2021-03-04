@@ -1,0 +1,2 @@
+structure_id
+territory_id

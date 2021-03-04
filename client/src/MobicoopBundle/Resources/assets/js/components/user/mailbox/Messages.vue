@@ -462,6 +462,7 @@ export default {
     refreshActionsCompleted(){
       this.loadingDetails = false;
       this.refreshActions = false;
+      this.loadingBtnAction = false;
     }
   }
 };

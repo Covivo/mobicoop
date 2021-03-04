@@ -83,6 +83,7 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserUpdatedSelf(UserUpdatedSelfEvent $event)
     {
+        $this->userManager->updatePaymentProviderUser($event->getUser());
         $this->notificationManager->notifies(UserUpdatedSelfEvent::NAME, $event->getUser());
     }
 

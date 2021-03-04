@@ -50,7 +50,12 @@ const createSolidarySolutionResolver = (dataProvider, type) => async (userId, so
   // Attempt to find a matching solution and create it
   const matchings = await getSolidaryMatching();
   // Moreover, shouldn't we retrieve the corresponding solution matching instead of checking user ?
-  const matching = matchings.find((m) => !!m.solidaryMatching);
+  let matching = null;
+  if (type === 'carpool') {
+    matching = matchings.find((m) => m.solidaryResultCarpool.authorId === userId);
+  } else if (type === 'transport') {
+    matching = matchings.find((m) => m.solidaryResultTransport.volunteerId === userId);
+  }
   if (!matching) {
     throw new Error("Can't find matching solution");
   }

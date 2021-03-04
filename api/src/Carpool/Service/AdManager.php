@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\App\Service\AppManager;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
@@ -84,6 +85,7 @@ class AdManager
     private $proofManager;
     private $subjectRepository;
     private $addressManager;
+    private $appManager;
 
     private $currentMargin = null;
 
@@ -93,7 +95,7 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository, AddressManager $addressManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository, AddressManager $addressManager, AppManager $appManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -114,6 +116,7 @@ class AdManager
         $this->proofManager = $proofManager;
         $this->subjectRepository = $subjectRepository;
         $this->addressManager = $addressManager;
+        $this->appManager = $appManager;
         if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
             $this->params["paymentActiveDate"]->setTime(0, 0);
             $this->params["paymentActive"] = true;
@@ -163,6 +166,15 @@ class AdManager
                 $outwardProposal->setUserDelegate($poster);
             } else {
                 throw new UserNotFoundException('Poster ' . $ad->getPosterId() . ' not found');
+            }
+        }
+
+        // we check if the ad is posted from an Interoperability app
+        if ($ad->getAppPosterId()) {
+            if ($poster = $this->appManager->getApp($ad->getAppPosterId())) {
+                $outwardProposal->setAppDelegate($poster);
+            } else {
+                throw new UserNotFoundException('Poster App ' . $ad->getAppPosterId() . ' not found');
             }
         }
 

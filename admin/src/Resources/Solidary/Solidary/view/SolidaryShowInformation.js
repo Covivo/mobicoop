@@ -59,7 +59,7 @@ const driverSearchOptions = [
   },
   can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole aller',
-    target: 'solidary_volunteers',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({
       way: 'outward',
       type: 'transport',
@@ -68,7 +68,7 @@ const driverSearchOptions = [
   },
   can('solidary_volunteer_list') && {
     label: 'Rechercher bénévole retour',
-    target: 'solidary_volunteers',
+    target: 'solidary_searches',
     filter: (solidaryId) => ({
       way: 'return',
       type: 'transport',
@@ -104,6 +104,7 @@ const createSolidarySolutionResolver = async (dataProvider, filter) => {
 
 const SolidaryShowInformation = ({ record }) => {
   const classes = useStyles();
+  const history = useHistory();
   const dataProvider = useDataProvider();
   const notify = useNotify();
 
@@ -138,7 +139,12 @@ const SolidaryShowInformation = ({ record }) => {
   const { user } = solidaryUser || {};
 
   const handleDriverSearch = (choice, index) => {
-    createSolidarySolutionResolver(dataProvider, driverSearchOptions[index].filter(id))
+    const url = `/${driverSearchOptions[index].target}?filter=${encodeURIComponent(
+      JSON.stringify(driverSearchOptions[index].filter(id))
+    )}`;
+
+    history.push(url);
+    /* createSolidarySolutionResolver(dataProvider, driverSearchOptions[index].filter(id))
       .then(() => {
         notify(
           `${
@@ -147,7 +153,7 @@ const SolidaryShowInformation = ({ record }) => {
           'success'
         );
       })
-      .catch((e) => notify(e.message, 'warning'));
+      .catch((e) => notify(e.message, 'warning')); */
   };
 
   return (

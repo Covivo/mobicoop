@@ -10,9 +10,9 @@
         cols="5"
         class="text-left "
       >
-        <h2 class="primary--text font-weight-bold">
+        <h3 class="primary--text font-weight-bold">
           {{ $t('cooperative.title') }}
-        </h2><br>
+        </h3><br>
         <p
           v-html="$t('cooperative.text')"
         />
@@ -99,9 +99,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  h2{
-        font-size: 2rem;
-
+  h3{
+    font-size: 1.8rem;
     line-height: 1.2;
   }
 </style>

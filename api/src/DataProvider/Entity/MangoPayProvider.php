@@ -44,6 +44,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
  * Payment Provider for MangoPay
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class MangoPayProvider implements PaymentProviderInterface
 {
@@ -353,6 +354,48 @@ class MangoPayProvider implements PaymentProviderInterface
             throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
         }
 
+        return $data['Id'];
+    }
+
+    /**
+     * Update a User to the provider and create a PaymentProfile
+     *
+     * @param User $user
+     * @return string The identifier
+     */
+    public function updateUser(User $user)
+    {
+        // We check first if the user have an identifier
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $identifier = $paymentProfiles[0]->getIdentifier();
+        
+        if (is_null($identifier)) {
+            throw new PaymentException(PaymentException::NO_IDENTIFIER);
+        }
+
+        // Build the body
+        $body['FirstName'] = $user->getGivenName();
+        $body['LastName'] = $user->getFamilyName();
+        $body['Email'] = $user->getEmail();
+
+        if (is_null($user->getBirthDate())) {
+            throw new PaymentException(PaymentException::NO_BIRTHDATE);
+        }
+        $body['Birthday'] = (int)$user->getBirthDate()->format('U');
+        
+        $body['KYCLevel'] = "LIGHT";
+
+        $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL."/".$identifier);
+        $headers = [
+            "Authorization" => $this->authChain
+        ];
+        $response = $dataProvider->putItem($body, $headers);
+        
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+        } else {
+            throw new PaymentException(PaymentException::UPDATE_USER_FAILED);
+        }
         return $data['Id'];
     }
 

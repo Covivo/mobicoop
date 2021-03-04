@@ -83,6 +83,7 @@ class CarpoolProof
      * @var Ask The ask related to the proof.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $ask;
 
@@ -199,7 +200,7 @@ class CarpoolProof
     private $driver;
 
     /**
-     * @var User|null The driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell).
+     * @var User|null The passenger, used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell).
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsPassenger")
      * @ORM\JoinColumn(nullable=true)
