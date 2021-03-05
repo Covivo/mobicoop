@@ -43,6 +43,7 @@
             class="ma-2"
             color="secondary"
             small
+            label
           >
             {{ $t('infos.members', {members:community.nbMembers}) }}
           </v-chip>
