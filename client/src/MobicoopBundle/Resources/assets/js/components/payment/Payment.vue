@@ -1072,7 +1072,7 @@ export default {
       let params = {
         'frequency':this.frequency,
         'type':this.type,
-        'week':this.selectedWeekNumber
+        'week':this.selectedWeekNumber.length == 5 ? '0'+this.selectedWeekNumber : this.selectedWeekNumber
       }
       // we get all paymentItems
       axios.post(this.$t("payments.getPayments"), params)
