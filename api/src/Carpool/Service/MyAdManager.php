@@ -117,7 +117,7 @@ class MyAdManager
                 
                 $myAd->setOutwardDate($fromDate->format("Y-m-d"));
                 $myAd->setOutwardTime($fromDate->format("H:i"));
-                if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+                if ($proposal->getType() == Proposal::TYPE_OUTWARD && !is_null($proposal->getProposalLinked())) {
                     // there's a return trip
                     /**
                      * @var DateTime $returnDate
@@ -138,12 +138,12 @@ class MyAdManager
             case Criteria::FREQUENCY_REGULAR:
                 $myAd->setFromDate($proposal->getCriteria()->getFromDate()->format("Y-m-d"));
                 $myAd->setToDate($proposal->getCriteria()->getToDate()->format("Y-m-d"));
-                if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+                if ($proposal->getType() == Proposal::TYPE_OUTWARD && !is_null($proposal->getProposalLinked())) {
                     // there's a return trip
                     $myAd->setReturnFromDate($proposal->getProposalLinked()->getCriteria()->getFromDate()->format("Y-m-d"));
                     $myAd->setReturnToDate($proposal->getProposalLinked()->getCriteria()->getToDate()->format("Y-m-d"));
                 }
-                $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getType() != Proposal::TYPE_ONE_WAY ? $proposal->getProposalLinked()->getCriteria() : null));
+                $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), (($proposal->getType() != Proposal::TYPE_ONE_WAY) && !is_null($proposal->getProposalLinked())) ? $proposal->getProposalLinked()->getCriteria() : null));
                 break;
 
         }
