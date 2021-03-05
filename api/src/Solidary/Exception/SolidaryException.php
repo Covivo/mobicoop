@@ -44,7 +44,11 @@ class SolidaryException extends \LogicException
     const MANDATORY_EMAIL_OR_PHONE = "Email or phone is mandatory and cannot be empty";
     const INVALID_PROGRESSION = "Invalid progression provided";
     const NO_HOME_ADDRESS = "No homeAddress";
-    
+    const NO_OUTWARD_TIMES = "The is no outward times";
+    const NO_RETURN_TIMES = "The is no return times";
+    const DAY_CHECK_BUT_NO_OUTWARD_TIME = "You selected a day in Days array but there no outward time";
+    const DAY_CHECK_BUT_NO_RETURN_TIME = "You selected a day in Days array but there no return time";
+        
     // SolidarySolution
     const IS_NOT_VOLUNTEER = "The SolidaryUser is not a volunteer";
     const CANT_HAVE_BOTH = "A SolidarySolution can't have both a Matching and a SolidaryUser";
