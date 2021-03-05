@@ -71,7 +71,7 @@ class ArticleVoter extends Voter
             self::ADMIN_ARTICLE_UPDATE,
             self::ADMIN_ARTICLE_DELETE,
             self::ADMIN_ARTICLE_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Article || $subject instanceof Section || $subject instanceof Paragraph)) {
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Article)) {
             return false;
         }
 
@@ -80,22 +80,15 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($subject instanceof Article) {
-            $article = $subject;
-        } elseif ($subject instanceof Section) {
-            $article = $subject->getArticle();
-        } elseif ($subject instanceof Paragraph) {
-            $article = $subject->getSection()->getArticle();
-        }
         switch ($attribute) {
             case self::ADMIN_ARTICLE_CREATE:
                 return $this->canCreateArticle();
             case self::ADMIN_ARTICLE_READ:
-                return $this->canReadArticle($article);
+                return $this->canReadArticle($subject);
             case self::ADMIN_ARTICLE_UPDATE:
-                return $this->canUpdateArticle($article);
+                return $this->canUpdateArticle($subject);
             case self::ADMIN_ARTICLE_DELETE:
-                return $this->canDeleteArticle($article);
+                return $this->canDeleteArticle($subject);
             case self::ADMIN_ARTICLE_LIST:
                 return $this->canListArticle();
             }

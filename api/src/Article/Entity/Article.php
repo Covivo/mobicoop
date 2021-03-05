@@ -144,7 +144,7 @@ class Article
      * @var string The title of the article.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","read","write"})
+     * @Groups({"aRead","aWrite","read","write"})
      */
     private $title;
 
@@ -152,7 +152,7 @@ class Article
      * @var int The status of publication of the article.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"aRead","read","write"})
+     * @Groups({"aRead","aWrite","read","write"})
      */
     private $status;
 
@@ -189,6 +189,12 @@ class Article
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var array|null The sections in administration write context
+     * @Groups({"aWrite"})
+     */
+    private $asections;
 
     public function __construct()
     {
@@ -250,6 +256,12 @@ class Article
         return $this;
     }
 
+    public function removeSections(): self
+    {
+        $this->sections->clear();
+        return $this;
+    }
+
     public function getIFrame(): ?string
     {
         return $this->iFrame;
@@ -282,6 +294,18 @@ class Article
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getAsections(): ?array
+    {
+        return $this->asections;
+    }
+
+    public function setAsections(?array $asections)
+    {
+        $this->asections = $asections;
 
         return $this;
     }

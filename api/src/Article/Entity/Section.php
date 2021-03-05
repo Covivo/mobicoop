@@ -161,6 +161,11 @@ class Section
      */
     private $updatedDate;
 
+    public function __construct()
+    {
+        $this->paragraphs = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -249,6 +254,12 @@ class Section
             }
         }
 
+        return $this;
+    }
+
+    public function removeParagraphs(): self
+    {
+        $this->paragraphs->clear();
         return $this;
     }
 
