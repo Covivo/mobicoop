@@ -143,7 +143,7 @@ class MyAdManager
                     $myAd->setReturnFromDate($proposal->getProposalLinked()->getCriteria()->getFromDate()->format("Y-m-d"));
                     $myAd->setReturnToDate($proposal->getProposalLinked()->getCriteria()->getToDate()->format("Y-m-d"));
                 }
-                $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked()->getCriteria() ? $proposal->getProposalLinked()->getCriteria() : null));
+                $myAd->setSchedule($this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getType() != Proposal::TYPE_ONE_WAY ? $proposal->getProposalLinked()->getCriteria() : null));
                 break;
 
         }
