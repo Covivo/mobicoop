@@ -82,5 +82,8 @@
         }
     },
     "yes": "oui",
-    "no": "non"
+    "no": "non",
+    "infos":{
+        "members":"{members} membres"
+    }
 }
