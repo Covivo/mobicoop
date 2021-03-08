@@ -368,11 +368,14 @@ services:
             $fixturesClearBase: '%env(bool:FIXTURES_CLEAR_BASE)%'
             $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
 
-    App\DataFixtures\Service\FixturesManager:
+    App\DataFixtures\Service\BasicFixturesManager:
         arguments:
             $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
-            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
     
+    App\DataFixtures\Service\SolidaryFixturesManager:
+        arguments:
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 

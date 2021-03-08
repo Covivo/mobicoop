@@ -24,7 +24,7 @@
 namespace App\DataFixtures;
 
 use App\Carpool\Service\ProposalManager;
-use App\DataFixtures\Service\FixturesManager;
+use App\DataFixtures\Service\SolidaryFixturesManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -42,7 +42,7 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
     private $fixturesSolidary;
 
     public function __construct(
-        FixturesManager $fixturesManager,
+        SolidaryFixturesManager $fixturesManager,
         ProposalManager $proposalManager,
         bool $fixturesEnabled,
         bool $fixturesClearBase,

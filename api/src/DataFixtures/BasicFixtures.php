@@ -24,7 +24,7 @@
 namespace App\DataFixtures;
 
 use App\Carpool\Service\ProposalManager;
-use App\DataFixtures\Service\FixturesManager;
+use App\DataFixtures\Service\BasicFixturesManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -42,7 +42,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     private $fixturesBasic;
 
     public function __construct(
-        FixturesManager $fixturesManager,
+        BasicFixturesManager $fixturesManager,
         ProposalManager $proposalManager,
         bool $fixturesEnabled,
         bool $fixturesClearBase,
@@ -68,6 +68,21 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         }
 
         if ($this->fixturesBasic) {
+
+            // load icons infos from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Icons/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the community user
+                        $this->fixturesManager->createIcons($tab);
+                    }
+                }
+            }
 
             // load users info from csv file
             $finder = new Finder();
@@ -157,6 +172,21 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     while (!feof($file)) {
                         // create the community user
                         $this->fixturesManager->createTerritories(fgets($file));
+                    }
+                }
+            }
+
+            // load relayPointTypes infos from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/RelayPointTypes/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the community user
+                        $this->fixturesManager->createRelayPointTypes($tab);
                     }
                 }
             }
