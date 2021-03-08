@@ -113,7 +113,7 @@ class FixturesManager
      *
      * @return void
      */
-    public function clearData()
+    public function clearBasicData()
     {
         $conn = $this->entityManager->getConnection();
         $sql = "SET FOREIGN_KEY_CHECKS = 0;";
@@ -167,6 +167,24 @@ class FixturesManager
             $stmt->execute();
         }
 
+        $sql = "
+        SET FOREIGN_KEY_CHECKS = 1;";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    }
+
+    /**
+     * Clear the database : remove all non essential data
+     *
+     * @return void
+     */
+    public function clearSolidaryData()
+    {
+        $conn = $this->entityManager->getConnection();
+        $sql = "SET FOREIGN_KEY_CHECKS = 0;";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        
         if ($this->fixturesSolidary) {
             echo "Clearing Solidary database... " . PHP_EOL;
             $sql = "
