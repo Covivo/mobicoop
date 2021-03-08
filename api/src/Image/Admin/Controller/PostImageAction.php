@@ -84,18 +84,20 @@ final class PostImageAction
             // we associate the owner and the image
             $owner->addImage($image);
             
-            // we rename the image depending on the owner
-            $image->setFileName($this->imageManager->generateFilename($image));
-            if (is_null($image->getName())) {
-                $image->setName($image->getFileName());
-            }
-
-            // we search the position of the image if not provided
+            // we rename the image depending on the owner and the position
             if (is_null($request->request->get('position'))) {
                 $image->setPosition($this->imageManager->getNextPosition($image));
             } else {
                 // the image position is provided, we remove the existing image at this position
                 $image->setPosition($request->request->get('position'));
+            }
+            $image->setFileName($this->imageManager->generateFilename($image));
+            if (is_null($image->getName())) {
+                $image->setName($image->getFileName());
+            }
+
+            if (!is_null($request->request->get('position'))) {
+                // the image position is provided, we remove the existing image at this position
                 $this->imageManager->removeImageAtPosition($owner, $request->request->get('position'));
             }
         }
