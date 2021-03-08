@@ -15,9 +15,8 @@
         cols="12"
         class="text-justify pt-4 font-italic"
         :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
-      >
-        {{ $t('text') }}
-      </v-col>
+        v-html="$t('text')"
+      />
     </v-row>
     <v-row v-if="validationAskedDate!=null || validationStatus > 0">
       <v-col cols="12">
@@ -53,7 +52,7 @@
             <v-icon class="error--text">
               mdi-close-circle-outline
             </v-icon>
-            {{ $t('status.refused') }}
+            {{ $t('status.refused.'+refusalReason) }}
           </v-card-text>          
           <!-- Outdated -->
           <v-card-text
@@ -80,10 +79,19 @@
           <v-file-input
             v-model="document"
             :accept="validationDocsAuthorizedExtensions"
-            :label="$t('fileInput')"
+            :label="$t('fileInput.label')"
             :disabled="!formActive"
+            :rules="identityProofRules"
+            :show-size="1000"
+            counter
           />
         </template>
+        <p
+          class="text-justify font-italic ml-6"
+          :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
+        >
+          {{ $t('fileInput.tooltip') }}
+        </p>
       </v-col>
       <v-col cols="2">
         <v-btn 
@@ -130,12 +138,19 @@ export default {
     validationAskedDate: {
       type: Object,
       default: null
+    },
+    refusalReason: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
       document:null,
-      loading:false
+      loading:false,
+      identityProofRules: [
+        value => !value ||  value.size < 5000000 || this.$t("fileInput.error")
+      ],
     }
   },
   computed:{

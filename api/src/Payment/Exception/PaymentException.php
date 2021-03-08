@@ -67,6 +67,7 @@ class PaymentException extends \LogicException
     const ERROR_CREATING_DOC_PAGE_TO_PROVIDER = "The creation of a page for a document to the provider has failed";
     const ERROR_VALIDATION_ASK_DOC = "The validation ask for a document has failed";
     const ERROR_VALIDATION_ASK_DOC_BAD_STATUS = "The validation ask for a document has failed (BAD STATUS)";
+    const ERROR_DOC = "The document does not exist ";
 
     // Web hooks
     const MISSING_PARAMETER = "Missing parameter";
