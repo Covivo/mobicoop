@@ -103,10 +103,16 @@ class CarpoolExportManager
             $carpoolExport = new CarpoolExport();
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
+           
+            
+            // if the payment is not active we set the amount of the carpool
+            if ($this->paymentActive == false) {
+                $carpoolExport->setAmount($carpoolItem->getAmount());
+            }
             //    we set the payment mode
             if ($carpoolItem->getItemStatus() !== 0) {
+                // we set the amount of the carpool only if the carpool is paid.
                 $carpoolExport->setAmount($carpoolItem->getAmount());
-
                 // We check the status of the right role
                 if ($isCreditor) {
                     switch ($carpoolItem->getCreditorStatus()) {
