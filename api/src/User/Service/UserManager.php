@@ -1524,7 +1524,7 @@ class UserManager
             }
 
             if (trim($ssoUser->getBirthdate())!="") {
-                $user->setBirthDate(DateTime::createFromFormat("Y-m-d", $ssoUser->getBirthdate()));
+                $user->setBirthDate(\DateTime::createFromFormat("Y-m-d", $ssoUser->getBirthdate()));
             }
 
             $user = $this->registerUser($user);
