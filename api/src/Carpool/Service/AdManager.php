@@ -1899,6 +1899,11 @@ class AdManager
             throw new AdException("Classic proof not found");
         }
 
+        // Check if the proof has been canceled
+        if ($carpoolProof->getStatus()===CarpoolProof::STATUS_CANCELED) {
+            throw new AdException("Classic proof already canceled");
+        }
+
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
             $classicProofData->setId($carpoolProof->getId());

@@ -191,5 +191,5 @@ class ClassicProof
         $this->status = $status;
 
         return $this;
-    }    
+    }
 }
