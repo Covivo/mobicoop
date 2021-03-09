@@ -1914,6 +1914,12 @@ class AdManager
         return $classicProofData;
     }
 
+    /**
+     * Cancel an already existing proof
+     *
+     * @param integer $id Proof's id to cancel
+     * @return ClassicProof
+     */
     public function cancelCarpoolProof(int $id): ClassicProof
     {
         // Get the proof
