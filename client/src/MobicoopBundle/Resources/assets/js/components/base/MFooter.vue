@@ -270,6 +270,7 @@
       <cookies
         :show="showCookies"
         :app-name="appName"
+        :auto-show="cookiesShowAuto"
         @dialogClosed="dialogCookiesClosed"
       />
     </v-container>
@@ -300,6 +301,10 @@ export default {
     appName:{
       type: String,
       default:null
+    },
+    cookiesShowAuto:{
+      type: Boolean,
+      default: true
     }
   },
   data() {

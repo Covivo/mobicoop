@@ -42,3 +42,4 @@ twig:
         canAccessAdminFromCommunity: '%env(resolve:CAN_ACCESS_ADMIN_FROM_COMMUNITY)%'
         timePrecision: '%env(TIME_PRECISION)%'
         languages: '%env(json:LANGUAGES)%'
+        cookiesShowAuto: '%env(bool:COOKIES_SHOW_AUTO)%'
