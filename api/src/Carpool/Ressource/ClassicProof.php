@@ -62,9 +62,9 @@ use App\User\Entity\User;
  *              "method"="PUT",
  *              "path"="/classic_proofs/{id}/cancel",
  *              "read"=false,
- *              "normalization_context"={"groups"={"updateClassicProof"}},
- *              "denormalization_context"={"groups"={"updateClassicProof"}},
- *              "validation_groups"={"updateClassicProof"},
+ *              "normalization_context"={"groups"={"cancelClassicProof"}},
+ *              "denormalization_context"={"groups"={"cancelClassicProof"}},
+ *              "validation_groups"={"cancelClassicProof"},
  *              "security"="is_granted('carpool_proof_update',object)"
  *          }
  *      }
@@ -79,7 +79,7 @@ class ClassicProof
      * @var int The id of this classic ad proof.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof","cancelClassicProof"})
      */
     private $id;
 
@@ -113,6 +113,12 @@ class ClassicProof
      * @Groups("writeClassicProof")
      */
     private $askId;
+
+    /**
+     * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
+     * @Groups("cancelClassicProof")
+     */
+    private $status;
 
     public function __construct()
     {
@@ -174,4 +180,16 @@ class ClassicProof
 
         return $this;
     }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }    
 }

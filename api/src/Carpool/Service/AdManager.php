@@ -1909,7 +1909,24 @@ class AdManager
         return $classicProofData;
     }
 
+    public function cancelCarpoolProof(int $id): ClassicProof
+    {
+        // Get the proof
+        if (!$carpoolProof = $this->proofManager->getProof($id)) {
+            throw new AdException("Classic proof not found");
+        }
 
+        // Cancel the proof
+        $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
+
+        $classicProof = new ClassicProof();
+        $classicProof->setId($carpoolProof->getId());
+        $classicProof->setStatus($carpoolProof->getStatus());
+        
+        return $classicProof;
+    }
 
     /*************
      *  REFACTOR *
