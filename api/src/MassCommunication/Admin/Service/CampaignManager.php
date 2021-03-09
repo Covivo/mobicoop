@@ -86,4 +86,16 @@ class CampaignManager
         // return the campaign
         return $campaign;
     }
+
+    /**
+     * Delete a campaign
+     *
+     * @param Campaign $campaign  The campaign to delete
+     * @return void
+     */
+    public function deleteCampaign(Campaign $campaign)
+    {
+        $this->entityManager->remove($campaign);
+        $this->entityManager->flush();
+    }
 }

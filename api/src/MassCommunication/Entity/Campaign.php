@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use App\MassCommunication\Controller\CampaignSend;
 use App\MassCommunication\Controller\CampaignSendTest;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
@@ -126,9 +127,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          },
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"status":"exact","name":"partial","email":"partial"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"subject", "user", "status"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"subject", "user", "email", "status", "createdDate", "updatedDate"}, arguments={"orderParameterName"="order"})
  */
 class Campaign
 {
@@ -262,7 +263,7 @@ class Campaign
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read_campaign"})
+     * @Groups({"aRead","read_campaign"})
      */
     private $updatedDate;
 
@@ -294,6 +295,24 @@ class Campaign
     private $sendAll;
 
     /**
+     * @var string The creator
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creator;
+
+    /**
+     * @var int The creator id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creatorId;
+
+    /**
+     * @var string|null The creator avatar
+     * @Groups({"aRead"})
+     */
+    private $creatorAvatar;
+
+    /**
      * @var int|null The source for the deliveries.
      *
      * @Groups({"aread","aWrite"})
@@ -320,6 +339,13 @@ class Campaign
      * @Groups({"aread","aWrite"})
      */
     private $filters;
+
+    /**
+     * @var int|null The number of deliveries.
+     *
+     * @Groups("aRead")
+     */
+    private $deliveryCount;
 
     public function __construct()
     {
@@ -566,6 +592,32 @@ class Campaign
         return $this;
     }
 
+    public function getCreator(): string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getCreatorId(): int
+    {
+        if (is_null($this->creatorId)) {
+            return $this->getUser()->getId();
+        }
+        return $this->creatorId;
+    }
+
+    public function setCreatorId(?int $creatorId)
+    {
+        $this->creatorId = $creatorId;
+    }
+
+    public function getCreatorAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
+    }
+
     public function getSource(): int
     {
         return $this->source;
@@ -612,6 +664,11 @@ class Campaign
         $this->filters = $filters;
 
         return $this;
+    }
+
+    public function getDeliveryCount(): int
+    {
+        return count($this->deliveries);
     }
     
 

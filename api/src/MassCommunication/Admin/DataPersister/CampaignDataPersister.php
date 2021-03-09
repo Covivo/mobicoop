@@ -62,8 +62,8 @@ final class CampaignDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
-        // if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
-        //     return $this->campaignManager->deleteEvent($data);
-        // }
+        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+            return $this->campaignManager->deleteCampaign($data);
+        }
     }
 }
