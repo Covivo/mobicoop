@@ -57,6 +57,15 @@ use App\User\Entity\User;
  *              "denormalization_context"={"groups"={"updateClassicProof"}},
  *              "validation_groups"={"updateClassicProof"},
  *              "security"="is_granted('carpool_proof_update',object)"
+ *          },
+ *          "cancel"={
+ *              "method"="PUT",
+ *              "path"="/classic_proofs/{id}/cancel",
+ *              "read"=false,
+ *              "normalization_context"={"groups"={"updateClassicProof"}},
+ *              "denormalization_context"={"groups"={"updateClassicProof"}},
+ *              "validation_groups"={"updateClassicProof"},
+ *              "security"="is_granted('carpool_proof_update',object)"
  *          }
  *      }
  * )
