@@ -168,13 +168,13 @@ class ApidaeProvider implements EventProviderInterface
             // we create and set the address
             $address = new Address();
 
-            if (isset($event->localisation->geolocalisation)) {
+            if (isset($event->localisation->geolocalisation->geoJson)) {
                 $address->setLatitude($event->localisation->geolocalisation->geoJson->coordinates[1]);
                 $address->setLongitude($event->localisation->geolocalisation->geoJson->coordinates[0]);
             } else {
                 throw new Exception("Latitude and longiture are mandatory", 1);
             }
-            if (isset($event->localisation)) {
+            if (isset($event->localisation->adresse)) {
                 $address->setStreetAddress(isset($event->localisation->adresse->adresse1) ? $event->localisation->adresse->adresse1 : $event->localisation->adresse->nomDuLieu);
                 $address->setAddressLocality(isset($event->localisation->adresse->commune->nom) ? $event->localisation->adresse->commune->nom : null);
                 $address->setPostalCode(isset($event->localisation->adresse->codePostal) ? $event->localisation->adresse->codePostal : null);
