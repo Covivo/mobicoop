@@ -186,7 +186,7 @@ class CampaignManager
         // we check if we have already create a provider campaign before
         if (is_null($campaign->getProviderCampaignId())) {
             // we create the campaign on provider side
-            $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $campaign->getBody(), $campaign->getDeliveries());
+            $providerCampaign = $this->massEmailProvider->createCampaign($campaign->getName(), $sender, $campaign->getSubject(), $this->getFormedEmailBody($campaign->getBody()), $campaign->getDeliveries());
             // We ad to the campaign the campaign provider id associated
             $campaign->setProviderCampaignId($providerCampaign['id']);
         }
