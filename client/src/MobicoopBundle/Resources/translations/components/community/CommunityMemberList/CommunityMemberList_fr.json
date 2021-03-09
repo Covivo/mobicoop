@@ -13,5 +13,6 @@
     "hidden": "La liste n'est visible que par les membres de la communauté",
     "urlMembersList": "/community/memberList",
     "referrer": "Référent",
+    "moderator": "Modérateur",
     "directMessage": "Envoyer un message direct"
 }

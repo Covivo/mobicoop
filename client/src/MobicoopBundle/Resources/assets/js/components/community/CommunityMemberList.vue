@@ -44,7 +44,7 @@
       @update:options="updateOptions"
     >
       <template v-slot:item.member="{ item }">
-        {{ displayUserName(item) }} - <b>{{ displayReferrer(item) }}</b>
+        {{ displayUserName(item) }} - <b>{{ displayModerator(item) }}</b><b>{{ displayReferrer(item) }}</b>
       </template> 
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
@@ -172,6 +172,11 @@ export default {
     displayReferrer(user) {
       if (user.isCommunityReferrer) {
         return this.$t('referrer');
+      }
+    },
+    displayModerator(user) {
+      if (user.isCommunityModerator) {
+        return this.$t('moderator');
       }
     }
   }
