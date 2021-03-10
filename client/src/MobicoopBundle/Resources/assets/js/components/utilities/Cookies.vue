@@ -36,8 +36,8 @@
               :disabled="!progressBarActive"
               step="1"
               ticks="always"
-              tick-size="2"
-              max="2"
+              :tick-size="socialNetworksActive ? 2 : 1"
+              :max="socialNetworksActive ? 2 : 1"
               @change="updatePrefs"
             />
           </v-col>
@@ -87,6 +87,7 @@
             </p>
           </v-col>
           <v-col
+            v-if="socialNetworksActive"
             cols="3"
           >
             <v-checkbox
@@ -128,6 +129,10 @@ export default {
     autoShow:{
       type: Boolean,
       default: true
+    },
+    socialNetworksActive:{
+      type: Boolean,
+      default: false
     }
   },
   data(){

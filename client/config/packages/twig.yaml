@@ -43,3 +43,4 @@ twig:
         timePrecision: '%env(TIME_PRECISION)%'
         languages: '%env(json:LANGUAGES)%'
         cookiesShowAuto: '%env(bool:COOKIES_SHOW_AUTO)%'
+        facebookShow: '%env(bool:FACEBOOK_SHOW)%'
