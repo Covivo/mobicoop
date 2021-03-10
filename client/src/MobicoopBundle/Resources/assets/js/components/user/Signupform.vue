@@ -455,6 +455,19 @@
         </v-col>
       </v-row>
       <v-row
+        v-else-if="showFacebookSignUp"
+        class="justify-center"
+      >
+        <v-col class="col-4 text-center">
+          <v-alert
+            type="info"
+            class="text-left"
+          >
+            {{ $t('rgpd.socialServicesUnavailableWithoutConsent') }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
         v-if="signupRgpdInfos"
       >
         <v-col
