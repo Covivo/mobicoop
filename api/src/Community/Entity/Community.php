@@ -376,8 +376,8 @@ class Community
     private $member;
 
     /**
-     * @var boolean|null Number of members of this community
-     * @Groups({"readCommunity","communities"})
+     * @var int|null Number of members of this community
+     * @Groups({"aRead","readCommunity","communities"})
      */
     private $nbMembers;
     
@@ -394,12 +394,6 @@ class Community
      * @Groups({"readCommunity","communities"})
      */
     private $mass;
-
-    /**
-     * @var int The number of members
-     * @Groups({"aRead"})
-     */
-    private $nbMembers;
 
     /**
      * @var string The referrer
@@ -777,11 +771,6 @@ class Community
         $this->mass = $mass;
 
         return $this;
-    }
-
-    public function getNbMembers(): int
-    {
-        return count($this->communityUsers);
     }
 
     public function getReferrer(): string
