@@ -24,10 +24,17 @@
                 cols="4"
                 class="text-right"
               >
-                {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
-                <span v-if="ageDisplay && publicProfile.age">
-                  {{ publicProfile.age }} {{ $t('yearsOld') }}
-                </span>
+                <v-row>
+                  <v-col>
+                    {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
+                    <span v-if="ageDisplay && publicProfile.age">
+                      {{ publicProfile.age }} {{ $t('yearsOld') }}
+                    </span>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>CO<sup>2</sup> {{ $t('savedCo2', {savedCo2:savedCo2}) }}</v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-col>
@@ -223,6 +230,9 @@ export default {
       case 2: return this.$t('params.smoke');
       }
       return this.$t('params.noSmoke');
+    },
+    savedCo2(){
+      return Number.parseFloat(this.publicProfile.savedCo2  / 1000000 ).toPrecision(1);
     }
   },
   watch:{

@@ -71,6 +71,7 @@ class UserLoadListener
             $user->setUserReviewsActive($this->userReviewActive);
             $publicProfile = $this->userManager->getPublicProfile($user);
             $user->setExperienced((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->isExperienced() : false);
+            $user->setSavedCo2((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->getSavedCo2() : false);
         }
     }
 }

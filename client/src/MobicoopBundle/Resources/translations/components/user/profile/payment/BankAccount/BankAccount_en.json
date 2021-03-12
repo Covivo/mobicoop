@@ -10,6 +10,9 @@
             "bic": "BIC",
             "address": "Votre adresse complète"
         },
+        "tooltip": {
+            "iban": "Renseignez votre IBAN sans espace"
+        },
         "errors": {
             "iban": "Le numéro IBAN doit être valide",
             "ibanRequired": "Le numéro IBAN est obligatoire",

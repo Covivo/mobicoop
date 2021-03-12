@@ -1268,6 +1268,11 @@ class User implements UserInterface, EquatableInterface
      */
     private $unreadSolidaryMessageNumber;
 
+    /**
+     * @var int|null The savedCo2 of this user in grams
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
+     */
+    private $savedCo2;
 
     // ADMIN
 
@@ -1288,7 +1293,6 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
-
 
     public function __construct($status = null)
     {
@@ -2996,6 +3000,18 @@ class User implements UserInterface, EquatableInterface
     public function setUnreadSolidaryMessageNumber(?int $unreadSolidaryMessageNumber): self
     {
         $this->unreadSolidaryMessageNumber = $unreadSolidaryMessageNumber;
+
+        return $this;
+    }
+
+    public function getSavedCo2(): ?int
+    {
+        return $this->savedCo2;
+    }
+
+    public function setSavedCo2(?int $savedCo2): self
+    {
+        $this->savedCo2 = $savedCo2;
 
         return $this;
     }

@@ -1483,8 +1483,8 @@ class AdManager
          * @var Criteria $criterion
          */
         foreach ($criteria as $criterion) {
-            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::MAX_DETOUR_DISTANCE_PERCENT/100);
-            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::MAX_DETOUR_DURATION_PERCENT/100);
+            $criterion->setMaxDetourDistance($criterion->getDirectionDriver()->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
+            $criterion->setMaxDetourDuration($criterion->getDirectionDriver()->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
             $this->entityManager->persist($criterion);
         }
         $this->entityManager->flush();
@@ -1899,6 +1899,11 @@ class AdManager
             throw new AdException("Classic proof not found");
         }
 
+        // Check if the proof has been canceled
+        if ($carpoolProof->getStatus()===CarpoolProof::STATUS_CANCELED) {
+            throw new AdException("Classic proof already canceled");
+        }
+
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
             $classicProofData->setId($carpoolProof->getId());
@@ -1909,7 +1914,30 @@ class AdManager
         return $classicProofData;
     }
 
+    /**
+     * Cancel an already existing proof
+     *
+     * @param integer $id Proof's id to cancel
+     * @return ClassicProof
+     */
+    public function cancelCarpoolProof(int $id): ClassicProof
+    {
+        // Get the proof
+        if (!$carpoolProof = $this->proofManager->getProof($id)) {
+            throw new AdException("Classic proof not found");
+        }
 
+        // Cancel the proof
+        $carpoolProof->setStatus(CarpoolProof::STATUS_CANCELED);
+        $this->entityManager->persist($carpoolProof);
+        $this->entityManager->flush();
+
+        $classicProof = new ClassicProof();
+        $classicProof->setId($carpoolProof->getId());
+        $classicProof->setStatus($carpoolProof->getStatus());
+        
+        return $classicProof;
+    }
 
     /*************
      *  REFACTOR *

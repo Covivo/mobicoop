@@ -205,9 +205,28 @@ services:
                 dynamicMaxPendingTime: '%env(int:DYNAMIC_CARPOOL_MAX_PENDING_TIME)%'
                 importChunkSize: '%env(int:IMPORT_PROPOSALS_CHUNK_SIZE)%'
                 importBatchMatchSize: '%env(int:IMPORT_PROPOSALS_BATCH_MATCH_SIZE)%'
+                maxDetourDistancePercent: '%env(int:ALGORITHM_MAX_DETOUR_DISTANCE_PERCENT)%'
+                maxDetourDurationPercent: '%env(int:ALGORITHM_MAX_DETOUR_DURATION_PERCENT)%'
+                minCommonDistanceCheck: '%env(int:ALGORITHM_MIN_COMMON_DISTANCE_CHECK)%'
+                minCommonDistancePercent: '%env(int:ALGORITHM_MIN_COMMON_DISTANCE_PERCENT)%'
         tags:
             - { name: monolog.logger, channel: carpool }
     
+    App\Carpool\Repository\ProposalRepository:
+        arguments:
+            $params:
+                bearingRange: '%env(int:ALGORITHM_BEARING_RANGE)%'
+                useBearing: '%env(bool:ALGORITHM_USE_BEARING)%'
+                useBbox: '%env(bool:ALGORITHM_USE_BBOX)%'
+                usePassengerProportion: '%env(bool:ALGORITHM_USE_PASSENGER_PROPORTION)%'
+                useDistance: '%env(bool:ALGORITHM_USE_DISTANCE)%'
+                passengerProportion: '%env(float:ALGORITHM_PASSENGER_PROPORTION)%'
+                maxDistancePunctual: '%env(float:ALGORITHM_MAX_DISTANCE_PUNCTUAL)%'
+                maxDistanceRegular: '%env(float:ALGORITHM_MAX_DISTANCE_REGULAR)%'
+                distanceRatio: '%env(int:ALGORITHM_DISTANCE_RATIO)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\CarpoolExportManager:
         arguments:
             $carpoolExportUri: '%env(string:CARPOOL_EXPORT_URI)%'
@@ -339,19 +358,28 @@ services:
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
 
-    # Fixtures
+    # Fixtures Basic
     App\DataFixtures\BasicFixtures:
         arguments:
             $fixturesEnabled: '%env(bool:FIXTURES_ENABLED)%'
             $fixturesClearBase: '%env(bool:FIXTURES_CLEAR_BASE)%'
             $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
-            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
     
-    App\DataFixtures\Service\FixturesManager:
+    # Fixtures Solidary
+    App\DataFixtures\SolidaryFixtures:
+        arguments:
+            $fixturesEnabled: '%env(bool:FIXTURES_ENABLED)%'
+            $fixturesClearBase: '%env(bool:FIXTURES_CLEAR_BASE)%'
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+
+    App\DataFixtures\Service\BasicFixturesManager:
         arguments:
             $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
-            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
     
+    App\DataFixtures\Service\SolidaryFixturesManager:
+        arguments:
+            $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
+
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 

@@ -57,5 +57,8 @@
         }
     },
     "yes": "yes",
-    "no": "no"
+    "no": "no",
+    "infos":{
+        "members":"{members} members"
+    }
 }

@@ -376,6 +376,12 @@ class Community
     private $member;
 
     /**
+     * @var boolean|null Number of members of this community
+     * @Groups({"readCommunity","communities"})
+     */
+    private $nbMembers;
+    
+    /**
      * @var array|null Store the ads of the community
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
      */
@@ -733,6 +739,18 @@ class Community
     public function setMember(?bool $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getNbMembers(): ?int
+    {
+        return $this->nbMembers;
+    }
+
+    public function setNbMembers(?int $nbMembers): self
+    {
+        $this->nbMembers = $nbMembers;
 
         return $this;
     }

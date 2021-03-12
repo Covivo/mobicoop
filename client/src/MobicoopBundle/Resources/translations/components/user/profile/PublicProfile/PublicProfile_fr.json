@@ -5,6 +5,7 @@
     "lastConnection":"Dernière connexion le",
     "answerRate":"Taux de réponse",
     "subscribedOn":"Inscrit le",
+    "savedCo2":" économisé : {savedCo2} t",
     "params":{
         "chat":"Je discute",
         "noChat":"Je ne suis pas bavard",
