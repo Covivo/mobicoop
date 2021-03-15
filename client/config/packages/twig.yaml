@@ -42,3 +42,5 @@ twig:
         canAccessAdminFromCommunity: '%env(resolve:CAN_ACCESS_ADMIN_FROM_COMMUNITY)%'
         timePrecision: '%env(TIME_PRECISION)%'
         languages: '%env(json:LANGUAGES)%'
+        informativeMessageActive: '%env(bool:INFORMATIVE_MESSAGE_ACTIVE)%'
+        informativeMessageText: '%env(string:INFORMATIVE_MESSAGE_TEXT)%'
