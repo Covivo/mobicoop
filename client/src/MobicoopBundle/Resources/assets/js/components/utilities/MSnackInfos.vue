@@ -2,6 +2,7 @@
   <v-snackbar
     v-model="snackbar"
     :top="top"
+    timeout="-1"
   >
     <span v-html="text" />
 
