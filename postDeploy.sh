@@ -123,7 +123,7 @@ else
 
     # check PT files
     PT_PROVIDERS_FILE=/var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json
-    if [ ! -f "$RDEX_CLIENTS_FILE" ]; then
+    if [ ! -f "$PT_PROVIDERS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json.dist /var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json
     fi
 
