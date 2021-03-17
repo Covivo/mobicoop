@@ -663,6 +663,10 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
