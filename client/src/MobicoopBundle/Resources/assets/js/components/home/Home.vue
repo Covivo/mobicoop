@@ -5,6 +5,10 @@
     :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"
     pa-0
   >
+    <MSnackInfos
+      :active="informativeMessageActive"
+      :text="informativeMessageText"
+    />  
     <v-row v-if="displayVerifiedMessage">
       <v-col class="pa-0">
         <v-snackbar
@@ -146,6 +150,7 @@ import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
+import MSnackInfos from "@components/utilities/MSnackInfos"
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -161,6 +166,7 @@ export default {
     Search,
     HomeContent,
     Cookies,
+    MSnackInfos
   },
   props: {
     geoSearchUrl: {
@@ -221,6 +227,14 @@ export default {
       default: null
     },
     urlMobile: {
+      type: String,
+      default: null
+    },
+    informativeMessageActive: {
+      type: Boolean,
+      default: false
+    },
+    informativeMessageText: {
       type: String,
       default: null
     }
