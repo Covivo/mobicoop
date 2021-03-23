@@ -109,8 +109,8 @@ dev_deploy:
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  
   except:
     refs:
@@ -162,8 +162,8 @@ test_deploy:
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
   after_script:
     #  Kill all node & php process if the e2e not passed
     - killall node || true
@@ -220,8 +220,8 @@ prod_test_deploy:
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP}:/var/www/prod/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}' ./ ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP}:/var/www/prod/mobicoop    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
@@ -265,8 +265,8 @@ staging_deploy:
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/staging    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/staging    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
@@ -310,9 +310,9 @@ prod_deploy:
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable;"    # put the site on maintenance
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable;"    # put the site on maintenance
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no -p ${SSH_PORT}' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
