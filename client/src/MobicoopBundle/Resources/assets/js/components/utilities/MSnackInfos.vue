@@ -8,7 +8,7 @@
 
     <template v-slot:action="{ attrs }">
       <v-btn
-        color="primary"
+        :color="btnColor"
         text
         v-bind="attrs"
         @click="snackbar = false"
@@ -40,6 +40,10 @@ export default {
     top:{
       type: Boolean,
       default: true
+    },
+    btnColor:{
+      type: String,
+      default: "primary"
     }
   },
   data() {
