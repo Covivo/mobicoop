@@ -108,7 +108,6 @@
       <v-row
         v-if="showFacebookLogin && consentSocial"
         justify="center"
-      
         class="text-center align-start"
       >
         <v-col class="col-4">
@@ -116,6 +115,19 @@
             :app-id="facebookLoginAppId"
             @errorFacebookConnect="errorFB"
           />
+        </v-col>
+      </v-row>
+      <v-row
+        v-else-if="showFacebookLogin"
+        class="justify-center"
+      >
+        <v-col class="col-4 text-center">
+          <v-alert
+            type="info"
+            class="text-left"
+          >
+            {{ $t('socialServicesUnavailableWithoutConsent') }}
+          </v-alert>
         </v-col>
       </v-row>
     </div>
