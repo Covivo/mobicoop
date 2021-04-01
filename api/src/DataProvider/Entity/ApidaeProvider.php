@@ -175,7 +175,7 @@ class ApidaeProvider implements EventProviderInterface
                 throw new Exception("Latitude and longiture are mandatory", 1);
             }
             if (isset($event->localisation->adresse)) {
-                $address->setStreetAddress(isset($event->localisation->adresse->adresse1) ? $event->localisation->adresse->adresse1 : $event->localisation->adresse->nomDuLieu);
+                $address->setStreetAddress(isset($event->localisation->adresse->adresse1) ? $event->localisation->adresse->adresse1 : (isset($event->localisation->adresse->nomDuLieu) ? $event->localisation->adresse->nomDuLieu : ""));
                 $address->setAddressLocality(isset($event->localisation->adresse->commune->nom) ? $event->localisation->adresse->commune->nom : null);
                 $address->setPostalCode(isset($event->localisation->adresse->codePostal) ? $event->localisation->adresse->codePostal : null);
                 $address->setAddressCountry(isset($event->localisation->adresse->commune->pays->libelleFr) ? $event->localisation->adresse->commune->pays->libelleFr : null);
