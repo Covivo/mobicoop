@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
+namespace App\Event\Interfaces;
 
 /**
- * Sso management service.
+ * Event Provider interface.
+ *
+ * An event provider entity class
+ *
+ * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
+ *
  */
-class SsoManager
+interface EventProviderInterface
 {
+    /**
+     * Get events from external sources
+     *
+     */
+    public function getEvents();
 
     /**
-     * Guess and return the parameters for a SSO connection
-     *
-     * @param array $params
-     * @return array
-     */
-    public function guessSsoParameters(array $params)
-    {
-        $return = [];
-        if (isset($params['state'])) {
-            switch ($params['state']) {
-                case "GLConnect":
-                case "PassMobilite":
-                    $return = ['ssoId'=>$params['code'], 'ssoProvider'=>$params['state']];
-                break;
-            }
-        }
+    * Get details of an event from external sources
+    *
+    */
+    public function getEvent();
 
-        return $return;
-    }
+    /**
+    * Get details of an event from external sources
+    *
+    */
+    public function createEvents(array $events);
 }

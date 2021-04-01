@@ -125,6 +125,13 @@
               class="white--text"
             >{{ $t('tools.cgu.title') }}</a>
           </v-card-text>
+          <v-card-text class="my-0 py-1">
+            <a
+              style="text-decoration:none;"
+              class="white--text"
+              @click="showCookiesAction()"
+            >{{ $t('tools.cookies.title') }}</a>
+          </v-card-text>
 
           <v-card-text class="my-0 pt-3 pb-0 white--text font-weight-bold">
             <span>{{ $t('category.contacts') }}</span>
@@ -260,6 +267,13 @@
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
       </v-row>
+      <cookies
+        :show="showCookies"
+        :app-name="appName"
+        :auto-show="cookiesShowAuto"
+        :social-networks-active="socialNetworksActive"
+        @dialogClosed="dialogCookiesClosed"
+      />
     </v-container>
   </v-footer>
 </template>
@@ -268,6 +282,7 @@
 import { merge } from "lodash";
 import {messages_en, messages_fr} from "@translations/components/base/MFooter/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MFooter/";
+import Cookies from "@components/utilities/Cookies";
 import Package from '@root/package.json'
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
@@ -280,11 +295,36 @@ export default {
       'fr': MessagesMergedFr
     }
   },
+  components:{
+    Cookies
+  },
+  props:{
+    appName:{
+      type: String,
+      default:null
+    },
+    cookiesShowAuto:{
+      type: Boolean,
+      default: true
+    },
+    socialNetworksActive:{
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       version:Package.version,
-      imageLink: "/images/pages/home/"
-
+      imageLink: "/images/pages/home/",
+      showCookies: false
+    }
+  },
+  methods:{
+    showCookiesAction(){
+      this.showCookies = true;
+    },
+    dialogCookiesClosed(){
+      this.showCookies = false;
     }
   }
 };

@@ -1,6 +1,32 @@
 {
-    "messageInfo": "Pour son fonctionnement, ce site utilise des cookies pour maintenir active votre connexion au site et réaliser des statistiques de visite sans aucune finalité commerciale. Ces statistiques sont anonymisées et leurs données restent dans un outil interne. Elles ne sont pas transmises à un tiers",
-    "iUnderstand": "J'ai compris",
-    "privacyPolicy": "Politique de confidentialité",
-    "link": "/protection-donnees"
+    "title": "Gestion des cookies",
+    "privateLife": "Vie privée",
+    "yourBrowseryourChoice": "Vous avez le choix",
+    "store":"Enregister",
+    "working":{
+        "line1":"Pour son fonctionnement, ce site utilise des cookies",
+        "line2":"Choisissez librement les cookies que vous souhaitez activer"
+    },
+    "privacyPolicy":{
+        "text": "Plus de détails sur notre gestion des données dans la",
+        "link": {
+            "label":"Politique de confidentialité",
+            "uri":"/protection-donnees"
+        }
+    },
+    "checkboxes":{
+        "connectionActive":{
+            "desc":"Maintenir votre connexion active",
+            "mandatoryOrNot":"Cookie nécessaire"
+        },
+        "stats":{
+            "desc":"Nous partager les statistiques anonymes de votre visite",
+            "mandatoryOrNot":"Cookie optionnel",
+            "details":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service"
+        },
+        "social":{
+            "desc":"Permettre inscription et connexion via les réseaux sociaux",
+            "mandatoryOrNot":"Cookie optionnel"
+        }
+    }
 }

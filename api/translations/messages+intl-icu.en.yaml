@@ -402,7 +402,7 @@ typeOfpayment: "Paiement"
 certified: "Certifié"
 driver: "Conducteur"
 passenger: "Passager"
-paymentNotDone: "Paiement non effectué"
+paymentNotDone: "Paiement non déclaré"
 onLinePayment: "Paiement en ligne"
 directPayment: "Paiement à la main"
 

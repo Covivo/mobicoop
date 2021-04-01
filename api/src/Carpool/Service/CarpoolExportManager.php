@@ -103,10 +103,9 @@ class CarpoolExportManager
             $carpoolExport = new CarpoolExport();
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
+            $carpoolExport->setAmount($carpoolItem->getAmount());
             //    we set the payment mode
             if ($carpoolItem->getItemStatus() !== 0) {
-                $carpoolExport->setAmount($carpoolItem->getAmount());
-
                 // We check the status of the right role
                 if ($isCreditor) {
                     switch ($carpoolItem->getCreditorStatus()) {
@@ -177,7 +176,7 @@ class CarpoolExportManager
             ->transliterate($user->getGivenName().$user->getFamilyName());
         $infoForPdf['fileName'] = $now->format("YmdHis").$sanitizeUserName.'ListeDesCovoiturages.pdf' ;
         $infoForPdf['filePath'] = $this->carpoolExportPath;
-        $infoForPdf['returnUrl'] = $this->carpoolExportUri . $infoForPdf['filePath'] . $infoForPdf['fileName'];
+        $infoForPdf['returnUrl'] = $this->carpoolExportUri . $infoForPdf['fileName'];
         $infoForPdf['userName'] = $user->getGivenName() . ' ' . $user->getFamilyName();
         $infoForPdf['appName'] = $this->carpoolExportPlatformName;
         $infoForPdf['paid'] = $sumPaid;

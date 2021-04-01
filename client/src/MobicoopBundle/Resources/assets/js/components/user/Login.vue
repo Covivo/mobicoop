@@ -17,6 +17,7 @@
     </v-row>
     <div class="pt-12">
       <v-row
+        v-if="consent"
         class="text-center justify-center"
       >
         <v-col
@@ -66,8 +67,16 @@
               @click:append="show1 = !show1"
             />
 
+            <v-alert
+              v-if="!consent"
+              class="warning white--text"
+            >
+              <v-icon class="white--text">
+                mdi-information-outline
+              </v-icon> {{ $t('consent') }}
+            </v-alert>
             <v-btn
-              :disabled="!valid"
+              :disabled="!valid || !consent"
               :loading="loading"
               color="secondary"
               type="submit"
@@ -97,9 +106,8 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="showFacebookLogin"
+        v-if="showFacebookLogin && consentSocial"
         justify="center"
-      
         class="text-center align-start"
       >
         <v-col class="col-4">
@@ -107,6 +115,19 @@
             :app-id="facebookLoginAppId"
             @errorFacebookConnect="errorFB"
           />
+        </v-col>
+      </v-row>
+      <v-row
+        v-else-if="showFacebookLogin"
+        class="justify-center"
+      >
+        <v-col class="col-4 text-center">
+          <v-alert
+            type="info"
+            class="text-left"
+          >
+            {{ $t('socialServicesUnavailableWithoutConsent') }}
+          </v-alert>
         </v-col>
       </v-row>
     </div>
@@ -171,12 +192,15 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
+      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
+      consent: false,
+      consentSocial: false
     };
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
     //console.log(this.$i18n.messages)
+    this.getConsent();
   },
   methods: {
     validate() {
@@ -190,6 +214,11 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
+    },
+    getConsent(){
+      let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
+      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
+      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   }
 };

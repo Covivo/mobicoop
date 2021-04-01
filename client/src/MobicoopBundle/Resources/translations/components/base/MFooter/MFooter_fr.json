@@ -53,6 +53,10 @@
         "dataPolicy":{
             "title":"Protection des données",
             "link":"/protection-donnees"
+        },
+        "cookies":{
+            "title":"Gestion des cookies",
+            "link":"#"
         }
     },
     "contacts":{
