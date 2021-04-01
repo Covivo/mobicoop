@@ -44,3 +44,5 @@ twig:
         languages: '%env(json:LANGUAGES)%'
         informativeMessageActive: '%env(bool:INFORMATIVE_MESSAGE_ACTIVE)%'
         informativeMessageText: '%env(string:INFORMATIVE_MESSAGE_TEXT)%'
+        cookiesShowAuto: '%env(bool:COOKIES_SHOW_AUTO)%'
+        facebookShow: '%env(bool:FACEBOOK_SHOW)%'

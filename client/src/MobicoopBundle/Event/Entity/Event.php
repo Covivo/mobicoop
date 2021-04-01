@@ -146,6 +146,11 @@ class Event implements ResourceInterface, \JsonSerializable
      * @Assert\Valid
      */
     private $images;
+
+    /**
+    * @var string The url of the image of the external event.
+    */
+    private $externalImageUrl;
     
     public function __construct($id=null)
     {
@@ -345,6 +350,16 @@ class Event implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getExternalImageUrl(): ?string
+    {
+        return $this->externalImageUrl;
+    }
+    
+    public function setExternalImageUrl(?string $externalImageUrl)
+    {
+        $this->externalImageUrl = $externalImageUrl;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -363,7 +378,8 @@ class Event implements ResourceInterface, \JsonSerializable
                 'url'               => $this->getUrl(),
                 'address'           => $this->getAddress(),
                 'user'              => $this->getUser(),
-                'images'            => $this->getImages()
+                'images'            => $this->getImages(),
+                'externalImageUrl'  => $this->getExternalImageUrl()
             ];
     }
 }

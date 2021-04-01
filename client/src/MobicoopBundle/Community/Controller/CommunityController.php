@@ -383,8 +383,13 @@ class CommunityController extends AbstractController
                         $user = $communityUser->getUser();
                         $user->setIsCommunityReferrer(true);
                         array_unshift($users, $user);
-                    } elseif ($communityUser->getStatus() == 1 || $communityUser->getStatus() == 2) {
-                        // get all community Users accepted_as_member or accepted_as_moderator
+                    } elseif ($communityUser->getStatus() == 2) {
+                        // get all community Users accepted_as_moderator
+                        $user = $communityUser->getUser();
+                        $user->setIsCommunityModerator(true);
+                        array_unshift($users, $user);
+                    } elseif ($communityUser->getStatus() == 1) {
+                        // get all community Users accepted_as_member
                         array_push($users, $communityUser->getUser());
                     }
                 }

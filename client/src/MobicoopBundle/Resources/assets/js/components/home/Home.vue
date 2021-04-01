@@ -8,7 +8,7 @@
     <MSnackInfos
       :active="informativeMessageActive"
       :text="informativeMessageText"
-    />  
+    />   
     <v-row v-if="displayVerifiedMessage">
       <v-col class="pa-0">
         <v-snackbar
@@ -139,18 +139,16 @@
       :user-id="(user && user.id) ? user.id : null"
     />
     <!-- end homeBottom -->
-    <Cookies />
   </v-container>
 </template>
 
 <script>
 import {merge} from "lodash";
-import Cookies from "@components/utilities/Cookies";
 import {messages_en, messages_fr} from "@translations/components/home/Home/";
 import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
-import MSnackInfos from "@components/utilities/MSnackInfos"
+import MSnackInfos from "@components/utilities/MSnackInfos";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
@@ -165,7 +163,6 @@ export default {
   components: {
     Search,
     HomeContent,
-    Cookies,
     MSnackInfos
   },
   props: {

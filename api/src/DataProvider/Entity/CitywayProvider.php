@@ -93,6 +93,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_BIKE = "BICYCLE";
     private const CW_PT_MODE_WALK = "WALK";
     private const CW_PT_MODE_ON_DEMAND = "TOD";
+    private const CW_PT_MODE_METRO = "METRO";
 
     private const CW_COUNTRY = "France";
     private const CW_NC = "";
@@ -211,11 +212,30 @@ class CitywayProvider implements ProviderInterface
             if (!isset($data["Data"][0]["response"])) {
                 return $this->collection;
             }
-            if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
-                return $this->collection;
+
+            // Several versions of CityWay api exists we need to check whick on it is.
+
+            // Last versions has "Trace" data to identify which mode is used
+            $matchingData = [];
+            if (isset($data["Data"][0]['Trace'])) {
+                // We keep only the data that matches the given mode
+                foreach ($data["Data"] as $currentData) {
+                    if (strtoupper($currentData['Trace']) == $this->getTripModes($params["modes"])) {
+                        $matchingData[] = $currentData;
+                    }
+                }
+            } else {
+                // oldest versions doesn't have "Trace" data. We take the first data array
+                $matchingData[] = $data["Data"][0];
             }
-            foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
-                $this->collection[] = $this->deserialize($class, $trip);
+
+            foreach ($matchingData as $currentMatchingData) {
+                if (!isset($currentMatchingData["response"]["trips"]["Trip"])) {
+                    return $this->collection;
+                }
+                foreach ($currentMatchingData["response"]["trips"]["Trip"] as $trip) {
+                    $this->collection[] = $this->deserialize($class, $trip);
+                }
             }
         }
     }
@@ -647,6 +667,10 @@ class CitywayProvider implements ProviderInterface
             } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_ON_DEMAND) {
                 // transport on demand
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_ON_DEMAND);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_METRO) {
+                // Metro
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_METRO);
                 $leg->setTravelMode($travelMode);
             }
 

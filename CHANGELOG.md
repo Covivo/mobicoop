@@ -1,3 +1,6 @@
+# Release 1.24.0
+* New RGPD compliant Cookie component. There is mandatory and optionnal cookie consent to give. Some features won't be available without consent.
+
 # Release 1.22.0
 * New contact recipients system
 * Number of unread messages

@@ -213,6 +213,7 @@ services:
             $loginDelegate: '%env(bool:LOGIN_DELEGATE)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
             $ageDisplay: '%env(bool:AGE_DISPLAY)%'
+            $birthDateDisplay: '%env(bool:BIRTHDATE_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

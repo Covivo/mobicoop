@@ -5,17 +5,18 @@
         <v-img
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['square_250']"
-          aspect-ratio="1"
+          :aspect-ratio="1"
           class="grey lighten-2"
           max-width="200"
           max-height="150"
         />
         <v-img
           v-else
-          src="/images/avatarsDefault/avatar.svg"
-          aspect-ratio="1"
-          max-width="200"
-          max-height="200"
+          :src="item.externalImageUrl ? item.externalImageUrl : '/images/avatarsDefault/avatar.svg'"
+          :aspect-ratio="1"
+          contain
+          width="225"
+          height="200"
         />
       </v-col>
       <v-col
@@ -119,12 +120,24 @@ export default {
       let toDate = moment(this.item.toDate.date).format(this.$t("shortCompleteDate"));
       
       if(fromDate === toDate){
-        this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
+        if (this.item.useTime) {
+          this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
+        } 
+        else { 
+          this.dateLine1 = this.$t("date.the")+" "+fromDate;
+        }
       }
       else{
-        this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
-        this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("hourMinute"));
+        if (this.item.useTime) {
+          this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
+          this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("hourMinute"));
+        } 
+        else {
+          this.dateLine1 = this.$t("date.from")+" "+fromDate;
+          this.dateLine2 = this.$t("date.to")+" "+toDate;
+        }
       }
+      
     }
   }
 }
