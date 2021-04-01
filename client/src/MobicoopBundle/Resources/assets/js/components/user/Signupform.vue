@@ -235,6 +235,7 @@
                   required
                 />
                 <v-menu
+                  v-if="birthDateDisplay"
                   ref="menu"
                   v-model="menu"
                   :close-on-content-click="false"
@@ -358,8 +359,23 @@
 
                 <!-- checkbox -->
                 <v-checkbox
-                  v-model="form.validation"
+                  v-if="!birthDateDisplay"
                   class="check mt-12"
+                  color="primary"
+                  :rules="form.checkboxLegalAgeRules"
+                  required
+                >
+                  <template v-slot:label>
+                    <div>
+                      {{ $t("legalAge.text") }}
+                    </div>
+                  </template>
+                </v-checkbox>
+
+
+                <!-- checkbox -->
+                <v-checkbox
+                  v-model="form.validation"
                   color="primary"
                   :rules="form.checkboxRules"
                   required
@@ -436,6 +452,19 @@
             :sign-up="true"
             @fillForm="fillForm"
           />
+        </v-col>
+      </v-row>
+      <v-row
+        v-else-if="showFacebookSignUp"
+        class="justify-center"
+      >
+        <v-col class="col-4 text-center">
+          <v-alert
+            type="info"
+            class="text-left"
+          >
+            {{ $t('rgpd.socialServicesUnavailableWithoutConsent') }}
+          </v-alert>
         </v-col>
       </v-row>
       <v-row
@@ -536,6 +565,10 @@ export default {
       default: false
     },
     newsSubscriptionDefault: {
+      type: Boolean,
+      default: false
+    },
+    birthDateDisplay: {
       type: Boolean,
       default: false
     }
@@ -660,6 +693,9 @@ export default {
         homeAddress: null,
         checkboxRules: [
           (v) => !!v || this.$t("chart.required"),
+        ],
+        checkboxLegalAgeRules: [
+          (v) => !!v || this.$t("legalAge.required"),  
         ],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault
@@ -856,7 +892,11 @@ export default {
       return this.form.email && this.form.password && this.form.telephone != null 
     },
     step2Valid() {
-      return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
+      if (this.birthDateDisplay){
+        return this.form.familyName && this.form.givenName && this.form.gender && this.form.date != null
+      } else {
+        return this.form.familyName && this.form.givenName && this.form.gender != null
+      }
     },
     emitEvent: function() {
       this.$emit("change", {

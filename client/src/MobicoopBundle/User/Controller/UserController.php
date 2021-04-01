@@ -90,6 +90,8 @@ class UserController extends AbstractController
     private $loginDelegate;
     private $fraudWarningDisplay;
     private $ageDisplay;
+    private $birthDateDisplay;
+
 
     /**
      * Constructor
@@ -115,7 +117,8 @@ class UserController extends AbstractController
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
-        bool $ageDisplay
+        bool $ageDisplay,
+        bool $birthDateDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -136,6 +139,7 @@ class UserController extends AbstractController
         $this->loginDelegate = $loginDelegate;
         $this->fraudWarningDisplay= $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
+        $this->birthDateDisplay = $birthDateDisplay;
 
         $this->ssoManager = $ssoManager;
     }
@@ -250,7 +254,9 @@ class UserController extends AbstractController
                 "loginLinkInConnection"=>$this->loginLinkInConnection,
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
                 "required_community"=>($this->required_community==="true") ? true : false,
-                "newsSubscription" => $newsSubscription
+                "newsSubscription" => $newsSubscription,
+                "birthDateDisplay" => $this->birthDateDisplay
+
         ]);
     }
 

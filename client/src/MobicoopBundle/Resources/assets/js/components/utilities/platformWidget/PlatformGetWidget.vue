@@ -58,7 +58,7 @@ export default {
   },
   methods:{
     getUrl() {
-      return window.location.protocol +"//"+ window.location.host + this.$t('externalRoute');
+      return window.location.protocol +"//"+ window.location.host + this.$t('widget.externalRoute');
     }
   }
 }

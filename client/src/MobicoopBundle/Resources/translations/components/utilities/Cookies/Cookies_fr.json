@@ -22,13 +22,10 @@
         "stats":{
             "desc":"Nous partager les statistiques anonymes de votre visite",
             "mandatoryOrNot":"Cookie optionnel",
-            "details":{
-                "part1":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service et témoigner de sa popularité",
-                "part2":"pour le maintenir gratuit"
-            }
+            "details":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service"
         },
         "social":{
-            "desc":"Ajouter les fonctionnalités de réseaux sociaux",
+            "desc":"Permettre inscription et connexion via les réseaux sociaux",
             "mandatoryOrNot":"Cookie optionnel"
         }
     }

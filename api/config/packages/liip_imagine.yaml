@@ -19,8 +19,7 @@ liip_imagine:
                 auto_rotate: ~
                 thumbnail: 
                     size: [800, 800]
-                    mode: outbound
-                background: { size: [800, 800], position: center, color: '#FFFFFF' }
+                    mode: inset
         square_250:
             jpeg_quality: 70
             png_compression_level: 8
@@ -28,8 +27,7 @@ liip_imagine:
                 auto_rotate: ~
                 thumbnail: 
                     size: [250, 250]
-                    mode: outbound
-                background: { size: [250, 250], position: center, color: '#FFFFFF' }
+                    mode: inset
         square_100:
             jpeg_quality: 70
             png_compression_level: 8
@@ -37,8 +35,7 @@ liip_imagine:
                 auto_rotate: ~
                 thumbnail: 
                     size: [100, 100]
-                    mode: outbound
-                background: { size: [100, 100], position: center, color: '#FFFFFF' }
+                    mode: inset
         169_800:
             jpeg_quality: 70
             png_compression_level: 8

@@ -36,8 +36,8 @@
               :disabled="!progressBarActive"
               step="1"
               ticks="always"
-              tick-size="2"
-              max="2"
+              :tick-size="socialNetworksActive ? 2 : 1"
+              :max="socialNetworksActive ? 2 : 1"
               @change="updatePrefs"
             />
           </v-col>
@@ -65,6 +65,7 @@
           >
             <v-checkbox
               v-model="checkboxes.connectionActive"
+              :disabled="checkboxes.connectionActiveDisabled"
               class="ma-0 subtitle-2"
               :label="$t('checkboxes.connectionActive.desc')"
               @click="disableProgressBar()"
@@ -82,10 +83,11 @@
             />
             <span class="font-italic subtitle-2">{{ $t('checkboxes.stats.mandatoryOrNot') }}</span>
             <p class="mt-2 subtitle-2">
-              {{ $t('checkboxes.stats.details.part1') }} <strong>{{ $t('checkboxes.stats.details.part2') }}</strong>.
+              {{ $t('checkboxes.stats.details') }}.
             </p>
           </v-col>
           <v-col
+            v-if="socialNetworksActive"
             cols="3"
           >
             <v-checkbox
@@ -123,6 +125,14 @@ export default {
     show:{
       type: Boolean,
       default: false
+    },
+    autoShow:{
+      type: Boolean,
+      default: true
+    },
+    socialNetworksActive:{
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -133,6 +143,7 @@ export default {
       defaultSettings:null,
       checkboxes:{
         connectionActive:false,
+        connectionActiveDisabled:false,
         stats:false,
         social:false
       }
@@ -182,13 +193,24 @@ export default {
       this.defaultSettings = JSON.parse(localStorage.getItem("cookies_prefs"));
       if(this.defaultSettings){
         this.checkboxes.connectionActive = this.defaultSettings.connectionActive;
+        if(!this.autoShow) this.checkboxes.connectionActiveDisabled = true;
         this.checkboxes.stats = this.defaultSettings.stats;
         this.checkboxes.social = this.defaultSettings.social;
         this.disableProgressBar();
       }
       else{
-        // If no data in local storage, we need to show the popup
-        this.dialog = true;
+        // If no data in local storage and autoShow is true, we need to show the popup
+        if(this.autoShow){
+          this.dialog = true;
+        }
+        else{
+          // Autoshow is inactive, we set somes choices to true and disable the slide barre
+          this.checkboxes.connectionActive = true;
+          this.checkboxes.connectionActiveDisabled = true;
+          this.checkboxes.stats = true;
+          this.store();
+          this.disableProgressBar();
+        }
       }
     },
     store(){

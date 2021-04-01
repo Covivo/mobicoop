@@ -17,15 +17,16 @@
     "checkboxes":{
         "connectionActive":{
             "desc":"Maintenir votre connexion active",
-            "mandatoryOrNot":"Obligatoire"
+            "mandatoryOrNot":"Cookie nécessaire"
         },
         "stats":{
             "desc":"Nous partager les statistiques anonymes de votre visite",
-            "mandatoryOrNot":"Optionnel"
+            "mandatoryOrNot":"Cookie optionnel",
+            "details":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service"
         },
         "social":{
-            "desc":"Ajouter les fonctionnalités de réseaux sociaux",
-            "mandatoryOrNot":"Optionnel"
+            "desc":"Permettre inscription et connexion via les réseaux sociaux",
+            "mandatoryOrNot":"Cookie optionnel"
         }
     }
 }
