@@ -374,6 +374,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $isCommunityReferrer;
 
     /**
+     * @var bool|null used for community member list to know who is the referrer
+     */
+    private $isCommunityModerator;
+
+    /**
      * @var array|null BankAccounts of a User
      */
     private $bankAccounts;
@@ -1125,7 +1130,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
         return $this;
     }
-
+    
     /**
      * @return bool|null
      */
@@ -1141,6 +1146,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setIsCommunityReferrer(?bool $isCommunityReferrer): User
     {
         $this->isCommunityReferrer = $isCommunityReferrer;
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsCommunityModerator(): ?bool
+    {
+        return $this->isCommunityModerator;
+    }
+
+    /**
+     * @param bool|null $isCommunityModerator
+     * @return User
+     */
+    public function setIsCommunityModerator(?bool $isCommunityModerator): User
+    {
+        $this->isCommunityModerator = $isCommunityModerator;
         return $this;
     }
 
@@ -1292,6 +1315,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
         if (!is_null($this->getIsCommunityReferrer())) {
             $userSerialized["isCommunityReferrer"] = $this->getIsCommunityReferrer();
+        }
+        if (!is_null($this->getIsCommunityModerator())) {
+            $userSerialized["isCommunityModerator"] = $this->getIsCommunityModerator();
         }
 
         return $userSerialized;
