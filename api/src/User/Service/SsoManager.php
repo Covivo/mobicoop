@@ -25,7 +25,7 @@ namespace App\User\Service;
 
 use App\User\Ressource\SsoConnection;
 use LogicException;
-use App\DataProvider\Entity\GlConnectSsoProvider;
+use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -41,7 +41,8 @@ class SsoManager
     private $ssoServicesActive;
 
     private const SUPPORTED_PROVIDERS = [
-        "GLConnect" => GlConnectSsoProvider::class
+        OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class
     ];
 
     public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive)
@@ -62,7 +63,7 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            return new $providerClass($baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
+            return new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
         }
         return null;
     }

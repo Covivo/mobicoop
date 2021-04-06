@@ -30,16 +30,35 @@ use App\DataProvider\Service\DataProvider;
 use App\User\Entity\SsoUser;
 
 /**
- * Grand Lyon Connect SSO Provider
+ * OpenId SSO Provider
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class GlConnectSsoProvider implements SsoProviderInterface
+class OpenIdSsoProvider implements SsoProviderInterface
 {
-    const SSO_PROVIDER = 'GLConnect';
-    const AUTHORIZATION_URL = "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state=".self::SSO_PROVIDER."&redirect_uri={REDIRECT_URI}";
-    const TOKEN_URL = "idp/oidc/token/";
-    const USERINFOS_URL = "idp/oidc/user_info";
+    // Supported Providers names
+    const SSO_PROVIDER_GLCONNECT = 'GLConnect';
+    const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
 
+
+    const AUTHORIZATION_URL = "Authorization_Url";
+    const TOKEN_URL = "Token_Url";
+    const USERINFOS_URL = "UserInfos_Url";
+
+    const URLS = [
+        self::SSO_PROVIDER_GLCONNECT => [
+            self::AUTHORIZATION_URL => "idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}",
+            self::TOKEN_URL => "idp/oidc/token/",
+            self::USERINFOS_URL => "idp/oidc/user_info"
+        ],
+        self::SSO_PROVIDER_PASSMOBILITE => [
+            self::AUTHORIZATION_URL => "auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}",
+            self::TOKEN_URL => "auth/realms/Passmobilite/protocol/openid-connect/token/",
+            self::USERINFOS_URL => "auth/realms/Passmobilite/protocol/openid-connect/userinfo"
+        ]
+    ];
+
+
+    private $serviceName;
     private $baseUri;
     private $clientId;
     private $clientSecret;
@@ -50,8 +69,13 @@ class GlConnectSsoProvider implements SsoProviderInterface
     
     private $code;
 
-    public function __construct(string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
+    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
     {
+        if (!isset(self::URLS[$serviceName])) {
+            throw new \LogicException("Service unknown");
+        }
+
+        $this->serviceName = $serviceName;
         $this->baseUri = $baseUri;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -70,11 +94,11 @@ class GlConnectSsoProvider implements SsoProviderInterface
      */
     public function getConnectFormUrl(): string
     {
-        return $this->baseUri."".str_replace(
-            "{CLIENT_ID}",
-            $this->clientId,
-            str_replace("{REDIRECT_URI}", $this->redirectUri, self::AUTHORIZATION_URL)
-        );
+        return $this->baseUri."".str_replace("{CLIENT_ID}", $this->clientId, str_replace(
+            "{SERVICE_NAME}",
+            $this->serviceName,
+            str_replace("{REDIRECT_URI}", $this->redirectUri, self::URLS[$this->serviceName][self::AUTHORIZATION_URL])
+        ));
     }
 
     /**
@@ -84,7 +108,7 @@ class GlConnectSsoProvider implements SsoProviderInterface
     {
         $token = $this->getToken($code);
 
-        $dataProvider = new DataProvider($this->baseUri, self::USERINFOS_URL);
+        $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
         $headers = [
             "Authorization" => "Bearer ".$token
         ];
@@ -95,12 +119,22 @@ class GlConnectSsoProvider implements SsoProviderInterface
             $data = json_decode($response->getValue(), true);
             $ssoUser = new SsoUser();
             $ssoUser->setSub($data['sub']);
-            $ssoUser->setEmail($data['email']);
-            $ssoUser->setFirstname($data['first_name']);
-            $ssoUser->setLastname($data['last_name']);
-            $ssoUser->setProvider(self::SSO_PROVIDER);
-            $ssoUser->setGender($data['gender']);
-            $ssoUser->setBirthdate($data['birthdate']);
+            $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);
+            $ssoUser->setFirstname((isset($data['first_name'])) ? $data['first_name'] : ((isset($data['given_name'])) ? $data['given_name'] : null));
+            $ssoUser->setLastname((isset($data['last_name'])) ? $data['last_name'] : ((isset($data['family_name'])) ? $data['family_name'] : null));
+            $ssoUser->setProvider($this->serviceName);
+            $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
+            $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
+            
+
+            if (
+                is_null($ssoUser->getFirstname()) ||
+                is_null($ssoUser->getLastname()) ||
+                is_null($ssoUser->getEmail())
+            ) {
+                throw new \LogicException("Not enough infos about the User");
+            }
+
             return $ssoUser;
         } else {
             throw new \LogicException("Error get Token");
@@ -115,7 +149,7 @@ class GlConnectSsoProvider implements SsoProviderInterface
             "redirect_uri" => $this->redirectUri
         ];
 
-        $dataProvider = new DataProvider($this->baseUri, self::TOKEN_URL);
+        $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId,$this->clientSecret]);
         

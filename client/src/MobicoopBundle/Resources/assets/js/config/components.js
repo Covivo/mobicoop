@@ -73,6 +73,7 @@ import ToolBox from "@components/utilities/ToolBox/ToolBox";
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
 import ErrorPage from "@components/utilities/ErrorPage";
+import MSnackInfos from "@components/utilities/MSnackInfos";
 
 // PAYMENT
 import Payment from "@components/payment/Payment"
@@ -123,5 +124,6 @@ export default {
   Payment,
   PaymentPaid,
   SsoLoginReturn,
-  ErrorPage
+  ErrorPage,
+  MSnackInfos
 }
