@@ -8,7 +8,7 @@
       min-height="350px"
     >
       <v-card-title class="primary--text font-weight-bold">
-        <h2> {{ title }} </h2>
+        <h3> {{ title }} </h3>
       </v-card-title>
 
       <v-card-text class="black--text">
