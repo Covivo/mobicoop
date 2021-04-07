@@ -31,7 +31,7 @@ use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\Community\Repository\CommunityRepository;
 use App\MassCommunication\Entity\Sender;
-use App\MassCommunication\CampaignProvider\SendinblueProvider;
+use App\MassCommunication\CampaignProvider\SendinBlueProvider;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment;
@@ -52,7 +52,7 @@ class CampaignManager
     private $campaignRepository;
     private $translator;
 
-    const MAIL_PROVIDER_SENDINBLUE = 'sendinblue';
+    const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
 
     /**
      * Constructor.
@@ -96,7 +96,7 @@ class CampaignManager
         $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
+                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
                 break;
         }
     }

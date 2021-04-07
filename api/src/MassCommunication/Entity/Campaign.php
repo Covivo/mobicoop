@@ -133,17 +133,26 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  */
 class Campaign
 {
-    const STATUS_PENDING = 0;
-    const STATUS_CREATED = 1;
-    const STATUS_SENT = 2;
-    const STATUS_ARCHIVED = 3;
+    const STATUS_PENDING = 0;   // when the campaign has not been tested yet
+    const STATUS_CREATED = 1;   // when the campaign has been successfully tested
+    const STATUS_SENT = 2;      // when the campaign was sent
+    const STATUS_ARCHIVED = 3;  // when the campaign is archived (not editable anymore)
 
-    const SOURCE_USER = 1;
-    const SOURCE_COMMUNITY = 2;
+    const SOURCE_USER = 1;          // user resource as source
+    const SOURCE_COMMUNITY = 2;     // community members as source
 
-    const FILTER_TYPE_SELECTION = 1;
-    const FILTER_TYPE_ALL = 2;
-    const FILTER_TYPE_FILTER = 3;
+    const SOURCES = [
+        self::SOURCE_USER,
+        self::SOURCE_COMMUNITY
+    ];
+
+    const FILTER_TYPE_SELECTION = 1;    // filter using a selection of users
+    const FILTER_TYPE_FILTER = 2;       // filter using a resource filter (empty filter to get all users)
+
+    const FILTER_TYPES = [
+        self::FILTER_TYPE_SELECTION,
+        self::FILTER_TYPE_FILTER
+    ];
 
     /**
      * @var int The id of this campaign.
@@ -268,7 +277,7 @@ class Campaign
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The deliveries related to this campaign.
+     * @var ArrayCollection|null The deliveries related to this campaign, if the filter type is selection.
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -282,17 +291,6 @@ class Campaign
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $images;
-
-    /**
-     * @var int Status to send all campaign
-     * null -> send to chosen deleveries
-     * 0 -> send to all user
-     * id community -> send to all user in the given community ID
-     *
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
-     */
-    private $sendAll;
 
     /**
      * @var string The creator
@@ -315,6 +313,7 @@ class Campaign
     /**
      * @var int|null The source for the deliveries.
      *
+     * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aread","aWrite"})
      */
     private $source;
@@ -322,6 +321,7 @@ class Campaign
     /**
      * @var int|null The source id for the deliveries.
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups({"aread","aWrite"})
      */
     private $sourceId;
@@ -329,13 +329,15 @@ class Campaign
     /**
      * @var int|null The filter type for the deliveries selection.
      *
+     * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aread","aWrite"})
      */
     private $filterType;
 
     /**
-     * @var array|null The filter array for the deliveries selection.
+     * @var string|null The filter string for the deliveries selection.
      *
+     * @ORM\Column(type="string", length=512, nullable=true)
      * @Groups({"aread","aWrite"})
      */
     private $filters;
@@ -343,6 +345,7 @@ class Campaign
     /**
      * @var int|null The number of deliveries.
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("aRead")
      */
     private $deliveryCount;
@@ -580,18 +583,6 @@ class Campaign
         return $this;
     }
 
-    public function getSendAll(): ?int
-    {
-        return $this->sendAll;
-    }
-
-    public function setSendAll($sendAll): self
-    {
-        $this->sendAll = $sendAll;
-
-        return $this;
-    }
-
     public function getCreator(): string
     {
         return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
@@ -654,12 +645,12 @@ class Campaign
         return $this;
     }
 
-    public function getFilters(): ?array
+    public function getFilters(): ?string
     {
         return $this->filters;
     }
 
-    public function setFilters(?array $filters): self
+    public function setFilters(?string $filters): self
     {
         $this->filters = $filters;
 
@@ -668,7 +659,18 @@ class Campaign
 
     public function getDeliveryCount(): int
     {
-        return count($this->deliveries);
+        if ($this->filterType == self::FILTER_TYPE_SELECTION) {
+            return count($this->deliveries);
+        } else {
+            return $this->deliveryCount;
+        }
+    }
+
+    public function setDeliveryCount(int $deliveryCount): self
+    {
+        $this->deliveryCount = $deliveryCount;
+
+        return $this;
     }
     
 

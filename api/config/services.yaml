@@ -514,6 +514,20 @@ services:
             $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
             $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'
 
+    App\MassCommunication\Admin\Service\CampaignManager:
+        arguments:
+            $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'
+            $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
+            $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
+            $mailerClientName: '%env(resolve:MASS_MAILER_CLIENT_NAME)%'
+            $mailerClientId: '%env(resolve:MASS_MAILER_CLIENT_ID)%'
+            $mailerClientTemplateId: '%env(resolve:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
+            $mailerReplyTo: '%env(resolve:MASS_MAILER_REPLYTO)%'
+            $mailerSenderEmail: '%env(resolve:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerDomain: '%env(resolve:MASS_MAILER_DOMAIN)%'
+            $mailerIp: '%env(resolve:MASS_MAILER_IP)%'
+            $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
+
     # Match
     App\Match\Controller\:
         resource: '../src/Match/Controller'
@@ -660,6 +674,14 @@ services:
         tags: ['controller.service_arguments']
 
     'App\User\DataProvider\UserSearchCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\User\Admin\DataProvider\UserCampaignSendCollectionDataProvider':
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 

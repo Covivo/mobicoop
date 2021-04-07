@@ -288,6 +288,24 @@ use App\User\Controller\UserSendValidationEmail;
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_user_create',object)"
  *          },
+ *          "ADMIN_associate_campaign"={
+ *              "path"="/admin/users/associate-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
+ *          "ADMIN_send_campaign"={
+ *              "path"="/admin/users/send-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -1289,7 +1307,7 @@ class User implements UserInterface, EquatableInterface
     private $homeAddress;
 
     /**
-     * @var array The user roles
+     * @var array|null The user roles
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
@@ -3046,7 +3064,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRolesTerritory(): array
+    public function getRolesTerritory(): ?array
     {
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
             if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
