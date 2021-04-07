@@ -30,9 +30,7 @@ use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Auth\Service\AuthManager;
-use App\Community\Repository\CommunityRepository;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignException;
@@ -41,12 +39,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Collection data provider used to associate Users as deliveries for a campaign (depending on the filter type).
+ * Collection data provider used to send a campaign to users.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class UserCampaignAssociateCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class UserCampaignSendCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $collectionExtensions;
     private $managerRegistry;
@@ -54,11 +52,10 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $campaignRepository;
     private $authManager;
     private $campaignManager;
-    private $communityRepository;
 
     const MAX_RESULTS = 999999;
     
-    public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
+    public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
@@ -66,12 +63,11 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         $this->campaignRepository = $campaignRepository;
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
-        $this->communityRepository = $communityRepository;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "ADMIN_associate_campaign";
+        return User::class === $resourceClass && $operationName === "ADMIN_send_campaign";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -91,42 +87,24 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
             return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
-        // SOURCE IS ALWAYS 1 here...
-        // // check if source is sent
-        // if (!$this->request->get('source')) {
-        //     throw new CampaignException('Source is mandatory');
-        // }
-
-        // // check if source is valid
-        // if (!in_array($this->request->get('source'),Campaign::SOURCES)) {
-        //     throw new CampaignException('Source is invalid');
-        // }
-        
-        // // check if sourceID is sent
-        // if (!$this->request->get('sourceId') && $this->request->get('source') == Campaign::SOURCE_COMMUNITY) {
-        //     throw new CampaignException('SourceId is mandatory');
-        // }
-
-        // // check if sourceId is valid
-        // if ($this->request->get('source') == Campaign::SOURCE_COMMUNITY && !$community = $this->communityRepository->find($this->request->get('sourceId'))) {
-        //     throw new CampaignException('Community not found');
-        // }
-
-        // check if filterType is sent
-        if (!$this->request->get('filterType')) {
-            throw new CampaignException('Filter type is mandatory');
+        // check if mode is sent
+        if (!$this->request->get('mode')) {
+            throw new CampaignException('Mode is mandatory');
         }
 
-        // check if filterType is valid
-        if (!in_array($this->request->get('filterType'), Campaign::FILTER_TYPES)) {
-            throw new CampaignException('FilterType is invalid');
+        // check if mode is valid
+        if (!in_array($this->request->get('mode'), CampaignManager::MODES)) {
+            throw new CampaignException('Mode is invalid');
+        }
+        if ($this->request->get('mode') == CampaignManager::MODE_PROD && $campaign->getStatus() != Campaign::STATUS_CREATED) {
+            throw new CampaignException('Campaign can\'t be sent before it has been tested');
         }
 
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
-        $repository = $manager->getRepository($resourceClass);
         /**
          * @var EntityRepository $repository
          */
+        $repository = $manager->getRepository($resourceClass);
         $queryBuilder = $repository->createQueryBuilder('u');
         $queryNameGenerator = new QueryNameGenerator();
 
@@ -135,12 +113,6 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         // we force the selection to the users that have accepted the news subscription
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
-
-        // source is always 1 here
-        $campaign->setSource(Campaign::SOURCE_USER);
-        
-        // filter type
-        $campaign->setFilterType($this->request->get('filterType'));
         
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
@@ -153,6 +125,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
             }
         }
 
+        // maybe the filters have changed, so we built them again and we don't use the ones defined in the campaign object
         $filters= [];
         if ($campaign->getFilterType() == Campaign::FILTER_TYPE_FILTER) {
             $exclude = ['source','filterType','campaignId'];
@@ -163,8 +136,8 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
             }
         }
 
-        // "associate" the users to the campaign (just complete the informations of the campaign, and create deliveries if selection)
-        $this->campaignManager->associateUsers($campaign, $users, $filters);
+        // send the campaign (or the test)
+        $this->campaignManager->send($campaign, $users, $filters, $this->request->get('mode'));
 
         return [count($users)];
     }

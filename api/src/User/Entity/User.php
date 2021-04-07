@@ -289,7 +289,16 @@ use App\User\Controller\UserSendValidationEmail;
  *              "security"="is_granted('admin_user_create',object)"
  *          },
  *          "ADMIN_associate_campaign"={
- *              "path"="/admin/users/associate",
+ *              "path"="/admin/users/associate-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
+ *          "ADMIN_send_campaign"={
+ *              "path"="/admin/users/send-campaign",
  *              "method"="GET",
  *              "normalization_context"={
  *                  "groups"={"aRead"},
