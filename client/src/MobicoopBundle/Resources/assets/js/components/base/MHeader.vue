@@ -63,7 +63,7 @@
         </v-btn>
       </v-toolbar-items>
       <v-btn
-        v-if="user"
+        v-if="user || publishButtonAlwaysActive==true"
         rounded
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
@@ -313,6 +313,10 @@ export default {
     token: {
       type: String,
       default: ''
+    },
+    publishButtonAlwaysActive:{
+      type: Boolean,
+      default:false
     }
   },
   data () {
