@@ -71,6 +71,16 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+      <!-- <div @click="snackbar = true">
+        <v-btn
+          v-if="!user && publishButtonAlwaysActive==false"
+          rounded
+          disabled
+          class="hidden-md-and-down"
+        >
+          {{ $t('buttons.shareAnAd.label') }}
+        </v-btn>
+      </div> -->
       <v-btn
         rounded
         color="secondary"
@@ -79,17 +89,6 @@
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
-     
-      <div @click="snackbar = true">
-        <v-btn
-          v-if="!user"
-          rounded
-          disabled
-          class="hidden-md-and-down"
-        >
-          {{ $t('buttons.shareAnAd.label') }}
-        </v-btn>
-      </div>
       <v-toolbar-items
         class="hidden-md-and-down"
       >
@@ -248,7 +247,7 @@
               <v-btn
                 text
                 rounded
-                :disabled="!user"
+                :disabled="!user && publishButtonAlwaysActive==false"
                 :href="$t('buttons.shareAnAd.route')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
