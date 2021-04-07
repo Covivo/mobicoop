@@ -947,7 +947,6 @@ class SolidaryManager
         }
         
         // We create the solidaryUserStructure associated to the demand
-        $solidaryUserStructure = new SolidaryUserStructure();
         $structure = null;
 
         if ($solidary->getStructure()) {
@@ -963,8 +962,20 @@ class SolidaryManager
                 throw new SolidaryException(SolidaryException::NO_STRUCTURE);
             }
         }
-        $solidaryUserStructure->setStructure($structure);
-        $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        // we check if the solidary user structure doesn't exists already
+        $solidaryUserStructure = null;
+        $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
+        foreach ($solidaryUserStructures as $currentSolidaryUserStructure) {
+            if ($structure->getId() === $currentSolidaryUserStructure->getStructure()->getId()) {
+                $solidaryUserStructure = $currentSolidaryUserStructure;
+                break;
+            } else {
+                $solidaryUserStructure = new SolidaryUserStructure();
+                $solidaryUserStructure->setStructure($structure);
+                $solidaryUserStructure->setSolidaryUser($solidaryUser);
+            }
+        }
 
         // We add the proofs associated to the demand
         foreach ($solidary->getProofs() as $givenProof) {
