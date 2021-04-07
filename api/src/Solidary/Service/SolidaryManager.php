@@ -721,41 +721,6 @@ class SolidaryManager
         // round-trip
         $ad->setOneWay(true);
 
-        $days = $solidary->getDays();
-
-        // Check if there is a outward time for each given day
-        $outwardTimes = $solidary->getOutwardTimes();
-        if (is_null($outwardTimes)) {
-            throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
-        }
-        foreach ($days as $outwardDay => $outwardDayChecked) {
-            if (
-                !array_key_exists($outwardDay, $outwardTimes) ||
-                ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
-            ) {
-                throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
-            }
-        }
-
-
-        if (!is_null($solidary->getReturnDatetime())) {
-            $returnTimes = $solidary->getReturnTimes();
-            if (is_null($returnTimes)) {
-                throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
-            }
-                
-            // Check if there is a return time for each given day
-            foreach ($days as $returnDay => $returnDayChecked) {
-                if (
-                    !array_key_exists($returnDay, $returnTimes) ||
-                    (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
-                ) {
-                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
-                }
-            }
-            $ad->setOneWay(false);
-        }
-
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
         // Frequency
@@ -771,7 +736,40 @@ class SolidaryManager
             // we set the schedule and the limit date of the regular demand
             $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
             $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
+            
+            $days = $solidary->getDays();
 
+            // Check if there is a outward time for each given day
+            $outwardTimes = $solidary->getOutwardTimes();
+            if (is_null($outwardTimes)) {
+                throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
+            }
+            foreach ($days as $outwardDay => $outwardDayChecked) {
+                if (
+                    !array_key_exists($outwardDay, $outwardTimes) ||
+                    ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
+                ) {
+                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
+                }
+            }
+        
+            if (!is_null($solidary->getReturnDatetime())) {
+                $returnTimes = $solidary->getReturnTimes();
+                if (is_null($returnTimes)) {
+                    throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
+                }
+
+                // Check if there is a return time for each given day
+                foreach ($days as $returnDay => $returnDayChecked) {
+                    if (
+                        !array_key_exists($returnDay, $returnTimes) ||
+                        (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
+                    ) {
+                        throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
+                    }
+                }
+                $ad->setOneWay(false);
+            }
             // We build the schedule
             $buildedSchedules = $this->buildSchedulesForAd($solidary->getDays(), $solidary->getOutwardTimes(), $solidary->getReturnTimes());
 
@@ -947,7 +945,7 @@ class SolidaryManager
         } else {
             $solidaryUser = $user->getSolidaryUser();
         }
-
+        
         // We create the solidaryUserStructure associated to the demand
         $solidaryUserStructure = new SolidaryUserStructure();
         $structure = null;
