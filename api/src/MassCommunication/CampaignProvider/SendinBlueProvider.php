@@ -57,12 +57,12 @@ class SendinBlueProvider implements CampaignProviderInterface
      * Constructor
      *
      * @param string $key           The api key
-     * @param integer $folderId     The ID for the SendinBlue folder
+     * @param string $folderId     The ID for the SendinBlue folder
      * @param string $replyTo       The replayTo email
      * @param string $sender        The sender Email
-     * @param integer $templateId   The ID for the SendinBlue template
+     * @param string $templateId   The ID for the SendinBlue template
      */
-    public function __construct(string $key, int $folderId, string $replyTo, string $senderEmail, int $templateId)
+    public function __construct(string $key, string $folderId, string $replyTo, string $senderEmail, string $templateId)
     {
         $this->folderId = $folderId;
         $this->replyTo = $replyTo;

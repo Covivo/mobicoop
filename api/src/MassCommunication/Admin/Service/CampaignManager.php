@@ -56,13 +56,6 @@ class CampaignManager
     private $translator;
     private $entityManager;
     private $mediumRepository;
-    private $mailerProvider;
-    private $mailerApiKey;
-    private $mailerClientName;
-    private $mailerClientId;
-    private $mailerClientTemplateId;
-    private $mailerReplyTo;
-    private $mailerSenderEmail;
     private $mailerDomain;
     private $mailerIp;
     private $massEmailProvider;
@@ -82,8 +75,8 @@ class CampaignManager
         string $mailerProvider,
         string $mailerApiKey,
         string $mailerClientName,
-        int $mailerClientId,
-        int $mailerClientTemplateId,
+        string $mailerClientId,
+        string $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerSenderEmail,
         string $mailerDomain,
@@ -95,13 +88,7 @@ class CampaignManager
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->mailTemplate = $mailTemplate;
-        $this->mailerProvider = $mailerProvider;
-        $this->mailerApiKey = $mailerApiKey;
         $this->mailerClientName = $mailerClientName;
-        $this->mailerClientId = $mailerClientId;
-        $this->mailerClientTemplateId = $mailerClientTemplateId;
-        $this->mailerReplyTo = $mailerReplyTo;
-        $this->mailerSenderEmail = $mailerSenderEmail;
         $this->mailerDomain = $mailerDomain;
         $this->mailerIp = $mailerIp;
         switch ($mailerProvider) {
