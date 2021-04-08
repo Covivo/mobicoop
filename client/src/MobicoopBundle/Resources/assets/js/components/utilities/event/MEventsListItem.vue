@@ -3,14 +3,14 @@
     v-if="item"
     flat
     class="secondary lighten-5 mx-auto"
-    max-width="500"
-    max-height="125"
+    width="500"
+    height="140"
   >
     <div
       class="d-flex flex-no-wrap"
     >
       <v-avatar
-        size="125"
+        size="140"
         tile
       >
         <v-img
@@ -25,13 +25,22 @@
         />
       </v-avatar>
     
-      <div style="min-width:250px;">
+      <div
+        style="width:300px"
+        class="d-flex flex-column align-self-center"
+      >
         <v-card-title
           class="text-left"
         >
-          <h3 class="text-uppercase"> 
-            {{ item.name }}
-          </h3>
+          <h6 class="text-uppercase">
+            <a
+              :href="linkToEventShow(item)"
+              style="text-decoration:none;"
+              class="black--text"
+            > 
+              {{ item.name }}
+            </a>
+          </h6>
         </v-card-title>
         <v-card-subtitle class="text-left">
           <span class="black--text font-italic">
@@ -49,6 +58,7 @@
         </v-card-subtitle>
       </div>
       <v-card-actions>
+        <v-spacer />
         <v-btn
           icon
           x-large
