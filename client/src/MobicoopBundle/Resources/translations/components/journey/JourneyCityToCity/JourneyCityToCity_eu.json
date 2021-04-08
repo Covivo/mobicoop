@@ -1,0 +1,22 @@
+{
+    "title":{
+        "part1":"De commune...",
+        "part2":"... à commune"
+    },
+    "links":{
+        "byCity":{
+            "title":"Les covoiturages par communes",
+            "uri":"/covoiturage-par-ville"
+        },
+        "popular":{
+            "title":"Les covoiturages par trajets populaires",
+            "uri":"/covoiturage-par-ville/populaires"
+        }
+    },
+    "popularJourneys":{
+        "from":"Covoiturage de",
+        "to":"à",
+        "uri":"/covoiturage/{origin}/{destination}"
+    },
+    "getPopularJourneysUrl":"/covoiturages/populaires/home"
+}
