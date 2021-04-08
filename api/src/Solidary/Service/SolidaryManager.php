@@ -968,14 +968,21 @@ class SolidaryManager
         // we check if the solidary user structure doesn't exists already
         $solidaryUserStructure = null;
         $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
-        foreach ($solidaryUserStructures as $currentSolidaryUserStructure) {
-            if ($structure->getId() === $currentSolidaryUserStructure->getStructure()->getId()) {
-                $solidaryUserStructure = $currentSolidaryUserStructure;
-                break;
-            } else {
-                $solidaryUserStructure = new SolidaryUserStructure();
-                $solidaryUserStructure->setStructure($structure);
-                $solidaryUserStructure->setSolidaryUser($solidaryUser);
+        // first we check if the solidaryUser is already linked to a structure
+        if (count($solidaryUser->getSolidaryUserStructures()) === 0) {
+            $solidaryUserStructure = new SolidaryUserStructure();
+            $solidaryUserStructure->setStructure($structure);
+            $solidaryUserStructure->setSolidaryUser($solidaryUser);
+        } else {
+            foreach ($solidaryUserStructures as $currentSolidaryUserStructure) {
+                if ($structure->getId() === $currentSolidaryUserStructure->getStructure()->getId()) {
+                    $solidaryUserStructure = $currentSolidaryUserStructure;
+                    break;
+                } else {
+                    $solidaryUserStructure = new SolidaryUserStructure();
+                    $solidaryUserStructure->setStructure($structure);
+                    $solidaryUserStructure->setSolidaryUser($solidaryUser);
+                }
             }
         }
         
