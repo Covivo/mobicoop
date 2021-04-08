@@ -53,7 +53,7 @@
 
 <script>
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingHeader/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingHeader/";
 import RouteSummary from "@components/carpool/utilities/RouteSummary"
 
 export default {
@@ -63,7 +63,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props: {

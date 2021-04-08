@@ -262,8 +262,8 @@
 
 <script>
 import { merge, has } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MHeader/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
@@ -273,12 +273,14 @@ import MMessageBtn from "@components/base/MMessageBtn.vue";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   components: {

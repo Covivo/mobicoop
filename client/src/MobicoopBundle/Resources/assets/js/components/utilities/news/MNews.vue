@@ -43,7 +43,7 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/utilities/MNews/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MNews/";
 
 let MessagesMergedEn = merge(messages_en);
 let MessagesMergedFr = merge(messages_fr);
@@ -52,7 +52,8 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   props: {

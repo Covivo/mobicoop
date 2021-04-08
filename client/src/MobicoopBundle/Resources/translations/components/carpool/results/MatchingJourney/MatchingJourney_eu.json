@@ -1,0 +1,53 @@
+{
+    "priceTooltip": "",
+    "detailTitle": "Journey detail",
+    "places": "{seats} seat | {seats} seats",
+    "carpool": "Carpool",
+    "carpoolAsDriver": "Carpool as driver",
+    "carpoolAsPassenger": "Carpool as passenger",
+    "alreadyAskCarpool": "You have already made a request on this proposal.",
+    "alreadyInitiatedCarpool": "Vous avez déjà pris contact sur cette annonce.",
+    "seeMessages": {
+        "label": "Voir messages",
+        "route": "/utilisateur/messages"
+    },
+    "birthYears": "years",
+    "contact": "Contact",
+    "contactTips": {
+        "acceptedAsk": "Vous avez déjà planifié un covoiturage avec ce covoitureur",
+        "pendingAsk": "Une demande vers ce covoitureur est en attente de réponse",
+        "initiatedAsk": "Une demande vers ce covoitureur est en attente de réponse"
+    },
+    "outward": "Choose outward",
+    "return": "Choose return",
+    "previous": "Previous",
+    "detail": "Detail",
+    "fromDate": "From",
+    "maxDate": "To",
+    "ranges": [
+        "1 semaine",
+        "1 mois",
+        "3 mois",
+        "Jusqu'au"
+    ],
+    "i18n": {
+        "date": {
+            "format": {
+                "fullDate": "ddd Do MMMM YYYY",
+                "shortDate": "DD/MM/YYYY",
+                "computeDate": "YYYY-MM-DD"
+            }
+        },
+        "time": {
+            "format": {
+                "hourMinute": "HH[h]mm"
+            }
+        }
+    },
+    "fraudWarningText":{
+        "part1":"Sur Mobicoop, les paiements pour vos covoiturages se réalisent essentiellement ",
+        "link":"/user/profile/update/accepted-carpools",
+        "textLink":"à la main ou en ligne ",
+        "part2":"ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    }
+}
