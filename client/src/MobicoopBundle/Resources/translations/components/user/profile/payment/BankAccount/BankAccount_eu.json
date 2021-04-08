@@ -1,0 +1,38 @@
+{
+    "titleCoordinates": "1. Coordonnées bancaires",
+    "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
+    "titleAddress": "2. Adresse complète",
+    "textAddress": "Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
+    "titleAlreadyRegistered": "Mes coordonnées bancaires",
+    "form": {
+        "label": {
+            "iban": "IBAN",
+            "bic": "BIC",
+            "address": "Votre adresse complète"
+        },
+        "tooltip": {
+            "iban": "Renseignez votre IBAN sans espace"
+        },
+        "errors": {
+            "iban": "Le numéro IBAN doit être valide",
+            "ibanRequired": "Le numéro IBAN est obligatoire",
+            "bic": "Le numéro BIC doit être valide",
+            "bicRequired": "Le numéro BIC est obligatoire"
+        }
+    },
+    "register": "Enregistrer",
+    "modalSuppr": {
+        "title": "Suppression des coordonnées bancaires ?",
+        "line1": "Vos coordonnées bancaires vont-être supprimée.",
+        "line2": "Vous ne serez plus en mesure de recevoir de paiement électronique.",
+        "line3": "Confirmez-vous cette action ?",
+        "yes": "oui",
+        "no": "non"
+    },
+    "uri": {
+        "getCoordinates": "/utilisateur/coordonnees-bancaires",
+        "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
+        "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter"
+    },
+    "error": "Une erreur est survenue"
+}

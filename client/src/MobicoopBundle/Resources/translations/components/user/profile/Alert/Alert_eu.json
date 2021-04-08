@@ -1,0 +1,33 @@
+{
+    "alerts": {
+        "carpool_ask_posted": "Sollicitation pour un covoiturage",
+        "communication_internal_message_received": "Nouveau message dans la messagerie",
+        "carpool_matching_new": "Nouveaux covoiturages potentiels",
+        "carpool_ask_accepted": "Covoiturage accepté",
+        "carpool_ask_refused": "Covoiturage refusé",
+        "carpool_ad_renewal": "Renouveler mes trajets en fin de validité",
+        "carpool_proposal_canceled": "Annulation d'un covoiturage *",
+        "*******": "Incitation à évaluer mon covoitureur",
+        "carpool_ask_linked_ad_deleted": "Suppression de l'annonce sujet de ma demande",
+        "passenger_carpool_linked_ad_deleted": "Suppression de l'annonce liée à un covoiturage accepté comme passager",
+        "passenger_carpool_linked_ad_deleted_urgent": "Suppression de l'annonce liée à un covoiturage accepté comme passager et imminent",
+        "driver_carpool_linked_ad_deleted": "Suppression de l'annonce liée à un covoiturage accepté comme conducteur",
+        "driver_carpool_linked_ad_deleted_urgent": "Suppression de l'annonce liée à un covoiturage accepté comme conducteur et imminent",
+        "validate_create_event": "Confirmation de création d'événement",
+        "pay_after_carpool":"Payer un covoiturage effectué",
+        "pay_after_carpool_regular":"Payer une semaine de covoiturage",
+        "confirm_direct_payment":"Confirmer le paiement d'un covoiturage",
+        "confirm_direct_payment_regular":"Confirmer le paiement d'une semaine de covoiturage"
+    },
+    "medium": {
+        "media1": "Message",
+        "media2": "Email",
+        "media3": "SMS",
+        "media4": "Push"
+    },
+    "popup": {
+        "title": "Information",
+        "content": "Attention, vous n'avez plus aucune notification extérieure activée en cas de {alert}. Vous ne pourrez être informé à ce sujet qu'en venant par vous-même vous connecter sur la plate-forme."
+    },
+    "ok": "OK"
+}
