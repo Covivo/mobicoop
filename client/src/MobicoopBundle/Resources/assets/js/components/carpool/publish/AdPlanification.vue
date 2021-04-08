@@ -490,9 +490,9 @@ import {messages_en, messages_fr, messages_eu} from "@translations/components/ca
 
 export default {
   i18n: {
-     messages: {
+    messages: {
       'en': messages_en,
-     'fr': messages_fr,
+      'fr': messages_fr,
       'eu':messages_eu
     }
   },
