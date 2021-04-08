@@ -47,6 +47,7 @@ import {messages_en, messages_fr, messages_eu} from "@translations/components/ut
 
 let MessagesMergedEn = merge(messages_en);
 let MessagesMergedFr = merge(messages_fr);
+let MessagesMergedEu = merge(messages_eu);
 
 export default {
   i18n: {
