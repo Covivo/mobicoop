@@ -54,7 +54,7 @@ import {messages_en, messages_fr, messages_eu} from "@translations/components/ut
 import WriteReview from "@components/utilities/Reviews/WriteReview";
 export default {
   i18n: {
-     messages: {
+    messages: {
       'en': messages_en,
       'fr': messages_fr,
       'eu':messages_eu
