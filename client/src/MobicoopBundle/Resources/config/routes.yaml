@@ -758,8 +758,9 @@ community_create:
 # display communities
 community_list:
     path:
-        fr: /autokidetza-komunitatea
+        fr: /covoiturage-communaute
         en: /carpool-community
+        eu: /autokidetza-komunitatea
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # display communities first version
@@ -807,8 +808,9 @@ community_leave:
 # display one community
 community_show:
     path:
-        fr: /autokidetza-komunitatea/{id}/{urlKey?}
+        fr: /covoiturage-communaute/{id}/{urlKey?}
         en: /carpool-community/{id}/{urlKey?}
+        eu: /autokidetza-komunitatea/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
