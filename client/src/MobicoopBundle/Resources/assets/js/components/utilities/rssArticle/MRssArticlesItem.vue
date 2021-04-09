@@ -47,17 +47,19 @@
 
 
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/utilities/rssArticle/RssArticlesItem/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/rssArticle/RssArticlesItem/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/rssArticle/RssArticlesItem/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/utilities/rssArticle/RssArticlesItem/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   name: "MRssArticlesItem",
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   props:{

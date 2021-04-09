@@ -1,0 +1,11 @@
+{
+    "title": "Boîte à outils",
+    "subtitle": "Les outils de communication",
+    "widget": {
+        "title": "Le widget",
+        "textLink": "Rendez-vous sur cette page",
+        "link": "/widget/get",
+        "text": "pour obtenir un widget intégrable sur votre site web ainsi que les instructions pour le faire"
+    },
+    "items": []
+}

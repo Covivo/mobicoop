@@ -67,12 +67,14 @@ user_login:
     path:
         fr: /utilisateur/connexion
         en: /user/login
+        de: /benutzer/anmeldung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
 user_login_result:
     path:
         fr: /utilisateur/connexion/{proposalId}
         en: /user/login/{proposalId}
+        de: /benutzer/anmeldung/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
 user_login_token:
@@ -102,6 +104,7 @@ user_sign_up:
     path:
         fr: /utilisateur/inscription
         en: /user/signup
+        de: /benutzer/registrierung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
 # community list (AJAX)
@@ -167,6 +170,7 @@ list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
         en: /user/profile/update/accepted-carpools/export
+        eu: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
 
 # Delete user by anonymise
@@ -357,6 +361,7 @@ user_get_sso_services:
     path:
         fr: /user/getSsoServices
         en: /user/getSsoServices
+        de: /benutzer/getSsoService
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getSsoServices
 
 # Login form SSO
@@ -385,6 +390,7 @@ user_communities:
     path:
         fr: /utilisateur/communautes
         en: /user/communities
+        eu: /erabiltzaile/komunitateak
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
 # Check if email is already taken (POST)
@@ -754,6 +760,7 @@ community_list:
     path:
         fr: /covoiturage-communaute
         en: /carpool-community
+        eu: /autokidetza-komunitatea
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # display communities first version
@@ -803,6 +810,7 @@ community_show:
     path:
         fr: /covoiturage-communaute/{id}/{urlKey?}
         en: /carpool-community/{id}/{urlKey?}
+        eu: /autokidetza-komunitatea/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
@@ -899,6 +907,7 @@ article:
     path:
         fr: /article
         en: /article
+        eu: /artikulua
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
 # Get the rss feeds (AJAX)

@@ -19,12 +19,13 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/home/HomeContent/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/HomeContent/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/home/HomeContent/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/home/HomeContent/";
 import MEventsListItem from "@components/utilities/event/MEventsListItem";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components:{
@@ -33,7 +34,8 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   props: {
