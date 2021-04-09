@@ -1,22 +1,22 @@
 {
     "myAds": {
-        "label": "My proposals",
-        "route": "/user/profile/update/myAds"
+        "label": "Mes annonces",
+        "route": "/utilisateur/profil/modifier/mes-annonces"
     },
     "myAcceptedCarpools": {
-        "label": "Accepted carpools",
-        "route": "/user/profile/update/carpoolsAccepted"
+        "label": "Covoiturages acceptés",
+        "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
     },
     "myProfile": {
-        "label": "Profile",
-        "route": "/user/profile/update/myProfile"
+        "label": "Profil",
+        "route": "/utilisateur/profil/modifier/mon-profil"
     },
     "reviews": {
         "label": "Avis",
-        "route": "/user/profile/update/reviews"
+        "route": "/utilisateur/profil/modifier/avis"
     },
     "logOut": {
-        "label": "Logout",
+        "label": "Déconnexion",
         "route": "/user/logout"
     }
 }

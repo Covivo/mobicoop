@@ -1,60 +1,59 @@
 {
     "lastName": {
-        "label": "Your last name",
-        "placeholder": "Your last name",
+        "label": "Votre nom",
+        "placeholder": "Votre nom",
         "errors": {
-            "required": "Last name is required"
+            "required": "Le nom est requis"
         }
     },
     "firstName": {
-        "label": "Your first name",
-        "placeholder": "Your first name",
+        "label": "Votre prénom",
+        "placeholder": "Votre prénom",
         "errors": {
-            "required": "First name is required"
+            "required": "Le prénom est requis"
         }
     },
     "email": {
-        "label": "Your email",
-        "placeholder": "Your email",
-        "hint": "",
+        "label": "Votre email",
+        "placeholder": "Votre email",
         "errors": {
-            "required": "Email is required",
-            "valid": "Email must be valid"
+            "required": "L'adresse email est requise",
+            "valid": "L'adresse email doit être valide."
         }
     },
     "demand": {
-        "label": "Your demand",
-        "placeholder": "Your demand",
+        "label": "Votre demande",
+        "placeholder": "Votre demande",
         "items": {
-            "infos": "Information",
-            "technicalIssues": "Technical issue",
-            "partnership": "Partnership",
-            "community": "Community creation"
+            "infos": "Renseignements",
+            "technicalIssues": "Problème technique",
+            "partnership": "Partenariat",
+            "community": "Création communauté"
         },
         "errors": {
             "required": "L'objet de votre demande est requis"
         }
     },
     "message": {
-        "label": "Your message",
-        "placeholder": "Your message",
+        "label": "Votre message",
+        "placeholder": "Votre message",
         "hint": " ",
         "errors": {
-            "required": "Message is required."
+            "required": "Le message est requis."
         }
     },
     "buttons": {
         "send": {
-            "label": "send",
+            "label": "Envoyer",
             "route": "contact/send"
         }
     },
     "dataPolicy": {
         "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
         "link": "notre politique de protection des données",
-        "route": "/data-policy"
+        "route": "/protection-donnees"
     },
-    "success": "Your message has been sent successfully",
-    "error": "An error happened",
+    "success": "Votre message a été envoyé avec succès.",
+    "error": "Une erreur est survenue.",
     "getContactItemsUri":"/contact/getItems"
 }

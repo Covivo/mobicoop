@@ -1,30 +1,48 @@
 {
     "title": "Mobicoop",
-    "subtitle": "Explanation in english",
-    "origin": "Departure location",
-    "destination": "Arrival location",
+    "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
+    "origin": {
+        "label": "Lieu de départ",
+        "error": "Obligatoire"
+    },
+    "destination": {
+        "label": "Lieu d'arrivée",
+        "error": "Obligatoire"
+    },
     "swap": {
-        "alt": "Swap origin and destination addresses",
-        "help": "Click to swap origin and destination addresses"
+        "alt": "Intervertir origine et destination",
+        "help": "Cliquez pour intervertir origine et destination"
+    },
+    "radio": {
+        "driver": {
+            "label": "Je suis conducteur.rice"
+        },
+        "passenger": {
+            "label": "Je suis passager.ère"
+        },
+        "both": {
+            "label": "Peu importe"
+        }
     },
     "switch": {
         "regular": {
-            "label": "Regular ride",
-            "help": "Switch to indicate a punctual ride then select a date"
+            "label": "Trajet régulier",
+            "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est occasionnel puis choisissez une date"
         },
         "punctual": {
-            "help": "Switch to indicate a regular ride"
+            "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est régulier"
         }
     },
-    "datePicker": {
-        "label": "Departure date"
+    "outwardDate": {
+        "label": "Date de départ",
+        "error": "Obligatoire"
     },
     "buttons": {
         "shareAnAd": {
-            "label": "Share an ad"
+            "label": "Publier une annonce"
         },
         "search": {
-            "label": "Search"
+            "label": "Rechercher"
         }
     },
     "fullDate": "ddd Do MMMM YYYY"
