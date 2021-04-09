@@ -170,7 +170,7 @@ list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
         en: /user/profile/update/accepted-carpools/export
-        en: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
+        eu: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
 
 # Delete user by anonymise
