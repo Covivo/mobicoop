@@ -314,7 +314,7 @@ class Campaign
      * @var int|null The source for the deliveries.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aread","aWrite"})
+     * @Groups({"aRead","aWrite"})
      */
     private $source;
 
@@ -322,7 +322,7 @@ class Campaign
      * @var int|null The source id for the deliveries.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"aread","aWrite"})
+     * @Groups({"aRead","aWrite"})
      */
     private $sourceId;
 
@@ -330,7 +330,7 @@ class Campaign
      * @var int|null The filter type for the deliveries selection.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aread","aWrite"})
+     * @Groups({"aRead","aWrite"})
      */
     private $filterType;
 
@@ -338,7 +338,7 @@ class Campaign
      * @var string|null The filter string for the deliveries selection.
      *
      * @ORM\Column(type="string", length=512, nullable=true)
-     * @Groups({"aread","aWrite"})
+     * @Groups({"aRead","aWrite"})
      */
     private $filters;
 
@@ -531,6 +531,13 @@ class Campaign
         return $this;
     }
 
+    public function removeDeliveries(): self
+    {
+        $this->deliveries->clear();
+        return $this;
+    }
+
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -609,7 +616,7 @@ class Campaign
         return null;
     }
 
-    public function getSource(): int
+    public function getSource(): ?int
     {
         return $this->source;
     }
@@ -633,7 +640,7 @@ class Campaign
         return $this;
     }
 
-    public function getFilterType(): int
+    public function getFilterType(): ?int
     {
         return $this->filterType;
     }
@@ -657,7 +664,7 @@ class Campaign
         return $this;
     }
 
-    public function getDeliveryCount(): int
+    public function getDeliveryCount(): ?int
     {
         if ($this->filterType == self::FILTER_TYPE_SELECTION) {
             return count($this->deliveries);

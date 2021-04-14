@@ -173,6 +173,8 @@ class CampaignManager
                 }
                 break;
             case Campaign::FILTER_TYPE_FILTER:
+                // remove selection if it exists
+                $campaign->removeDeliveries();
                 $campaign->setFilters($this->stringFilters($filters));
                 $campaign->setDeliveryCount(count($users));
                 $this->entityManager->persist($campaign);
@@ -330,10 +332,16 @@ class CampaignManager
     {
         $stringFilters = "";
         foreach ($filters as $filter=>$value) {
-            $stringFilters .= $filter . "=" . $value . "&";
+            // value may be an array itself
+            if (is_array($value)) {
+                foreach ($value as $val) {
+                    $stringFilters .= $filter . "=" . $val . "&";
+                }
+            } else {
+                $stringFilters .= $filter . "=" . $value . "&";
+            }
         }
-        $stringFilters = substr($stringFilters, 0, -1);
-        return $stringFilters;
+        return substr($stringFilters, 0, -1);
     }
 
     /**
