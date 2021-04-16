@@ -721,41 +721,6 @@ class SolidaryManager
         // round-trip
         $ad->setOneWay(true);
 
-        $days = $solidary->getDays();
-
-        // Check if there is a outward time for each given day
-        $outwardTimes = $solidary->getOutwardTimes();
-        if (is_null($outwardTimes)) {
-            throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
-        }
-        foreach ($days as $outwardDay => $outwardDayChecked) {
-            if (
-                !array_key_exists($outwardDay, $outwardTimes) ||
-                ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
-            ) {
-                throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
-            }
-        }
-
-
-        if (!is_null($solidary->getReturnDatetime())) {
-            $returnTimes = $solidary->getReturnTimes();
-            if (is_null($returnTimes)) {
-                throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
-            }
-                
-            // Check if there is a return time for each given day
-            foreach ($days as $returnDay => $returnDayChecked) {
-                if (
-                    !array_key_exists($returnDay, $returnTimes) ||
-                    (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
-                ) {
-                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
-                }
-            }
-            $ad->setOneWay(false);
-        }
-
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
 
@@ -772,6 +737,39 @@ class SolidaryManager
             // we set the schedule and the limit date of the regular demand
             $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
             $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
+
+            $days = $solidary->getDays();
+            // Check if there is a outward time for each given day
+            $outwardTimes = $solidary->getOutwardTimes();
+            if (is_null($outwardTimes)) {
+                throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
+            }
+            foreach ($days as $outwardDay => $outwardDayChecked) {
+                if (
+                    !array_key_exists($outwardDay, $outwardTimes) ||
+                    ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
+                ) {
+                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
+                }
+            }
+
+            if (!is_null($solidary->getReturnDatetime())) {
+                $returnTimes = $solidary->getReturnTimes();
+                if (is_null($returnTimes)) {
+                    throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
+                }
+
+                // Check if there is a return time for each given day
+                foreach ($days as $returnDay => $returnDayChecked) {
+                    if (
+                        !array_key_exists($returnDay, $returnTimes) ||
+                        (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
+                    ) {
+                        throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
+                    }
+                }
+                $ad->setOneWay(false);
+            }
 
             // We build the schedule
             $buildedSchedules = $this->buildSchedulesForAd($solidary->getDays(), $solidary->getOutwardTimes(), $solidary->getReturnTimes());
@@ -966,9 +964,28 @@ class SolidaryManager
                 throw new SolidaryException(SolidaryException::NO_STRUCTURE);
             }
         }
-        $solidaryUserStructure->setStructure($structure);
-        $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
+        // we check if the solidary user structure doesn't exists already
+        $solidaryUserStructure = null;
+        $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
+        // first we check if the solidaryUser is already linked to a structure
+        if (count($solidaryUser->getSolidaryUserStructures()) === 0) {
+            $solidaryUserStructure = new SolidaryUserStructure();
+            $solidaryUserStructure->setStructure($structure);
+            $solidaryUserStructure->setSolidaryUser($solidaryUser);
+        } else {
+            foreach ($solidaryUserStructures as $currentSolidaryUserStructure) {
+                if ($structure->getId() === $currentSolidaryUserStructure->getStructure()->getId()) {
+                    $solidaryUserStructure = $currentSolidaryUserStructure;
+                    break;
+                } else {
+                    $solidaryUserStructure = new SolidaryUserStructure();
+                    $solidaryUserStructure->setStructure($structure);
+                    $solidaryUserStructure->setSolidaryUser($solidaryUser);
+                }
+            }
+        }
+        
         // We add the proofs associated to the demand
         foreach ($solidary->getProofs() as $givenProof) {
             // We get the structure proof and we create a proof to persist

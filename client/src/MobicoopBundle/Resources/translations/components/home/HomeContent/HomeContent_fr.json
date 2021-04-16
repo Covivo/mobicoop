@@ -28,27 +28,14 @@
         }
     },
     "events": {
-        "title": "Allez en covoiturage à vos prochains événements",
+        "title": "Organisez du covoiturage pour vos événements",
         "button1": {
             "label": "Voir les événements",
             "route": "/evenements"
         },
         "button2": {
             "label": "Ajouter un événement",
-            "route": "/evenements"
-        }
-    },
-    "privateEvent": {
-        "title":"Un événement privé ?",
-        "subtitle":"Laissez vos invités organiser leur covoiturage",
-        "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
-        "button":{
-            "label":"Créer un événement",
-            "route":"https://www.covievent.org/evenement/nouveau"
-        },
-        "coviEvent":{
-            "text":"Découvrir CoviEvent",
-            "link":"https://www.covievent.org/"
+            "route": "/evenement/creer"
         }
     },
     "articles": {
@@ -56,7 +43,7 @@
     },
     "items":[
         {
-            "title":"Une plateforme sans commission",
+            "title":"Covoiturage sans commission",
             "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
         },
         {
