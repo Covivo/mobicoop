@@ -89,15 +89,13 @@
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
-      <v-toolbar-items
+ 
+      <MHeaderLanguage
+        :languages="languages"
+        :language="dlocale"
         class="hidden-md-and-down"
-      >
-        <MHeaderLanguage
-          :languages="languages"
-          :language="dlocale"
-          @languageSelected="updateLanguage"
-        />
-      </v-toolbar-items>
+        @languageSelected="updateLanguage"
+      />
       <v-snackbar
         v-if="!user"
         v-model="snackbar"

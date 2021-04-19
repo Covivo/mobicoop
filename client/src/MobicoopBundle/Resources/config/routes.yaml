@@ -475,6 +475,7 @@ carpool_ad_post:
     path:
         fr: /covoiturage/publierannonce
         en: /carpool/postad
+        eu: /covoiturage/publierannonce
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
 # update an ad
@@ -753,6 +754,7 @@ community_create:
     path:
         fr: /communaute/creer
         en: /community/create
+        eu: /communaute/creer
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityCreate
 
 # display communities
