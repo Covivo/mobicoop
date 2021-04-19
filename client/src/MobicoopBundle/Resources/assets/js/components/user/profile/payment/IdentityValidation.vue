@@ -97,7 +97,7 @@
         <v-btn 
           rounded
           color="secondary"
-          :disabled="!formActive || document == null"
+          :disabled="!formActive || document == null || disabledSendFile"
           :loading="loading"
           @click="send"
         >
@@ -150,8 +150,9 @@ export default {
       document:null,
       loading:false,
       identityProofRules: [
-        value => !value ||  value.size < 5000000 || this.$t("fileInput.error")
+        value => !value ||  value.size < 6291456 || this.$t("fileInput.error")
       ],
+      disabledSendFile:false
     }
   },
   computed:{
@@ -169,6 +170,11 @@ export default {
         return true;
       }
       return false;
+    }
+  },
+  watch: {
+    document() {
+      this.disabledSendFile = (this.document) ? ((this.document.size > 6291456) ? true : false) : false;
     }
   },
   mounted(){
