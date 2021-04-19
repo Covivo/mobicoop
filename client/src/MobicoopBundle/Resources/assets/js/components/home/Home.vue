@@ -101,7 +101,7 @@
       justify="center"
     >
       <v-col
-        class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
+        class="text-center mt-md-n8 pt-md-16 mt-lg-n4 white--text"
         :style="'font-size:1.25rem;line-height:1.25;'"
       >
         <h1
