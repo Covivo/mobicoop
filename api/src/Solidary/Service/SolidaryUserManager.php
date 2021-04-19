@@ -559,6 +559,9 @@ class SolidaryUserManager
 
                 // auto valid the registration
                 $user->setValidatedDate(new \DateTime());
+
+                // we treat the user to add right authItem and notifiactions
+                $this->userManager->treatUser($user);
             }
         }
 
@@ -727,6 +730,9 @@ class SolidaryUserManager
 
                 // auto valid the registration
                 $user->setValidatedDate(new \DateTime());
+
+                // we treat the user to add right authItem and notifiactions
+                $this->userManager->treatUser($user);
             }
         }
         if (!is_null($user->getSolidaryUser())) {
