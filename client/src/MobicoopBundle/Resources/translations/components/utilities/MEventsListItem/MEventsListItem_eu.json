@@ -1,0 +1,12 @@
+{
+    "routes": {
+        "event": "/evenement/{id}"
+    },
+    "date": {
+        "from": "Du",
+        "to": "au",
+        "the": "Le"
+    },
+    "shortCompleteDate": "DD/MM/YYYY",
+    "hourMinute": "HH[h]mm"
+}

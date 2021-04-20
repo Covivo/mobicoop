@@ -74,7 +74,7 @@
 
 <script>
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/relayPoints/RelayPoints/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
@@ -83,7 +83,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {
