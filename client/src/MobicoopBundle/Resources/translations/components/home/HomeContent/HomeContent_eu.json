@@ -1,1 +1,64 @@
-{}
+{
+    "mustMeLogged": "Konektatua izan behar zira",
+    "urlBackground3": "/images/pages/home/background_bottom.svg",
+    "urlBackground2": "/images/pages/home/background_middle.svg",
+    "routes": {
+        "getList": "/events/getEventList"
+    },
+    "items": [
+        {
+            "text": "Autokidetza aske baten balore ondokoa, Mobicoop doako autokidetza zerbitzu bat da; hots, webguneak ez baitu joan-etorrientzat komisiorik hartzen eta ez baitu publizitaterik egiten! Ondorioz, bidaiak merkeagoak dira gastuak partekatzen dituzten autokideentzat.",
+            "title": "Komisiorik gabeko autokidetza"
+        },
+        {
+            "text": "Askatasun numerikoa Mobicoop-en baloreen muinean kokatzen da. Software libreko webgune baten hautua eginez, autokidetaza-erabiltzaileen burujabetasun numerikoa eta datuen babesa bermatzen dugu. Edonork lagun dezake iturburu-kodean, eta mugikortasun partekatua denen ondasun bihur dezake.",
+            "title": "Programa librea"
+        },
+        {
+            "text": "Mobiccop kooperatiba bat da, ondorioz, plataorma bere bazkideena da, bazkide 1 = boz 1 logika izanez. Araudi honek gobernantza ireki bat ahalbidetzen du, bazkide, soldateko, plataforma erabiltzaile eta bezeroen artean. Haatik, autokidetza zerbitzua erabiltzeko ez da baieztapa bazkide izan behar.",
+            "title": "Autokidetzaren kooperatiba"
+        }
+    ],
+    "articles": {
+        "title": "Zer berri Mobicoop-en?"
+    },
+    "events": {
+        "button2": {
+            "route": "/ekitaldia/sortu",
+            "label": "Ekitaldi bat gehitu"
+        },
+        "button1": {
+            "route": "/ekitaldiak",
+            "label": "Ekitaldiak ikusi"
+        },
+        "title": "Zure ekitaldientzat autokidetza antolatu"
+    },
+    "solidary": {
+        "button2": {
+            "route": "/autokidetza/iragarkiaargitaratu/elkartasuna",
+            "label": "Esku ukaldi bat eman"
+        },
+        "button": {
+            "route": "/#/carpools/solidary/home/request",
+            "label": "Esku ukaldi baten eskaera"
+        },
+        "text": "Elkar lagundu lanbide bat atzemateko",
+        "title": "ELKARTASUNEZKO AUTOKIDETZA"
+    },
+    "event": {
+        "button": {
+            "route": "/autokidetzak-ekitaldiak",
+            "label": "Ekitaldiak ikusi"
+        },
+        "title": "EKITALDIAK",
+        "text": "Ekitaldi berdinera dihoazten autokideak atzeman."
+    },
+    "community": {
+        "button": {
+            "route": "/autokidetza-komunitatea",
+            "label": "Komunitateak ikusi"
+        },
+        "text": "Nire taldeko edo enpresako kideak ezagutu.",
+        "title": "KOMUNITATEAK"
+    }
+}
