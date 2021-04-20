@@ -87,7 +87,7 @@
             </p>
           </v-col>
           <v-col
-            v-if="socialNetworksActive"
+            v-if="socialNetworksActive || forceShowSocial"
             cols="3"
           >
             <v-checkbox
@@ -105,14 +105,20 @@
 </template>
  
 <script>
+import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/Cookies/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/utilities/Cookies/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'fr': messages_fr,
-      'eu':messages_eu
+      'en': MessagesMergedEn,
+      'fr': MessagesMergedFr,
+      'eu':MessagesMergedEu
     }
   },
   components: { 
@@ -131,10 +137,26 @@ export default {
       type: Boolean,
       default: true
     },
+    forceShowSocial:{
+      type: Boolean,
+      default: false
+    },
     socialNetworksActive:{
       type: Boolean,
       default: false
-    }
+    },
+    connectionActiveCheckDefault:{
+      type: Boolean,
+      default: false
+    },
+    statsCheckDefault:{
+      type: Boolean,
+      default: false
+    },
+    socialCheckDefault:{
+      type: Boolean,
+      default: false
+    },
   },
   data(){
     return{
@@ -143,10 +165,10 @@ export default {
       progressBarActive:true,
       defaultSettings:null,
       checkboxes:{
-        connectionActive:false,
-        connectionActiveDisabled:false,
-        stats:false,
-        social:false
+        connectionActive:this.connectionActiveCheckDefault,
+        connectionActiveDisabled:this.connectionActiveCheckDefault ? true : false,
+        stats:this.statsCheckDefault,
+        social:this.socialCheckDefault
       }
     }
   },
