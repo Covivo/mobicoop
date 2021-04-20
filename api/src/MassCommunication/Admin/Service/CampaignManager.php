@@ -164,6 +164,7 @@ class CampaignManager
     {
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
+                $campaign->removeDeliveries();
                 foreach ($users as $user) {
                     $delivery = new Delivery();
                     $delivery->setCampaign($campaign);
@@ -171,6 +172,8 @@ class CampaignManager
                     $delivery->setStatus(Delivery::STATUS_PENDING);
                     $this->entityManager->persist($delivery);
                 }
+                // force updated date
+                $campaign->setAutoUpdatedDate();
                 break;
             case Campaign::FILTER_TYPE_FILTER:
                 // remove selection if it exists

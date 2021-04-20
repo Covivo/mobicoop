@@ -144,4 +144,18 @@ class UserRepository
         // var_dump($structureAdmin->getId());die;
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Get users by their id
+     *
+     * @param array $ids    The ids of the users
+     * @return array|null
+     */
+    public function findByIds(array $ids)
+    {
+        return $this->repository->createQueryBuilder('u')
+        ->where("u.id IN(:ids)")
+        ->setParameter('ids', $ids)
+        ->getQuery()->getResult();
+    }
 }

@@ -37,6 +37,7 @@ use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
+use App\User\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,6 +52,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $collectionExtensions;
     private $managerRegistry;
     private $request;
+    private $userRepository;
     private $campaignRepository;
     private $authManager;
     private $campaignManager;
@@ -58,11 +60,12 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
 
     const MAX_RESULTS = 999999;
     
-    public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
+    public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
         $this->request = $requestStack->getCurrentRequest();
+        $this->userRepository = $userRepository;
         $this->campaignRepository = $campaignRepository;
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
@@ -122,45 +125,54 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
             throw new CampaignException('FilterType is invalid');
         }
 
-        $manager = $this->managerRegistry->getManagerForClass($resourceClass);
-        $repository = $manager->getRepository($resourceClass);
-        /**
-         * @var EntityRepository $repository
-         */
-        $queryBuilder = $repository->createQueryBuilder('u');
-        $queryNameGenerator = new QueryNameGenerator();
-
-        $users = [];
-
-        // we force the selection to the users that have accepted the news subscription
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
-
         // source is always 1 here
         $campaign->setSource(Campaign::SOURCE_USER);
         
         // filter type
         $campaign->setFilterType($this->request->get('filterType'));
-        
-        foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
-            // remove pagination
-            if ($extension instanceof PaginationExtension) {
-                $queryBuilder->setMaxResults(self::MAX_RESULTS);
-            }
-            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
-                $users = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-            }
-        }
 
+        $users = [];
         $filters= [];
-        if ($campaign->getFilterType() == Campaign::FILTER_TYPE_FILTER) {
-            $exclude = ['source','filterType','campaignId'];
-            foreach ($this->request->query->all() as $param=>$value) {
-                if (!in_array($param, $exclude)) {
-                    $filters[$param] = $value;
+
+        switch ($campaign->getFilterType()) {
+            case Campaign::FILTER_TYPE_SELECTION:
+                // check if user ids are sent
+                if (!$this->request->get('user')) {
+                    throw new CampaignException('At least one user id is mandatory');
                 }
-            }
+                $users = $this->userRepository->findByIds($this->request->get('user'));
+                break;
+            case Campaign::FILTER_TYPE_FILTER:
+                $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+                $repository = $manager->getRepository($resourceClass);
+                /**
+                 * @var EntityRepository $repository
+                 */
+                $queryBuilder = $repository->createQueryBuilder('u');
+                $queryNameGenerator = new QueryNameGenerator();
+
+                // we force the selection to the users that have accepted the news subscription
+                $rootAlias = $queryBuilder->getRootAliases()[0];
+                $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
+                
+                foreach ($this->collectionExtensions as $extension) {
+                    $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
+                    // remove pagination
+                    if ($extension instanceof PaginationExtension) {
+                        $queryBuilder->setMaxResults(self::MAX_RESULTS);
+                    }
+                    if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
+                        $users = $extension->getResult($queryBuilder, $resourceClass, $operationName);
+                    }
+                }
+
+                $exclude = ['source','filterType','campaignId'];
+                foreach ($this->request->query->all() as $param=>$value) {
+                    if (!in_array($param, $exclude)) {
+                        $filters[$param] = $value;
+                    }
+                }
+                break;
         }
 
         // "associate" the users to the campaign (just complete the informations of the campaign, and create deliveries if selection)
