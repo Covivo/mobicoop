@@ -67,9 +67,9 @@ deletedAccountOccasionalCarpool: ' X-(e)k bere kontua kendu du eta ezingo du xx/
 pickUp: 'Hartze lekua: '
 at: 'xxx-(e)ra '
 hasUpdatedHisAd: bere iragarkia aldatu du.
-header1Data: Autokidetza-ouestgo
-header1Name: X-JEMH-esleitua
-mobileUrlUpdatePassword: /#/carpools/pasahitza berrabiarazi?marka-ikurra=
+header1Data: jira-ouestgo
+header1Name: X-JEMH-assignee
+mobileUrlUpdatePassword: /#/carpools/reset-password?token=
 click: Hemen klika ezazu.
 goToAcceptedCarpoolsTovalidate: 'Zoaza "Autokidetza onartuak" atalera, eskuz-eskuzko
   ordainketa honen baieztatzeko, edo bestenaz seinala ezazu ez dela ordaindua izan.'
@@ -86,7 +86,7 @@ canceledRegularCarpool: '  X-(e)k bere ohiko bidaia ezeztatu du eta ezingo du au
 deletedAccountRegularCarpool: ' X-(e)k bere kontua kendu du eta ezingo du xx/xx/xx-(e)(a)n
   autoa zurekin partekatu '
 homeAddress: Etxea
-domicile: etxeHelbidea
+domicile: homeAddress
 directPayment: Ordainketa eskuz-esku
 onLinePayment: Ordainketa linea bidez
 paymentNotDone: Ez ordaindua
@@ -156,7 +156,7 @@ toUseTheService: zerbitzu honen erabiltzen! Zure joan-etorriak parteka itzazu et
   zure zoriona aurki ezazu
 nowYouAreMore: Orain xxxxx baino gehiago zarete
 changePassword: Azkarki gomendatzen dizugu pasahitza aldatzea zure ondoko konexioan
-temporaryPassword: '{pasahitza}'
+temporaryPassword: '{password}'
 temporaryPasswordAttributed: Aldi bateko pasahitz bat emana izan zaizu
 massMigrated: Zure autokidetza kontua
 journeyDetailTime: Aurreikusia {journeyDate}-(e)an - {journeyTime}-e(t)an.
@@ -168,7 +168,7 @@ useDirectContact: Bere mezuan, untsalaz utzi dizkizun datuak erabil ditzakezu, h
   zuzenean harremanetan jartzeko.
 noDirectResponse: Erabiltzaile hau beste autokidetza plataforma batean izena eman
   duenez, ezin diozu erantzun  {instanceName}-ren bidez.
-youReceivedExternalContactOrigin: '{jatorria}'
+youReceivedExternalContactOrigin: '{origin}'
 youReceivedExternalContact: 'Bere izena xxxx-(e)an eman duen autokide baten mezua
   ukan duzu'
 rdexMessage: Bere mezua
@@ -177,9 +177,9 @@ unsubscribeEmailAlertFront: '{instanceName} zerbitzuaren Berrietatik desharpidet
   izan zira. Zure izena berriz emateko, Perfila > Nire kontua helbidera joan zaitez.'
 unsubscribeEmail: Hemen klika ezazu, {instanceName} zerbitzuaren Berrietatik desharpidetzeko
 urlUnsubscribeEmail: /erabiltzailea/desharpidetu
-header3Data: IgorleIzena
+header3Data: senderName
 header3Name: X-JEMH- Solaskidearen deitura eta izena
-header2Data: E-mezuIgorlea
+header2Data: senderEmail
 header2Name: X-JEMH- Solaskidearen helbide elektronikoa
 yourValidationToken: Zure baieztapen kodea
 updatedSefl: Zure perfilaren aldaketa
