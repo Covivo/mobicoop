@@ -25,7 +25,7 @@ namespace App\MassCommunication\Admin\Service;
 
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\MediumRepository;
-use App\MassCommunication\CampaignProvider\SendinblueProvider;
+use App\MassCommunication\CampaignProvider\SendinBlueProvider;
 use App\User\Entity\User;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
@@ -42,7 +42,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CampaignManager
 {
-    const MAIL_PROVIDER_SENDINBLUE = 'sendinblue';
+    const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
 
     const MODE_TEST = 1;
     const MODE_PROD = 2;
@@ -75,7 +75,7 @@ class CampaignManager
         string $mailerProvider,
         string $mailerApiKey,
         string $mailerClientName,
-        string $mailerClientId,
+        int $mailerClientId,
         string $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerSenderEmail,
@@ -93,7 +93,7 @@ class CampaignManager
         $this->mailerIp = $mailerIp;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinblueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
+                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
                 break;
         }
         switch ($smsProvider) {
@@ -164,6 +164,7 @@ class CampaignManager
     {
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
+                // remove selection if it exists before adding the new one
                 $campaign->removeDeliveries();
                 foreach ($users as $user) {
                     $delivery = new Delivery();
@@ -191,13 +192,12 @@ class CampaignManager
      *
      * @param Campaign $campaign    The campaign
      * @param iterable $users       The users
-     * @param array $filters        The filters applied
      * @param int $mode             The sending mode (test or prod)
-     * @return void
+     * @return Campaign             The campaign
      */
-    public function send(Campaign $campaign, iterable $users, array $filters = [], int $mode)
+    public function send(Campaign $campaign, iterable $users, int $mode)
     {
-        $campaign->setFilters($this->stringFilters($filters));
+        // the delivery count may have changed
         $campaign->setDeliveryCount(count($users));
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
@@ -240,7 +240,7 @@ class CampaignManager
                  * @var User $user
                  */
                 foreach ($users as $user) {
-                    $recipients[] = new Recipient($user()->getEmail(), $user()->getGivenName(), $user()->getFamilyName(), null, $user->getUnsubscribeToken());
+                    $recipients[] = new Recipient($user->getEmail(), $user->getGivenName(), $user->getFamilyName(), null, $user->getUnsubscribeToken());
                 }
                 break;
         }
@@ -266,7 +266,7 @@ class CampaignManager
                 // we send the test email with the creator of the campaign as recipient
                 $this->massEmailProvider->sendCampaignTest($campaign->getName(), $campaign->getProviderCampaignId(), [$campaign->getUser()->getEmail()]);
                 
-                // update the campaing if needed
+                // update the campaign if needed
                 if ($campaign->getStatus() != Campaign::STATUS_CREATED) {
                     $campaign->setStatus(Campaign::STATUS_CREATED);
                     $this->entityManager->persist($campaign);

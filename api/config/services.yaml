@@ -520,7 +520,7 @@ services:
             $mailerProvider: '%env(string:MASS_MAILER_PROVIDER)%'
             $mailerApiKey: '%env(string:MASS_MAILER_API_KEY)%'
             $mailerClientName: '%env(string:MASS_MAILER_CLIENT_NAME)%'
-            $mailerClientId: '%env(string:MASS_MAILER_CLIENT_ID)%'
+            $mailerClientId: '%env(int:MASS_MAILER_CLIENT_ID)%'
             $mailerClientTemplateId: '%env(string:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
             $mailerReplyTo: '%env(string:MASS_MAILER_REPLYTO)%'
             $mailerSenderEmail: '%env(string:MASS_MAILER_SENDER_EMAIL)%'

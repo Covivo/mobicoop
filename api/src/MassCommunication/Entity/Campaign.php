@@ -112,19 +112,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_campaign_delete',object)"
- *          },
- *          "ADMIN_send"={
- *              "path"="/admin/campaigns/send/{id}",
- *              "method"="GET",
- *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_campaign_send',object)"
- *          },
- *          "ADMIN_test"={
- *              "path"="/admin/campaigns/test/{id}",
- *              "method"="GET",
- *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_campaign_test',object)"
- *          },
+ *          }
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"status":"exact","name":"partial","email":"partial"})

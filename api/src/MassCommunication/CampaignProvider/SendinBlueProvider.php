@@ -57,12 +57,12 @@ class SendinBlueProvider implements CampaignProviderInterface
      * Constructor
      *
      * @param string $key           The api key
-     * @param string $folderId     The ID for the SendinBlue folder
+     * @param int $folderId         The ID for the SendinBlue folder
      * @param string $replyTo       The replayTo email
      * @param string $sender        The sender Email
      * @param string $templateId   The ID for the SendinBlue template
      */
-    public function __construct(string $key, string $folderId, string $replyTo, string $senderEmail, string $templateId)
+    public function __construct(string $key, int $folderId, string $replyTo, string $senderEmail, string $templateId)
     {
         $this->folderId = $folderId;
         $this->replyTo = $replyTo;
@@ -99,7 +99,7 @@ class SendinBlueProvider implements CampaignProviderInterface
         try {
             $list = $this->contactsApi->createList($createList);
         } catch (Exception $e) {
-            throw new CampaignException('Exception when calling SendinBlue ContactsApi->createList: ', $e->getMessage());
+            throw new CampaignException('Exception when calling SendinBlue ContactsApi->createList: ' . $e->getMessage());
         }
 
         // we import contacts
@@ -136,7 +136,7 @@ class SendinBlueProvider implements CampaignProviderInterface
         try {
             $this->contactsApi->importContacts($requestContactImport);
         } catch (Exception $e) {
-            throw new CampaignException('Exception when calling SendinBlue ContactsApi->importContacts: ', $e->getMessage());
+            throw new CampaignException('Exception when calling SendinBlue ContactsApi->importContacts: ' . $e->getMessage());
         }
 
         // We create the campaign
@@ -155,7 +155,7 @@ class SendinBlueProvider implements CampaignProviderInterface
         try {
             return $this->emailCampaignApi->createEmailCampaign($emailCampaigns);
         } catch (Exception $e) {
-            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->createEmailCampaign: ', $e->getMessage());
+            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->createEmailCampaign: ' . $e->getMessage());
         }
     }
 
@@ -171,7 +171,7 @@ class SendinBlueProvider implements CampaignProviderInterface
         try {
             return $this->emailCampaignApi->sendEmailCampaignNow($campaignId);
         } catch (Exception $e) {
-            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->sendEmailCampaignNow: ', $e->getMessage());
+            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->sendEmailCampaignNow: ' . $e->getMessage());
         }
     }
 
@@ -191,7 +191,7 @@ class SendinBlueProvider implements CampaignProviderInterface
         try {
             return $this->emailCampaignApi->sendTestEmail($campaignId, $emailTo);
         } catch (Exception $e) {
-            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->sendTestEmail: ', $e->getMessage());
+            throw new CampaignException('Exception when calling SendinBlue EmailCampaignsApi->sendTestEmail: ' . $e->getMessage());
         }
     }
 }

@@ -37,6 +37,7 @@ use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use App\MassCommunication\Entity\Delivery;
 
 /**
  * Collection data provider used to send a campaign to users.
@@ -100,44 +101,47 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
             throw new CampaignException('Campaign can\'t be sent before it has been tested');
         }
 
-        $manager = $this->managerRegistry->getManagerForClass($resourceClass);
-        /**
-         * @var EntityRepository $repository
-         */
-        $repository = $manager->getRepository($resourceClass);
-        $queryBuilder = $repository->createQueryBuilder('u');
-        $queryNameGenerator = new QueryNameGenerator();
-
         $users = [];
 
-        // we force the selection to the users that have accepted the news subscription
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
-        
-        foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
-            // remove pagination
-            if ($extension instanceof PaginationExtension) {
-                $queryBuilder->setMaxResults(self::MAX_RESULTS);
-            }
-            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
-                $users = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-            }
-        }
-
-        // maybe the filters have changed, so we built them again and we don't use the ones defined in the campaign object
-        $filters= [];
-        if ($campaign->getFilterType() == Campaign::FILTER_TYPE_FILTER) {
-            $exclude = ['source','filterType','campaignId'];
-            foreach ($this->request->query->all() as $param=>$value) {
-                if (!in_array($param, $exclude)) {
-                    $filters[$param] = $value;
+        switch ($campaign->getFilterType()) {
+            case Campaign::FILTER_TYPE_SELECTION:
+                foreach ($campaign->getDeliveries() as $delivery) {
+                    /**
+                     * @var Delivery $delivery
+                     */
+                    // check again if user accepts emailing (may have changed since the initial association)
+                    if ($delivery->getUser()->hasNewsSubscription()) {
+                        $users[] = $delivery->getUser();
+                    }
                 }
-            }
+                break;
+            case Campaign::FILTER_TYPE_FILTER:
+                $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+                /**
+                 * @var EntityRepository $repository
+                 */
+                $repository = $manager->getRepository($resourceClass);
+                $queryBuilder = $repository->createQueryBuilder('u');
+                $queryNameGenerator = new QueryNameGenerator();
+
+                // we force the selection to the users that have accepted the news subscription
+                $rootAlias = $queryBuilder->getRootAliases()[0];
+                $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
+                
+                foreach ($this->collectionExtensions as $extension) {
+                    $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
+                    // remove pagination
+                    if ($extension instanceof PaginationExtension) {
+                        $queryBuilder->setMaxResults(self::MAX_RESULTS);
+                    }
+                    if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
+                        $users = $extension->getResult($queryBuilder, $resourceClass, $operationName);
+                    }
+                }
         }
 
         // send the campaign (or the test)
-        $this->campaignManager->send($campaign, $users, $filters, $this->request->get('mode'));
+        $this->campaignManager->send($campaign, $users, $this->request->get('mode'));
 
         return [count($users)];
     }

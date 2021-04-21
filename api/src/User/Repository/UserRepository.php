@@ -149,7 +149,7 @@ class UserRepository
      * Get users by their id
      *
      * @param array $ids    The ids of the users
-     * @return array|null
+     * @return array|null   The users
      */
     public function findByIds(array $ids)
     {

@@ -30,9 +30,7 @@ use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Auth\Service\AuthManager;
-use App\Community\Repository\CommunityRepository;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignException;
@@ -56,11 +54,10 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $campaignRepository;
     private $authManager;
     private $campaignManager;
-    private $communityRepository;
 
     const MAX_RESULTS = 999999;
     
-    public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
+    public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
@@ -69,7 +66,6 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         $this->campaignRepository = $campaignRepository;
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
-        $this->communityRepository = $communityRepository;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
