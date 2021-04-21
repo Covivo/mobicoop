@@ -1,1 +1,17 @@
-{}
+{
+    "unpaid": "Ordaindugabekoa",
+    "route": "/paiements/{id}/{frequency}/{type}/{week}",
+    "tooltip": {
+        "paymentElectronicNotActive": "Ordainketa eta autokidetzaren gauzatzea baieztatu",
+        "paymentElectronicActive": "Ordainketa linean edo eskuz esku eginiko ordainketa baieztatu eta autokidetzaren gauzatzea baieztatu"
+    },
+    "passenger": {
+        "pendingElectronicNotActive": "Baieztatua",
+        "pending": "Ordaindua edo baieztatua",
+        "paid": "Jadanik ordaindua"
+    },
+    "driver": {
+        "pending": "Ordainketa baieztatua",
+        "paid": "Jadanik ordaindua"
+    }
+}
