@@ -1,1 +1,29 @@
-{}
+{
+    "items": [
+        {
+            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
+            "title": "Komisiorik gabeko plataforma bat"
+        },
+        {
+            "text": "Libertate numerikoa, Mobicoop-en balore muinean da. Hautu eginez webgunea programa librean ekoitzea, autokidetza erabiltzailetzen dutenen burujabetasun numerikoa eta datuen babesa bermatzen dugu. Bakoitzak iturri kodean parte har dezake eta mugikortasun partekatua, denen ondasun egin dezake.",
+            "title": "Programa librea"
+        },
+        {
+            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, bazkide 1 = boz 1 logikan. Estatus horrek, bazkide, soldatadun, plataforma erabiltzaile eta bezeroen gobernantza ireki bat ahalbideratzen du. Haatik, ez da bazkide izan behar autokidetza zerbitzua erabili ahal izateko.",
+            "title": "Autokidetza kooperatiboa"
+        }
+    ],
+    "urlBackground": "/images/pages/home/background_top.svg",
+    "urlImageSwap": "/images/PictoInterchanger.svg",
+    "clickHere": "Hemen klikatu",
+    "altUrlArticle": "Hemen-klikatu",
+    "urlArticle": "#",
+    "myProfile": "Perfila",
+    "snackbar-unsubscribe-email": "Gure emailing zerrendatik desabonatua zira",
+    "snackbar-account-delete": "Zure kontua kendua izan da.",
+    "profileLink": "/erabiltzaileak/perfila/aldatu/perfil-izena",
+    "snackbar2": ", zure autokideak lasaitzeo eta zure abisuak SMS-en bidez errezibitzeko.",
+    "snackbar1": "Zure telefono zenbakia komunikatu duzu. Egiazta ezazu, egiaztatze kode bat igorriz webguneko orrialdetik",
+    "subtitle": "Hurbiltasunezko autokidetza zerbitzu bat, lagunartekoa eta solidarioa.<br />Gaurdanik atxeman zure autokidetza edo bidaia bat proposatu.",
+    "title": "Autokidetza librea, </br> komisiorik gabe eta kooperatiboa"
+}
