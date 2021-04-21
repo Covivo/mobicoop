@@ -1,1 +1,46 @@
-{}
+{
+    "pause": {
+        "error": {
+            "pause": "Akats bat agertu da, zure iragarkia geldialdian ezarri da.",
+            "unpause": "Akats bat agertu da zure iragarkia ez da aktibatu"
+        },
+        "info": "Kasu iragarkia pausan da!",
+        "success": {
+            "unpause": "Zure iragarkia orain aktiboa da.",
+            "pause": "Zure iragarkia geldialdian da orain."
+        }
+    },
+    "update": {
+        "route": "/autokidetza/iragarkia/{id}/aldatu"
+    },
+    "delete": {
+        "dialog": {
+            "validate": "Baieztatu",
+            "cancel": "Ezeztatu",
+            "pending": {
+                "text": "Iragarki honekin lotura duten eskaera bat edo gehiago egin dira. Zure ezeztatzeak egin diren eskaerak ezabatuko ditu. Ezeztatzea baieztatzen baduzu, zein mezu bidali nahi eskaera diezu ezeztatu diezun autokidei?",
+                "title": "Iragarki honentzat gutienez eskaera bat bada"
+            },
+            "accepted": {
+                "text": "Autokide bat edo gehiago planifaktuak izan dira iragarki honekin. Zure iragarkia kentzen baduzu, onartutako autokidetzak ezeztatuko dira. Zure ezeztatzea baieztatzen baduzu, zein mezu igorri nahi zenieke ezeztatuko diezun autokideei?",
+                "title": "Iragarki honentzat gutienez autokide bat bada"
+            },
+            "base": {
+                "text": "Kentzen den iragarkia, behin betiko da, segur ote zira iragarkia kendu nahi duzula?",
+                "title": "Segur al zira iragarki hori kendu nahi duzula?"
+            }
+        },
+        "error": "Akats bat agertu da zure iragarkia kendua izan delarik.",
+        "success": "Zure iragarkia kendua izan da.",
+        "route": "/autokidetza/iragarkia/kendu"
+    },
+    "ads": {
+        "tooltips": {
+            "diverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
+            "passenger": "Bidaiari izanen naiz",
+            "driver": "Gidari izanen naiz"
+        },
+        "archived": "Iragarkia artxibatuak",
+        "ongoing": "Iragarkia egiten ari"
+    }
+}
