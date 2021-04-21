@@ -651,26 +651,30 @@ export default {
         });
     },
     contact(params) {
-      axios.post(this.$t("contactUrl"), params,
-        {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then((response) => {
-          if(response.status == 200){
-            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
-          }
-          else{
-            console.log(response);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.carpoolDialog = false;
-        })
+      // Creating a "virtual" new carpool thread
+      const form = document.createElement("form");
+      form.method = "post";
+      form.action = this.$t("contactUrl");
+
+      const paramsForm = {
+        carpool: 1,
+        idRecipient: params.idRecipient,
+        shortFamilyName: params.shortFamilyName,
+        givenName: params.givenName,
+        avatar: params.avatar,
+      };
+
+      for (const key in paramsForm) {
+        if (paramsForm.hasOwnProperty(key)) {
+          const hiddenField = document.createElement("input");
+          hiddenField.type = "hidden";
+          hiddenField.name = key;
+          hiddenField.value = paramsForm[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();      
     },
     launchCarpool(params) {
       axios.post(this.$t("carpoolUrl"), params,

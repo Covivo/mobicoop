@@ -825,7 +825,13 @@ export default {
       params.adId = resultChoice.outward.proposalId;
       params.matchingId = resultChoice.outward.matchingId;
       params.date = resultChoice.outward.date;
-      params.time = resultChoice.outward.time;      
+      params.time = resultChoice.outward.time;
+      
+      // These infos are necessary to generay a non persisted message thread
+      params.idRecipient = this.lResult.carpooler.id;
+      params.shortFamilyName = this.lResult.carpooler.shortFamilyName;
+      params.givenName = this.lResult.carpooler.givenName;
+      params.avatar = this.lResult.carpooler.avatars[0];
       this.$emit('contact', params);
     },
     carpool(role) {
