@@ -1,1 +1,59 @@
-{}
+{
+    "getContactItemsUri": "/contact/getItems",
+    "error": "Akats bat agertu da.",
+    "success": "Zure mezua igorria izan da.",
+    "dataPolicy": {
+        "route": "/datuak-babestu",
+        "link": "gure datuak babesteko politika",
+        "text": "Zure eskubideak ezagutu eta erabiltzeko, formulario honetan bildutako datuak erabiltzeko baimenaren kentzea barne, irakur ezazu"
+    },
+    "buttons": {
+        "send": {
+            "route": "contact/send",
+            "label": "Bidali"
+        }
+    },
+    "message": {
+        "errors": {
+            "required": "Mezua baieztatua da."
+        },
+        "hint": " . ",
+        "placeholder": "Zure mezua",
+        "label": "Zure mezua"
+    },
+    "demand": {
+        "errors": {
+            "required": "Zure eskaeraren gaia baieztatu"
+        },
+        "items": {
+            "community": "Komunitatearen sortzea",
+            "partnership": "Partaidetza",
+            "technicalIssues": "Arazo teknikoa",
+            "infos": "Argibideak"
+        },
+        "placeholder": "Zure eskaera",
+        "label": "Zure eskaera"
+    },
+    "email": {
+        "errors": {
+            "valid": "Zure helbide elektronikoa bali izan behar da.",
+            "required": "Zure helbide elektronikoa baitezpadakoa da"
+        },
+        "placeholder": "Zure helbide elektronikoa",
+        "label": "Zure helbide elektronikoa"
+    },
+    "firstName": {
+        "errors": {
+            "required": "Zure izena baitezpadakoa da"
+        },
+        "placeholder": "Zure izena",
+        "label": "Zure izena"
+    },
+    "lastName": {
+        "errors": {
+            "required": "Deitura baitezpadakoa da"
+        },
+        "placeholder": "Zure deitura",
+        "label": "Zure deitura"
+    }
+}
