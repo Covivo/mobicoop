@@ -767,7 +767,20 @@ class UserController extends AbstractController
                     "idRecipient" => (int)$request->request->get('idRecipient'),
                     "shortFamilyName" => $request->request->get('shortFamilyName'),
                     "givenName" => $request->request->get('givenName'),
-                    "avatar" => $request->request->get('avatar')
+                    "avatar" => $request->request->get('avatar'),
+                    "origin" => $request->request->get('origin'),
+                    "destination" => $request->request->get('destination'),
+                    "askHistoryId" => $request->request->get('askHistoryId'),
+                    "frequency" => (int)$request->request->get('frequency'),
+                    "fromDate" => $request->request->get('fromDate'),
+                    "fromTime" => $request->request->get('fromTime'),
+                    "monCheck" => (bool)$request->request->get('monCheck'),
+                    "tueCheck" => (bool)$request->request->get('tueCheck'),
+                    "wedCheck" => (bool)$request->request->get('wedCheck'),
+                    "thuCheck" => (bool)$request->request->get('thuCheck'),
+                    "friCheck" => (bool)$request->request->get('friCheck'),
+                    "satCheck" => (bool)$request->request->get('satCheck'),
+                    "sunCheck" => (bool)$request->request->get('sunCheck')
                 ];
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }

@@ -832,6 +832,23 @@ export default {
       params.shortFamilyName = this.lResult.carpooler.shortFamilyName;
       params.givenName = this.lResult.carpooler.givenName;
       params.avatar = this.lResult.carpooler.avatars[0];
+      params.carpoolInfos = {
+        askHistoryId: null,
+        origin: this.lResult.origin.addressLocality,
+        destination: this.lResult.destination.addressLocality,
+        criteria: {
+          frequency:this.lResult.frequency,
+          fromDate:this.lResult.frequency==1 ? this.lResult.date : this.lResult.startDate,
+          fromTime:this.lResult.time,
+          monCheck:this.lResult.monCheck,
+          tueCheck:this.lResult.tueCheck,
+          wedCheck:this.lResult.wedCheck,
+          thuCheck:this.lResult.thuCheck,
+          friCheck:this.lResult.friCheck,
+          satCheck:this.lResult.satCheck,
+          sunCheck:this.lResult.sunCheck
+        }
+      };
       this.$emit('contact', params);
     },
     carpool(role) {

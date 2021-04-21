@@ -125,7 +125,28 @@ export default {
               shortFamilyName:this.newThread.shortFamilyName,
               givenName:this.newThread.givenName,
               idMessage:-1,
-              idRecipient:this.newThread.idRecipient
+              idRecipient:this.newThread.idRecipient,
+              unreadMessages: 0,
+              idAsk:null,
+              idAskHistory:null,
+              selected: false,
+              avatarsRecipient:this.newThread.avatar,
+              carpoolInfos:{
+                askHistoryId: this.newThread.askHistoryId,
+                origin:this.newThread.origin,
+                destination:this.newThread.destination,
+                criteria:{
+                  frequency: this.newThread.frequency,
+                  fromDate: this.newThread.fromDate,
+                  fromTime: this.newThread.fromTime,
+                  monCheck: this.newThread.monCheck,
+                  tueCheck: this.newThread.tueCheck,
+                  wedCheck: this.newThread.wedCheck,
+                  thuCheck: this.newThread.thuCheck,
+                  friCheck: this.newThread.friCheck,
+                  satCheck: this.newThread.satCheck,
+                  sunCheck: this.newThread.sunCheck              }
+              }
             });
           }
           (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';

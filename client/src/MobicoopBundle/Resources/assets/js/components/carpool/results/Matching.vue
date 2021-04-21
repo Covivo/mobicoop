@@ -662,8 +662,20 @@ export default {
         shortFamilyName: params.shortFamilyName,
         givenName: params.givenName,
         avatar: params.avatar,
+        origin: params.carpoolInfos.origin,
+        destination: params.carpoolInfos.destination,
+        askHistoryId: params.carpoolInfos.askHistoryId,
+        frequency: params.carpoolInfos.criteria.frequency,
+        fromDate: params.carpoolInfos.criteria.fromDate,
+        fromTime: params.carpoolInfos.criteria.fromTime,
+        monCheck: params.carpoolInfos.criteria.monCheck,
+        tueCheck: params.carpoolInfos.criteria.tueCheck,
+        wedCheck: params.carpoolInfos.criteria.wedCheck,
+        thuCheck: params.carpoolInfos.criteria.thuCheck,
+        friCheck: params.carpoolInfos.criteria.friCheck,
+        satCheck: params.carpoolInfos.criteria.satCheck,
+        sunCheck: params.carpoolInfos.criteria.sunCheck
       };
-
       for (const key in paramsForm) {
         if (paramsForm.hasOwnProperty(key)) {
           const hiddenField = document.createElement("input");
