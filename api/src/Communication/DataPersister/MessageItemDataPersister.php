@@ -30,6 +30,8 @@ use App\User\Exception\BlockException;
 use App\User\Service\BlockManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
+use App\Carpool\Service\AdManager;
+use App\Carpool\Service\AskManager;
 
 /**
  * Post a Message
@@ -40,12 +42,16 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
     private $internalMessageManager;
     private $blockManager;
     private $security;
+    private $adManager;
+    private $askManager;
 
-    public function __construct(InternalMessageManager $internalMessageManager, BlockManager $blockManager, Security $security)
+    public function __construct(InternalMessageManager $internalMessageManager, BlockManager $blockManager, Security $security, AdManager $adManager, AskManager $askManager)
     {
         $this->internalMessageManager = $internalMessageManager;
         $this->blockManager = $blockManager;
         $this->security = $security;
+        $this->adManager = $adManager;
+        $this->askManager = $askManager;
     }
   
     public function supports($data, array $context = []): bool
@@ -69,6 +75,16 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
             }
         }
 
+        // We check if there is an Ad id. If so, we create the ask.
+        if ($data->getIdAd()!==null) {
+
+            // To do : use makeAd from the proposal (need to get de proposalId...)
+            // $ad = $this->adManager->getAd($data->getIdAd());
+            // $ad->setMatchingId($data->getIdMatching());
+            // $ad = $this->askManager->createAskFromAd($ad, false);
+
+            exit;
+        }
         return $this->internalMessageManager->postMessage($data);
     }
 
