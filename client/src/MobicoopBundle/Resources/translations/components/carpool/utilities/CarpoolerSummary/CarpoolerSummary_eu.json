@@ -1,1 +1,21 @@
-{}
+{
+    "route": {
+        "user": {
+            "message": "/utilisateur/messages"
+        }
+    },
+    "externalResult": {
+        "contact": {
+            "urlSendContact": "/covoiturage/rdexConnection",
+            "popup": {
+                "send": "Bidali",
+                "textarea": {
+                    "label": "Zure mezua",
+                    "content": {
+                        "hello": "Egun on"
+                    }
+                }
+            }
+        }
+    }
+}
