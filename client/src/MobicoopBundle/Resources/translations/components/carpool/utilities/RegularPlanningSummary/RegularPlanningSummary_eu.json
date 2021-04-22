@@ -1,1 +1,7 @@
-{}
+{
+    "hourMinute": "HH[h]mm",
+    "fullMultiple": "Tenoreak desberdinak egunen arabera",
+    "multiple": "anitz",
+    "return": "Etorri",
+    "outward": "Joan"
+}
