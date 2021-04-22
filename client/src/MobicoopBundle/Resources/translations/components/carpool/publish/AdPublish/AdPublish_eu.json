@@ -8,6 +8,9 @@
             "major_update_asks": {
                 "content": "Iragarki honentzat eskaera bat edo gehiago eginak izan dira. Funtsezko informazioetan aldaketak eginez, oraingo iragarkiaren bertsioa ezabatuko du berri baten sortzeko eta ondorioz bidean diren eskaera guziak ezeztatuko ditu.<br> zure aldaketa baieztatzen baduzu, zein ezu bidali nahi zenieke eskaera ezeztatu diezun autokideei?",
                 "title": "Iragarki honentzat gutienez eskaera bat bada"
+            },
+            "minor_update_asks": {
+                "title": "Iragarki honentzat eskaerak badaude"
             }
         },
         "title": "Zure iragarkia aldatu"
