@@ -6,13 +6,12 @@
 {% set outwardOrigin = context.origin %}
 {% set outwardDestination = context.destination %}
 
-{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
-{{ "cancelledCarpool"|trans }}
+Covoiturage annulé.
 
-{{ "yourCarpool"|trans }} {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
-{{ "with"|trans }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{ "hasBeenCancelledBecause"|trans }}
-{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} {{ "hasUpdatedHisAd"|trans }}
+Votre covoiturage : {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
+avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a été annulé car 
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a modifié son annonce.
 
-
-{{"signature"|trans|raw}} {{api_env('PUSH_PLATFORM_NAME')}}
+A bientôt sur {{api_env('PUSH_PLATFORM_NAME')}}
