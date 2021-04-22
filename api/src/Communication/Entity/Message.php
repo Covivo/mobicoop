@@ -143,6 +143,13 @@ class Message
     private $idAsk;
 
     /**
+     * @var int|null Id of a matching if this message is a first contact in a carpool context
+     *
+     * @Groups({"read","write"})
+     */
+    private $idMatching;
+
+    /**
      * @var int|null Id of a Solidary Ask if this message is related to a Solidary Ask
      *
      * @Groups({"read","write"})
@@ -296,6 +303,18 @@ class Message
     public function setIdAsk(?int $idAsk): self
     {
         $this->idAsk = $idAsk;
+
+        return $this;
+    }
+
+    public function getIdMatching(): ?int
+    {
+        return $this->idMatching;
+    }
+
+    public function setIdMatching(?int $idMatching): self
+    {
+        $this->idMatching = $idMatching;
 
         return $this;
     }

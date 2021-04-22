@@ -121,7 +121,8 @@ export default {
           // I'm pushing the new "virtual" thread
           if(this.newThread){
             response.data.threads.push({
-              date:moment().format(),
+              date: (this.newThread.date) ? this.newThread.date : moment().format(),
+              time: (this.newThread.time) ? this.newThread.time : moment().format(),
               shortFamilyName:this.newThread.shortFamilyName,
               givenName:this.newThread.givenName,
               idMessage:-1,
@@ -131,6 +132,11 @@ export default {
               idAskHistory:null,
               selected: true,
               avatarsRecipient:this.newThread.avatar,
+              adId: this.newThread.adId,
+              matchingId: this.newThread.matchingId,
+              driver: this.newThread.driver,
+              passenger: this.newThread.passenger,
+              regular: this.newThread.regular,
               carpoolInfos:{
                 askHistoryId: this.newThread.askHistoryId,
                 origin:this.newThread.origin,

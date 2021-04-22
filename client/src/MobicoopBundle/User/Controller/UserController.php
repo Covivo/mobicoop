@@ -780,7 +780,14 @@ class UserController extends AbstractController
                     "thuCheck" => (bool)$request->request->get('thuCheck'),
                     "friCheck" => (bool)$request->request->get('friCheck'),
                     "satCheck" => (bool)$request->request->get('satCheck'),
-                    "sunCheck" => (bool)$request->request->get('sunCheck')
+                    "sunCheck" => (bool)$request->request->get('sunCheck'),
+                    "adId" => (int)$request->request->get('adId'),
+                    "matchingId" => (int)$request->request->get('matchingId'),
+                    "date" => $request->request->get('date'),
+                    "time" => $request->request->get('time'),
+                    "driver" => (bool)$request->request->get('driver'),
+                    "passenger" => (bool)$request->request->get('passenger'),
+                    "regular" => (bool)$request->request->get('regular')
                 ];
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }
@@ -888,6 +895,7 @@ class UserController extends AbstractController
             // -99 : It's a false id for no carpool message
             $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
+            $idMatching = (isset($data['matchingId']) && !is_null($data['matchingId'])) ? $data['matchingId'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
 
@@ -902,6 +910,11 @@ class UserController extends AbstractController
             if ($idAsk!==null) {
                 $messageToSend->setIdAsk($idAsk);
             }
+
+            if ($idMatching!==null) {
+                $messageToSend->setIdMatching($idMatching);
+            }
+            
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));

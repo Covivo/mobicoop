@@ -674,7 +674,14 @@ export default {
         thuCheck: params.carpoolInfos.criteria.thuCheck,
         friCheck: params.carpoolInfos.criteria.friCheck,
         satCheck: params.carpoolInfos.criteria.satCheck,
-        sunCheck: params.carpoolInfos.criteria.sunCheck
+        sunCheck: params.carpoolInfos.criteria.sunCheck,
+        adId: params.adId,
+        matchingId: params.matchingId,
+        date: params.date,
+        time: params.time,
+        driver: params.driver,
+        passenger: params.passenger,
+        regular: params.regular
       };
       for (const key in paramsForm) {
         if (paramsForm.hasOwnProperty(key)) {
