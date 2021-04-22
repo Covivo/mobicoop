@@ -1,1 +1,12 @@
-{}
+{
+    "unread": "{nb} ez irakurria",
+    "userDelete": "Erabiltzailea ez da gehiago inskribatua",
+    "Sun": "Ig.",
+    "Sat": "Lr.",
+    "Fri": "Or.",
+    "Thu": "Os.",
+    "Wed": "Az.",
+    "Tue": "As.",
+    "Mon": "Al.",
+    "at": "xxx-ra"
+}
