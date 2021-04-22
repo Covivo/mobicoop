@@ -10,13 +10,79 @@
                 "title": "Iragarki honentzat gutienez eskaera bat bada"
             },
             "minor_update_asks": {
-                "title": "Iragarki honentzat eskaerak badaude"
+                "title": "Iragarki honentzat eskaerak badaude",
+                "content": "Eskaera bat edo gehiago eginak izan dira iragarki honentzat. Zure aldaketen xehetasunak igorriak izanen dira eskaera egin dizuten erabiltzaileer. <br> Zure aldaketa baieztatzen ote duzu?"
             }
         },
-        "title": "Zure iragarkia aldatu"
+        "title": "Zure iragarkia aldatu",
+        "unavailable": "Ezin duzu iragarki hori aldatu.",
+        "error": "Zure iragarkia aldatzerakoan akats bat agertu da.",
+        "success": "Zure iragarkia aldatua izan da."
     },
     "create": {
         "subtitle": "Zure iragarkia hasi",
         "title": "Iragarki bat argitaratu"
+    },
+    "messageFirstAd": {
+        "signUpDone": "Bibazu {givenName}! Zure izen ematua bururatua da"
+    },
+    "stepper": {
+        "buttons": {
+            "notValid": "Berriz inizializatu eta bidaiari loturiko inforazio guzia eman behar duzu zure iragarkia argitarazteko",
+            "publish_ad": "Nire iragarkia argitaratu",
+            "update_ad": "Nire iragarkia aldatu",
+            "previous": "Aitzinekoa",
+            "next": "Ondokoa"
+        },
+        "driverLicense": {
+            "route": "/ebo",
+            "link": "(Ituna)",
+            "text": "Nire iragarkia argitaratuz, nire gida baimena eta bali eta eguneratua den asurantza badudala egiaztatzen dut"
+        },
+        "content": {
+            "map": {
+                "myproposal": "Zure bidaia proposamena"
+            },
+            "summary": "Laburbilduma",
+            "message": {
+                "label": "Zure iragarkian, denek ikus dezaketen mezu bat utz ezazu",
+                "title": {
+                    "passenger": "Nire mezua gidarieri",
+                    "driver": "Nire mezua bidaiarieri",
+                    "both": "Nire mezua"
+                }
+            },
+            "participation": {
+                "passengers": " Bidaiarika",
+                "price": "XXX-ren parte hartzea "
+            },
+            "passengers": {
+                "backSeats": {
+                    "help": "Lauki hori marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelaldean",
+                    "label": "Gehienez bi pertsona giblean"
+                },
+                "bike": {
+                    "help": "Lauki hori marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
+                    "label": "Bizikleta bat garrai dezaket"
+                },
+                "luggage": {
+                    "help": "Lauki hau markatu zure ubilgailuak zaku lodiak garraitzen ahal baditu",
+                    "label": "Tokia badut zaku lodientzat"
+                },
+                "seats": {
+                    "passengers": " Bidaiaria(k)",
+                    "question": "Tokiak baditut XXX-rentzat "
+                }
+            }
+        },
+        "header": {
+            "summary": "Laburbilduma",
+            "message": "Mezua",
+            "participation": "Parte hartea",
+            "passengers": "Bidaiariak",
+            "map": "Bidaia",
+            "planification": "Planifikazioa",
+            "search_journey": "Zure iragarkia hasi"
+        }
     }
 }
