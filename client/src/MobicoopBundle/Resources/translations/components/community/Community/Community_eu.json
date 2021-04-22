@@ -1,1 +1,24 @@
-{}
+{
+    "widget": {
+        "externalRoute": "/communaute/widget/{id}",
+        "route": "/communaute/widget/get/{id}",
+        "textDetails": {
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;"
+        }
+    },
+    "urlCommunityUser": "/community-user",
+    "buttons": {
+        "login": {
+            "route": "/utilisateur/connexion"
+        },
+        "contact": {
+            "route": "/utilisateur/messages/nouveau"
+        },
+        "join": {
+            "route": "/communaute/{id}/rejoindre"
+        }
+    },
+    "leaveCommunity": {
+        "route": "/communaute/{id}/quitter"
+    }
+}
