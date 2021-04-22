@@ -129,7 +129,7 @@ export default {
               unreadMessages: 0,
               idAsk:null,
               idAskHistory:null,
-              selected: false,
+              selected: true,
               avatarsRecipient:this.newThread.avatar,
               carpoolInfos:{
                 askHistoryId: this.newThread.askHistoryId,
