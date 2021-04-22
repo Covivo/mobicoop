@@ -1,1 +1,22 @@
-{}
+{
+    "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialen bidezko konexio funtzionaltasuna partekatua izan behar da \"Cookies kudeaketa\" tresnari esker, oin-orrian eskuragarri dena.",
+    "consent": "Konektatu ahal izateko \"Zure konexioa aktibo mantentzea\" onartu behar duzu \"Cookies-en kudeaketa\" tresnari esker, esteka orri-oinean atxemanen duzuna.",
+    "passwordRequired": "Pasahitza beharrezkoa da",
+    "emailInvalid": "Helbide elektronikoa bali izan behar da",
+    "emailRequired": "Helbide elektronikoa beharrezkoa da",
+    "email": "E-mezua",
+    "password": "Pasahitza",
+    "connection": "Konektatu",
+    "urlGetSsoServices": "/user/getSsoServices",
+    "urlSignUp": "/erabiltzaile/izena eman",
+    "signUp": "Ez duzu oraindik izena emana?",
+    "textRecovery": "Pasahitza ahantzia?",
+    "urlRecovery": "/erabiltzailea/pasahitza/berreskuratzea",
+    "urlLoginResult": "/erabiltzailea/konexioa/{id}",
+    "urlLogin": "/erabiltzailea/konexioa",
+    "userFBNotFound": "Facebook erabiltzaile horrek ez du izena eman plataforman",
+    "errorCredentialsFacebook": "Akats bat Facebook bidez konektatzerakoan",
+    "Unable to get an API token.": "Akats bat konktatzerakoan.",
+    "Bad credentials.": "Erabiltzailearen izena edo pasahitza okerra da.",
+    "title": "Konexioa"
+}
