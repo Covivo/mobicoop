@@ -35,5 +35,134 @@
         "deleteAccount": "Nire kontua ezabatu",
         "password": "Pasahitza",
         "personnalInfos": "Informazio pertsonalak"
+    },
+    "savedCo2": "Aurreztu duzu {savedCo2}",
+    "no": "ez",
+    "yes": "bai",
+    "save": "Gorde",
+    "homeTown": {
+        "label": "Bizilekuaren hiria"
+    },
+    "birthDay": {
+        "errors": {
+            "notadult": "16 urte behar dituzu plataforman izena emateko",
+            "required": "Sorteguna beharrezkoa da"
+        },
+        "label": "Sorteguna"
+    },
+    "gender": {
+        "values": {
+            "other": "Beste",
+            "female": "Anderea",
+            "male": "Jauna"
+        },
+        "label": "Egoera zibila"
+    },
+    "familyName": {
+        "label": "Abizena"
+    },
+    "givenName": {
+        "label": "Izena"
+    },
+    "email": {
+        "verificationRoute": "/erabiltzaile/e-mezu/baieztapena",
+        "buttons": {
+            "label": {
+                "generateEmailAgain": "Egiaztatze e-mezua gilera igorri",
+                "generateEmail": "Egiaztatze e-mezu bat bidali"
+            }
+        },
+        "tooltips": {
+            "notVerified": "Zure e-mezua ez da egiaztatua izan",
+            "verified": "Zure helbide elektronikoa egiaztatua izan da"
+        },
+        "errors": {
+            "valid": "Helbide elektronikoa formatu onean izan behar da"
+        },
+        "label": "E-mezua"
+    },
+    "events": {
+        "route": "/user/events/created"
+    },
+    "communities": {
+        "route": "/user/communities/owned"
+    },
+    "address": {
+        "update": {
+            "route": "/erabiltzaile/perfila/helbidea",
+            "label": "Nire helbidea gorde"
+        }
+    },
+    "buttons": {
+        "supprimerAccount": "Nire kontua ezeztatu"
+    },
+    "dialogEmail": {
+        "buttons": {
+            "cancelUpdate": "Ezeztatu",
+            "confirmUpdate": "Nire helbide elektronikoa aldatzen dut"
+        },
+        "content": "<p>zure helbide elektronikoa aldatu duzu.</p><p>Jarraitzen baduzu, baieztatze e-mezu bat bidalia izanen zaizu zure helbide elektronikora, eta deskonektatua izanen zira. </p><p>Jarraitu nahi ote duzu?</p>",
+        "title": "Zure helbide elektronikoa aldatu duzu"
+    },
+    "dialog": {
+        "buttons": {
+            "close": "Hetsi",
+            "confirmDelete": "Ezabatzea baieztatzen dut"
+        },
+        "content": {
+            "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferente izaten jarraitzen duzun arte. <br/> <a href=/contact> euskarri teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitatea ezabatzeko.<br/>",
+            "errorEvents": "Helduko diren ekitaldi antolatzaile gisa, <br/> ezin duzu zure kontua ezabatu, antolatzaile bazira edo izango bazira. <br/> <a href=/contact> teknika euskarriarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailea aldatzeko edo ezabatzeko eskaera egiteko edo ekitaldia pasatzea igurika ezazu.",
+            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula? <br/> Ekintza hori ezin itzulizkoa da. <br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonala guziak ezabatu<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatuak<br/> -Autokidetza artxiboetan beste autokide batzuk anonimazatuko dituzu <br/> oraindik aktibo dituzun autokidetza iragarki guziak ezabatu <br/> - oraindik indarrean diren autokidetza eskaera guziak ezeztatu <br/> planifikatutako autokidetza guziak ezeztatu<br/> Baieztatzen duzuia?"
+        },
+        "titles": {
+            "deletionImpossible": "Zure kontua ezabatzea ezinezkoa da",
+            "deleteAccount": "Zure kontua ezabatua izan da"
+        }
+    },
+    "phone": {
+        "i18n": {
+            "time": {
+                "format": {
+                    "hourMinute": "HH[h]mm"
+                }
+            },
+            "date": {
+                "format": {
+                    "computeDate": "YYYY-MM-DD",
+                    "shortDate": "YYYY/MM/DD",
+                    "fullDate": "ddd Do MMMM YYYY"
+                }
+            }
+        },
+        "token": {
+            "inputError": "Baieztatze odea 4 zenbakiz osatua da.",
+            "route": "/erabiltzaile/telefonoa/token"
+        },
+        "validation": {
+            "route": "/erabiltzaile/telefono/baieztapena",
+            "label": "Zure baieztatze kodea"
+        },
+        "buttons": {
+            "label": {
+                "validate": "Baieztatu",
+                "generateNewToken": "Kode berri bat bidali",
+                "generateToken": "Egiaztatze kode bat bidali"
+            }
+        },
+        "tooltips": {
+            "notVerified": "Zure mugikor zenbakia ez da egiaztatua",
+            "verified": "Zure mugikor zenbakia egiaztatua da"
+        },
+        "errors": {
+            "valid": "Mugikor telefonoa bali izan behar da"
+        },
+        "label": "Mugikor telefonoa"
+    },
+    "phoneDisplay": {
+        "label": {
+            "all": "Ikusgai iragarkia argitaratua denean, izena eman duten guzieri.",
+            "general": "Nire telefono zenbakia ikusgai.",
+            "restricted": "Ikusgai soilik autokidetza onartu ondoren, bakarrik parte hartzaileak."
+        }
     }
 }
