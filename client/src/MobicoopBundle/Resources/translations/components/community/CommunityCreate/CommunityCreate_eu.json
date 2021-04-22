@@ -1,1 +1,10 @@
-{}
+{
+    "redirect": {
+        "route": "/communautes"
+    },
+    "buttons": {
+        "create": {
+            "route": "/communaute/creer"
+        }
+    }
+}
