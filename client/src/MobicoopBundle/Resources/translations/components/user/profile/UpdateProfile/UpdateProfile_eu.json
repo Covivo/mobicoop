@@ -1,1 +1,38 @@
-{}
+{
+    "news": {
+        "confirmation": {
+            "title": "Desinskripzioaren baieztapena"
+        },
+        "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da publizitaterik eginen.",
+        "label": "Zerbitzuko berriak{platform}(autokidetza egiteko argibide baliagarriak, eta zerbitzu berriak edota funtzionalitate berriak)"
+    },
+    "route": {
+        "supprimer": "/erabiltzaile/perfila/kendu",
+        "update": "/erabiltzaile/perfila/aldatu"
+    },
+    "avatar": {
+        "delete": {
+            "label": "Irudia kendu",
+            "route": "/erabiltzailea/perfila/avatar/kendu"
+        },
+        "size": "Aragazki izaria pasa duzu",
+        "label": "Argazkia"
+    },
+    "snackBar": {
+        "emailError": "Hutsa, e-mezua ez da bidalia izan",
+        "emailOk": "Baieztatze e-mezua igorria izan da.",
+        "tokenError": "Hutsa, kodea ez da igorria izan",
+        "tokenOk": "Baieztatze kodea igorria izan da.",
+        "unknown": "Baieztatze kodea okerra da.",
+        "phoneValidated": "Zure telefonoa egiaztatua izan da.",
+        "phoneUpdate": "Hutsa, zure telefonoa ez da egiaztatua izan.",
+        "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua izan da.",
+        "errorProfileUpdate": "Hutsa, zure perfila ez da eguneratua izan.",
+        "profileUpdated": "Zure perfila euneratua izan da!"
+    },
+    "titles": {
+        "deleteAccount": "Nire kontua ezabatu",
+        "password": "Pasahitza",
+        "personnalInfos": "Informazio pertsonalak"
+    }
+}
