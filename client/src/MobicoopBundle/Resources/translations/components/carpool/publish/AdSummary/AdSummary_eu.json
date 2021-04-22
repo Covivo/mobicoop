@@ -1,14 +1,14 @@
 {
     "fullDate": "YYYY MMMM Do ddd",
     "hourMinute": "HH[h]mm",
-    "sun": "ig.",
-    "sat": "lr.",
-    "fri": "or.",
-    "thu": "og.",
-    "wed": "az.",
-    "mon": "al.",
-    "tue": "as.",
-    "return": "Itzuli",
+    "sun": "Ig.",
+    "sat": "Lr.",
+    "fri": "Or.",
+    "thu": "Os.",
+    "wed": "Az.",
+    "mon": "Al.",
+    "tue": "As.",
+    "return": "Etorri",
     "outward": "Joan",
     "places": "plaza | plazak"
 }
