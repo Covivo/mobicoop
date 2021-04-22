@@ -1,6 +1,6 @@
 {
     "fullDate": "YYYY MMMM Do ddd",
-    "hourMinute": "HH:mm",
+    "hourMinute": "HH[h]mm",
     "sun": "ig.",
     "sat": "lr.",
     "fri": "or.",
