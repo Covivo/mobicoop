@@ -20,5 +20,7 @@
     },
     "leaveCommunity": {
         "route": "/communaute/{id}/quitter"
-    }
+    },
+    "no": "ez",
+    "yes": "bai"
 }
