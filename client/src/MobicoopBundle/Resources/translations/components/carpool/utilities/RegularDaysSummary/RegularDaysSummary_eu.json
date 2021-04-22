@@ -1,1 +1,13 @@
-{}
+{
+    "shortCompleteDate": "YYYY/MM/DD",
+    "dateValidUntil": "XXXXa arte",
+    "valid": "Baliozkotasuna:",
+    "dateValid": "Balio du XXX-a arte",
+    "sun": "Ig.",
+    "sat": "Lr.",
+    "fri": "Or.",
+    "thu": "Os.",
+    "wed": "Az.",
+    "tue": "As.",
+    "mon": "Al."
+}
