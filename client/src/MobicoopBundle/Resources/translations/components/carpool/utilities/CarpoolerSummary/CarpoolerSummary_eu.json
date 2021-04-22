@@ -12,10 +12,35 @@
                 "textarea": {
                     "label": "Zure mezua",
                     "content": {
-                        "hello": "Egun on"
+                        "hello": "Egun on",
+                        "seeya": "Laster arte",
+                        "phone": "Nire telefono zenbakia {phone} da",
+                        "email": "Nire e-maila {email} da",
+                        "name": "Nire deitura {name} da",
+                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak zuzenki harremanetan jar gaitezen"
                     }
-                }
+                },
+                "cancel": "Ezeztatu",
+                "instructions": {
+                    "line2": "Pentsa harremanetan jartzeko modu bat uztea gutienez, zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera ukan dezan",
+                    "line1": "Eskertzen zaitugu beheragoko mezua betetzea edo aldatzea."
+                },
+                "intro": "Iragarki hori ez dator gure autokidetza webgunetik baina webgune partaidetik {origin}",
+                "title": "Harremanetan jarri"
+            },
+            "return": {
+                "error": "Arazo tekniko batengatik mezua ez da igorria izan",
+                "ok": "Mezua igorria izan da."
+            },
+            "button": {
+                "tooltip": "Konektatua izan behar zira autokide batekin harremanetan jartzeko",
+                "label": "Harremanetan jarri"
             }
-        }
-    }
+        },
+        "go": "Hara joan"
+    },
+    "inDev": "Garatzen ari da.",
+    "needTobeConnected": "Ekintza hori egin ahal izateko konektatua izan behar zira.",
+    "seeDetails": "Ikus xehetasunak",
+    "birthYears": "urte"
 }
