@@ -1,3 +1,4 @@
 {
-    "urlGet": "/erabiltzaile/mezuak/autokidetza"
+    "urlGet": "/erabiltzaile/mezuak/autokidetza",
+    "noCarpool": "Ez diozu oraindik autokidetza eskaera bat egin izena eman duen bati."
 }
