@@ -1,1 +1,11 @@
-{}
+{
+    "noCommunity": "Ez da komunitaterik",
+    "urlGetCommunities": "/community/getCommunityList",
+    "seeAds": "Ikus iragarkiak",
+    "linePerPage": "Lerro kopurua orrialdeka",
+    "all": "Denak",
+    "search": "Bilatu",
+    "createCommunity": "Komunitate bat sortu",
+    "myCommunities": "Nire komunitateak",
+    "communitiesAvailable": "Libro diren komunitateak"
+}
