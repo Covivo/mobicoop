@@ -146,15 +146,15 @@ class UserRepository
     }
 
     /**
-     * Get users by their id
+     * Get users by their id if they accept emailing
      *
      * @param array $ids    The ids of the users
      * @return array|null   The users
      */
-    public function findByIds(array $ids)
+    public function findDeliveriesByIds(array $ids)
     {
         return $this->repository->createQueryBuilder('u')
-        ->where("u.id IN(:ids)")
+        ->where("u.id IN(:ids) and u.newsSubscription=1")
         ->setParameter('ids', $ids)
         ->getQuery()->getResult();
     }

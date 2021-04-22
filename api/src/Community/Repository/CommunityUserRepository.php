@@ -79,4 +79,20 @@ class CommunityUserRepository
 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Get accepted members by their id if they accept emailing
+     *
+     * @param array $ids    The ids of the users
+     * @return array|null   The users
+     */
+    public function findAcceptedDeliveriesByIds(array $ids)
+    {
+        return $this->repository->createQueryBuilder('cu')
+        ->join('cu.user', 'u')
+        ->where("cu.id IN(:ids) and u.newsSubscription=1 and cu.status IN (:statuses)")
+        ->setParameter('ids', $ids)
+        ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER,CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
+        ->getQuery()->getResult();
+    }
 }

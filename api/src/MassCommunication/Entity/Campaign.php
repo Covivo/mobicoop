@@ -315,6 +315,13 @@ class Campaign
     private $sourceId;
 
     /**
+     * @var string|null The source name for the deliveries.
+     *
+     * @Groups({"aRead"})
+     */
+    private $sourceName;
+
+    /**
      * @var int|null The filter type for the deliveries selection.
      *
      * @ORM\Column(type="smallint", nullable=true)
@@ -624,6 +631,18 @@ class Campaign
     public function setSourceId(?int $sourceId): self
     {
         $this->sourceId = $sourceId;
+
+        return $this;
+    }
+
+    public function getSourceName(): ?string
+    {
+        return $this->sourceName;
+    }
+
+    public function setSourceName(?string $sourceName): self
+    {
+        $this->sourceName = $sourceName;
 
         return $this;
     }

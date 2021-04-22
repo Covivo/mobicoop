@@ -178,7 +178,6 @@ class CampaignManager
      */
     private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
     {
-       
         // we set the sender
         $sender = new Sender;
         $sender->setUser($campaign->getUser());

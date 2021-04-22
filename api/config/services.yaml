@@ -68,6 +68,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Campaign Load Listener
+    mobicoop.campaign.campaign_load_listener:
+        class: App\MassCommunication\EventListener\CampaignLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
         class: App\Community\EventListener\CommunityUserLoadListener
@@ -328,6 +334,10 @@ services:
             - { name: monolog.logger, channel: community }
 
     App\Community\Repository\CommunityUserRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 

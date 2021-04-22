@@ -78,6 +78,24 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_community_membership',object)"
  *          },
+ *          "ADMIN_associate_campaign"={
+ *              "path"="/admin/community_members/associate-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_membership',object)"
+ *          },
+ *          "ADMIN_send_campaign"={
+ *              "path"="/admin/community_members/send-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_membership',object)"
+ *          },
  *          "add"={
  *              "method"="POST",
  *              "path"="/community_users/add",

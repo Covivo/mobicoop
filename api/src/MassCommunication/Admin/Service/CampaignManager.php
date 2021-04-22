@@ -156,7 +156,6 @@ class CampaignManager
      *
      * @param Campaign $campaign    The campaign
      * @param iterable $users       The users
-     * @param integer $filterType   The filter type
      * @param array $filters        The filters if the filter type is 'filter'
      * @return void
      */
@@ -166,6 +165,7 @@ class CampaignManager
             case Campaign::FILTER_TYPE_SELECTION:
                 // remove selection if it exists before adding the new one
                 $campaign->removeDeliveries();
+                $campaign->setFilters(null);
                 foreach ($users as $user) {
                     $delivery = new Delivery();
                     $delivery->setCampaign($campaign);
@@ -181,6 +181,42 @@ class CampaignManager
                 $campaign->removeDeliveries();
                 $campaign->setFilters($this->stringFilters($filters));
                 $campaign->setDeliveryCount(count($users));
+                $this->entityManager->persist($campaign);
+                break;
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Associate community users to a campaign (complete Campaign information, and create deliveries only if selection)
+     *
+     * @param Campaign $campaign    The campaign
+     * @param iterable $members     The members
+     * @param array $filters        The filters if the filter type is 'filter'
+     * @return void
+     */
+    public function associateCommunityUsers(Campaign $campaign, iterable $members, array $filters = [])
+    {
+        switch ($campaign->getFilterType()) {
+            case Campaign::FILTER_TYPE_SELECTION:
+                // remove selection if it exists before adding the new one
+                $campaign->removeDeliveries();
+                $campaign->setFilters(null);
+                foreach ($members as $member) {
+                    $delivery = new Delivery();
+                    $delivery->setCampaign($campaign);
+                    $delivery->setUser($member->getUser());
+                    $delivery->setStatus(Delivery::STATUS_PENDING);
+                    $this->entityManager->persist($delivery);
+                }
+                // force updated date
+                $campaign->setAutoUpdatedDate();
+                break;
+            case Campaign::FILTER_TYPE_FILTER:
+                // remove selection if it exists
+                $campaign->removeDeliveries();
+                $campaign->setFilters($this->stringFilters($filters));
+                $campaign->setDeliveryCount(count($members));
                 $this->entityManager->persist($campaign);
                 break;
         }
