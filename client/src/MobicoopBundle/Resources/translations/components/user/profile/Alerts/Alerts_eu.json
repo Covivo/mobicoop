@@ -1,3 +1,5 @@
 {
-    "urlUpdate": "/utilisateur/alerte/changement"
+    "urlUpdate": "/utilisateur/alerte/changement",
+    "asterisk": "* Autokidetza bat ezeztatzen den aldioro, e-mezu bat bidaltzen da.",
+    "errorUpdateAlert": "Arazo tekniko baten ondorioz, adaketa ezin izan da grabatu"
 }
