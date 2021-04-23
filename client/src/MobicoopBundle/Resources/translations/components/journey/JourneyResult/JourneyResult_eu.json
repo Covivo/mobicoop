@@ -1,4 +1,8 @@
 {
     "redirectForCarpoolSearch": "/covoiturage/annonce/{proposalId}/resultats",
-    "createSearchFromProposalUrl": "/covoiturage/creer-recherche/{proposalId}"
+    "createSearchFromProposalUrl": "/covoiturage/creer-recherche/{proposalId}",
+    "regular": "Bidaia erregularrak",
+    "punctual": "Ezohiko bidaia",
+    "nbResults": "Ez da iragarkirik autokitza atxemaneran | Iragarki 1 autokidetza atxemanetan| {nb} iragarki autokidetza atxemanetan",
+    "title": "Autokidetza{origin} -tik{destination}-ra"
 }
