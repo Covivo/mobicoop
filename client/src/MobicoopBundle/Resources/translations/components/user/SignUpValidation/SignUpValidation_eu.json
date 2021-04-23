@@ -1,1 +1,15 @@
-{}
+{
+    "canValid": "Zure kontua baiezta dezakezu <strong>e-mezuko edukian </strong> baieztapen estekan klikatuz edo <strong>kopiatu-kolatu kodea</strong> zuzenean beherean.",
+    "validationMailSend": "Baieztapen e-mezua igorria izan da.",
+    "almostDone": "Izen ematea kasik bukatua da.",
+    "unknown": "Kodea ez da ezagutua",
+    "updateError": "Kode hori ez da kontu grabatu bati lotua",
+    "alreadyValidated": "Zure kontua jadanik baieztatu izan da",
+    "validate": "Zure izen ematea baieztatu",
+    "errorCredentials": "Egiaztatze kodea ez da ezagutua izan",
+    "tokenRequired": "zure egiaztapen kodea baitezpadakoa da",
+    "urlEmailValidation": "/erabiltzaile/login-token/email",
+    "urlSignUpValidation": "/erabiltzaile/login-token",
+    "token": "Zure kodearen egiaztapena",
+    "title": "Zure emailaren egiaztapena"
+}
