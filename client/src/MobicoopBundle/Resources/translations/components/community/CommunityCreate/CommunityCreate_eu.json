@@ -1,10 +1,10 @@
 {
     "redirect": {
-        "route": "/communautes"
+        "route": "/komunitateak"
     },
     "buttons": {
         "create": {
-            "route": "/communaute/creer",
+            "route": "/komunitatea/sortu",
             "label": "Komunitatea sortu"
         }
     },
@@ -24,20 +24,20 @@
         },
         "address": {
             "required": "Komunitatearen helbidea baitezpadakoa da",
-            "label": "Elkargoaren* helbidea"
+            "label": "Elkargoaren helbidea*"
         },
         "avatar": {
             "size": "Avatar-aren neurri handiena gainditua da",
             "required": "Elkargoaren avatar-a baitezpadakoa da",
-            "label": "Elkargoaren* avatar-a"
+            "label": "Elkargoaren avatar-a*"
         },
         "fullDescription": {
             "required": "Komunitatearen aurkezpen zehatzak baitezpadakoa da",
-            "label": "Komunitatearen* xehetsun zehatzak"
+            "label": "Komunitatearen xehetsun zehatzak*"
         },
         "description": {
             "required": "Komunitatearen aurkezpen laburra baitezpadakoa da",
-            "label": "Komunitateaaren* aurkezpen laburra"
+            "label": "Komunitateaaren aurkezpen laburra*"
         },
         "name": {
             "required": "Komunitatearen izena baitezpadakoa da",
