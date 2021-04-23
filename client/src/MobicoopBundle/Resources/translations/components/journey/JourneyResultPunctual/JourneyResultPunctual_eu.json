@@ -1,1 +1,6 @@
-{}
+{
+    "carpool": "Honi lotuak diren autokidetzak",
+    "age": " | |{age} urte",
+    "hourMinute": "HH[h]mm",
+    "shortDate": "ddd DD/MM/Y"
+}
