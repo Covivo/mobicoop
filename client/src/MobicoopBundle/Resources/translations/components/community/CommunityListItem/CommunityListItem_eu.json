@@ -9,12 +9,20 @@
             },
             "title": "Baietapen eskaera"
         },
-        "button": "Komunitatetik atera"
+        "button": "Komunitatetik atera",
+        "route": "/Komunitatea/{id}/utzi"
     },
     "snackbar": {
         "leaveCommunity": {
             "textError": "Huts bat agertu da berriz entsea ezazu",
             "textOk": "Ez zira gehiago komunitatearen parte"
         }
+    },
+    "protected": "Kideek ezin dute haien komunitatea ikusi",
+    "join": "Komunitatean sartu",
+    "communityDetails": "Ikus komunitatea",
+    "routes": {
+        "communitySecuredRegister": "/komunitatea/{id}/segurtasuna/izen-ematea",
+        "community": "/autokidetza-komunitatea/{id}/{urlKey}"
     }
 }
