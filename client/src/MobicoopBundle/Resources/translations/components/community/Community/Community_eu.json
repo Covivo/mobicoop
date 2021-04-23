@@ -3,8 +3,12 @@
         "externalRoute": "/communaute/widget/{id}",
         "route": "/communaute/widget/get/{id}",
         "textDetails": {
-            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;"
-        }
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p3": "<span class=\"font-weight-bold\">Attention</span> : Wordpress bezala argitaratzeko tresna batzutan plugings bereziak gehitu begar dira iFrame bat erabili ahal izateko.",
+            "p1": "Widget-a integratzeko, azpeiko testua kopiatu  eta zure webgunean kolatu behar duzu.<br />Zure widget-a pertsonalizatzeko, lodiz diren elementuak alda ditzakezu.",
+            "title": "Widget-an kide egin"
+        },
+        "label": "Ikus Widget-a"
     },
     "urlCommunityUser": "/community-user",
     "buttons": {
@@ -15,19 +19,70 @@
             "route": "/utilisateur/messages/nouveau"
         },
         "join": {
-            "route": "/communaute/{id}/rejoindre"
+            "route": "/communaute/{id}/rejoindre",
+            "label": "Komunitatean sartu"
+        },
+        "search": {
+            "label": "Bilatu"
+        },
+        "accessAdmin": {
+            "label": "Nire komunitatea administratu"
+        },
+        "publish": {
+            "route": "autokidetza/bilatu/argitaratu",
+            "label": "Iragaria argitaratu"
         }
     },
     "leaveCommunity": {
         "route": "/communaute/{id}/quitter",
         "popup": {
             "content": {
-                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?"
+                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
             },
             "title": "Baietapen eskaera"
         },
         "button": "Komunitatetik atera"
     },
     "no": "ez",
-    "yes": "bai"
+    "yes": "bai",
+    "infos": {
+        "members": "{members} kideak"
+    },
+    "map": {
+        "search": {
+            "label": "Honi loturiko autokidetzak bilatu"
+        },
+        "regular": "Usaiazko bidaia",
+        "destination": "Helmuga",
+        "origin": "Abiatzea",
+        "findMatchings": "<strong>Loturiko iragarkiak bilatu</strong>"
+    },
+    "title": {
+        "searchCarpool": "Komunitatean bidaia bat bilatu"
+    },
+    "snackbar": {
+        "leaveCommunity": {
+            "textError": "Huts bat agertu da berriz entsea ezazu",
+            "textOk": "Ez zira gehiago komunitatearen parte"
+        },
+        "joinCommunity": {
+            "textError": "Huts bat agertu da, berriz entsea ezazu.",
+            "textOkAutoValidation": "Zure kidetza eskaera baieztatua da.",
+            "textOkManualValidation": "Zure kidetza eskaera erreferenteari igorria izan zaio.E-mezuz informatua izanen zira."
+        }
+    },
+    "tooltips": {
+        "domain": "Zure helbide elektronikoa eremu baten parte izan behar da:",
+        "validation": "Baieztapenaren zain",
+        "connected": "Konektatua izan behar zira"
+    },
+    "joinCommunity": {
+        "popup": {
+            "content": {
+                "printPhoneNumberWarning": "Komunitateko erreferenteak zure telefono zenbakia ikusten ahalko du.<br>Baieztatzen duzu?"
+            },
+            "title": "Baieztapen eskaera"
+        }
+    }
 }
