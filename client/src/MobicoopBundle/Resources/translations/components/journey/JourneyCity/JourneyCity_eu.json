@@ -1,4 +1,10 @@
 {
     "routeToCity": "/communes/covoiturage-vers-{city}",
-    "routeFromCity": "/communes/covoiturage/{city}"
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "journeyToCity": "{city}-rantz autokidetza",
+    "journeyFromCity": "{city}ko autokidetza",
+    "toCity": "...herrira",
+    "fromCity": "Herritik...",
+    "subtitle": "Autokidetzak herrika atzitu",
+    "title": "Autokidetzak herrika"
 }
