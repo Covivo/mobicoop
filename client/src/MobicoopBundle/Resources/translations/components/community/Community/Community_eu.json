@@ -19,7 +19,14 @@
         }
     },
     "leaveCommunity": {
-        "route": "/communaute/{id}/quitter"
+        "route": "/communaute/{id}/quitter",
+        "popup": {
+            "content": {
+                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?"
+            },
+            "title": "Baietapen eskaera"
+        },
+        "button": "Komunitatetik atera"
     },
     "no": "ez",
     "yes": "bai"
