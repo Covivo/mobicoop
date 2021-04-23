@@ -2,10 +2,17 @@
     "getPopularJourneysUrl": "/covoiturages/populaires",
     "links": {
         "popularJourneys": {
-            "uri": "/covoiturage/{origin}/{destination}"
+            "uri": "/covoiturage/{origin}/{destination}",
+            "to": "-ra",
+            "from": "XXX -ko autokidetzak"
         },
         "cityByCity": {
-            "uri": "/covoiturage-par-ville"
+            "uri": "/covoiturage-par-ville",
+            "label": "Autokidetzak herrika"
         }
-    }
+    },
+    "popularJourneys": "Ezagunenak diren bidaiak",
+    "intro": "Ezagunenak diren autokidetza bidaien zerrenda begizta edo kontsulta ezazu ",
+    "title": "Autokidetzak ezagunak dira bidaiaka",
+    "subtitle": "Interesatzen zaizkizun autokidetzak atzitu"
 }
