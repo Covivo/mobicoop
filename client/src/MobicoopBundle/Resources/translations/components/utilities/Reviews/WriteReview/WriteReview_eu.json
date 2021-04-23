@@ -1,1 +1,6 @@
-{}
+{
+    "fail": "Abisu pausatzean huts bat agertu da",
+    "validate": "Baieztatu",
+    "leaveReviewUri": "/erabiltzaile/abisu/idatzi",
+    "label": "Zure oharrak idatz itzazu"
+}
