@@ -4,7 +4,7 @@
         "popularJourneys": {
             "uri": "/covoiturage/{origin}/{destination}",
             "to": "-ra",
-            "from": "XXX -ko autokidetzak"
+            "from": "Autokidetza...tik"
         },
         "cityByCity": {
             "uri": "/covoiturage-par-ville",
