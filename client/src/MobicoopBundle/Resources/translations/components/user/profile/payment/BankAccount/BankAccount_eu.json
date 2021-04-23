@@ -1,1 +1,38 @@
-{}
+{
+    "error": "Huts bat agertu da",
+    "uri": {
+        "addCoordinates": "/erabiltzaile/banku-datuak/gehitu",
+        "deleteCoordinates": "/erabiltzaile/banku-datuak/kendu",
+        "getCoordinates": "/erabiltzaile/banku-datuak"
+    },
+    "modalSuppr": {
+        "no": "ez",
+        "yes": "bai",
+        "line3": "Ekintza hori baieztatzen ote duzu?",
+        "line2": "Ezingo duzu gehiago ordainketa elektronikorik errezibitu.",
+        "line1": "Zure banku-datuak ezabatuak izanen dira.",
+        "title": "Banku-datuak ezabatu nahi dituzu?"
+    },
+    "register": "Gorde",
+    "form": {
+        "errors": {
+            "bicRequired": "BIC zenbakia derrigorrezkoa da",
+            "bic": "BIC zebakia bali izan behar da",
+            "ibanRequired": "IBAN zenbakia derrigorrezkoa da",
+            "iban": "IBAN zenbakia bali izan behar da"
+        },
+        "tooltip": {
+            "iban": "Zure IBAN-a eman tarterik gabe"
+        },
+        "label": {
+            "address": "Zure helbide osoa",
+            "bic": "BIC",
+            "iban": "IBAN"
+        }
+    },
+    "titleAlreadyRegistered": "Nire banku-datuak",
+    "textAddress": "Eskertzen zaitugu helbide osoa (zenbakia, karrika izena...) betetzea eta ez bakarrik zure bizilekuko hiria.",
+    "titleAddress": "2. Helbide osoa",
+    "textInfo": "Lineako ordainketak eskuratzeko, beheragoko informazio guziak ematea baitezpadako da.",
+    "titleCoordinates": "1.banku-datuak"
+}
