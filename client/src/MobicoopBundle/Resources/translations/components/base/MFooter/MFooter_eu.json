@@ -1,1 +1,90 @@
-{}
+{
+    "urlFramasphereLogo": "/images/footer/framasphere.svg",
+    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+    "urlTwitterLogo": "/images/footer/twitter.svg",
+    "urlTwitter": "https://twitter.com/Mobicoop",
+    "urlInstagramLogo": "/images/footer/instagram.svg",
+    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+    "urlFacebookLogo": "/images/footer/facebook.svg",
+    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+    "urlAndroidLogo": "/images/footer/android.svg",
+    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
+    "urlIosLogo": "/images/footer/IOS.svg",
+    "need": {
+        "community": {
+            "link": "autokidetza-komunitatea",
+            "title": "mobicoop.fr webgunean komunitatea sortu ezazu!"
+        }
+    },
+    "contacts": {
+        "presse": {
+            "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
+            "title": "Prentsa"
+        },
+        "hotline": {
+            "link": "/Harremanak",
+            "title": "Hotline"
+        }
+    },
+    "tools": {
+        "cookies": {
+            "link": "#",
+            "title": "Cookies-en kudeaketa"
+        },
+        "dataPolicy": {
+            "link": "/datuen-babesa",
+            "title": "Datuen babesa"
+        },
+        "cgu": {
+            "link": "/cgu",
+            "title": "Erabilera Baldintza Orokorrak"
+        },
+        "faq": {
+            "link": "/FAQ",
+            "title": "Galderak"
+        },
+        "events": {
+            "link": "/autokidetza-ekitaldiak",
+            "title": "Autokidetza ekiataldiak"
+        },
+        "map": {
+            "link": "/geldiguneak",
+            "title": "Autokidetza eremuen mapa"
+        }
+    },
+    "services": {
+        "covievent": {
+            "link": "https://www.covievent.org/",
+            "title": "www.covievent.org"
+        },
+        "mobicoop": {
+            "link": "https://pro.mobicoop.fr/",
+            "title": "pro.mobicoop.fr"
+        }
+    },
+    "cooperative": {
+        "joinUs": {
+            "link": "https://lacampagne.mobicoop.fr/",
+            "title": "Bazkide izan"
+        },
+        "talkAboutUs": {
+            "link": "https://pro.mobicoop.fr/cooperative/",
+            "title": "Nor gira?"
+        }
+    },
+    "category": {
+        "download": "MOBICOOP APLIKAZIOA TELEKARGA EZAZU",
+        "need": "Zure egitrurarentzat autokidetza aterabide baten beharra duzu?",
+        "contacts": "Harremanak",
+        "services": "Mobicoop zerbitzuak",
+        "tools": "Tresnak",
+        "cooperative": "Kooperatiba"
+    },
+    "buttons": {
+        "contact": {
+            "label": "Gurekin harremanetan jarri",
+            "route": "/harremanak"
+        }
+    }
+}
