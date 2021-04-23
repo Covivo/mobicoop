@@ -1,1 +1,4 @@
-{}
+{
+    "sendUrl": "/utilisateur/document-validation-identite/envoyer",
+    "send": "Bidali"
+}
