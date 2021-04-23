@@ -1,1 +1,4 @@
-{}
+{
+    "routeToCity": "/communes/covoiturage-vers-{city}",
+    "routeFromCity": "/communes/covoiturage/{city}"
+}
