@@ -1,1 +1,18 @@
-{}
+{
+    "driver": {
+        "hide": "Kukutu gidaria",
+        "show": "Ikus gidaria"
+    },
+    "passengers": {
+        "hide": "bidaiaria kukutu|bidaiariak kukutu",
+        "show": "Ikus bidaiaria|Ikus bidaiariak"
+    },
+    "seat": {
+        "booked": "0 | 1 leku erreserbatuak | {bookedSeats} / {seats} leku erreserbatuak"
+    },
+    "ui": {
+        "button": {
+            "cancel": "Ezeztatua"
+        }
+    }
+}
