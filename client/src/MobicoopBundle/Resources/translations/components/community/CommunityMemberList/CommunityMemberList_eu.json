@@ -1,3 +1,18 @@
 {
-    "urlMembersList": "/community/memberList"
+    "urlMembersList": "/community/memberList",
+    "table": {
+        "colTitle": {
+            "familyName": "Deitura",
+            "actions": "Ekintzak",
+            "givenName": "Izena"
+        },
+        "all": "Denak",
+        "lineNumber": "Lerro kopurua orrialdeka",
+        "search": "Bilatu"
+    },
+    "directMessage": "Mezu bat bidali zuzenean",
+    "moderator": "Moderatzailea",
+    "referrer": "Erreferentea",
+    "hidden": "Zerrenda soilik komunitateko kideek ikus dezakete",
+    "title": "Kideen zerrenda"
 }
