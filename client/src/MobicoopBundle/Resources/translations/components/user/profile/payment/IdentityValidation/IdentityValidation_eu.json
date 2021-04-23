@@ -1,4 +1,28 @@
 {
     "sendUrl": "/utilisateur/document-validation-identite/envoyer",
-    "send": "Bidali"
+    "send": "Bidali",
+    "status": {
+        "refused": {
+            "9": "Dokumentua errefusatua ez baita osoa",
+            "8": "Dokumentua errefusatua ez baita irakurgarri",
+            "7": "Dokumentua errefusatua, datuak ez baitira erabiltzailearenak",
+            "6": "Dokumentua errefusatua dokumentu mota hori ez baita onartua",
+            "5": "Dokumentua errefusatua dokumentua baliogabetua baita",
+            "4": "Dokumentua errefusatua fitxategia hutsa baita",
+            "3": "Dokumentua errefusatua faltsifikatua izan baita",
+            "2": "Dokumentua errefusatu heldua izan behar zirelako",
+            "1": "Zure datu pertsonalak aldatuak izan dira, zure nortasuna berriz egiazta ezazu",
+            "0": "Dokumentua errefusatua"
+        },
+        "outdated": "Dokumentua baliogabetua",
+        "validated": "Nortasuna egiaztatua",
+        "pending": "Dokumentua egiaztatzen ari da"
+    },
+    "fileInput": {
+        "tooltip": "Dokumentuak jpg, jpeg, png edo pdf formatuan izan behar dira eta ez dute 7MB gainditu behar",
+        "error": "Dokumentuak ez ditu 7MB gainditu behar",
+        "label": "Nortasun agiria eguneratua"
+    },
+    "text": "<p>Nortasun egiaztapena eguneratua den nortasun agiri batetik (nortasun agiriaren aitzin eta gibelaldea, pasaportea, gidabaimena) egitea legezko betebehar bat da ordainketak eskuratu ahal izateko. Betebehar hori dirua zuritzeketak saihesteko egiten da..</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena zure perfilean komunikatu dituzun izen-deitura eta zure nortasun agiriko izen-deiturarekin konparatzen da. Beraz otoi informazio zuzenak eman itzazu zure perfilean.</p><p>Gure partaidearen dokumentuaren baieztapen baldintzak irakur ditzazkezu<a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
+    "title": "3.Nortasun egiaztatzea"
 }
