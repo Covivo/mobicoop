@@ -1,1 +1,32 @@
-{}
+{
+    "checkboxes": {
+        "social": {
+            "mandatoryOrNot": "Hautuzko cookie-a",
+            "desc": "Sare sozialeen bidez izena ematea eta konektatzea ahalbideratu"
+        },
+        "stats": {
+            "details": "Estatistika horiek ez dute merkataritza helbururik. Zerbitzua hobetzen laguntzen gaituzte",
+            "mandatoryOrNot": "Hautuzko cookie-ak",
+            "desc": "Zure bisiten estatistika anonimoak partekatu"
+        },
+        "connectionActive": {
+            "mandatoryOrNot": "Beharrezko cookie-ak",
+            "desc": "Zure konexio aktiboa mantendu"
+        }
+    },
+    "privacyPolicy": {
+        "link": {
+            "uri": "/datuen-babes",
+            "label": "Konfidentzialtasun politika"
+        },
+        "text": "Gure datu kudeaketei buruzko xehetasun gehiago XXXX-an"
+    },
+    "working": {
+        "line2": "Aktibatu nahi zenituzken cookies-ak libroki hauta itzazu",
+        "line1": "Bere funtzionamenduarentzat, webguneak cookies-ak erabiltzen ditu"
+    },
+    "store": "Gorde",
+    "yourBrowseryourChoice": "{appName} -k hautua ematen dizu",
+    "privateLife": "Bizi pribatua",
+    "title": "Cookies-en kudeaketa"
+}
