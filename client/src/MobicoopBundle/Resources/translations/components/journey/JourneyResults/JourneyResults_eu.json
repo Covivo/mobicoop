@@ -1,5 +1,11 @@
 {
     "routeFromCityToCity": "/covoiturage/{origin}/{destination}",
     "routeToCity": "/communes/covoiturage-vers-{city}",
-    "routeFromCity": "/communes/covoiturage/{city}"
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "nbResults": "Ez da bidairik atzeman | autokidetza bidaia 1 atxeman da| {nb} autokitza bidaia atxeman dira",
+    "listJourneys": "Autokidetzen zerrenda",
+    "journeyTo": " XXX-ra ",
+    "journeyFrom": "Autokidetza XXX-tik ",
+    "titleToCity": "Autoa partekatu{city}-rantz",
+    "titleFromCity": "Autoa partekatu{city}-tik"
 }
