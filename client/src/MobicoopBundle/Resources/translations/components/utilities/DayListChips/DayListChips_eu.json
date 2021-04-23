@@ -1,1 +1,38 @@
-{}
+{
+    "days": {
+        "sun": {
+            "longName": "Igandea",
+            "shortName": "Ig."
+        },
+        "sat": {
+            "longName": "Larunbata",
+            "shortName": "Lr."
+        },
+        "fri": {
+            "longName": "Ostirala",
+            "shortName": "Or."
+        },
+        "thu": {
+            "longName": "Osteguna",
+            "shortName": "Os."
+        },
+        "wed": {
+            "longName": "Asteazkena",
+            "shortName": "Az."
+        },
+        "tue": {
+            "longName": "Asteartea",
+            "shortName": "As."
+        },
+        "mon": {
+            "longName": "Astelehena",
+            "shortName": "As."
+        },
+        "list": [
+            "Al.",
+            "As.",
+            "Az.",
+            "Os."
+        ]
+    }
+}
