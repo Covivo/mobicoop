@@ -143,11 +143,18 @@ class Message
     private $idAsk;
 
     /**
-     * @var int|null Id of a matching if this message is a first contact in a carpool context
+     * @var int|null Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
      *
      * @Groups({"read","write"})
      */
-    private $idAd;
+    private $idAdToRespond;
+    
+    /**
+     * @var int|null Id of a proposal if this message is a first contact in a carpool context (id of the search)
+     *
+     * @Groups({"read","write"})
+     */
+    private $idProposal;
 
     /**
      * @var int|null Id of a matching if this message is a first contact in a carpool context
@@ -314,14 +321,26 @@ class Message
         return $this;
     }
 
-    public function getIdAd(): ?int
+    public function getIdAdToRespond(): ?int
     {
-        return $this->idAd;
+        return $this->idAdToRespond;
     }
 
-    public function setIdAd(?int $idAd): self
+    public function setIdAdToRespond(?int $idAdToRespond): self
     {
-        $this->idAd = $idAd;
+        $this->idAdToRespond = $idAdToRespond;
+
+        return $this;
+    }
+    
+    public function getIdProposal(): ?int
+    {
+        return $this->idProposal;
+    }
+
+    public function setIdProposal(?int $idProposal): self
+    {
+        $this->idProposal = $idProposal;
 
         return $this;
     }

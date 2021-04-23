@@ -783,6 +783,7 @@ class UserController extends AbstractController
                     "sunCheck" => (bool)$request->request->get('sunCheck'),
                     "adId" => (int)$request->request->get('adId'),
                     "matchingId" => (int)$request->request->get('matchingId'),
+                    "proposalId" => (int)$request->request->get('proposalId'),
                     "date" => $request->request->get('date'),
                     "time" => $request->request->get('time'),
                     "driver" => (bool)$request->request->get('driver'),
@@ -895,7 +896,9 @@ class UserController extends AbstractController
             // -99 : It's a false id for no carpool message
             $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
+            $idAdToRespond = (isset($data['adIdResult']) && !is_null($data['adIdResult'])) ? $data['adIdResult'] : null;
             $idMatching = (isset($data['matchingId']) && !is_null($data['matchingId'])) ? $data['matchingId'] : null;
+            $idProposal = (isset($data['proposalId']) && !is_null($data['proposalId'])) ? $data['proposalId'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
 
@@ -911,7 +914,9 @@ class UserController extends AbstractController
                 $messageToSend->setIdAsk($idAsk);
             }
 
-            if ($idMatching!==null) {
+            if ($idAdToRespond !==null && $idMatching!==null && $idProposal !== null) {
+                $messageToSend->setIdAdToRespond($idAdToRespond);
+                $messageToSend->setIdProposal($idProposal);
                 $messageToSend->setIdMatching($idMatching);
             }
             

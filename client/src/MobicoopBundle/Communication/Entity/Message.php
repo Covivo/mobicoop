@@ -88,6 +88,20 @@ class Message implements ResourceInterface
     private $idAsk;
 
     /**
+     * @var int|null Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
+     *
+     * @Groups({"read","write"})
+     */
+    private $idAdToRespond;
+
+    /**
+     * @var int|null Id of a proposal if this message is a first contact in a carpool context (id of the search)
+     *
+     * @Groups({"read","write"})
+     */
+    private $idProposal;
+    
+    /**
      * @var int|null Id of a matching if this message is a first contact in a carpool context
      *
      * @Groups({"post"})
@@ -202,6 +216,30 @@ class Message implements ResourceInterface
         return $this;
     }
 
+    public function getIdAdToRespond(): ?int
+    {
+        return $this->idAdToRespond;
+    }
+
+    public function setIdAdToRespond(?int $idAdToRespond): self
+    {
+        $this->idAdToRespond = $idAdToRespond;
+
+        return $this;
+    }
+    
+    public function getIdProposal(): ?int
+    {
+        return $this->idProposal;
+    }
+
+    public function setIdProposal(?int $idProposal): self
+    {
+        $this->idProposal = $idProposal;
+
+        return $this;
+    }
+    
     public function getIdMatching(): ?int
     {
         return $this->idMatching;

@@ -822,7 +822,7 @@ export default {
         resultChoice = this.lResult.resultDriver;
       }      
       // proposal and matching results
-      params.adId = resultChoice.outward.proposalId;
+      params.adIdResult = resultChoice.outward.proposalId;
       params.matchingId = resultChoice.outward.matchingId;
       params.date = resultChoice.outward.date;
       params.time = resultChoice.outward.time;

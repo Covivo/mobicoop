@@ -383,6 +383,7 @@ export default {
         // messageToSend.regular = this.newThreadCarpool.regular;
         // messageToSend.adId = this.newThreadCarpool.adId;
         messageToSend.matchingId = this.newThreadCarpool.matchingId;
+        messageToSend.proposalId = this.newThreadCarpool.proposalId;
         // messageToSend.fromDate = this.newThreadCarpool.fromDate;
         // messageToSend.toDate = this.newThreadCarpool.toDate;
       }
