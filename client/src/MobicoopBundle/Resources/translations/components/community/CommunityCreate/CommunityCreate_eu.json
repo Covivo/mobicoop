@@ -4,7 +4,45 @@
     },
     "buttons": {
         "create": {
-            "route": "/communaute/creer"
+            "route": "/communaute/creer",
+            "label": "Komunitatea sortu"
         }
-    }
+    },
+    "error": {
+        "image": "Irudia ez da gorde",
+        "community": {
+            "required": "Izar batez markatuak diren eremu guziak baitezpadakoak dira",
+            "create": "Komunitatearen sortzeak huts egin du",
+            "name": "Komunitate hori jadanik existitzen da, beste izen bat erabil ezazu otoi"
+        }
+    },
+    "form": {
+        "domain": {
+            "error": "Sailaren izena zehatz ezazu formatu onean",
+            "label": "Sailaren murrizketa",
+            "tooltips": "Komunitatearen sarbidea e-mezu berezi batzuetara mugatu nahi baduzu, sail honetako izenak balia itzazu (adibidez: monentreprise.fr)"
+        },
+        "address": {
+            "required": "Komunitatearen helbidea baitezpadakoa da",
+            "label": "Elkargoaren* helbidea"
+        },
+        "avatar": {
+            "size": "Avatar-aren neurri handiena gainditua da",
+            "required": "Elkargoaren avatar-a baitezpadakoa da",
+            "label": "Elkargoaren* avatar-a"
+        },
+        "fullDescription": {
+            "required": "Komunitatearen aurkezpen zehatzak baitezpadakoa da",
+            "label": "Komunitatearen* xehetsun zehatzak"
+        },
+        "description": {
+            "required": "Komunitatearen aurkezpen laburra baitezpadakoa da",
+            "label": "Komunitateaaren* aurkezpen laburra"
+        },
+        "name": {
+            "required": "Komunitatearen izena baitezpadakoa da",
+            "label": "Komunitatearen izena*"
+        }
+    },
+    "title": "Zure komunitatea sortu"
 }
