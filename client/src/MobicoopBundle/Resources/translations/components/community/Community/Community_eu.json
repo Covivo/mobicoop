@@ -34,7 +34,7 @@
         }
     },
     "leaveCommunity": {
-        "route": "/communaute/{id}/quitter",
+        "route": "/Komunitatea/{id}/utzi",
         "popup": {
             "content": {
                 "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
