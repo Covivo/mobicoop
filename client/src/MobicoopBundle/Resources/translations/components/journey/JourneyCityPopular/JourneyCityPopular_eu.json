@@ -1,1 +1,11 @@
-{}
+{
+    "getPopularJourneysUrl": "/covoiturages/populaires",
+    "links": {
+        "popularJourneys": {
+            "uri": "/covoiturage/{origin}/{destination}"
+        },
+        "cityByCity": {
+            "uri": "/covoiturage-par-ville"
+        }
+    }
+}
