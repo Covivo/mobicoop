@@ -1,1 +1,29 @@
-{}
+{
+    "distance": "Distantzia",
+    "communities": {
+        "route": "/erabiltzaile/komunitateak",
+        "label": "Komunitate horietan iragarkia argitaratu"
+    },
+    "avoidMotorway": "Autopista saihestua",
+    "waypoint4": {
+        "label": "4. etapa"
+    },
+    "waypoint3": {
+        "label": "3. etapa"
+    },
+    "waypoint2": {
+        "label": "Etapa 2"
+    },
+    "waypoint1": {
+        "label": "Etapa 1"
+    },
+    "destination": {
+        "error": "Beharrezkoa",
+        "label": "Helmuga"
+    },
+    "origin": {
+        "error": "Beharrezkoa",
+        "label": "Jatorria"
+    },
+    "addWaypoint": "Urrats bat gehitu"
+}
