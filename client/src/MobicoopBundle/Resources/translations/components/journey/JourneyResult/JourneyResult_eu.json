@@ -1,1 +1,4 @@
-{}
+{
+    "redirectForCarpoolSearch": "/covoiturage/annonce/{proposalId}/resultats",
+    "createSearchFromProposalUrl": "/covoiturage/creer-recherche/{proposalId}"
+}
