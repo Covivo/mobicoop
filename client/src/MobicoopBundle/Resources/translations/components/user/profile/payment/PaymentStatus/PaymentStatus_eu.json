@@ -1,1 +1,4 @@
-{}
+{
+    "canBePaid": "Ordainketak jaso ditzakezu",
+    "cannotBePaid": "Ezin da ordainketarik jaso: banku agiriko informazioak eskas baitira"
+}
