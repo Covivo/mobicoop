@@ -1,1 +1,62 @@
-{}
+{
+    "tipsEncouragement": {
+        "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre",
+        "textLink": "hemen emaitza bat eginez",
+        "text": "{platformName} zerbitzu libre bat da, komisiorik eta iragarkirik gabe. Plataforma mantentzen laguntzeko, esku ukaldi bat ematen ahal diguzu"
+    },
+    "loadingPageText": "Egin edo baieztatu behar diren ordainketen kargatzea",
+    "noMoreItems": "Ez da ordainketarik egin edo baieztatze igurikatzerik.",
+    "noOnlinePayment": {
+        "line2": "Zure helbide osoa bete bahar duzu (karrika izena, zenbakia...) adibidez, eta ez soilik zure bizilekuaren herria.",
+        "line1": "Zure perfila ez denez osoki betea ezin duzu linean ordaindu."
+    },
+    "to": " arte ",
+    "from": "-tik ",
+    "redirectAfterPayment": "/erabiltzaile/perfila/aldatu/nire-autokidetza-onartuak",
+    "regularInfo": "Zoinbait egunetan ez baduzu{driver} -ekin autokidetza egin, behereko laukia desmarka ezazu.",
+    "tooltip": {
+        "message": "Ezin duzu linean ordaindu, gidariak ez baititu bere banku datuak sartu."
+    },
+    "payments": {
+        "getFirstWeek": "/getFirstWeek",
+        "getCalendar": "/getCalendar",
+        "postPayments": "/payments/post",
+        "getPayments": "/payments/get"
+    },
+    "select": {
+        "label": "Garaia"
+    },
+    "buttons": {
+        "isConfirmed": "Eskuz eskuko ordainketa baieztatua",
+        "directPayConfirm": "Eskuz eskuko ordainketa baieztatu",
+        "directPay": "Eskuz esku ordaindu dut",
+        "validate": "Balioztatu",
+        "confirm": "Baieztatu",
+        "back": {
+            "route": "/erabiltzailea/perfila/nire-autokidetza-onartuak",
+            "label": "Itzuli"
+        },
+        "next": "Hurrengoa",
+        "previous": "Aitzinekoa"
+    },
+    "report": {
+        "labelIsReported": "Ordaindugabea",
+        "valid": "Baieztatu",
+        "cancel": "Ezeztatu",
+        "text2": "Bidaiariari notifikazio bat bidaliko zaio. Gonbidatzen zaitugu bidaiariarekin harremanetan jartzen, arazoa konpontzeko.",
+        "text1": "Adierazten duzu autokidetza honentzat ez duzula ordaindu. Baieztatzeko\"Baieztatu\"-n klik egizu.",
+        "label": "Ordaindugabe bat seinalatu"
+    },
+    "directPaymentReceived": "Ordainketa eskuz esku errezibitu dut | ordainketa eskuz errezibitua",
+    "directPay": "Eskuz esku ordaindu dut",
+    "electronicPay": "Linean ordaintzen dut",
+    "sumToPay": "Orotara ondaintzekoa:{price} €",
+    "price": "Diru zama:{price} €",
+    "return": "Etorri",
+    "outward": "Joan",
+    "titleConfirmation": "Bidaiarien ordainketaren baieztapena",
+    "titlePunctual": "Ordainketak",
+    "titleRegular": "Bidaia erregularren ordainketa",
+    "donations": "Emaitza",
+    "wallet": "Diru zorroaren kokalekua"
+}
