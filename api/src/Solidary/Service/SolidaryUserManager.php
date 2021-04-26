@@ -724,7 +724,7 @@ class SolidaryUserManager
                 $user->setLanguage('fr_FR');
 
                 // Set an encrypted password
-                $password = $this->userManager->randomString();
+                $password = $solidaryVolunteer->getPassword();
                 $user->setPassword($this->encoder->encodePassword($user, $password));
                 $user->setClearPassword($password); // Used to be send by email (not persisted)
 
@@ -732,11 +732,11 @@ class SolidaryUserManager
                 $user->setValidatedDate(new \DateTime());
                 
                 // we treat the user to add right authItem and notifiactions
-                $this->userManager->treatUser($user);
+                $this->userManager->registerUser($user);
             }
         }
         if (!is_null($user->getSolidaryUser())) {
-//            $solidaryUser = $user->getSolidaryUser();
+            $solidaryUser = $user->getSolidaryUser();
             // We check if this User doesn't already have a Solidary User
             if (!is_null($user->getSolidaryUser())) {
                 throw new SolidaryException(SolidaryException::ALREADY_SOLIDARY_USER);
