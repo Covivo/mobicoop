@@ -1,1 +1,35 @@
-{}
+{
+    "snackbar": {
+        "needConnection": "Konekta zaitez edo izena eman iragarkia argitaratzeko"
+    },
+    "buttons": {
+        "solidary": {
+            "route": "http://solidaires.mobicoop.fr/",
+            "label": "Elkartasunezko gidaria izan"
+        },
+        "logOut": {
+            "route": "/user/logout",
+            "label": "Deskonektatu"
+        },
+        "myProfile": {
+            "route": "/erabitzailea/perfila/aldatu",
+            "label": "Nire perfila"
+        },
+        "messages": {
+            "route": "/erabiltzailea/mezuak",
+            "label": "Mezuak"
+        },
+        "shareAnAd": {
+            "route": "/autokidetza/iragarkiaargitaratu",
+            "label": "Iragarkia argitaratu"
+        },
+        "logIn": {
+            "route": "/erabiltzailea/konxeioa",
+            "label": "Konexioa"
+        },
+        "signup": {
+            "route": "/erabiltzailea/izen ematea",
+            "label": "Izen ematea"
+        }
+    }
+}
