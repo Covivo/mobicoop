@@ -2,7 +2,7 @@
     "pause": {
         "error": {
             "pause": "Akats bat agertu da, zure iragarkia geldialdian ezarri da.",
-            "unpause": "Akats bat agertu da zure iragarkia ez da aktibatu"
+            "unpause": "Huts bat agertu da zure iragarkia ez da aktibatu"
         },
         "info": "Kasu iragarkia pausan da!",
         "success": {
@@ -30,7 +30,7 @@
                 "title": "Segur al zira iragarki hori kendu nahi duzula?"
             }
         },
-        "error": "Akats bat agertu da zure iragarkia kendua izan delarik.",
+        "error": "Huts bat agertu da zure iragarkia kendua izan delarik.",
         "success": "Zure iragarkia kendua izan da.",
         "route": "/autokidetza/iragarkia/kendu"
     },
