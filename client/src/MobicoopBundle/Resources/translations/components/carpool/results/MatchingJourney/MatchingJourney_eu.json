@@ -1,1 +1,51 @@
-{}
+{
+    "fraudWarningText": {
+        "part2": "edo tokiko monetan. Gure erabitzaileei PCS txartelak edo Transcash bezalako ordainkera moduak ez onartzea gomendatzen diegu, gehienetzan iruzurrezko praktikentzat erabiltzen baita. Erabiltzaile bat seinalatzen ahal diguzu bere perfiletik.",
+        "textLink": "eskuz esku edo linean ",
+        "link": "/erabiltzaile/perfila/aldatu/nire-autokidetzak-hautatu",
+        "part1": "Mobiccop-en, autokidetzen ordainketak gehienetan honela egiten dira "
+    },
+    "i18n": {
+        "time": {
+            "format": {
+                "hourMinute": "HH[h]mm"
+            }
+        },
+        "date": {
+            "format": {
+                "computeDate": "YYYY-MM-DD",
+                "shortDate": "YYYY/MM/DD",
+                "fullDate": "ddd Do MMMM YYYY"
+            }
+        }
+    },
+    "ranges": [
+        "aste 1",
+        "Hilabete 1"
+    ],
+    "maxDate": "-a arte",
+    "fromDate": "-tik goiti",
+    "detail": "Xehetasunak",
+    "previous": "Aitzinekoa",
+    "return": "Itzultzeko bidaiak hautatu",
+    "outward": "Joateko bidaiak hautatu",
+    "contactTips": {
+        "initiatedAsk": "Autokide honi egindako erantzuaren zain",
+        "pendingAsk": "Autokidetza honi egindako eskaeraren arrapostuaren zain",
+        "acceptedAsk": "Autoki honekin jadanik autokidetza bat planifikatu duzu"
+    },
+    "contact": "Harremanetan jarri",
+    "birthYears": "urte",
+    "seeMessages": {
+        "route": "/erabiltzaile/mezuak",
+        "label": "Mezuak ikusi"
+    },
+    "alreadyInitiatedCarpool": "Iragarki honentzat jadanik harremanetan jarri zira.",
+    "alreadyAskCarpool": "Iragarki honetan eskaera bat egin duzu jadanik.",
+    "carpoolAsPassenger": "Autokidetza egin bidaiari izanez",
+    "carpoolAsDriver": "Autokidetza egin gidari izanez",
+    "carpool": "Autokidetza egin",
+    "places": "{seats} toki | {seats} toki",
+    "detailTitle": "Autokidetzaren xehetasunak",
+    "priceTooltip": "Prezio adierazgarria"
+}
