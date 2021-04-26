@@ -1,1 +1,23 @@
-{}
+{
+    "fraudWarningText": {
+        "part2": "edo tokiko mometa librean. Gomendatzen dizuegu PCS edo Transcah txartelak bezalako beste ordainketa moduak ez onartzea, gehienetan iruzurreko praktikentzat erabiltzen baitira. Erabiltzaile bat seinala dezakezu bere perfiletik.",
+        "textLink": "eskuz esku edo linean ",
+        "link": "/erabiltzaile/perfila/aldatu/nire-autokidetza-onartuak",
+        "part1": "Mobicoop-en, egin dituzun autokidetzen ordainketak gehienetan egiten dira "
+    },
+    "tooltip": {
+        "message": "Iragakiari lotuak ez diren mezuak"
+    },
+    "headersCategories": {
+        "titleSolidary": "Elkartasunezkoa",
+        "titleLive": "Zuzena",
+        "titleCarpool": "Autokidetza"
+    },
+    "urlUpdateAsk": "/erabiltzaile/mezuak/updateAsk",
+    "urlSend": "/erabiltzaile/mezuak/bidali",
+    "headers": {
+        "context": "Iragarkia",
+        "messages": "Mezuak"
+    },
+    "title": "Mezutegia"
+}
