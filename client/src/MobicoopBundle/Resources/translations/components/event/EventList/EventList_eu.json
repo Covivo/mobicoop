@@ -1,1 +1,18 @@
-{}
+{
+    "routes": {
+        "login": "/erabiltzailea/konexioa",
+        "getList": "/ekitaldiak/getEventList",
+        "event": "/autokidetza-ekitaldiak/{id}/{urlKey}"
+    },
+    "noEvent": "Ez da ekitaldirik",
+    "endEvent": "Bukaera",
+    "startEvent": "Hastapena",
+    "all": "Denak",
+    "seeAds": "Ikus iragarkiak",
+    "linePerPage": "Linea kopurua orrialdeka",
+    "search": "Xerkatu",
+    "createEvent": "Ekitaldi bat sortu",
+    "eventsPassed": "Pasa diren ekitaldiak",
+    "eventsAvailable": "Libre diren ekitaldiak",
+    "events": "Autokidetza ekitaldiak"
+}
