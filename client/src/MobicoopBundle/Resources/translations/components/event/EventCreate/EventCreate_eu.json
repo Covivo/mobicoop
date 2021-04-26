@@ -1,1 +1,73 @@
-{}
+{
+    "fullDate": "ddd Do MMMM YYYY",
+    "popUp": {
+        "cancel": "Ezeztatu",
+        "validation": "Ekitaldia argitaratu",
+        "label": "Ulertu dut funtzionalitate honek EZ du balio autokidetza pertsinal baten argitaratzeko, baina ekitaldi bat antolatzeko gune bat da (ekitaldira doazten edo itzultzen dirak bateratzeko).\nIragarki pertsonala argitaratzeko, izena eman (edo konekta zaitez jadanik izena eman baduzu) eta zure perfiletik iragarki berri bat sort ezazu.",
+        "title": "Ekitaldiaren sortzea baieztatu"
+    },
+    "endTime": {
+        "label": "Bukaerako ordua"
+    },
+    "startTime": {
+        "label": "Hastapeneko ordua"
+    },
+    "endDate": {
+        "error": "Beharrezkoa",
+        "label": "Bukaerako eguna*"
+    },
+    "startDate": {
+        "error": "Beharrezkoa",
+        "label": "Hastapeneko eguna*"
+    },
+    "error": {
+        "image": "Irudia ez da gorde",
+        "event": {
+            "required": "Izarrez markatutako eremu guziak baitezpadakoak dira",
+            "create": "Ekitaldiaren sorrerak huts egin du",
+            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu"
+        }
+    },
+    "redirect": {
+        "route": "/autokidetza-ekitaldiak"
+    },
+    "form": {
+        "private": {
+            "tooltip": "Zuzenean errezibitu duzun baieztatze e-mezua eman dezakezu",
+            "label": "Ekitaldi pribatua (ez da ekitaldi zerrendan agertzen)"
+        },
+        "urlEvent": {
+            "error": "Bali den formatuan webgune bat eman",
+            "tooltips": "Ekitaldiaren webgunearen helbidea",
+            "label": "Ekitaldiaren URLa"
+        },
+        "address": {
+            "required": "Ekitaldiaren helbidea baitezpadakoa da",
+            "label": "Ekitaldiaren helbidea*"
+        },
+        "avatar": {
+            "size": "Irudiaren tamaina maximoa gainditu duzu",
+            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "label": "Ekitaldiaren izena*"
+        },
+        "fullDescription": {
+            "required": "Ekitaldiaren aurkezpen xehea baitezpadakoa da",
+            "label": "Ekitaldiaren aurkezpen xehea*"
+        },
+        "description": {
+            "required": "Ekitaldiaren aurkezpen laburra baitezpadakoa da",
+            "label": "Ekitaldiaren aurkezpen laburra*"
+        },
+        "name": {
+            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "label": "Ekitaldiaren izena*"
+        }
+    },
+    "buttons": {
+        "create": {
+            "route": "/ekitaldia/sortu",
+            "label": "Ekitaldia sortu"
+        }
+    },
+    "title": "Ekitaldi bat sortu"
+}
