@@ -8,7 +8,7 @@
     "password": "Pasahitza",
     "connection": "Konektatu",
     "urlGetSsoServices": "/user/getSsoServices",
-    "urlSignUp": "/erabiltzaile/izena eman",
+    "urlSignUp": "/erabiltzaile/izen ematea",
     "signUp": "Ez duzu oraindik izena emana?",
     "textRecovery": "Pasahitza ahantzia?",
     "urlRecovery": "/erabiltzailea/pasahitza/berreskuratzea",
