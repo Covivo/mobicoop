@@ -1,1 +1,31 @@
-{}
+{
+    "email": {
+        "errors": {
+            "required": "Helbide elektronikoa baitezpadakoa da"
+        },
+        "placeholder": "Helbide elektronikoa"
+    },
+    "givenName": {
+        "errors": {
+            "required": "Izena baitezpadakoa da"
+        },
+        "placeholder": "Izena"
+    },
+    "familyName": {
+        "errors": {
+            "required": "Deitura baitezpadakoa da"
+        },
+        "placeholder": "Deitura"
+    },
+    "gender": {
+        "errors": {
+            "required": "Zibilitatea baitezpadakoa da"
+        },
+        "values": {
+            "other": "Beste",
+            "female": "Anderea",
+            "male": "Jauna"
+        },
+        "placeholder": "Zibilitatea"
+    }
+}
