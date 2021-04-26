@@ -21,7 +21,7 @@
         },
         "shareAnAd": {
             "route": "/autokidetza/iragarkiaargitaratu",
-            "label": "Iragarkia argitaratu"
+            "label": "Iragarki bat argitaratu"
         },
         "logIn": {
             "route": "/erabiltzailea/konxeioa",
