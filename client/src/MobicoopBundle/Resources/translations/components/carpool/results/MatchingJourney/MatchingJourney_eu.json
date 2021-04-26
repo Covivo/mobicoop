@@ -1,9 +1,9 @@
 {
     "fraudWarningText": {
-        "part2": "edo tokiko monetan. Gure erabitzaileei PCS txartelak edo Transcash bezalako ordainkera moduak ez onartzea gomendatzen diegu, gehienetzan iruzurrezko praktikentzat erabiltzen baita. Erabiltzaile bat seinalatzen ahal diguzu bere perfiletik.",
+        "part2": "edo tokiko mometa librean. Gomendatzen dizuegu PCS edo Transcah txartelak bezalako beste ordainketa moduak ez onartzea, gehienetan iruzurreko praktikentzat erabiltzen baitira. Erabiltzaile bat seinala dezakezu bere perfiletik.",
         "textLink": "eskuz esku edo linean ",
-        "link": "/erabiltzaile/perfila/aldatu/nire-autokidetzak-hautatu",
-        "part1": "Mobiccop-en, autokidetzen ordainketak gehienetan honela egiten dira "
+        "link": "/erabiltzaile/perfila/aldatu/nire-autokidetza-onartuak",
+        "part1": "Mobicoop-en, egin dituzun autokidetzen ordainketak gehienetan egiten dira "
     },
     "i18n": {
         "time": {
