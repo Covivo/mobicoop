@@ -1,7 +1,7 @@
 {
     "hourMinute": "HH[h]mm",
     "shortDate": "ddd DD/MM",
-    "places": "{seats} place | {seats} places",
+    "places": "{seats} toki | {seats} toki",
     "priceTooltipSolidaryExclusive": "Elkartasunezko iragarki esklusiboak",
     "priceTooltip": "Prezio adierazgarria"
 }
