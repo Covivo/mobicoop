@@ -2,7 +2,7 @@
     "routes": {
         "login": "/erabiltzailea/konexioa",
         "getList": "/ekitaldiak/getEventList",
-        "event": "/autokidetza-ekitaldiak/{id}/{urlKey}"
+        "event": "/autokidetzak-ekitaldiak/{id}/{urlKey}"
     },
     "noEvent": "Ez da ekitaldirik",
     "endEvent": "Bukaera",
