@@ -73,7 +73,7 @@
             "valid": "Helbide elektronikoa ez da bali izan behar",
             "required": "Helbide elektronikoa baitezpadakoa da"
         },
-        "placeholder": "Email"
+        "placeholder": "Helbide elektronikoa"
     },
     "homeTown": {
         "placeholder": "Bzilekuaren herria"
@@ -101,7 +101,7 @@
     },
     "gender": {
         "errors": {
-            "required": "Zibilitatea beharrezkoa da"
+            "required": "Zibilitatea baitezpadakoa da"
         },
         "values": {
             "other": "Beste",
