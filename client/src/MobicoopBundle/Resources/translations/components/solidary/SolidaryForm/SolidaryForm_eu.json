@@ -1,7 +1,8 @@
 {
     "email": {
         "errors": {
-            "required": "Helbide elektronikoa baitezpadakoa da"
+            "required": "Helbide elektronikoa baitezpadakoa da",
+            "valid": "Helbide elektrioa bali izan behar da"
         },
         "placeholder": "Helbide elektronikoa"
     },
@@ -27,5 +28,44 @@
             "male": "Jauna"
         },
         "placeholder": "Zibilitatea"
+    },
+    "success": "Zure esku ukaldiaren eskaera igorria izan da!",
+    "other": {
+        "placeholder": "Beste",
+        "label": "Beste"
+    },
+    "structure": {
+        "placeholder": "Laguntzen duen egitura",
+        "label": "Laguntzen duen egitura"
+    },
+    "subject": {
+        "label": "Bidaiaren arrazoia",
+        "placeholder": "Bidaiaren arrazoia"
+    },
+    "hasRSA": {
+        "placeholder": "RSA hartzailea",
+        "label": "RSA hartzailea"
+    },
+    "yearOfBirth": {
+        "placeholder": "Sorturtea",
+        "label": "Sorturtea"
+    },
+    "ui": {
+        "buttons": {
+            "cancel": {
+                "label": "Ezeztatu"
+            },
+            "validate": {
+                "route": "/elkartasunezkoa/eskaera",
+                "label": "Balioztatu"
+            }
+        }
+    },
+    "phone": {
+        "errors": {
+            "valid": "Mugikor zenbakia bali izan behar da",
+            "required": "Mugikor zenbakia baitezpadakoa da"
+        },
+        "placeholder": "Mugikorra"
     }
 }
