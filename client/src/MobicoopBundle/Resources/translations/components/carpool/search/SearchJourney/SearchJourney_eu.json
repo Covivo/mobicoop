@@ -2,6 +2,9 @@
     "buttons": {
         "search": {
             "label": "Bilatu"
+        },
+        "shareAnAd": {
+            "label": "Iragarki bat argitaratu"
         }
     },
     "swap": {
@@ -10,5 +13,37 @@
     },
     "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
     "title": "Mobicoop",
-    "fullDate": "ddd Do MMMM YYYY"
+    "fullDate": "ddd Do MMMM YYYY",
+    "outwardDate": {
+        "error": "Beharrezkoa",
+        "label": "Abiatze eguna"
+    },
+    "switch": {
+        "punctual": {
+            "help": "Komuntagailua klika ezazu zure bidaia erregularra zehazteko"
+        },
+        "regular": {
+            "help": "Komutagaailuan klika ezazu zure noiztenkako bidaia zehazteko eta egun bat hauta ezazu",
+            "label": "Bidaia erregularra"
+        }
+    },
+    "radio": {
+        "both": {
+            "label": "Bata ala bestea"
+        },
+        "passenger": {
+            "label": "Bidaiaria naiz"
+        },
+        "driver": {
+            "label": "Gidaria naiz"
+        }
+    },
+    "destination": {
+        "error": "Beharrezkoa",
+        "label": "Iristeko gunea"
+    },
+    "origin": {
+        "error": "Beharrezkoa",
+        "label": "Abiatzeko gunea"
+    }
 }
