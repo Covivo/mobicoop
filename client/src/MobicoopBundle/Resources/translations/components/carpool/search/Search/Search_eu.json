@@ -10,7 +10,7 @@
             "label": "Bilatu"
         },
         "publish": {
-            "route": "autokidetza/bilaketa/argitaratu",
+            "route": "autokidetza/bilatu/argitaratu",
             "label": "Iragarkia argitaratu"
         }
     },
