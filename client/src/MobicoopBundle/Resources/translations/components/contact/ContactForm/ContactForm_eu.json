@@ -37,7 +37,7 @@
     "email": {
         "errors": {
             "valid": "Zure helbide elektronikoa bali izan behar da.",
-            "required": "Zure helbide elektronikoa baitezpadakoa da"
+            "required": "Helbide elektronikoa baitezpadakoa da"
         },
         "placeholder": "Zure helbide elektronikoa",
         "label": "Zure helbide elektronikoa"
