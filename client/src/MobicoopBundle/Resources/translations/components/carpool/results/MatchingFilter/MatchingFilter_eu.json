@@ -1,1 +1,80 @@
-{}
+{
+    "chips": {
+        "community": {
+            "label": "Komunitatea"
+        },
+        "gender": {
+            "value": {
+                "3": "Beste",
+                "2": "Jauna",
+                "1": "Anderea"
+            },
+            "label": "Zibilitatea"
+        },
+        "role": {
+            "value": {
+                "3": "Gidaria eta bidaiaria",
+                "2": "Bidaiaria",
+                "1": "Gidaria"
+            },
+            "label": "Mota"
+        },
+        "hour": "Ordua",
+        "date": {
+            "value": {
+                "DESC": "Ttipituz doa",
+                "ASC": "Handituz doa"
+            },
+            "label": "Eguna"
+        }
+    },
+    "select": {
+        "hour": {
+            "help": "Iragarkien afitxaketak hautatutako orduarentzat bakarrik ",
+            "label": "Ordua"
+        },
+        "filter": {
+            "gender": {
+                "male": {
+                    "label": "Jauna",
+                    "value": "2"
+                },
+                "female": {
+                    "label": "Anderea",
+                    "value": "1"
+                },
+                "other": {
+                    "value": "3",
+                    "label": "Bestea"
+                },
+                "label": "Zibilitatea"
+            },
+            "community": {
+                "label": "Komunitatea"
+            },
+            "role": {
+                "both": {
+                    "value": "3",
+                    "label": "Gidaria eta bidaiaria"
+                },
+                "passenger": {
+                    "value": "2",
+                    "label": "Bidaiaria"
+                },
+                "driver": {
+                    "value": "1",
+                    "label": "Gidaria"
+                },
+                "label": "Iragarki mota"
+            }
+        },
+        "order": {
+            "date": {
+                "decreasing": "Data ttipienaren ordenean",
+                "increasing": "Data zaharrenaren ordenean"
+            },
+            "label": "Ordrea"
+        }
+    },
+    "filters": "Irazkiak"
+}
