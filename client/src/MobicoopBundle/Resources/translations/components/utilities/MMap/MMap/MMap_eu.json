@@ -1,1 +1,7 @@
-{}
+{
+    "dialog": {
+        "destination": "Helmuga",
+        "origin": "Jatorria",
+        "title": "Ondoko geldigune bat hautatu:"
+    }
+}
