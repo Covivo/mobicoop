@@ -6,7 +6,7 @@
         "paymentElectronicActive": "Ordainketa linean edo eskuz esku eginiko ordainketa baieztatu eta autokidetzaren gauzatzea baieztatu"
     },
     "passenger": {
-        "pendingElectronicNotActive": "Baieztatua",
+        "pendingElectronicNotActive": "Baieztatu",
         "pending": "Ordaindua edo baieztatua",
         "paid": "Jadanik ordaindua"
     },
