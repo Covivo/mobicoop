@@ -45,8 +45,8 @@
     },
     "birthDay": {
         "errors": {
-            "notadult": "16 urte behar dituzu plataforman izena emateko",
-            "required": "Sorteguna beharrezkoa da"
+            "notadult": "16 urte ukan behar dituzu plataforman izena emateko",
+            "required": "Sorteguna baitezpadokoa da"
         },
         "label": "Sorteguna"
     },
@@ -56,7 +56,7 @@
             "female": "Anderea",
             "male": "Jauna"
         },
-        "label": "Egoera zibila"
+        "label": "Zibilitatea"
     },
     "familyName": {
         "label": "Abizena"
@@ -154,7 +154,7 @@
             "verified": "Zure mugikor zenbakia egiaztatua da"
         },
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da"
+            "valid": "Mugikor zenbakia bali izan behar da"
         },
         "label": "Mugikor telefonoa"
     },
