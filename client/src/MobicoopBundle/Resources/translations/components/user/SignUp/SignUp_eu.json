@@ -70,7 +70,7 @@
     },
     "email": {
         "errors": {
-            "valid": "Helbide elektronikoa ez da bali izan behar",
+            "valid": "Helbide elektrioa bali izan behar da",
             "required": "Helbide elektronikoa baitezpadakoa da"
         },
         "placeholder": "Helbide elektronikoa"
