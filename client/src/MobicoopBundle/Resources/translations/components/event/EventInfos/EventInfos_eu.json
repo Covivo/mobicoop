@@ -1,1 +1,11 @@
-{}
+{
+    "hourMinute": "HH[h]mm",
+    "shortCompleteDate": "YYYY/MM/DD",
+    "endEvent": {
+        "label": "Bukaera"
+    },
+    "startEvent": {
+        "label": "Hastapena"
+    },
+    "private": "Pribatua"
+}
