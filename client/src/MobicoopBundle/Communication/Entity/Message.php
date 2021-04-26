@@ -90,14 +90,14 @@ class Message implements ResourceInterface
     /**
      * @var int|null Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
      *
-     * @Groups({"read","write"})
+     * @Groups({"post"})
      */
     private $idAdToRespond;
 
     /**
      * @var int|null Id of a proposal if this message is a first contact in a carpool context (id of the search)
      *
-     * @Groups({"read","write"})
+     * @Groups({"post"})
      */
     private $idProposal;
     

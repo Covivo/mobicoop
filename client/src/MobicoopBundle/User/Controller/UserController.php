@@ -781,7 +781,7 @@ class UserController extends AbstractController
                     "friCheck" => (bool)$request->request->get('friCheck'),
                     "satCheck" => (bool)$request->request->get('satCheck'),
                     "sunCheck" => (bool)$request->request->get('sunCheck'),
-                    "adId" => (int)$request->request->get('adId'),
+                    "adId" => (int)$request->request->get('adIdResult'),
                     "matchingId" => (int)$request->request->get('matchingId'),
                     "proposalId" => (int)$request->request->get('proposalId'),
                     "date" => $request->request->get('date'),
@@ -896,7 +896,7 @@ class UserController extends AbstractController
             // -99 : It's a false id for no carpool message
             $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
-            $idAdToRespond = (isset($data['adIdResult']) && !is_null($data['adIdResult'])) ? $data['adIdResult'] : null;
+            $idAdToRespond = (isset($data['adIdToRespond']) && !is_null($data['adIdToRespond'])) ? $data['adIdToRespond'] : null;
             $idMatching = (isset($data['matchingId']) && !is_null($data['matchingId'])) ? $data['matchingId'] : null;
             $idProposal = (isset($data['proposalId']) && !is_null($data['proposalId'])) ? $data['proposalId'] : null;
             $text = $data['text'];

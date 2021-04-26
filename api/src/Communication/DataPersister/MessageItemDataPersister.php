@@ -92,8 +92,7 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
             $ad->setMatchingId($data->getIdMatching());
             $ad->setAdId($data->getIdAdToRespond()); // yeah... i found it strange too, check the AdId comment in Ad entity. You don't do that, you don't set up the roles correctly
             $ad = $this->askManager->createAskFromAd($ad, false);
-
-            exit;
+            $data->setIdAsk($ad->getAskId());
         }
         return $this->internalMessageManager->postMessage($data);
     }
