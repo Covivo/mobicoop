@@ -68,8 +68,8 @@
         },
         "joinCommunity": {
             "textError": "Huts bat agertu da, berriz entsea ezazu.",
-            "textOkAutoValidation": "Zure kidetza eskaera baieztatua da.",
-            "textOkManualValidation": "Zure kidetza eskaera erreferenteari igorria izan zaio.E-mezuz informatua izanen zira."
+            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
+            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
         }
     },
     "tooltips": {
