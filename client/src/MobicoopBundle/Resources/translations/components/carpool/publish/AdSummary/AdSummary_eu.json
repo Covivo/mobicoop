@@ -1,5 +1,5 @@
 {
-    "fullDate": "YYYY MMMM Do ddd",
+    "fullDate": "ddd Do MMMM YYYY",
     "hourMinute": "HH[h]mm",
     "sun": "Ig.",
     "sat": "Lr.",
