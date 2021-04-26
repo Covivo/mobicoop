@@ -1,1 +1,34 @@
-{}
+{
+    "registerUrl": "/erabiltzaile/izen ematea/{id}",
+    "loginUrl": "/erabiltzaile/konexioa/{id}",
+    "register": "Izen ematea",
+    "login": "Konexioa",
+    "loginOrRegister": "Konektatu behar zira edo izena eman behar duzu segitzeko",
+    "loginOrRegisterTitle": "Konxexio edo izena ematea beharrezkoa da",
+    "tabs": {
+        "ptresults": "Garraio publikoak",
+        "otherCarpools": "Beste autokidetzak",
+        "carpools": "Autokidetzak {platform}"
+    },
+    "snackBar": {
+        "error": "Arazo tekniko baten ondorioz, ezin izan dugu harremanetan jartzeko eskera bidali",
+        "success": "Harremaneta jartzeko eskaera igorria izan da"
+    },
+    "alsoIncludePassengers": "Bilaketa honek bidaiari iragarkiak baditu ere",
+    "includePassengers": "Bidaiari iragarkiak ikusi",
+    "matchingNumber": "Ez da autokidetzarik atzeman... | {number} atzemandako autokidetza| {number} atzemandako autokidetza iragarki",
+    "AskNewSearch": "Berriz saia ezazu zure bilaketa aldatuz? Beste bidaia bat?",
+    "newSearch": "Bilaketa berria",
+    "search3": "Igurika pixkat gehiago...",
+    "search2": "Pazientzia, autokidetza potentzial ainiz badugu!",
+    "search": "Bilaketa eiten ari...",
+    "ptSearchUrl": "/garraio-publiko/bilaketa",
+    "externalJourneyUrl": "/autokidetza/rdexJourney",
+    "mailboxUrl": "/erabiltzaile/mezuak/autokideta/{askId}",
+    "contactUrl": "/autokidetza/harremanak",
+    "carpoolUrl": "/autokidetza/eskaera",
+    "matchingUrl": "/autokidetza/bilaketa/matching",
+    "externalUrl": "/autokidetza/iragarkia/{id}/kanpoa",
+    "proposalUrl": "/autokidetza/iragarkia/{id}/xehetasuna",
+    "title": "Autokidetzaren emaitzak {cityA} eta{cityB}ren artean"
+}
