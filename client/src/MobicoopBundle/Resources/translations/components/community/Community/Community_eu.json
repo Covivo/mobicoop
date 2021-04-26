@@ -13,10 +13,10 @@
     "urlCommunityUser": "/community-user",
     "buttons": {
         "login": {
-            "route": "/utilisateur/connexion"
+            "route": "/erabiltzailea/konexioa"
         },
         "contact": {
-            "route": "/utilisateur/messages/nouveau"
+            "route": "/erabiltzaile/mezuak/berria"
         },
         "join": {
             "route": "/communaute/{id}/rejoindre",
@@ -29,7 +29,7 @@
             "label": "Nire komunitatea administratu"
         },
         "publish": {
-            "route": "autokidetza/bilaketa/argitaratu",
+            "route": "autokidetza/bilatu/argitaratu",
             "label": "Iragarkia argitaratu"
         }
     },
@@ -73,8 +73,8 @@
         }
     },
     "tooltips": {
-        "domain": "Zure helbide elektronikoa eremu baten parte izan behar da:",
-        "validation": "Baieztapenaren zain",
+        "domain": "Helbide eletronikoak ondoko eremu baten parte izan behar da:",
+        "validation": "Egiaztapena igurikatzen",
         "connected": "Konektatua izan behar zira"
     },
     "joinCommunity": {
