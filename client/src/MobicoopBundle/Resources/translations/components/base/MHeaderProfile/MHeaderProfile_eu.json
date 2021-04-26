@@ -1,1 +1,22 @@
-{}
+{
+    "logOut": {
+        "route": "/user/logout",
+        "label": "Dekonexioa"
+    },
+    "reviews": {
+        "route": "/erabiltzailea/perfila/aldatu/iritziak",
+        "label": "Abisu"
+    },
+    "myProfile": {
+        "route": "/erabiltzaile/perfila/aldatu/nire-perfila",
+        "label": "Perfila"
+    },
+    "myAcceptedCarpools": {
+        "route": "/erabiltzailea/perfila/aldatu/nire-autokidetza-onartuak",
+        "label": "Autokidetza onartuak"
+    },
+    "myAds": {
+        "route": "/erabiltzaile/perfila/aldatu/nire-iragarkiak",
+        "label": "Nire iragarkiak"
+    }
+}
