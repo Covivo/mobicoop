@@ -1,5 +1,5 @@
 {
-    "fullDate": "YYYY MMMM Do ddd",
+    "fullDate": "ddd Do MMMM YYYY",
     "optional": "hautuzkoa",
     "errorReturnTime": "Itzultze ordua, abiatze ordutik hurbilegia da.",
     "marginTooltip": "Zure iragarkia bilaketetan agertuko da, ordutegi honetako  {margin}  minutu inguruko malgutasunarekin",
