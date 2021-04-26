@@ -29,8 +29,8 @@
             "label": "Nire komunitatea administratu"
         },
         "publish": {
-            "route": "autokidetza/bilatu/argitaratu",
-            "label": "Iragaria argitaratu"
+            "route": "autokidetza/bilaketa/argitaratu",
+            "label": "Iragarkia argitaratu"
         }
     },
     "leaveCommunity": {
