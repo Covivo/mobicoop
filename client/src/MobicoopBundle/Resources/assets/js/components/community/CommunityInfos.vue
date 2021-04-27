@@ -7,17 +7,7 @@
       align="center"
     >
       <v-img
-        v-if="community.images[0]"
-        :src="community['images'][0]['versions']['square_250']"
-        width="225"
-        height="200"
-        :aspect-ratio="1"
-        :alt="community.name"
-        contain
-      />
-      <v-img
-        v-else
-        :src="urlAltAvatar"
+        :src="(community.images[0] && community['images'][0]['versions']['square_250']) ? community['images'][0]['versions']['square_250'] : urlAltAvatar"
         width="225"
         height="200"
         :aspect-ratio="1"

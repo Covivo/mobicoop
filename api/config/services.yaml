@@ -86,7 +86,8 @@ services:
     # Community Load Listener
     mobicoop.community.community_load_listener:
         class: App\Community\EventListener\CommunityLoadListener
-        arguments: ['@request_stack']
+        arguments:
+            $avatarDefault: '%env(string:AVATAR_DEFAULT)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 

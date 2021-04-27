@@ -7,7 +7,7 @@
         :community="{{ community|json_encode }}"
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
-        url-alt-avatar="{{ urlAltCommunityAvatar }}"
+        url-alt-avatar="{{ community.defaultAvatar }}"
         avatar-version="{{ communityAvatarVersion }}"
         token="{{token.getToken}}"
     ></community-widget>
