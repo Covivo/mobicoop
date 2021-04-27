@@ -1,33 +1,33 @@
 {
-    "ok": "Ados",
+    "ok": "ADOS",
     "popup": {
-        "content": "Kasu,{alert} kasuan zure kanpoko jakinarazpenik ez duzu gehiago. Gai horretaz informazioa eskuratzeko plataformara konektatu beharko zira.",
-        "title": "Informazioa"
+        "content": "Kasu, ez duzu gehiago kanpoko notifikaziorik aktibatua {alert}-ren kasuan. Gai honetaz informatua izateko plataforman konektatu beharko zira.",
+        "title": "Argibideak"
     },
     "medium": {
         "media4": "Push",
         "media3": "SMS",
-        "media2": "E-mezua",
+        "media2": "Email",
         "media1": "Mezua"
     },
     "alerts": {
-        "confirm_direct_payment_regular": "Astebateko autokidetzaren ordainketa baieztatu",
+        "confirm_direct_payment_regular": "Aste bateko autokidetzaren ordainketaren baieztapena",
         "confirm_direct_payment": "Autokidetza baten ordainketa baieztatu",
-        "pay_after_carpool_regular": "Aste bateko autokidetza ordaindu",
+        "pay_after_carpool_regular": "Asteko autokidetza ordaindu",
         "pay_after_carpool": "Egindako autokidetza ordaindu",
-        "validate_create_event": "Ekitaldi baten sortzearen baieztapena",
-        "driver_carpool_linked_ad_deleted_urgent": "Gidari gisa eta hurbil-hurbila den autokidetza onartu bati lotua den iragarkia ezeztatua",
-        "driver_carpool_linked_ad_deleted": "Gidari gisa, onartua den autokidetza bati lotua den iragarkia ezeztatua",
-        "passenger_carpool_linked_ad_deleted_urgent": "Bidaiari gisa eta hurbil-hurbila den autokidetza onartu bati lotua den iragarkia ezeztatua",
-        "passenger_carpool_linked_ad_deleted": "Bidaiari gisa autokidetza onartu bati lotua den iragarkia ezeztatua",
-        "carpool_ask_linked_ad_deleted": "Iragarkia ezabatua, nik galdeginik",
+        "validate_create_event": "Ekitaldiaren sortzearen baieztapena",
+        "driver_carpool_linked_ad_deleted_urgent": "Gidari gisa eta berehalakoa zen eta onartua izan zen autokidetzaren iragarkia kendua izan da",
+        "driver_carpool_linked_ad_deleted": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
+        "passenger_carpool_linked_ad_deleted_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
+        "passenger_carpool_linked_ad_deleted": "Bidaiari gisa onartua izan zitzaidan autokidetzari loturiko iragarkia kendua izan da",
+        "carpool_ask_linked_ad_deleted": "Nik galdegindako iragarkia ezeztatua",
         "*******": "Nire autokidea ebaluatzeko sustapena",
         "carpool_proposal_canceled": "Autokidetza baten ezeztatzea*",
-        "carpool_ad_renewal": "Kasik balio ez duten bidaiak berritu",
-        "carpool_ask_refused": "Autokidetza ez onartua",
-        "carpool_ask_accepted": "Autokidetza onartua",
-        "carpool_matching_new": "Autokitza potentzial berri batzuk",
+        "carpool_ad_renewal": "Laster bali izanen ez bidaiak berritu",
+        "carpool_ask_refused": "Autokidetza ez onartuak",
+        "carpool_ask_accepted": "Autokidetza onartuak",
+        "carpool_matching_new": "Autokide potentzial berriak",
         "communication_internal_message_received": "Mezu berri bat mezutegian",
-        "carpool_ask_posted": "Autokidetza batentzako eskaera"
+        "carpool_ask_posted": "Eskaera bat autokitza batentzat"
     }
 }
