@@ -119,7 +119,9 @@ export default {
               shortFamilyName:this.newThread.shortFamilyName,
               givenName:this.newThread.givenName,
               idMessage:-1,
-              idRecipient:this.newThread.idRecipient
+              idRecipient:this.newThread.idRecipient,
+              selected: true,
+              unreadMessages: 0
             });
           }
           this.messages = response.data.threads;

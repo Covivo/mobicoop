@@ -183,11 +183,11 @@
           </tbody>
         </v-simple-table>
       </v-card>
-      <v-card v-else-if="!loading">
+      <!-- <v-card v-else-if="!loading">
         <v-card-text>
           {{ $t("notLinkedToACarpool") }}
         </v-card-text>
-      </v-card>
+      </v-card> -->
       <v-skeleton-loader
         v-if="loading"
         ref="skeleton"
