@@ -378,21 +378,13 @@ export default {
       };
 
       if(this.newThreadCarpool && this.newThreadCarpool.matchingId){
-        console.log(this.newThreadCarpool);
-        // messageToSend.driver = this.newThreadCarpool.driver;
-        // messageToSend.passenger = this.newThreadCarpool.passenger;
-        // messageToSend.regular = this.newThreadCarpool.regular;
-        // messageToSend.adId = this.newThreadCarpool.adId;
         messageToSend.matchingId = this.newThreadCarpool.matchingId;
         messageToSend.proposalId = this.newThreadCarpool.proposalId;
         messageToSend.adIdToRespond = this.newThreadCarpool.adId;
-        // messageToSend.fromDate = this.newThreadCarpool.fromDate;
-        // messageToSend.toDate = this.newThreadCarpool.toDate;
       }
-      console.log(messageToSend);
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
-        //console.error(res.data);
         this.idMessage = (res.data.message !== null) ? res.data.message.id : res.data.id;
+        this.currentIdAsk = (res.data.idAsk !== null) ? res.data.idAsk : this.currentIdAsk;
         this.loadingTypeText = false;
         // Update the threads list
         (this.currentIdAsk) ? this.refreshThreadsCarpool = true : this.refreshThreadsDirect = true;
