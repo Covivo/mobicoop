@@ -723,14 +723,9 @@ class SolidaryUserManager
                 // To do : Dynamic Language
                 $user->setLanguage('fr_FR');
 
-                // Set an encrypted password
-                $password = $solidaryVolunteer->getPassword();
-                $user->setPassword($this->encoder->encodePassword($user, $password));
-                $user->setClearPassword($password); // Used to be send by email (not persisted)
+                // Set password
+                $user->setPassword($solidaryVolunteer->getPassword());
 
-                // auto valid the registration
-                $user->setValidatedDate(new \DateTime());
-                
                 // we treat the user to add right authItem and notifiactions
                 $this->userManager->registerUser($user);
             }
