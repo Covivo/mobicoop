@@ -5,8 +5,8 @@
         "textDetails": {
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p3": "<span class=\"font-weight-bold\">Attention</span> : Wordpress bezala argitaratzeko tresna batzutan plugings bereziak gehitu begar dira iFrame bat erabili ahal izateko.",
-            "p1": "Widget-a integratzeko, azpeiko testua kopiatu  eta zure webgunean kolatu behar duzu.<br />Zure widget-a pertsonalizatzeko, lodiz diren elementuak alda ditzakezu.",
-            "title": "Widget-an kide egin"
+            "p1": "Widget-a integratzeko, beheragoko testua kopita eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
+            "title": "widget integratu"
         },
         "label": "Ikus Widget-a"
     },
