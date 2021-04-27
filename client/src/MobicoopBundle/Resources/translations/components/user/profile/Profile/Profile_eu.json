@@ -1,1 +1,42 @@
-{}
+{
+    "getMyCarpools": "/getMyCarpools",
+    "save": "Gorde",
+    "errors": {
+        "number": "Pasahitzak zenbaki bat eduki behar du.",
+        "lower": "Pasahitzak minuskula bat eduki behar du.",
+        "upper": "Pasahitzak maiuskula bat eduki behar du.",
+        "min": "Pasahitzak gutienez 8 karaktere behar ditu.",
+        "required": "Pasahitza baitezpadakoa da"
+    },
+    "publicProfile": {
+        "close": "Hetsi",
+        "see": "Ikus publiko perfila",
+        "title": "Publiko perfila"
+    },
+    "snackBar": {
+        "textSnackError": "Huts bat pasahitzaren eguneraketan",
+        "passwordUpdated": "Pasahitza eguneratua"
+    },
+    "form": {
+        "errors": {
+            "notIdentiquals": "Pasahitzak ez dira berdinak",
+            "required": "Pasahitza baitezpadakoa da"
+        },
+        "newPasswordRepeat": "Pasahitza berria (baieztapena)",
+        "newPassword": "Pasahitza berria"
+    },
+    "tabs": {
+        "reviews": "Abisuak",
+        "myAccount": "Kontua",
+        "carpoolsAccepted": "Onartuak diren autokidetzak",
+        "bankCoordinates": "Banku agiria",
+        "alerts": "Abisuak",
+        "carpoolSettings": "Hobespenak",
+        "myAds": "Nire iragarkiak",
+        "password": "Pasahitza",
+        "myProfile": "Perfila"
+    },
+    "page": {
+        "title": "Perfila"
+    }
+}
