@@ -13,7 +13,7 @@
     "textRecovery": "Pasahitza ahantzia?",
     "urlRecovery": "/erabiltzailea/pasahitza/berreskuratzea",
     "urlLoginResult": "/erabiltzailea/konexioa/{id}",
-    "urlLogin": "/utilisateur/connexion",
+    "urlLogin": "/erabiltzaile/konexioa",
     "userFBNotFound": "Facebook erabiltzaile horrek ez du izena eman plataforman",
     "errorCredentialsFacebook": "Akats bat Facebook bidez konektatzerakoan",
     "Unable to get an API token.": "Akats bat konktatzerakoan.",
