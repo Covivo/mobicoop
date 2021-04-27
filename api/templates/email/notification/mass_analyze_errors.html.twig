@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:22px" ><strong>{{"massAnalyzeErrors"|trans({'%massId%' : context.massId})}}</strong></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:22px" ><strong> L'analyse de l'import n° {{ context.massId }} comporte des erreurs }}</strong></p>
                         <hr>
                     </td>
                 </tr>
@@ -34,7 +34,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>

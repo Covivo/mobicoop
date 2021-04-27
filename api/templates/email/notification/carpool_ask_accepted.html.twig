@@ -16,7 +16,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "acceptedCarpool"|trans }}</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE COVOITURAGE EST CONFIRMÉ !</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -28,12 +28,12 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
-                        <p>{{ "yourCarpoolWith"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> {{ "isConfirmed"|trans }}</p>
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
+                        <p>Votre covoiturage avec<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> est confirmé!</p>
                         {% if ad.results[0].frequency == 1 %}
-                            <p>{{ "occasionalCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
+                            <p>Récapitulatif de votre trajet occasionnel du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
                         {% else %}
-                            <p>{{ "regularCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
+                            <p>Récapitulatif de votre trajet régulier du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
                     </td>
                     <td style="width:30%">
@@ -68,51 +68,51 @@
                             <tr>
                                 <td>
                                     {% if result.outward.monCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayMonday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Lu</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayMonday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Lu</span></div>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if result.outward.tueCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayTuesday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Ma</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayTuesday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Ma</span></div>
                                     {% endif %} 
                                 </td>
                                 <td>
                                     {% if result.outward.wedCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayWednesday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Me</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayWednesday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Me</span></div>
                                     {% endif %} 
                                 </td>
                                 <td>
                                     {% if result.outward.thuCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayThursday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Je</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayThursday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Je</span></div>
                                     {% endif %} 
                                 </td>
                                 <td>
                                     {% if result.outward.friCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdayFriday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Ve</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdayFriday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Ve</span></div>
                                     {% endif %} 
                                 </td>
                                 <td>
                                     {% if result.outward.satCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdaySaturday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Sa</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdaySaturday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Sa</span></div>
                                     {% endif %} 
                                 </td>
                                 <td>
                                     {% if result.outward.sunCheck %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>{{ "shortdaySunday"|trans }}</strong></span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_DARK')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;"><strong>Di</strong></span></div>
                                     {% else %}
-                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">{{ "shortdaySunday"|trans }}</span></div>
+                                        <div style="background-image:url('{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_DAY_LIGHT')}}');background-repeat:no-repeat;width:42px;height:42px;position:relative;top:50%;padding-top:25%;padding-left:25%;"><span style="position:absolute;color:black;font-style:italic;">Di</span></div>
                                     {% endif %}     
                                 </td>
                             </tr>
@@ -129,7 +129,7 @@
                 <tr>
                     {% if result.outward %}
                         <td >
-                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>{{"outward"|trans}}</b></p>
+                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>ALLER</b></p>
                         </td>
                     {% endif %}
                     <td>
@@ -137,7 +137,7 @@
                     </td>
                     {% if result.return %}
                         <td >
-                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>{{"return"|trans}}</b></p>
+                            <p style="color:{{api_env('EMAILS_COLOR_ACCENT')}}"><b>RETOUR</b></p>
                         </td>
                     {% endif %}
                 </tr>
@@ -145,10 +145,10 @@
                     {% if result.outward %}
                         <td>
                             {% if result.outward.multipleTimes %}
-                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">Horaires multiples</b></p>
                         {% else %}
-                            <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardOrigin.time|date('H:i')}}</b></p>
-                            <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardDestination.time|date('H:i')}}</b></p>
+                            <p>Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardOrigin.time|date('H:i')}}</b></p>
+                            <p>Dépose à <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{outwardDestination.time|date('H:i')}}</b></p>
                         {% endif %}
                         </td>
                     {% endif %}
@@ -158,10 +158,10 @@
                     {% if result.return %}
                         <td>
                             {% if result.return.multipleTimes %}
-                                <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{"multipleShedules"|trans}}</b></p>
+                                <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">Horaires multiples</b></p>
                             {% else %}
-                                <p>{{"pickUp"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnOrigin.time|date('H:i')}}</b></p>
-                                <p>{{"dropOff"|trans}}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnDestination.time|date('H:i')}}</b></p>
+                                <p>Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnOrigin.time|date('H:i')}}</b></p>
+                                <p>Dépose à <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{returnDestination.time|date('H:i')}}</b></p>
                             {% endif %}    
                         </td>
                     {% endif %}
@@ -176,8 +176,8 @@
             <table  style="width:100%;">
                 <tr>
                     <td style="width:100%">
-                        <p>{{"seatsSelected"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].seats}}</b></p>
-                        <p>{{"indicativePrice"|trans}} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].roundedPrice}}</b></p>
+                        <p>Place(s) réservée(s) :  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].seats}}</b></p>
+                        <p>Prix indicatif :  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ad.results[0].roundedPrice}}</b></p>
                     </td>
                 </tr>
             </table>
