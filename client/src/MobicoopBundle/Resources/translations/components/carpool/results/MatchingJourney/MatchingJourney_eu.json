@@ -1,9 +1,9 @@
 {
     "fraudWarningText": {
-        "part2": "edo tokiko mometa librean. Gomendatzen dizuegu PCS edo Transcah txartelak bezalako beste ordainketa moduak ez onartzea, gehienetan iruzurreko praktikentzat erabiltzen baitira. Erabiltzaile bat seinala dezakezu bere perfiletik.",
-        "textLink": "eskuz esku edo linean ",
-        "link": "/erabiltzaile/perfila/aldatu/nire-autokidetza-onartuak",
-        "part1": "Mobicoop-en, egin dituzun autokidetzen ordainketak gehienetan egiten dira "
+        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
+        "textLink": "Eskuz esku edo linean ",
+        "link": "/erabitzaile/perfila/update/accepted-carpools",
+        "part1": "Mobicoop-en, zure autokidetzen ordainketak gehieneta horrela egiten dira "
     },
     "i18n": {
         "time": {
@@ -20,30 +20,31 @@
         }
     },
     "ranges": [
-        "aste 1",
-        "Hilabete 1"
+        "Aste 1",
+        "Hilabete 1",
+        "3 hilabete"
     ],
-    "maxDate": "-a arte",
-    "fromDate": "-tik goiti",
+    "maxDate": "ondoko eguna arte",
+    "fromDate": "Ondoko egunetik goiti",
     "detail": "Xehetasunak",
     "previous": "Aitzinekoa",
-    "return": "Itzultzeko bidaiak hautatu",
-    "outward": "Joateko bidaiak hautatu",
+    "return": "Itzultzeko bidaia bat hautatu",
+    "outward": "Joateko bidaia bat hautatu",
     "contactTips": {
-        "initiatedAsk": "Autokide honi egindako erantzuaren zain",
-        "pendingAsk": "Autokidetza honi egindako eskaeraren arrapostuaren zain",
-        "acceptedAsk": "Autoki honekin jadanik autokidetza bat planifikatu duzu"
+        "initiatedAsk": "Autokide honen eskaera batek erantzun bat igurikatzen du",
+        "pendingAsk": "Autokide honek erantzun bat igurikatzen du",
+        "acceptedAsk": "Autokide honekin jadanik autokidetza bat planifikatu duzu"
     },
     "contact": "Harremanetan jarri",
     "birthYears": "urte",
     "seeMessages": {
         "route": "/erabiltzaile/mezuak",
-        "label": "Mezuak ikusi"
+        "label": "Ikus mezuak"
     },
-    "alreadyInitiatedCarpool": "Iragarki honentzat jadanik harremanetan jarri zira.",
-    "alreadyAskCarpool": "Iragarki honetan eskaera bat egin duzu jadanik.",
-    "carpoolAsPassenger": "Autokidetza egin bidaiari izanez",
-    "carpoolAsDriver": "Autokidetza egin gidari izanez",
+    "alreadyInitiatedCarpool": "Iragarki honentzat jadanik harremanetan jarri zira",
+    "alreadyAskCarpool": "Iragarki honentzat jadanik eskaera bat egin duzu.",
+    "carpoolAsPassenger": "Autokidetza egin bidaiari gisa",
+    "carpoolAsDriver": "Autokidetza egin gidari gisa",
     "carpool": "Autokidetza egin",
     "places": "{seats} toki | {seats} toki",
     "detailTitle": "Autokidetzaren xehetasunak",
