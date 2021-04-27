@@ -1,1 +1,10 @@
-{}
+{
+    "widget": {
+        "text": "Zure webgunean sar daiteken widget-a lortzeko eta honen egiteko argibideak eskuratzeko",
+        "link": "/widget/get",
+        "textLink": "Hitzordua orrialde honetan",
+        "title": "Widget-a"
+    },
+    "subtitle": "Komunikazio tresnak",
+    "title": "Esku-tresna kutxa"
+}
