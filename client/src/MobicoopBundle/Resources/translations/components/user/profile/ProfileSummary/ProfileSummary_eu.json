@@ -1,1 +1,9 @@
-{}
+{
+    "infos": {
+        "lastConnection": "Azken konexioa",
+        "answerPct": "Erantzun tasa",
+        "carpoolRealized": "Egindako autokidetzak"
+    },
+    "getProfileSummaryUri": "/erabiltzaile/perfila/laburbilduma",
+    "yearsOld": "urte"
+}
