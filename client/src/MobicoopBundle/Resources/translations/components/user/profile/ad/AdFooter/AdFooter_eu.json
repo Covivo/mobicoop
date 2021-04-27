@@ -1,1 +1,11 @@
-{}
+{
+    "urlResult": "/autokidetza/iragarkia/{id}/emaitzak",
+    "potentialCarpooler": {
+        "plural": "autokide potentzialak",
+        "singular": "Autokide potentziala"
+    },
+    "seat": {
+        "plural": "tokiak",
+        "singular": "toki bat"
+    }
+}
