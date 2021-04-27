@@ -1,1 +1,17 @@
-{}
+{
+    "blockUrl": "/user/block",
+    "block": "Blokatu",
+    "blocked": "Blokatua",
+    "userDelete": "Erabiltzailea desinskriatua da",
+    "priceTooltip": "Prezio adierazgarria",
+    "price": "Prezioa",
+    "seatsAvailable": "Libro diren tokiak",
+    "distanceTooltip": "Autokidetzaren distantzia gidariaren itzulingurua kontatuz",
+    "distance": "Distantzia",
+    "regular": {
+        "ask": "Autokidetza erregular bat proposatu"
+    },
+    "urlGetAdAsk": "/erabiltzaile/mezuak/ekintzak/argibideak",
+    "roundTrip": "Joan-etorri bidaia",
+    "notLinkedToACarpool": "Solasaldi horrek ez du zerikusirik autokidetza batekin"
+}
