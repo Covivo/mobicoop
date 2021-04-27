@@ -127,7 +127,7 @@ class CommunityManager
         if ($checkDomain) {
             // check validation domain
             if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
-            ($community->getDomain() != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
+            (str_replace("@", "", $community->getDomain()) != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
                 $authorized = false;
             }
         }

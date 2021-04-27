@@ -610,7 +610,7 @@ export default {
           },
         })
         .then((res) => {
-          this.errorUpdate = res.data.state;
+          (res.data.id) ? this.errorUpdate = false : this.errorUpdate = true;
           this.askToJoin = true;
           this.isAccepted = false;
           this.snackbar = true;
@@ -621,6 +621,7 @@ export default {
           this.refreshLastUsers = true;
           this.getCommunityUser();
           this.loading = false;
+          location.reload();
         });
     },
     checkIfUserLogged() {
