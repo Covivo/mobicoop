@@ -260,10 +260,11 @@ class ImageManager
      *
      * @return void
      */
-    public function regenerateVersions(){
+    public function regenerateVersions()
+    {
         set_time_limit(3600);
         $images = $this->imageRepository->findAll();
-        foreach($images as $image){
+        foreach ($images as $image) {
             $this->generateVersions($image);
         }
     }
