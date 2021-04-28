@@ -34,10 +34,12 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 class EventLoadListener
 {
     private $eventManager;
+    private $avatarDefault;
 
-    public function __construct(EventManager $eventManager)
+    public function __construct(EventManager $eventManager, string $avatarDefault)
     {
         $this->eventManager = $eventManager;
+        $this->avatarDefault = $avatarDefault;
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -46,6 +48,9 @@ class EventLoadListener
 
         if ($event instanceof Event) {
             $event->setUrlKey($this->eventManager->generateUrlKey($event));
+
+            // default avatar
+            $event->setDefaultAvatar($this->avatarDefault);
         }
     }
 }

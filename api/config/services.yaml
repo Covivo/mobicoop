@@ -94,6 +94,8 @@ services:
     # Event Load Listener
     mobicoop.event.event_load_listener:
         class: App\Event\EventListener\EventLoadListener
+        arguments:
+            $avatarDefault: '%env(string:AVATAR_DEFAULT)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
