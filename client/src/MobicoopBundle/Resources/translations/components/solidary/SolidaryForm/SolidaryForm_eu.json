@@ -63,7 +63,7 @@
     },
     "phone": {
         "errors": {
-            "valid": "Mugikor zenbakia bali izan behar da",
+            "valid": "Mugikor telefonoa bali izan behar da",
             "required": "Mugikor zenbakia baitezpadakoa da"
         },
         "placeholder": "Mugikorra"
