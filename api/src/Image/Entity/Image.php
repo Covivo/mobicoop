@@ -68,6 +68,10 @@ use App\User\Entity\User;
  *              "deserialize"=false,
  *              "security_post_denormalize"="is_granted('image_post',object)"
  *          },
+ *          "regenVersions"={
+ *              "method"="GET",
+ *              "path"="/images/regenversions"
+ *          }
  *      },
  *      itemOperations={
  *          "get","put", "delete"
