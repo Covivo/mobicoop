@@ -42,7 +42,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s&layers=locality';
+    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s&layers=locality,localAdmin';
 
     /**
      * @var string
