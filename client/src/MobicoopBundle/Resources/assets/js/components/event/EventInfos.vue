@@ -9,8 +9,8 @@
           align="center"
         >
           <v-img
-            v-if="event.images[0]"
-            :src="event['images'][0]['versions']['square_250']"
+            v-if="event.externalImageUrl"
+            :src="event.externalImageUrl"
             width="225"
             height="200"
             :aspect-ratio="1"
@@ -19,7 +19,7 @@
           />
           <v-img
             v-else
-            :src="event.externalImageUrl ? event.externalImageUrl : urlAltAvatar"
+            :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : urlAltAvatar"
             width="225"
             height="200"
             :aspect-ratio="1"

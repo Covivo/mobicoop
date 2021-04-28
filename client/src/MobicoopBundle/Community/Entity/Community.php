@@ -537,7 +537,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'name'              => $this->getName(),
             'urlKey'            => $this->getUrlKey(),
             'description'       => $this->getDescription(),
-            'defaultAvatar'            => $this->getDefaultAvatar(),
+            'defaultAvatar'     => $this->getDefaultAvatar(),
             'images'            => $this->getImages(),
             'fullDescription'   => $this->getFullDescription(),
             'proposalsHidden'   => $this->isProposalsHidden(),
