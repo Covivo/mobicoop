@@ -1,11 +1,11 @@
 {
     "news": {
         "confirmation": {
-            "title": "Desinskripzioaren baieztapena",
+            "title": "Desinkripzioaren baieztapena",
             "content": "Kasu, zerbitzuko berrietatik desinskribatuko zirelarik, ez duzu gehiago ondoko argibiderik errezibituko:br><ul><li>plataformaren funtzionalitate berriak eta zerbitzu berriak</li><li>zure lurraldeko autokidetzaren berriak </li><li>zure komunitateen berriak</li><li>laguntza pertsonalizatua </li></ul><br> Segur ote zira desinskribatu nahi duzula?"
         },
-        "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da publizitaterik eginen.",
-        "label": "Zerbitzuko berriak{platform}(autokidetza egiteko argibide baliagarriak, eta zerbitzu berriak edota funtzionalitate berriak)"
+        "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da iragarkirik eginen.",
+        "label": "Zerbitzuaren berriak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
     },
     "route": {
         "supprimer": "/erabiltzaile/perfila/kendu",
@@ -14,29 +14,29 @@
     "avatar": {
         "delete": {
             "label": "Irudia kendu",
-            "route": "/erabiltzailea/perfila/avatar/kendu"
+            "route": "/erabiltzaile/perfila/avatar/kendu"
         },
-        "size": "Aragazki izaria pasa duzu",
+        "size": "Avatar neurri handiena gainditu duzu",
         "label": "Argazkia"
     },
     "snackBar": {
-        "emailError": "Hutsa, e-mezua ez da bidalia izan",
-        "emailOk": "Baieztatze e-mezua igorria izan da.",
-        "tokenError": "Hutsa, kodea ez da igorria izan",
-        "tokenOk": "Baieztatze kodea igorria izan da.",
-        "unknown": "Baieztatze kodea okerra da.",
+        "emailError": "Huts bat e-mezua ez da bidalia izan",
+        "emailOk": "Egiazkotzeko e-mezua igorria izan da.",
+        "tokenError": "Huts bat kodea ez da bidalia izan",
+        "tokenOk": "Egiazkotzeko kodea bidalia izan da.",
+        "unknown": "Egiazkotzeko kodea ez da zuzena.",
         "phoneValidated": "Zure telefonoa egiaztatua izan da.",
-        "phoneUpdate": "Hutsa, zure telefonoa ez da egiaztatua izan.",
-        "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua izan da.",
-        "errorProfileUpdate": "Hutsa, zure perfila ez da eguneratua izan.",
-        "profileUpdated": "Zure perfila euneratua izan da!"
+        "phoneUpdate": "Huts bat zure telefonoa ez da egiaztatua izan.",
+        "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua da.",
+        "errorProfileUpdate": "Huts bat, zure perfila ez da eguneratua izan",
+        "profileUpdated": "Zure perfila eguneratua da!"
     },
     "titles": {
-        "deleteAccount": "Nire kontua ezabatu",
+        "deleteAccount": "Nire kontua kendu",
         "password": "Pasahitza",
         "personnalInfos": "Informazio pertsonalak"
     },
-    "savedCo2": "Aurreztu duzu {savedCo2}",
+    "savedCo2": "Aurreztu duzu {savedCo2} t",
     "no": "ez",
     "yes": "bai",
     "save": "Gorde",
@@ -45,8 +45,8 @@
     },
     "birthDay": {
         "errors": {
-            "notadult": "16 urte ukan behar dituzu plataforman izena emateko",
-            "required": "Sorteguna baitezpadokoa da"
+            "notadult": "16 urte behar dituzu plataforman izena emateko",
+            "required": "Sorteguna baitezpadakoa da"
         },
         "label": "Sorteguna"
     },
@@ -59,21 +59,21 @@
         "label": "Zibilitatea"
     },
     "familyName": {
-        "label": "Abizena"
+        "label": "Deitura"
     },
     "givenName": {
         "label": "Izena"
     },
     "email": {
-        "verificationRoute": "/erabiltzaile/e-mezu/baieztapena",
+        "verificationRoute": "/erabiltzaile/email/bali egin",
         "buttons": {
             "label": {
-                "generateEmailAgain": "Egiaztatze e-mezua gilera igorri",
+                "generateEmailAgain": "Egiaztatze e-mezua gilera bidali",
                 "generateEmail": "Egiaztatze e-mezu bat bidali"
             }
         },
         "tooltips": {
-            "notVerified": "Zure e-mezua ez da egiaztatua izan",
+            "notVerified": "Zure helbide elektronikoa ez da egiaztatua izan",
             "verified": "Zure helbide elektronikoa egiaztatua izan da"
         },
         "errors": {
@@ -89,12 +89,12 @@
     },
     "address": {
         "update": {
-            "route": "/erabiltzaile/perfila/helbidea",
-            "label": "Nire helbidea gorde"
+            "route": "/erabiltzaile/perfila/aldatu/helbidea",
+            "label": "Helbidea gorde"
         }
     },
     "buttons": {
-        "supprimerAccount": "Nire kontua ezeztatu"
+        "supprimerAccount": "Nire kontuaren kentzea"
     },
     "dialogEmail": {
         "buttons": {
@@ -107,12 +107,12 @@
     "dialog": {
         "buttons": {
             "close": "Hetsi",
-            "confirmDelete": "Ezabatzea baieztatzen dut"
+            "confirmDelete": "Ezeztatzea baieztatu"
         },
         "content": {
             "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferente izaten jarraitzen duzun arte. <br/> <a href=/contact> euskarri teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitatea ezabatzeko.<br/>",
             "errorEvents": "Helduko diren ekitaldi antolatzaile gisa, <br/> ezin duzu zure kontua ezabatu, antolatzaile bazira edo izango bazira. <br/> <a href=/contact> teknika euskarriarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailea aldatzeko edo ezabatzeko eskaera egiteko edo ekitaldia pasatzea igurika ezazu.",
-            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula? <br/> Ekintza hori ezin itzulizkoa da. <br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonala guziak ezabatu<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatuak<br/> -Autokidetza artxiboetan beste autokide batzuk anonimazatuko dituzu <br/> oraindik aktibo dituzun autokidetza iragarki guziak ezabatu <br/> - oraindik indarrean diren autokidetza eskaera guziak ezeztatu <br/> planifikatutako autokidetza guziak ezeztatu<br/> Baieztatzen duzuia?"
+            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula?<br/> Ekintza hori ezin itzulizkoa da.<br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonala guziak ezabatu<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatuak<br/> -Autokidetza artxiboetan beste autokide batzuk anonimazatuko dituzu<br/> oraindik aktibo dituzun autokidetza iragarki guziak ezabatu<br/> - oraindik indarrean diren autokidetza eskaera guziak ezeztatu<br/> planifikatutako autokidetza guziak ezeztatu<br/> Baieztatzen duzuia?"
         },
         "titles": {
             "deletionImpossible": "Zure kontua ezabatzea ezinezkoa da",
@@ -128,40 +128,40 @@
             },
             "date": {
                 "format": {
-                    "computeDate": "YYYY-MM-DD",
+                    "computeDate": "DD-MM-YYYY",
                     "shortDate": "YYYY/MM/DD",
                     "fullDate": "ddd Do MMMM YYYY"
                 }
             }
         },
         "token": {
-            "inputError": "Baieztatze odea 4 zenbakiz osatua da.",
+            "inputError": "Egiaztatze kodea 4 zenbakiz osatua da.",
             "route": "/erabiltzaile/telefonoa/token"
         },
         "validation": {
-            "route": "/erabiltzaile/telefono/baieztapena",
-            "label": "Zure baieztatze kodea"
+            "route": "/erabiltzaile/telefonoa/bali egin",
+            "label": "Zure egiaztatze kodea"
         },
         "buttons": {
             "label": {
-                "validate": "Baieztatu",
+                "validate": "Bali egin",
                 "generateNewToken": "Kode berri bat bidali",
                 "generateToken": "Egiaztatze kode bat bidali"
             }
         },
         "tooltips": {
-            "notVerified": "Zure mugikor zenbakia ez da egiaztatua",
+            "notVerified": "Zure mugikor telefonoa ez da egiaztatua",
             "verified": "Zure mugikor zenbakia egiaztatua da"
         },
         "errors": {
-            "valid": "Mugikor zenbakia bali izan behar da"
+            "valid": "Mugikor telefonoa bali izan behar da"
         },
-        "label": "Mugikor telefonoa"
+        "label": "Mugikorra"
     },
     "phoneDisplay": {
         "label": {
             "all": "Ikusgai iragarkia argitaratua denean, izena eman duten guzieri.",
-            "general": "Nire telefono zenbakia ikusgai.",
+            "general": "Nire telefono zenbakia irakusgarri.",
             "restricted": "Ikusgai soilik autokidetza onartu ondoren, bakarrik parte hartzaileak."
         }
     }
