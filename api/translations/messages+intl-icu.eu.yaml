@@ -64,7 +64,7 @@ newCarpoolAdMatchingYourCommute: Zure xxx eta xxx arteko bidaiari dagokion autok
 clickOnLinkToSearchAgain: Lotura honetan klikatu bilaketa berrabiatzeko
 deletedAccountOccasionalCarpool: ' X-(e)k bere kontua kendu du eta ezingo du xx/xx/xx-(e)(a)n
   autoa zurekin partekatu '
-pickUp: 'Hartze lekua: '
+pickUp: 'Hartze lekua '
 at: 'xxx-(e)ra '
 hasUpdatedHisAd: bere iragarkia aldatu du.
 header1Data: jira-ouestgo
@@ -310,7 +310,7 @@ refusedRegularCarpool: ' X-(e)k ez du autokidetza baieztatu xx/xx/xx-ko ohiko bi
 refusedOccasionalCarpool: ' X-(e)k ez du autokidetza baieztatu xx/xx/xx-ko bidaiarentzat '
 regularCarpoolAsk: 'xx/xx/xx-ko ohiko autokidetza eskaeraren laburbilduma '
 occasionalCarpoolAsk: 'xx/xx/xx-ko noiztenkako autokidetza eskaeraren laburbilduma '
-dropOff: 'Uzte lekua: '
+dropOff: 'Uzte lekua '
 to: xx/xx/xx-(e)an
 yourCarpoolWith: Zure autokitza xxxxx-rekin
 doNotReply: Milesker e-mezu honi ez erantzutea.
