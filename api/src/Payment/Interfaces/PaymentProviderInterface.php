@@ -126,4 +126,12 @@ interface PaymentProviderInterface
      * @return Hook with status and ressource id
      */
     public function handleHook(Hook $hook);
+
+    /**
+     * Get a document
+     *
+     * @param Int $DocumentId Id of the document
+     * @return void
+     */
+    public function getDocument(Int $DocumentId);
 }

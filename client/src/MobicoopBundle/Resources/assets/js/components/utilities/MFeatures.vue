@@ -25,17 +25,20 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/utilities/MFeatures/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MFeatures/";
 
 let MessagesMergedEn = merge(messages_en);
 let MessagesMergedFr = merge(messages_fr);
+let MessagesMergedEu = merge(messages_eu);
+
 
 import MFeaturesItem from "@components/utilities/MFeaturesItem";
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   components: {

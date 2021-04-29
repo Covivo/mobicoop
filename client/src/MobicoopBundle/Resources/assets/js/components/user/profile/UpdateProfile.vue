@@ -91,6 +91,9 @@
               />
             </v-col>
           </v-row>
+          <v-row class="text-left">
+            <v-col cols="6"><v-alert type="success">{{ $t('savedCo2',{savedCo2:savedCo2}) }} CO<sup>2</sup></v-alert></v-col>
+          </v-row>
           <v-row class="text-left title font-weight-bold">
             <v-col>{{ $t('titles.personnalInfos') }}</v-col>
           </v-row>
@@ -529,17 +532,19 @@ import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/user/profile/UpdateProfile/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/user/profile/UpdateProfile/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/UpdateProfile/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/user/profile/UpdateProfile/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     },
   },
   components: {
@@ -680,6 +685,9 @@ export default {
         return moment.utc(this.birthDay).format("YYYY-MM-DD");
       }
       return null;
+    },
+    savedCo2(){
+      return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
     }
   },
   mounted() {
@@ -897,7 +905,7 @@ export default {
       let maxDate = new Date();
       maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
-    },
+    }
   }
 }
 </script>

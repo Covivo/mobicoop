@@ -87,16 +87,18 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/utilities/Report/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/utilities/Report/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/Report/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/utilities/Report/";
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     },
   },
   props:{
@@ -106,6 +108,10 @@ export default {
     },
     user:{
       type: Object,
+      default: null
+    },
+    userId:{
+      type: Number,
       default: null
     },
     defaultEmail:{
@@ -166,6 +172,9 @@ export default {
       }
       else if(this.user){
         url = this.$t("routes.userReport", {id: this.user.id});
+      }
+      else if(this.userId){
+        url = this.$t("routes.userReport", {id: this.userId});
       }
       else{
         return;

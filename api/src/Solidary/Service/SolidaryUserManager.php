@@ -662,8 +662,6 @@ class SolidaryUserManager
             throw new SolidaryException(SolidaryException::UNKNOWN_USER);
         }
 
-        
-
         // Accepted/Refused
         if (is_null($solidaryBeneficiary->isValidatedCandidate())) {
             // Don't do anything, it's not an acceptation or refulsal action
@@ -680,8 +678,6 @@ class SolidaryUserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-
-
 
         return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }

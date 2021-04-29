@@ -49,6 +49,16 @@ class PaymentProfile
     const VALIDATION_REJECTED = 2;
     const VALIDATION_OUTDATED = 3;
 
+    const OUT_OF_DATE = 1;
+    const UNDERAGE_PERSON = 2;
+    const DOCUMENT_FALSIFIED = 3;
+    const DOCUMENT_MISSING = 4;
+    const DOCUMENT_HAS_EXPIRED = 5;
+    const DOCUMENT_NOT_ACCEPTED = 6;
+    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    const DOCUMENT_UNREADABLE = 8;
+    const DOCUMENT_INCOMPLETE = 9;
+
     /**
      * @var int The id of this payment profile
      *
@@ -170,6 +180,13 @@ class PaymentProfile
      * @Groups({"readPayment"})
      */
     private $wallets;
+
+    /**
+     * @var int|null The reason why the document is refused
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $refusalReason;
 
     public function getId(): ?int
     {
@@ -340,6 +357,18 @@ class PaymentProfile
     public function setElectronicallyPayable(bool $electronicallyPayable): self
     {
         $this->electronicallyPayable = $electronicallyPayable;
+
+        return $this;
+    }
+
+    public function getRefusalReason(): ?int
+    {
+        return $this->refusalReason;
+    }
+
+    public function setRefusalReason(int $refusalReason): self
+    {
+        $this->refusalReason = $refusalReason;
 
         return $this;
     }

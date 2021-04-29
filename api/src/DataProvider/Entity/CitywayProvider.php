@@ -88,6 +88,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_BUS = "BUS";
     private const CW_PT_MODE_TRAMWAY = "TRAMWAY";
     private const CW_PT_MODE_COACH = "COACH";
+    private const CW_PT_MODE_TRAIN = "TRAIN";
     private const CW_PT_MODE_TRAIN_LOCAL = "LOCAL_TRAIN";
     private const CW_PT_MODE_TRAIN_HIGH_SPEED = "HST";
     private const CW_PT_MODE_BIKE = "BICYCLE";
@@ -656,6 +657,10 @@ class CitywayProvider implements ProviderInterface
                 // coach mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_COACH);
                 $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
+                // train local mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN);
+                $leg->setTravelMode($travelMode);
             } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_LOCAL) {
                 // train local mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN_LOCAL);
@@ -677,6 +682,7 @@ class CitywayProvider implements ProviderInterface
             if (is_null($travelMode)) {
                 throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
             }
+
 
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -752,10 +758,11 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) {
                     $leg->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
                 }
-                if (isset($data["PTRide"]["PTNetwork"])) {
-                    $ptcompany = new PTCompany(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+
+                if (isset($data["PTRide"]["Operator"])) {
+                    $ptcompany = new PTCompany($data["PTRide"]["Operator"]["id"]); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                     if (isset($data["PTRide"]["PTNetwork"]["Name"])) {
-                        $ptcompany->setName($data["PTRide"]["PTNetwork"]["Name"]);
+                        $ptcompany->setName($data["PTRide"]["Operator"]["Name"]);
                     }
                     $ptline->setPTCompany($ptcompany);
                 }

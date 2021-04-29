@@ -368,25 +368,25 @@ class GeoMatcher
         // we check the common distance
         if ($candidate2->getDirection()) {
             if ($candidate1->getDirection()) {
-                if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                    (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                    (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                     $commonDistance = true;
                 }
             } else {
-                if (($candidate1->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                    (($candidate2->getDirection()->getDistance()*100/$candidate1->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                if (($candidate1->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                    (($candidate2->getDirection()->getDistance()*100/$candidate1->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                     $commonDistance = true;
                 }
             }
         } else {
             if ($candidate1->getDirection()) {
-                if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                    (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                    (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                     $commonDistance = true;
                 }
             } else {
-                if (($candidate1->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                    (($candidate2->getDistance()*100/$candidate1->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                if (($candidate1->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                    (($candidate2->getDistance()*100/$candidate1->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                     $commonDistance = true;
                 }
             }
@@ -459,13 +459,13 @@ class GeoMatcher
         }
         // we check the common distance
         if ($candidate2->getDirection()) {
-            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                 $commonDistance = true;
             }
         } else {
-            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-                (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+            if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+                (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
                 $commonDistance = true;
             }
         }
@@ -525,8 +525,8 @@ class GeoMatcher
             }
         }
         // we check the common distance
-        if (($candidate1->getMassPerson()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
-            (($candidate2->getMassPerson()->getDistance()*100/$candidate1->getMassPerson()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+        if (($candidate1->getMassPerson()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
+            (($candidate2->getMassPerson()->getDistance()*100/$candidate1->getMassPerson()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
             $commonDistance = true;
         }
         

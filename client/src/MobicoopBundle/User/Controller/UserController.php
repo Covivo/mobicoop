@@ -774,6 +774,7 @@ class UserController extends AbstractController
         }
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
+            "emailUser"=>$user->getEmail(),
             "unreadCarpoolMessages"=>$user->getUnreadCarpoolMessageNumber(),
             "unreadDirectMessages"=>$user->getUnreadDirectMessageNumber(),
             "unreadSolidaryMessages"=>$user->getUnreadSolidaryMessageNumber(),

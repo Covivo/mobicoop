@@ -9,8 +9,14 @@
       
       dense
     >
-      <v-col cols="12">
+      <v-col cols="10">
         {{ departureLabel }}
+      </v-col>
+      <v-col
+        cols="2"
+        class="text-right"
+      >
+        {{ journeyDuration }}
       </v-col>
     </v-row>
     <v-row
@@ -56,7 +62,7 @@
 import moment from "moment";
 import MatchingPTResultSummary from "@components/carpool/results/publicTransport/MatchingPTResultSummary";
 import MatchingPTResultDetails from "@components/carpool/results/publicTransport/MatchingPTResultDetails";
-import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResult/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/publicTransport/MatchingPTResult/";
 
 export default {
   components:{
@@ -66,7 +72,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   props:{
@@ -86,10 +93,28 @@ export default {
     },
     arrivalLabel(){
       return this.ptResult.pTArrival.address.displayLabel[0]+" "+this.$t('at')+" "+moment.utc(this.ptResult.pTArrival.date).format("HH:mm");
+    },
+    journeyDuration(){
+      return this.secondsToHms(this.ptResult.duration);
     }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
+  methods:{ 
+    secondsToHms(d) {
+      d = Number(d);
+      let h = Math.floor(d / 3600);
+      let m = Math.floor(d % 3600 / 60);
+      //let s = Math.floor(d % 3600 % 60);
+
+      let hDisplay = h > 0 ? h + (h == 1 ? " h " : " h ") : "";
+      let mDisplay = m > 0 ? m + (m == 1 ? " min " : " mins ") : "";
+      //let sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+      let sDisplay = '';
+
+      return hDisplay + mDisplay + sDisplay; 
+    }  
+  }
 }
 </script>

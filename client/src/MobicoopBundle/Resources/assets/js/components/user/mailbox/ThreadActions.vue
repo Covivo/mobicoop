@@ -38,35 +38,55 @@
         {{ $t("userDelete") }}
       </v-card-text>
 
-      <div v-if="infosComplete.carpooler && !loading">
-        <v-btn
-          v-if="dataBlockerId==null"
-          class="ma-2"
-          rounded
-          text
-          color="error"
-          :loading="loadingBlock"
-          @click="block"
+      <v-row dense>
+        <v-col
+          cols="6"
+          class="text-right align-center"
         >
-          <v-icon left>
-            mdi-account-cancel-outline
-          </v-icon>
-          {{ $t('block') }}
-        </v-btn>
-        <v-btn
-          v-else
-          class="ma-2"
-          rounded
-          color="error"
-          :loading="loadingBlock"
-          @click="block"
+          <div v-if="infosComplete.carpooler && !loading">
+            <v-btn
+              v-if="dataBlockerId==null"
+              class="ma-2"
+              rounded
+              text
+              color="error"
+              :loading="loadingBlock"
+              @click="block"
+            >
+              <v-icon left>
+                mdi-account-cancel-outline
+              </v-icon>
+              {{ $t('block') }}
+            </v-btn>
+            <v-btn
+              v-else
+              class="ma-2"
+              rounded
+              color="error"
+              :loading="loadingBlock"
+              @click="block"
+            >
+              <v-icon left>
+                mdi-account-cancel
+              </v-icon> {{ $t('blocked') }}
+            </v-btn>        
+          </div>
+        </v-col>
+        <v-col
+          cols="6"
+          class="text-left align-center"
         >
-          <v-icon left>
-            mdi-account-cancel
-          </v-icon> {{ $t('blocked') }}
-        </v-btn>        
-      </div>
-
+          <div
+            v-if="idRecipient"
+            class="pa-2"
+          >
+            <Report
+              :user-id="idRecipient"
+              :default-email="emailUser"
+            />
+          </div>
+        </v-col>
+      </v-row>
       <!-- Only visible for carpool -->
       <v-card
         v-if="idAsk && !loading"
@@ -220,11 +240,12 @@
 </template>
 <script>
 
-import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadActions/";
-import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons'
-import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary'
-import VJourney from '@components/carpool/utilities/VJourney'
-import MatchingJourney from '@components/carpool/results/MatchingJourney'
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/ThreadActions/";
+import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
+import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
+import VJourney from '@components/carpool/utilities/VJourney';
+import MatchingJourney from '@components/carpool/results/MatchingJourney';
+import Report from "@components/utilities/Report";
 import axios from "axios";
 import moment from "moment";
 
@@ -232,14 +253,16 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components:{
     ThreadsActionsButtons,
     RegularDaysSummary,
     VJourney,
-    MatchingJourney
+    MatchingJourney,
+    Report
   },
   props: {
     idAsk: {
@@ -248,6 +271,10 @@ export default {
     },
     idUser: {
       type: Number,
+      default: null
+    },
+    emailUser: {
+      type: String,
       default: null
     },
     idRecipient: {

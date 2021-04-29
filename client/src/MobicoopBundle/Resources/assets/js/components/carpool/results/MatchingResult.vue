@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingResult/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingResult/";
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
 import JourneySummary from "@components/carpool/utilities/JourneySummary"
 import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
@@ -103,7 +103,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props: {

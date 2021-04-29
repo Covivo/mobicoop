@@ -1141,7 +1141,6 @@ class PaymentManager
         }
 
         $hook = $this->paymentProvider->handleHook($hook);
-
         switch ($hook->getStatus()) {
             case Hook::STATUS_SUCCESS:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
@@ -1155,6 +1154,7 @@ class PaymentManager
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
                 $paymentProfile->setElectronicallyPayable(false);
+                $paymentProfile = $this->getRefusalReason($paymentProfile);
                 // we dispatch the event
                 $event = new IdentityProofRejectedEvent($paymentProfile);
                 $this->eventDispatcher->dispatch(IdentityProofRejectedEvent::NAME, $event);
@@ -1207,6 +1207,7 @@ class PaymentManager
         $paymentProfile = $paymentProfiles[0];
         $paymentProfile->setValidationId($validationDocument->getIdentifier());
         $paymentProfile->setValidationAskedDate(new \DateTime());
+        $paymentProfile->setValidationStatus(0);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 
@@ -1303,5 +1304,18 @@ class PaymentManager
             fwrite($fpr, $fileContent);
             fclose($fpr);
         }
+    }
+
+    /**
+     * Get the reason why the document is refused
+     *
+     * @param PaymentProfile $paymentProfile
+     * @return PaymentProfile
+     */
+    public function getRefusalReason(PaymentProfile $paymentProfile)
+    {
+        $validationDocument = $this->paymentProvider->getDocument($paymentProfile->getValidationId());
+        $paymentProfile->setRefusalReason($validationDocument->getStatus());
+        return $paymentProfile;
     }
 }

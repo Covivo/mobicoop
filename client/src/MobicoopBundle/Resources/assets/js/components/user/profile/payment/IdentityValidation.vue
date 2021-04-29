@@ -15,9 +15,8 @@
         cols="12"
         class="text-justify pt-4 font-italic"
         :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
-      >
-        {{ $t('text') }}
-      </v-col>
+        v-html="$t('text')"
+      />
     </v-row>
     <v-row v-if="validationAskedDate!=null || validationStatus > 0">
       <v-col cols="12">
@@ -53,7 +52,7 @@
             <v-icon class="error--text">
               mdi-close-circle-outline
             </v-icon>
-            {{ $t('status.refused') }}
+            {{ $t('status.refused.'+refusalReason) }}
           </v-card-text>          
           <!-- Outdated -->
           <v-card-text
@@ -80,16 +79,25 @@
           <v-file-input
             v-model="document"
             :accept="validationDocsAuthorizedExtensions"
-            :label="$t('fileInput')"
+            :label="$t('fileInput.label')"
             :disabled="!formActive"
+            :rules="identityProofRules"
+            :show-size="1000"
+            counter
           />
         </template>
+        <p
+          class="text-justify font-italic ml-6"
+          :class="(!formActive && validationAskedDate==null) ? 'text--disabled' : ''"
+        >
+          {{ $t('fileInput.tooltip') }}
+        </p>
       </v-col>
       <v-col cols="2">
         <v-btn 
           rounded
           color="secondary"
-          :disabled="!formActive || document == null"
+          :disabled="!formActive || document == null || disabledSendFile"
           :loading="loading"
           @click="send"
         >
@@ -101,13 +109,14 @@
 </template>
 <script>
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/user/profile/payment/IdentityValidation/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/payment/IdentityValidation/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   props: {
@@ -130,12 +139,20 @@ export default {
     validationAskedDate: {
       type: Object,
       default: null
+    },
+    refusalReason: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
       document:null,
-      loading:false
+      loading:false,
+      identityProofRules: [
+        value => !value ||  value.size < 6291456 || this.$t("fileInput.error")
+      ],
+      disabledSendFile:false
     }
   },
   computed:{
@@ -153,6 +170,11 @@ export default {
         return true;
       }
       return false;
+    }
+  },
+  watch: {
+    document() {
+      this.disabledSendFile = (this.document) ? ((this.document.size > 6291456) ? true : false) : false;
     }
   },
   mounted(){

@@ -46,6 +46,11 @@ services:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:fixtures:load -n -v --append --group=basic
+  db-fixtures-solidary:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:fixtures:load -n -v --append --group=solidary
   app-geography-territory-link-batch:
     extends:
       service: base

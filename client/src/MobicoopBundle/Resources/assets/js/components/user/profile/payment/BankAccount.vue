@@ -43,13 +43,19 @@
               cols="12"
               md="10"
             >
-              <v-text-field
-                v-model="form.iban"
-                :counter="34"
-                :label="$t('form.label.iban')"
-                :rules="form.rules.ibanRules"
-                required
-              />        
+              <v-tooltip right>
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="form.iban"
+                    :counter="34"
+                    :label="$t('form.label.iban')"
+                    :rules="form.rules.ibanRules"
+                    required
+                    v-on="on"
+                  />  
+                </template>
+                <span>{{ $t('form.tooltip.iban') }}</span>
+              </v-tooltip>      
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -178,6 +184,7 @@
             :payment-profile-status="(bankCoordinates) ? bankCoordinates.status : 0"
             :validation-status="(bankCoordinates) ? bankCoordinates.validationStatus : 0"
             :validation-asked-date="(bankCoordinates) ? bankCoordinates.validationAskedDate : null"
+            :refusal-reason="(bankCoordinates) ? bankCoordinates.refusalReason : null"
             @identityDocumentSent="identityDocumentSent"
           />
         </v-col>
@@ -225,7 +232,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/user/profile/payment/BankAccount/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/payment/BankAccount/";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
@@ -234,7 +241,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {
