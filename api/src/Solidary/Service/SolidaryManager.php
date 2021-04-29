@@ -662,11 +662,11 @@ class SolidaryManager
     }
 
     /**
-     * We create the ad associated to the solidary
-     *
-     * @param Solidary $solidary
-     * @return Ad
-     */
+      * We create the ad associated to the solidary
+      *
+      * @param Solidary $solidary
+      * @return Ad
+      */
     private function createJourneyFromSolidary(Solidary $solidary, int $userId = null): Ad
     {
         $ad = new Ad();
@@ -723,6 +723,7 @@ class SolidaryManager
 
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
+
         // Frequency
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         // We set the date and time of the demand
@@ -736,28 +737,6 @@ class SolidaryManager
             // we set the schedule and the limit date of the regular demand
             $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
             $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
-            
-            $days = $solidary->getDays();
-
-            // Check if there is a outward time for each given day
-            $outwardTimes = $solidary->getOutwardTimes();
-            if (is_null($outwardTimes)) {
-                throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
-            }
-            foreach ($days as $outwardDay => $outwardDayChecked) {
-                if (
-                    !array_key_exists($outwardDay, $outwardTimes) ||
-                    ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
-                ) {
-                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
-                }
-            }
-        
-            if (!is_null($solidary->getReturnDatetime())) {
-                $returnTimes = $solidary->getReturnTimes();
-                if (is_null($returnTimes)) {
-                    throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
-                }
 
             $days = $solidary->getDays();
             // Check if there is a outward time for each given day
@@ -791,6 +770,7 @@ class SolidaryManager
                 }
                 $ad->setOneWay(false);
             }
+
             // We build the schedule
             $buildedSchedules = $this->buildSchedulesForAd($solidary->getDays(), $solidary->getOutwardTimes(), $solidary->getReturnTimes());
 
@@ -828,7 +808,7 @@ class SolidaryManager
         return $this->adManager->createAd($ad);
     }
 
-    
+
     /**
      * Build a schedule for an Ad from the Solidary $days and $outwardTimes/$returnTimes
      *
