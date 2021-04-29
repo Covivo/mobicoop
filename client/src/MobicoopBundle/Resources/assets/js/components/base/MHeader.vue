@@ -63,7 +63,7 @@
         </v-btn>
       </v-toolbar-items>
       <v-btn
-        v-if="user"
+        v-if="user || publishButtonAlwaysActive==true"
         rounded
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
@@ -71,6 +71,16 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
+      <!-- <div @click="snackbar = true">
+        <v-btn
+          v-if="!user && publishButtonAlwaysActive==false"
+          rounded
+          disabled
+          class="hidden-md-and-down"
+        >
+          {{ $t('buttons.shareAnAd.label') }}
+        </v-btn>
+      </div> -->
       <v-btn
         rounded
         color="secondary"
@@ -79,26 +89,13 @@
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
-     
-      <div @click="snackbar = true">
-        <v-btn
-          v-if="!user"
-          rounded
-          disabled
-          class="hidden-md-and-down"
-        >
-          {{ $t('buttons.shareAnAd.label') }}
-        </v-btn>
-      </div>
-      <v-toolbar-items
+ 
+      <MHeaderLanguage
+        :languages="languages"
+        :language="dlocale"
         class="hidden-md-and-down"
-      >
-        <MHeaderLanguage
-          :languages="languages"
-          :language="dlocale"
-          @languageSelected="updateLanguage"
-        />
-      </v-toolbar-items>
+        @languageSelected="updateLanguage"
+      />
       <v-snackbar
         v-if="!user"
         v-model="snackbar"
@@ -248,7 +245,7 @@
               <v-btn
                 text
                 rounded
-                :disabled="!user"
+                :disabled="!user && publishButtonAlwaysActive==false"
                 :href="$t('buttons.shareAnAd.route')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
@@ -263,8 +260,8 @@
 
 <script>
 import { merge, has } from "lodash";
-import {messages_en, messages_fr} from "@translations/components/base/MHeader/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/base/MHeader/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MHeader/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
@@ -274,12 +271,14 @@ import MMessageBtn from "@components/base/MMessageBtn.vue";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   components: {
@@ -313,6 +312,10 @@ export default {
     token: {
       type: String,
       default: ''
+    },
+    publishButtonAlwaysActive:{
+      type: Boolean,
+      default:false
     }
   },
   data () {

@@ -220,7 +220,8 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
             'lastActivityDate'          => $this->getProfileSummary()->getLastActivityDate(),
             'createdDate'               => $this->getProfileSummary()->getCreatedDate(),
             'reviewActive'              => $this->isReviewActive(),
-            'reviews'                   => $this->getReviews()
+            'reviews'                   => $this->getReviews(),
+            'savedCo2'                  => $this->getProfileSummary()->getSavedCo2()
         ];
 
         return $userSerialized;

@@ -204,6 +204,7 @@
           <thread-actions
             :id-ask="currentIdAsk"
             :id-user="idUser"
+            :email-user="emailUser"
             :id-recipient="idRecipient"
             :loading-init="loadingDetails"
             :refresh="refreshActions"
@@ -221,7 +222,7 @@
 </template>
 <script>
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/user/mailbox/Messages/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -234,7 +235,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {
@@ -249,6 +251,10 @@ export default {
   props: {
     idUser:{
       type: Number,
+      default:null
+    },
+    emailUser:{
+      type: String,
       default:null
     },
     idThreadDefault:{

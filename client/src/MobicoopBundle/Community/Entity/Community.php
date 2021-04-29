@@ -182,6 +182,11 @@ class Community implements ResourceInterface, \JsonSerializable
     private $member;
 
     /**
+     * @var boolean|null Number of members of this community
+     */
+    private $nbMembers;
+
+    /**
      * @var array|null Store the ads of the community
      */
     private $ads;
@@ -494,6 +499,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getNbMembers()
+    {
+        return $this->nbMembers;
+    }
+
+    public function setNbMembers(?int $nbMembers): self
+    {
+        $this->nbMembers = $nbMembers;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -514,6 +531,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
             'ads'               => $this->getAds(),
+            'nbMembers'         => $this->getNbMembers()
         ];
     }
 }

@@ -38,6 +38,15 @@
           <h3 class="text-h5 text-justify font-weight-bold">
             {{ community.name }}
           </h3>
+          <v-chip
+            v-if="community.nbMembers"
+            class="ma-2"
+            color="secondary"
+            small
+            label
+          >
+            {{ $t('infos.members', {members:community.nbMembers}) }}
+          </v-chip>
           <p
             class="text-body-1 text-justify"
             v-html="community.description"
@@ -52,7 +61,16 @@
   </v-row>
 </template>
 <script>
+import {messages_en, messages_fr, messages_eu} from "@translations/components/community/Community/";
+
 export default {
+  i18n: {
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr,
+      'eu':messages_eu
+    },
+  },
   props: {
     community: {
       type: Object,

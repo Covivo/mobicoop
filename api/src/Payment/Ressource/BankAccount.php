@@ -83,6 +83,16 @@ class BankAccount
     const VALIDATION_REJECTED = 2;
     const VALIDATION_OUTDATED = 3;
 
+    const OUT_OF_DATE = 1;
+    const UNDERAGE_PERSON = 2;
+    const DOCUMENT_FALSIFIED = 3;
+    const DOCUMENT_MISSING = 4;
+    const DOCUMENT_HAS_EXPIRED = 5;
+    const DOCUMENT_NOT_ACCEPTED = 6;
+    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    const DOCUMENT_UNREADABLE = 8;
+    const DOCUMENT_INCOMPLETE = 9;
+
     const DEFAULT_ID = "999999999999";
 
     /**
@@ -145,6 +155,13 @@ class BankAccount
      * @Groups({"readPayment","writePayment"})
      */
     private $validationStatus;
+
+    /**
+     * @var int The reason why the identity document associated to the bankaccount is not validated
+     *
+     * @Groups({"readPayment","writePayment"})
+     */
+    private $refusalReason;
 
     /**
      * @var \DateTimeInterface Date when the validation has been asked to the payment provider
@@ -271,6 +288,16 @@ class BankAccount
     public function setValidationStatus(?int $validationStatus)
     {
         $this->validationStatus = $validationStatus;
+    }
+
+    public function getRefusalReason(): ?int
+    {
+        return $this->refusalReason;
+    }
+
+    public function setRefusalReason(?int $refusalReason)
+    {
+        $this->refusalReason = $refusalReason;
     }
 
     public function getValidationAskedDate(): ?\DateTimeInterface

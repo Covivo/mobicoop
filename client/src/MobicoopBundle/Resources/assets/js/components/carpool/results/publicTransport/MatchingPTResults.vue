@@ -53,7 +53,7 @@
 <script>
 
 import MatchingPTResult from "@components/carpool/results/publicTransport/MatchingPTResult";
-import {messages_en, messages_fr} from "@translations/components/carpool/results/publicTransport/MatchingPTResults/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/publicTransport/MatchingPTResults/";
 
 export default {
   components: {
@@ -62,7 +62,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   props:{

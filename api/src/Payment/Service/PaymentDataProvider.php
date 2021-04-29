@@ -309,4 +309,11 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
         return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
+
+    
+    public function getDocument(int $validationDocumentId)
+    {
+        $this->checkPaymentConfiguration();
+        return $this->providerInstance->getDocument($validationDocumentId);
+    }
 }

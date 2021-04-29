@@ -122,6 +122,12 @@ db-fixtures-basic:
 	$(info $(builder)------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-basic
 
+db-fixtures-solidary:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Solidary Fixtures...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-fixtures-solidary
+
 app-geography-territory-link-batch:
 	$(info $(builder)-----------------------------------------------------------)
 	$(info $(builder)Make ($(os)): Command app:geography:territory-link-batch...)

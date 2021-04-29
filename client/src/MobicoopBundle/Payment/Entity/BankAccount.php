@@ -45,6 +45,16 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     const VALIDATION_REJECTED = 2;
     const VALIDATION_OUTDATED = 3;
 
+    const OUT_OF_DATE = 1;
+    const UNDERAGE_PERSON = 2;
+    const DOCUMENT_FALSIFIED = 3;
+    const DOCUMENT_MISSING = 4;
+    const DOCUMENT_HAS_EXPIRED = 5;
+    const DOCUMENT_NOT_ACCEPTED = 6;
+    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    const DOCUMENT_UNREADABLE = 8;
+    const DOCUMENT_INCOMPLETE = 9;
+
     /**
      * @var int The id of this bank account
      */
@@ -104,6 +114,12 @@ class BankAccount implements ResourceInterface, \JsonSerializable
      * @var int The validation status of this bank account (0 : pending, 1 : validated, 2 : rejected, 3 : outdated)
      */
     private $validationStatus;
+
+    /**
+     * @var int The reason why the identity document associated to the bankaccount is not validated
+     *
+     */
+    private $refusalReason;
 
     /**
      * @var \DateTimeInterface Date when the validation has been asked to the payment provider
@@ -220,6 +236,16 @@ class BankAccount implements ResourceInterface, \JsonSerializable
         return $this->validationStatus;
     }
 
+    public function getRefusalReason(): ?int
+    {
+        return $this->refusalReason;
+    }
+
+    public function setRefusalReason(?int $refusalReason)
+    {
+        $this->refusalReason = $refusalReason;
+    }
+
     public function getValidationAskedDate(): ?\DateTimeInterface
     {
         return $this->validationAskedDate;
@@ -284,6 +310,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
                 'comment'                       => $this->getComment(),
                 'status'                        => $this->getStatus(),
                 'validationStatus'              => $this->getValidationStatus(),
+                'refusalReason'                 => $this->getRefusalReason(),
                 'validationAskedDate'           => $this->getValidationAskedDate(),
                 'validatedDate'                 => $this->getValidatedDate(),
                 'validationOutdatedDate'        => $this->getValidationOutdatedDate(),

@@ -94,6 +94,11 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
      */
     private $experienced;
 
+    /**
+     * @var int|null The savedCo2 of this user in grams
+     */
+    private $savedCo2;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -238,6 +243,18 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getSavedCo2(): ?int
+    {
+        return $this->savedCo2;
+    }
+
+    public function setSavedCo2(?int $savedCo2): self
+    {
+        $this->savedCo2 = $savedCo2;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         $userSerialized = [
@@ -252,7 +269,8 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
             'answerPct'                 => $this->getAnswerPct(),
             'lastActivityDate'          => $this->getLastActivityDate(),
             'createdDate'               => $this->getCreatedDate(),
-            'experienced'               => $this->isExperienced()
+            'experienced'               => $this->isExperienced(),
+            'savedCo2'                  => $this->getSavedCo2()
         ];
 
         return $userSerialized;

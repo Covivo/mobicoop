@@ -1,0 +1,34 @@
+{
+    "title": "Résultats de covoiturages entre {cityA} et {cityB}",
+    "proposalUrl": "/covoiturage/annonce/{id}/detail",
+    "externalUrl": "/covoiturage/annonce/{id}/externe",
+    "matchingUrl": "/covoiturage/recherche/matching",
+    "carpoolUrl": "/covoiturage/demande",
+    "contactUrl": "/covoiturage/contact",
+    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
+    "externalJourneyUrl": "/covoiturage/rdexJourney",
+    "ptSearchUrl": "/transport-public/recherche",
+    "search": "Recherche en cours...",
+    "search2": "Patience, nous avons beaucoup de covoitureurs potentiels !",
+    "search3": "Encore quelques instants...",
+    "newSearch": "Nouvelle recherche",
+    "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
+    "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
+    "includePassengers": "Voir aussi les annonces passager",
+    "alsoIncludePassengers": "Cette recherche contient également les annonces passager",
+    "snackBar": {
+        "success": "La prise de contact a bien été envoyée",
+        "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
+    },
+    "tabs": {
+        "carpools": "Covoiturages {platform}",
+        "otherCarpools": "Autres covoiturages",
+        "ptresults": "Transport en commun"
+    },
+    "loginOrRegisterTitle": "Connexion ou inscription requise",
+    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
+    "login": "Connexion",
+    "register": "Inscription",
+    "loginUrl": "/utilisateur/connexion/{id}",
+    "registerUrl": "/utilisateur/inscription/{id}"
+}

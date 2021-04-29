@@ -78,5 +78,6 @@
             "confirmUpdate": "Je modifie mon adresse email",
             "cancelUpdate": "Annuler"
         }
-    }
+    },
+    "savedCo2":"Vous avez économisé {savedCo2} t de"
 }

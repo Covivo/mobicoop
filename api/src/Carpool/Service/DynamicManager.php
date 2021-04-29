@@ -1000,6 +1000,11 @@ class DynamicManager
             throw new DynamicException("Dynamic proof not found");
         }
 
+        // Check if the proof has been canceled
+        if ($carpoolProof->getStatus()===CarpoolProof::STATUS_CANCELED) {
+            throw new DynamicException("Dynamic proof already canceled");
+        }
+
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $dynamicProofData->getLongitude(), $dynamicProofData->getLatitude(), $dynamicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['dynamicProofDistance']);
             $dynamicProofData->setId($carpoolProof->getId());

@@ -62,7 +62,9 @@ class CommunityLoadListener
                         }
                     }
                 }
-                
+                // Number of members if this community
+                $community->setNbMembers(count($community->getCommunityUsers()));
+
                 // Url Key of the community
                 $community->setUrlKey($this->communityManager->generateUrlKey($community));
             }

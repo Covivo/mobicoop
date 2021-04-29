@@ -759,6 +759,27 @@ class SolidaryManager
                     throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
                 }
 
+            $days = $solidary->getDays();
+            // Check if there is a outward time for each given day
+            $outwardTimes = $solidary->getOutwardTimes();
+            if (is_null($outwardTimes)) {
+                throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
+            }
+            foreach ($days as $outwardDay => $outwardDayChecked) {
+                if (
+                    !array_key_exists($outwardDay, $outwardTimes) ||
+                    ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
+                ) {
+                    throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
+                }
+            }
+
+            if (!is_null($solidary->getReturnDatetime())) {
+                $returnTimes = $solidary->getReturnTimes();
+                if (is_null($returnTimes)) {
+                    throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
+                }
+
                 // Check if there is a return time for each given day
                 foreach ($days as $returnDay => $returnDayChecked) {
                     if (

@@ -24,10 +24,17 @@
                 cols="4"
                 class="text-right"
               >
-                {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
-                <span v-if="ageDisplay && publicProfile.age">
-                  {{ publicProfile.age }} {{ $t('yearsOld') }}
-                </span>
+                <v-row>
+                  <v-col>
+                    {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
+                    <span v-if="ageDisplay && publicProfile.age">
+                      {{ publicProfile.age }} {{ $t('yearsOld') }}
+                    </span>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>CO<sup>2</sup> {{ $t('savedCo2', {savedCo2:savedCo2}) }}</v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-col>
@@ -133,12 +140,13 @@ import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import Report from "@components/utilities/Report";
-import {messages_en, messages_fr} from "@translations/components/user/profile/PublicProfile/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/PublicProfile/";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {
@@ -223,6 +231,9 @@ export default {
       case 2: return this.$t('params.smoke');
       }
       return this.$t('params.noSmoke');
+    },
+    savedCo2(){
+      return Number.parseFloat(this.publicProfile.savedCo2  / 1000000 ).toPrecision(1);
     }
   },
   watch:{
