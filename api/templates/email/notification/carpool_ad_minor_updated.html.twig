@@ -16,7 +16,7 @@
                     <tr>
                         <td>
                             <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30px">
-                                <b>{{ "updatedCarpool"|trans }}</b></p>
+                                <b>Covoiturage modifié</b></p>
                             <hr>
                         </td>
                     </tr>
@@ -28,11 +28,11 @@
                 <table style="width:100%;">
                     <tr>
                         <td style="width:70%">
-                            <p>{{ "hello"|trans }}<b
+                            <p>Bonjour<b
                                         style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
                             </p>
-                            <p>{{ "yourCarpoolWith"|trans }}<b
-                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasBeenUpdated"|trans }}
+                            <p>Votre covoiturage avec<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a été modifié
                             </p>
                         </td>
                         <td style="width:30%">
@@ -65,45 +65,45 @@
         <tr>
             <td>
                 <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:20px">
-                    {{ "updateFieldsListTitle"|trans}}
+                    Voici le détail des informations modifiées :
                 </p>
                 <table style="width:100%;">
                     <tr>
-                        <td><p>{{ "field"|trans }}</p></td>
-                        <td><p>{{ "old" | trans }}</p></td>
-                        <td><p>{{ "new" | trans }}</p></td>
+                        <td><p>Champ</p></td>
+                        <td><p>Ancien</p></td>
+                        <td><p>Nouveau</p></td>
                     </tr>
                     {% if old.bike != new.bike %}
                         <tr>
-                            <td><p>{{ "bike"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.bike == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p>Vélo</p></td>
+                            <td><p style="color: red">{% if old.bike == true %}Oui{% else %}Non{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.bike == true %}Oui{% else %}Non{% endif %}</p></td>
                         </tr>
                     {% endif %}
                     {% if old.backSeats != new.backSeats %}
                         <tr>
-                            <td><p>{{ "backSeats"|trans|raw }}</p></td>
-                            <td><p style="color: red">{% if old.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.backSeats == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p>2 à l'arrière</p></td>
+                            <td><p style="color: red">{% if old.backSeats == true %}Oui{% else %}Non{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.backSeats == true %}Oui{% else %}Non{% endif %}</p></td>
                         </tr>
                     {% endif %}
                     {% if old.luggage != new.luggage %}
                         <tr>
-                            <td><p>{{ "luggage"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.luggage == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p>Bagages volumineux</p></td>
+                            <td><p style="color: red">{% if old.luggage == true %}Oui{% else %}Non{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.luggage == true %}Oui{% else %}Non{% endif %}</p></td>
                         </tr>
                     {% endif %}
                     {% if old.seatsDriver != new.seatsDriver %}
                         <tr>
-                            <td><p>{{ "seatsDriver"|trans }}</p></td>
-                            <td><p style="color: red">{% if old.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
-                            <td><p style="color: green">{% if new.seatsDriver == true %}{{ "yes" | trans }}{% else %}{{ "no" | trans }}{% endif %}</p></td>
+                            <td><p>Sièges disponibles</p></td>
+                            <td><p style="color: red">{% if old.seatsDriver == true %}Oui{% else %}Non{% endif %}</p></td>
+                            <td><p style="color: green">{% if new.seatsDriver == true %}Oui{% else %}Non{% endif %}</p></td>
                         </tr>
                     {% endif %}
                     {% if old.comment != new.comment %}
                         <tr>
-                            <td><p>{{ "comment"|trans }}</p></td>
+                            <td><p>Commentaire</p></td>
                             <td><p style="color: red">{{ old.comment }}</p></td>
                             <td><p style="color: green">{{ new.comment }}</p></td>
                         </tr>

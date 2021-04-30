@@ -232,7 +232,7 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/user/profile/payment/BankAccount/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/payment/BankAccount/";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
@@ -241,7 +241,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {

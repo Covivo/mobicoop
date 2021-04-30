@@ -222,7 +222,7 @@
 </template>
 <script>
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/user/mailbox/Messages/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -235,7 +235,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {
@@ -375,9 +376,15 @@ export default {
         idRecipient: data.idRecipient,
         idAsk: this.currentIdAsk
       };
+
+      if(this.newThreadCarpool && this.newThreadCarpool.matchingId){
+        messageToSend.matchingId = this.newThreadCarpool.matchingId;
+        messageToSend.proposalId = this.newThreadCarpool.proposalId;
+        messageToSend.adIdToRespond = this.newThreadCarpool.adId;
+      }
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
-        //console.error(res.data);
         this.idMessage = (res.data.message !== null) ? res.data.message.id : res.data.id;
+        this.currentIdAsk = (res.data.idAsk !== null) ? res.data.idAsk : this.currentIdAsk;
         this.loadingTypeText = false;
         // Update the threads list
         (this.currentIdAsk) ? this.refreshThreadsCarpool = true : this.refreshThreadsDirect = true;

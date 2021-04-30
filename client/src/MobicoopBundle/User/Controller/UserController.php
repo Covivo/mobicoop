@@ -767,7 +767,28 @@ class UserController extends AbstractController
                     "idRecipient" => (int)$request->request->get('idRecipient'),
                     "shortFamilyName" => $request->request->get('shortFamilyName'),
                     "givenName" => $request->request->get('givenName'),
-                    "avatar" => $request->request->get('avatar')
+                    "avatar" => $request->request->get('avatar'),
+                    "origin" => $request->request->get('origin'),
+                    "destination" => $request->request->get('destination'),
+                    "askHistoryId" => $request->request->get('askHistoryId'),
+                    "frequency" => (int)$request->request->get('frequency'),
+                    "fromDate" => $request->request->get('fromDate'),
+                    "fromTime" => $request->request->get('fromTime'),
+                    "monCheck" => (bool)$request->request->get('monCheck'),
+                    "tueCheck" => (bool)$request->request->get('tueCheck'),
+                    "wedCheck" => (bool)$request->request->get('wedCheck'),
+                    "thuCheck" => (bool)$request->request->get('thuCheck'),
+                    "friCheck" => (bool)$request->request->get('friCheck'),
+                    "satCheck" => (bool)$request->request->get('satCheck'),
+                    "sunCheck" => (bool)$request->request->get('sunCheck'),
+                    "adId" => (int)$request->request->get('adIdResult'),
+                    "matchingId" => (int)$request->request->get('matchingId'),
+                    "proposalId" => (int)$request->request->get('proposalId'),
+                    "date" => $request->request->get('date'),
+                    "time" => $request->request->get('time'),
+                    "driver" => (bool)$request->request->get('driver'),
+                    "passenger" => (bool)$request->request->get('passenger'),
+                    "regular" => (bool)$request->request->get('regular')
                 ];
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }
@@ -875,6 +896,9 @@ class UserController extends AbstractController
             // -99 : It's a false id for no carpool message
             $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
+            $idAdToRespond = (isset($data['adIdToRespond']) && !is_null($data['adIdToRespond'])) ? $data['adIdToRespond'] : null;
+            $idMatching = (isset($data['matchingId']) && !is_null($data['matchingId'])) ? $data['matchingId'] : null;
+            $idProposal = (isset($data['proposalId']) && !is_null($data['proposalId'])) ? $data['proposalId'] : null;
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
 
@@ -889,6 +913,13 @@ class UserController extends AbstractController
             if ($idAsk!==null) {
                 $messageToSend->setIdAsk($idAsk);
             }
+
+            if ($idAdToRespond !==null && $idMatching!==null && $idProposal !== null) {
+                $messageToSend->setIdAdToRespond($idAdToRespond);
+                $messageToSend->setIdProposal($idProposal);
+                $messageToSend->setIdMatching($idMatching);
+            }
+            
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));

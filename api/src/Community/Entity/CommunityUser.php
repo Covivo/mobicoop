@@ -159,7 +159,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
+     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */

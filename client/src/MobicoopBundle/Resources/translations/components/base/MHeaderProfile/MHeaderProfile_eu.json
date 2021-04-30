@@ -1,0 +1,22 @@
+{
+    "myAds": {
+        "label": "Mes annonces",
+        "route": "/utilisateur/profil/modifier/mes-annonces"
+    },
+    "myAcceptedCarpools": {
+        "label": "Covoiturages acceptés",
+        "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
+    },
+    "myProfile": {
+        "label": "Profil",
+        "route": "/utilisateur/profil/modifier/mon-profil"
+    },
+    "reviews": {
+        "label": "Avis",
+        "route": "/utilisateur/profil/modifier/avis"
+    },
+    "logOut": {
+        "label": "Déconnexion",
+        "route": "/user/logout"
+    }
+}

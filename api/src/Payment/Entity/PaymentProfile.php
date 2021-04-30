@@ -361,7 +361,7 @@ class PaymentProfile
         return $this;
     }
 
-    public function getRefusalReason(): int
+    public function getRefusalReason(): ?int
     {
         return $this->refusalReason;
     }
