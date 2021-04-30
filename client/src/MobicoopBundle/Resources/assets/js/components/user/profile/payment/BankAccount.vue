@@ -429,9 +429,11 @@ export default {
     },
     addressSelected(address){
       this.form.formAddress = address;
-      this.form.addressDetail.way = address.streetAddress;
-      this.form.addressDetail.cp = address.postalCode;
-      this.form.addressDetail.city = address.addressLocality;
+      if(address){
+        this.form.addressDetail.way = address.streetAddress;
+        this.form.addressDetail.cp = address.postalCode;
+        this.form.addressDetail.city = address.addressLocality;
+      }
     },
     identityDocumentSent(data){
       if(!data.id){

@@ -3,7 +3,7 @@
     "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
     "titleAddress": "2. Adresse complète",
     "textAddress": "Merci de rechercher votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
-    "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la véracité des informations.",
+    "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la conformité des informations.",
     "titleAlreadyRegistered": "Mes coordonnées bancaires",
     "form": {
         "label": {
