@@ -49,6 +49,13 @@ class EventLoadListener
         if ($event instanceof Event) {
             $event->setUrlKey($this->eventManager->generateUrlKey($event));
 
+            // Check if http or https is given in url
+            // If not, we use https by default
+            $parsedUrl = parse_url($event->getUrl());
+            if (!isset($parsedUrl['scheme'])) {
+                $event->setUrl("https://".$event->getUrl());
+            }
+
             // default avatar
             $event->setDefaultAvatar($this->avatarDefault);
         }
