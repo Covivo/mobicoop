@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Article\Entity\Paragraph;
 use App\Article\Entity\Article as ArticleEntity;
+use App\Article\Entity\Iframe;
 use App\Article\Entity\RssElement;
 use App\Article\Repository\SectionRepository;
 use App\Article\Repository\ParagraphRepository;
@@ -190,6 +191,11 @@ class ArticleManager
         $article->setDescription($rssElement->getDescription());
         $article->setImage($rssElement->getImage());
         $article->setPubDate($rssElement->getPubDate());
+        
+        if (!is_null($rssElement->getIframe())) {
+            $rssIframe = $rssElement->getIframe();
+            $article->setIFrame('<iframe src="'.$rssIframe->getSrc().'" allowfullscreen title="'.$rssIframe->getTitle().'" width="'.$rssIframe->getWidth().'" height="'.$rssIframe->getHeight().'" allow="'.$rssIframe->getAllow().'" frameborder="0"></iframe>');
+        }
 
         return $article;
     }
@@ -247,6 +253,19 @@ class ArticleManager
                 $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
                 $rssElement->setImage($image);
             }
+
+            // If there is an iframe (usually a video) we parse it. We only take the first one.
+            if ($dom->getElementsByTagName('iframe')->length > 0) {
+                $iframe = new Iframe();
+                $iframe->setSrc($dom->getElementsByTagName('iframe')->item(0)->getAttribute('src'));
+                $iframe->setTitle($dom->getElementsByTagName('iframe')->item(0)->getAttribute('title'));
+                $iframe->setWidth($dom->getElementsByTagName('iframe')->item(0)->getAttribute('width'));
+                $iframe->setHeight($dom->getElementsByTagName('iframe')->item(0)->getAttribute('height'));
+                $iframe->setAllow($dom->getElementsByTagName('iframe')->item(0)->getAttribute('allow'));
+                
+                $rssElement->setIframe($iframe);
+            }
+
             $counter++;
             if ($counter == $articleFeedNumber) {
                 break;
@@ -281,10 +300,10 @@ class ArticleManager
             $rssItems = $this->getRssFeeds();
 
             foreach ($rssItems as $rssItem) {
-                $article[] = $this->makeArticleFromRss($rssItem);
+                $articles[] = $this->makeArticleFromRss($rssItem);
             }
         }
 
-        return $article;
+        return $articles;
     }
 }
