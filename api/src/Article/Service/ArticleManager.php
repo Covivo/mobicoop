@@ -70,14 +70,25 @@ class ArticleManager
 
     private $articleFeed;
     private $articleFeedNumber;
+    private $articleIframeMaxWidth;
+    private $articleIframeMaxHeight;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, SectionRepository $sectionRepository, ParagraphRepository $paragraphRepository, ArticleRepository $articleRepository, $articleFeed, $articleFeedNumber)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        SectionRepository $sectionRepository,
+        ParagraphRepository $paragraphRepository,
+        ArticleRepository $articleRepository,
+        string $articleFeed,
+        int $articleFeedNumber,
+        int $articleIframeMaxWidth,
+        int $articleIframeMaxHeight
+    ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->sectionRepository = $sectionRepository;
@@ -85,6 +96,8 @@ class ArticleManager
         $this->articleRepository = $articleRepository;
         $this->articleFeed = $articleFeed;
         $this->articleFeedNumber = $articleFeedNumber;
+        $this->articleIframeMaxWidth = $articleIframeMaxWidth;
+        $this->articleIframeMaxHeight = $articleIframeMaxHeight;
     }
 
     /**
@@ -259,8 +272,19 @@ class ArticleManager
                 $iframe = new Iframe();
                 $iframe->setSrc($dom->getElementsByTagName('iframe')->item(0)->getAttribute('src'));
                 $iframe->setTitle($dom->getElementsByTagName('iframe')->item(0)->getAttribute('title'));
-                $iframe->setWidth($dom->getElementsByTagName('iframe')->item(0)->getAttribute('width'));
-                $iframe->setHeight($dom->getElementsByTagName('iframe')->item(0)->getAttribute('height'));
+                
+                if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('width') > $this->articleIframeMaxWidth) {
+                    $iframe->setWidth($this->articleIframeMaxWidth);
+                } else {
+                    $iframe->setWidth($dom->getElementsByTagName('iframe')->item(0)->getAttribute('width'));
+                }
+                
+                if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('height') > $this->articleIframeMaxHeight) {
+                    $iframe->setHeight($this->articleIframeMaxHeight);
+                } else {
+                    $iframe->setHeight($dom->getElementsByTagName('iframe')->item(0)->getAttribute('height'));
+                }
+
                 $iframe->setAllow($dom->getElementsByTagName('iframe')->item(0)->getAttribute('allow'));
                 
                 $rssElement->setIframe($iframe);
