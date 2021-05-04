@@ -41,10 +41,14 @@ use App\RelayPoint\Entity\RelayPointType;
  *          "force_eager"=false,
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('image_list',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('image_read',object)"
+ *          }
  *      }
  * )
  */

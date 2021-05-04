@@ -28,6 +28,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Image\Entity\Image;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Image\Entity\Icon;
 
 class ImageVoter extends Voter
 {
@@ -67,7 +68,7 @@ class ImageVoter extends Voter
             self::IMAGE_DELETE,
             self::IMAGE_LIST,
             self::IMAGE_REGENVERSIONS,
-            ]) && !($subject instanceof Paginator) && !$subject instanceof Image) {
+            ]) && !($subject instanceof Paginator) && !$subject instanceof Image && !$subject instanceof Icon) {
             return false;
         }
         return true;
@@ -79,7 +80,7 @@ class ImageVoter extends Voter
             case self::IMAGE_CREATE:
                 return $this->canCreateImage();
             case self::IMAGE_READ:
-                return $this->canReadImage($subject);
+                return ($subject instanceof Icon) ? $this->canReadIcon($subject) : $this->canReadImage($subject);
             case self::IMAGE_UPDATE:
                 return $this->canUpdateImage($subject);
             case self::IMAGE_DELETE:
@@ -101,6 +102,11 @@ class ImageVoter extends Voter
     private function canReadImage(Image $image)
     {
         return $this->authManager->isAuthorized(self::IMAGE_READ, ['image'=>$image]);
+    }
+
+    private function canReadIcon(Icon $icon)
+    {
+        return $this->authManager->isAuthorized(self::IMAGE_READ, ['icon'=>$icon]);
     }
 
     private function canUpdateImage(Image $image)
