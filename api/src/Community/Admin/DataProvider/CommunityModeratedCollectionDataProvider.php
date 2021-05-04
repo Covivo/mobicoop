@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,18 +25,18 @@ namespace App\Community\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Community\Entity\CommunityUser;
+use App\Community\Entity\Community;
 use App\Community\Admin\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Collection member data provider in admin context.
+ * Collection data provider for moderated communities in admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */
-final class CommunityUserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityModeratedCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     private $communityManager;
@@ -51,11 +51,11 @@ final class CommunityUserCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CommunityUser::class === $resourceClass && $operationName === "ADMIN_get";
+        return Community::class === $resourceClass && $operationName === "ADMIN_moderated";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        return $this->communityManager->getMembers($this->request->get("id"), $context, $operationName);
+        return $this->communityManager->getModerated($this->security->getUser());
     }
 }

@@ -225,4 +225,21 @@ class CommunityRepository
         $communities = $query->getQuery()->getResult();
         return count($communities)>0;
     }
+
+    /**
+    * Get the communities where the user has one of the given statuses
+    *
+    * @param User $user         The user
+    * @param array $statuses    The statuses
+    * @return array|null    The communities found
+    */
+    public function getCommunitiesForUserAndStatuses(User $user, array $statuses): ?array
+    {
+        return $this->repository->createQueryBuilder('c')
+        ->join('c.communityUsers', 'cu')
+        ->where('cu.user = :user and cu.status IN (:statuses)')
+        ->setParameter('user', $user)
+        ->setParameter('statuses', $statuses)
+        ->getQuery()->getResult();
+    }
 }

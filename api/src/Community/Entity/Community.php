@@ -142,7 +142,13 @@ use App\Match\Entity\Mass;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_community_create',object)"
+ *              "security"="is_granted('admin_community_create',object)",
+ *          },
+ *          "ADMIN_moderated"={
+ *              "method"="GET",
+ *              "path"="/admin/communities/moderated",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security_post_denormalize"="is_granted('admin_community_list',object)"
  *          },
  *      },
  *      itemOperations={

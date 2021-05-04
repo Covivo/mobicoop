@@ -268,4 +268,15 @@ class CommunityManager
             }
         }
     }
+
+    /**
+     * Get the moderated communities for a given user
+     *
+     * @param User $user    The user
+     * @return arry|null    The communities found
+     */
+    public function getModerated(User $user)
+    {
+        return $this->communityRepository->getCommunitiesForUserAndStatuses($user, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]);
+    }
 }
