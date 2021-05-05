@@ -24,34 +24,35 @@
 namespace App\Article\Entity;
 
 /**
-* An RSS element
+* A RSS element
 * @author Céline Jacquet <celine.jacquet@mobicoop.org>
 */
 class RssElement
 {
     /**
      * @var int The id of the article
-     *
      */
     private $id;
 
     /**
      * @var string The title of the article
-     *
      */
     private $title;
 
     /**
      * @var string The description of the article
-     *
      */
     private $description;
 
     /**
      * @var string The image of the article
-     *
      */
     private $image;
+
+    /**
+     * @var Iframe Iframes of the article
+     */
+    private $iframe;
 
     /**
      * @var string The date of the post
@@ -102,6 +103,18 @@ class RssElement
     public function setImage(?string $image): self
     {
         $this->image = $image;
+        
+        return $this;
+    }
+
+    public function getIframe(): ?Iframe
+    {
+        return $this->iframe;
+    }
+
+    public function setIframe(?Iframe $iframe): self
+    {
+        $this->iframe = $iframe;
         
         return $this;
     }

@@ -121,7 +121,8 @@ services:
         arguments:
             $articleFeed: '%env(string:ARTICLE_FEED)%'
             $articleFeedNumber: '%env(int:ARTICLE_FEED_NUMBER)%'
-
+            $articleIframeMaxWidth: '%env(int:ARTICLE_IFRAME_MAX_WIDTH)%'
+            $articleIframeMaxHeight: '%env(int:ARTICLE_IFRAME_MAX_HEIGHT)%'
             
     # Auth
     App\Auth\Controller\:
