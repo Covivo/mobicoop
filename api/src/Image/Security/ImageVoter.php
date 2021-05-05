@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,203 +23,109 @@
 
 namespace App\Image\Security;
 
-use App\Community\Service\CommunityManager;
-use App\Event\Service\EventManager;
-use App\Auth\Service\PermissionManager;
+use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Image\Entity\Image;
-use App\MassCommunication\Service\CampaignManager;
-use App\RelayPoint\Service\RelayPointManager;
-use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Image\Entity\Icon;
 
 class ImageVoter extends Voter
 {
-    const POST = 'image_post';
-    const READ = 'image_read';
-    const UPDATE = 'image_update';
-    const DELETE = 'image_delete';
-    const ADMIN_MANAGE_EVENT = 'image_admin_manage_event';
-    const ADMIN_MANAGE_COMMUNITY = 'image_admin_manage_community';
-    const ADMIN_MANAGE_USER = 'image_admin_manage_user';
+    const IMAGE_CREATE = 'image_create';
+    const IMAGE_READ = 'image_read';
+    const IMAGE_UPDATE = 'image_update';
+    const IMAGE_DELETE = 'image_delete';
+    const IMAGE_LIST = 'image_list';
+    const IMAGE_REGENVERSIONS = 'images_regenversions';
 
-    private $permissionManager;
-    private $userManager;
-    private $communityManager;
-    private $eventManager;
-    private $relayPointManager;
-    private $campaignManager;
-    private $request;
+    private $authManager;
 
-    public function __construct(
-        Security $security,
-        PermissionManager $permissionManager,
-        RequestStack $requestStack,
-        EventManager $eventManager,
-        CommunityManager $communityManager,
-        UserManager $userManager,
-        RelayPointManager $relayPointManager,
-        CampaignManager $campaignManager
-    ) {
-        $this->security = $security;
-        $this->permissionManager = $permissionManager;
-        $this->userManager = $userManager;
-        $this->communityManager = $communityManager;
-        $this->eventManager = $eventManager;
-        $this->relayPointManager = $relayPointManager;
-        $this->campaignManager = $campaignManager;
-        $this->request = $requestStack->getCurrentRequest();
+    public function __construct(AuthManager $authManager)
+    {
+        $this->authManager = $authManager;
     }
 
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::POST,
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
-            self::ADMIN_MANAGE_EVENT,
-            self::ADMIN_MANAGE_COMMUNITY,
-            self::ADMIN_MANAGE_USER,
+            self::IMAGE_CREATE,
+            self::IMAGE_READ,
+            self::IMAGE_UPDATE,
+            self::IMAGE_DELETE,
+            self::IMAGE_LIST,
+            self::IMAGE_REGENVERSIONS,
             ])) {
             return false;
         }
 
-        // only vote on Image objects inside this voter
-        // only for items actions
-        if (in_array($attribute, [
-            self::READ,
-            self::UPDATE,
-            self::DELETE,
-            ]) && !$subject instanceof Image) {
+        // only vote on User objects inside this voter
+        if (!in_array($attribute, [
+            self::IMAGE_CREATE,
+            self::IMAGE_READ,
+            self::IMAGE_UPDATE,
+            self::IMAGE_DELETE,
+            self::IMAGE_LIST,
+            self::IMAGE_REGENVERSIONS,
+            ]) && !($subject instanceof Paginator) && !$subject instanceof Image && !$subject instanceof Icon) {
             return false;
         }
-
         return true;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        // TO DO : Code the real Voter
-        return true;
-
-        $requester = $token->getUser();
-        
         switch ($attribute) {
-            case self::READ:
-                return $this->canRead($requester, $subject);
-            case self::POST:
-                return $this->canPost($requester, $this->request);
-            case self::UPDATE:
-                return $this->canUpdate($requester, $subject);
-            case self::DELETE:
-                return $this->canDelete($requester, $subject);
-            case self::ADMIN_MANAGE_EVENT:
-                return $this->canAdminManageEvent($requester, $subject);
-            case self::ADMIN_MANAGE_COMMUNITY:
-                return $this->canAdminManageCommunity($requester, $subject);
-            case self::ADMIN_MANAGE_USER:
-                return $this->canAdminManageUser($requester, $subject);
-        
+            case self::IMAGE_CREATE:
+                return $this->canCreateImage();
+            case self::IMAGE_READ:
+                return ($subject instanceof Icon) ? $this->canReadIcon($subject) : $this->canReadImage($subject);
+            case self::IMAGE_UPDATE:
+                return $this->canUpdateImage($subject);
+            case self::IMAGE_DELETE:
+                return $this->canDeleteImage($subject);
+            case self::IMAGE_LIST:
+                return $this->canListImages();
+            case self::IMAGE_REGENVERSIONS:
+                return $this->canRegenVersions();
         }
 
         throw new \LogicException('This code should not be reached!');
     }
     
-    private function canRead(UserInterface $requester, Image $subject)
+    private function canCreateImage()
     {
-        if (($subject->getEventId() && $subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_read', $requester);
-        } elseif (($subject->getCommunityId() && $subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_read', $requester);
-        } elseif (($subject->getUserId() && $subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_read_self', $requester);
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::IMAGE_CREATE);
     }
 
-    private function canPost(UserInterface $requester, Request $request)
+    private function canReadImage(Image $image)
     {
-        if ($request->get('userId')) {
-            if (!$this->userManager->getUser($request->get('userId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        if ($request->get('communityId')) {
-            if (!$this->communityManager->getCommunity($request->get('communityId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        if ($request->get('eventId')) {
-            if (!$this->eventManager->getEvent($request->get('eventId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        if ($request->get('relayPointId')) {
-            if (!$this->relayPointManager->getRelayPoint($request->get('relayPointId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        if ($request->get('relayPointTypeId')) {
-            if (!$this->userManager->getUser($request->get('relayPointTypeId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        if ($request->get('campaignId')) {
-            if (!$this->userManager->getUser($request->get('campaignId'))) {
-                return false;
-            }
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::IMAGE_READ, ['image'=>$image]);
     }
 
-    private function canUpdate(UserInterface $requester, Image $subject)
+    private function canReadIcon(Icon $icon)
     {
-        if (($subject->getEventId() && $subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_update_self', $requester);
-        } elseif (($subject->getCommunityId() && $subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_update_self', $requester);
-        } elseif (($subject->getUserId() && $subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_update_self', $requester);
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::IMAGE_READ, ['icon'=>$icon]);
     }
 
-    private function canDelete(UserInterface $requester, Image $subject)
+    private function canUpdateImage(Image $image)
     {
-        if (($subject->getEventId() && $subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
-            return $this->permissionManager->checkPermission('event_delete_self', $requester);
-        } elseif (($subject->getCommunityId() && $subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
-            return $this->permissionManager->checkPermission('community_delete_self', $requester);
-        } elseif (($subject->getUserId() && $subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
-            return $this->permissionManager->checkPermission('user_delete_self', $requester);
-        }
-        return false;
+        return $this->authManager->isAuthorized(self::IMAGE_UPDATE, ['image'=>$image]);
+    }
+    
+    private function canDeleteImage(Image $image)
+    {
+        return $this->authManager->isAuthorized(self::IMAGE_DELETE, ['image'=>$image]);
+    }
+    
+    private function canListImages()
+    {
+        return $this->authManager->isAuthorized(self::IMAGE_LIST);
     }
 
-    private function canAdminManageEvent($requester)
+    private function canRegenVersions()
     {
-        return $this->permissionManager->checkPermission('event_manage', $requester);
-    }
-
-    private function canAdminManageCommunity($requester)
-    {
-        return $this->permissionManager->checkPermission('community_manage', $requester);
-    }
-
-    private function canAdminManageUser($requester)
-    {
-        return $this->permissionManager->checkPermission('user_manage', $requester);
+        return $this->authManager->isAuthorized(self::IMAGE_REGENVERSIONS);
     }
 }

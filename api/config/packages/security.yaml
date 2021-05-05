@@ -141,7 +141,7 @@ security:
 
         # firewall for dev (profiler)
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|js)/
             security: false
 
         # firewall for any other route
