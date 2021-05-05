@@ -3,20 +3,20 @@
     <v-row>
       <v-col cols="3">
         <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_250']"
-          :aspect-ratio="1"
-          class="grey lighten-2"
-          max-width="200"
-          max-height="150"
-        />
-        <v-img
-          v-else
+          v-if="item.externalImageUrl"
           :src="item.externalImageUrl ? item.externalImageUrl : '/images/avatarsDefault/avatar.svg'"
           :aspect-ratio="1"
           contain
           width="225"
           height="200"
+        />
+        <v-img
+          v-else
+          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item['defaultAvatar']"
+          :aspect-ratio="1"
+          contain
+          max-width="250"
+          max-height="150"
         />
       </v-col>
       <v-col
