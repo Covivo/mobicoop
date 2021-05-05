@@ -7,17 +7,7 @@
       align="center"
     >
       <v-img
-        v-if="community.images[0]"
-        :src="community['images'][0]['versions']['square_250']"
-        width="225"
-        height="200"
-        :aspect-ratio="1"
-        :alt="community.name"
-        contain
-      />
-      <v-img
-        v-else
-        :src="urlAltAvatar"
+        :src="(community.images[0] && community['images'][0]['versions']['square_250']) ? community['images'][0]['versions']['square_250'] : urlAltAvatar"
         width="225"
         height="200"
         :aspect-ratio="1"
@@ -61,13 +51,14 @@
   </v-row>
 </template>
 <script>
-import {messages_en, messages_fr} from "@translations/components/community/Community/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/community/Community/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props: {

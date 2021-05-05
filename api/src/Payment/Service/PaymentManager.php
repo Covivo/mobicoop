@@ -1207,6 +1207,7 @@ class PaymentManager
         $paymentProfile = $paymentProfiles[0];
         $paymentProfile->setValidationId($validationDocument->getIdentifier());
         $paymentProfile->setValidationAskedDate(new \DateTime());
+        $paymentProfile->setValidationStatus(0);
         $this->entityManager->persist($paymentProfile);
         $this->entityManager->flush();
 

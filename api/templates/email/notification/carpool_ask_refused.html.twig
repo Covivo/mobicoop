@@ -16,7 +16,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "refusedCarpool"|trans }}</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE COVOITURAGE N'EST PAS VALIDÉ.</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -28,11 +28,11 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
                         {% if ad.results[0].frequency == 1 %}
-                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b>{{ "refusedOccasionalCarpool"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> n'a pas validé le covoiturage pour le trajet du  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
                         {% else %}
-                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b>{{ "refusedRegularCarpool"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> {{ "to"|trans }} <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
+                            <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> n'a pas validé le covoiturage pour le trajet régulier du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
                     </td>
                 </tr>
@@ -59,7 +59,7 @@
             <table  style="width:100%;">
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b>{{"noPanic"|trans}}</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b>Pas de panique, vous pouvez rechercher un nouveau trajet ou publier une annonce.</b></p>
                     </td>
                 </tr>
                  {# <tr style="text-align:left">
@@ -71,14 +71,14 @@
                 </tr>
                 <tr style="text-align:left">
                     <td>
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}{{'urlPublish'|trans}}">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce">
                             <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_PUBLISH_LOGO')}}" alt="publish"/>
                         </a>
                     </td>   
                 </tr> #}
                 <tr style="text-align:left">
                     <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>

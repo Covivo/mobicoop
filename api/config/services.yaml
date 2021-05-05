@@ -86,13 +86,16 @@ services:
     # Community Load Listener
     mobicoop.community.community_load_listener:
         class: App\Community\EventListener\CommunityLoadListener
-        arguments: ['@request_stack']
+        arguments:
+            $avatarDefault: '%env(string:AVATAR_DEFAULT)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
     # Event Load Listener
     mobicoop.event.event_load_listener:
         class: App\Event\EventListener\EventLoadListener
+        arguments:
+            $avatarDefault: '%env(string:AVATAR_DEFAULT)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
@@ -118,7 +121,8 @@ services:
         arguments:
             $articleFeed: '%env(string:ARTICLE_FEED)%'
             $articleFeedNumber: '%env(int:ARTICLE_FEED_NUMBER)%'
-
+            $articleIframeMaxWidth: '%env(int:ARTICLE_IFRAME_MAX_WIDTH)%'
+            $articleIframeMaxHeight: '%env(int:ARTICLE_IFRAME_MAX_HEIGHT)%'
             
     # Auth
     App\Auth\Controller\:

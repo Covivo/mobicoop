@@ -239,7 +239,7 @@
 <script>
 
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/carpool/results/Matching/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
@@ -261,7 +261,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props: {
@@ -650,26 +651,50 @@ export default {
         });
     },
     contact(params) {
-      axios.post(this.$t("contactUrl"), params,
-        {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
-        .then((response) => {
-          if(response.status == 200){
-            window.location = this.$t("mailboxUrl", {'askId':response.data.askId});
-          }
-          else{
-            console.log(response);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.carpoolDialog = false;
-        })
+      // Creating a "virtual" new carpool thread
+      const form = document.createElement("form");
+      form.method = "post";
+      form.action = this.$t("contactUrl");
+
+      const paramsForm = {
+        carpool: 1,
+        idRecipient: params.idRecipient,
+        shortFamilyName: params.shortFamilyName,
+        givenName: params.givenName,
+        avatar: params.avatar,
+        origin: params.carpoolInfos.origin,
+        destination: params.carpoolInfos.destination,
+        askHistoryId: params.carpoolInfos.askHistoryId,
+        frequency: params.carpoolInfos.criteria.frequency,
+        fromDate: params.carpoolInfos.criteria.fromDate,
+        fromTime: params.carpoolInfos.criteria.fromTime,
+        monCheck: params.carpoolInfos.criteria.monCheck,
+        tueCheck: params.carpoolInfos.criteria.tueCheck,
+        wedCheck: params.carpoolInfos.criteria.wedCheck,
+        thuCheck: params.carpoolInfos.criteria.thuCheck,
+        friCheck: params.carpoolInfos.criteria.friCheck,
+        satCheck: params.carpoolInfos.criteria.satCheck,
+        sunCheck: params.carpoolInfos.criteria.sunCheck,
+        adIdResult: params.adIdResult,
+        matchingId: params.matchingId,
+        proposalId: this.lProposalId,
+        date: params.date,
+        time: params.time,
+        driver: params.driver,
+        passenger: params.passenger,
+        regular: params.regular
+      };
+      for (const key in paramsForm) {
+        if (paramsForm.hasOwnProperty(key)) {
+          const hiddenField = document.createElement("input");
+          hiddenField.type = "hidden";
+          hiddenField.name = key;
+          hiddenField.value = paramsForm[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();      
     },
     launchCarpool(params) {
       axios.post(this.$t("carpoolUrl"), params,

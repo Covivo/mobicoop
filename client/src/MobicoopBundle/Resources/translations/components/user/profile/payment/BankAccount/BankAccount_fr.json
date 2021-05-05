@@ -2,13 +2,19 @@
     "titleCoordinates": "1. Coordonnées bancaires",
     "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
     "titleAddress": "2. Adresse complète",
-    "textAddress": "Merci de saisir l'adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
+    "textAddress": "Merci de rechercher votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
+    "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la conformité des informations.",
     "titleAlreadyRegistered": "Mes coordonnées bancaires",
     "form": {
         "label": {
             "iban": "IBAN",
             "bic": "BIC",
-            "address": "Votre adresse complète"
+            "address": {
+                "check":"Recherchez votre adresse complète",
+                "way":"Rue et numéro",
+                "cp":"Code postal",
+                "city":"Ville"
+            }
         },
         "tooltip": {
             "iban": "Renseignez votre IBAN sans espace"
@@ -17,7 +23,10 @@
             "iban": "Le numéro IBAN doit être valide",
             "ibanRequired": "Le numéro IBAN est obligatoire",
             "bic": "Le numéro BIC doit être valide",
-            "bicRequired": "Le numéro BIC est obligatoire"
+            "bicRequired": "Le numéro BIC est obligatoire",
+            "wayRequired": "Le numéro et la rue sont obligatoires",
+            "cpRequired": "Le code postale est obligatoire",
+            "cityRequired": "La ville est obligatoire"
         }
     },
     "register": "Enregistrer",

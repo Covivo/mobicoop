@@ -16,12 +16,13 @@
   </v-btn>
 </template>
 <script>
-import {messages_en, messages_fr} from "@translations/components/base/MMessageBtn/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MMessageBtn/";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   props:{

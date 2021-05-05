@@ -135,7 +135,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr} from "@translations/components/event/Event/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import Report from "@components/utilities/Report";
 import Search from "@components/carpool/search/Search";
@@ -150,7 +150,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props:{

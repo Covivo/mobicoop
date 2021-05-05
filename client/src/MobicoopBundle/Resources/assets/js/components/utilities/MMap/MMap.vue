@@ -114,13 +114,14 @@
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
 import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
-import {messages_en, messages_fr} from "@translations/components/utilities/MMap/MMap";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MMap/MMap";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components: {

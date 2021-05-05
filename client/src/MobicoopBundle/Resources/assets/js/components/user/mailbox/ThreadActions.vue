@@ -183,11 +183,11 @@
           </tbody>
         </v-simple-table>
       </v-card>
-      <v-card v-else-if="!loading">
+      <!-- <v-card v-else-if="!loading">
         <v-card-text>
           {{ $t("notLinkedToACarpool") }}
         </v-card-text>
-      </v-card>
+      </v-card> -->
       <v-skeleton-loader
         v-if="loading"
         ref="skeleton"
@@ -240,7 +240,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr} from "@translations/components/user/mailbox/ThreadActions/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/ThreadActions/";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
 import VJourney from '@components/carpool/utilities/VJourney';
@@ -253,7 +253,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     }
   },
   components:{

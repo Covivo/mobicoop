@@ -4,7 +4,7 @@
     "externalUrl": "/carpool/ad/{id}/external",
     "matchingUrl": "/carpool/search/matching",
     "carpoolUrl": "/carpool/ask",
-    "contactUrl": "/carpool/contact",
+    "contactUrl": "/utilisateur/messages/new",
     "mailboxUrl": "/user/messages/carpool/{askId}",
     "externalJourneyUrl": "/carpool/rdexJourney",
     "ptSearchUrl": "/public-transport/search",

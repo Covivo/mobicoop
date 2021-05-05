@@ -101,7 +101,7 @@
       justify="center"
     >
       <v-col
-        class="text-center mt-md-n12 pt-md-16 mt-lg-n4 white--text"
+        class="text-center mt-md-n8 pt-md-16 mt-lg-n4 white--text"
         :style="'font-size:1.25rem;line-height:1.25;'"
       >
         <h1
@@ -144,20 +144,22 @@
 
 <script>
 import {merge} from "lodash";
-import {messages_en, messages_fr} from "@translations/components/home/Home/";
-import {messages_client_en, messages_client_fr} from "@clientTranslations/components/home/Home/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/home/Home/";
+import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/home/Home/";
 import Search from "@components/carpool/search/Search";
 import HomeContent from "@components/home/HomeContent";
 import MSnackInfos from "@components/utilities/MSnackInfos";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
-      'fr': MessagesMergedFr
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   components: {

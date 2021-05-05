@@ -9,8 +9,8 @@
           align="center"
         >
           <v-img
-            v-if="event.images[0]"
-            :src="event['images'][0]['versions']['square_250']"
+            v-if="event.externalImageUrl"
+            :src="event.externalImageUrl"
             width="225"
             height="200"
             :aspect-ratio="1"
@@ -19,7 +19,7 @@
           />
           <v-img
             v-else
-            :src="event.externalImageUrl ? event.externalImageUrl : urlAltAvatar"
+            :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : urlAltAvatar"
             width="225"
             height="200"
             :aspect-ratio="1"
@@ -71,6 +71,17 @@
                 <p class="text-body-2 pa-3">
                   <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
                 </p>
+                <p
+                  v-id="event.url"
+                  class="text-body-1 pa-3"
+                >
+                  <span class="font-weight-black">{{ $t('website') }} : </span>
+                  <a
+                    :href="event.url"
+                    :title="event.name"
+                    target="blank_"
+                  >{{ event.url }}</a>
+                </p>
               </v-row>
             </v-card-text>
           </v-card>
@@ -81,7 +92,7 @@
 </template>
 <script>
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/event/EventInfos/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/event/EventInfos/";
 
 export default {
   props:{
@@ -109,7 +120,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   data() {

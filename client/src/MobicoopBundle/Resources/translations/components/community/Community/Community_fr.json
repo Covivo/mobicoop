@@ -50,7 +50,7 @@
         "joinCommunity": {
             "textOkManualValidation": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
             "textOkAutoValidation": "Votre demande d'adhésion est validée.",
-            "textError": "Une erreur est survenue veillez essayer à nouveau."
+            "textError": "Une erreur est survenue, votre adhésion n'a pas été prise en compte."
         },
         "leaveCommunity": {
             "textOk": "Vous ne faites désormais plus partie de cette communauté",

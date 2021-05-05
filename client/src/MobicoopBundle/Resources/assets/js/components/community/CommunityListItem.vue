@@ -22,20 +22,10 @@
         align="center"
       >
         <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['original']"
+          :src="(item['images'][0] && item['images'][0]['versions']['original']) ? item['images'][0]['versions']['original'] : item['defaultAvatar']"
           contain
           max-width="200"
           max-height="150"
-        />
-        <v-img
-          v-else
-          src="/images/avatarsDefault/avatar.svg"
-          aspect-ratio="1"
-          class="grey lighten-2"
-          contain
-          max-width="200"
-          max-height="200"
         />
       </v-col>
       <v-col  
@@ -128,13 +118,14 @@
 <script>
 
 import axios from "axios";
-import {messages_en, messages_fr} from "@translations/components/community/CommunityListItem/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/community/CommunityListItem/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props:{

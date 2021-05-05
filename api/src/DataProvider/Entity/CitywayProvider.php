@@ -88,6 +88,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_BUS = "BUS";
     private const CW_PT_MODE_TRAMWAY = "TRAMWAY";
     private const CW_PT_MODE_COACH = "COACH";
+    private const CW_PT_MODE_TRAIN = "TRAIN";
     private const CW_PT_MODE_TRAIN_LOCAL = "LOCAL_TRAIN";
     private const CW_PT_MODE_TRAIN_HIGH_SPEED = "HST";
     private const CW_PT_MODE_BIKE = "BICYCLE";
@@ -655,6 +656,10 @@ class CitywayProvider implements ProviderInterface
             } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_COACH) {
                 // coach mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_COACH);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
+                // train local mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN);
                 $leg->setTravelMode($travelMode);
             } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_LOCAL) {
                 // train local mode

@@ -492,7 +492,7 @@
 
 <script>
 import moment from "moment";
-import {messages_en, messages_fr} from "@translations/components/carpool/results/MatchingJourney/";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
@@ -510,7 +510,8 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
-      'fr': messages_fr
+      'fr': messages_fr,
+      'eu':messages_eu
     },
   },
   props: {
@@ -821,10 +822,33 @@ export default {
         resultChoice = this.lResult.resultDriver;
       }      
       // proposal and matching results
-      params.adId = resultChoice.outward.proposalId;
+      params.adIdResult = resultChoice.outward.proposalId;
       params.matchingId = resultChoice.outward.matchingId;
       params.date = resultChoice.outward.date;
-      params.time = resultChoice.outward.time;      
+      params.time = resultChoice.outward.time;
+      
+      // These infos are necessary to generay a non persisted message thread
+      params.idRecipient = this.lResult.carpooler.id;
+      params.shortFamilyName = this.lResult.carpooler.shortFamilyName;
+      params.givenName = this.lResult.carpooler.givenName;
+      params.avatar = this.lResult.carpooler.avatars[0];
+      params.carpoolInfos = {
+        askHistoryId: null,
+        origin: this.lResult.origin.addressLocality,
+        destination: this.lResult.destination.addressLocality,
+        criteria: {
+          frequency:this.lResult.frequency,
+          fromDate:this.lResult.frequency==1 ? this.lResult.date : this.lResult.startDate,
+          fromTime:this.lResult.time,
+          monCheck:this.lResult.monCheck,
+          tueCheck:this.lResult.tueCheck,
+          wedCheck:this.lResult.wedCheck,
+          thuCheck:this.lResult.thuCheck,
+          friCheck:this.lResult.friCheck,
+          satCheck:this.lResult.satCheck,
+          sunCheck:this.lResult.sunCheck
+        }
+      };
       this.$emit('contact', params);
     },
     carpool(role) {

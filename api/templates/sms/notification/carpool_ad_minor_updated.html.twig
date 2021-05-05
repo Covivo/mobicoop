@@ -3,8 +3,8 @@
 {% set outwardOrigin = context.origin %}
 {% set outwardDestination = context.destination %}
 
-{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
 
-{{ "updatedCarpoolDetails"|trans({'%origin%' : outwardOrigin.address.displayLabel[0], '%destination%' : outwardDestination.address.displayLabel[0]}) }} {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} sur {{api_env('SMS_PLATFORM_NAME')|raw}}.
+Des détails de votre covoiturage de {{outwardOrigin.address.displayLabel[0]}} à {{outwardDestination.address.displayLabel[0]}} ont été modifiés par {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} sur {{api_env('SMS_PLATFORM_NAME')|raw}}.
 
-{{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')|raw}}
+A bientôt sur {{api_env('SMS_PLATFORM_NAME')|raw}}

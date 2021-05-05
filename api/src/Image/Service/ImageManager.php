@@ -254,7 +254,22 @@ class ImageManager
         }
         return $versions;
     }
-    
+
+    /**
+     * Regen all images versions
+     *
+     * @return void
+     */
+    public function regenerateVersions()
+    {
+        set_time_limit(3600);
+        $images = $this->imageRepository->findAll();
+        foreach ($images as $image) {
+            $this->generateVersions($image);
+        }
+    }
+
+
     /**
      * Get the different versions of the image (thumbnails).
      * Returns the names of the generated versions
