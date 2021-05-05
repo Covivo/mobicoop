@@ -25,7 +25,7 @@
     "ptSearchUrl": "/garraio-publiko/bilaketa",
     "externalJourneyUrl": "/autokidetza/rdexJourney",
     "mailboxUrl": "/erabiltzaile/mezuak/autokideta/{askId}",
-    "contactUrl": "/autokidetza/harremanak",
+    "contactUrl": "/erabiltzailea/mezuak/berria",
     "carpoolUrl": "/autokidetza/eskaera",
     "matchingUrl": "/autokidetza/bilaketa/matching",
     "externalUrl": "/autokidetza/iragarkia/{id}/kanpoa",
