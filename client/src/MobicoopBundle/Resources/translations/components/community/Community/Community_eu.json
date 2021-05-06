@@ -67,7 +67,7 @@
             "textOk": "Ez zira gehiago komunitatearen parte"
         },
         "joinCommunity": {
-            "textError": "Huts bat agertu da, berriz entsea ezazu.",
+            "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
             "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
             "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
         }
