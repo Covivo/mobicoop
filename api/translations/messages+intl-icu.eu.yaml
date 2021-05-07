@@ -36,7 +36,7 @@ carpoolProposalUpdated: Zure eskaerari loturiko iragarkia aldatua izan da
 justPublished: argitaratu berria da
 toConsultCorrespondingAdsAndMakeContact: araberako iragarkiak ikusteko eta harremanetan
   jartzeko
-linkMyAds: /erabiltzailea/profila/aldatu/nire-iragarkiak
+linkMyAds: /utilisateur/profil/modifier/mes-annonces
 myAds: Nire iragarkiak
 askForCarpool: autoa partekatzeko eskaera bat baduzu.
 return: ETORRI
@@ -78,7 +78,7 @@ yourAskCarpoolBetween: Zure xxxx eta xxxx arteko autokidetza eskaera
 yourCarpoolBetween: Zure xxxxx eta xxxxxx arteko autokidetza
 yourPasswordIs: Zure pasahitza xxxxxx da
 the: 'xx/xx/xx-(e)an '
-urlPublish: /Autokidetza/iragarkiargitaratu
+urlPublish: /covoiturage/publierannonce
 canceledOccasionalCarpool: ' X-(e)k bere bidaia ezeztatu du eta ezingo du autoa zurekin
   partekatu xx/xx/xx-(e)an '
 canceledRegularCarpool: '  X-(e)k bere ohiko bidaia ezeztatu du eta ezingo du autoa
@@ -130,7 +130,7 @@ identityProofRejected: Nortasun agiria ukatua izan da
 yourProofIsAccepted: Helarazi diguzun nortasun agiria egiaztatua eta onartua izan
   da.
 identityProofAccepted: Nortasun agiria onartua
-linkValidatePaymentRoute: /erabiltzailea/perfila/aldatu/nire-autokitzak-onartuak
+linkValidatePaymentRoute: /utilisateur/profil/modifier/mes-covoiturages-acceptes
 linkValidatePaymentLabel: Ordainketa bat baieztatu.
 clickOnlinkToConfirmOrNot: 'Ondoko xxxx loturan klika ezazu, eskuz-eskuzko ordainketa
   honen baieztatzeko, edo bestenaz seinala ezazu ez dela ordaindua izan: '
@@ -176,7 +176,7 @@ externalContact: Kontaktu bat ukan duzu autokidetza batentzat
 unsubscribeEmailAlertFront: '{instanceName} zerbitzuaren Berrietatik desharpidetua
   izan zira. Zure izena berriz emateko, Perfila > Nire kontua helbidera joan zaitez.'
 unsubscribeEmail: Hemen klika ezazu, {instanceName} zerbitzuaren Berrietatik desharpidetzeko
-urlUnsubscribeEmail: /erabiltzailea/desharpidetu
+urlUnsubscribeEmail: /utilisateur/unsubscribe
 header3Data: senderName
 header3Name: X-JEMH- Solaskidearen deitura eta izena
 header2Data: senderEmail
@@ -248,7 +248,7 @@ reportThatEvent: ekitaldia seinalatu du
 theUser: Erabiltzailea
 eventReport: Ekitaldi bat seinalatua izan da
 eventReportTitle: Ekitaldi baten seinalatzea
-eventUrl: /autokidetza-ekitaldiak/
+eventUrl: /covoiturages-evenements/
 eventDescription: 'Deskribapena: '
 eventLocation: 'Helbidea: '
 eventName: 'Deitura: '
@@ -264,14 +264,14 @@ with: xxxx-rekin
 withTheDriver: xxxxxx gidariarekin
 withThePassenger: xxxxx bidaiariarekin
 CheckoutForAnyURLMisspellingOr: mezuak
-urlMailBox: /erabiltzailea/mezuak
+urlMailBox: /utilisateur/messages
 profilUpdate: ZURE PROFILAREN EGUNERATZEA BAIEZTATUA DA!
 theModificationIsConfirmed: Zure profilaren aldaketa baieztatua da
-emailValidationUrl: /erabiltzailea/e-mezua/baieztapena/
+emailValidationUrl: /utilisateur/email/validation/
 emailValidation: Zure helbide elektronikoaren baieztapena
 yourPasswordHasBeenSendBySms: Zure pasahitza SMS-ez igorria izan zaizu.
-urlMobileEmailValidation: /#/baieztapena-erregistratu/
-urlEmailValidation: /erabiltzailea/izen ematea/baieztatu/
+urlMobileEmailValidation: /#/confirm-registration/
+urlEmailValidation: /utilisateur/inscription/validation/
 orUseTheValidationCode: Edo zuzenean baieztapen kodea erabil ezazu webgunean
 clickHereToConfirm: Lotura honetan klika ezazu zure e-mezua baieztatzeko
 wellTakenIntoAccount: kontuan hartua izan da
@@ -283,7 +283,7 @@ changeYourPassword: Zure pasahitza alda ezazu
 thanksForUse: Milesker xxxxx erabiltzeagatik
 successfullyChanged: aldatua izan da
 yourPassword: Zure pasahitza
-urlUpdatePassword: /erabiltzailea/pasahitza/berrabiarazi/
+urlUpdatePassword: /utilisateur/mot-de-passe/reset/
 linkChangePassword: Pasahitzaren aldatzeko lotura
 clickHereToChangePassword: Lotura honetan klika ezazu zure pasahitzaren aldatzeko
 askNewPassword: Pasahitz berri bat galdegin duzu
