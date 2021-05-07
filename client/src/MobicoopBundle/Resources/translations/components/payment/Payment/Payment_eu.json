@@ -12,7 +12,7 @@
     },
     "to": " arte ",
     "from": "-tik ",
-    "redirectAfterPayment": "/erabiltzaile/perfila/aldatu/nire-autokidetza-onartuak",
+    "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
     "regularInfo": "Zoinbait egunetan ez baduzu{driver} -ekin autokidetza egin, behereko laukia desmarka ezazu.",
     "tooltip": {
         "message": "Ezin duzu linean ordaindu, gidariak ez baititu bere banku datuak sartu."
@@ -33,7 +33,7 @@
         "validate": "Balioztatu",
         "confirm": "Baieztatu",
         "back": {
-            "route": "/erabiltzailea/perfila/nire-autokidetza-onartuak",
+            "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
             "label": "Itzuli"
         },
         "next": "Hurrengoa",
