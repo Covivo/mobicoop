@@ -36,7 +36,7 @@
             "next": "Ondokoa"
         },
         "driverLicense": {
-            "route": "/ebo",
+            "route": "/cgu",
             "link": "(Ituna)",
             "text": "Nire iragarkia argitaratuz, nire gida baimena eta bali eta eguneratua den asurantza badudala egiaztatzen dut"
         },
@@ -89,10 +89,10 @@
     "no": "ez",
     "yes": "bai",
     "route": {
-        "roundPrice": "/prezioa/borobildu",
-        "myAds": "/erabiltzaile/perfila/aldatu/nire-iragarkiak",
-        "update": "autokidetza/iragarkia/{id}/aldatu",
-        "publish": "autokitza/iragarkiaargitaratu"
+        "roundPrice": "/prix/arrondir",
+        "myAds": "/utilisateur/profil/modifier/mes-annonces",
+        "update": "covoiturage/annonce/{id}/modifier",
+        "publish": "covoiturage/publierannonce"
     },
     "messageRoundedPrice": "Zure iragarkiko prezioa borobildu dugu, zure eta beste erabiltzaileen esperentzia hobetzeko. Ulertuko duzulakoan, eskertzen zaitugu.",
     "participation": {
