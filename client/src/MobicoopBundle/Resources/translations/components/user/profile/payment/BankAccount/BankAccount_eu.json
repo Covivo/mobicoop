@@ -1,9 +1,9 @@
 {
     "error": "Huts bat agertu da",
     "uri": {
-        "addCoordinates": "/erabiltzaile/banku-datuak/gehitu",
-        "deleteCoordinates": "/erabiltzaile/banku-datuak/kendu",
-        "getCoordinates": "/erabiltzaile/banku-datuak"
+        "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter",
+        "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
+        "getCoordinates": "/utilisateur/coordonnees-bancaires"
     },
     "modalSuppr": {
         "no": "ez",
@@ -42,6 +42,6 @@
     "textAddress": "Eskertzen zaitugu helbide osoa (zenbakia, karrika izena...) bilatzea eta ez bakarrik zure bizilekuaren hiria.",
     "titleAddress": "2. Helbide osoa",
     "textInfo": "Lineako ordainketak eskuratzeko, beheragoko informazio guziak ematea baitezpadako da.",
-    "titleCoordinates": "1.banku-datuak",
+    "titleCoordinates": "1. Banku-datuak",
     "textAddressDetails": "Ondoko eremuak beteko dira gaineko bilaketei esker. Milesker informazioen araberakotasuna egiaztatzeagatik."
 }
