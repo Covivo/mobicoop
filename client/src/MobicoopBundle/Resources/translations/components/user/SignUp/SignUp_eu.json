@@ -13,7 +13,7 @@
         "next": "Hurrengoa",
         "previous": "Aitzinekoa"
     },
-    "urlLogin": "/erabiltzaile/konexioa/",
+    "urlLogin": "/utilisateur/connexion/",
     "login": "Jadanik kontu bat baduzu? Identifika zaitez!",
     "snackbar": {
         "joinCommunity": {
@@ -31,7 +31,7 @@
     },
     "step": "Urratsa",
     "communities": {
-        "route": "/erabiltzailea/izen-emaitea/komunitateen-zerrenda",
+        "route": "/utilisateur/inscription/liste-des-communautes",
         "label": "Komunitatean sartu"
     },
     "legalAge": {
@@ -49,7 +49,7 @@
     },
     "checkEmail": {
         "error": "Helbide elektroniko hori jadanik hartua da",
-        "url": "/erabiltzaile/egiaztatu/email"
+        "url": "/utilisateur/verif/email"
     },
     "password": {
         "errors": {
@@ -111,9 +111,9 @@
         "placeholder": "Zibilitatea",
         "label": "Zibilitatea"
     },
-    "urlRedirectAfterSignUpResult": "/erabiltzailea/konexioa/{id}",
-    "urlRedirectAfterSignUp": "/erabiltzailea/izen ematea/baieztatu/{email}",
-    "urlSignUpResult": "/erabiltzailea/izen ematea/{id}",
-    "urlSignUp": "/erabiltzaile/izen ematea",
+    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+    "urlSignUpResult": "/utilisateur/inscription/{id}",
+    "urlSignUp": "/utilisateur/inscription",
     "title": "Izen ematea"
 }
