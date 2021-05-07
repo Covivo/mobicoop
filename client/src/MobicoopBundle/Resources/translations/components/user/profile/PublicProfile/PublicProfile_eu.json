@@ -14,5 +14,5 @@
     "lastConnection": "Azken konexioa",
     "carpoolRealized": "Eginiko autokidetzak",
     "yearsOld": "urte",
-    "getPublicProfileUri": "/erabiltzaile/perfila/publikoa"
+    "getPublicProfileUri": "/utilisateur/profil/public"
 }

@@ -24,18 +24,18 @@
     },
     "events": {
         "button2": {
-            "route": "/ekitaldia/sortu",
+            "route": "/evenement/creer",
             "label": "Ekitaldi bat gehitu"
         },
         "button1": {
-            "route": "/ekitaldiak",
+            "route": "/evenements",
             "label": "Ekitaldiak ikusi"
         },
         "title": "Zure ekitaldientzat autokidetza antolatu"
     },
     "solidary": {
         "button2": {
-            "route": "/autokidetza/iragarkiaargitaratu/elkartasuna",
+            "route": "/covoiturage/publierannonce/solidaire",
             "label": "Esku ukaldi bat eman"
         },
         "button": {
@@ -47,7 +47,7 @@
     },
     "event": {
         "button": {
-            "route": "/autokidetzak-ekitaldiak",
+            "route": "/covoiturages-evenements",
             "label": "Ekitaldiak ikusi"
         },
         "title": "EKITALDIAK",
@@ -55,7 +55,7 @@
     },
     "community": {
         "button": {
-            "route": "/autokidetza-komunitatea",
+            "route": "/covoiturage-communaute",
             "label": "Komunitateak ikusi"
         },
         "text": "Nire taldeko edo enpresako kideak ezagutu.",
