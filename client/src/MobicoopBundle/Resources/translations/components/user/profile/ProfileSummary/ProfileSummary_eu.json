@@ -4,6 +4,6 @@
         "answerPct": "Erantzun tasa",
         "carpoolRealized": "Egindako autokidetzak"
     },
-    "getProfileSummaryUri": "/erabiltzaile/perfila/laburbilduma",
+    "getProfileSummaryUri": "/utilisateur/profil/resume",
     "yearsOld": "urte"
 }
