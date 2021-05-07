@@ -8,8 +8,8 @@
     "validate": "Zure izen ematea baieztatu",
     "errorCredentials": "Egiaztatze kodea ez da ezagutua izan",
     "tokenRequired": "zure egiaztapen kodea baitezpadakoa da",
-    "urlEmailValidation": "/erabiltzaile/login-token/email",
-    "urlSignUpValidation": "/erabiltzaile/login-token",
+    "urlEmailValidation": "/utilisateur/login-token/email",
+    "urlSignUpValidation": "/utilisateur/login-token",
     "token": "Zure kodearen egiaztapena",
     "title": "Zure emailaren egiaztapena"
 }

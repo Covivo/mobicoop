@@ -13,10 +13,10 @@
     "urlCommunityUser": "/community-user",
     "buttons": {
         "login": {
-            "route": "/erabiltzailea/konexioa"
+            "route": "/utilisateur/connexion"
         },
         "contact": {
-            "route": "/erabiltzaile/mezuak/berria"
+            "route": "/utilisateur/messages/nouveau"
         },
         "join": {
             "route": "/communaute/{id}/rejoindre",
@@ -29,12 +29,12 @@
             "label": "Nire komunitatea administratu"
         },
         "publish": {
-            "route": "autokidetza/bilatu/argitaratu",
+            "route": "covoiturage/recherche/poster",
             "label": "Iragarkia argitaratu"
         }
     },
     "leaveCommunity": {
-        "route": "/Komunitatea/{id}/utzi",
+        "route": "/communaute/{id}/quitter",
         "popup": {
             "content": {
                 "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
@@ -67,7 +67,7 @@
             "textOk": "Ez zira gehiago komunitatearen parte"
         },
         "joinCommunity": {
-            "textError": "Huts bat agertu da, berriz entsea ezazu.",
+            "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
             "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
             "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
         }

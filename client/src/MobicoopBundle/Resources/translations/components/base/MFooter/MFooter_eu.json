@@ -23,7 +23,7 @@
             "title": "Prentsa"
         },
         "hotline": {
-            "link": "/Harremanak",
+            "link": "/contact",
             "title": "Hotline"
         }
     },
@@ -33,7 +33,7 @@
             "title": "Cookies-en kudeaketa"
         },
         "dataPolicy": {
-            "link": "/datuen-babesa",
+            "link": "/protection-donnees",
             "title": "Datuen babesa"
         },
         "cgu": {
@@ -45,11 +45,11 @@
             "title": "Galderak"
         },
         "events": {
-            "link": "/autokidetza-ekitaldiak",
+            "link": "/covoiturages-evenements",
             "title": "Autokidetza ekiataldiak"
         },
         "map": {
-            "link": "/geldiguneak",
+            "link": "/points-relais",
             "title": "Autokidetza eremuen mapa"
         }
     },
@@ -84,7 +84,7 @@
     "buttons": {
         "contact": {
             "label": "Gurekin harremanetan jarri",
-            "route": "/harremanak"
+            "route": "/contact"
         }
     }
 }

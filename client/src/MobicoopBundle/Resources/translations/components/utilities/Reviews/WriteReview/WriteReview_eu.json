@@ -1,6 +1,6 @@
 {
     "fail": "Abisu pausatzean huts bat agertu da",
     "validate": "Bali egin",
-    "leaveReviewUri": "/erabiltzaile/abisu/idatzi",
+    "leaveReviewUri": "/utilisateur/avis/ecrire",
     "label": "Zure oharrak idatz itzazu"
 }

@@ -2,7 +2,7 @@
     "fraudWarningText": {
         "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
         "textLink": "Eskuz esku edo linean ",
-        "link": "/erabitzaile/perfila/update/accepted-carpools",
+        "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
         "part1": "Mobicoop-en, zure autokidetzen ordainketak gehieneta horrela egiten dira "
     },
     "tooltip": {
@@ -13,8 +13,8 @@
         "titleLive": "Zuzena",
         "titleCarpool": "Autokidetza"
     },
-    "urlUpdateAsk": "/erabiltzaile/mezuak/updateAsk",
-    "urlSend": "/erabiltzaile/mezuak/bidali",
+    "urlUpdateAsk": "/utilisateur/messages/updateAsk",
+    "urlSend": "/utilisateur/messages/envoyer",
     "headers": {
         "context": "Iragarkia",
         "messages": "Mezuak"

@@ -1,4 +1,4 @@
 {
     "noMessage": "Ez duzu oraindik izena emana duen beste batekin trukatu.",
-    "urlGet": "/erabiltzaile/mezuak/zuzenean"
+    "urlGet": "/utilisateur/messages/direct"
 }

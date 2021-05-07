@@ -1,8 +1,8 @@
 {
     "routes": {
-        "login": "/erabiltzailea/konexioa",
-        "getList": "/ekitaldiak/getEventList",
-        "event": "/autokidetzak-ekitaldiak/{id}/{urlKey}"
+        "login": "/utilisateur/connexion",
+        "getList": "/evenements/getEventList",
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
     },
     "noEvent": "Ez da ekitaldirik",
     "endEvent": "Bukaera",

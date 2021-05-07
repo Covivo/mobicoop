@@ -3,7 +3,7 @@
     "error": "Akats bat agertu da.",
     "success": "Zure mezua igorria izan da.",
     "dataPolicy": {
-        "route": "/datuak-babestu",
+        "route": "/protection-donnees",
         "link": "gure datuak babesteko politika",
         "text": "Zure eskubideak ezagutu eta erabiltzeko, formulario honetan bildutako datuak erabiltzeko baimenaren kentzea barne, irakur ezazu"
     },
