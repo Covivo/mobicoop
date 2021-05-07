@@ -1,7 +1,7 @@
 {
     "distance": "Distantzia",
     "communities": {
-        "route": "/erabiltzaile/komunitateak",
+        "route": "/utilisateur/communautes",
         "label": "Komunitate horietan iragarkia argitaratu"
     },
     "avoidMotorway": "Autopista saihestua",
