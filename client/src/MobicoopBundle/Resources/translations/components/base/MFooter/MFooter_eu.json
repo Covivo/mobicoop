@@ -84,7 +84,7 @@
     "buttons": {
         "contact": {
             "label": "Gurekin harremanetan jarri",
-            "route": "/harremanak"
+            "route": "/contact"
         }
     }
 }
