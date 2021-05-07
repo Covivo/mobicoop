@@ -12,23 +12,23 @@
             "label": "Deskonektatu"
         },
         "myProfile": {
-            "route": "/erabitzailea/perfila/aldatu",
+            "route": "/utilisateur/profil/modifier",
             "label": "Nire perfila"
         },
         "messages": {
-            "route": "/erabiltzailea/mezuak",
+            "route": "/utilisateur/messages",
             "label": "Mezuak"
         },
         "shareAnAd": {
-            "route": "/autokidetza/iragarkiaargitaratu",
+            "route": "/covoiturage/publierannonce",
             "label": "Iragarki bat argitaratu"
         },
         "logIn": {
-            "route": "/erabiltzailea/konxeioa",
+            "route": "/utilisateur/connexion",
             "label": "Konexioa"
         },
         "signup": {
-            "route": "/erabiltzailea/izen ematea",
+            "route": "/utilisateur/inscription",
             "label": "Izen ematea"
         }
     }
