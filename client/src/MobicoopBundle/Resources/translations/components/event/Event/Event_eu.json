@@ -33,7 +33,7 @@
             "route": "/utilisateur/connexion"
         },
         "publish": {
-            "route": "autokidetza/bilatu/argitaratu",
+            "route": "covoiturage/recherche/poster",
             "label": "Iragarkia argitaratu"
         }
     }
