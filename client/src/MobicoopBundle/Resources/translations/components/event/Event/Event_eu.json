@@ -13,7 +13,7 @@
     },
     "buttons": {
         "contact": {
-            "route": "/erabiltzaile/mezuak/berria"
+            "route": "/utilisateur/messages/nouveau"
         },
         "search": {
             "label": "Bilatu"
@@ -25,12 +25,12 @@
                 "p1": "widget-a integratzeko, beheragoko testua kopiatu eta webgunean kolatu behar da..<br /> Lodiz diren elementuak aldatzen ahalko ditzu zure widget-ak pertsonalizatzeko.",
                 "title": "Widget-a integratu"
             },
-            "externalRoute": "/ekitaldia/widget/{id}",
-            "route": "/ekitaldia/widget/get/{id}/{urlKey}",
+            "externalRoute": "/evenement/widget/{id}",
+            "route": "/evenement/widget/get/{id}/{urlKey}",
             "label": "Ikus Widget-a"
         },
         "login": {
-            "route": "/erabiltzailea/konexioa"
+            "route": "/utilisateur/connexion"
         },
         "publish": {
             "route": "autokidetza/bilatu/argitaratu",
