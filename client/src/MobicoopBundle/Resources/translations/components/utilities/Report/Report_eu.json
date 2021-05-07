@@ -1,7 +1,7 @@
 {
     "routes": {
-        "userReport": "/erabiltzaile/{id}/seinalatu",
-        "eventReport": "/ekitaldia/{id}/seinalatu"
+        "userReport": "/utilisateur/{id}/signaler",
+        "eventReport": "/evenement/{id}/signaler"
     },
     "popup": {
         "button": {
