@@ -8,13 +8,13 @@
         "label": "Zerbitzuaren berriak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
     },
     "route": {
-        "supprimer": "/erabiltzaile/perfila/kendu",
-        "update": "/erabiltzaile/perfila/aldatu"
+        "supprimer": "/utilisateur/profil/supprimer",
+        "update": "/utilisateur/profil/modifier"
     },
     "avatar": {
         "delete": {
             "label": "Irudia kendu",
-            "route": "/erabiltzaile/perfila/avatar/kendu"
+            "route": "/utilisateur/profil/avatar/supprimer"
         },
         "size": "Avatar neurri handiena gainditu duzu",
         "label": "Argazkia"
@@ -65,7 +65,7 @@
         "label": "Izena"
     },
     "email": {
-        "verificationRoute": "/erabiltzaile/email/bali egin",
+        "verificationRoute": "/utilisateur/email/validation",
         "buttons": {
             "label": {
                 "generateEmailAgain": "Egiaztatze e-mezua gilera bidali",
@@ -89,7 +89,7 @@
     },
     "address": {
         "update": {
-            "route": "/erabiltzaile/perfila/aldatu/helbidea",
+            "route": "/utilisateur/profil/modifier/adresse",
             "label": "Helbidea gorde"
         }
     },
@@ -136,10 +136,10 @@
         },
         "token": {
             "inputError": "Egiaztatze kodea 4 zenbakiz osatua da.",
-            "route": "/erabiltzaile/telefonoa/token"
+            "route": "/utilisateur/telephone/token"
         },
         "validation": {
-            "route": "/erabiltzaile/telefonoa/bali egin",
+            "route": "/utilisateur/telephone/validation",
             "label": "Zure egiaztatze kodea"
         },
         "buttons": {
