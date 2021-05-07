@@ -29,7 +29,7 @@
         }
     },
     "redirect": {
-        "route": "/autokidetza-ekitaldiak"
+        "route": "/covoiturages-evenements"
     },
     "form": {
         "private": {
@@ -65,7 +65,7 @@
     },
     "buttons": {
         "create": {
-            "route": "/ekitaldia/sortu",
+            "route": "/evenement/creer",
             "label": "Ekitaldia sortu"
         }
     },

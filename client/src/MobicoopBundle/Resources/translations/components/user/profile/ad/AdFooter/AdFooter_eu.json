@@ -1,5 +1,5 @@
 {
-    "urlResult": "/autokidetza/iragarkia/{id}/emaitzak",
+    "urlResult": "/covoiturage/annonce/{id}/resultats",
     "potentialCarpooler": {
         "plural": "autokide potentzialak",
         "singular": "Autokide potentziala"

@@ -10,6 +10,6 @@
     "join": "Ekitaldira joan",
     "eventDetails": "Ekitaldiaren xehetasunak",
     "routes": {
-        "event": "/autokidetzak-ekitaldiak/{id}/{urlKey}"
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
     }
 }

@@ -5,12 +5,12 @@
     },
     "buttons": {
         "search": {
-            "widgetRoute": "Ekitaldia/{id}/bilaketa/autokidetza",
-            "route": "autokidetza/bilatu",
+            "widgetRoute": "event/{id}/recherche/covoiturage",
+            "route": "covoiturage/recherche",
             "label": "Bilatu"
         },
         "publish": {
-            "route": "autokidetza/bilatu/argitaratu",
+            "route": "covoiturage/recherche/poster",
             "label": "Iragarkia argitaratu"
         }
     },

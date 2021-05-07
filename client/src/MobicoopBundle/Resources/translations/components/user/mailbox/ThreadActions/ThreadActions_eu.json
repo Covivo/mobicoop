@@ -11,7 +11,7 @@
     "regular": {
         "ask": "Autokidetza erregular bat proposatu"
     },
-    "urlGetAdAsk": "/erabiltzaile/mezuak/ekintzak/argibideak",
+    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
     "roundTrip": "Joan-etorri bidaia",
     "notLinkedToACarpool": "Solasaldi horrek ez du zerikusirik autokidetza batekin"
 }

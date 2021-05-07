@@ -11,7 +11,7 @@
         }
     },
     "update": {
-        "route": "/autokidetza/iragarkia/{id}/aldatu"
+        "route": "/covoiturage/annonce/{id}/modifier"
     },
     "delete": {
         "dialog": {
@@ -32,7 +32,7 @@
         },
         "error": "Huts bat agertu da zure iragarkia kendua izan delarik.",
         "success": "Zure iragarkia kendua izan da.",
-        "route": "/autokidetza/iragarkia/kendu"
+        "route": "/covoiturage/annonce/supprimer"
     },
     "ads": {
         "tooltips": {

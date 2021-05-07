@@ -10,7 +10,7 @@
             "title": "Baietapen eskaera"
         },
         "button": "Komunitatetik atera",
-        "route": "/Komunitatea/{id}/utzi"
+        "route": "/communaute/{id}/quitter"
     },
     "snackbar": {
         "leaveCommunity": {
@@ -22,7 +22,7 @@
     "join": "Komunitatean sartu",
     "communityDetails": "Ikus komunitatea",
     "routes": {
-        "communitySecuredRegister": "/komunitatea/{id}/segurtasuna/izen-ematea",
-        "community": "/autokidetza-komunitatea/{id}/{urlKey}"
+        "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
+        "community": "/covoiturage-communaute/{id}/{urlKey}"
     }
 }
