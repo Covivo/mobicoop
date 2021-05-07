@@ -250,7 +250,7 @@ class Mass
     const TYPE_QUALIFIED = 1;
 
     const NB_WORKING_DAY = 228;
-    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
     const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
     const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger

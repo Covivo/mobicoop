@@ -204,7 +204,7 @@ class MassPerson
      * @var boolean The person accepts to be a driver.
      *
      * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
+     * @Assert\NotNull
      * @ORM\Column(type="boolean")
      * @Groups({"mass","massCompute"})
      */
@@ -214,7 +214,7 @@ class MassPerson
      * @var boolean The person accepts to be a passenger.
      *
      * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
+     * @Assert\NotNull
      * @ORM\Column(type="boolean")
      * @Groups({"mass","massCompute"})
      */

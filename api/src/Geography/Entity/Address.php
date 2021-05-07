@@ -150,7 +150,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint", "writeSolidary","readPayment"})
-     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $street;
 
@@ -167,7 +167,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
-     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $postalCode;
 
