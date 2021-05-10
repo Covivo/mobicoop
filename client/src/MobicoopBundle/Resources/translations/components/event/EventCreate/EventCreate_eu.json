@@ -1,73 +1,73 @@
 {
-    "title": "Créez votre événement",
-    "buttons": {
-        "create": {
-            "label": "Créer l'événement",
-            "route": "/evenement/creer"
-        }
+    "fullDate": "ddd Do MMMM YYYY",
+    "popUp": {
+        "cancel": "Ezeztatu",
+        "validation": "Ekitaldia argitaratu",
+        "label": "Ulertu dut funtzionalitate honek EZ du balio autokidetza pertsinal baten argitaratzeko, baina ekitaldi bat antolatzeko gune bat da (ekitaldira doazten edo itzultzen dirak bateratzeko).\nIragarki pertsonala argitaratzeko, izena eman (edo konekta zaitez jadanik izena eman baduzu) eta zure perfiletik iragarki berri bat sort ezazu.",
+        "title": "Ekitaldiaren sortzea baieztatu"
     },
-    "form": {
-        "name": {
-            "label": "Nom de l'événement*",
-            "required": "Le nom de l'événement est requis"
-        },
-        "description": {
-            "label": "Description courte de l'événement*",
-            "required": "La courte description de l'événement est requise"
-        },
-        "fullDescription": {
-            "label": "Description détaillée de l'événement*",
-            "required": "La description détaillée de l'événement est requise"
-        },
-        "avatar": {
-            "label": "Image de l'événement*",
-            "required": "L'image de l'événement est requis",
-            "size": "Vous avez dépassé a taille maximale de l'image"
-        },
-        "address": {
-            "label": "Adresse de l'événement*",
-            "required": "L'adesse de l'événement est requise"
-        },
-        "urlEvent": {
-            "label": "URL de l'événement",
-            "tooltips": "L'adresse du site web de l'événement",
-            "error": "Veuillez renseigner un site web au format valide"
-        },
-        "private": {
-            "label": "Evénement privé (n'apparait pas dans la liste des événements)",
-            "tooltip": "Vous pourrez transmettre le lien direct reçu dans l'email de confirmation"
+    "endTime": {
+        "label": "Bukaerako ordua"
+    },
+    "startTime": {
+        "label": "Hastapeneko ordua"
+    },
+    "endDate": {
+        "error": "Beharrezkoa",
+        "label": "Bukaerako eguna*"
+    },
+    "startDate": {
+        "error": "Beharrezkoa",
+        "label": "Hastapeneko eguna*"
+    },
+    "error": {
+        "image": "Irudia ez da gorde",
+        "event": {
+            "required": "Izarrez markatutako eremu guziak baitezpadakoak dira",
+            "create": "Ekitaldiaren sorrerak huts egin du",
+            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu"
         }
     },
     "redirect": {
         "route": "/covoiturages-evenements"
     },
-    "error": {
-        "event": {
-            "name": "Cet événement existe déjà veuillez utiliser un autre nom",
-            "create": "La création de l'événement a échoué",
-            "required": "Tous les champs marqués d'une étoile sont requis"
+    "form": {
+        "private": {
+            "tooltip": "Zuzenean errezibitu duzun baieztatze e-mezua eman dezakezu",
+            "label": "Ekitaldi pribatua (ez da ekitaldi zerrendan agertzen)"
         },
-        "image": "L'image n'a pas été enregistrée"
+        "urlEvent": {
+            "error": "Bali den formatuan webgune bat eman",
+            "tooltips": "Ekitaldiaren webgunearen helbidea",
+            "label": "Ekitaldiaren URLa"
+        },
+        "address": {
+            "required": "Ekitaldiaren helbidea baitezpadakoa da",
+            "label": "Ekitaldiaren helbidea*"
+        },
+        "avatar": {
+            "size": "Irudiaren tamaina maximoa gainditu duzu",
+            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "label": "Ekitaldiaren izena*"
+        },
+        "fullDescription": {
+            "required": "Ekitaldiaren aurkezpen xehea baitezpadakoa da",
+            "label": "Ekitaldiaren aurkezpen xehea*"
+        },
+        "description": {
+            "required": "Ekitaldiaren aurkezpen laburra baitezpadakoa da",
+            "label": "Ekitaldiaren aurkezpen laburra*"
+        },
+        "name": {
+            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "label": "Ekitaldiaren izena*"
+        }
     },
-    "startDate": {
-        "label": "Date de début*",
-        "error": "Obligatoire"
+    "buttons": {
+        "create": {
+            "route": "/evenement/creer",
+            "label": "Ekitaldia sortu"
+        }
     },
-    "endDate": {
-        "label": "Date de fin*",
-        "error": "Obligatoire"
-    },
-    "startTime": {
-        "label": "Heure de début"
-    },
-    "endTime": {
-        "label": "Heure de fin"
-    },
-    "popUp": {
-        "title": "Confirmation de création de l'événement",
-        "label": "J'ai bien compris que cette fonctionnalité ne sert PAS à publier mon annonce de covoiturage personnelle, mais permet de créer un espace dédié à l'événement que j'organise (pour regrouper tous les trajets qui s'y rendent ou qui en partent).\nPour publier votre annonce personnelle, inscrivez-vous (ou connectez-vous si vous êtes déjà inscrit) et créez votre nouvelle annonce depuis votre profil.",
-        "validation": "Publier l'événement",
-        "cancel": "Annuler"
-    },
-    "fullDate": "ddd Do MMMM YYYY"
+    "title": "Ekitaldi bat sortu"
 }

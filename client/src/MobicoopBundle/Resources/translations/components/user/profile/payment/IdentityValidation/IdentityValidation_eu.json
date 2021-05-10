@@ -1,28 +1,28 @@
 {
-    "title": "3. Vérification d'identité",
-    "text": "<p>La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements.Cette obligation est motivée par la lutte contre le blanchiment.</p><p>La vérification d'identité nécessaire au paiement se fait par comparaison entre les prénom et nom renseignés dans votre profil, et ceux sur votre document d'identité. Veillez donc à avoir des informations justes dans votre profil.</p><p>Vous pouvez lire les conditions de validation d'un document d'identité chez notre partenaire <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
-    "fileInput": {
-        "label" : "Document d'identité à jour",
-        "error": "Le document ne doit pas dépasser 6MB",
-        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf et ne doit pas excéder 6MB"
-    },
-    "send": "Envoyer",
+    "sendUrl": "/utilisateur/document-validation-identite/envoyer",
+    "send": "Bidali",
     "status": {
-        "pending": "Document en cours de validation",
-        "validated": "Identité vérifiée",
-        "outdated": "Document expiré",
         "refused": {
-            "0" : "Document refusé",
-            "1" : "Vos données personnelles ont changé veuillez valider à nouveau votre identité",
-            "2" : "Document refusé car vous devez être majeur",
-            "3" : "Document refusé car falsifié",
-            "4" : "Document refusé car le fichier est vide",
-            "5" : "Document refusé car le document a expiré",
-            "6" : "Document refusé car type de document non accepté",
-            "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
-            "8" : "Document refusé car illisible",
-            "9" : "Document refusé car incomplet"
-        }
+            "9": "Dokumentua errefusatua ez baita osoa",
+            "8": "Dokumentua errefusatua ez baita irakurgarri",
+            "7": "Dokumentua errefusatua, datuak ez baitira erabiltzailearenak",
+            "6": "Dokumentua errefusatua dokumentu mota hori ez baita onartua",
+            "5": "Dokumentua errefusatua dokumentua baliogabetua baita",
+            "4": "Dokumentua errefusatua fitxategia hutsa baita",
+            "3": "Dokumentua errefusatua faltsifikatua izan baita",
+            "2": "Dokumentua errefusatu heldua izan behar zirelako",
+            "1": "Zure datu pertsonalak aldatuak izan dira, zure nortasuna berriz egiazta ezazu",
+            "0": "Dokumentua errefusatua"
+        },
+        "outdated": "Dokumentua baliogabetua",
+        "validated": "Nortasuna egiaztatua",
+        "pending": "Dokumentua egiaztatzen ari da"
     },
-    "sendUrl": "/utilisateur/document-validation-identite/envoyer"
+    "fileInput": {
+        "tooltip": "Dokumentuak jpg, jpeg, png edo pdf formatuan izan behar dira eta ez dute 6MB gainditu behar",
+        "error": "Dokumentuak ez ditu 6MB gainditu behar",
+        "label": "Nortasun agiria eguneratua"
+    },
+    "text": "<p>Nortasun egiaztapena eguneratua den nortasun agiri batetik (nortasun agiriaren aitzin eta gibelaldea, pasaportea, gidabaimena) egitea legezko betebehar bat da ordainketak eskuratu ahal izateko. Betebehar hori dirua zuritzeketak saihesteko egiten da..</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena zure perfilean komunikatu dituzun izen-deitura eta zure nortasun agiriko izen-deiturarekin konparatzen da. Beraz otoi informazio zuzenak eman itzazu zure perfilean.</p><p>Gure partaidearen dokumentuaren baieztapen baldintzak irakur ditzazkezu<a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
+    "title": "3.Nortasun egiaztatzea"
 }

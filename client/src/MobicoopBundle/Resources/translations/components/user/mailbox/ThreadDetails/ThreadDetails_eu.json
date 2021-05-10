@@ -1,6 +1,6 @@
 {
-    "notThreadSelected": "Aucun fil selectionné",
     "urlCompleteThread": "/utilisateur/messages/{idMessage}/fil",
-    "messageDelete": "Message supprimé",
-    "sendBy": "Envoyé par {name}"
+    "sendBy": "{name}-(e)k igorria",
+    "messageDelete": "Mezuak ezabatuak",
+    "notThreadSelected": "Ez da deik hautatu"
 }

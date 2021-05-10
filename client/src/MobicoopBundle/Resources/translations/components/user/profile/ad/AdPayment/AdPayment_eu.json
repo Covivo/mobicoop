@@ -1,17 +1,17 @@
 {
-    "driver": {
-        "paid": "Déjà payé",
-        "pending": "Valider le paiement"
+    "unpaid": "Ordaindugabekoa",
+    "route": "/paiements/{id}/{frequency}/{type}/{week}",
+    "tooltip": {
+        "paymentElectronicNotActive": "Ordainketa eta autokidetzaren gauzatzea baieztatu",
+        "paymentElectronicActive": "Ordainketa linean edo eskuz esku eginiko ordainketa baieztatu eta autokidetzaren gauzatzea baieztatu"
     },
     "passenger": {
-        "paid": "Déjà payé",
-        "pending": "Payer ou confirmer",
-        "pendingElectronicNotActive": "Confirmer"
+        "pendingElectronicNotActive": "Baieztatu",
+        "pending": "Ordaindua edo baieztatua",
+        "paid": "Jadanik ordaindua"
     },
-    "tooltip" : {
-        "paymentElectronicActive": "Payer en ligne ou confirmer le paiement à la main et la réalisation du covoiturage",
-        "paymentElectronicNotActive": "Confirmer le paiement et la réalisation du covoiturage"
-    },
-    "route": "/paiements/{id}/{frequency}/{type}/{week}",
-    "unpaid": "Impayé"
+    "driver": {
+        "pending": "Ordainketa baieztatua",
+        "paid": "Jadanik ordaindua"
+    }
 }

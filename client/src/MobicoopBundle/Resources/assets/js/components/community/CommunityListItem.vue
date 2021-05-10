@@ -22,20 +22,10 @@
         align="center"
       >
         <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['original']"
+          :src="(item['images'][0] && item['images'][0]['versions']['original']) ? item['images'][0]['versions']['original'] : item['defaultAvatar']"
           contain
           max-width="200"
           max-height="150"
-        />
-        <v-img
-          v-else
-          src="/images/avatarsDefault/avatar.svg"
-          aspect-ratio="1"
-          class="grey lighten-2"
-          contain
-          max-width="200"
-          max-height="200"
         />
       </v-col>
       <v-col  

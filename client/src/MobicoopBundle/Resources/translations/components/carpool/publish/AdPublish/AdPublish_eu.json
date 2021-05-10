@@ -1,110 +1,110 @@
 {
-    "create": {
-        "title": "Publier une annonce",
-        "subtitle": "Commencer votre annonce"
-    },
     "update": {
-        "title": "Modifier votre annonce",
         "popup": {
-            "major_update_asks": {
-                "title": "Au moins une demande existe pour cette annonce",
-                "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre modification sur des informations essentielles supprimera la version actuelle de votre annonce pour en créer une nouvelle et rejettera donc toutes les demandes en cours.<br>Si vous confirmez votre modification, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
-            },
             "major_update_ads": {
-                "title": "Un usager a déjà repéré votre annonce",
-                "content": "Un usager a déjà repéré votre annonce comme correspondant à un besoin et a pu en être alerté par SMS ou email. Votre modification supprimera la version actuelle de votre annonce pour en créer une nouvelle."
+                "content": "Erabiltzaile batek zure iragarkia jadanik begiztatu du, bere behar bati erantzuten diolako eta SMS baten edo e-mezu baten bidez abisatua izan da. Zure aldaketak gaurko iragarkiaren bertsioa ezabatuko du eskaera berri baten sortzeko.",
+                "title": "Erabiltzaile batek zure iragarkia jadanik begiztatu du"
+            },
+            "major_update_asks": {
+                "content": "Iragarki honentzat eskaera bat edo gehiago eginak izan dira. Funtsezko informazioetan aldaketak eginez, oraingo iragarkiaren bertsioa ezabatuko du berri baten sortzeko eta ondorioz bidean diren eskaera guziak ezeztatuko ditu.<br> zure aldaketa baieztatzen baduzu, zein ezu bidali nahi zenieke eskaera ezeztatu diezun autokideei?",
+                "title": "Iragarki honentzat gutienez eskaera bat bada"
             },
             "minor_update_asks": {
-                "title": "Des demandes existent pour cette annonce",
-                "content": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Les détails de votre modification seront envoyées à tous les usagers ayant fait ces demandes.<br>Confirmez-vous votre modification ?"
+                "title": "Iragarki honentzat eskaerak badaude",
+                "content": "Eskaera bat edo gehiago eginak izan dira iragarki honentzat. Zure aldaketen xehetasunak igorriak izanen dira eskaera egin dizuten erabiltzaileer. <br> Zure aldaketa baieztatzen ote duzu?"
             }
         },
-        "success": "Votre annonce a été modifiée avec succès.",
-        "error": "Une erreur est survenue lors de la modification de votre annonce.",
-        "unavailable": "Vous ne pouvez pas modifier cette annonce."
+        "title": "Zure iragarkia aldatu",
+        "unavailable": "Ezin duzu iragarki hori aldatu.",
+        "error": "Zure iragarkia aldatzerakoan akats bat agertu da.",
+        "success": "Zure iragarkia aldatua izan da."
+    },
+    "create": {
+        "subtitle": "Zure iragarkia hasi",
+        "title": "Iragarki bat argitaratu"
+    },
+    "messageFirstAd": {
+        "signUpDone": "Bibazu {givenName}! Zure izen ematua bururatua da",
+        "alert": "Orain, usu egiten duzu bidaiari loturiko iragarki berrien abisua eskuratzeko, zure usaiako bidaiaren lehen iragarkia argitaratu ezazu ahal bezain laster autokidetza egin ahal izateko."
     },
     "stepper": {
-        "header": {
-            "search_journey": "Commencer votre annonce",
-            "planification": "Planification",
-            "map": "Trajet",
-            "passengers": "Passagers",
-            "participation": "Participation",
-            "message": "Message",
-            "summary": "Récapitulatif"
+        "buttons": {
+            "notValid": "Berriz inizializatu eta bidaiari loturiko inforazio guzia eman behar duzu zure iragarkia argitarazteko",
+            "publish_ad": "Nire iragarkia argitaratu",
+            "update_ad": "Nire iragarkia aldatu",
+            "previous": "Aitzinekoa",
+            "next": "Ondokoa"
+        },
+        "driverLicense": {
+            "route": "/cgu",
+            "link": "(Ituna)",
+            "text": "Nire iragarkia argitaratuz, nire gida baimena eta bali eta eguneratua den asurantza badudala egiaztatzen dut"
         },
         "content": {
-            "passengers": {
-                "seats": {
-                    "question": "J'ai de la place pour ",
-                    "passengers": " passager(s)"
-                },
-                "luggage": {
-                    "label": "J'ai de la place pour des gros bagages",
-                    "help": "Cochez cette case si votre véhicule peut transporter des gros bagages"
-                },
-                "bike": {
-                    "label": "Je peux transporter un vélo",
-                    "help": "Cochez cette case si votre véhicule peut transporter un vélo"
-                },
-                "backSeats": {
-                    "label": "Maximum 2 personnes à l'arrière",
-                    "help": "Cochez cette case si vous garantissez que les passagers ne seront pas plus de 2 à l'arrière"
+            "map": {
+                "myproposal": "Zure bidaia proposamena"
+            },
+            "summary": "Laburbilduma",
+            "message": {
+                "label": "Zure iragarkian, denek ikus dezaketen mezu bat utz ezazu",
+                "title": {
+                    "passenger": "Nire mezua gidarieri",
+                    "driver": "Nire mezua bidaiarieri",
+                    "both": "Nire mezua"
                 }
             },
             "participation": {
-                "price": "Participation de ",
-                "passengers": " par passager"
+                "passengers": " Bidaiarika",
+                "price": "XXX-ren parte hartzea "
             },
-            "message": {
-                "title": {
-                    "both": "Mon message",
-                    "driver": "Mon message aux passagers",
-                    "passenger": "Mon message aux conducteurs"
+            "passengers": {
+                "backSeats": {
+                    "help": "Lauki hori marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelaldean",
+                    "label": "Gehienez bi pertsona giblean"
                 },
-                "label": "Laissez un message visible par tous dans votre annonce"
-            },
-            "summary": "Récapitulatif",
-            "map": {
-                "myproposal": "Votre proposition de trajet"
+                "bike": {
+                    "help": "Lauki hori marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
+                    "label": "Bizikleta bat garrai dezaket"
+                },
+                "luggage": {
+                    "help": "Lauki hau markatu zure ubilgailuak zaku lodiak garraitzen ahal baditu",
+                    "label": "Tokia badut zaku lodientzat"
+                },
+                "seats": {
+                    "passengers": " Bidaiaria(k)",
+                    "question": "Tokiak baditut XXX-rentzat "
+                }
             }
         },
-        "driverLicense": {
-            "text": "En publiant mon annonce, je certifie avoir un permis de conduire et une assurance valides et à jour",
-            "link": "(Charte)",
-            "route": "/cgu"
-        },
-        "buttons": {
-            "next": "Suivant",
-            "previous": "Précédent",
-            "publish_ad": "Publier mon annonce",
-            "update_ad": "Modifier mon annonce",
-            "notValid": "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
+        "header": {
+            "summary": "Laburbilduma",
+            "message": "Mezua",
+            "participation": "Parte hartea",
+            "passengers": "Bidaiariak",
+            "map": "Bidaia",
+            "planification": "Planifikazioa",
+            "search_journey": "Zure iragarkia hasi"
         }
     },
-    "messageFirstAd": {
-        "signUpDone": "Bravo {givenName} ! Votre inscription est terminée",
-        "alert": "Maintenant, pour être alerté de nouvelles annonces correspondant à votre trajet le plus fréquent, publier sans attendre votre première annonce de trajet régulier afin de pouvoir covoiturer rapidement."
+    "no": "ez",
+    "yes": "bai",
+    "route": {
+        "roundPrice": "/prix/arrondir",
+        "myAds": "/utilisateur/profil/modifier/mes-annonces",
+        "update": "covoiturage/annonce/{id}/modifier",
+        "publish": "covoiturage/publierannonce"
+    },
+    "messageRoundedPrice": "Zure iragarkiko prezioa borobildu dugu, zure eta beste erabiltzaileen esperentzia hobetzeko. Ulertuko duzulakoan, eskertzen zaitugu.",
+    "participation": {
+        "text": "Ibilgailu pribatuekin egiten dire bidaia pribatuei loturiko gobernuko prezio gomendioen erakuspenak ez ditu parte hartzaileak, ez plataforma ez IBM-a engaiatzen. Zerbitzuaren helburua da enplegatuen artean harremanak errextea. Xehetasun gehiagorentzat: <a href='/FAQ'>FAQ</a>.",
+        "forbidden": "Zure bidaiaren prezioak plataformak finkatutako prezioaren muga pasatzen du (0.50/km). Zure bidaia ezingo da argitaratu.",
+        "high": "Zure bidaiaren prezioa, biziki garesti da, zerga taularen batazbestekoa (0.30/km) gainditzen du: zurekin bidaiatzeko aukera biziki apala izanen da. Horrez gain, debekatua da autokidetza gastu partekatuen baitan garraio prestazio ordaiduak proposatzea.",
+        "mid": "Zure bidaia prezioa batazbestekoa baino garestiagoa da, ondorioz, zurekin bidaiatzeko aukerak apalagoak dira."
     },
     "messageSolidaryExclusiveAd": {
-        "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
         "switch": {
-            "label": "Annonce de covoiturage solidaire exclusif"
-        }
-    },
-    "participation": {
-        "mid": "Le prix de votre trajet est supérieur à la moyenne, et vos chances d'être contacté seront donc réduites.",
-        "high": "Le prix de votre trajet, très haut, est au-delà du barème fiscale moyen (0,30€/km) : vos chances d'être contacté seront donc très réduites, il est par ailleurs interdit de proposer des prestations rémunérées de transport qui sortent du cadre du partage de frais en covoiturage.",
-        "forbidden": "Le prix de votre trajet, dépasse le seuil maximum fixé par notre plateforme (0,50€/km). Votre trajet ne pourra pas être publié.",
-        "text": "Les indications de prix indiquées issues de recommandations gouvernementales sont relatives à des trajet privés avec des véhicules privés, elles n’engagent en rien ni les participants, ni la plateforme et ni IBM. L'objectif du service étant uniquement de faciliter la mise en relation entre employé. Plus d'informations sur la <a href='/FAQ'>FAQ</a>."
-    },
-    "messageRoundedPrice": "Nous avons arrondi le tarif de votre annonce afin d'améliorer votre expérience et celle des autres usagers. Merci de votre compréhension.",
-    "route": {
-        "publish": "covoiturage/publierannonce",
-        "update": "covoiturage/annonce/{id}/modifier",
-        "myAds": "/utilisateur/profil/modifier/mes-annonces",
-        "roundPrice": "/prix/arrondir"
-    },
-    "yes": "yes",
-    "no": "no"
+            "label": "Elkartasunezko autokidetza esklusiboa"
+        },
+        "message": " Iragarki hori elkartasuneko autokidetza esklusiboa izanen da, ondoko opzioa atxikitza baduzu. Bakarrik elkartasunezko operadoreek ikusten ahalko dute elkaratsunezko galdegileekin harremanetan sartu ahal izateko. Opzio hori kentzen baduzu, zure iragarki, iragariki arrunta bilakatuko da, ikusgai izanen dena gainerateko autokideentzat eta elkartasunezko operadoreentzat."
+    }
 }

@@ -1,13 +1,13 @@
 {
-    "title": "Rejoindre une communauté sécurisée",
-    "titleWithName": "Rejoindre la communauté",
-    "credential1": "1er identifiant",
-    "credential2": "2nd identifiant",
     "urlSignIn": "/communaute/{id}/securisee/inscription",
-    "join": "Rejoindre la communauté",
+    "credential2": "2.erabiltzaile izena",
     "errors": {
-        "required": "Ce champs est obligatoire",
-        "badCredentials": "Identifiants incorrects",
-        "notLogged": "Vous devez être connecté"
-    }
+        "notLogged": "Konektua izan behar zira",
+        "badCredentials": "Erabiltzaile izena okerra da",
+        "required": "Eremu hau baitezpadakoa da"
+    },
+    "credential1": "1.erabiltzaile izena",
+    "titleWithName": "Komunitatean sartu",
+    "title": "Komunitate seguru batetan sartu",
+    "join": "Komunitatean sartu"
 }

@@ -1,46 +1,46 @@
 {
-    "birthYears": "ans",
-    "seeDetails": "voir détails",
-    "externalResult":{
-        "go":"S'y rendre",
-        "contact":{
-            "button":{
-                "label":"Contacter",
-                "tooltip":"Vous devez être connecté pour contacter un covoitureur"
-            },
-            "popup":{
-                "title":"Contacter",
-                "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
-                "instructions":{
-                    "line1":"Merci de compléter ou de modifier le message ci-dessous.",
-                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
-                },
-                "cancel":"Annuler",
-                "textarea":{
-                    "label":"Votre message",
-                    "content":{
-                        "hello":"Bonjour",
-                        "carpool":"Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrits auprès du même réseaux de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que nous puissions nous contacter",
-                        "name":"Mon nom est {name}",
-                        "email":"Mon mail est {email}",
-                        "phone":"Mon numéro de téléphone est le {phone}",
-                        "seeya":"A bientôt"
-                    }
-                },
-                "send":"Envoyer"
-            },
-            "urlSendContact":"/carpool/rdexConnection",
-            "return":{
-                "ok":"Le message a bien été envoyé.",
-                "error":"Suite à un problème technique le message n'a pas pu être envoyé"
-            }
-        }
-    },
-    "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
-    "inDev": "En cours de développement.",
     "route": {
         "user": {
             "message": "/utilisateur/messages"
         }
-    }
+    },
+    "externalResult": {
+        "contact": {
+            "urlSendContact": "/covoiturage/rdexConnection",
+            "popup": {
+                "send": "Bidali",
+                "textarea": {
+                    "label": "Zure mezua",
+                    "content": {
+                        "hello": "Egun on",
+                        "seeya": "Laster arte",
+                        "phone": "Nire telefono zenbakia {phone} da",
+                        "email": "Nire e-maila {email} da",
+                        "name": "Nire deitura {name} da",
+                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak zuzenki harremanetan jar gaitezen"
+                    }
+                },
+                "cancel": "Ezeztatu",
+                "instructions": {
+                    "line2": "Pentsa harremanetan jartzeko modu bat uztea gutienez, zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera ukan dezan",
+                    "line1": "Eskertzen zaitugu beheragoko mezua betetzea edo aldatzea."
+                },
+                "intro": "Iragarki hori ez dator gure autokidetza webgunetik baina webgune partaidetik {origin}",
+                "title": "Harremanetan jarri"
+            },
+            "return": {
+                "error": "Arazo tekniko batengatik mezua ez da igorria izan",
+                "ok": "Mezua igorria izan da."
+            },
+            "button": {
+                "tooltip": "Konektatua izan behar zira autokide batekin harremanetan jartzeko",
+                "label": "Harremanetan jarri"
+            }
+        },
+        "go": "Hara joan"
+    },
+    "inDev": "Garatzen ari da.",
+    "needTobeConnected": "Ekintza hori egin ahal izateko konektatua izan behar zira.",
+    "seeDetails": "Ikus xehetasunak",
+    "birthYears": "urte"
 }

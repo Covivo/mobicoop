@@ -1,7 +1,7 @@
 {
     "dialog": {
-        "title": "Sélectionner ce point relais comme :",
-        "origin": "Origine",
-        "destination": "Destination"
+        "destination": "Helmuga",
+        "origin": "Jatorria",
+        "title": "Ondoko geldigune bat hautatu:"
     }
 }

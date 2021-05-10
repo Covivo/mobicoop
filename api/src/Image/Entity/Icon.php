@@ -41,7 +41,6 @@ use App\RelayPoint\Entity\RelayPointType;
  *          "force_eager"=false,
  *      },
  *      collectionOperations={
- *          "get",
  *          "ADMIN_get"={
  *              "path"="/admin/icons",
  *              "method"="GET",
@@ -49,10 +48,16 @@ use App\RelayPoint\Entity\RelayPointType;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
+ *              "security"="is_granted('image_list',object)"
  *          },
+ *          "get"={
+ *             "security"="is_granted('image_list',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *             "security"="is_granted('image_read',object)"
+ *          }
  *      }
  * )
  */

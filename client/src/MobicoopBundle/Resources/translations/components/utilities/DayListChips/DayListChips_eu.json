@@ -1,41 +1,38 @@
 {
     "days": {
-        "list": [
-            "mon",
-            "tue",
-            "wed",
-            "thu",
-            "fri",
-            "sat",
-            "sun"
-        ],
-        "mon": {
-            "shortName": "L",
-            "longName": "Lundi"
-        },
-        "tue": {
-            "shortName": "M",
-            "longName": "Mardi"
-        },
-        "wed": {
-            "shortName": "Me",
-            "longName": "Mercredi"
-        },
-        "thu": {
-            "shortName": "J",
-            "longName": "Jeudi"
-        },
-        "fri": {
-            "shortName": "V",
-            "longName": "Vendredi"
+        "sun": {
+            "longName": "Igandea",
+            "shortName": "Ig."
         },
         "sat": {
-            "shortName": "S",
-            "longName": "Samedi"
+            "longName": "Larunbata",
+            "shortName": "Lr."
         },
-        "sun": {
-            "shortName": "D",
-            "longName": "Dimanche"
-        }
+        "fri": {
+            "longName": "Ostirala",
+            "shortName": "Or."
+        },
+        "thu": {
+            "longName": "Osteguna",
+            "shortName": "Os."
+        },
+        "wed": {
+            "longName": "Asteazkena",
+            "shortName": "Az."
+        },
+        "tue": {
+            "longName": "Asteartea",
+            "shortName": "As."
+        },
+        "mon": {
+            "longName": "Astelehena",
+            "shortName": "As."
+        },
+        "list": [
+            "Al.",
+            "As.",
+            "Az.",
+            "Os."
+        ]
     }
 }

@@ -1,7 +1,7 @@
 {
-    "outward": "Aller",
-    "return": "Retour",
-    "multipleTimesSlots": "Plusieurs créneaux",
+    "hourMinute": "HH[h]mm",
     "shortDate": "ddd DD/MM",
-    "hourMinute": "HH[h]mm"
+    "multipleTimesSlots": "Tarte andana bat",
+    "return": "Etorri",
+    "outward": "Joan"
 }

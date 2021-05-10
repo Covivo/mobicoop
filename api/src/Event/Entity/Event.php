@@ -315,7 +315,14 @@ class Event
      */
     private $images;
 
-    /** @var int The id of this external event.
+    /**
+     * @var string $defaultAvatar Url of the default Avatar for an event
+     * @Groups("readEvent")
+     */
+    private $defaultAvatar;
+
+    /**
+     * @var int The id of this external event.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readEvent","write"})
@@ -552,6 +559,18 @@ class Event
         $address->setEvent($this);
 
         return $this;
+    }
+
+    public function setDefaultAvatar(?string $defaultAvatar): self
+    {
+        $this->defaultAvatar = $defaultAvatar;
+
+        return $this;
+    }
+
+    public function getDefaultAvatar(): ?string
+    {
+        return $this->defaultAvatar;
     }
     
     public function getImages()

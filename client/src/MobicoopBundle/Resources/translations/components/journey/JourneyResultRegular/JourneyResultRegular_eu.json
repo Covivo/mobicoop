@@ -1,6 +1,6 @@
 {
-    "shortDate": "ddd DD/MM/Y",
+    "carpool": "Ondoko autokidetzak xerkatu",
+    "age": " | |{age} urte",
     "hourMinute": "HH[h]mm",
-    "age": " | |{age} ans",
-    "carpool": "Chercher les covoiturages correspondants"
+    "shortDate": "ddd DD/MM/Y"
 }

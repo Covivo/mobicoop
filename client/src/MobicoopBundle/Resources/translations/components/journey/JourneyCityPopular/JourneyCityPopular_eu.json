@@ -1,18 +1,18 @@
 {
-    "title":"Les covoiturages par trajets populaires",
-    "subtitle":"Accédez aux covoiturages qui vous intéressent",
-    "intro":"Parcourez ci-dessous la liste des trajets en covoiturage les plus populaires ou consulter ",
-    "popularJourneys":"Les trajets les plus populaires",
-    "links":{
-        "cityByCity":{
-            "label":"les covoiturages par communes",
-            "uri":"/covoiturage-par-ville"
+    "getPopularJourneysUrl": "/covoiturages/populaires",
+    "links": {
+        "popularJourneys": {
+            "uri": "/covoiturage/{origin}/{destination}",
+            "to": "-ra",
+            "from": "Autokidetza...tik"
         },
-        "popularJourneys":{
-            "from":"Covoiturage de",
-            "to":"à",
-            "uri":"/covoiturage/{origin}/{destination}"
+        "cityByCity": {
+            "uri": "/covoiturage-par-ville",
+            "label": "Autokidetzak herrika"
         }
     },
-    "getPopularJourneysUrl":"/covoiturages/populaires"
+    "popularJourneys": "Ezagunenak diren bidaiak",
+    "intro": "Ezagunenak diren autokidetza bidaien zerrenda begizta edo kontsulta ezazu ",
+    "title": "Autokidetzak ezagunak dira bidaiaka",
+    "subtitle": "Interesatzen zaizkizun autokidetzak atzitu"
 }

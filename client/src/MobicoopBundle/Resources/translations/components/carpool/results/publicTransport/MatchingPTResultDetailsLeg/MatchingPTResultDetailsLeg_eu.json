@@ -1,9 +1,9 @@
 {
-    "walkFromToStop": "Marcher de <span class='primary--text'>{departure}</span> à <span class='primary--text'>{arrival}</span>",
-    "walkFromToDestination": "Marcher de <span class='primary--text'>{departure}</span> à <span class='primary--text'>{arrival}</span>",
-    "estimatedDuration": "Durée estimée : {duration}",
-    "waiting": "Attendre {duration}",
-    "direction": "Direction",
-    "hopOn": "Monter",
-    "hopOff": "descendre"
+    "walkFromToDestination": "Ibili <span class='primary--text'>{departure}</span>-tik <span class='primary--text'>{arrival}</span>-ra",
+    "walkFromToStop": "Ibili <span class='primary--text'>{departure}</span> -tik <span class='primary--text'>{arrival}</span>-ra",
+    "hopOff": "Jaitsi",
+    "hopOn": "Igo",
+    "direction": "Norabidea",
+    "waiting": "Igurikatu{duration}",
+    "estimatedDuration": "Distantziaren estimazioa: {duration}"
 }

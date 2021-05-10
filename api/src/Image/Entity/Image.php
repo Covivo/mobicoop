@@ -54,20 +54,21 @@ use App\Image\Admin\Controller\PostImageAction;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
- *  TO DO : Secure the DELETE, GET AND PUT in itemOperations,
- * @ApiResource(
+  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}},
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *             "security"="is_granted('image_list',object)"
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "controller"=CreateImageAction::class,
  *              "deserialize"=false,
- *              "security_post_denormalize"="is_granted('image_post',object)"
+ *              "security_post_denormalize"="is_granted('image_create',object)"
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/images",
@@ -79,9 +80,16 @@ use App\Image\Admin\Controller\PostImageAction;
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security_post_denormalize"="is_granted('admin_image_post',object)"
  *          },
+ *          "regenVersions"={
+ *              "method"="GET",
+ *              "path"="/images/regenversions",
+ *              "security"="is_granted('images_regenversions',object)"
+ *          }
  *      },
  *      itemOperations={
- *          "get","put", "delete"
+ *          "get"={
+ *             "security"="is_granted('image_read',object)"
+ *          }
  *      }
  * )
  * @Vich\Uploadable

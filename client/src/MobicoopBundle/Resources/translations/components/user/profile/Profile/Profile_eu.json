@@ -1,42 +1,42 @@
 {
-    "page": {
-        "title": "Profil"
+    "getMyCarpools": "/getMyCarpools",
+    "save": "Gorde",
+    "errors": {
+        "number": "Pasahitzak zenbaki bat eduki behar du.",
+        "lower": "Pasahitzak minuskula bat eduki behar du.",
+        "upper": "Pasahitzak maiuskula bat eduki behar du.",
+        "min": "Pasahitzak gutienez 8 karaktere behar ditu.",
+        "required": "Pasahitza baitezpadakoa da"
     },
-    "tabs": {
-        "myProfile": "Profil",
-        "password": "Mot de passe",
-        "myAds": "Mes annonces",
-        "carpoolSettings": "Préférences",
-        "alerts": "Alertes",
-        "bankCoordinates": "Identité bancaire",
-        "carpoolsAccepted": "Covoiturages acceptés",
-        "myAccount":"Compte",
-        "reviews":"Avis"
-    },
-    "form": {
-        "newPassword": "Nouveau mot de passe",
-        "newPasswordRepeat": "Nouveau mot de passe (confirmation)",
-        "errors": {
-            "required": "Le mot de passe est requis",
-            "notIdentiquals": "Les mots de passes ne sont pas identiques"
-        }
+    "publicProfile": {
+        "close": "Hetsi",
+        "see": "Ikus publiko perfila",
+        "title": "Publiko perfila"
     },
     "snackBar": {
-        "passwordUpdated": "Mot de passe mis à jour",
-        "textSnackError": "Erreur dans la mise à jour du mot de passe"
-    },    
-    "publicProfile":{
-        "title":"Profil public",
-        "see":"Voir profil public",
-        "close":"Fermer"
+        "textSnackError": "Huts bat pasahitzaren eguneraketan",
+        "passwordUpdated": "Pasahitza eguneratua"
     },
-    "errors": {
-        "required": "Le mot de passe est requis",
-        "min": "Le mot de passe doit comprendre 8 caractères min.",
-        "upper": "Le mot de passe doit comprendre 1 majuscule.",
-        "lower": "Le mot de passe doit comprendre 1 minuscule.",
-        "number": "Le mot de passe doit comprendre 1 chiffre."
+    "form": {
+        "errors": {
+            "notIdentiquals": "Pasahitzak ez dira berdinak",
+            "required": "Pasahitza baitezpadakoa da"
+        },
+        "newPasswordRepeat": "Pasahitza berria (baieztapena)",
+        "newPassword": "Pasahitza berria"
     },
-    "save": "Enregistrer",
-    "getMyCarpools": "/getMyCarpools"
+    "tabs": {
+        "reviews": "Abisuak",
+        "myAccount": "Kontua",
+        "carpoolsAccepted": "Onartuak diren autokidetzak",
+        "bankCoordinates": "Banku agiria",
+        "alerts": "Abisuak",
+        "carpoolSettings": "Hobespenak",
+        "myAds": "Nire iragarkiak",
+        "password": "Pasahitza",
+        "myProfile": "Perfila"
+    },
+    "page": {
+        "title": "Perfila"
+    }
 }

@@ -1,16 +1,16 @@
 {
-    "title": "Paiement en ligne",
-    "wait": {
-        "line1": "Merci pour votre paiement en ligne.",
-        "line2": "Veuillez patienter pendant la validation de la transaction."
+    "tipsEncouragement": {
+        "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre",
+        "textLink": "emaitza bat eginez hemen",
+        "text": "{platformName} zerbitzu librean da, komisiorik eta iragarkirik gabe. Baina plataforma mantentzen laguntzeko, esku ukaldi bat eman dezakezu"
     },
+    "paymentFailed": "Huts bat agertu da, zure ordainketa ez da gorde.",
+    "paymentSucceeded": "Zure ordainketa gordea izan da.",
+    "noPaymentPaymentId": "Ordainketa honen estatusa ezin da atxeman.",
     "checkUrl": "/payment/status",
-    "noPaymentPaymentId": "Impossible de retrouver le status de ce paiement.",
-    "paymentSucceeded": "Votre paiement a bien été enregistré.",
-    "paymentFailed": "Une erreur est survenue, votre paiement n'a pas été enregistré.",
-    "tipsEncouragement":{
-        "text":"{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
-        "textLink":"un don ici",
-        "link":"https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre"
-    }    
+    "wait": {
+        "line2": "Igurika ezazu transakzioa baieztatzen ari den bitartean.",
+        "line1": "Milesker ordainketa linean egiteagatik."
+    },
+    "title": "Ordainketa linean"
 }

@@ -1,28 +1,28 @@
 {
-    "outwardDate": {
-        "label": "Date de départ"
-    },
-    "returnDate": {
-        "label": "Date de retour"
-    },
-    "outwardTime": {
-        "label": "Heure de départ"
-    },
-    "returnTime": {
-        "label": "Heure de retour"
-    },
-    "regularOutwardTime": {
-        "label": "Départ à"
+    "fullDate": "ddd Do MMMM YYYY",
+    "optional": "hautuzkoa",
+    "errorReturnTime": "Itzultze ordua, abiatze ordutik hurbilegia da.",
+    "marginTooltip": "Zure iragarkia bilaketetan agertuko da, ordutegi honetako  {margin}  minutu inguruko malgutasunarekin",
+    "addSchedule": "Denbora tarte bat gehitu",
+    "returnTrip": {
+        "label": "Itzultzea"
     },
     "regularReturnTime": {
-        "label": "Retour à"
+        "label": "Itzultze tokia"
     },
-    "returnTrip": {
-        "label": "Retour"
+    "regularOutwardTime": {
+        "label": "Abiatze tokia"
     },
-    "addSchedule": "Ajouter un créneau",
-    "marginTooltip": "Votre annonce apparaîtra dans des recherches avec une flexibilité de {margin} minutes autour de cet horaire",
-    "errorReturnTime": "L'heure de retour est trop proche de l'heure de départ.",
-    "optional": "facultatif",
-    "fullDate": "ddd Do MMMM YYYY"
+    "returnTime": {
+        "label": "Itzultze ordua"
+    },
+    "outwardTime": {
+        "label": "Abiatze ordua"
+    },
+    "returnDate": {
+        "label": "Itzultze eguna"
+    },
+    "outwardDate": {
+        "label": "Abiatze eguna"
+    }
 }

@@ -1,28 +1,32 @@
 {
-    "title": "Mobicoop",
-    "subtitle": "Explanation in english",
-    "origin": "Departure location",
-    "destination": "Arrival location",
-    "swap": {
-        "alt": "Swap origin and destination addresses",
-        "help": "Click to swap origin and destination addresses"
-    },
-    "switch": {
-        "label": "Regular ride",
-        "help": "Switch to indicate a regular ride"
-    },
-    "datePicker": {
-        "label": "Departure date"
+    "urlDate": "YMMDD",
+    "tooltips": {
+        "needConnection": "Iragarkia argitaratzeko konekta zaitez edo izena eman"
     },
     "buttons": {
-        "publish": {
-            "label": "Publish",
-            "route": "/carpool/search/publish"
-        },
         "search": {
-            "label": "Search",
-            "route": "carpool/search"
+            "widgetRoute": "event/{id}/recherche/covoiturage",
+            "route": "covoiturage/recherche",
+            "label": "Bilatu"
+        },
+        "publish": {
+            "route": "covoiturage/recherche/poster",
+            "label": "Iragarkia argitaratu"
         }
     },
-    "urlDate": "YMMDD"
+    "datePicker": {
+        "label": "Abiatze data"
+    },
+    "switch": {
+        "help": "Komutadore honetan klikatu zure bidaia erregularra zehazteko",
+        "label": "Bidaia erregularra"
+    },
+    "swap": {
+        "help": "Abiatze eta iriste tokia gibelez aitzina ezartzeko klikatu",
+        "alt": "Iriste eta abiatzea gibelez aitzina ezarri"
+    },
+    "destination": "Iriste lekua",
+    "origin": "Abiatze lekua",
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
+    "title": "Mobicoop"
 }

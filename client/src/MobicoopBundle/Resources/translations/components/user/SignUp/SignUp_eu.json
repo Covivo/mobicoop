@@ -1,119 +1,119 @@
 {
-    "title": "Inscription",
-    "urlSignUp": "/utilisateur/inscription",
-    "urlSignUpResult": "/utilisateur/inscription/{id}",
-    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
-    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
-    "gender": {
-        "label": "Civilité",
-        "placeholder": "Civilité",
-        "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+    "rgpd": {
+        "link": {
+            "route": "/cgu",
+            "label": "Zure datuen kudeaketa eta eskubideei buruz gehiago jakiteko."
         },
-        "errors": {
-            "required": "La civilité est requise"
+        "infos": "Formulario honetik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
+        "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orrialde azpian eskuratu dezakezun \"cookies kudeaketa\" tresna onartu beharko duzu.",
+        "consent": "Konektatu ahal izateko orri azpian atxemnen duzu loturan \"konexio aktiboa mantendu\" onartu beharko duzu , \"cookies kudeaketa\" tresnari esker."
+    },
+    "button": {
+        "register": "Izena ematen dut",
+        "next": "Hurrengoa",
+        "previous": "Aitzinekoa"
+    },
+    "urlLogin": "/utilisateur/connexion/",
+    "login": "Jadanik kontu bat baduzu? Identifika zaitez!",
+    "snackbar": {
+        "joinCommunity": {
+            "textError": "Huts bat agertu da, berriz saia ezazu.",
+            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
+            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
         }
     },
-    "givenName": {
-        "placeholder": "Prénom",
-        "errors": {
-            "required": "Le prénom est requis"
-        }
+    "steps": {
+        "5": "Bizilekuaren hiria",
+        "4": "Sorteguna",
+        "3": "Generoa",
+        "2": "Nortasuna",
+        "1": "Erabiltzailearen izena"
     },
-    "familyName": {
-        "placeholder": "Nom",
-        "errors": {
-            "required": "Le nom est requis"
-        }
+    "step": "Urratsa",
+    "communities": {
+        "route": "/utilisateur/inscription/liste-des-communautes",
+        "label": "Komunitatean sartu"
     },
-    "birthDate": {
-        "placeholder": "Date de naissance"
+    "legalAge": {
+        "required": "Baitezpadakoa",
+        "text": "Baieztatzen dut gutienez 18 urte ditudala"
+    },
+    "newsSubscription": {
+        "text": "Onartzen dut zerbitzuaren egunerokotasunak eskuratzea (autokidetza egiteko informazio baliagarriak, zerbitzu berriak edo funtzionalitate berriak)"
+    },
+    "chart": {
+        "required": "Ituna baieztatzea baitezpadakoa da",
+        "route": "/cgu",
+        "link": "plataformaren ituna eta bere datuak babesteko politika",
+        "text": "Onartzen dut "
+    },
+    "checkEmail": {
+        "error": "Helbide elektroniko hori jadanik hartua da",
+        "url": "/utilisateur/verif/email"
+    },
+    "password": {
+        "errors": {
+            "number": "Pasahitzak zenbaki bat izan behar du.",
+            "lower": "Pasahitza minuskula bat izan behar du.",
+            "upper": "Pasahitzak maiuskula bat izan behar du.",
+            "min": "Pasahitzak gutxienez 8 karaktere ditu.",
+            "required": "Pasahitza baitezpadakoa da"
+        },
+        "placeholder": "Pasahitza"
+    },
+    "phone": {
+        "errors": {
+            "valid": "Mugikor telefonoa bali izan behar da",
+            "required": "Mugikor zenbakia baitezpadakoa da"
+        },
+        "placeholder": "Mugikorra"
+    },
+    "email": {
+        "errors": {
+            "valid": "Helbide elektrioa bali izan behar da",
+            "required": "Helbide elektronikoa baitezpadakoa da"
+        },
+        "placeholder": "Helbide elektronikoa"
+    },
+    "homeTown": {
+        "placeholder": "Bzilekuaren herria"
     },
     "birthDay": {
         "errors": {
-            "required": "La date de naissance est requise",
-            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+            "notadult": "16 urte behar dituzu plataforman izena emateko",
+            "required": "Sorteguna baitezpadakoa da"
         }
     },
-    "homeTown": {
-        "placeholder": "Commune de résidence"
+    "birthDate": {
+        "placeholder": "Sorteguna"
     },
-    "email": {
-        "placeholder": "Email",
+    "familyName": {
         "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide"
-        }
-    },
-    "phone": {
-        "placeholder": "Téléphone portable",
-        "errors": {
-            "required": "Le numéro de téléphone est requis",
-            "valid": "Le numéro de téléphone doit être valide"
-        }
-    },
-    "password": {
-        "placeholder": "Mot de passe",
-        "errors": {
-            "required": "Le mot de passe est requis",
-            "min": "Le mot de passe doit comprendre 8 caractères min.",
-            "upper": "Le mot de passe doit comprendre 1 majuscule.",
-            "lower": "Le mot de passe doit comprendre 1 minuscule.",
-            "number": "Le mot de passe doit comprendre 1 chiffre."
-        }
-    },
-    "checkEmail": {
-        "url": "/utilisateur/verif/email",
-        "error": "Cet email est déjà pris"
-    },
-    "chart": {
-        "text": "J'accepte ",
-        "link": "la charte de la plateforme et sa politique de protection des données",
-        "route": "/cgu",
-        "required": "La validation de la charte est requise"
-    },
-    "newsSubscription":{
-        "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
-    },
-    "legalAge": {
-        "text": "Je confirme être âgé d'au moins 18 ans",
-        "required": "Requis"
-    },
-    "communities": {
-        "label": "Rejoindre une communauté",
-        "route": "/utilisateur/inscription/liste-des-communautes"
-    },
-    "step": "Etape",
-    "steps": {
-        "1": "Identifiants",
-        "2": "Identité",
-        "3": "Genre",
-        "4": "Date de naissance",
-        "5": "Ville de résidence"
-    },
-    "snackbar": {
-        "joinCommunity": {
-            "textOkManualValidation": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
-            "textOkAutoValidation": "Votre demande d'adhésion est validée.",
-            "textError": "Une erreur est survenue veuillez essayer à nouveau."
-        }
-    },
-    "login": "Vous avez déjà un compte ? Identifiez-vous !",
-    "urlLogin": "/utilisateur/connexion/",
-    "button": {
-        "previous": "Précédent",
-        "next": "Suivant",
-        "register": "Je m'inscris"
-    },
-    "rgpd": {
-        "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
-        "link": {
-            "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
-            "route": "/cgu"
+            "required": "Deitura baitezpadakoa da"
         },
-        "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page.",
-        "socialServicesUnavailableWithoutConsent":"Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
-    }
+        "placeholder": "Deitura"
+    },
+    "givenName": {
+        "errors": {
+            "required": "Izena baitezpadakoa da"
+        },
+        "placeholder": "Izena"
+    },
+    "gender": {
+        "errors": {
+            "required": "Zibilitatea baitezpadakoa da"
+        },
+        "values": {
+            "other": "Beste",
+            "female": "Anderea",
+            "male": "Jauna"
+        },
+        "placeholder": "Zibilitatea",
+        "label": "Zibilitatea"
+    },
+    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+    "urlSignUpResult": "/utilisateur/inscription/{id}",
+    "urlSignUp": "/utilisateur/inscription",
+    "title": "Izen ematea"
 }

@@ -1,59 +1,59 @@
 {
-    "lastName": {
-        "label": "Votre nom",
-        "placeholder": "Votre nom",
-        "errors": {
-            "required": "Le nom est requis"
-        }
-    },
-    "firstName": {
-        "label": "Votre prénom",
-        "placeholder": "Votre prénom",
-        "errors": {
-            "required": "Le prénom est requis"
-        }
-    },
-    "email": {
-        "label": "Votre email",
-        "placeholder": "Votre email",
-        "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide."
-        }
-    },
-    "demand": {
-        "label": "Votre demande",
-        "placeholder": "Votre demande",
-        "items": {
-            "infos": "Renseignements",
-            "technicalIssues": "Problème technique",
-            "partnership": "Partenariat",
-            "community": "Création communauté"
-        },
-        "errors": {
-            "required": "L'objet de votre demande est requis"
-        }
-    },
-    "message": {
-        "label": "Votre message",
-        "placeholder": "Votre message",
-        "hint": " ",
-        "errors": {
-            "required": "Le message est requis."
-        }
+    "getContactItemsUri": "/contact/getItems",
+    "error": "Akats bat agertu da.",
+    "success": "Zure mezua igorria izan da.",
+    "dataPolicy": {
+        "route": "/protection-donnees",
+        "link": "gure datuak babesteko politika",
+        "text": "Zure eskubideak ezagutu eta erabiltzeko, formulario honetan bildutako datuak erabiltzeko baimenaren kentzea barne, irakur ezazu"
     },
     "buttons": {
         "send": {
-            "label": "Envoyer",
-            "route": "contact/send"
+            "route": "contact/send",
+            "label": "Bidali"
         }
     },
-    "dataPolicy": {
-        "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
-        "link": "notre politique de protection des données",
-        "route": "/protection-donnees"
+    "message": {
+        "errors": {
+            "required": "Mezua baieztatua da."
+        },
+        "hint": " . ",
+        "placeholder": "Zure mezua",
+        "label": "Zure mezua"
     },
-    "success": "Votre message a été envoyé avec succès.",
-    "error": "Une erreur est survenue.",
-    "getContactItemsUri":"/contact/getItems"
+    "demand": {
+        "errors": {
+            "required": "Zure eskaeraren gaia baieztatu"
+        },
+        "items": {
+            "community": "Komunitatearen sortzea",
+            "partnership": "Partaidetza",
+            "technicalIssues": "Arazo teknikoa",
+            "infos": "Argibideak"
+        },
+        "placeholder": "Zure eskaera",
+        "label": "Zure eskaera"
+    },
+    "email": {
+        "errors": {
+            "valid": "Zure helbide elektronikoa bali izan behar da.",
+            "required": "Helbide elektronikoa baitezpadakoa da"
+        },
+        "placeholder": "Zure helbide elektronikoa",
+        "label": "Zure helbide elektronikoa"
+    },
+    "firstName": {
+        "errors": {
+            "required": "Zure izena baitezpadakoa da"
+        },
+        "placeholder": "Zure izena",
+        "label": "Zure izena"
+    },
+    "lastName": {
+        "errors": {
+            "required": "Deitura baitezpadakoa da"
+        },
+        "placeholder": "Zure deitura",
+        "label": "Zure deitura"
+    }
 }

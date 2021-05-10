@@ -1,80 +1,80 @@
 {
-    "filters": "Filtres",
-    "select": {
-        "order": {
-            "label": "Ordre",
-            "date": {
-                "increasing": "Par date croissante",
-                "decreasing": "Par date décroissante"
-            }
-        },
-        "filter": {
-            "role": {
-                "label": "Type d'annonce",
-                "driver": {
-                    "label": "Conducteur",
-                    "value": "1"
-                },
-                "passenger": {
-                    "label": "Passager",
-                    "value": "2"
-                },
-                "both": {
-                    "label": "Conducteur et passager",
-                    "value": "3"
-                }
-            },
-            "gender": {
-                "label": "Civilité",
-                "female": {
-                    "label": "Madame",
-                    "value": "1"
-                },
-                "male": {
-                    "label": "Monsieur",
-                    "value": "2"
-                },
-                "other": {
-                    "label": "Autre",
-                    "value": "3"
-                }
-            },
-            "community": {
-                "label": "Communauté"
-            }
-        },
-        "hour": {
-            "label": "Heure",
-            "help": "Affichage des annonces sur l'heure sélectionnée uniquement "
-        }
-    },
     "chips": {
-        "date": {
-            "label": "Date",
-            "value": {
-                "ASC": "croissante",
-                "DESC": "décroissante"
-            }
-        },
-        "hour": "Heure",
-        "role": {
-            "label": "Type",
-            "value": {
-                "1": "Conducteur",
-                "2": "Passager",
-                "3": "Conducteur et passager"
-            }
+        "community": {
+            "label": "Komunitatea"
         },
         "gender": {
-            "label": "Civilité",
             "value": {
-                "1": "Madame",
-                "2": "Monsieur",
-                "3": "Autre"
+                "3": "Beste",
+                "2": "Jauna",
+                "1": "Anderea"
+            },
+            "label": "Zibilitatea"
+        },
+        "role": {
+            "value": {
+                "3": "Gidaria eta bidaiaria",
+                "2": "Bidaiaria",
+                "1": "Gidaria"
+            },
+            "label": "Mota"
+        },
+        "hour": "Ordua",
+        "date": {
+            "value": {
+                "DESC": "Ttipituz doa",
+                "ASC": "Handituz doa"
+            },
+            "label": "Eguna"
+        }
+    },
+    "select": {
+        "hour": {
+            "help": "Iragarkien afitxaketak hautatutako orduarentzat bakarrik ",
+            "label": "Ordua"
+        },
+        "filter": {
+            "gender": {
+                "male": {
+                    "label": "Jauna",
+                    "value": "2"
+                },
+                "female": {
+                    "label": "Anderea",
+                    "value": "1"
+                },
+                "other": {
+                    "value": "3",
+                    "label": "Bestea"
+                },
+                "label": "Zibilitatea"
+            },
+            "community": {
+                "label": "Komunitatea"
+            },
+            "role": {
+                "both": {
+                    "value": "3",
+                    "label": "Gidaria eta bidaiaria"
+                },
+                "passenger": {
+                    "value": "2",
+                    "label": "Bidaiaria"
+                },
+                "driver": {
+                    "value": "1",
+                    "label": "Gidaria"
+                },
+                "label": "Iragarki mota"
             }
         },
-        "community": {
-            "label": "Communauté"
+        "order": {
+            "date": {
+                "decreasing": "Data ttipienaren ordenean",
+                "increasing": "Data zaharrenaren ordenean"
+            },
+            "label": "Ordrea"
         }
-    }
+    },
+    "filters": "Irazkiak"
 }

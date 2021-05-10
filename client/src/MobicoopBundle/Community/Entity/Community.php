@@ -149,6 +149,11 @@ class Community implements ResourceInterface, \JsonSerializable
     private $images;
 
     /**
+     * @var string $defaultAvatar Url of the default Avatar for a community
+     */
+    private $defaultAvatar;
+
+    /**
      * @var Proposal[]|null The proposals in this community.
      *
      * @Groups({"post","put"})
@@ -355,6 +360,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function setDefaultAvatar(?string $defaultAvatar): self
+    {
+        $this->defaultAvatar = $defaultAvatar;
+
+        return $this;
+    }
+
+    public function getDefaultAvatar(): ?string
+    {
+        return $this->defaultAvatar;
+    }
+
     /**
      *
      * @return Collection|Image[]
@@ -520,6 +537,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'name'              => $this->getName(),
             'urlKey'            => $this->getUrlKey(),
             'description'       => $this->getDescription(),
+            'defaultAvatar'     => $this->getDefaultAvatar(),
             'images'            => $this->getImages(),
             'fullDescription'   => $this->getFullDescription(),
             'proposalsHidden'   => $this->isProposalsHidden(),

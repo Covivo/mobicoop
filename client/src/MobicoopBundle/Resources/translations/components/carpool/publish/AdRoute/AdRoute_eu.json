@@ -1,29 +1,29 @@
 {
-    "addWaypoint": "Ajouter une étape",
-    "origin": {
-        "label": "Origine",
-        "error": "Obligatoire"
+    "distance": "Distantzia",
+    "communities": {
+        "route": "/utilisateur/communautes",
+        "label": "Komunitate horietan iragarkia argitaratu"
     },
-    "destination": {
-        "label": "Destination",
-        "error": "Obligatoire"
-    },
-    "waypoint1": {
-        "label": "Etape 1"
-    },
-    "waypoint2": {
-        "label": "Etape 2"
+    "avoidMotorway": "Autopista saihestua",
+    "waypoint4": {
+        "label": "4. etapa"
     },
     "waypoint3": {
-        "label": "Etape 3"
+        "label": "3. etapa"
     },
-    "waypoint4": {
-        "label": "Etape 4"
+    "waypoint2": {
+        "label": "Etapa 2"
     },
-    "avoidMotorway": "Eviter l'autoroute",
-    "communities": {
-        "label": "Publier l'annonce dans ces communautés",
-        "route": "/utilisateur/communautes"
+    "waypoint1": {
+        "label": "Etapa 1"
     },
-    "distance": "Distance"
+    "destination": {
+        "error": "Beharrezkoa",
+        "label": "Helmuga"
+    },
+    "origin": {
+        "error": "Beharrezkoa",
+        "label": "Jatorria"
+    },
+    "addWaypoint": "Urrats bat gehitu"
 }

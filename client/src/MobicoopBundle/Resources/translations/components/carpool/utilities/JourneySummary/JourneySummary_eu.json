@@ -1,7 +1,7 @@
 {
-    "priceTooltip": "",
-    "priceTooltipSolidaryExclusive": "",
-    "places": "",
+    "hourMinute": "HH[h]mm",
     "shortDate": "ddd DD/MM",
-    "hourMinute": "HH[h]mm"
+    "places": "{seats} toki | {seats} toki",
+    "priceTooltipSolidaryExclusive": "Elkartasunezko iragarki esklusiboak",
+    "priceTooltip": "Prezio adierazgarria"
 }

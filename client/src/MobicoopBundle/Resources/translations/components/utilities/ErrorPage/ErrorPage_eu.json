@@ -1,14 +1,14 @@
 {
-    "default":{
-        "title":"Houston, nous avons un problème...",
-        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
+    "returnHome": {
+        "link": "harrera orrialdera",
+        "text": "Berriz etor zaitezke"
     },
-    "404":{
-        "title":"Houston, nous avons un problème...",
-        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
+    "404": {
+        "desc": "Afitxatu nahi duzun orrialdea ez da eskuragarri. Milesker berantago berriz saiatzea edo arazoa seinalatzea honi dagokion formularioaren bidez.",
+        "title": "Houston, arazo bat badugu..."
     },
-    "returnHome":{
-        "text":"Vous pouvez revenir",
-        "link":"en page d'accueil"
+    "default": {
+        "desc": "Afitxatu nahi duzun orrialdea ez da eskuragarri. Milesker berantago berriz saiatzea edo arazoa seinalatzea honi dagokion formularioaren bidez.",
+        "title": "Houston, arazo bat badugu..."
     }
 }

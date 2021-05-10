@@ -1,8 +1,8 @@
 {
-    "driverOrigin": "Départ du conducteur",
-    "driverDestination": "Arrivée du conducteur",
-    "step": "Point de passage",
-    "pickUp": "Pris en charge",
-    "dropOff": "Dépose",
-    "hourMinute": "HH[h]mm"
+    "hourMinute": "HH[h]mm",
+    "dropOff": "Utzi",
+    "pickUp": "Bere gain hartu",
+    "step": "Geldiguneak",
+    "driverDestination": "Gidaria iritsiko da",
+    "driverOrigin": "Gidaria abiatzen da"
 }

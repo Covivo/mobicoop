@@ -1,71 +1,71 @@
 {
-    "gender": {
-        "placeholder": "Civilité",
-        "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+    "email": {
+        "errors": {
+            "required": "Helbide elektronikoa baitezpadakoa da",
+            "valid": "Helbide elektrioa bali izan behar da"
         },
-        "errors": {
-            "required": "La civilité est requise"
-        }
-    },
-    "familyName": {
-        "placeholder": "Nom",
-        "errors": {
-            "required": "Le nom est requis"
-        }
+        "placeholder": "Helbide elektronikoa"
     },
     "givenName": {
-        "placeholder": "Prénom",
         "errors": {
-            "required": "Le prénom est requis"
-        }
+            "required": "Izena baitezpadakoa da"
+        },
+        "placeholder": "Izena"
     },
-    "email": {
-        "placeholder": "Email",
+    "familyName": {
         "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide"
-        }
+            "required": "Deitura baitezpadakoa da"
+        },
+        "placeholder": "Deitura"
     },
-    "phone": {
-        "placeholder": "Téléphone portable",
+    "gender": {
         "errors": {
-            "required": "Le numéro de téléphone est requis",
-            "valid": "Le numéro de téléphone doit être valide"
-        }
+            "required": "Zibilitatea baitezpadakoa da"
+        },
+        "values": {
+            "other": "Beste",
+            "female": "Anderea",
+            "male": "Jauna"
+        },
+        "placeholder": "Zibilitatea"
+    },
+    "success": "Zure esku ukaldiaren eskaera igorria izan da!",
+    "other": {
+        "placeholder": "Beste",
+        "label": "Beste"
+    },
+    "structure": {
+        "placeholder": "Laguntzen duen egitura",
+        "label": "Laguntzen duen egitura"
+    },
+    "subject": {
+        "label": "Bidaiaren arrazoia",
+        "placeholder": "Bidaiaren arrazoia"
+    },
+    "hasRSA": {
+        "placeholder": "RSA hartzailea",
+        "label": "RSA hartzailea"
+    },
+    "yearOfBirth": {
+        "placeholder": "Sorturtea",
+        "label": "Sorturtea"
     },
     "ui": {
         "buttons": {
-            "validate": {
-                "label": "Valider",
-                "route": "/solidarite/demande"
-            },
             "cancel": {
-                "label": "Annuler"
+                "label": "Ezeztatu"
+            },
+            "validate": {
+                "route": "/elkartasunezkoa/eskaera",
+                "label": "Balioztatu"
             }
         }
     },
-    "yearOfBirth": {
-        "label": "Année de naissance",
-        "placeholder": "Année de naissance"
-    },
-    "hasRSA": {
-        "label": "Bénéficiaire du RSA",
-        "placeholder": "Bénéficière du RSA"
-    },
-    "subject": {
-        "label": "Objet du déplacement",
-        "placeholder": "Objet du déplacement"
-    },
-    "structure": {
-        "label": "Structure accompagnante",
-        "placeholder": "Structure accompagnante"
-    },
-    "other": {
-        "label": "Autre",
-        "placeholder": "Autre"
-    },
-    "success": "Votre demande de coup de pouce a bien été envoyée !"
+    "phone": {
+        "errors": {
+            "valid": "Mugikor telefonoa bali izan behar da",
+            "required": "Mugikor zenbakia baitezpadakoa da"
+        },
+        "placeholder": "Mugikorra"
+    }
 }

@@ -1,8 +1,8 @@
 {
-    "title": "Covoiturage depuis {origin} vers {destination}",
-    "nbResults": "Pas d'annonce en covoiturage trouvée | 1 annonce en covoiturage trouvée | {nb} annonces en covoiturage trouvées",
-    "punctual": "Trajet ponctuel",
-    "regular": "Trajet régulier",
+    "redirectForCarpoolSearch": "/covoiturage/annonce/{proposalId}/resultats",
     "createSearchFromProposalUrl": "/covoiturage/creer-recherche/{proposalId}",
-    "redirectForCarpoolSearch": "/covoiturage/annonce/{proposalId}/resultats"
+    "regular": "Bidaia erregularrak",
+    "punctual": "Ezohiko bidaia",
+    "nbResults": "Ez da iragarkirik autokitza atxemaneran | Iragarki 1 autokidetza atxemanetan| {nb} iragarki autokidetza atxemanetan",
+    "title": "Autokidetza{origin} -tik{destination}-ra"
 }

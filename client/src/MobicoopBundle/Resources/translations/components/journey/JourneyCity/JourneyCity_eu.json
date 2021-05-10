@@ -1,10 +1,10 @@
 {
-    "title": "Les covoiturages par commune",
-    "subtitle": "Accédez aux covoiturages de votre commune",
-    "fromCity": "De commune...",
-    "toCity": "... à commune",
-    "journeyFromCity": "Covoiturage de {city}",
-    "journeyToCity": "Covoiturage vers {city}",
+    "routeToCity": "/communes/covoiturage-vers-{city}",
     "routeFromCity": "/communes/covoiturage/{city}",
-    "routeToCity": "/communes/covoiturage-vers-{city}"
+    "journeyToCity": "{city}-rantz autokidetza",
+    "journeyFromCity": "{city}ko autokidetza",
+    "toCity": "...herrira",
+    "fromCity": "Herritik...",
+    "subtitle": "Autokidetzak herrika atzitu",
+    "title": "Autokidetzak herrika"
 }

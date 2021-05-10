@@ -1,11 +1,10 @@
 {
-    "title": "Boîte à outils",
-    "subtitle": "Les outils de communication",
     "widget": {
-        "title": "Le widget",
-        "textLink": "Rendez-vous sur cette page",
+        "text": "Zure webgunean sar daiteken widget-a lortzeko eta honen egiteko argibideak eskuratzeko",
         "link": "/widget/get",
-        "text": "pour obtenir un widget intégrable sur votre site web ainsi que les instructions pour le faire"
+        "textLink": "Hitzordua orrialde honetan",
+        "title": "Widget-a"
     },
-    "items": []
+    "subtitle": "Komunikazio tresnak",
+    "title": "Esku-tresna kutxa"
 }
