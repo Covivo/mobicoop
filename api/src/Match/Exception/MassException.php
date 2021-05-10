@@ -26,6 +26,7 @@ namespace App\Match\Exception;
 class MassException extends \LogicException
 {
     const NO_MASSPERSON = "This Mass has no MassPerson";
+    const BAD_TYPE = "Bad Mass Type";
 
     // Migrate
     const NO_WORK_PLACES = "No work places found";
