@@ -2,13 +2,13 @@
     "getPopularJourneysUrl": "/covoiturages/populaires/home",
     "popularJourneys": {
         "uri": "/covoiturage/{origin}/{destination}",
-        "to": "xxx-ra",
-        "from": "Autokidetzak XXXtik"
+        "to": "-ra",
+        "from": "Autokidetza"
     },
     "links": {
         "popular": {
             "uri": "/covoiturage-par-ville/populaires",
-            "title": "Autokidetzak ezagunak diren herrika"
+            "title": "Autokidetzak arrakasta duten bidaiaka"
         },
         "byCity": {
             "uri": "/covoiturage-par-ville",
@@ -16,7 +16,7 @@
         }
     },
     "title": {
-        "part2": "...herrira",
+        "part2": "... herrira",
         "part1": "Herritik..."
     }
 }
