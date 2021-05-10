@@ -477,6 +477,13 @@ class Mass
     private $migratedDate;
 
     /**
+     * @var int The id of an existing community. The migrated users will be joining this community.
+     * If there is a communityId, the other community fields (name, desc etc...) will be ignored
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityId;
+    
+    /**
      * @var string The name of the new community that will be created if we migrate the users.
      * All the migrated user will join this new community.
      * @Groups({"mass","massMigrate"})
@@ -897,6 +904,16 @@ class Mass
         $this->migratedDate = $migratedDate;
 
         return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
     }
 
     public function getCommunityName(): ?string
