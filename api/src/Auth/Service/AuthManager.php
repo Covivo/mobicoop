@@ -293,7 +293,7 @@ class AuthManager
      * Return the assigned AuthItem of the current user
      *
      * @param integer|null $type    Limit to this type af Auth Item
-     * @param boolean|null $withId    If set to true, return also ROLE_ID
+     * @param boolean|null $withId  If set to true, return also ROLE_ID
      *
      * @return array The auth items
      */

@@ -127,7 +127,29 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"readCommunity","readCommunityAdmin"}},
  *              "method"="GET",
  *              "path"="/communities/manage",
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/communities",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/communities",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_create',object)",
+ *          },
+ *          "ADMIN_moderated"={
+ *              "method"="GET",
+ *              "path"="/admin/communities/moderated",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security_post_denormalize"="is_granted('admin_community_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -144,7 +166,27 @@ use App\Match\Entity\Mass;
  *          },
  *          "delete"={
  *              "security"="is_granted('community_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_community_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/communities/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_delete',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
@@ -164,7 +206,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","results","existsCommunity","communities","readUserAdmin"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","communities","readUserAdmin"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -174,7 +216,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
      */
     private $name;
 
@@ -189,7 +231,7 @@ class Community
      * @var int Community status.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"readCommunity","write","readUserAdmin"})
+     * @Groups({"aRead","aWrite","readCommunity","write","readUserAdmin"})
      */
     private $status;
 
@@ -197,7 +239,7 @@ class Community
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $membersHidden;
 
@@ -205,7 +247,7 @@ class Community
      * @var boolean|null Proposals are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $proposalsHidden;
 
@@ -213,7 +255,7 @@ class Community
      * @var int|null The type of validation (automatic/manual/domain).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","write", "communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write", "communities"})
      */
     private $validationType;
 
@@ -221,7 +263,7 @@ class Community
      * @var string|null The domain of the community.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $domain;
 
@@ -230,7 +272,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $description;
 
@@ -239,7 +281,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
      */
     private $fullDescription;
 
@@ -247,7 +289,7 @@ class Community
     * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
-    * @Groups({"readCommunity"})
+    * @Groups({"aRead","readCommunity"})
     */
     private $createdDate;
 
@@ -255,7 +297,7 @@ class Community
      * @var \DateTimeInterface Updated date of the community.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readCommunity","communities"})
+     * @Groups({"aRead", "readCommunity","communities"})
      */
     private $updatedDate;
 
@@ -263,7 +305,7 @@ class Community
      * @var User The creator of the community.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
@@ -277,7 +319,7 @@ class Community
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      * @MaxDepth(1)
      */
     private $address;
@@ -346,8 +388,8 @@ class Community
     private $member;
 
     /**
-     * @var boolean|null Number of members of this community
-     * @Groups({"readCommunity","communities"})
+     * @var int|null Number of members of this community
+     * @Groups({"aRead","readCommunity","communities"})
      */
     private $nbMembers;
     
@@ -365,6 +407,35 @@ class Community
      */
     private $mass;
 
+    /**
+     * @var string The referrer
+     * @Groups({"aRead","aWrite"})
+     */
+    private $referrer;
+
+    /**
+     * @var int The referrer id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $referrerId;
+
+    /**
+     * @var string|null The referrer avatar
+     * @Groups({"aRead"})
+     */
+    private $referrerAvatar;
+
+    /**
+     * @var string|null The community main image
+     * @Groups({"aRead","aWrite"})
+     */
+    private $image;
+
+    /**
+     * @var string|null The community avatar
+     * @Groups({"aRead","aWrite"})
+     */
+    private $avatar;
 
     public function __construct($id=null)
     {
@@ -725,6 +796,49 @@ class Community
 
         return $this;
     }
+
+    public function getReferrer(): string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getReferrerId(): int
+    {
+        if (is_null($this->referrerId)) {
+            return $this->getUser()->getId();
+        }
+        return $this->referrerId;
+    }
+
+    public function setReferrerId(?int $referrerId)
+    {
+        $this->referrerId = $referrerId;
+    }
+
+    public function getReferrerAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
+    }
+
+    public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+            return $this->getImages()[0]->getVersions()['square_250'];
+        }
+        return null;
+    }
+
 
     // DOCTRINE EVENTS
 

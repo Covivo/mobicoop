@@ -44,8 +44,9 @@ final class IsInCommunityFilter extends AbstractContextAwareFilter
             $value = substr($value, strrpos($value, '/') + 1);
         }
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->leftJoin('u.communityUsers', 'c')
+            ->leftJoin(sprintf("%s.communityUsers", $rootAlias), 'c')
             ->andWhere(sprintf('(c.id != %s)', $value));
     }
 

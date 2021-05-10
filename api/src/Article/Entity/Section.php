@@ -90,7 +90,7 @@ class Section
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","read"})
      */
     private $id;
             
@@ -98,7 +98,7 @@ class Section
      * @var string The title of the section.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $title;
 
@@ -106,7 +106,7 @@ class Section
      * @var string The subtitle of the section.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $subTitle;
 
@@ -114,7 +114,7 @@ class Section
      * @var int The position of the section in the article.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $position;
 
@@ -122,7 +122,7 @@ class Section
      * @var int The status of publication of the section.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $status;
 
@@ -140,7 +140,7 @@ class Section
      *
      * @ORM\OneToMany(targetEntity="\App\Article\Entity\Paragraph", mappedBy="section", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      * @MaxDepth(1)
      */
     private $paragraphs;
@@ -160,6 +160,11 @@ class Section
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    public function __construct()
+    {
+        $this->paragraphs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -249,6 +254,12 @@ class Section
             }
         }
 
+        return $this;
+    }
+
+    public function removeParagraphs(): self
+    {
+        $this->paragraphs->clear();
         return $this;
     }
 

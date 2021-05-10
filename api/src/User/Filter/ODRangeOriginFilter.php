@@ -46,8 +46,9 @@ final class ODRangeOriginFilter extends AbstractContextAwareFilter
         // we decode the json we received for get Latitude and Longitude
         $value = json_decode($value);
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->leftJoin('u.proposals', 'pori')
+            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'pori')
             ->leftJoin('pori.waypoints', 'wori')
             ->leftJoin('wori.address', 'aori')
             ->andWhere('pori.private <> 1 AND wori.position = 0 AND acos(sin(aori.latitude * 0.0175) * sin('.$value->lat.' * 0.0175) 

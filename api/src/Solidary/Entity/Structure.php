@@ -89,7 +89,7 @@ class Structure
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","readSolidary","writeSolidary","readUser"})
      */
     private $id;
 
@@ -98,7 +98,7 @@ class Structure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","readSolidary","writeSolidary","readUser"})
      */
     private $name;
 

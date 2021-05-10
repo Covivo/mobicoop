@@ -46,6 +46,7 @@ use App\Image\Controller\ImportImageUserController;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
+use App\Image\Admin\Controller\PostImageAction;
 
 /**
  * An uploaded image (for a user, an event, a community and so on).
@@ -69,6 +70,16 @@ use App\User\Entity\User;
  *              "deserialize"=false,
  *              "security_post_denormalize"="is_granted('image_create',object)"
  *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/images",
+ *              "method"="POST",
+ *              "controller"=PostImageAction::class,
+ *              "deserialize"=false,
+ *              "defaults"={"_api_receive"=false},
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security_post_denormalize"="is_granted('admin_image_post',object)"
+ *          },
  *          "regenVersions"={
  *              "method"="GET",
  *              "path"="/images/regenversions",
@@ -91,7 +102,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"aRead","read","readUser","communities","readRelayPoint"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -209,7 +220,7 @@ class Image
      * @var int The position of the image if mulitple images are related to the same entity.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","aWrite"})
      */
     private $position;
     
@@ -346,6 +357,18 @@ class Image
      * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities"})
      */
     private $versions;
+
+    /**
+     * @var string|null The default image
+     * @Groups({"aRead"})
+     */
+    private $image;
+
+    /**
+     * @var string|null The default avatar
+     * @Groups({"aRead"})
+     */
+    private $avatar;
         
     public function __construct($id=null)
     {
@@ -755,6 +778,22 @@ class Image
     public function setVersions(?array $versions)
     {
         $this->versions = $versions;
+    }
+
+    public function getImage(): ?string
+    {
+        if (isset($this->getVersions()['square_800'])) {
+            return $this->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (isset($this->getVersions()['square_250'])) {
+            return $this->getVersions()['square_250'];
+        }
+        return null;
     }
     
     public function preventSerialization()

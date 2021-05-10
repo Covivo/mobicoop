@@ -68,6 +68,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Campaign Load Listener
+    mobicoop.campaign.campaign_load_listener:
+        class: App\MassCommunication\EventListener\CampaignLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Community User Load Listener
     mobicoop.community_user.community_user_load_listener:
         class: App\Community\EventListener\CommunityUserLoadListener
@@ -331,6 +337,14 @@ services:
         tags:
             - { name: monolog.logger, channel: community }
 
+    App\Community\Repository\CommunityUserRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # Event
     App\Event\Controller\:
         resource: '../src/Event/Controller'
@@ -446,6 +460,10 @@ services:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
 
+    App\Image\Admin\Controller\:
+        resource: '../src/Image/Admin/Controller'
+        tags: ['controller.service_arguments']
+
     App\Image\EntityListener\ImageListener:
         arguments: ['@App\Image\Service\ImageManager']
         tags:
@@ -497,18 +515,32 @@ services:
 
     App\MassCommunication\Service\CampaignManager:
         arguments:
-            $mailerProvider: '%env(resolve:MASS_MAILER_PROVIDER)%'
-            $mailerApiUrl: '%env(resolve:MASS_MAILER_API_URL)%'
-            $mailerClientName: '%env(resolve:MASS_MAILER_CLIENT_NAME)%'
-            $mailerClientId: '%env(resolve:MASS_MAILER_CLIENT_ID)%'
-            $mailerClientTemplateId: '%env(resolve:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
-            $mailerReplyTo: '%env(resolve:MASS_MAILER_REPLYTO)%'
-            $mailerSenderEmail: '%env(resolve:MASS_MAILER_SENDER_EMAIL)%'
-            $mailerDomain: '%env(resolve:MASS_MAILER_DOMAIN)%'
-            $mailerIp: '%env(resolve:MASS_MAILER_IP)%'
-            $smsProvider: '%env(resolve:MASS_SMS_PROVIDER)%'
-            $mailerApiKey: '%env(resolve:MASS_MAILER_API_KEY)%'
-            $mailTemplate: '%env(resolve:MASS_MAILER_BASE_TEMPLATE)%'
+            $mailerProvider: '%env(string:MASS_MAILER_PROVIDER)%'
+            $mailerApiUrl: '%env(string:MASS_MAILER_API_URL)%'
+            $mailerClientName: '%env(string:MASS_MAILER_CLIENT_NAME)%'
+            $mailerClientId: '%env(string:MASS_MAILER_CLIENT_ID)%'
+            $mailerClientTemplateId: '%env(string:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
+            $mailerReplyTo: '%env(string:MASS_MAILER_REPLYTO)%'
+            $mailerSenderEmail: '%env(string:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerDomain: '%env(string:MASS_MAILER_DOMAIN)%'
+            $mailerIp: '%env(string:MASS_MAILER_IP)%'
+            $smsProvider: '%env(string:MASS_SMS_PROVIDER)%'
+            $mailerApiKey: '%env(string:MASS_MAILER_API_KEY)%'
+            $mailTemplate: '%env(string:MASS_MAILER_BASE_TEMPLATE)%'
+
+    App\MassCommunication\Admin\Service\CampaignManager:
+        arguments:
+            $mailTemplate: '%env(string:MASS_MAILER_BASE_TEMPLATE)%'
+            $mailerProvider: '%env(string:MASS_MAILER_PROVIDER)%'
+            $mailerApiKey: '%env(string:MASS_MAILER_API_KEY)%'
+            $mailerClientName: '%env(string:MASS_MAILER_CLIENT_NAME)%'
+            $mailerClientId: '%env(int:MASS_MAILER_CLIENT_ID)%'
+            $mailerClientTemplateId: '%env(string:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
+            $mailerReplyTo: '%env(string:MASS_MAILER_REPLYTO)%'
+            $mailerSenderEmail: '%env(string:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerDomain: '%env(string:MASS_MAILER_DOMAIN)%'
+            $mailerIp: '%env(string:MASS_MAILER_IP)%'
+            $smsProvider: '%env(string:MASS_SMS_PROVIDER)%'
 
     # Match
     App\Match\Controller\:
@@ -645,11 +677,25 @@ services:
                 smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'  
 
     # User
+    App\User\Admin\Service\UserManager:
+        arguments:
+            $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
+            $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
+            $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+            
     App\User\Controller\:
         resource: '../src/User/Controller'
         tags: ['controller.service_arguments']
 
     'App\User\DataProvider\UserSearchCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\User\Admin\DataProvider\UserCampaignAssociateCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\User\Admin\DataProvider\UserCampaignSendCollectionDataProvider':
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 

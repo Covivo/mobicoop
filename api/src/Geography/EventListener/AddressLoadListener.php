@@ -25,7 +25,9 @@ namespace App\Geography\EventListener;
 
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoTools;
+use App\User\Entity\User;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Address Load Event listener
@@ -33,17 +35,19 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 class AddressLoadListener
 {
     private $geoTools;
+    private $security;
 
-    public function __construct(GeoTools $geoTools)
+    public function __construct(GeoTools $geoTools, Security $security)
     {
         $this->geoTools = $geoTools;
+        $this->security = $security;
     }
 
     public function postLoad(LifecycleEventArgs $args)
     {
         $address = $args->getEntity();
         if ($address instanceof Address) {
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $this->security->getUser()));
         }
     }
 }

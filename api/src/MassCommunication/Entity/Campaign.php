@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use App\MassCommunication\Controller\CampaignSend;
 use App\MassCommunication\Controller\CampaignSendTest;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 
@@ -58,6 +59,22 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *              "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/campaigns",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_campaign_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/campaigns",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_campaign_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get",
@@ -76,18 +93,54 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *              "controller"=CampaignSendTest::class,
  *              "path"="/campaigns/send-test/{id}"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/campaigns/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_campaign_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/campaigns/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_campaign_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/campaigns/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_campaign_delete',object)"
+ *          }
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"status":"exact","name":"partial","email":"partial"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(DateFilter::class, properties={"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"subject", "user", "status"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"subject", "user", "email", "status", "createdDate", "updatedDate"}, arguments={"orderParameterName"="order"})
  */
 class Campaign
 {
-    const STATUS_PENDING = 0;
-    const STATUS_CREATED = 1;
-    const STATUS_SENT = 2;
-    const STATUS_ARCHIVED = 3;
+    const STATUS_PENDING = 0;   // when the campaign has not been tested yet
+    const STATUS_CREATED = 1;   // when the campaign has been successfully tested
+    const STATUS_SENT = 2;      // when the campaign was sent
+    const STATUS_ARCHIVED = 3;  // when the campaign is archived (not editable anymore)
+
+    const SOURCE_USER = 1;          // user resource as source
+    const SOURCE_COMMUNITY = 2;     // community members as source
+
+    const SOURCES = [
+        self::SOURCE_USER,
+        self::SOURCE_COMMUNITY
+    ];
+
+    const FILTER_TYPE_SELECTION = 1;    // filter using a selection of users
+    const FILTER_TYPE_FILTER = 2;       // filter using a resource filter (empty filter to get all users)
+
+    const FILTER_TYPES = [
+        self::FILTER_TYPE_SELECTION,
+        self::FILTER_TYPE_FILTER
+    ];
 
     /**
      * @var int The id of this campaign.
@@ -96,7 +149,7 @@ class Campaign
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"read_campaign","update_campaign"})
+     * @Groups({"aRead","read_campaign","update_campaign"})
      */
     private $id;
 
@@ -105,7 +158,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     * @Groups({"aRead","aWrite","read_campaign","write_campaign","update_campaign"})
      */
     private $name;
 
@@ -114,7 +167,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     * @Groups({"aRead","aWrite","read_campaign","write_campaign","update_campaign"})
      */
     private $subject;
 
@@ -122,7 +175,7 @@ class Campaign
      * @var string Email used to send the campaign.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     * @Groups({"aRead","aWrite","read_campaign","write_campaign","update_campaign"})
      */
     private $email;
 
@@ -147,7 +200,7 @@ class Campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     * @Groups({"aRead","aWrite","read_campaign","write_campaign","update_campaign"})
      */
     private $body;
 
@@ -155,7 +208,7 @@ class Campaign
      * @var int Campaign status.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read_campaign"})
+     * @Groups({"aRead","read_campaign"})
      */
     private $status;
 
@@ -199,7 +252,7 @@ class Campaign
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read_campaign"})
+     * @Groups({"aRead","read_campaign"})
      */
     private $createdDate;
 
@@ -207,12 +260,12 @@ class Campaign
      * @var \DateTimeInterface Updated date.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read_campaign"})
+     * @Groups({"aRead","read_campaign"})
      */
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The deliveries related to this campaign.
+     * @var ArrayCollection|null The deliveries related to this campaign, if the filter type is selection.
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -222,22 +275,75 @@ class Campaign
     /**
      * @var ArrayCollection The images of the campaign.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade="remove", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $images;
 
     /**
-     * @var int Status to send all campaign
-     * null -> send to chosen deleveries
-     * 0 -> send to all user
-     * id community -> send to all user in the given community ID
+     * @var string The creator
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creator;
+
+    /**
+     * @var int The creator id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creatorId;
+
+    /**
+     * @var string|null The creator avatar
+     * @Groups({"aRead"})
+     */
+    private $creatorAvatar;
+
+    /**
+     * @var int|null The source for the deliveries.
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"read_campaign","write_campaign","update_campaign"})
+     * @Groups({"aRead","aWrite"})
      */
-    private $sendAll;
+    private $source;
 
+    /**
+     * @var int|null The source id for the deliveries.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $sourceId;
+
+    /**
+     * @var string|null The source name for the deliveries.
+     *
+     * @Groups({"aRead"})
+     */
+    private $sourceName;
+
+    /**
+     * @var int|null The filter type for the deliveries selection.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $filterType;
+
+    /**
+     * @var string|null The filter string for the deliveries selection.
+     *
+     * @ORM\Column(type="string", length=512, nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $filters;
+
+    /**
+     * @var int|null The number of deliveries.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("aRead")
+     */
+    private $deliveryCount;
 
     public function __construct()
     {
@@ -420,6 +526,13 @@ class Campaign
         return $this;
     }
 
+    public function removeDeliveries(): self
+    {
+        $this->deliveries->clear();
+        return $this;
+    }
+
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -472,14 +585,104 @@ class Campaign
         return $this;
     }
 
-    public function getSendAll(): ?int
+    public function getCreator(): string
     {
-        return $this->sendAll;
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
     }
 
-    public function setSendAll($sendAll): self
+    public function getCreatorId(): int
     {
-        $this->sendAll = $sendAll;
+        if (is_null($this->creatorId)) {
+            return $this->getUser()->getId();
+        }
+        return $this->creatorId;
+    }
+
+    public function setCreatorId(?int $creatorId)
+    {
+        $this->creatorId = $creatorId;
+    }
+
+    public function getCreatorAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
+    }
+
+    public function getSource(): ?int
+    {
+        return $this->source;
+    }
+
+    public function setSource(int $source): self
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    public function getSourceId(): ?int
+    {
+        return $this->sourceId;
+    }
+
+    public function setSourceId(?int $sourceId): self
+    {
+        $this->sourceId = $sourceId;
+
+        return $this;
+    }
+
+    public function getSourceName(): ?string
+    {
+        return $this->sourceName;
+    }
+
+    public function setSourceName(?string $sourceName): self
+    {
+        $this->sourceName = $sourceName;
+
+        return $this;
+    }
+
+    public function getFilterType(): ?int
+    {
+        return $this->filterType;
+    }
+
+    public function setFilterType(int $filterType): self
+    {
+        $this->filterType = $filterType;
+
+        return $this;
+    }
+
+    public function getFilters(): ?string
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(?string $filters): self
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getDeliveryCount(): ?int
+    {
+        if ($this->filterType == self::FILTER_TYPE_SELECTION) {
+            return count($this->deliveries);
+        } else {
+            return $this->deliveryCount;
+        }
+    }
+
+    public function setDeliveryCount(int $deliveryCount): self
+    {
+        $this->deliveryCount = $deliveryCount;
 
         return $this;
     }

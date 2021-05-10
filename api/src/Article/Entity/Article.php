@@ -60,6 +60,22 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "path"="/pages",
  *              "security_post_denormalize"="is_granted('article_create',object)"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/articles",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_article_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/articles",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_article_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -82,11 +98,31 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "path"="/pages/{id}",
  *              "security"="is_granted('article_delete',object)"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/articles/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_article_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/articles/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_article_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/articles/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_article_delete',object)"
+ *          },
  *      }
  *
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "title", "status"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"status":"exact","title":"partial"})
  */
 class Article
 {
@@ -100,7 +136,7 @@ class Article
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","read"})
      */
     private $id;
             
@@ -108,7 +144,7 @@ class Article
      * @var string The title of the article.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"aRead","aWrite","read","write"})
      */
     private $title;
 
@@ -116,7 +152,7 @@ class Article
      * @var int The status of publication of the article.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"aRead","aWrite","read","write"})
      */
     private $status;
 
@@ -125,7 +161,7 @@ class Article
      *
      * @ORM\OneToMany(targetEntity="\App\Article\Entity\Section", mappedBy="article", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      * @MaxDepth(1)
      */
     private $sections;
@@ -153,6 +189,12 @@ class Article
      * @Groups({"read"})
      */
     private $updatedDate;
+
+    /**
+     * @var array|null The sections in administration write context
+     * @Groups({"aWrite"})
+     */
+    private $asections;
 
     public function __construct()
     {
@@ -214,6 +256,12 @@ class Article
         return $this;
     }
 
+    public function removeSections(): self
+    {
+        $this->sections->clear();
+        return $this;
+    }
+
     public function getIFrame(): ?string
     {
         return $this->iFrame;
@@ -246,6 +294,18 @@ class Article
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getAsections(): ?array
+    {
+        return $this->asections;
+    }
+
+    public function setAsections(?array $asections)
+    {
+        $this->asections = $asections;
 
         return $this;
     }

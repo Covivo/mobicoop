@@ -93,7 +93,23 @@ use App\App\Entity\App;
  *              "path"="/events/{id}/ads",
  *              "normalization_context"={"groups"={"readEvent"}},
  *              "security_post_denormalize"="is_granted('event_list_ads',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/events",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_event_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/events",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_event_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -104,7 +120,27 @@ use App\App\Entity\App;
  *          },
  *          "delete"={
  *              "security"="is_granted('event_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/events/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_event_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/events/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_event_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/events/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_event_delete',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate"}, arguments={"orderParameterName"="order"})
@@ -124,7 +160,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("readEvent")
+     * @Groups({"aRead","readEvent"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -133,7 +169,7 @@ class Event
      * @var string The name of the event.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $name;
 
@@ -148,7 +184,7 @@ class Event
      * @var int The status of the event (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $status;
 
@@ -156,7 +192,7 @@ class Event
      * @var boolean Private event. Should be filtered when event list is publicly displayed.
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $private;
     
@@ -164,7 +200,7 @@ class Event
      * @var string The short description of the event.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $description;
     
@@ -172,7 +208,7 @@ class Event
      * @var string The full description of the event.
      *
      * @ORM\Column(type="text")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
     
@@ -181,7 +217,7 @@ class Event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fromDate;
 
@@ -190,7 +226,7 @@ class Event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $toDate;
     
@@ -198,7 +234,7 @@ class Event
      * @var boolean Use the time for the starting and ending date of the event.
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $useTime;
     
@@ -206,7 +242,7 @@ class Event
      * @var string The information url for the event.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $url;
     
@@ -263,7 +299,7 @@ class Event
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"readEvent","write"})
+     * @Groups({"aRead","aWrite","readEvent","write"})
      * @MaxDepth(1)
      */
     private $address;
@@ -271,7 +307,7 @@ class Event
     /**
      * @var ArrayCollection The images of the event.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade="remove", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups("readEvent")
      * @MaxDepth(1)
@@ -308,6 +344,36 @@ class Event
      * @Groups({"readEvent","write"})
      */
     private $externalImageUrl;
+
+    /**
+     * @var string The creator
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creator;
+
+    /**
+     * @var int The creator id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $creatorId;
+
+    /**
+     * @var string|null The creator avatar
+     * @Groups({"aRead"})
+     */
+    private $creatorAvatar;
+
+    /**
+     * @var string|null The event main image
+     * @Groups("aRead")
+     */
+    private $image;
+
+    /**
+     * @var string|null The event avatar
+     * @Groups("aRead")
+     */
+    private $avatar;
     
     public function __construct($id=null)
     {
@@ -563,6 +629,48 @@ class Event
     public function setExternalImageUrl(?string $externalImageUrl)
     {
         $this->externalImageUrl = $externalImageUrl;
+    }
+
+    public function getCreator(): string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getCreatorId(): int
+    {
+        if (is_null($this->creatorId)) {
+            return $this->getUser()->getId();
+        }
+        return $this->creatorId;
+    }
+
+    public function setCreatorId(?int $creatorId)
+    {
+        $this->creatorId = $creatorId;
+    }
+
+    public function getCreatorAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
+    }
+
+    public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+            return $this->getImages()[0]->getVersions()['square_250'];
+        }
+        return null;
     }
     
     // DOCTRINE EVENTS

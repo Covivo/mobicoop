@@ -45,6 +45,11 @@ class SectionRepository
         $this->repository = $entityManager->getRepository(Section::class);
     }
 
+    public function find(int $id): ?Section
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Find the following section of a given section.
      *
