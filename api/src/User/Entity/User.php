@@ -2544,7 +2544,7 @@ class User implements UserInterface, EquatableInterface
         return $this->avatars;
     }
 
-    public function setAvatars(array $avatars): self
+    public function setAvatars(?array $avatars): self
     {
         $this->avatars = $avatars;
 

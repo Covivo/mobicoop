@@ -152,7 +152,9 @@ class MassMigrateManager
         }
 
         // Then we get the Mass persons related the this mass
-        $massPersons = $this->massPersonRepository->findAllByMass($mass);
+        $massPersonIdMin = null;
+        // $massPersonIdMin = 2217; // Use this in debug to force a minimal id of MassPerson
+        $massPersons = $this->massPersonRepository->findAllByMass($mass, $massPersonIdMin);
 
         $this->logger->info('Mass Migrate | Number of Mass persons to migrate : ' . count($massPersons) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -237,8 +239,11 @@ class MassMigrateManager
             $this->entityManager->flush();
 
             // We create an Ad for the User (regular, home to work, monday to friday)
-            $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $this->createJourneyFromMassPerson($massPerson, $user, $community);
+            // First we check if the journey has been computed (analyzing phase)
+            if (!is_null($massPerson->getDistance())) {
+                $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $this->createJourneyFromMassPerson($massPerson, $user, $community, $mass->getMassType());
+            }
         }
         
         // Finally, we set status of the Mass at Migrated and save the migrated date
@@ -284,9 +289,10 @@ class MassMigrateManager
      * @param MassPerson $massPerson            Current MassPerson
      * @param User $user                        The User created after this MassPerson
      * @param Community|null $community         The community of this person. Can be null if there is no community created
+     * @param int $massType                     The Mass type of this Person's Mass
      * @return Ad
      */
-    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community): Ad
+    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community, int $massType): Ad
     {
         set_time_limit(50000);
 
@@ -303,28 +309,32 @@ class MassMigrateManager
 
         // round-trip
         $ad->setOneWay(false);
+        if (is_null($massPerson->getReturnTime())) {
+            $ad->setOneWay(true);
+        }
 
         // Regular
         $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
-        // Outward waypoint
+        // Outward waypoints and time
         $outwardWaypoints = [
             clone $massPerson->getPersonalAddress(),
             clone $massPerson->getWorkAddress()
         ];
 
         $ad->setOutwardWaypoints($outwardWaypoints);
-
-        // return waypoint
-        $returnWaypoints = [
-            clone $massPerson->getWorkAddress(),
-            clone $massPerson->getPersonalAddress()
-        ];
-
-        $ad->setReturnWaypoints($returnWaypoints);
-
         $ad->setOutwardTime($massPerson->getOutwardTime()->format("H:i"));
-        $ad->setReturnTime($massPerson->getReturnTime()->format("H:i"));
+
+        // return waypoints and time
+        if (!$ad->isOneWay()) {
+            $returnWaypoints = [
+                clone $massPerson->getWorkAddress(),
+                clone $massPerson->getPersonalAddress()
+            ];
+
+            $ad->setReturnWaypoints($returnWaypoints);
+            $ad->setReturnTime($massPerson->getReturnTime()->format("H:i"));
+        }
 
         // Schedule
         $schedule = [];
@@ -333,7 +343,10 @@ class MassMigrateManager
             $schedule[0][$day] = true;
         }
         $schedule[0]['outwardTime'] = $massPerson->getOutwardTime()->format("H:i");
-        $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+        
+        if (!$ad->isOneWay()) {
+            $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+        }
 
         $ad->setSchedule($schedule);
 
@@ -346,6 +359,6 @@ class MassMigrateManager
             $ad->setCommunities([$community->getId()]);
         }
 
-        return $this->adManager->createAd($ad, false, false);
+        return $this->adManager->createAd($ad, ($massType == Mass::TYPE_MIGRATION) ? true : false, false);
     }
 }

@@ -248,6 +248,7 @@ class Mass
 
     const TYPE_ANONYMOUS = 0;
     const TYPE_QUALIFIED = 1;
+    const TYPE_MIGRATION = 2;
 
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)

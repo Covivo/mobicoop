@@ -69,15 +69,22 @@ class MassPersonRepository
 
     /**
      * Return all the MassPersons related to a mass.
+     * @param Mass $mass The Mass
+     * @param int $mass The mininum id of the mass persons returned
      * @return array
      */
-    public function findAllByMass(Mass $mass)
+    public function findAllByMass(Mass $mass, int $idMassPersonMin = null)
     {
         $query = $this->repository->createQueryBuilder('mp')
-            ->where('mp.mass = :mass')
-            ->setParameter('mass', $mass)
-            ->getQuery();
+            ->where('mp.mass = :mass');
+            
+        $query = $query->setParameter('mass', $mass);
 
+        if (!is_null($idMassPersonMin)) {
+            $query->andWhere("mp.id >= :idMassPersonMin")->setParameter('idMassPersonMin', $idMassPersonMin);
+        }
+
+        $query = $query->getQuery();
         return $query->getResult();
     }
 }
