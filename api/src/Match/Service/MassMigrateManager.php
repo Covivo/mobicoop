@@ -209,9 +209,11 @@ class MassMigrateManager
                     $user->addUserAuthAssignment($userAuthAssignment);
 
                     // The home address of the user
-                    $personalAddress = clone $massPerson->getPersonalAddress();
-                    $personalAddress->setUser($user);
-                    $personalAddress->setHome(true);
+                    if ($mass->hasSetHomeAddress()) {
+                        $personalAddress = clone $massPerson->getPersonalAddress();
+                        $personalAddress->setUser($user);
+                        $personalAddress->setHome(true);
+                    }
 
                     $user->addAddress($personalAddress);
 

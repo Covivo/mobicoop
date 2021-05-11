@@ -478,12 +478,18 @@ class Mass
     private $migratedDate;
 
     /**
+     * @var bool Set the first address as the home address of the users that will be migrated
+     * @Groups({"mass","massMigrate"})
+     */
+    private $setHomeAddress;
+    
+    /**
      * @var int The id of an existing community. The migrated users will be joining this community.
      * If there is a communityId, the other community fields (name, desc etc...) will be ignored
      * @Groups({"mass","massMigrate"})
      */
     private $communityId;
-    
+
     /**
      * @var string The name of the new community that will be created if we migrate the users.
      * All the migrated user will join this new community.
@@ -907,6 +913,16 @@ class Mass
         return $this;
     }
 
+    public function hasSetHomeAddress(): ?bool
+    {
+        return $this->setHomeAddress;
+    }
+
+    public function setSetHomeAddress(?bool $setHomeAddress)
+    {
+        $this->setHomeAddress = $setHomeAddress;
+    }
+    
     public function getCommunityId(): ?int
     {
         return $this->communityId;
