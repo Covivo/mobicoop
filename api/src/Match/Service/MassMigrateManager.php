@@ -255,7 +255,7 @@ class MassMigrateManager
 
             // We create an Ad for the User (regular, home to work, monday to friday)
             // First we check if the journey has been computed (analyzing phase)
-            if (!is_null($massPerson->getDistance())) {
+            if (!is_null($massPerson->getDistance()) && is_null($massPerson->getProposal())) {
                 $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $ad = $this->createJourneyFromMassPerson($massPerson, $user, $community, $mass->getMassType());
 
