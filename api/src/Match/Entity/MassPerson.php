@@ -25,6 +25,7 @@ namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -237,13 +238,22 @@ class MassPerson
     private $updatedDate;
 
     /**
-     * @var User|null The User created base on this MassPerson
+     * @var User|null The User created based on this MassPerson
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @MaxDepth(1)
      * @Groups({"read"})
      */
     private $user;
+
+    /**
+     * @var Proposal|null The Proposal created based on this MassPerson journey (only the outward for round trip)
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @MaxDepth(1)
+     * @Groups({"read"})
+     */
+    private $proposal;
 
     /**
      * @var ArrayCollection|null The MassPTJourneys linked to this mass person
@@ -536,6 +546,18 @@ class MassPerson
         return $this;
     }
 
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+    
+    public function setProposal(Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+        
+        return $this;
+    }
+    
     public function getMassPTJourneys()
     {
         return $this->massPTJourneys->getValues();

@@ -38,6 +38,7 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use App\Carpool\Service\ProposalManager;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -68,12 +69,13 @@ class MassMigrateManager
     private $communityManager;
     private $security;
     private $importManager;
+    private $proposalManager;
     private $logger;
 
     const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
     const LAUNCH_IMPORT = true;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, LoggerInterface $logger, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -86,6 +88,7 @@ class MassMigrateManager
         $this->communityManager = $communityManager;
         $this->security = $security;
         $this->importManager = $importManager;
+        $this->proposalManager = $proposalManager;
         $this->logger = $logger;
     }
 
@@ -254,7 +257,11 @@ class MassMigrateManager
             // First we check if the journey has been computed (analyzing phase)
             if (!is_null($massPerson->getDistance())) {
                 $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                $this->createJourneyFromMassPerson($massPerson, $user, $community, $mass->getMassType());
+                $ad = $this->createJourneyFromMassPerson($massPerson, $user, $community, $mass->getMassType());
+
+                // We link the proposal with the MassPerson
+                $massPerson->setProposal($this->proposalManager->get($ad->getId()));
+                $this->entityManager->persist($massPerson);
             }
         }
         
