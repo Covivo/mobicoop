@@ -226,11 +226,21 @@ class MassMigrateManager
             }
 
             // If there is a community we create a CommunityUser with the User.
-            if (!empty($mass->getCommunityName())) {
-                $communityUser = new CommunityUser();
-                $communityUser->setCommunity($community);
-                $communityUser->setUser($user);
-                $this->entityManager->persist($communityUser);
+            if (!is_null($community)) {
+                // Check if the user is aleadry a member of this community
+                $alreadyMember = false;
+                foreach ($user->getCommunityUsers() as $userCommunityUser) {
+                    if ($userCommunityUser->getCommunity()->getId()==$community->getId()) {
+                        $alreadyMember = true;
+                    }
+                }
+
+                if (!$alreadyMember) {
+                    $communityUser = new CommunityUser();
+                    $communityUser->setCommunity($community);
+                    $communityUser->setUser($user);
+                    $this->entityManager->persist($communityUser);
+                }
             }
 
             // We set the link between the MassPerson and the User (new or found)
