@@ -80,7 +80,7 @@ class Subject
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary","readSubjects"})
+     * @Groups({"aRead","readSolidary","writeSolidary","readSubjects"})
      */
     private $id;
 
@@ -89,7 +89,7 @@ class Subject
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readSolidary","writeSolidary","readSubjects"})
+     * @Groups({"aRead","readSolidary","writeSolidary","readSubjects"})
      */
     private $label;
 
@@ -135,6 +135,14 @@ class Subject
      * @Groups({"writeSolidary"})
      */
     private $proposals;
+
+    /**
+     * @var bool The subject is removable (not removable if it is used for a solidary).
+     *
+     * @Groups("aRead")
+     */
+    private $removable;
+
 
     public function __construct()
     {
@@ -256,6 +264,11 @@ class Subject
         }
 
         return $this;
+    }
+
+    public function isRemovable(): ?bool
+    {
+        return count($this->getSolidaries())==0;
     }
 
     // DOCTRINE EVENTS

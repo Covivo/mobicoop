@@ -61,7 +61,23 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "path"="/structures/geolocation",
  *              "normalization_context"={"groups"={"readSolidary"}},
  *              "security"="is_granted('structure_list',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/structures",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_structure_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/structures",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_structure_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -72,7 +88,27 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *             "security"="is_granted('structure_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/structures/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_structure_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/structures/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_structure_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/structures/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_structure_delete',object)"
+ *          },
  *      }
  * )
  * ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
@@ -98,7 +134,7 @@ class Structure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $name;
 
@@ -107,7 +143,7 @@ class Structure
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $email;
 
@@ -115,7 +151,7 @@ class Structure
      * @var string|null The telephone number of the structure.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $telephone;
 
@@ -139,7 +175,7 @@ class Structure
      * @var \DateTimeInterface Morning min range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMinRangeTime;
 
@@ -147,7 +183,7 @@ class Structure
      * @var \DateTimeInterface Morning max range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMaxRangeTime;
 
@@ -155,7 +191,7 @@ class Structure
      * @var \DateTimeInterface Afternoon min range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMinRangeTime;
 
@@ -163,7 +199,7 @@ class Structure
      * @var \DateTimeInterface Afternoon max range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMaxRangeTime;
 
@@ -171,7 +207,7 @@ class Structure
      * @var \DateTimeInterface Evening min range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMinRangeTime;
 
@@ -179,7 +215,7 @@ class Structure
      * @var \DateTimeInterface Evening max range time.
      *
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMaxRangeTime;
 
@@ -187,7 +223,7 @@ class Structure
      * @var \DateTimeInterface Morning min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
@@ -195,7 +231,7 @@ class Structure
      * @var \DateTimeInterface Morning max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
@@ -203,7 +239,7 @@ class Structure
      * @var \DateTimeInterface Afternoon min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
@@ -211,7 +247,7 @@ class Structure
      * @var \DateTimeInterface Afternoon max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
@@ -219,7 +255,7 @@ class Structure
      * @var \DateTimeInterface Evening min time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
@@ -227,7 +263,7 @@ class Structure
      * @var \DateTimeInterface Evening max time.
      *
      * @ORM\Column(type="time")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
@@ -235,7 +271,7 @@ class Structure
      * @var bool Available on monday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMon;
     
@@ -243,7 +279,7 @@ class Structure
      * @var bool Available on monday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMon;
     
@@ -251,7 +287,7 @@ class Structure
      * @var bool Available on monday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMon;
     
@@ -259,7 +295,7 @@ class Structure
      * @var bool Available on tuesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mTue;
     
@@ -267,7 +303,7 @@ class Structure
      * @var bool Available on tuesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aTue;
     
@@ -275,7 +311,7 @@ class Structure
      * @var bool Available on tuesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eTue;
     
@@ -283,7 +319,7 @@ class Structure
      * @var bool Available on wednesday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mWed;
     
@@ -291,7 +327,7 @@ class Structure
      * @var bool Available on wednesday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aWed;
     
@@ -299,7 +335,7 @@ class Structure
      * @var bool Available on wednesday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eWed;
     
@@ -307,7 +343,7 @@ class Structure
      * @var bool Available on thursday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mThu;
     
@@ -315,7 +351,7 @@ class Structure
      * @var bool Available on thursday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aThu;
     
@@ -323,7 +359,7 @@ class Structure
      * @var bool Available on thursday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eThu;
     
@@ -331,7 +367,7 @@ class Structure
      * @var bool Available on friday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mFri;
     
@@ -339,7 +375,7 @@ class Structure
      * @var bool Available on friday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aFri;
     
@@ -347,7 +383,7 @@ class Structure
      * @var bool Available on friday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eFri;
     
@@ -355,7 +391,7 @@ class Structure
      * @var bool Available on saturday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mSat;
     
@@ -363,7 +399,7 @@ class Structure
      * @var bool Available on saturday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aSat;
     
@@ -371,7 +407,7 @@ class Structure
      * @var bool Available on saturday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eSat;
     
@@ -379,7 +415,7 @@ class Structure
      * @var bool Available on sunday morning.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mSun;
     
@@ -387,7 +423,7 @@ class Structure
      * @var bool Available on sunday afternoon.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aSun;
     
@@ -395,7 +431,7 @@ class Structure
      * @var bool Available on sunday evening.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eSun;
 
@@ -428,7 +464,7 @@ class Structure
      * @var ArrayCollection|null The subjects for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
-     * @Groups({"readSolidary", "writeSolidary"})
+     * @Groups({"aRead","readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
     private $subjects;
@@ -437,7 +473,7 @@ class Structure
      * @var ArrayCollection|null The special needs for this structure.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", inversedBy="structures", cascade={"persist"})
-     * @Groups({"readSolidary", "writeSolidary"})
+     * @Groups({"aRead","readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
     private $needs;
@@ -472,7 +508,7 @@ class Structure
      * @var ArrayCollection|null The Territories linked to this Structure
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $territories;
