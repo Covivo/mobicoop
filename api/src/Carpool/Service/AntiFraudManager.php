@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\AntiFraudResponse;
 use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
@@ -36,19 +37,38 @@ class AntiFraudManager
 {
     private $geoRouter;
 
+    // Parameters
+    private $distanceMinCheck;
+    private $nbCarpoolsMax;
+
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        GeoRouter $geoRouter
+        GeoRouter $geoRouter,
+        array $params
     ) {
         $this->geoRouter = $geoRouter;
+        $this->distanceMinCheck = $params['distanceMinCheck'];
+        $this->nbCarpoolsMax = $params['nbCarpoolsMax'];
     }
 
-    public function validAd(Ad $ad)
+    /**
+     * Check if an Ad is valid against the Anti-Fraud system rules
+     *
+     * @param Ad $ad                The Ad to check
+     * @return AntiFraudResponse    The response
+     */
+    public function validAd(Ad $ad): AntiFraudResponse
     {
+        // Default response is that the Ad is valid
+        $response = new AntiFraudResponse(true, "OK");
+        
+        
+        // Compute the distance of the journey
+        
         $addressesToValidate = [];
         foreach ($ad->getOutwardWaypoints() as $pointToValidate) {
             $waypointToValidate = new Address();
@@ -59,7 +79,15 @@ class AntiFraudManager
         
 
         $route = $this->geoRouter->getRoutes($addressesToValidate, false, true);
-        var_dump($route);
-        die;
+        // var_dump($route);
+        
+        // If the journey is above the $distanceMinCheck paramaters we need to check it otherwise, it's an immediate validation
+        if (($route[0]->getDistance()/1000) > $this->distanceMinCheck) {
+            echo "need validation";
+            die;
+        }
+
+
+        return $response;
     }
 }

@@ -162,11 +162,12 @@ class AdManager
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
         
-        
-        // TO DO : Ignore search !!!!
-        if ($ad->isSearch()) {
+        /** Anti-Fraud check **/
+        if (!$ad->isSearch()) {
             // Not a search, we check if the Ad is valid regarding anti fraud system
-            $this->antiFraudManager->validAd($ad);
+            $antiFraudResponse = $this->antiFraudManager->validAd($ad);
+            var_dump($antiFraudResponse);
+            die;
         }
 
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
