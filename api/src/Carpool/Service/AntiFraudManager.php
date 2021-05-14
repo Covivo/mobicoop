@@ -24,9 +24,12 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\AntiFraudResponse;
+use App\Carpool\Entity\Criteria;
+use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
+use App\User\Service\UserManager;
 
 /**
  * Anti-Fraud system manager service.
@@ -36,11 +39,13 @@ use App\Geography\Service\GeoRouter;
 class AntiFraudManager
 {
     private $geoRouter;
+    private $proposalRepository;
+    private $userManager;
 
     // Parameters
     private $distanceMinCheck;
     private $nbCarpoolsMax;
-
+    
     /**
      * Constructor.
      *
@@ -48,9 +53,13 @@ class AntiFraudManager
      */
     public function __construct(
         GeoRouter $geoRouter,
+        ProposalRepository $proposalRepository,
+        UserManager $userManager,
         array $params
     ) {
         $this->geoRouter = $geoRouter;
+        $this->proposalRepository = $proposalRepository;
+        $this->userManager = $userManager;
         $this->distanceMinCheck = $params['distanceMinCheck'];
         $this->nbCarpoolsMax = $params['nbCarpoolsMax'];
     }
@@ -83,11 +92,46 @@ class AntiFraudManager
         
         // If the journey is above the $distanceMinCheck paramaters we need to check it otherwise, it's an immediate validation
         if (($route[0]->getDistance()/1000) > $this->distanceMinCheck) {
-            echo "need validation";
-            die;
+
+            /****************** FIRST CHECK ********************** */
+            $response = $this->validAdFirstCheck($ad);
+            if (!$response->isValid()) {
+                return $response;
+            }
         }
 
 
         return $response;
+    }
+
+    /**
+     * Anti Fraud System first check - Max number of journeys
+     * A user can only have $nbCarpoolsMax on the same day
+     *
+     * @param Ad $ad
+     * @return AntiFraudResponse
+     */
+    private function validAdFirstCheck(Ad $ad): AntiFraudResponse
+    {
+        // By default, the outward date is immutable, we need to make a regular Datetime
+        $dateTime = new \DateTime(null, $ad->getOutwardDate()->getTimezone());
+        $dateTime->setTimestamp($ad->getOutwardDate()->getTimestamp());
+
+        // Setup the User if it exists
+        $user = null;
+        if (!is_null($ad->getUser())) {
+            $user = $ad->getUser();
+        } elseif (!is_null($ad->getUserId())) {
+            $user = $this->userManager->getUser($ad->getUserId());
+        }
+
+
+        $proposals = $this->proposalRepository->findByDate($dateTime, $user, true);
+
+        if (!is_null($proposals) && is_array($proposals) && count($proposals)>=$this->nbCarpoolsMax) {
+            return new AntiFraudResponse(false, "Too many ad for this date");
+        }
+
+        return new AntiFraudResponse(true, "OK");
     }
 }
