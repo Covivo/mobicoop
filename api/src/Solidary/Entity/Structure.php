@@ -111,8 +111,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *      }
  * )
- * ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Structure
@@ -487,7 +487,7 @@ class Structure
     private $relayPoints;
 
     /**
-     * @var ArrayCollection|null The solidary records for this structure.
+     * @var ArrayCollection|null The proofs for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
      * @Groups({"readSolidary", "writeSolidary"})
@@ -499,7 +499,7 @@ class Structure
     /**
      * @var ArrayCollection|null A Structure can have multiple entry in Operate
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
      * @MaxDepth(1)
      */
     private $operates;
@@ -513,6 +513,12 @@ class Structure
      */
     private $territories;
 
+    /**
+     * @var array   Operators for this structure (more direct than operates for admin context)
+     * @Groups("aRead")
+     */
+    private $operators;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -525,6 +531,7 @@ class Structure
         $this->users = new ArrayCollection();
         $this->structureProofs = new ArrayCollection();
         $this->territories = new ArrayCollection();
+        $this->operators = [];
     }
     
     public function getId(): ?int
@@ -1171,9 +1178,9 @@ class Structure
     /**
     * @return ArrayCollection|Operate[]
     */
-    public function getOperates(): ArrayCollection
+    public function getOperates()
     {
-        return $this->operates;
+        return $this->operates->getValues();
     }
 
     public function addOperate(Operate $operate): self
@@ -1201,7 +1208,7 @@ class Structure
 
     public function getTerritories()
     {
-        return $this->territories;
+        return $this->territories->getValues();
     }
 
     public function addTerritory(Territory $territory): self
@@ -1218,6 +1225,27 @@ class Structure
         if ($this->territories->contains($territory)) {
             $this->territories->removeElement($territory);
         }
+
+        return $this;
+    }
+
+    public function getOperators()
+    {
+        foreach ($this->getOperates() as $operate) {
+            $this->operators[] = [
+                'id' => $operate->getUser()->getId(),
+                'givenName' => $operate->getUser()->getGivenName(),
+                'familyName' => $operate->getUser()->getFamilyName(),
+                'email' => $operate->getUser()->getEmail(),
+                'operatorDate' => $operate->getCreatedDate()
+            ];
+        }
+        return $this->operators;
+    }
+
+    public function setOperators(array $operators): self
+    {
+        $this->operators = $operators;
 
         return $this;
     }

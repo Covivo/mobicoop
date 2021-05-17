@@ -98,4 +98,7 @@ class SolidaryException extends \LogicException
     const STRUCTURE_PROOF_NOT_FOUND = "StructureProof not found";
     const STRUCTURE_PROOF_NOT_FILE = "This structure_proof is not file type";
     const PROOF_ALREADY_EXISTS = "A proof of this StructureProof type for this Solidary already exists";
+
+    // Territory
+    const TERRITORY_INVALID = "Invalid territory";
 }

@@ -25,6 +25,11 @@ namespace App\Auth\ServiceAdmin;
 
 use App\Auth\Entity\AuthItem;
 use App\Auth\Service\AuthManager as ServiceAuthManager;
+use App\Geography\Entity\Territory;
+use App\User\Entity\User;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Auth manager service in administration context.
@@ -33,7 +38,9 @@ use App\Auth\Service\AuthManager as ServiceAuthManager;
  */
 class AuthManager
 {
+    private $entityManager;
     private $authManager;
+    private $authItemRepository;
 
     const GRANTABLE_ROLES =  [
         AuthItem::ROLE_SUPER_ADMIN => [
@@ -79,9 +86,22 @@ class AuthManager
     /**
      * Constructor.
      */
-    public function __construct(ServiceAuthManager $authManager)
+    public function __construct(EntityManagerInterface $entityManager, ServiceAuthManager $authManager, AuthItemRepository $authItemRepository)
     {
+        $this->entityManager = $entityManager;
         $this->authManager = $authManager;
+        $this->authItemRepository = $authItemRepository;
+    }
+
+    /**
+     * Get an authItem from its id
+     *
+     * @param integer $id       The id
+     * @return AuthItem|null    The authItem or null if not found
+     */
+    public function getAuthItem(int $id)
+    {
+        return $this->authItemRepository->find($id);
     }
 
     /**
@@ -99,5 +119,67 @@ class AuthManager
             }
         }
         return $rolesGranted;
+    }
+
+    /**
+     * Grant an auth item to a user, eventually on a given territory (if not already granted)
+     *
+     * @param User $user            The user
+     * @param AuthItem $authItem    The auth item
+     * @param Territory $territory  The territory
+     * @param bool $flush           Flush immediately
+     * @return void
+     */
+    public function grant(User $user, AuthItem $authItem, ?Territory $territory=null, bool $flush = true)
+    {
+        // check if the auth item already exists
+        $granted = false;
+        foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+            /**
+             * @var UserAuthAssignment $userAuthAssignment
+             */
+            if ($userAuthAssignment->getAuthItem()->getId() === $authItem->getId()) {
+                // item already granted, check territory
+                if (is_null($territory) || (!is_null($userAuthAssignment->getTerritory()) && $userAuthAssignment->getTerritory()->getId() === $territory->getId())) {
+                    $granted = true;
+                    break;
+                }
+            }
+        }
+        if (!$granted) {
+            // auth item not already granted
+            $userAuthAssignment = new UserAuthAssignment();
+            $userAuthAssignment->setAuthItem($authItem);
+            $userAuthAssignment->setUser($user);
+            $userAuthAssignment->setTerritory($territory);
+            $this->entityManager->persist($userAuthAssignment);
+            if ($flush) {
+                $this->entityManager->flush();
+            }
+        }
+    }
+
+    /**
+     * Revoke an auth item for a user, eventually on a given territory
+     *
+     * @param User $user            The user
+     * @param AuthItem $authItem    The auth item
+     * @param Territory $territory  The territory
+     * @param bool $flush           Flush immediately
+     * @return void
+     */
+    public function revoke(User $user, AuthItem $authItem, ?Territory $territory, bool $flush = true)
+    {
+        foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+            /**
+             * @var UserAuthAssignment $userAuthAssignment
+             */
+            if ($userAuthAssignment->getAuthItem()->getId() === $authItem->getId() && (is_null($territory) || $userAuthAssignment->getTerritory() === $territory)) {
+                $this->entityManager->remove($userAuthAssignment);
+                if ($flush) {
+                    $this->entityManager->flush();
+                }
+            }
+        }
     }
 }

@@ -23,9 +23,17 @@
 
 namespace App\Solidary\Admin\Service;
 
+use App\Auth\Entity\AuthItem;
+use App\Auth\ServiceAdmin\AuthManager;
+use App\Geography\Entity\Territory;
+use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Need;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
+use App\Solidary\Exception\SolidaryException;
+use App\User\Entity\User;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -36,6 +44,9 @@ use Doctrine\ORM\EntityManagerInterface;
 class StructureManager
 {
     private $entityManager;
+    private $territoryRepository;
+    private $userRepository;
+    private $authManager;
 
     /**
      * Constructor
@@ -43,9 +54,15 @@ class StructureManager
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TerritoryRepository $territoryRepository,
+        UserRepository $userRepository,
+        AuthManager $authManager
     ) {
         $this->entityManager = $entityManager;
+        $this->territoryRepository = $territoryRepository;
+        $this->userRepository = $userRepository;
+        $this->authManager = $authManager;
     }
 
     /**
@@ -72,6 +89,34 @@ class StructureManager
      */
     public function patchStructure(Structure $structure, array $fields)
     {
+        // check if territories have changed
+        if (in_array('territories', array_keys($fields))) {
+            
+            // check if a territory has been removed
+            foreach ($structure->getTerritories() as $territory) {
+                if (!in_array($territory->getId(), $fields['territories'])) {
+                    // territory removed
+                    $structure->removeTerritory($territory);
+                }
+            }
+
+            // check if a territory has been added
+            $ids=[];
+            foreach ($structure->getTerritories() as $territory) {
+                $ids[] = $territory->getId();
+            }
+            foreach ($fields["territories"] as $id) {
+                if (!in_array($id, $ids)) {
+                    // territory added, check if the territory exists
+                    if ($territory = $this->territoryRepository->find($id)) {
+                        $structure->addTerritory($territory);
+                    } else {
+                        throw new SolidaryException(SolidaryException::TERRITORY_INVALID);
+                    }
+                }
+            }
+        }
+
         // check if subjects have changed
         if (in_array('subjects', array_keys($fields))) {
             
@@ -164,6 +209,47 @@ class StructureManager
             }
         }
 
+        // check if operators have changed
+        if (in_array('operators', array_keys($fields))) {
+            $ids = [];
+            foreach ($fields['operators'] as $operator) {
+                if (array_key_exists('id', $operator)) {
+                    $ids[] = $operator['id'];
+                }
+            }
+            // check if an operator has been removed
+            foreach ($structure->getOperates() as $operate) {
+                if (!in_array($operate->getUser()->getId(), $ids)) {
+                    // operator removed
+                    // check if user is still an operator somewhere
+                    $this->checkIsOperator($operate);
+                    // remove operator for current structure
+                    $structure->removeOperate($operate);
+                }
+            }
+
+            // check if an operator has been added
+            $ids=[];
+            foreach ($structure->getOperates() as $operate) {
+                $ids[] = $operate->getUser()->getId();
+            }
+            foreach ($fields["operators"] as $operator) {
+                if (!in_array($operator['id'], $ids)) {
+                    // operator added, check if the operator exists
+                    if ($user = $this->userRepository->find($operator['id'])) {
+                        $operate = new Operate();
+                        $operate->setUser($user);
+                        $structure->addOperate($operate);
+                        if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_MANAGER)) {
+                            $this->authManager->grant($user, $authItem, null, false);
+                        }
+                    } else {
+                        throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+                    }
+                }
+            }
+        }
+
         // persist the structure
         $this->entityManager->persist($structure);
         $this->entityManager->flush();
@@ -182,5 +268,32 @@ class StructureManager
     {
         $this->entityManager->remove($structure);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Check if the given operate user is operator elsewhere the given structure, and eventually remove the operate role
+     *
+     * @param Operate $operate      The operate that containes the user and structure
+     * @return bool
+     */
+    private function checkIsOperator(Operate $operate)
+    {
+        $nbStructures = 0;
+        foreach ($operate->getUser()->getOperates() as $operated) {
+            /**
+             * @var Operate $operated
+             */
+            if ($operated->getStructure()->getId() !== $operate->getStructure()->getId()) {
+                // the user is at least operator for another structure
+                $nbStructures++;
+                break;
+            }
+        }
+        if ($nbStructures == 0) {
+            // the user is not operator anymore
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_MANAGER)) {
+                $this->authManager->revoke($operate->getUser(), $authItem, null, false);
+            }
+        }
     }
 }
