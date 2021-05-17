@@ -26,7 +26,7 @@ namespace App\Carpool\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Carpooling : a history item for an ask (all the items represent a thread for the ask).
+ * Anti-Fraud system response
  */
 class AntiFraudResponse
 {
