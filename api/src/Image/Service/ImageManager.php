@@ -266,10 +266,7 @@ class ImageManager
         set_time_limit(3600);
         $images = $this->imageRepository->findAll();
         foreach ($images as $image) {
-            try {
-                $this->generateVersions($image);
-            } catch (Exception $e) {
-            }
+            $this->generateVersions($image);
         }
     }
 
