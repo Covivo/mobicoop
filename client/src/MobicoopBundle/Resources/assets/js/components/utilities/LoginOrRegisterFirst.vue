@@ -2,6 +2,7 @@
   <v-dialog
     v-model="dialog"
     max-width="800"
+    @click:outside="closeDialog()"
   >
     <v-card>
       <v-toolbar
@@ -15,7 +16,7 @@
 
         <v-btn 
           icon
-          @click="dialog = false"
+          @click="closeDialog()"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -90,6 +91,11 @@ export default {
   watch:{
     showDialog(){
       this.dialog = this.showDialog;
+    },
+  },
+  methods:{
+    closeDialog(){
+      this.$emit('closeLoginOrRegisterDialog');
     }
   }
 }
