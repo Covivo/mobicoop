@@ -43,7 +43,6 @@ use App\User\Repository\UserRepository;
 use App\Image\Repository\ImageRepository;
 use App\Image\Exception\OwnerNotFoundException;
 use App\Image\Exception\ImageException;
-use Exception;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use ProxyManager\Exception\FileNotWritableException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
