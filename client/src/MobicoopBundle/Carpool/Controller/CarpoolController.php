@@ -119,13 +119,11 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $result = $adManager->createAd($data);
-            if($result instanceof Ad){
+            if ($result instanceof Ad) {
                 return $this->json(['result'=>$result]);
-            }
-            else{
+            } else {
                 return $this->json($result);
             }
-            
         }
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [
