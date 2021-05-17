@@ -151,7 +151,7 @@ services:
     App\Carpool\Service\AntiFraudManager:
         arguments:
             $params: 
-                active: '%env(int:ANTIFRAUD_ACTIVE)%'
+                active: '%env(bool:ANTIFRAUD_ACTIVE)%'
                 distanceMinCheck: '%env(int:ANTIFRAUD_DISTANCE_MIN_CHECK)%'
                 nbCarpoolsMax: '%env(int:ANTIFRAUD_NB_CARPOOLS_MAX)%'
         tags:
