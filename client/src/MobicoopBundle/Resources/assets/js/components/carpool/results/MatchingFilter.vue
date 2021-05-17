@@ -80,18 +80,6 @@
                 </v-col>
                 <v-col cols="4">
                   <v-select
-                    v-model="filters.filters.role"
-                    :items="itemsRole"
-                    :label="$t('select.filter.role.label')"
-                    outlined
-                    dense
-                    flat
-                    :disabled="!filterEnabled.role || disabledFilters"
-                    @change="updateFilterRole"
-                  />
-                </v-col>
-                <v-col cols="4">
-                  <v-select
                     v-model="filters.filters.gender"
                     :items="itemsGender"
                     :label="$t('select.filter.gender.label')"
@@ -100,6 +88,18 @@
                     flat
                     :disabled="!filterEnabled.gender || disabledFilters"
                     @change="updateFilterGender"
+                  />
+                </v-col>
+                <v-col cols="4">
+                  <v-select
+                    v-if="filterEnabled.role && !disabledFilters"
+                    v-model="filters.filters.role"
+                    :items="itemsRole"
+                    :label="$t('select.filter.role.label')"
+                    outlined
+                    dense
+                    flat
+                    @change="updateFilterRole"
                   />
                 </v-col>
               </v-row>
