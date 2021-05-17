@@ -219,11 +219,12 @@ class CommunityManager
      */
     public function getCommunity(int $communityId, User $user=null)
     {
-        $community = $this->communityRepository->find($communityId);
-        $community->setUrlKey($this->generateUrlKey($community));
-        $this->getAdsOfCommunity($community);
-        if ($user) {
-            $this->checkIfCurrentUserIsMember($community, $user);
+        if ($community = $this->communityRepository->find($communityId)) {
+            $community->setUrlKey($this->generateUrlKey($community));
+            $this->getAdsOfCommunity($community);
+            if ($user) {
+                $this->checkIfCurrentUserIsMember($community, $user);
+            }
         }
         return $community;
     }

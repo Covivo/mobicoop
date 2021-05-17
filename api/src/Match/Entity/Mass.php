@@ -248,9 +248,10 @@ class Mass
 
     const TYPE_ANONYMOUS = 0;
     const TYPE_QUALIFIED = 1;
+    const TYPE_MIGRATION = 2;
 
     const NB_WORKING_DAY = 228;
-    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
     const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
     const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
@@ -449,7 +450,7 @@ class Mass
     /**
      * @var Community The community created after the migration of this mass users
      *
-     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
      * @Groups({"mass","massMigrate"})
      */
     private $community;
@@ -475,6 +476,19 @@ class Mass
      * @Groups({"mass"})
      */
     private $migratedDate;
+
+    /**
+     * @var bool Set the first address as the home address of the users that will be migrated
+     * @Groups({"mass","massMigrate"})
+     */
+    private $setHomeAddress;
+    
+    /**
+     * @var int The id of an existing community. The migrated users will be joining this community.
+     * If there is a communityId, the other community fields (name, desc etc...) will be ignored
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityId;
 
     /**
      * @var string The name of the new community that will be created if we migrate the users.
@@ -897,6 +911,26 @@ class Mass
         $this->migratedDate = $migratedDate;
 
         return $this;
+    }
+
+    public function hasSetHomeAddress(): ?bool
+    {
+        return $this->setHomeAddress;
+    }
+
+    public function setSetHomeAddress(?bool $setHomeAddress)
+    {
+        $this->setHomeAddress = $setHomeAddress;
+    }
+    
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
     }
 
     public function getCommunityName(): ?string
