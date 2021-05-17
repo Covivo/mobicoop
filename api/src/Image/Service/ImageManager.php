@@ -43,6 +43,7 @@ use App\User\Repository\UserRepository;
 use App\Image\Repository\ImageRepository;
 use App\Image\Exception\OwnerNotFoundException;
 use App\Image\Exception\ImageException;
+use Exception;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use ProxyManager\Exception\FileNotWritableException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -265,7 +266,10 @@ class ImageManager
         set_time_limit(3600);
         $images = $this->imageRepository->findAll();
         foreach ($images as $image) {
-            $this->generateVersions($image);
+            try {
+                $this->generateVersions($image);
+            } catch (Exception $e) {
+            }
         }
     }
 
@@ -366,9 +370,11 @@ class ImageManager
     ) {
         $versionName = $prefix . $fileName . "." . $extension;
 
-        $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
-        $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-        $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
+        if (file_exists($baseFolder.$folderOrigin.$image->getFileName())) {
+            $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
+            $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
+            $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
+        }
         return $versionName;
     }
     
