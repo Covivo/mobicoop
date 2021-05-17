@@ -45,7 +45,7 @@
         },
         "hour": {
             "label": "Heure",
-            "help": "Affichage des annonces sur l'heure sélectionnée uniquement "
+            "help": "Affichage des annonces à partir de l'heure sélectionnée."
         }
     },
     "chips": {

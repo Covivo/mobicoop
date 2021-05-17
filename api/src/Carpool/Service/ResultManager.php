@@ -2076,7 +2076,7 @@ class ResultManager
                                 $return = false;
                                 break;
                             }
-                            $return = $a->getTime()->format("H") === $value->format("H");
+                            $return = $a->getTime()->format("H") >= $value->format("H");
                             break;
                         // Filter on Role (driver, passenger, both)
                         case "role":
