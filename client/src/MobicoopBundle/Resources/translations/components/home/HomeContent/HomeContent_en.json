@@ -28,27 +28,14 @@
         }
     },
     "events": {
-        "title": "Allez en covoiturage à vos prochains événements",
+        "title": "Organisez du covoiturage pour vos événements",
         "button1": {
             "label": "Voir les événements",
             "route": "/evenements"
         },
         "button2": {
             "label": "Ajouter un événement",
-            "route": "/evenements"
-        }
-    },
-    "privateEvent": {
-        "title":"Un événement privé ?",
-        "subtitle":"Laissez vos invités organiser leur covoiturage",
-        "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
-        "button":{
-            "label":"Créer un événement",
-            "route":"https://www.covievent.org/evenement/nouveau"
-        },
-        "coviEvent":{
-            "text":"Découvrir CoviEvent",
-            "link":"https://www.covievent.org/"
+            "route": "/evenement/creer"
         }
     },
     "articles": {

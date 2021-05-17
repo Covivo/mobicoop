@@ -98,12 +98,59 @@
               <GeoComplete
                 :url="geoSearchUrl"
                 :token="user ? user.token : ''"
-                :label="$t('form.label.address')"
+                :label="$t('form.label.address.check')"
                 :display-name-in-selected="false"
                 @address-selected="addressSelected"
               />
             </v-col>
           </v-row>
+          <v-row
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              md="10"
+              class="grey lighten-3"
+            >
+              <v-row justify="center">
+                <v-col
+                  cols="12"
+                  md="10"
+                  class="text-left pt-4 font-italic"
+                >
+                  {{ $t('textAddressDetails') }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="form.addressDetail.way"
+                    :label="$t('form.label.address.way')"
+                    :rules="form.rules.wayRules"
+                    required
+                  />                   
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="form.addressDetail.cp"
+                    :label="$t('form.label.address.cp')"
+                    :rules="form.rules.cpRules"
+                    required
+                  />                   
+                </v-col>
+                <v-col cols="8">
+                  <v-text-field
+                    v-model="form.addressDetail.city"
+                    :label="$t('form.label.address.city')"
+                    :rules="form.rules.cityRules"
+                    required
+                  />                   
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>          
           <v-row justify="center">
             <v-col
               cols="12"
@@ -114,7 +161,7 @@
                 rounded
                 color="secondary" 
                 class="mt-4 justify-self-center"
-                :disabled="!valid || !validAddress"
+                :disabled="!valid"
                 @click="addBankCoordinates"
               >
                 {{ $t('register') }}
@@ -271,6 +318,11 @@ export default {
         iban:"",
         bic:"",
         formAddress:null,
+        addressDetail:{
+          way:null,
+          cp:null,
+          city:null
+        },
         rules:{
           ibanRules: [
             v => !!v || this.$t('form.errors.ibanRequired'),
@@ -280,14 +332,22 @@ export default {
             v => !!v || this.$t('form.errors.bicRequired'),
             v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?/).test(v) || this.$t('form.errors.bic'),
           ],
+          wayRules: [
+            v => !!v || this.$t('form.errors.wayRequired'),
+          ],
+          cpRules: [
+            v => !!v || this.$t('form.errors.cpRequired'),
+          ],
+          cityRules: [
+            v => !!v || this.$t('form.errors.cityRequired'),
+          ],
         }
       },
       bankCoordinates: null,
       loading:false,
       title:this.$t('title'),
       dialog:false,
-      error:false,
-      validAddress:false
+      error:false
     }
   },
   computed:{
@@ -341,6 +401,13 @@ export default {
     addBankCoordinates(){
       this.loading = true;
       this.error = false;
+
+      // We override several parameters retrieive by the SIG and validated directly by the user
+      // We keep the ones given in the form
+      this.form.formAddress.streetAddress = this.form.addressDetail.way;
+      this.form.formAddress.postalCode = this.form.addressDetail.cp;
+      this.form.formAddress.city = this.form.addressDetail.city;
+
       let params = {
         "iban":this.form.iban,
         "bic":this.form.bic,
@@ -362,17 +429,10 @@ export default {
     },
     addressSelected(address){
       this.form.formAddress = address;
-      this.validateAddress();
-    },
-    validateAddress(){
-      if(!this.form.formAddress ||
-          !this.form.formAddress.streetAddress || 
-          !this.form.formAddress.addressLocality ||
-          !this.form.formAddress.postalCode){
-        this.validAddress = false;
-      }
-      else{
-        this.validAddress = true;
+      if(address){
+        this.form.addressDetail.way = address.streetAddress;
+        this.form.addressDetail.cp = address.postalCode;
+        this.form.addressDetail.city = address.addressLocality;
       }
     },
     identityDocumentSent(data){

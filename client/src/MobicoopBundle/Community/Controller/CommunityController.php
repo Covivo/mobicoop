@@ -280,15 +280,13 @@ class CommunityController extends AbstractController
             $communityUser->setCommunity($community);
             $communityUser->setUser($user);
             $data = $communityManager->joinCommunity($communityUser);
-            $reponseofmanager = $this->handleManagerReturnValue($data);
-            if (!empty($reponseofmanager)) {
-                $session = $this->get('session');
-                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
-                return $reponseofmanager;
-            }
+            $session = $this->get('session');
+            $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
+
+            return new JsonResponse($data);
         }
 
-        return new Response();
+        return new JsonResponse();
     }
 
     /**

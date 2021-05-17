@@ -24,7 +24,6 @@ twig:
         attributionCopyright: '%env(resolve:MAP_ATTRIBUTION_COPYRIGHTS)%'
         communityAvatarSize: '%env(resolve:COMMUNITY_AVATAR_SIZE)%'
         communityAvatarVersion: '%env(resolve:COMMUNITY_AVATAR_VERSION)%'
-        urlAltCommunityAvatar: '%env(resolve:URL_ALT_COMMUNITY_AVATAR)%'
         dataComponents: '%env(resolve:DATA_COMPONENTS)%'
         homeCommunityDisplay: '%env(resolve:COMMUNITY_DISPLAY)%'
         additionalTextDisplay: '%env(resolve:ADDITIONAL_TEXT_DISPLAY)%'

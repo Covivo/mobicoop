@@ -21,6 +21,11 @@
         max-height="150"
         :src="article.image"
       />
+      <div
+        v-else-if="article.iframe"
+        class="ma-0 pa-0"
+        v-html="article.iframe"
+      />
       <v-img
         v-else
         src="/images/avatarsDefault/avatar.svg"

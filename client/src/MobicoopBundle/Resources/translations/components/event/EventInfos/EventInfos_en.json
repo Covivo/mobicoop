@@ -7,5 +7,6 @@
         "label": "End"
     },
     "shortCompleteDate": "DD/MM/YYYY",
-    "hourMinute": "HH[h]mm"
+    "hourMinute": "HH[h]mm",
+    "website": "Site internet"
 }

@@ -26,6 +26,7 @@ namespace App\Community\EventListener;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
+use App\Image\Entity\Image;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -36,11 +37,13 @@ class CommunityLoadListener
 {
     private $requestStack;
     private $communityManager;
+    private $avatarDefault;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, string $avatarDefault)
     {
         $this->requestStack = $requestStack;
         $this->communityManager = $communityManager;
+        $this->avatarDefault = $avatarDefault;
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -67,6 +70,9 @@ class CommunityLoadListener
 
                 // Url Key of the community
                 $community->setUrlKey($this->communityManager->generateUrlKey($community));
+
+                // default avatar
+                $community->setDefaultAvatar($this->avatarDefault);
             }
         }
     }

@@ -295,6 +295,12 @@ class Community
     private $images;
 
     /**
+     * @var string $defaultAvatar Url of the default Avatar for a community
+     * @Groups({"readCommunity","readCommunityUser","write","communities"})
+     */
+    private $defaultAvatar;
+
+    /**
      * @var ArrayCollection|null The proposals in this community.
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
@@ -553,6 +559,18 @@ class Community
         return $this;
     }
 
+    public function setDefaultAvatar(?string $defaultAvatar): self
+    {
+        $this->defaultAvatar = $defaultAvatar;
+
+        return $this;
+    }
+
+    public function getDefaultAvatar(): ?string
+    {
+        return $this->defaultAvatar;
+    }
+    
     public function getProposals()
     {
         return $this->proposals->getValues();

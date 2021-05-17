@@ -148,6 +148,11 @@ class Event implements ResourceInterface, \JsonSerializable
     private $images;
 
     /**
+     * @var string $defaultAvatar Url of the default Avatar for an Event
+     */
+    private $defaultAvatar;
+
+    /**
     * @var string The url of the image of the external event.
     */
     private $externalImageUrl;
@@ -311,6 +316,18 @@ class Event implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
+    public function setDefaultAvatar(?string $defaultAvatar): self
+    {
+        $this->defaultAvatar = $defaultAvatar;
+
+        return $this;
+    }
+
+    public function getDefaultAvatar(): ?string
+    {
+        return $this->defaultAvatar;
+    }
+
     /**
      * @return Collection|Image[]
      */
@@ -379,6 +396,7 @@ class Event implements ResourceInterface, \JsonSerializable
                 'address'           => $this->getAddress(),
                 'user'              => $this->getUser(),
                 'images'            => $this->getImages(),
+                'defaultAvatar'     => $this->getDefaultAvatar(),
                 'externalImageUrl'  => $this->getExternalImageUrl()
             ];
     }

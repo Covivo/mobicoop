@@ -92,6 +92,13 @@ class Article
     private $image;
 
     /**
+     * @var string The code of the article iFrame if it's displayed from an external source
+     *
+     * @Groups({"readArticle"})
+     */
+    private $iFrame;
+    
+    /**
      * @var string The date of the post
      *
      * @Groups({"readArticle"})
@@ -155,6 +162,18 @@ class Article
         return $this;
     }
 
+    public function getIFrame(): ?string
+    {
+        return $this->iFrame;
+    }
+    
+    public function setIFrame(?string $iFrame): self
+    {
+        $this->iFrame = $iFrame;
+        
+        return $this;
+    }
+    
     public function getPubDate(): ?string
     {
         return $this->pubDate;

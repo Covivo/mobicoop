@@ -7,7 +7,6 @@
     {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
 {% endblock %}
 {% block main %}
-
     <community
         :community="{{ community|json_encode }}"
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
@@ -15,7 +14,7 @@
         :map-provider="{{ mapProvider|json_encode }}"
         :url-tiles="{{ urlTiles|json_encode }}"
         :attribution-copyright="{{ attributionCopyright|json_encode }}"
-        url-alt-avatar="{{ urlAltCommunityAvatar }}"
+        url-alt-avatar="{{ community.defaultAvatar }}"
         avatar-version="{{ communityAvatarVersion }}"
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}

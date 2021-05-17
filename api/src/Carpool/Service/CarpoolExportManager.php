@@ -93,7 +93,6 @@ class CarpoolExportManager
         $sumReceived = null;
         // we create an array of carpoolExport
         foreach ($carpoolItems as $carpoolItem) {
-
             // Check if the User is debtor or creditor
             $isCreditor = false;
             if ($carpoolItem->getCreditorUser()->getId() == $user->getId()) {
@@ -130,7 +129,6 @@ class CarpoolExportManager
                     }
                 }
             }
-            
             //    we set the role and the carpooler
             if ($isCreditor) {
                 $carpoolExport->setRole(CarpoolExport::ROLE_DRIVER);
@@ -156,9 +154,9 @@ class CarpoolExportManager
             //    we set the certification type
             if ($carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
-                    if ($carpoolProof->getPickUpPassengerDate() == $carpoolItem->getItemDate()) {
-                        $carpoolExport->setCertification($carpoolProof->getType());
-                    }
+                    // if ($carpoolProof->getPickUpPassengerDate() == $carpoolItem->getItemDate()) {
+                    $carpoolExport->setCertification($carpoolProof->getType());
+                    // }
                 }
             }
        

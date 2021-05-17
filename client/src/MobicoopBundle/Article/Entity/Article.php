@@ -75,6 +75,12 @@ class Article implements ResourceInterface, \JsonSerializable
     private $image;
 
     /**
+     * @var string The code of the article iFrame if it's displayed from an external source
+     *
+     */
+    private $iFrame;
+    
+    /**
      * @var string The pubDate of the article.
      *
      * @Groups({"post","put"})
@@ -158,6 +164,18 @@ class Article implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getIFrame(): ?string
+    {
+        return $this->iFrame;
+    }
+    
+    public function setIFrame(?string $iFrame): self
+    {
+        $this->iFrame = $iFrame;
+        
+        return $this;
+    }
+
     public function getPubDate(): ?string
     {
         return $this->pubDate;
@@ -218,6 +236,7 @@ class Article implements ResourceInterface, \JsonSerializable
             'sections' => $this->getSections(),
             'description' => $this->getDescription(),
             'image' => $this->getImage(),
+            'iframe' => $this->getIFrame(),
             'pubDate' => $this->getPubDate(),
         ];
     }

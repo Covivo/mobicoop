@@ -191,6 +191,8 @@ class MangoPayProvider implements PaymentProviderInterface
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
             $bankAccount = $this->deserializeBankAccount($data);
+        } else {
+            throw new PaymentException(PaymentException::ERROR_CREATING);
         }
         return $bankAccount;
     }

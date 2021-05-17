@@ -5,6 +5,6 @@
 {% else %}
     {% set deleter = ask.user %}
 {% endif %}
-{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
-{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} {{"accountDeleted"|trans|raw}} {{ context.origin.address.displayLabel[0] }} {{"at"|trans|raw}} {{ context.destination.address.displayLabel[0] }}. {{"findNewCarpool"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')|raw}}.
-{{"signature"|trans|raw}} {{api_env('SMS_PLATFORM_NAME')|raw}}
+Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} a supprimé son compte et ne pourra pas covoiturer avec vous de {{ context.origin.address.displayLabel[0] }} à {{ context.destination.address.displayLabel[0] }}. Trouvez de nouveaux covoiturages ou déposez une annonce sur  {{api_env('SMS_PLATFORM_NAME')|raw}}.
+A bientôt sur {{api_env('SMS_PLATFORM_NAME')|raw}}

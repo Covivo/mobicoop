@@ -10,5 +10,15 @@
         "addressLocality":"Arches",
         "longitude":6.5272208,
         "latitude":48.117861
+    },
+    "1360672683": {
+        "longitude":6.877523,
+        "latitude":45.928630
+    },
+    "1125816127": {
+        "addressLocality":"Gotein-Libarrenx"
+    },
+    "1260015065": {
+        "addressLocality":"Saint-Martin-d'Arberoue"
     }
 }

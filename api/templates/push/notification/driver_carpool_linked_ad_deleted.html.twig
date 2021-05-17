@@ -5,6 +5,6 @@
 {% else %}
     {% set deleter = ask.user %}
 {% endif %}
-{{"hello"|trans|raw}} {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
-{{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}} {{"carpoolDeleted"|trans|raw}} {{ context.origin.address.displayLabel[0] }} {{"at"|trans|raw}} {{ context.destination.address.displayLabel[0] }}. {{"findNewCarpool"|trans|raw}} {{api_env('PUSH_PLATFORM_NAME')}}.
-{{"signature"|trans|raw}} {{api_env('PUSH_PLATFORM_NAME')}}
+Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+{{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}} a annulé son trajet et ne pourra pas covoiturer avec vous de {{ context.origin.address.displayLabel[0] }} à {{ context.destination.address.displayLabel[0] }}. Trouvez de nouveaux covoiturages ou déposez une annonce sur {{api_env('PUSH_PLATFORM_NAME')}}.
+A bientôt sur {{api_env('PUSH_PLATFORM_NAME')}}

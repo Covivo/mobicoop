@@ -94,38 +94,6 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row justify="center">
-      <v-col
-        class="text-center mt-16"
-      >
-        <h3 class="primary--text font-weight-bold">
-          {{ $t('privateEvent.title') }}
-        </h3>
-        <h3 class="primary--text font-italic">
-          {{ $t('privateEvent.subtitle') }}
-        </h3>
-        <p>
-          {{ $t('privateEvent.text') }}
-        </p>
-        <v-btn
-          rounded
-          color="secondary"
-          :href="this.$t('privateEvent.button.route')"
-          target="_blank"
-          class="white--text mt-4"
-        >
-          {{ $t('privateEvent.button.label') }}
-        </v-btn>
-        <p class="mt-4">
-          <a
-            :href="this.$t('privateEvent.coviEvent.link')"
-            target="_blank"
-          >
-            {{ $t('privateEvent.coviEvent.text') }}
-          </a>
-        </p>
-      </v-col>
-    </v-row>
     <!-- end Event -->
 
     <!-- journeyCityToCity -->
@@ -144,7 +112,7 @@
       </v-col>
     </v-row>
     <!-- end journeyCityToCity -->
-    
+
     <!-- cooperative -->
     <div
       :style="'background-image:url(\''+$t('urlBackground3')+'\');background-size:cover;background-position-y:right;'"
@@ -246,13 +214,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  h2{
-    font-size: 2rem;
-    line-height: 1.2;
-  }
+h2{
+  font-size: 2rem;
+  line-height: 1.2;
+}
 
-  h3{
-    font-size: 1.8rem;
-    line-height: 1.2;
-  }
+h3{
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
 </style>

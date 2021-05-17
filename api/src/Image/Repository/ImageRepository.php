@@ -54,6 +54,11 @@ class ImageRepository
         return $this->repository->find($id);
     }
     
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+    
     /**
      * Find the next image position for a given related entity (owner)
      * @param $owner
