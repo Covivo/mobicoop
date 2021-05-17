@@ -31,6 +31,22 @@
       </v-btn>
     </v-snackbar>
 
+    <v-snackbar
+      v-model="snackErrorPublish.show"
+      :color="snackErrorPublish.color"
+      top
+      timeout="-1"
+    >
+      {{ snackErrorPublish.message }}
+      <v-btn
+        color="white"
+        text
+        @click="snackErrorPublish.show = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>    
+
     <!-- Title and subtitle -->
     <v-row
       justify="center"
@@ -869,6 +885,11 @@ export default {
         message: "",
         color: "success"
       },
+      snackErrorPublish: {
+        show: false,
+        message: this.$t('snackBarErrorPublish'),
+        color:"error"
+      },
       priceForbidden: false,
       returnTimeIsValid: true,
       initWaypoints: [],
@@ -1194,7 +1215,12 @@ export default {
       })
         .then(response => {
           if (response.data) {
-            window.location.href = this.$t('route.myAds');
+            if(response.data.result == undefined){
+              this.snackErrorPublish.show = true;
+            }
+            else{
+              window.location.href = this.$t('route.myAds');
+            }
           }
           //console.log(response);
         })
