@@ -30,6 +30,7 @@ use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
 use App\User\Service\UserManager;
+use App\Carpool\Exception\AntiFraudException;
 
 /**
  * Anti-Fraud system manager service.
@@ -45,6 +46,7 @@ class AntiFraudManager
     // Parameters
     private $distanceMinCheck;
     private $nbCarpoolsMax;
+    private $active;
     
     /**
      * Constructor.
@@ -62,6 +64,7 @@ class AntiFraudManager
         $this->userManager = $userManager;
         $this->distanceMinCheck = $params['distanceMinCheck'];
         $this->nbCarpoolsMax = $params['nbCarpoolsMax'];
+        $this->active = $params['active'];
     }
 
     /**
@@ -73,8 +76,10 @@ class AntiFraudManager
     public function validAd(Ad $ad): AntiFraudResponse
     {
         // Default response is that the Ad is valid
-        $response = new AntiFraudResponse(true, "OK");
-        
+        $response = new AntiFraudResponse(true, AntiFraudException::OK);
+        if (!$this->active) {
+            return $response;
+        }
         
         // Compute the distance of the journey
         
@@ -129,9 +134,9 @@ class AntiFraudManager
         $proposals = $this->proposalRepository->findByDate($dateTime, $user, true);
 
         if (!is_null($proposals) && is_array($proposals) && count($proposals)>=$this->nbCarpoolsMax) {
-            return new AntiFraudResponse(false, "Too many ad for this date");
+            return new AntiFraudResponse(false, AntiFraudException::TOO_MANY_AD);
         }
 
-        return new AntiFraudResponse(true, "OK");
+        return new AntiFraudResponse(true, AntiFraudException::OK);
     }
 }

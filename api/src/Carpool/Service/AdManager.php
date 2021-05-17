@@ -50,6 +50,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Exception\AntiFraudException;
 use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\MatchingRepository;
@@ -166,8 +167,9 @@ class AdManager
         if (!$ad->isSearch()) {
             // Not a search, we check if the Ad is valid regarding anti fraud system
             $antiFraudResponse = $this->antiFraudManager->validAd($ad);
-            var_dump($antiFraudResponse);
-            die;
+            if (!$antiFraudResponse->isValid()) {
+                throw new AntiFraudException($antiFraudResponse->getMessage());
+            }
         }
 
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
