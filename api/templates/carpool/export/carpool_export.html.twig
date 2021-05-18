@@ -4,7 +4,7 @@
     	<meta charset="utf-8">
     	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     	<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title> Liste Paiements et covoiturages</title>
+		<title> {{ "listCrapoolPayments"|trans }}</title>
 		
 		<style type="text/css">
 			table{
@@ -33,9 +33,9 @@
 			{# header #}
         	<div>
         		<div>
-                    <h1 style="font-family:Roboto,sans-serif;text-align:center;">Covoiturages réalisés par 
+                    <h1 style="font-family:Roboto,sans-serif;text-align:center;">{{ "carpoolRealizedBy"|trans }} 
 						<br>{{ dataToPdf.userName }}
-						<br>"sur le site
+						<br>{{ "onTheSite"|trans }}
 						{{ dataToPdf.appName }}
 						<br>
 					</h1>
@@ -46,15 +46,15 @@
 			<div>
                 {# sum paid #}
                 {% if dataToPdf.paid %}
-                    <p style="font-family:Roboto,sans-serif;text-align:right;">Total payé {{ dataToPdf.paid }} €</p>
+                    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
                 {% endif %}
                 {# sum received #}
                 {% if dataToPdf.received %}
-				    <p style="font-family:Roboto,sans-serif;text-align:right;">Total reçu {{ dataToPdf.received }} €</p>
+				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
                 {% endif %}
                 {# tax info #}
 				{% if dataToPdf.tax %}
-				    <p style="font-family:Roboto,sans-serif;text-align:right;">Vous avez reçu plus de 300,00€ en 2020 : la loi vous impose de le déclarer aux impôts.</p>
+				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "taxInfo"|trans }}</p>
 				{% endif %}
 
 	 			{% set refYear = null %}
@@ -73,16 +73,16 @@
 						<h3>{{ carpoolExport.date|date("Y") }}</h3>
 							{# thead #}
 							<tr>
-								<th>Date</th>
-								<th>Rôle</th>
-								<th>Covoitureur</th>
-								<th>Prise en charge</th>
-								<th>Dépose</th>
-								<th>Contribution</th>
+								<th>{{ "date"|trans }}</th>
+								<th>{{ "role"|trans }}</th>
+								<th>{{ "carpooler"|trans }}</th>
+								<th>{{ "pickUpLocality"|trans }}</th>
+								<th>{{ "dropOffLocality"|trans }}</th>
+								<th>{{ "amount"|trans }}</th>
 								{% if dataToPdf.paymentActive %}
-								<th>Paiement</th>
+								<th>{{ "typeOfpayment"|trans }}</th>
 								{% endif %}
-								<th>Certifié registre (<a href='https://doc.covoiturage.beta.gouv.fr/territoires-beneficier-du-registre-de-preuve-de-covoiturage/classes-de-preuve-de-covoiturage' alt='voir les classes'>voir les classes</a>)</th>
+								<th>{{ "certified"|trans }} (<a href="https://doc.covoiturage.beta.gouv.fr/territoires-beneficier-du-registre-de-preuve-de-covoiturage/classes-de-preuve-de-covoiturage">{{ "seeProofsClasses"|trans }}</a>)</th>
 							</tr>
 							{# tbody #}
 
@@ -95,9 +95,9 @@
 							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
 							{# Role #}
 							{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
-								<td>Conducteur</td>
+								<td>{{ "driver"|trans }}</td>
 							{% else  %}
-								<td>Passager</td>
+								<td>{{ "passenger"|trans }}</td>
 							{% endif %}
 							{# carpooler name #}
 							<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
@@ -114,11 +114,11 @@
 							{# type of payment #}
 							{% if dataToPdf.paymentActive %}
 								{% if (carpoolExport.mode == 1) %}
-									<td>Paiement en ligne</td>
+									<td>{{ "onLinePayment"|trans }}</td>
 								{% elseif (carpoolExport.mode == 2) %}
-									<td>directPayment</td>  
+									<td>{{ "directPayment"|trans }}</td>  
 								{% else %}
-									<td>Paiement non déclaré</td>	       
+									<td>{{ "paymentNotDone"|trans }}</td>	       
 								{% endif %}
 							{% endif %}
 							{# certification #}
