@@ -170,7 +170,8 @@ class ResultManager
     private function createGlobalResult(Result $result, array $waypoints)
     {
         // origin / destination
-        // we display the origin and destination of the passenger for his outward trip
+        // We always display the origin and destination of the driver
+        // We set the pickup address which is the passenger's origin
         // if the carpooler can be driver and passenger, we choose to consider him as driver as he's the first to publish
         // we also set the originFirst and destinationLast to indicate if the driver origin / destination are different than the passenger ones
 
@@ -186,9 +187,10 @@ class ResultManager
             }
         }
         if ($result->getResultDriver() && !$result->getResultPassenger()) {
-            // the carpooler is passenger only, we use his origin and destination
-            $result->setOrigin($result->getResultDriver()->getOutward()->getOrigin());
-            $result->setDestination($result->getResultDriver()->getOutward()->getDestination());
+            // the carpooler is passenger only
+            $result->setPickUpOutward($result->getResultDriver()->getOutward()->getOrigin());
+            $result->setOrigin($result->getResultDriver()->getOutward()->getOriginDriver());
+            $result->setDestination($result->getResultDriver()->getOutward()->getDestinationDriver());
             // we check if his origin and destination are first and last of the whole journey
             // we use the gps coordinates
             $result->setOriginFirst(false);
@@ -199,15 +201,13 @@ class ResultManager
             if ($result->getDestination()->getLatitude() == $requesterDestination->getLatitude() && $result->getDestination()->getLongitude() == $requesterDestination->getLongitude()) {
                 $result->setDestinationLast(true);
             }
-            // driver and passenger origin/destination
-            // $result->setOriginDriver($result->getResultDriver()->getOutward()->getOriginDriver());
-            // $result->setDestinationDriver($result->getResultDriver()->getOutward()->getDestinationDriver());
-            // $result->setOriginPassenger($result->getResultDriver()->getOutward()->getOriginPassenger());
-            // $result->setDestinationPassenger($result->getResultDriver()->getOutward()->getDestinationPassenger());
         } else {
-            // the carpooler can be driver, we use the requester origin and destination
-            $result->setOrigin($requesterOrigin);
-            $result->setDestination($requesterDestination);
+            // the carpooler can be driver
+            $result->setPickUpOutward($requesterOrigin);
+            $result->setOrigin($result->getResultPassenger()->getOutward()->getOrigin());
+            $result->setDestination($result->getResultPassenger()->getOutward()->getDestination());
+
+
             // we check if his origin and destination are first and last of the whole journey
             // we use the gps coordinates
             $result->setOriginFirst(false);
@@ -218,11 +218,6 @@ class ResultManager
             if ($result->getDestination()->getLatitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLatitude() && $result->getDestination()->getLongitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLongitude()) {
                 $result->setDestinationLast(true);
             }
-            // driver and passenger origin/destination
-            // $result->setOriginDriver($result->getResultPassenger()->getOutward()->getOriginDriver());
-            // $result->setDestinationDriver($result->getResultPassenger()->getOutward()->getDestinationDriver());
-            // $result->setOriginPassenger($result->getResultPassenger()->getOutward()->getOriginPassenger());
-            // $result->setDestinationPassenger($result->getResultPassenger()->getOutward()->getDestinationPassenger());
         }
 
         // date / time / seats / price
@@ -356,11 +351,13 @@ class ResultManager
             // the carpooler is passenger only
             if (!is_null($result->getResultDriver()->getReturn())) {
                 $result->setReturn(true);
+                $result->setPickUpReturn($result->getResultDriver()->getReturn()->getOrigin());
             }
         } else {
             // the carpooler is driver or passenger
             if (!is_null($result->getResultPassenger()->getReturn())) {
                 $result->setReturn(true);
+                $result->setPickUpReturn($requesterDestination);
             }
         }
 
