@@ -12,6 +12,14 @@
       >
         <v-row
           dense
+          class="text-body-2"
+        >
+          <v-col cols="auto">
+            {{ pickUpOutwardDisplay }}
+          </v-col>
+        </v-row>
+        <v-row
+          dense
         >
           <v-col
             v-if="returnTrip"
@@ -49,6 +57,14 @@
         cols="3"
         offset="1"
       >
+        <v-row
+          dense
+          class="text-body-2"
+        >
+          <v-col cols="auto">
+            {{ pickUpReturnDisplay }}
+          </v-col>
+        </v-row>
         <v-row
           dense
         >
@@ -152,6 +168,14 @@ export default {
     },
   },
   props: {
+    pickUpOutward: {
+      type: Object,
+      default: null
+    },
+    pickUpReturn: {
+      type: Object,
+      default: null
+    },
     outwardTime: {
       type: String,
       default: null
@@ -197,6 +221,14 @@ export default {
     return {
       locale: this.$i18n.locale,
     };
+  },
+  computed:{
+    pickUpOutwardDisplay() {
+      return (this.pickUpOutward.addressLocality) ? this.pickUpOutward.addressLocality : ''
+    },
+    pickUpReturnDisplay() {
+      return (this.pickUpReturn.addressLocality) ? this.pickUpReturn.addressLocality : ''
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
