@@ -70,10 +70,110 @@ class StructureManager
      * Add a structure.
      *
      * @param Structure     $structure              The structure to add
+     * @param array         $fields                 The fields
      * @return Structure    The structure created
      */
-    public function addStructure(Structure $structure)
+    public function addStructure(Structure $structure, array $fields)
     {
+        // treat territories
+        if (in_array('territories', array_keys($fields))) {
+            foreach ($fields["territories"] as $id) {
+                if ($territory = $this->territoryRepository->find($id)) {
+                    $structure->addTerritory($territory);
+                } else {
+                    throw new SolidaryException(SolidaryException::TERRITORY_INVALID);
+                }
+            }
+        }
+
+        // treat subjects
+        if (in_array('subjects', array_keys($fields))) {
+            foreach ($fields["subjects"] as $asubject) {
+                if (array_key_exists('label', $asubject) && $asubject['label'] !== null) {
+                    $subject = new Subject();
+                    $subject->setLabel($asubject['label']);
+                    $subject->setStructure($structure);
+                    $structure->addSubject($subject);
+                    $this->entityManager->persist($subject);
+                }
+            }
+        }
+
+        // treat needs
+        if (in_array('needs', array_keys($fields))) {
+            foreach ($fields["needs"] as $aneed) {
+                if (array_key_exists('label', $aneed) && $aneed['label'] !== null) {
+                    $need = new Need();
+                    $need->setLabel($aneed['label']);
+                    $need->addStructure($structure);
+                    $structure->addNeed($need);
+                    $this->entityManager->persist($need);
+                }
+            }
+        }
+
+        // treat proofs
+        if (in_array('structureProofs', array_keys($fields))) {
+            foreach ($fields["structureProofs"] as $aproof) {
+                if (array_key_exists('label', $aproof) && $aproof['label'] !== null) {
+                    $proof = new StructureProof();
+                    $proof->setLabel($aproof['label']);
+                    $proof->setType($aproof['type']);
+                    $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
+                    $proof->setPosition($aproof['position']);
+                    $proof->setStructure($structure);
+                    $proof->setCheckbox(false);
+                    $proof->setRadio(false);
+                    $proof->setInput(false);
+                    $proof->setFile(false);
+                    $proof->setSelectbox(false);
+                    $proof->setOptions(null);
+                    $proof->setAcceptedValues(null);
+                    if (isset($aproof['checkbox']) && $aproof['checkbox']) {
+                        $proof->setCheckbox(true);
+                    } elseif (isset($aproof['radio']) && $aproof['radio']) {
+                        $proof->setRadio(true);
+                        $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                        $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                    } elseif (isset($aproof['input']) && $aproof['input']) {
+                        $proof->setInput(true);
+                    } elseif (isset($aproof['file']) && $aproof['file']) {
+                        $proof->setFile(true);
+                    } elseif (isset($aproof['selectbox']) && $aproof['selectbox']) {
+                        $proof->setSelectbox(true);
+                        $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                        $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                    }
+                    $structure->addStructureProof($proof);
+                    $this->entityManager->persist($proof);
+                }
+            }
+        }
+
+        // treat operators
+        if (in_array('operators', array_keys($fields))) {
+            foreach ($fields["operators"] as $operator) {
+                if ($user = $this->userRepository->find($operator['id'])) {
+                    $operate = new Operate();
+                    $operate->setUser($user);
+                    $structure->addOperate($operate);
+                    if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_MANAGER)) {
+                        $this->authManager->grant($user, $authItem, null, false);
+                    }
+                } else {
+                    throw new SolidaryException(SolidaryException::UNKNOWN_USER);
+                }
+            }
+        }
+
+        // reorder proofs (order may have changed during the persists)
+        $proofs = $structure->getStructureProofs();
+        $structure->removeStructureProofs();
+        usort($proofs, [$this,"comparePosition"]);
+        foreach ($proofs as $proof) {
+            $structure->addStructureProof($proof);
+        }
+
         // persist the structure
         $this->entityManager->persist($structure);
         $this->entityManager->flush();
@@ -85,7 +185,7 @@ class StructureManager
      * Patch a structure.
      *
      * @param Structure $structure    The structure to update
-     * @param array $fields             The updated fields
+     * @param array     $fields       The updated fields
      * @return Structure   The structure updated
      */
     public function patchStructure(Structure $structure, array $fields)

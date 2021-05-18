@@ -49,7 +49,8 @@ final class StructureDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
-            $data = $this->structureManager->addStructure($data);
+            // for a post operation, we also pass the fields to handle some of them manually for convenience
+            $data = $this->structureManager->addStructure($data, json_decode($this->request->getContent(), true));
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->structureManager->patchStructure($data, json_decode($this->request->getContent(), true));
