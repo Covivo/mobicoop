@@ -72,6 +72,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class StructureProof
 {
+    const TYPE_REQUESTER = 1;
+    const TYPE_VOLUNTEER = 2;
     
     /**
      * @var int The id of this structure proof.
@@ -80,7 +82,7 @@ class StructureProof
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs"})
      */
     private $id;
 
@@ -89,7 +91,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $label;
 
@@ -98,7 +100,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $type;
 
@@ -107,7 +109,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $position;
 
@@ -115,7 +117,7 @@ class StructureProof
      * @var bool The proof is a checkbox.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $checkbox;
 
@@ -123,7 +125,7 @@ class StructureProof
      * @var bool The proof is a input.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $input;
 
@@ -131,7 +133,7 @@ class StructureProof
      * @var bool The proof is a select.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $selectbox;
 
@@ -139,7 +141,7 @@ class StructureProof
      * @var bool The proof is a radio button.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $radio;
 
@@ -147,7 +149,7 @@ class StructureProof
      * @var string Text options for radio or select (separated by semicolon, in the same order than values).
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $options;
 
@@ -155,7 +157,7 @@ class StructureProof
      * @var string Values for radio or select (separated by semicolon, in the same order than options).
      *
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $acceptedValues;
 
@@ -163,7 +165,7 @@ class StructureProof
      * @var bool The proof is a file.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $file;
 
@@ -171,7 +173,7 @@ class StructureProof
      * @var bool Is the proof mandatory ?
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
      */
     private $mandatory;
 
@@ -210,6 +212,13 @@ class StructureProof
      * @MaxDepth(1)
      */
     private $proofs;
+
+    /**
+     * @var bool The structure proof is removable (not removable if it is used for a solidary record).
+     *
+     * @Groups("aRead")
+     */
+    private $removable;
 
     public function __construct()
     {
@@ -418,6 +427,11 @@ class StructureProof
         }
         
         return $this;
+    }
+
+    public function isRemovable(): ?bool
+    {
+        return count($this->getProofs())==0;
     }
 
     // DOCTRINE EVENTS

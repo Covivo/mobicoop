@@ -31,6 +31,7 @@ use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
+use App\Solidary\Entity\StructureProof;
 use App\Solidary\Exception\SolidaryException;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
@@ -209,6 +210,104 @@ class StructureManager
             }
         }
 
+        // check if proofs have changed
+        if (in_array('structureProofs', array_keys($fields))) {
+            $ids = [];
+            foreach ($fields['structureProofs'] as $proof) {
+                if (array_key_exists('id', $proof)) {
+                    $ids[] = $proof['id'];
+                }
+            }
+            // check if a proof have been removed
+            foreach ($structure->getStructureProofs() as $proof) {
+                if (!in_array($proof->getId(), $ids)) {
+                    // proof removed
+                    $structure->removeStructureProof($proof);
+                }
+            }
+
+            foreach ($fields["structureProofs"] as $aproof) {
+                if (
+                    array_key_exists('id', $aproof) &&
+                    $aproof['id'] !== null &&
+                    array_key_exists('label', $aproof) &&
+                    $aproof['label'] !== null
+                    ) {
+                    // existing proof => update
+                    foreach ($structure->getStructureProofs() as $proof) {
+                        /**
+                         * @var StructureProof $proof
+                         */
+                        if ($proof->getId() === $aproof['id']) {
+                            $proof->setLabel($aproof['label']);
+                            $proof->setType($aproof['type']);
+                            $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
+                            $proof->setPosition($aproof['position']);
+                            $proof->setCheckbox(false);
+                            $proof->setRadio(false);
+                            $proof->setInput(false);
+                            $proof->setFile(false);
+                            $proof->setSelectbox(false);
+                            $proof->setOptions(null);
+                            $proof->setAcceptedValues(null);
+                            if (isset($aproof['checkbox']) && $aproof['checkbox']) {
+                                $proof->setCheckbox(true);
+                            } elseif (isset($aproof['radio']) && $aproof['radio']) {
+                                $proof->setRadio(true);
+                                $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                                $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                            } elseif (isset($aproof['input']) && $aproof['input']) {
+                                $proof->setInput(true);
+                            } elseif (isset($aproof['file']) && $aproof['file']) {
+                                $proof->setFile(true);
+                            } elseif (isset($aproof['selectbox']) && $aproof['selectbox']) {
+                                $proof->setSelectbox(true);
+                                $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                                $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                            }
+                            break;
+                        }
+                    }
+                } elseif (
+                    !array_key_exists('id', $aproof) &&
+                    array_key_exists('label', $aproof) &&
+                 $aproof['label'] !== null
+                    ) {
+                    // new proof
+                    $proof = new StructureProof();
+                    $proof->setLabel($aproof['label']);
+                    $proof->setType($aproof['type']);
+                    $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
+                    $proof->setPosition($aproof['position']);
+                    $proof->setStructure($structure);
+                    $proof->setCheckbox(false);
+                    $proof->setRadio(false);
+                    $proof->setInput(false);
+                    $proof->setFile(false);
+                    $proof->setSelectbox(false);
+                    $proof->setOptions(null);
+                    $proof->setAcceptedValues(null);
+                    if (isset($aproof['checkbox']) && $aproof['checkbox']) {
+                        $proof->setCheckbox(true);
+                    } elseif (isset($aproof['radio']) && $aproof['radio']) {
+                        $proof->setRadio(true);
+                        $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                        $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                    } elseif (isset($aproof['input']) && $aproof['input']) {
+                        $proof->setInput(true);
+                    } elseif (isset($aproof['file']) && $aproof['file']) {
+                        $proof->setFile(true);
+                    } elseif (isset($aproof['selectbox']) && $aproof['selectbox']) {
+                        $proof->setSelectbox(true);
+                        $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
+                        $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
+                    }
+                    $structure->addStructureProof($proof);
+                    $this->entityManager->persist($proof);
+                }
+            }
+        }
+
         // check if operators have changed
         if (in_array('operators', array_keys($fields))) {
             $ids = [];
@@ -248,6 +347,14 @@ class StructureManager
                     }
                 }
             }
+        }
+
+        // reorder proofs (order may have changed during the persists)
+        $proofs = $structure->getStructureProofs();
+        $structure->removeStructureProofs();
+        usort($proofs, [$this,"comparePosition"]);
+        foreach ($proofs as $proof) {
+            $structure->addStructureProof($proof);
         }
 
         // persist the structure
@@ -295,5 +402,10 @@ class StructureManager
                 $this->authManager->revoke($operate->getUser(), $authItem, null, false);
             }
         }
+    }
+
+    private function comparePosition($a, $b)
+    {
+        return strcmp($a->getPosition(), $b->getPosition());
     }
 }

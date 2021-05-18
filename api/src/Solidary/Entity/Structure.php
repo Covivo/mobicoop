@@ -490,7 +490,8 @@ class Structure
      * @var ArrayCollection|null The proofs for this structure.
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
-     * @Groups({"readSolidary", "writeSolidary"})
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"aRead","readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -518,6 +519,13 @@ class Structure
      * @Groups("aRead")
      */
     private $operators;
+
+    /**
+     * @var bool The structure is removable (not removable if it is used for a solidary record).
+     *
+     * @Groups("aRead")
+     */
+    private $removable;
 
     public function __construct()
     {
@@ -1168,10 +1176,20 @@ class Structure
 
     public function removeStructureProof(StructureProof $structureProof): self
     {
-        if ($this->needs->contains($structureProof)) {
-            $this->needs->removeElement($structureProof);
+        if ($this->structureProofs->contains($structureProof)) {
+            $this->structureProofs->removeElement($structureProof);
+            // set the owning side to null (unless already changed)
+            if ($structureProof->getStructure() === $this) {
+                $structureProof->setStructure(null);
+            }
         }
 
+        return $this;
+    }
+
+    public function removeStructureProofs(): self
+    {
+        $this->structureProofs->clear();
         return $this;
     }
 
@@ -1248,6 +1266,11 @@ class Structure
         $this->operators = $operators;
 
         return $this;
+    }
+
+    public function isRemovable(): ?bool
+    {
+        return count($this->getSolidaryUserStructures())==0;
     }
 
     // DOCTRINE EVENTS
