@@ -4,13 +4,17 @@
       align="center"
       dense
     >
-      <!-- Date and time -->
       <v-col
         v-if="date"
         cols="2"
       >
         <v-list-item two-line>
           <v-list-item-content>
+            <!-- Pickup -->
+            <v-list-item-title class="text-body-2">
+              {{ pickupDisplay }}
+            </v-list-item-title>
+            <!-- Date and time -->
             <v-list-item-title class="text-h6 font-weight-bold">
               {{ computedTime }}
             </v-list-item-title>
@@ -99,6 +103,10 @@ export default {
       type: Object,
       default: null
     },
+    pickUp: {
+      type: Object,
+      default: null
+    },
     originFirst: {
       type: Boolean,
       default: false
@@ -145,7 +153,10 @@ export default {
         return moment.utc(this.date).format(this.$t("shortDate"));
       }
       return null;
-    }
+    },
+    pickupDisplay() {
+      return (this.pickUp.addressLocality) ? this.pickUp.addressLocality : ''
+    },
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
