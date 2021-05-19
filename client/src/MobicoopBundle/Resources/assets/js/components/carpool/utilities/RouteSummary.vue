@@ -19,7 +19,6 @@
     <v-col
       v-if="!compact"
       cols="5"
-      class="text-right"
       :class="type==1 ? 'text-left ml-6' : regular ? 'text-left' : 'text-left  mr-n4'"
     >
       <v-list-item

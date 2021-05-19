@@ -47,6 +47,8 @@
             :outward-time="result.outwardTime"
             :return-time="result.returnTime"
             :return-trip="result.return"
+            :pick-up-outward="result.pickUpOutward"
+            :pick-up-return="result.pickUpReturn"
           />
 
           <v-divider v-if="showRegularSummary" />
@@ -57,6 +59,7 @@
             :origin-first="result.originFirst"
             :destination="result.destination"
             :destination-last="result.destinationLast"
+            :pick-up="result.pickUpOutward"
             :date="result.date"
             :time="result.time"
             :seats="result.seats"
