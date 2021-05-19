@@ -62,7 +62,7 @@
           :alt="$t('pad.social.facebook.title')"
           target="_blank"
         >
-          <v-icon class="white--text">
+          <v-icon class="white--text mx-2">
             mdi-facebook
           </v-icon></a>
         <a
@@ -70,7 +70,7 @@
           :alt="$t('pad.social.facebook.title')"
           target="_blank"
         >
-          <v-icon class="white--text">
+          <v-icon class="white--text mx-2">
             mdi-twitter
           </v-icon>
         </a>
@@ -79,7 +79,7 @@
           :alt="$t('pad.social.facebook.title')"
           target="_blank"
         >
-          <v-icon class="white--text">
+          <v-icon class="white--text mx-2">
             mdi-linkedin
           </v-icon>
         </a>
