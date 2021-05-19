@@ -99,7 +99,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *              "security"="is_granted('territory_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/territories/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('territory_read',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"id":"exact","name": "partial"})
@@ -128,8 +134,9 @@ class Territory
 
     /**
      * @var string The geoJson details of the territory.
+     * /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
      *
-     * @ORM\Column(type="multipolygon")
+     * ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
      */
     private $geoJsonDetail;

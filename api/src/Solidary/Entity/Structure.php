@@ -66,7 +66,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "path"="/admin/structures",
  *              "method"="GET",
  *              "normalization_context"={
- *                  "groups"={"aRead"},
+ *                  "groups"={"aReadCol"},
  *                  "skip_null_values"=false
  *              },
  *              "security"="is_granted('admin_structure_list',object)"
@@ -125,7 +125,7 @@ class Structure
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"aRead","readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aReadCol","readSolidary","writeSolidary","readUser"})
      */
     private $id;
 
@@ -134,7 +134,7 @@ class Structure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aReadCol","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $name;
 

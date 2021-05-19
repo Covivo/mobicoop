@@ -115,6 +115,12 @@ services:
                 userReview: '%env(bool:USER_REVIEW)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+
+    mobicoop.geography.territory_event_listener:
+        class: App\Geography\EventListener\TerritoryEventListener
+        tags:
+            - { name: doctrine.event_listener, event: onSchemaAlterTableRemoveColumn }
+            - { name: doctrine.event_listener, event: onSchemaAlterTableAddColumn }
             
     # CONTROLLERS AND SERVICES
 
