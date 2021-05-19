@@ -43,7 +43,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User;
+        return $data instanceof User && ($context['collection_operation_name'] == 'ADMIN_post' || $context['item_operation_name'] == 'ADMIN_patch' || $context['item_operation_name'] == 'ADMIN_delete');
     }
 
     public function persist($data, array $context = [])
