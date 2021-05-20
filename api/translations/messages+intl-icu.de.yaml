@@ -235,6 +235,7 @@ paymentNotDone: Zahlung nicht deklariert
 passenger: Fahrgast
 driver: Fahrer
 certified: Zertifiziert
+seeProofsClasses: "voir les classes"
 typeOfpayment: Zahlung
 pickUpLocality: Übernahme
 carpooler: Mitfahrgelegenheit
