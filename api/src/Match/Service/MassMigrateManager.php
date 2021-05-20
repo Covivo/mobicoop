@@ -38,6 +38,7 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Service\AdManager;
+use App\Carpool\Service\ProposalManager;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -68,12 +69,13 @@ class MassMigrateManager
     private $communityManager;
     private $security;
     private $importManager;
+    private $proposalManager;
     private $logger;
 
     const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
     const LAUNCH_IMPORT = true;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, LoggerInterface $logger, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -86,6 +88,7 @@ class MassMigrateManager
         $this->communityManager = $communityManager;
         $this->security = $security;
         $this->importManager = $importManager;
+        $this->proposalManager = $proposalManager;
         $this->logger = $logger;
     }
 
@@ -110,7 +113,19 @@ class MassMigrateManager
 
         // If there is a community to create, we create it
         $community = null;
-        if (!empty($mass->getCommunityName())) {
+        
+        
+        /*** COMMNUNITY ***/
+        if (!empty($mass->getCommunityId())) {
+            // First, we check if there is an id community given
+
+            $community = $this->communityManager->getCommunity($mass->getCommunityId());
+            if (!$community) {
+                throw new MassException(MassException::COMMUNITY_UNKNOWN);
+            }
+        } elseif (!empty($mass->getCommunityName())) {
+            // Else we check if there is new community infos given
+
             $this->logger->info('Mass Migrate | Create community ' . $mass->getCommunityName() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $community = new Community();
             $community->setName($mass->getCommunityName());
@@ -140,7 +155,9 @@ class MassMigrateManager
         }
 
         // Then we get the Mass persons related the this mass
-        $massPersons = $this->massPersonRepository->findAllByMass($mass);
+        $massPersonIdMin = null;
+        // $massPersonIdMin = 2217; // Use this in debug to force a minimal id of MassPerson
+        $massPersons = $this->massPersonRepository->findAllByMass($mass, $massPersonIdMin);
 
         $this->logger->info('Mass Migrate | Number of Mass persons to migrate : ' . count($massPersons) . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -195,9 +212,11 @@ class MassMigrateManager
                     $user->addUserAuthAssignment($userAuthAssignment);
 
                     // The home address of the user
-                    $personalAddress = clone $massPerson->getPersonalAddress();
-                    $personalAddress->setUser($user);
-                    $personalAddress->setHome(true);
+                    if ($mass->hasSetHomeAddress()) {
+                        $personalAddress = clone $massPerson->getPersonalAddress();
+                        $personalAddress->setUser($user);
+                        $personalAddress->setHome(true);
+                    }
 
                     $user->addAddress($personalAddress);
 
@@ -212,11 +231,21 @@ class MassMigrateManager
             }
 
             // If there is a community we create a CommunityUser with the User.
-            if (!empty($mass->getCommunityName())) {
-                $communityUser = new CommunityUser();
-                $communityUser->setCommunity($community);
-                $communityUser->setUser($user);
-                $this->entityManager->persist($communityUser);
+            if (!is_null($community)) {
+                // Check if the user is aleadry a member of this community
+                $alreadyMember = false;
+                foreach ($user->getCommunityUsers() as $userCommunityUser) {
+                    if ($userCommunityUser->getCommunity()->getId()==$community->getId()) {
+                        $alreadyMember = true;
+                    }
+                }
+
+                if (!$alreadyMember) {
+                    $communityUser = new CommunityUser();
+                    $communityUser->setCommunity($community);
+                    $communityUser->setUser($user);
+                    $this->entityManager->persist($communityUser);
+                }
             }
 
             // We set the link between the MassPerson and the User (new or found)
@@ -225,8 +254,15 @@ class MassMigrateManager
             $this->entityManager->flush();
 
             // We create an Ad for the User (regular, home to work, monday to friday)
-            $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            $this->createJourneyFromMassPerson($massPerson, $user, $community);
+            // First we check if the journey has been computed (analyzing phase)
+            if (!is_null($massPerson->getDistance()) && is_null($massPerson->getProposal())) {
+                $this->logger->info('Mass Migrate | createJourneyFromMassPerson #' . $massPerson->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                $ad = $this->createJourneyFromMassPerson($massPerson, $user, $community, $mass->getMassType());
+
+                // We link the proposal with the MassPerson
+                $massPerson->setProposal($this->proposalManager->get($ad->getId()));
+                $this->entityManager->persist($massPerson);
+            }
         }
         
         // Finally, we set status of the Mass at Migrated and save the migrated date
@@ -272,9 +308,10 @@ class MassMigrateManager
      * @param MassPerson $massPerson            Current MassPerson
      * @param User $user                        The User created after this MassPerson
      * @param Community|null $community         The community of this person. Can be null if there is no community created
+     * @param int $massType                     The Mass type of this Person's Mass
      * @return Ad
      */
-    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community): Ad
+    private function createJourneyFromMassPerson(MassPerson $massPerson, User $user, ?Community $community, int $massType): Ad
     {
         set_time_limit(50000);
 
@@ -291,28 +328,32 @@ class MassMigrateManager
 
         // round-trip
         $ad->setOneWay(false);
+        if (is_null($massPerson->getReturnTime())) {
+            $ad->setOneWay(true);
+        }
 
         // Regular
         $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
-        // Outward waypoint
+        // Outward waypoints and time
         $outwardWaypoints = [
             clone $massPerson->getPersonalAddress(),
             clone $massPerson->getWorkAddress()
         ];
 
         $ad->setOutwardWaypoints($outwardWaypoints);
-
-        // return waypoint
-        $returnWaypoints = [
-            clone $massPerson->getWorkAddress(),
-            clone $massPerson->getPersonalAddress()
-        ];
-
-        $ad->setReturnWaypoints($returnWaypoints);
-
         $ad->setOutwardTime($massPerson->getOutwardTime()->format("H:i"));
-        $ad->setReturnTime($massPerson->getReturnTime()->format("H:i"));
+
+        // return waypoints and time
+        if (!$ad->isOneWay()) {
+            $returnWaypoints = [
+                clone $massPerson->getWorkAddress(),
+                clone $massPerson->getPersonalAddress()
+            ];
+
+            $ad->setReturnWaypoints($returnWaypoints);
+            $ad->setReturnTime($massPerson->getReturnTime()->format("H:i"));
+        }
 
         // Schedule
         $schedule = [];
@@ -321,7 +362,10 @@ class MassMigrateManager
             $schedule[0][$day] = true;
         }
         $schedule[0]['outwardTime'] = $massPerson->getOutwardTime()->format("H:i");
-        $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+        
+        if (!$ad->isOneWay()) {
+            $schedule[0]['returnTime'] = $massPerson->getReturnTime()->format("H:i");
+        }
 
         $ad->setSchedule($schedule);
 
@@ -334,6 +378,6 @@ class MassMigrateManager
             $ad->setCommunities([$community->getId()]);
         }
 
-        return $this->adManager->createAd($ad, false, false);
+        return $this->adManager->createAd($ad, ($massType == Mass::TYPE_MIGRATION) ? true : false, false);
     }
 }

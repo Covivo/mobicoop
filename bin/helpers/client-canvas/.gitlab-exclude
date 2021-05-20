@@ -72,7 +72,10 @@ mobicoop-platform/api/public/upload/mass/files/*.csv
 mobicoop-platform/api/public/upload/mass/files/*.xml
 mobicoop-platform/api/public/upload/mass/files/*.zip
 mobicoop-platform/api/public/upload/mass/files/*.json
-mobicoop-platform/api/public/upload/export/carpool/*.pdf
+mobicoop-platform/api/public/upload/export/
+mobicoop-platform/api/public/upload/export/*.*
+mobicoop-platform/api/public/upload/export/carpool/
+mobicoop-platform/api/public/upload/export/carpool/*.*
 mobicoop-platform/api/public/import/
 mobicoop-platform/api/public/import/*.*
 mobicoop-platform/api/public/import/Avatar/*.*

@@ -162,7 +162,8 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             "ad" => $ad,
             "hasAsks" => $hasAsks,
-            "hasPotentialAds" => $hasPotentialAds
+            "hasPotentialAds" => $hasPotentialAds,
+            "solidaryExclusive" => $ad->isSolidaryExclusive()
         ]);
     }
 
