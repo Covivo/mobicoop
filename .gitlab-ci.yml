@@ -339,7 +339,7 @@ admin_test_deploy:
     name: test
     url: https://bo.test.mobicoop.io/
   only:
-    - dev
+    - /^*.-next$/
   # variables:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
