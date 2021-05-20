@@ -69,6 +69,7 @@ class AntiFraudManager
 
     /**
      * Check if an Ad is valid against the Anti-Fraud system rules
+     * If the Anti-Fraud system is inactive, or the Ad is a Search or the role is passenger only, it's an automatic validation
      *
      * @param Ad $ad                The Ad to check
      * @return AntiFraudResponse    The response
@@ -77,7 +78,9 @@ class AntiFraudManager
     {
         // Default response is that the Ad is valid
         $response = new AntiFraudResponse(true, AntiFraudException::OK);
-        if (!$this->active) {
+        
+        // If the Anti-Fraud system is inactive, or the Ad is a Search or the role is passenger only, it's an automatic validation
+        if (!$this->active || $ad->getRole() == Ad::ROLE_PASSENGER || $ad->isSearch()) {
             return $response;
         }
         
