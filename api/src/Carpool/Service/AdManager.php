@@ -164,12 +164,9 @@ class AdManager
     {
         
         /** Anti-Fraud check **/
-        if (!$ad->isSearch()) {
-            // Not a search, we check if the Ad is valid regarding anti fraud system
-            $antiFraudResponse = $this->antiFraudManager->validAd($ad);
-            if (!$antiFraudResponse->isValid()) {
-                throw new AntiFraudException($antiFraudResponse->getMessage());
-            }
+        $antiFraudResponse = $this->antiFraudManager->validAd($ad);
+        if (!$antiFraudResponse->isValid()) {
+            throw new AntiFraudException($antiFraudResponse->getMessage());
         }
 
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
