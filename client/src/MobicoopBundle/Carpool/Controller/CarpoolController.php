@@ -135,7 +135,7 @@ class CarpoolController extends AbstractController
     /**
      * Update a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request, bool $solidaryExclusive = false)
     {
         $ad = $adManager->getFullAd($id);
         $this->denyAccessUnlessGranted('update_ad', $ad);
@@ -158,7 +158,8 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             "ad" => $ad,
             "hasAsks" => $hasAsks,
-            "hasPotentialAds" => $hasPotentialAds
+            "hasPotentialAds" => $hasPotentialAds,
+            "solidaryExclusive" => $ad->isSolidaryExclusive()
         ]);
     }
 
