@@ -135,7 +135,7 @@ class CarpoolController extends AbstractController
     /**
      * Update a carpooling ad.
      */
-    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request, bool $solidaryExclusive = false)
+    public function carpoolAdUpdate(int $id, AdManager $adManager, Request $request)
     {
         $ad = $adManager->getFullAd($id);
         $this->denyAccessUnlessGranted('update_ad', $ad);
