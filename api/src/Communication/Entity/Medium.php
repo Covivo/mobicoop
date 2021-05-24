@@ -42,8 +42,20 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "normalization_context"={"groups"={"read","readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *     itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
+ *          },
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
+ *          }
+ *      },
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})

@@ -46,8 +46,20 @@ use App\Solidary\Entity\SolidaryMatching;
  *          "normalization_context"={"groups"={"read","readSolidary"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
+ *      }
  * )
  */
 class Matching

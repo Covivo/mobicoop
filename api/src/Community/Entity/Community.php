@@ -61,6 +61,7 @@ use App\Match\Entity\Mass;
  *      collectionOperations={
  *          "get"={
  *              "swagger_context" = {
+ *                  "tags"={"Communities"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "userId",
@@ -75,13 +76,17 @@ use App\Match\Entity\Mass;
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('community_create',object)"
+ *              "security_post_denormalize"="is_granted('community_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "available"={
  *              "method"="GET",
  *              "path"="/communities/available",
  *              "normalization_context"={"groups"={"read"}},
  *              "swagger_context" = {
+ *                  "tags"={"Communities"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "userId",
@@ -99,6 +104,7 @@ use App\Match\Entity\Mass;
  *              "path"="/communities/exists",
  *              "normalization_context"={"groups"={"existsCommunity"}},
  *              "swagger_context" = {
+ *                  "tags"={"Communities"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "name",
@@ -115,18 +121,27 @@ use App\Match\Entity\Mass;
  *              "method"="GET",
  *              "path"="/communities/owned",
  *              "normalization_context"={"groups"={"readCommunity"}},
- *              "security_post_denormalize"="is_granted('community_list',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "ismember"={
  *              "method"="GET",
  *              "path"="/communities/ismember",
  *              "normalization_context"={"groups"={"readCommunity"}},
- *              "security_post_denormalize"="is_granted('community_list',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "manage"={
  *              "normalization_context"={"groups"={"readCommunity","readCommunityAdmin"}},
  *              "method"="GET",
  *              "path"="/communities/manage",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/communities",
@@ -135,7 +150,10 @@ use App\Match\Entity\Mass;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_community_list',object)"
+ *              "security"="is_granted('admin_community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/communities",
@@ -143,49 +161,76 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_community_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_moderated"={
  *              "method"="GET",
  *              "path"="/admin/communities/moderated",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security_post_denormalize"="is_granted('admin_community_list',object)"
+ *              "security_post_denormalize"="is_granted('admin_community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('community_read',object)"
+ *              "security"="is_granted('community_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "public"={
  *              "method"="GET",
  *              "path"="/communities/{id}/public",
  *              "normalization_context"={"groups"={"readCommunityPublic"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
- *              "security"="is_granted('community_update',object)"
+ *              "security"="is_granted('community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('community_delete',object)"
+ *              "security"="is_granted('community_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/communities/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_community_read',object)"
+ *              "security"="is_granted('admin_community_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/communities/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_community_update',object)"
+ *              "security"="is_granted('admin_community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/communities/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_community_delete',object)"
+ *              "security"="is_granted('admin_community_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

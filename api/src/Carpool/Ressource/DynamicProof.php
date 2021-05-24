@@ -42,21 +42,35 @@ use App\User\Entity\User;
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic"}},
- *              "security_post_denormalize"="is_granted('dynamic_proof_create',object)"
- *          },"get"
+ *              "security_post_denormalize"="is_granted('dynamic_proof_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+ *          },
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('dynamic_proof_read',object)"
- *          },
+ *              "security"="is_granted('dynamic_proof_read',object)",
+  *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+*          },
  *          "put"={
  *              "method"="PUT",
  *              "read"=false,
  *              "normalization_context"={"groups"={"updateDynamic"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
- *              "security"="is_granted('dynamic_proof_update',object)"
- *          }
+ *              "security"="is_granted('dynamic_proof_update',object)",
+  *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+*          }
  *      }
  * )
  *
