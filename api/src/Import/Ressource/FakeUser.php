@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "method"="POST",
  *              "path"="/fake_users/create",
  *              "normalization_context"={"groups"={"readFake"}},
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
