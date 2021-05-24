@@ -47,19 +47,28 @@ use App\Import\Controller\ImportImageUserController;
  *              "method"="POST",
  *              "path"="/user_imports/treat",
  *              "normalization_context"={"groups"={"read"}},
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *          "import-users-from-v1"={
  *              "method"="GET",
  *              "path"="/import/images-from-v1/users",
  *              "controller"=ImportImageUserController::class,
  *              "read"=false,
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      }
  * )

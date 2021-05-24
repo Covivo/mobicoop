@@ -40,8 +40,35 @@ use App\User\Entity\User;
  *          "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write_campaign"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          }
+ *      }
  * )
  */
 class Delivery

@@ -26,12 +26,15 @@ use App\Import\Controller\ImportImageEventController;
  *              "path"="/import/images-from-v1/event",
  *              "controller"=ImportImageEventController::class,
  *              "read"=false,
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
  *          },
  *      }
  * )

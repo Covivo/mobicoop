@@ -41,11 +41,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "path"="/fake_users/create",
  *              "normalization_context"={"groups"={"readFake"}},
  *              "security"="is_granted('import_create',object)"
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

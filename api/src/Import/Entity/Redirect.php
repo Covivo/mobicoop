@@ -42,10 +42,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"originUri": "exact"})

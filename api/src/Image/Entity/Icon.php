@@ -48,15 +48,24 @@ use App\RelayPoint\Entity\RelayPointType;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('image_list',object)"
+ *              "security"="is_granted('image_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "get"={
- *             "security"="is_granted('image_list',object)"
+ *             "security"="is_granted('image_list',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('image_read',object)"
+ *             "security"="is_granted('image_read',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
  *          }
  *      }
  * )
