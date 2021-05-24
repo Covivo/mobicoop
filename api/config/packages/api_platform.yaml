@@ -5,14 +5,42 @@ api_platform:
 
     # The description of the API.
     description: "
-    <p>Mobicoop Platform API is an Open Source carpooling platform.</p>
-    <p>It's operated by many public authorities and private organizations.</p>
-    <p>This document contains all routes of the API.</p>
-    <p>
-        - If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a><br />
-        - If you're only looking for the <strong>RDEX protocol routes</strong> <a href='#operations-tag-RDEX'>get to them</a><br />
-    </p>
-    <p>License : <a href='https://www.gnu.org/licenses/agpl.html' title='GNU Affero AGPL-v3'>GNU Affero AGPL-v3</a></p>"
+    Mobicoop Platform API is an Open Source carpooling platform.
+
+
+    It's operated by many public authorities and private organizations.
+
+    ## Authentification
+    
+    This API use **JWT Token authentification**. To get the security token you must send a **POST** request on one of this two routes depending of your own context :
+    
+    - /login
+
+    - /auth
+    
+    
+    The body of this request must be a JSON object based on this definition :
+
+
+    ```
+    {
+        \"username\":\"API_USERNAME\",
+        \"password\":\"API_PASSWORD\"        
+    }
+    ```
+    
+    ## Specific domains
+    
+    This document contains all endpoints of the API.
+
+
+    - If you're only looking for the **Interoperability routes** <a href='#operations-tag-Interoperability'>jump right to them</a>
+
+    - If you're only looking for the **RDEX protocol routes** <a href='#operations-tag-RDEX'>get to them</a>
+
+    
+    **License** : [GNU Affero AGPL-v3](https://www.gnu.org/licenses/agpl.html)
+    "
 
     # The version of the API.
     version: 'AGPL-v3'
@@ -31,7 +59,7 @@ api_platform:
              apiKey:
                 name: Authorization
                 type: header
-                
+
     mapping:
         paths: [
             '%kernel.project_dir%/src/Entity',
