@@ -12,7 +12,7 @@
         v-on="on"
       >
         <p class="mt-4">
-          {{ diplayedLanguage }}
+          {{ displayedLanguage }}
         </p>
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
@@ -67,7 +67,7 @@ export default {
   data(){
     return {
       selectedLanguage: this.language,
-      diplayedLanguage: this.language,
+      displayedLanguage: this.language,
       // check if we have more than 1 language
       enabled: Object.keys(this.languages).length > 1
     }
@@ -75,7 +75,7 @@ export default {
   methods:{
     selectLanguage(item, key) {
       this.selectedLanguage = item;
-      this.diplayedLanguage = key;
+      this.displayedLanguage = key;
       this.$emit('languageSelected', key);
       axios.post(this.$t('urlToSelectLanguage'), {locale:key});
     },
