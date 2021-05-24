@@ -1,13 +1,17 @@
 api_platform:
 
     # The title of the API.
-    title: 'Mobicoop API'
+    title: 'Mobicoop Platform Open Source API'
 
     # The description of the API.
-    description: 'The mobility API.'
+    description: "
+    <p style='text-align:center;'><img src='https://www.mobicoop.fr/images/logo.jpg' alt='Mobicoop Platform' style='width:25%;height:auto;'/></p>
+    <p>The complete description of the open source API Carpool projet Mobicoop Platform.</p>
+    <p>This document contains all routes of the project.<br />
+    If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a>.</p>"
 
     # The version of the API.
-    version: '0.6.0'
+    version: 'version 1'
 
     collection:
         pagination:
