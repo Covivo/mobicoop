@@ -83,6 +83,14 @@ use App\Auth\Controller\PermissionCheck;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
  *      }
  * )
  */

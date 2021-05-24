@@ -35,6 +35,9 @@ use App\Import\Controller\ImportImageEventController;
  *      itemOperations={
  *          "get"={
  *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      }
  * )

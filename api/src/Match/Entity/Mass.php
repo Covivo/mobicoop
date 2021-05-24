@@ -127,8 +127,8 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
- *              "tags"={"Mobimatch"},
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",
@@ -180,8 +180,8 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassReMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
- *              "tags"={"Mobimatch"},
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",

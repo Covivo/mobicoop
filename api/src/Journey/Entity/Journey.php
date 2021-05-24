@@ -47,7 +47,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "denormalization_context"={"groups"={"writeJourney"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
+ *          },
  *          "cities"={
  *              "method"="GET",
  *              "path"="/journeys/cities",

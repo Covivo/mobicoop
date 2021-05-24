@@ -41,20 +41,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('user_create',object)"
+ *              "security_post_denormalize"="is_granted('user_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('user_delete',object)"
+ *              "security"="is_granted('user_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

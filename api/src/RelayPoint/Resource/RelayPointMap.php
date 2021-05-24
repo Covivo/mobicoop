@@ -44,6 +44,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "tags"={"Geography"}
  *              }
  *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
  *      }
  * )
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>

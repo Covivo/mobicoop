@@ -59,8 +59,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "path"="/bank_accounts/disable",
  *              "read"="false",
  *              "security"="is_granted('bank_account_disable',object)",
- *              "tags"={"Payment"},
  *              "swagger_context" = {
+ *                  "tags"={"Payment"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "idBankAccount",

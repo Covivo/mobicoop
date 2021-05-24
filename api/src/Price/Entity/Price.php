@@ -48,11 +48,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "path"="/prices/round",
  *              "controller"=RoundPrice::class,
  *              "swagger_context" = {
- *                  "tags"={"Payment"}
+ *                  "tags"={"Misc"}
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
+ *          },
+ *      }
  * )
  */
 class Price

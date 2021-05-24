@@ -102,6 +102,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          "put"={
  *              "normalization_context"={"groups"={"update_campaign"}, "enable_max_depth"="true"},
  *              "denormalization_context"={"groups"={"update_campaign"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
  *          },
  *          "delete"={
  *              "swagger_context" = {

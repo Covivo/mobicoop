@@ -40,7 +40,12 @@ use App\Rdex\Entity\RdexConnectionUser;
  *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
  *       collectionOperations={
- *          "get",
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"RDEX"}
+ *              }
+ *          },
  *          "post"={
  *              "path"="/connections",
  *              "controller"=ConnectionController::class,
@@ -111,8 +116,13 @@ use App\Rdex\Entity\RdexConnectionUser;
  *          }
  *      },
  *      itemOperations={
- *          "get",
-*        }
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"RDEX"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

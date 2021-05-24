@@ -41,32 +41,47 @@ use App\User\Entity\User;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "post"={
  *              "denormalization_context"={"groups"={"writeBlock"}},
  *              "normalization_context"={"groups"={"readBlock"}},
  *              "read"="false",
- *              "security_post_denormalize"="is_granted('block_create',object)"
+ *              "security_post_denormalize"="is_granted('block_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "blocked"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"readBlock"}},
  *              "path"="/blocked",
  *              "read"="false",
- *              "security"="is_granted('block_blocked',object)"
+ *              "security"="is_granted('block_blocked',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "blockedBy"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"readBlock"}},
  *              "path"="/blockedBy",
  *              "read"="false",
- *              "security"="is_granted('block_blockedby',object)"
+ *              "security"="is_granted('block_blockedby',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )
