@@ -191,7 +191,7 @@ class Event
     /**
      * @var boolean Private event. Should be filtered when event list is publicly displayed.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":0})
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $private;
@@ -199,7 +199,7 @@ class Event
     /**
      * @var string The short description of the event.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=512)
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $description;
