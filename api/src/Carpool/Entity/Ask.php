@@ -64,7 +64,17 @@ use App\Solidary\Entity\SolidaryAsk;
  *              }
  *          },
  *      },
- *      itemOperations={"get","delete",
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/asks/{id}",

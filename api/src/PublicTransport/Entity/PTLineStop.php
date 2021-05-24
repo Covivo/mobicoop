@@ -41,6 +41,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      collectionOperations={
  *          "get"={
  *              "path"="/linestops",
+ *              "tags"={"Public Transport"},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -68,7 +69,14 @@ use Doctrine\ORM\Mapping as ORM;
  *              }
  *          }
  *     },
- *      itemOperations={"get"={"path"="/linestop/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/linestop/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

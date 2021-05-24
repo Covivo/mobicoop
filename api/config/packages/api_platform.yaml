@@ -1,17 +1,18 @@
 api_platform:
 
     # The title of the API.
-    title: 'Mobicoop Platform Open Source API'
+    title: 'Mobicoop Platform API'
 
     # The description of the API.
     description: "
-    <p style='text-align:center;'><img src='https://www.mobicoop.fr/images/logo.jpg' alt='Mobicoop Platform' style='width:25%;height:auto;'/></p>
-    <p>The complete description of the open source API Carpool projet Mobicoop Platform.</p>
-    <p>This document contains all routes of the project.<br />
-    If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a>.</p>"
+    <p>Mobicoop Platform API is an Open Source carpooling platform.</p>
+    <p>It's operated by many public authorities and private organizations.</p>
+    <p>This document contains all routes of the API.</p>
+    <p>If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a>.</p>
+    <p>License : <a href='https://www.gnu.org/licenses/agpl.html' title='GNU Affero AGPL-v3'>GNU Affero AGPL-v3</a></p>"
 
     # The version of the API.
-    version: 'version 1'
+    version: 'AGPL-v3'
 
     collection:
         pagination:
@@ -23,11 +24,10 @@ api_platform:
     
     # enable token bearer
     swagger:
-         api_keys:
+        api_keys:
              apiKey:
                 name: Authorization
                 type: header
-
     mapping:
         paths: [
             '%kernel.project_dir%/src/Entity',

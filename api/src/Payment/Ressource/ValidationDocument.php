@@ -44,19 +44,28 @@ use App\Payment\Controller\UploadValidationDocumentAction;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/validation_documents",
  *              "controller"=UploadValidationDocumentAction::class,
  *              "deserialize"=false,
- *              "defaults"={"_api_receive"=false}
+ *              "defaults"={"_api_receive"=false},
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          }
  *      }
  * )

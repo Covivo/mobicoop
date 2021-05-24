@@ -39,12 +39,23 @@ use App\Geography\Entity\Address;
  *     },
  *     collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
- *          "post"
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
- *          "get"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
+ *          }
  *      }
  * )
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>

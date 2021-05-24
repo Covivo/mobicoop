@@ -41,7 +41,14 @@ use App\Travel\Entity\TravelMode;
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"={"path"="/legs/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/legs/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
