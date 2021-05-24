@@ -392,18 +392,23 @@ class CampaignManager
      */
     private function getFormedEmailBody(?string $body):string
     {
-        $encodedBody = json_decode($body);
+        $encodedBody = json_decode($body, true);
         $arrayForTemplate = [];
-
         foreach ($encodedBody as $parts) {
-            foreach ($parts as $type => $content) {
+            if ($parts['type'] == 'image') {
                 $arrayForTemplate[] = [
-                    'type' => $type,
-                    'content' => $content
+                    'type' => $parts['type'],
+                    'content' => $parts['src'],
+                    'position' => $parts['position']
+                ];
+            } else {
+                $arrayForTemplate[] = [
+                    'type' => $parts['type'],
+                    'content' => $parts['value'],
+                    'position' => $parts['position']
                 ];
             }
         }
-
         return $this->templating->render(
             $this->mailTemplate,
             ['arrayForTemplate' => $arrayForTemplate]
