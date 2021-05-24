@@ -44,21 +44,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *         "get"={
- *             "security"="is_granted('solidary_user_structure_list',object)"
+ *             "security"="is_granted('solidary_user_structure_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_user_structure_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_user_structure_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('solidary_user_structure_read',object)"
+ *             "security"="is_granted('solidary_user_structure_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "put"={
- *             "security"="is_granted('solidary_user_structure_update',object)"
+ *             "security"="is_granted('solidary_user_structure_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "delete"={
- *             "security"="is_granted('solidary_user_structure_delete',object)"
+ *             "security"="is_granted('solidary_user_structure_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      }
  * )

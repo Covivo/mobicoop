@@ -52,10 +52,16 @@ use App\Image\Entity\Icon;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('relay_point_type_list',object)"
+ *              "security_post_denormalize"="is_granted('relay_point_type_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('relay_point_type_create',object)"
+ *              "security_post_denormalize"="is_granted('relay_point_type_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/relaypoint_types",
@@ -64,45 +70,69 @@ use App\Image\Entity\Icon;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_relay_point_type_list',object)"
+ *              "security"="is_granted('admin_relay_point_type_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/relaypoint_types",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_type_create',object)"
+ *              "security"="is_granted('admin_relay_point_type_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('relay_point_type_read',object)"
+ *              "security"="is_granted('relay_point_type_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('relay_point_type_update',object)"
+ *              "security"="is_granted('relay_point_type_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('relay_point_type_delete',object)"
+ *              "security"="is_granted('relay_point_type_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/relaypoint_types/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_relay_point_type_read',object)"
+ *              "security"="is_granted('admin_relay_point_type_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/relaypoint_types/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_type_update',object)"
+ *              "security"="is_granted('admin_relay_point_type_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/relaypoint_types/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_type_delete',object)"
+ *              "security"="is_granted('admin_relay_point_type_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

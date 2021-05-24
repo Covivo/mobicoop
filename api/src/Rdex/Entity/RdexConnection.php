@@ -45,6 +45,8 @@ use App\Rdex\Entity\RdexConnectionUser;
  *              "path"="/connections",
  *              "controller"=ConnectionController::class,
  *              "swagger_context" = {
+ *                  "summary"="Contact a user using RDEX protocol",
+ *                  "tags"={"RDEX"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "timestamp",

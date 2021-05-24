@@ -44,15 +44,24 @@ use App\Communication\Interfaces\MessagerInterface;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_contact',object)"
+ *             "security_post_denormalize"="is_granted('solidary_contact',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      }
  * )

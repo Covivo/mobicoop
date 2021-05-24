@@ -39,7 +39,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     collectionOperations={
  *          "get"={
- *             "security"="is_granted('relay_point_map_list',object)"
+ *             "security"="is_granted('relay_point_map_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          }
  *      }
  * )

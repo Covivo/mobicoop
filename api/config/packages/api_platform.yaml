@@ -8,7 +8,10 @@ api_platform:
     <p>Mobicoop Platform API is an Open Source carpooling platform.</p>
     <p>It's operated by many public authorities and private organizations.</p>
     <p>This document contains all routes of the API.</p>
-    <p>If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a>.</p>
+    <p>
+        - If you're only looking for the <strong>Interoperability routes</strong> <a href='#operations-tag-Interoperability'>jump right to them</a><br />
+        - If you're only looking for the <strong>RDEX protocol routes</strong> <a href='#operations-tag-RDEX'>get to them</a><br />
+    </p>
     <p>License : <a href='https://www.gnu.org/licenses/agpl.html' title='GNU Affero AGPL-v3'>GNU Affero AGPL-v3</a></p>"
 
     # The version of the API.
