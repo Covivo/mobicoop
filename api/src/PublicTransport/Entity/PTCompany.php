@@ -38,7 +38,14 @@ use Doctrine\ORM\Mapping as ORM;
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"={"path"="/companies/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/companies/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>

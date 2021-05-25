@@ -42,12 +42,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
- *              "security_post_denormalize"="is_granted('dynamic_ask_create',object)"
- *          },"get"
+ *              "security_post_denormalize"="is_granted('dynamic_ask_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('dynamic_ask_read',object)"
+ *              "security"="is_granted('dynamic_ask_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -55,7 +66,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "normalization_context"={"groups"={"updateDynamic"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
- *              "security"="is_granted('dynamic_ask_update',object)"
+ *              "security"="is_granted('dynamic_ask_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      }
  * )

@@ -37,11 +37,18 @@ use App\Geography\Entity\Address;
  *          "normalization_context"={"groups"={"readPayment"}, "enable_max_depth"="true"}
  *     },
  *     collectionOperations={
- *          "get"
+ *          "get"={
+  *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
+*          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          }
  *      }
  * )

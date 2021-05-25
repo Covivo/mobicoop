@@ -125,23 +125,33 @@ use App\User\Controller\UserSendValidationEmail;
  *      collectionOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
- *              "security"="is_granted('user_list',object)"
+ *              "security"="is_granted('user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "checkEmail"={
  *              "method"="GET",
  *              "path"="/users/checkEmail",
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "checkPasswordToken"={
  *              "method"="GET",
  *              "path"="/users/checkPasswordToken",
- *              "security_post_denormalize"="is_granted('user_register',object)"
+ *              "security_post_denormalize"="is_granted('user_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
  *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
+ *                  "tags"={"Users"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "givenName",
@@ -204,6 +214,7 @@ use App\User\Controller\UserSendValidationEmail;
  *              "path"="/users/register",
  *              "normalization_context"={"groups"={"readUser"}},
  *              "swagger_context" = {
+ *                  "tags"={"Users"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "givenName",
@@ -253,24 +264,36 @@ use App\User\Controller\UserSendValidationEmail;
  *              "denormalization_context"={"groups"={"checkPhoneToken"}},
  *              "normalization_context"={"groups"={"readUser"}},
  *              "path"="/users/checkPhoneToken",
- *              "controller"=UserCheckPhoneToken::class
+ *              "controller"=UserCheckPhoneToken::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "me"={
  *              "normalization_context"={"groups"={"readUser"}},
  *              "method"="GET",
  *              "path"="/users/me",
- *              "read"="false"
+ *              "read"="false",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "paymentProfile"={
  *              "normalization_context"={"groups"={"readPayment"}},
  *              "method"="GET",
  *              "path"="/users/paymentProfile",
- *              "read"="false"
+ *              "read"="false",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "Payment"}
+ *              }
  *          },
  *          "accessAdmin"={
  *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
  *              "method"="GET",
  *              "path"="/users/accesFromAdminReact",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users",
@@ -279,14 +302,20 @@ use App\User\Controller\UserSendValidationEmail;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_user_list',object)"
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/users",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_user_create',object)"
+ *              "security"="is_granted('admin_user_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_associate_campaign"={
  *              "path"="/admin/users/associate-campaign",
@@ -295,7 +324,10 @@ use App\User\Controller\UserSendValidationEmail;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_user_list',object)"
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_send_campaign"={
  *              "path"="/admin/users/send-campaign",
@@ -304,13 +336,19 @@ use App\User\Controller\UserSendValidationEmail;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_user_list',object)"
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"readUser"}},
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "password_update_request"={
  *              "method"="POST",
@@ -320,7 +358,10 @@ use App\User\Controller\UserSendValidationEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdateRequest"}},
  *              "normalization_context"={"groups"={"passwordUpdateRequest"}},
- *              "security"="is_granted('user_register',object)"
+ *              "security"="is_granted('user_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "password_update"={
  *              "method"="POST",
@@ -330,26 +371,38 @@ use App\User\Controller\UserSendValidationEmail;
  *              "read"=false,
  *              "denormalization_context"={"groups"={"passwordUpdate"}},
  *              "normalization_context"={"groups"={"passwordUpdate"}},
- *              "security"="is_granted('user_register',object)"
+ *              "security"="is_granted('user_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "generate_phone_token"={
  *              "method"="GET",
  *              "path"="/users/{id}/generate_phone_token",
  *              "controller"=UserGeneratePhoneToken::class,
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "send_validation_email"={
  *              "method"="GET",
  *              "path"="/users/{id}/sendValidationEmail",
  *              "controller"=UserSendValidationEmail::class,
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "alerts"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"alerts"}},
  *              "controller"=UserAlerts::class,
  *              "path"="/users/{id}/alerts",
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "putAlerts"={
  *              "method"="PUT",
@@ -357,82 +410,121 @@ use App\User\Controller\UserSendValidationEmail;
  *              "denormalization_context"={"groups"={"alerts"}},
  *              "path"="/users/{id}/alerts",
  *              "controller"=UserAlertsUpdate::class,
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "threadsOBSOLETE20200311"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads",
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "threadsDirectMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "path"="/users/{id}/threadsDirectMessages",
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "Communication"}
+ *              }
  *          },
  *          "threadsCarpoolMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "path"="/users/{id}/threadsCarpoolMessages",
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "Communication"}
+ *              }
  *          },
  *          "threadsSolidaryMessages"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"threads"}},
  *              "path"="/users/{id}/threadsSolidaryMessages",
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "Communication", "Solidary"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
  *              "normalization_context"={"groups"={"readUser"}},
  *              "denormalization_context"={"groups"={"write"}},
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "delete_user"={
  *              "method"="DELETE",
  *              "path"="/users/{id}",
  *              "controller"=UserDelete::class,
- *              "security"="is_granted('user_delete',object)"
+ *              "security"="is_granted('user_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "asks"={
  *              "method"="GET",
  *              "path"="/users/{id}/asks",
  *              "controller"=UserAsks::class,
- *              "security"="is_granted('user_read',object)"
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "Carpool"}
+ *              }
  *          },
  *          "unsubscribe_user"={
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
- *              "controller"=UserUnsubscribeFromEmail::class
+ *              "controller"=UserUnsubscribeFromEmail::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "getCarpoolExport"={
  *              "method"="GET",
  *              "path"="/users/{id}/carpool_export",
  *              "normalization_context"={"groups"={"carpoolExport"}},
- *              "security"="is_granted('user_update',object)"
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_user_read',object)"
+ *              "security"="is_granted('admin_user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/users/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_user_update',object)"
+ *              "security"="is_granted('admin_user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/users/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_user_delete',object)"
+ *              "security"="is_granted('admin_user_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

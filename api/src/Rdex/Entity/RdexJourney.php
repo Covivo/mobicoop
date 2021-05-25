@@ -43,6 +43,8 @@ use App\Rdex\Controller\JourneyCollectionController;
  *              "path"="/journeys",
  *              "controller"=JourneyCollectionController::class,
  *              "swagger_context" = {
+ *                  "summary"="Search a journey using RDEX protocol",
+ *                  "tags"={"RDEX"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "timestamp",

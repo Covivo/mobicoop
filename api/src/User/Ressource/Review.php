@@ -40,21 +40,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('review_list',object)"
+ *              "security"="is_granted('review_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('review_create',object)"
+ *              "security_post_denormalize"="is_granted('review_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('review_read',object)"
+ *              "security"="is_granted('review_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

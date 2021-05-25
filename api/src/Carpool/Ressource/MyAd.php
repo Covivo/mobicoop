@@ -32,13 +32,19 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  * @ApiResource(
  *      collectionOperations={
  *          "get"={
- *          "path"="/my_carpools",
- *             "security"="is_granted('my_ad_list_self',object)"
+ *              "path"="/my_carpools",
+ *              "security"="is_granted('my_ad_list_self',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      }
  * )

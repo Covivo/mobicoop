@@ -43,12 +43,18 @@ use App\Action\Filter\TypeFilter;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('action_list',object)"
+ *              "security"="is_granted('action_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('action_read',object)"
+ *              "security"="is_granted('action_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
  *          },
  *      }
  * )

@@ -47,49 +47,84 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "denormalization_context"={"groups"={"writeJourney"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
+ *          },
  *          "cities"={
  *              "method"="GET",
- *              "path"="/journeys/cities"
+ *              "path"="/journeys/cities",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "popularHome"={
  *              "method"="GET",
  *              "path"="/journeys/popular/home",
  *              "normalization_context"={"groups"={"readPopularJourney"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "popular"={
  *              "method"="GET",
  *              "path"="/journeys/popular",
  *              "normalization_context"={"groups"={"readPopularJourney"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "origin"={
  *              "method"="GET",
- *              "path"="/journeys/origin/{origin}"
+ *              "path"="/journeys/origin/{origin}",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "destinations"={
  *              "method"="GET",
- *              "path"="/journeys/destinations/{origin}"
+ *              "path"="/journeys/destinations/{origin}",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "destination"={
  *              "method"="GET",
- *              "path"="/journeys/destination/{destination}"
+ *              "path"="/journeys/destination/{destination}",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "origins"={
  *              "method"="GET",
- *              "path"="/journeys/origins/{destination}"
+ *              "path"="/journeys/origins/{destination}",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "originDestination"={
  *              "method"="GET",
- *              "path"="/journeys/origin/{origin}/destination/{destination}"
+ *              "path"="/journeys/origin/{origin}/destination/{destination}",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *          "carpools"={
  *              "method"="POST",
  *              "path"="/journeys/carpools",
- *              "normalization_context"={"groups"={"journeyCarpools"}}
+ *              "normalization_context"={"groups"={"journeyCarpools"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
  *          },
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Summary"}
+ *              }
+ *          },
  *      }
  * )
  * @ApiFilter(SearchFilter::class, properties={"origin":"partial", "destination":"partial"})

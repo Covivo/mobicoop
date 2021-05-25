@@ -39,12 +39,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     collectionOperations={
  *          "get"={
- *             "security"="is_granted('community_list',object)"
+ *             "security"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          }
  *      }
  * )

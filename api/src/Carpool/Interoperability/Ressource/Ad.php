@@ -42,20 +42,29 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "interop_get"={
  *              "method"="GET",
  *              "path"="/carpools",
- *              "security_post_denormalize"="is_granted('ad_list',object)"
+ *              "security_post_denormalize"="is_granted('ad_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Interoperability"}
+ *              }
  *          },
  *          "interop_post"={
  *              "method"="POST",
  *              "path"="/carpools",
- *              "security_post_denormalize"="is_granted('ad_search_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Interoperability"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "interop_get"={
  *              "method"="GET",
  *              "path"="/carpools/{id}",
- *              "security"="is_granted('reject',object)"
- *          }
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Interoperability"}
+ *              }
+ *           }
  *       }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

@@ -44,8 +44,20 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "normalization_context"={"groups"={"mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
+ *          }
+ *      }
  * )
  *
  */

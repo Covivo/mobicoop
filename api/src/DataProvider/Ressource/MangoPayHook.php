@@ -40,23 +40,38 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "mangoPayins"={
  *              "method"="GET",
- *              "path"="/mango-payins"
+ *              "path"="/mango-payins",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "mangoPayKYC"={
  *              "method"="GET",
- *              "path"="/mango-kyc"
+ *              "path"="/mango-kyc",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('reject',object)"
+ *             "security_post_denormalize"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          }
  *      }
  * )

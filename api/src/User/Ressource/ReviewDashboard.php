@@ -40,12 +40,18 @@ use App\User\Ressource\Review;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('review_list',object)"
+ *              "security"="is_granted('review_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

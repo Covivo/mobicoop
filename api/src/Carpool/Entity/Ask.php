@@ -50,28 +50,54 @@ use App\Solidary\Entity\SolidaryAsk;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/asks",
  *              "controller"=AskPost::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *      },
- *      itemOperations={"get","delete",
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/asks/{id}",
  *              "controller"=AskPut::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "payment_status"={
  *              "method"="GET",
  *              "path"="/asks/{id}/paymentStatus",
  *              "normalization_context"={"groups"={"readPaymentStatus"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "pending_payment"={
  *              "method"="GET",
  *              "path"="/asks/{id}/pendingPayment",
  *              "normalization_context"={"groups"={"readPayment"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          }
  *      }
  * )

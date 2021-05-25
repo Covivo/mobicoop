@@ -59,16 +59,23 @@ use App\App\Entity\App;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('event_list',object)"
+ *              "security_post_denormalize"="is_granted('event_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('event_create',object)"
+ *              "security_post_denormalize"="is_granted('event_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "created"={
  *              "method"="GET",
  *              "path"="/events/created",
  *              "normalization_context"={"groups"={"readEvent"}},
  *              "swagger_context" = {
+ *                  "tags"={"Events"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "userId",
@@ -86,13 +93,19 @@ use App\App\Entity\App;
  *              "path"="/events/{id}/valide_create_event",
 *               "requirements"={"id"="\d+"},
  *              "controller"=ValidateCreateEventController::class,
- *              "security"="is_granted('event_create',object)"
+ *              "security"="is_granted('event_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "ads"={
  *              "method"="GET",
  *              "path"="/events/{id}/ads",
  *              "normalization_context"={"groups"={"readEvent"}},
- *              "security_post_denormalize"="is_granted('event_list_ads',object)"
+ *              "security_post_denormalize"="is_granted('event_list_ads',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events", "Carpool"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/events",
@@ -101,45 +114,69 @@ use App\App\Entity\App;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_event_list',object)"
+ *              "security"="is_granted('admin_event_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/events",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_event_create',object)"
+ *              "security"="is_granted('admin_event_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('event_read',object)"
+ *              "security"="is_granted('event_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('event_update',object)"
+ *              "security"="is_granted('event_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('event_delete',object)"
+ *              "security"="is_granted('event_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Events"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/events/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_event_read',object)"
+ *              "security"="is_granted('admin_event_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/events/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_event_update',object)"
+ *              "security"="is_granted('admin_event_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/events/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_event_delete',object)"
+ *              "security"="is_granted('admin_event_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

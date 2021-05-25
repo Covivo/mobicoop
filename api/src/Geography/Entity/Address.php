@@ -58,6 +58,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/addresses/search",
  *              "swagger_context"={
+ *                  "tags"={"Geography"},
  *                  "parameters"={
  *                     {
  *                         "name" = "q",
@@ -79,6 +80,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/addresses/reverse",
  *              "swagger_context"={
+ *                  "tags"={"Geography"},
  *                  "parameters"={
  *                     {
  *                         "name" = "latitude",
@@ -99,17 +101,31 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "completion"={
  *              "method"="GET",
  *              "path"="/addresses/completion",
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_search"={
  *              "method"="GET",
  *              "path"="/addresses/admin/search",
  *              "normalization_context"={"groups"={"aRead"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
- *          "get",
- *          "put"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})

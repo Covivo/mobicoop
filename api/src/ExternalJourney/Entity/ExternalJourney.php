@@ -35,6 +35,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *      "normalization_context"={"groups"={"externalJourney"}},
  *      "security"="is_granted('external_journey_list',object)",
  *      "swagger_context"={
+ *           "tags"={"Carpool"},
  *           "parameters"={
  *              {
  *                  "name" = "driver",
@@ -90,7 +91,12 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *    }
  * },
  *      itemOperations={
- *          "get" = {"security"="is_granted('reject',object)"}
+ *          "get" = {
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
  *      }
  * )
  *

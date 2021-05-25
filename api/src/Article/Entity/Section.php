@@ -47,33 +47,54 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('article_list',object)"
- *          },
+ *              "security_post_denormalize"="is_granted('article_list',object)",
+  *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
+*          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('article_create',object)"
+ *              "security_post_denormalize"="is_granted('article_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('article_read',object)"
+ *              "security"="is_granted('article_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('article_update',object)"
+ *              "security"="is_granted('article_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('article_delete',object)"
+ *              "security"="is_granted('article_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "up"={
  *              "method"="POST",
  *              "controller"=SectionUp::class,
  *              "path"="/sections/{id}/up",
- *              "security"="is_granted('article_update',object)"
+ *              "security"="is_granted('article_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "down"={
  *              "method"="POST",
  *              "controller"=SectionDown::class,
  *              "path"="/sections/{id}/down",
- *              "security"="is_granted('article_update',object)"
+ *              "security"="is_granted('article_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          }
  *      }
  * )

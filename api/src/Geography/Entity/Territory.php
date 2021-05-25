@@ -47,13 +47,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('territory_list',object)"
+ *              "security"="is_granted('territory_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "territoriesPoint"={
  *              "method"="GET",
  *              "path"="/territories/point",
  *              "security"="is_granted('territory_list',object)",
  *              "swagger_context" = {
+ *                  "tags"={"Geography"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "latitude",
@@ -73,23 +77,38 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "link"={
  *              "method"="GET",
  *              "path"="/territories/link",
- *              "security"="is_granted('territory_link',object)"
+ *              "security"="is_granted('territory_link',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/territories",
- *              "security_post_denormalize"="is_granted('territory_create',object)"
+ *              "security_post_denormalize"="is_granted('territory_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('territory_read',object)"
+ *              "security"="is_granted('territory_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('territory_update',object)"
+ *              "security"="is_granted('territory_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('territory_delete',object)"
+ *              "security"="is_granted('territory_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          }
  *      }
  * )
