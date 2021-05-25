@@ -69,7 +69,6 @@ class WaySchedule
 
     public function __construct()
     {
-        $this->regularSchedule = [new WeekSchedule()];
     }
 
     public function getDepartureDate(): ?int

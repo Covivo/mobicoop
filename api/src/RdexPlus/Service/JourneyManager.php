@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,34 +21,19 @@
  *    LICENSE
  **************************/
 
-namespace App\RdexPlus\DataProvider;
+namespace App\RdexPlus\Service;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\RdexPlus\Resource\Journey;
-use Symfony\Component\Security\Core\Security;
 
 /**
- * RDEX+ : Collection data provider of Journey.
+ * RDEX+ : Journey manager service.
  *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+class JourneyManager
 {
-    protected $security;
-
-    public function __construct(Security $security)
+    public function createJourney(Journey $journey): Journey
     {
-        $this->security = $security;
-    }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return Journey::class === $resourceClass && $operationName === "rdex_plus_journey_get";
-    }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
-    {
-        /* TO DO */
-        return [new Journey("1")];
+        return $journey;
     }
 }

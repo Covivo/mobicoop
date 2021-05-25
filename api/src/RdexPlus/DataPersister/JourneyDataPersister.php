@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,34 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\RdexPlus\DataProvider;
+namespace App\RdexPlus\DataPersister;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\RdexPlus\Resource\Journey;
-use Symfony\Component\Security\Core\Security;
+use App\RdexPlus\Service\JourneyManager;
 
 /**
- * RDEX+ : Collection data provider of Journey.
- *
+ * RDEX+ : Journey data persister
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class JourneyDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $security;
+    private $journeyManager;
 
-    public function __construct(Security $security)
+    public function __construct(JourneyManager $journeyManager)
     {
-        $this->security = $security;
+        $this->journeyManager = $journeyManager;
     }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+  
+    public function supports($data, array $context = []): bool
     {
-        return Journey::class === $resourceClass && $operationName === "rdex_plus_journey_get";
+        return $data instanceof Journey && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'rdex_plus_journey_post';
     }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+
+    public function persist($data, array $context = [])
     {
-        /* TO DO */
-        return [new Journey("1")];
+        return $this->journeyManager->createJourney($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

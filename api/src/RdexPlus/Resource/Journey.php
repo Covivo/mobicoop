@@ -43,7 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"rdexPlusWrite"}}
  *      },
  *      collectionOperations={
- *          "interop_get"={
+ *          "rdex_plus_journey_get"={
  *              "method"="GET",
  *              "path"="/journeys",
  *              "security"="is_granted('ad_list',object)",
@@ -52,7 +52,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Interoperability", "RDEX+"}
  *              }
  *          },
- *          "interop_post"={
+ *          "rdex_plus_journey_post"={
  *              "method"="POST",
  *              "path"="/journeys",
  *              "security_post_denormalize"="is_granted('ad_search_create',object)",
@@ -63,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      },
  *      itemOperations={
- *          "interop_get_item"={
+ *          "rdex_plus_journey_get_item"={
  *              "method"="GET",
  *              "path"="/journeys/{id}",
  *              "security"="is_granted('reject',object)",
@@ -257,11 +257,6 @@ class Journey
         } else {
             $this->id = $id;
         }
-
-        $this->user = new User();
-        $this->waypoints = [new Waypoint()];
-        $this->price = new Price();
-        $this->outward = new WaySchedule();
     }
 
     public function getId(): ?string
