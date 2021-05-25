@@ -83,14 +83,29 @@ class Journey
     const TYPE_PLANNED = "planned";
     const TYPE_DYNAMIC = "dynamic";
     const TYPE_LINE = "line";
+    const VALID_TYPES = [
+        self::TYPE_PLANNED,
+        self::TYPE_DYNAMIC,
+        self::TYPE_LINE
+    ];
 
     const CARPOOLER_TYPE_DRIVER = "driver";
     const CARPOOLER_TYPE_PASSENGER = "passenger";
     const CARPOOLER_TYPE_BOTH = "both";
+    const VALID_CARPOOLER_TYPES = [
+        self::CARPOOLER_TYPE_DRIVER,
+        self::CARPOOLER_TYPE_PASSENGER,
+        self::CARPOOLER_TYPE_BOTH
+    ];
 
     const FREQUENCY_PUNCTUAL = "punctual";
     const FREQUENCY_REGULAR = "regular";
     const FREQUENCY_BOTH = "both";
+    const VALID_FREQUENCIES = [
+        self::FREQUENCY_PUNCTUAL,
+        self::FREQUENCY_REGULAR,
+        self::FREQUENCY_BOTH
+    ];
 
     const TIME_MARGIN_DEFAULT = 900;
 
@@ -111,7 +126,7 @@ class Journey
 
     /**
      * @var string Journey's type (planned, dynamic, line)
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $type;
@@ -132,6 +147,9 @@ class Journey
     
     /**
      * @var string Journey's carpooler's type (driver, passenger, both)
+     * On GET : it's the role the poster is looking for
+     * On POST : it's the role of the poster
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -139,7 +157,7 @@ class Journey
 
     /**
      * @var User Journey's carpooler
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $user;
@@ -160,6 +178,7 @@ class Journey
 
     /**
      * @var Geopoint Journey's origin
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -167,6 +186,7 @@ class Journey
     
     /**
      * @var Geopoint Journey's destination
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -189,7 +209,7 @@ class Journey
     /**
      * @var int Journey's nomber of waypoints
      *
-     * @Groups({"rdexPlusRead"})
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $numberOfWaypoints;
     
@@ -202,6 +222,7 @@ class Journey
 
     /**
      * @var Price Journey's price
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -217,14 +238,15 @@ class Journey
     /**
      * @var string Journey's frequency (punctual, regular, both)
      * both : only on GET
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $frequency;
 
     /**
      * @var bool If the journey is a round trip
-     *
+     * @Assert\Type("bool")
+     * @Assert\NotNull
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $isRoundTrip;

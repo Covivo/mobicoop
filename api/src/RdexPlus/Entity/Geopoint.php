@@ -35,14 +35,14 @@ class Geopoint
     
     /**
      * @var float Geopoint's longitude
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $longitude;
 
     /**
      * @var float Geopoint's latitude
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $latitude;

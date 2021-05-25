@@ -38,7 +38,7 @@ class User
     
     /**
      * @var string User's id
-     *
+     * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $id;

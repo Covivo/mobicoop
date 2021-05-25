@@ -36,18 +36,25 @@ class Price
     const TYPE_FIXED = "fixed";
     const TYPE_VARIABLE = "variable";
     const TYPE_UNKNOWN = "unknown";
-
+    const VALID_TYPES = [
+        self::TYPE_FREE,
+        self::TYPE_FIXED,
+        self::TYPE_VARIABLE,
+        self::TYPE_UNKNOWN
+    ];
     
     /**
-     * @var string Journey's amount Required if type=fixed or variable
+     * @var float Journey's amount Required if type=fixed or variable
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $amount;
 
     /**
-     * @var float Journey's price type. (free, fixed, variable, unknown)
+     * @var string Journey's price type. (free, fixed, variable, unknown)
      * nnknown must be returned when the journey is free, but the amount is unknown (and price.amount must then be left empty).
+     * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -61,12 +68,12 @@ class Price
     private $kilometricPrice;
 
 
-    public function getAmount(): ?string
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(?string $amount): self
+    public function setAmount(?float $amount): self
     {
         $this->amount = $amount;
 
