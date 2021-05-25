@@ -25,7 +25,11 @@ namespace App\RdexPlus\Resource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\RdexPlus\Entity\Geopoint;
+use App\RdexPlus\Entity\Price;
 use App\RdexPlus\Entity\User;
+use App\RdexPlus\Entity\Waypoint;
+use App\RdexPlus\Entity\WaySchedule;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -84,18 +88,24 @@ class Journey
     const CARPOOLER_TYPE_PASSENGER = "passenger";
     const CARPOOLER_TYPE_BOTH = "both";
 
+    const FREQUENCY_PUNCTUAL = "punctual";
+    const FREQUENCY_REGULAR = "regular";
+    const FREQUENCY_BOTH = "both";
+
+    const TIME_MARGIN_DEFAULT = 900;
+
     /**
      * @var string Journey's id
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     * @Groups({"rdexPlusRead"})
      */
     private $id;
 
     /**
      * @var string Journey's direct URL
      *
-     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     * @Groups({"rdexPlusRead"})
      */
     private $webUrl;
 
@@ -109,14 +119,14 @@ class Journey
     /**
      * @var string Journey's operator
      *
-     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     * @Groups({"rdexPlusRead"})
      */
     private $operator;
 
     /**
      * @var string Journey's operator's website
      *
-     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     * @Groups({"rdexPlusRead"})
      */
     private $operatorUrl;
     
@@ -134,6 +144,112 @@ class Journey
      */
     private $user;
 
+    /**
+     * @var int Journey's available seats (required if carpoolerType = driver or both)
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $availableSeats;
+
+    /**
+     * @var int Journey's available seats (required if carpoolerType = passenger)
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $requestedSeats;
+
+    /**
+     * @var Geopoint Journey's origin
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $from;
+    
+    /**
+     * @var Geopoint Journey's destination
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $to;
+
+    /**
+     * @var int Journey's duration in seconds
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $duration;
+
+    /**
+     * @var int Journey's duration in seconds
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $distance;
+
+    /**
+     * @var int Journey's nomber of waypoints
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $numberOfWaypoints;
+    
+    /**
+     * @var Waypoint[] Journey's waypoints (required if numberOfWaypoints>0)
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $waypoints;
+
+    /**
+     * @var Price Journey's price
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $price;
+
+    /**
+     * @var string Journey's free comment
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $details;
+
+    /**
+     * @var string Journey's frequency (punctual, regular, both)
+     * both : only on GET
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $frequency;
+
+    /**
+     * @var bool If the journey is a round trip
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $isRoundTrip;
+
+    /**
+     * @var bool If the journey is now stopped
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $isStopped;
+
+    /**
+     * @var WaySchedule Outward date, time and regular informations
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $outward;
+
+    /**
+     * @var WaySchedule Return date, time and regular informations (required if isRoundTrip = true)
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $return;
+    
     public function __construct(int $id = null)
     {
         if (is_null($id)) {
@@ -143,6 +259,9 @@ class Journey
         }
 
         $this->user = new User();
+        $this->waypoints = [new Waypoint()];
+        $this->price = new Price();
+        $this->outward = new WaySchedule();
     }
 
     public function getId(): ?string
@@ -225,6 +344,186 @@ class Journey
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAvailableSeats(): ?int
+    {
+        return $this->availableSeats;
+    }
+
+    public function setAvailableSeats(?int $availableSeats): self
+    {
+        $this->availableSeats = $availableSeats;
+
+        return $this;
+    }
+    
+    public function getRequestedSeats(): ?int
+    {
+        return $this->requestedSeats;
+    }
+
+    public function setRequestedSeats(?int $requestedSeats): self
+    {
+        $this->requestedSeats = $requestedSeats;
+
+        return $this;
+    }
+
+    public function getFrom(): ?Geopoint
+    {
+        return $this->from;
+    }
+
+    public function setFrom(?Geopoint $from): self
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+    
+    public function getTo(): ?Geopoint
+    {
+        return $this->to;
+    }
+
+    public function setTo(?Geopoint $to): self
+    {
+        $this->to = $to;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+    
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+
+    public function setistance(?int $distance): self
+    {
+        $this->distance = $distance;
+
+        return $this;
+    }
+    
+    public function getNumberOfWaypoints(): ?int
+    {
+        return $this->numberOfWaypoints;
+    }
+
+    public function setNumberOfWaypoints(?int $numberOfWaypoints): self
+    {
+        $this->numberOfWaypoints = $numberOfWaypoints;
+
+        return $this;
+    }
+    
+    public function getWaypoints(): ?array
+    {
+        return $this->waypoints;
+    }
+
+    public function setWaypoints(?array $waypoints): self
+    {
+        $this->waypoints = $waypoints;
+
+        return $this;
+    }
+    
+    public function getPrice(): ?Price
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?Price $price): self
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    public function getDetails(): ?string
+    {
+        return $this->details;
+    }
+
+    public function setDetails(?string $details): self
+    {
+        $this->details = $details;
+
+        return $this;
+    }
+
+    public function getFrequency(): ?string
+    {
+        return $this->frequency;
+    }
+
+    public function setFrequency(?string $frequency): self
+    {
+        $this->frequency = $frequency;
+
+        return $this;
+    }
+
+    public function getIsRoundTrip(): ?bool
+    {
+        return $this->isRoundTrip;
+    }
+
+    public function setIsRoundTrip(?bool $isRoundTrip): self
+    {
+        $this->isRoundTrip = $isRoundTrip;
+
+        return $this;
+    }
+
+    public function getIsStopped(): ?bool
+    {
+        return $this->isStopped;
+    }
+
+    public function setIsStopped(?bool $isStopped): self
+    {
+        $this->isStopped = $isStopped;
+
+        return $this;
+    }
+
+    public function getOutward(): ?WaySchedule
+    {
+        return $this->outward;
+    }
+
+    public function setOutward(?WaySchedule $outward): self
+    {
+        $this->outward = $outward;
+
+        return $this;
+    }
+    
+    public function getReturn(): ?WaySchedule
+    {
+        return $this->return;
+    }
+
+    public function setReturn(?WaySchedule $return): self
+    {
+        $this->return = $return;
 
         return $this;
     }

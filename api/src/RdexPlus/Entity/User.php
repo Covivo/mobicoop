@@ -32,6 +32,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User
 {
+    const GENGER_MALE = "M";
+    const GENGER_FEMALE = "F";
+    const GENGER_OTHER = "O";
+    
     /**
      * @var string User's id
      *
@@ -42,9 +46,44 @@ class User
     /**
      * @var string User's alias
      *
-     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     * @Groups({"rdexPlusRead"})
      */
     private $alias;
+
+    /**
+     * @var string User's first name
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $firstName;
+
+    /**
+     * @var string User's last name
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $lastName;
+
+    /**
+     * @var string User's grade
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $grade;
+
+    /**
+     * @var string User's picture
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $picture;
+    
+    /**
+     * @var string User's gender (F, M, O)
+     *
+     * @Groups({"rdexPlusRead"})
+     */
+    private $gender;
 
     public function getId(): ?string
     {
@@ -66,6 +105,66 @@ class User
     public function setAlias(?string $alias): self
     {
         $this->alias = $alias;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+    
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+    
+    public function getGrade(): ?string
+    {
+        return $this->grade;
+    }
+
+    public function setGrade(?string $grade): self
+    {
+        $this->grade = $grade;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): self
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+    
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
 
         return $this;
     }
