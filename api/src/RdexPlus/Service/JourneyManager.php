@@ -226,6 +226,21 @@ class JourneyManager
                 $ad->setReturnTime($returnDate->format("H:i"));
             }
         } else {
+            
+            // We set a max date if it's given
+            if (!is_null($journey->getOutward()->getMaxDate())) {
+                $outwardLimitDate = new \DateTime("now");
+                $outwardLimitDate->setTimestamp($journey->getOutward()->getMaxDate());
+                $ad->setOutwardLimitDate($outwardLimitDate);
+            }
+            
+            // If there is a return, we set the max date for the return if it's given
+            if (!$ad->isOneWay() && !is_null($journey->getReturn()->getMaxDate())) {
+                $returnLimitDate = new \DateTime("now");
+                $returnLimitDate->setTimestamp($journey->getReturn()->getMaxDate());
+                $ad->setReturnLimitDate($returnLimitDate);
+            }
+
             // Regular, we build the schedules
             $schedules = $this->buildSchedulesFromWaySchedule($journey->getOutward(), (!$ad->isOneWay()) ? $journey->getReturn() : null);
             $ad->setSchedule($schedules);

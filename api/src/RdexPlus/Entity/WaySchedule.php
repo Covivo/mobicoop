@@ -34,7 +34,6 @@ use App\RdexPlus\Entity\WeekSchedule;
  */
 class WaySchedule
 {
-
     const DEFAULT_TIME_DELTA = 900;
 
     /**
