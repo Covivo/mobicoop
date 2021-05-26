@@ -89,8 +89,14 @@ class AntiFraudManager
         $addressesToValidate = [];
         foreach ($ad->getOutwardWaypoints() as $pointToValidate) {
             $waypointToValidate = new Address();
-            $waypointToValidate->setLatitude($pointToValidate['latitude']);
-            $waypointToValidate->setLongitude($pointToValidate['longitude']);
+            if(is_array($pointToValidate)){
+                $waypointToValidate->setLatitude($pointToValidate['latitude']);
+                $waypointToValidate->setLongitude($pointToValidate['longitude']);
+            }
+            else{
+                $waypointToValidate->setLatitude($pointToValidate->getLatitude());
+                $waypointToValidate->setLongitude($pointToValidate->getLongitude());
+            }
             $addressesToValidate[] = $waypointToValidate;
         }
         

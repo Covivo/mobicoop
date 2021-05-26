@@ -36,10 +36,11 @@ class WaySchedule
 {
 
     /**
-     * @var int if frequency=punctual orboth, departureDate specifies departure datetime using a UNIX UTC timestamp in seconds.
+     * @var int if frequency=punctual or both, departureDate specifies departure datetime using a UNIX UTC timestamp in seconds.
      * If not specified, the timestamp of the request is considered the expected departure datetime.
      * If frequency=regular, departureDate specifies the beginning of the validity period for the regular journey
-     *
+     * @Assert\NotBlank
+     * 
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $departureDate;

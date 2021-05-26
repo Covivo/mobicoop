@@ -48,8 +48,6 @@ class JourneyManager
     private $userManager;
     private $geoTools;
 
-    private $user;
-
     public function __construct(AdManager $adManager, UserManager $userManager, Security $security, GeoTools $geoTools)
     {
         $this->adManager = $adManager;
@@ -72,8 +70,10 @@ class JourneyManager
         $ad = $this->buildAdFromJourney($journey);
         
         //create ad
-        //$this->adManager->createAd($ad, true, false, false);
+        $ad = $this->adManager->createAd($ad, true, false, false);
 
+        // We set the id of the createdAd
+        $journey->setId($ad->getId());
         return $journey;
     }
 
@@ -139,7 +139,7 @@ class JourneyManager
         } else {
             $ad->setAppPosterId($this->security->getUser()->getId());
         }
-        $ad->setUser($this->user);
+        $ad->setUserId($journey->getUser()->getId());
 
         // Driver by default
         $ad->setRole(Ad::ROLE_DRIVER);
@@ -188,6 +188,11 @@ class JourneyManager
 
         $ad->setOutwardWaypoints($outwardWaypoints);
 
+        // Outward date
+        $ourwardDate = new \DateTime("now");
+        $ourwardDate->setTimestamp($journey->getOutward()->getDepartureDate());
+        $ad->setOutwardDate($ourwardDate);
+
         // Return's Waypoints
         if (!$ad->isOneWay()) {
             $returnWaypoints[] = $this->buildAddressFromGeopoint($journey->getTo());
@@ -202,6 +207,27 @@ class JourneyManager
             $returnWaypoints[] = $this->buildAddressFromGeopoint($journey->getFrom());
 
             $ad->setReturnWaypoints($returnWaypoints);
+
+            // Outward date
+            $returnDate = new \DateTime("now");
+            $returnDate->setTimestamp($journey->getReturn()->getDepartureDate());
+            $ad->setReturnDate($returnDate);
+
+        }
+
+
+        // If punctual we set the outward time
+        if($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL){
+            $ad->setOutwardTime($ourwardDate->format("H:i"));
+
+            // If there is a return, we set the time
+            if (!$ad->isOneWay()) {
+                $ad->setReturnTime($returnDate->format("H:i"));
+            }
+
+        }
+        else{
+            // Regular, we build the schedules
         }
 
         return $ad;
