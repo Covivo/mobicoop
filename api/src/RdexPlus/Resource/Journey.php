@@ -35,7 +35,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : Journey
+ * Documentation : https://rdex.fabmob.io/
+ *
  * The RDEX+ protocol does'nt require the POST route. We did it anyway.
+ *
  * @ApiResource(
  *      routePrefix="/interoperability",
  *      attributes={

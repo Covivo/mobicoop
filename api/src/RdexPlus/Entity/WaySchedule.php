@@ -29,6 +29,7 @@ use App\RdexPlus\Entity\WeekSchedule;
 
 /**
  * RDEX+ : A WaySchedule
+ * Documentation : https://rdex.fabmob.io/
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class WaySchedule

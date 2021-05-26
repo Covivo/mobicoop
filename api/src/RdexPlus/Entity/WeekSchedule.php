@@ -28,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A WeekSchedule (for regular Journeys)
+ * Documentation : https://rdex.fabmob.io/
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class WeekSchedule
