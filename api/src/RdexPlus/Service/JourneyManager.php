@@ -212,21 +212,18 @@ class JourneyManager
             $returnDate = new \DateTime("now");
             $returnDate->setTimestamp($journey->getReturn()->getDepartureDate());
             $ad->setReturnDate($returnDate);
-
         }
 
 
         // If punctual we set the outward time
-        if($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL){
+        if ($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
             $ad->setOutwardTime($ourwardDate->format("H:i"));
 
             // If there is a return, we set the time
             if (!$ad->isOneWay()) {
                 $ad->setReturnTime($returnDate->format("H:i"));
             }
-
-        }
-        else{
+        } else {
             // Regular, we build the schedules
         }
 

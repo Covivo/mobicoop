@@ -68,6 +68,13 @@ class Price
      */
     private $kilometricPrice;
 
+    /**
+     * @var string Journey's money currency
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $currency;
+
 
     public function getAmount(): ?float
     {
@@ -101,6 +108,18 @@ class Price
     public function setKilometricPrice(?string $kilometricPrice): self
     {
         $this->kilometricPrice = $kilometricPrice;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
 
         return $this;
     }
