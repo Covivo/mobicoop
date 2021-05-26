@@ -127,7 +127,7 @@ class JourneyManager
 
     /**
      * Build an Ad from a RDEX+ Journey
-     *
+     * WARNING : For now, we only use the OutWard delta time and ignore the rest
      * @param Journey $journey
      * @return Ad
      */
@@ -231,6 +231,10 @@ class JourneyManager
             $ad->setSchedule($schedules);
         }
 
+        // Margin duration
+        // For now, we only use the OutWard delta time and ignore the rest
+        $ad->setMarginDuration($journey->getOutward()->getTimeDelta());
+        
         return $ad;
     }
 

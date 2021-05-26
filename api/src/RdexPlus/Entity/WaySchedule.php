@@ -35,6 +35,8 @@ use App\RdexPlus\Entity\WeekSchedule;
 class WaySchedule
 {
 
+    const DEFAULT_TIME_DELTA = 900;
+
     /**
      * @var int if frequency=punctual or both, departureDate specifies departure datetime using a UNIX UTC timestamp in seconds.
      * If not specified, the timestamp of the request is considered the expected departure datetime.
@@ -62,8 +64,8 @@ class WaySchedule
 
     /**
      * @var int Time margin in seconds
-     * If frequency=regular, this timeDelta is taken into account only if no other value is specified for the specific day
-     *
+     * RDEX+: If frequency=regular, this timeDelta is taken into account only if no other value is specified for the specific day
+     * WARNING : For now, Mobicoop only use the outward timeDelta and ignore the rest
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $timeDelta;
@@ -111,7 +113,7 @@ class WaySchedule
     
     public function getTimeDelta(): ?int
     {
-        return $this->timeDelta;
+        return (!is_null($this->timeDelta)) ? $this->timeDelta : self::DEFAULT_TIME_DELTA;
     }
 
     public function setTimeDelta(?int $timeDelta): self

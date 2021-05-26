@@ -33,6 +33,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WeekSchedule
 {
+    /*
+    * WARNING : For now, Mobicoop only use the outward timeDelta and ignore the time delta of specific days
+    */
 
     /**
      * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Mondays, if any.
