@@ -97,7 +97,7 @@ class WaySchedule
         return $this;
     }
    
-    public function isRegularSchedule(): ?array
+    public function getRegularSchedule(): ?array
     {
         return $this->regularSchedule;
     }

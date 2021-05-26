@@ -31,6 +31,8 @@ use App\Geography\Service\GeoTools;
 use App\RdexPlus\Entity\Geopoint;
 use App\RdexPlus\Entity\Price;
 use App\RdexPlus\Entity\Waypoint;
+use App\RdexPlus\Entity\WaySchedule;
+use App\RdexPlus\Entity\WeekSchedule;
 use App\RdexPlus\Exception\RdexPlusException;
 use App\RdexPlus\Resource\Journey;
 use App\User\Entity\User;
@@ -225,6 +227,8 @@ class JourneyManager
             }
         } else {
             // Regular, we build the schedules
+            $schedules = $this->buildSchedulesFromWaySchedule($journey->getOutward(), (!$ad->isOneWay()) ? $journey->getReturn() : null);
+            $ad->setSchedule($schedules);
         }
 
         return $ad;
@@ -268,5 +272,123 @@ class JourneyManager
         $address->setName($waypoint->getPoiName());
 
         return $address;
+    }
+
+    /**
+     * Build schedules array rom outward et return WaySchedule object.
+     * It's easier to make 7 différent schedule : one for each week day
+     * @param WaySchedule $outwardWaySchedule
+     * @param WaySchedule|null $returnWaySchedule
+     * @return array
+     */
+    private function buildSchedulesFromWaySchedule(WaySchedule $outwardWaySchedule, ?WaySchedule $returnWaySchedule): array
+    {
+        $schedules = [];
+
+        $schedules = $this->setRegularTimeAndDays($schedules, $outwardWaySchedule, "outward");
+
+        if (!is_null($returnWaySchedule)) {
+            $schedules = $this->setRegularTimeAndDays($schedules, $returnWaySchedule, "return");
+        }
+
+        return $schedules;
+    }
+
+    /**
+     * Set the right day status (check or not) and the right time (outward or return)
+     * According to RDEX+ specs we can have several regularSchedule
+     * WARNING : If two schedules contain the same day for the same wat (outward or return), we are keeping the last time given
+     *
+     * @param array $schedules          The current Ad schedule
+     * @param WaySchedule $waySchedule  The WaySchedule (outward or return)
+     * @param string $way               The way (outward or return)
+     * @return array
+     */
+    private function setRegularTimeAndDays(array $schedules, WaySchedule $waySchedule, string $way): array
+    {
+        $templateDays = [
+            "mon"=>false,
+            "tue"=>false,
+            "wed"=>false,
+            "thu"=>false,
+            "fri"=>false,
+            "sat"=>false,
+            "sun"=>false
+        ];
+        
+        // According to RDEX+ specs we can have several regularSchedule
+        // WARNING : If two schedules contains the same day, we are keeping the last time given
+        foreach ($waySchedule->getRegularSchedule() as $regularSchedule) {
+            /**
+             * @var WeekSchedule $regularSchedule
+             */
+            foreach ($templateDays as $day => $value) {
+                switch ($day) {
+                    case "mon":
+                        $time = $regularSchedule->getMondayTime();
+                        break;
+                    case "tue":
+                        $time = $regularSchedule->getTuesdayTime();
+                        break;
+                    case "wed":
+                        $time = $regularSchedule->getWednesdayTime();
+                        break;
+                    case "thu":
+                        $time = $regularSchedule->getThursdayTime();
+                        break;
+                    case "fri":
+                        $time = $regularSchedule->getFridayTime();
+                        break;
+                    case "sat":
+                        $time = $regularSchedule->getSaturdayTime();
+                        break;
+                    case "sun":
+                        $time = $regularSchedule->getSundayTime();
+                        break;
+                }
+                
+                if (!is_null($time) && !empty($time) && $time !== "") {
+                    $key = $this->checkSubScheduleDayExists($schedules, $day);
+                    if ($key == -1) {
+                        // Not set already, we create a new sub schedule
+                        $newSchedule = [
+                            $day => true,
+                            $way."Time" => $time
+                        ];
+                        $schedules[] = $newSchedule;
+                    } else {
+                        $schedules[$key][$day] = true; // We force the true to override the first value set by the first WeekSchedule
+                        $schedules[$key][$way."Time"] = $time;
+                    }
+                } else {
+                    $key = $this->checkSubScheduleDayExists($schedules, $day);
+                    if ($key == -1) {
+                        $newSchedule = [
+                            $day => false
+                        ];
+                        $schedules[] = $newSchedule;
+                    }
+                }
+            }
+        }
+        return $schedules;
+    }
+    
+    /**
+     * Check if a subschedule is already defined for a given day
+     *
+     * @param array $schedules  The current Ad schedule
+     * @param string $day       The given day to check
+     * @return integer          Return the array index or -1 if the day is not defined
+     */
+    private function checkSubScheduleDayExists(array $schedules, string $day): int
+    {
+        foreach ($schedules as $key => $schedule) {
+            if (isset($schedule[$day])) {
+                return $key;
+            }
+        }
+
+        return -1;
     }
 }
