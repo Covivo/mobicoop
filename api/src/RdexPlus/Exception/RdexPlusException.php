@@ -35,4 +35,7 @@ class RdexPlusException extends \LogicException
     const INVALID_CARPOOLER_TYPE = "Invalid carpoolerType";
     const FROM_LATITUDE_LONGITUDE_REQUIRED = "Origin's Latitude/Longitude are required";
     const TO_LATITUDE_LONGITUDE_REQUIRED = "Destination's Latitude/Longitude are required";
+    const NO_REGULAR_SCHEDULE = "Missing regular schedule";
+    const NO_RETURN = "Missing return data";
+    const NO_RETURN_REGULAR_SCHEDULE = "Missing return regular schedule";
 }

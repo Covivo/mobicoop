@@ -122,6 +122,23 @@ class JourneyManager
             throw new RdexPlusException(RdexPlusException::TO_LATITUDE_LONGITUDE_REQUIRED);
         }
 
+        // Specific regular
+        if ($journey->getFrequency() == Journey::FREQUENCY_REGULAR || $journey->getFrequency() == Journey::FREQUENCY_BOTH) {
+            if (is_null($journey->getOutward()->getRegularSchedule())) {
+                throw new RdexPlusException(RdexPlusException::NO_REGULAR_SCHEDULE);
+            }
+
+            if ($journey->getIsRoundTrip() && is_null($journey->getReturn())) {
+                throw new RdexPlusException(RdexPlusException::NO_RETURN_REGULAR_SCHEDULE);
+            }
+        }
+
+        // Specific return
+        if ($journey->getIsRoundTrip()) {
+            if (is_null($journey->getReturn())) {
+                throw new RdexPlusException(RdexPlusException::NO_RETURN);
+            }
+        }
         return true;
     }
 
