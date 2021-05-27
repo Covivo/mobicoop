@@ -43,13 +43,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="GET",
  *             "security"="is_granted('reject',object)",
  *             "swagger_context" = {
+ *               "summary"="Not permitted",
  *               "tags"={"Interoperability"}
  *             }
  *          },
  *          "interop_post"={
  *             "method"="POST",
- *             "security_post_denormalize"="is_granted('user_register',object)",
+ *             "security_post_denormalize"="is_granted('interop_user_create',object)",
  *             "swagger_context" = {
+ *                  "summary"="Create a User created via interoperability",
  *                  "tags"={"Interoperability"},
  *                  "parameters" = {
  *                      {
@@ -97,20 +99,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "interop_get"={
  *             "path"="/users/{id}",
  *             "method"="GET",
- *             "security"="is_granted('user_register',object)",
+ *             "security"="is_granted('interop_user_read',object)",
  *             "swagger_context" = {
+ *               "summary"="Update a User created via interoperability",
  *               "tags"={"Interoperability"}
  *             }
  *          },
  *          "interop_put"={
  *             "path"="/users/{id}",
  *             "method"="PUT",
- *             "security"="is_granted('user_register',object)",
+ *             "security"="is_granted('interop_user_update',object)",
  *             "swagger_context" = {
+ *               "summary"="Update a User created via interoperability",
+ *               "tags"={"Interoperability"}
+ *             }
+ *          },
+ *          "interop_detach_sso"={
+ *             "path"="/users/{id}/detachSso",
+ *             "method"="PUT",
+ *             "security"="is_granted('interop_user_update',object)",
+ *             "swagger_context" = {
+ *               "summary"="Erase the SsoId and the SsoProvider informations of the user account",
  *               "tags"={"Interoperability"}
  *             }
  *          }
- *        }
+ *      }
  * )
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */

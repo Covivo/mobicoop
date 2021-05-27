@@ -55,9 +55,14 @@ class UserManager
      * @param integer $id   User's Id
      * @return User The interoperabily User
      */
-    public function getUser(int $id): User
+    public function getUser(int $id): ?User
     {
-        return $this->buildUserFromUserEntity($this->userEntityManager->getUser($id));
+        $userEntity = $this->userEntityManager->getUser($id);
+        $user = null;
+        if ($userEntity) {
+            $user = $this->buildUserFromUserEntity($userEntity);
+        }
+        return $user;
     }
     
     /**

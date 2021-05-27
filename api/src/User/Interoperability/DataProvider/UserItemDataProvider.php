@@ -25,8 +25,11 @@ namespace App\User\Interoperability\DataProvider;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\App\Entity\App;
+use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Interoperability User DataProvider
@@ -35,25 +38,24 @@ use App\User\Interoperability\Service\UserManager;
 final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
+    private $security;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, Security $security)
     {
         $this->userManager = $userManager;
+        $this->security = $security;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && ($operationName == "interop_get" || $operationName == "interop_put");
+        return User::class === $resourceClass && ($operationName == "interop_get" || $operationName == "interop_put"  || $operationName == "interop_detach_sso");
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        if ($operationName == "interop_get") {
-            return $this->userManager->getUser($id);
+        if (!($this->security->getUser() instanceof App)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
         }
-
-        if ($operationName == "interop_put") {
-            return $this->userManager->getUser($id);
-        }
+        return $this->userManager->getUser($id);
     }
 }

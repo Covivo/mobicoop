@@ -23,6 +23,7 @@
 namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\App\Entity\App;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
@@ -45,6 +46,10 @@ final class UserCollectionDataPersister implements ContextAwareDataPersisterInte
 
     public function persist($data, array $context = [])
     {
+        if (!($this->security->getUser() instanceof App)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
+        }
+
         if (is_null($data)) {
             throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
         }

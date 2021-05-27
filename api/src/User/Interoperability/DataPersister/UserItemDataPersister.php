@@ -23,29 +23,40 @@
 namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\App\Entity\App;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
+use Symfony\Component\Security\Core\Security;
 
 final class UserItemDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
     private $security;
     private $userManager;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, Security $security)
     {
         $this->userManager = $userManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User && isset($context['item_operation_name']) && $context['item_operation_name'] == 'interop_put';
+        return $data instanceof User && isset($context['item_operation_name']) && ($context['item_operation_name'] == 'interop_put' || $context['item_operation_name'] == 'interop_detach_sso');
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->userManager->updateUser($data);
+        if (!($this->security->getUser() instanceof App)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
+        }
+
+        if ($context['item_operation_name'] == 'interop_put') {
+            return $this->userManager->updateUser($data);
+        }
+        if ($context['item_operation_name'] == 'interop_detach_sso') {
+            return "interop_detach_sso";
+        }
     }
 
     public function remove($data, array $context = [])

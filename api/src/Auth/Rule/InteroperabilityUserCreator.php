@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,25 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Exception;
+namespace App\Auth\Rule;
 
-use \Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\User\Interoperability\Ressource\User;
+use App\Auth\Interfaces\AuthRuleInterface;
+use App\User\Entity\PushToken;
 
-class BadRequestInteroperabilityUserException extends BadRequestHttpException
+/**
+ *  Check that the requester is the owner of the related Push Token
+ */
+class InteroperabilityUserCreator implements AuthRuleInterface
 {
-    const UNAUTHORIZED = "You are not authorized to perform this operation";
-    const NO_USER_PROVIDED = "No user provided";
-    const INVALID_GENDER = "Gender must be a valid value : ".User::GENDER_FEMALE." (female), ".User::GENDER_MALE." (male), ".User::GENDER_OTHER." (other)";
-    const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($requester, $item, $params)
+    {
+        if (!isset($params['user'])) {
+            return false;
+        }
+        
+        return $params['user']->getAppDelegate()->getId() == $requester->getId();
+    }
 }
