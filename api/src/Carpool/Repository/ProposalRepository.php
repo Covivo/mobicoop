@@ -1216,6 +1216,7 @@ class ProposalRepository
         ->where('(c.frequency = :punctualFrequency and c.fromDate = :date) or 
                     (c.frequency = :regularFrequency and c.fromDate <= :date and c.toDate >= :date and c.'.strtolower($date->format("D")).'Check=1) ')
         ->andWhere('p.private = 0')
+        ->andWhere('p.paused = 0')
         ->setParameter('punctualFrequency', Criteria::FREQUENCY_PUNCTUAL)
         ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
         ->setParameter('date', $date->format('Ymd'))
