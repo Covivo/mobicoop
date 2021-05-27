@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "profilUpdate"|trans }}</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>MISE À JOUR DE VOTRE PROFIL CONFIRMÉE!</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -19,8 +19,8 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p>{{ "theModificationIsConfirmed"|trans}}</p>
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>La modification de votre profil est confirmée</p>
                     </td>
                 </tr>
             </table>
@@ -31,7 +31,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>

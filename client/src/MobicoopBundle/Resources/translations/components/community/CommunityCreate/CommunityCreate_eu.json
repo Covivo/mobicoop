@@ -1,48 +1,48 @@
 {
-    "title": "Créez votre communauté",
+    "redirect": {
+        "route": "/komunitateak"
+    },
     "buttons": {
         "create": {
-            "label": "Créer la communauté",
-            "route": "/communaute/creer"
+            "route": "/komunitatea/sortu",
+            "label": "Komunitatea sortu"
+        }
+    },
+    "error": {
+        "image": "Irudia ez da gorde",
+        "community": {
+            "required": "Izar batez markatuak diren eremu guziak baitezpadakoak dira",
+            "create": "Komunitatearen sortzeak huts egin du",
+            "name": "Komunitate hori jadanik existitzen da, beste izen bat erabil ezazu otoi"
         }
     },
     "form": {
-        "name": {
-            "label": "Nom de la communauté*",
-            "required": "Le nom de la communauté est requis"
-        },
-        "description": {
-            "label": "Description courte de la communauté*",
-            "required": "La courte description de la communauté est requise"
-        },
-        "fullDescription": {
-            "label": "Description détaillée de la communauté*",
-            "required": "La description détaillée de la communauté est requise"
-        },
-        "avatar": {
-            "label": "Avatar de la communauté*",
-            "required": "L'avatar de la communauté est requis",
-            "size": "Vous avez dépassé a taille maximale de l'avatar"
+        "domain": {
+            "error": "Sailaren izena zehatz ezazu formatu onean",
+            "label": "Sailaren murrizketa",
+            "tooltips": "Komunitatearen sarbidea e-mezu berezi batzuetara mugatu nahi baduzu, sail honetako izenak balia itzazu (adibidez: monentreprise.fr)"
         },
         "address": {
-            "label": "Adresse de la communauté*",
-            "required": "L'adesse de la communauté est requise"
+            "required": "Komunitatearen helbidea baitezpadakoa da",
+            "label": "Elkargoaren helbidea*"
         },
-        "domain": {
-            "label": "Restriction du domaine",
-            "tooltips": "Si vous souhaitez restreindre l'accès à la communauté à des emails spécifiques, saisissez ces noms de domaines (exemple : monentreprise.fr) séparés par un ;",
-            "error": "Veuillez renseigner un nom de domaine au bon format"
+        "avatar": {
+            "size": "Avatar-aren neurri handiena gainditua da",
+            "required": "Elkargoaren avatar-a baitezpadakoa da",
+            "label": "Elkargoaren avatar-a*"
+        },
+        "fullDescription": {
+            "required": "Komunitatearen aurkezpen zehatzak baitezpadakoa da",
+            "label": "Komunitatearen xehetsun zehatzak*"
+        },
+        "description": {
+            "required": "Komunitatearen aurkezpen laburra baitezpadakoa da",
+            "label": "Komunitateaaren aurkezpen laburra*"
+        },
+        "name": {
+            "required": "Komunitatearen izena baitezpadakoa da",
+            "label": "Komunitatearen izena*"
         }
     },
-    "redirect": {
-        "route": "/communautes"
-    },
-    "error": {
-        "community": {
-            "name": "Cette communauté existe déjà veuillez utiliser un autre nom",
-            "create": "La création de la communauté a échoué",
-            "required": "Tous les champs marqués d'une étoile sont requis"
-        },
-        "image": "L'image n'a pas été enregistrée"
-    }
+    "title": "Zure komunitatea sortu"
 }

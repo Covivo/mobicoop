@@ -1,28 +1,28 @@
 {
+    "no": "ez",
+    "yes": "bai",
     "leaveCommunity": {
-        "button": "Quitter la communauté",
-        "route": "/communaute/{id}/quitter",
         "popup": {
-            "title": "Demande de confirmation",
             "content": {
-                "isProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté privée, ces annonces seront supprimées.<br>Confirmez-vous ?",
-                "isNotProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté, ces annonces ne seront plus marquées comme étant liées à la communauté une fois que vous l'aurez quittée.<br>Confirmez-vous ?"
-            }
-        }
+                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
+            },
+            "title": "Baietapen eskaera"
+        },
+        "button": "Komunitatetik atera",
+        "route": "/communaute/{id}/quitter"
     },
     "snackbar": {
         "leaveCommunity": {
-            "textOk": "Vous ne faites désormais plus partie de cette communauté",
-            "textError": "Une erreur est survenue veuillez essayer à nouveau"
+            "textError": "Huts bat agertu da berriz entsea ezazu",
+            "textOk": "Ez zira gehiago komunitatearen parte"
         }
     },
+    "protected": "Kideek ezin dute haien komunitatea ikusi",
+    "join": "Komunitatean sartu",
+    "communityDetails": "Ikus komunitatea",
     "routes": {
-        "community": "/covoiturage-communaute/{id}/{urlKey}",
-        "communitySecuredRegister": "/communaute/{id}/securisee/inscription"
-    },
-    "communityDetails": "Voir la communauté",
-    "join": "Rejoindre la communauté",
-    "protected": "Cette communauté n'est visible que par ses membres",
-    "yes": "oui",
-    "no": "non"
+        "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
+        "community": "/covoiturage-communaute/{id}/{urlKey}"
+    }
 }

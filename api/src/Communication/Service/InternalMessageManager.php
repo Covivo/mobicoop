@@ -53,8 +53,14 @@ class InternalMessageManager
     private $logger;
     private $storeReadDate;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger, MessageRepository $messageRepository, bool $storeReadDate)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        MediumRepository $mediumRepository,
+        LoggerInterface $logger,
+        MessageRepository $messageRepository,
+        bool $storeReadDate
+    ) {
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->logger = $logger;

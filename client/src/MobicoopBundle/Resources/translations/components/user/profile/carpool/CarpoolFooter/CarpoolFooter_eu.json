@@ -1,18 +1,18 @@
 {
-    "ui": {
-        "button": {
-            "cancel": "Annuler"
-        }
-    },
-    "seat": {
-        "booked": "0 | 1 place réservée | {bookedSeats} / {seats} places réservées"
+    "driver": {
+        "hide": "Kukutu gidaria",
+        "show": "Ikus gidaria"
     },
     "passengers": {
-        "show": "voir le passager | voir les passagers",
-        "hide": "masquer le passager | masquer les passagers"
+        "hide": "bidaiaria kukutu|bidaiariak kukutu",
+        "show": "Ikus bidaiaria|Ikus bidaiariak"
     },
-    "driver": {
-        "show": "voir le conducteur",
-        "hide": "masquer le conducteur"
+    "seat": {
+        "booked": "0 | 1 leku erreserbatuak | {bookedSeats} / {seats} leku erreserbatuak"
+    },
+    "ui": {
+        "button": {
+            "cancel": "Ezeztatua"
+        }
     }
 }

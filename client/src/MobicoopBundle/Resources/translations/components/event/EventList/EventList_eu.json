@@ -1,18 +1,18 @@
 {
-    "events": "Les événements en covoiturage",
-    "eventsAvailable": "Événements disponibles",
-    "eventsPassed": "Événements passés",
-    "createEvent": "Créer un événement",
-    "search": "Rechercher",
-    "linePerPage": "Nombre de lignes par page",
-    "seeAds": "Voir les annonces",
-    "all": "Tous",
-    "startEvent": "Début",
-    "endEvent": "Fin",
-    "noEvent": "Aucun événement",
     "routes": {
-        "event": "/covoiturages-evenements/{id}/{urlKey}",
+        "login": "/utilisateur/connexion",
         "getList": "/evenements/getEventList",
-        "login": "/utilisateur/connexion"
-    }
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
+    },
+    "noEvent": "Ez da ekitaldirik",
+    "endEvent": "Bukaera",
+    "startEvent": "Hastapena",
+    "all": "Denak",
+    "seeAds": "Ikus iragarkiak",
+    "linePerPage": "Linea kopurua orrialdeka",
+    "search": "Xerkatu",
+    "createEvent": "Ekitaldi bat sortu",
+    "eventsPassed": "Pasa diren ekitaldiak",
+    "eventsAvailable": "Libre diren ekitaldiak",
+    "events": "Autokidetza ekitaldiak"
 }

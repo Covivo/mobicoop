@@ -5,22 +5,22 @@
     <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
     <tr>
         <td>
-            <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+            <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
         </td>
     </tr>
     <tr>
         <td>
-            <p> {{ "youReceivedExternalContact"|trans }} <strong>{{ "youReceivedExternalContactOrigin"|trans({'%origin%':context.origin}) }}</strong>.</p>
+            <p>Vous avez reçu un message de la part d'un covoitureur inscrit sur <strong>{{ "youReceivedExternalContactOrigin"|trans({'%origin%':context.origin}) }}</strong>.</p>
         </td>
     </tr> 
     <tr>
         <td>
-            <p>{{ "journeyDetail"|trans }} <strong>{{ "journeyDetailOrigin"|trans({'%journeyOrigin%':context.journeyOrigin}) }}</strong> {{ "journeyDetailTo"|trans }} <strong>{{ "journeyDetailDestination"|trans({'%journeyDestination%':context.journeyDestination}) }}</strong> {{ "journeyDetailTime"|trans({'%journeyDate%':context.journeyDate,'%journeyTime%':context.journeyTime}) }}</p>
+            <p>Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong> prévu le {{ context.journeyDate }} à {{ context.journeyTime }}</p>
         </td>
     </tr> 
     <tr>
         <td>
-            <p><strong>{{ "rdexMessage"|trans }} :</strong></p>  
+            <p><strong>Son message :</strong></p>  
             <hr />
             <p>{{ context.text | nl2br }}</p>
             <hr />
@@ -28,13 +28,13 @@
     </tr> 
     <tr>
         <td>  
-            <p>{{ "noDirectResponse"|trans({'%instanceName%':api_env('EMAILS_PLATFORM_NAME')}) }}</p>
-            <p>{{ "useDirectContact"|trans }}</p>
+            <p>Cet usager étant inscrit sur une autre platforme de covoiturage, vous ne pouvez pas lui répondre via {{ api_env('EMAILS_PLATFORM_NAME') }}</p>
+            <p>Vous pouvez utiliser les coordonnées qu'il vous a, en principe, transmis dans son message pour le contacter directement.</p>
         </td>
     </tr> 
     <tr>
         <td>
-            <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+            <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
         </td>
     </tr>
     </table>    

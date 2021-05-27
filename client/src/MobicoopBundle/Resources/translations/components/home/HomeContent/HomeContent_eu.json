@@ -1,77 +1,64 @@
 {
-    "community": {
-        "title": "COMMUNAUTÉS",
-        "text": "Reconnaître les membres de mon club ou de mon entreprise.",
-        "button": {
-            "label": "Voir les communautés",
-            "route": "/covoiturage-communaute"
-        }
-    },
-    "event": {
-        "title": "ÉVÉNEMENTS",
-        "text": "Trouver des covoitureurs allant au même événement.",
-        "button": {
-            "label": "Voir les événements",
-            "route": "/covoiturages-evenements"
-        }
-    },
-    "solidary": {
-        "title": "COVOITURAGE SOLIDAIRE",
-        "text": "S'entraider pour l'accès à l'emploi",
-        "button": {
-            "label": "Je demande un coup de pouce",
-            "route": "/#/carpools/solidary/home/request"
-        },
-        "button2": {
-            "label": "Donner un coup de pouce",
-            "route": "/covoiturage/publierannonce/solidaire"
-        }
-    },
-    "events": {
-        "title": "Allez en covoiturage à vos prochains événements",
-        "button1": {
-            "label": "Voir les événements",
-            "route": "/evenements"
-        },
-        "button2": {
-            "label": "Ajouter un événement",
-            "route": "/evenements"
-        }
-    },
-    "privateEvent": {
-        "title":"Un événement privé ?",
-        "subtitle":"Laissez vos invités organiser leur covoiturage",
-        "text":"Un service Mobicoop, toujours gratuit, sans inscription et où les données sont (toujours) protégées.",
-        "button":{
-            "label":"Créer un événement",
-            "route":"https://www.covievent.org/evenement/nouveau"
-        },
-        "coviEvent":{
-            "text":"Découvrir CoviEvent",
-            "link":"https://www.covievent.org/"
-        }
-    },
-    "articles": {
-        "title":"Quoi de neuf chez Mobicoop ?"
-    },
-    "items":[
-        {
-            "title":"Covoiturage sans commission",
-            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
-        },
-        {
-            "title":"Un logiciel libre",
-            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
-        },
-        {
-            "title":"La coopérative du covoiturage",
-            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
-        }
-    ],
+    "mustMeLogged": "Konektatua izan behar zira",
+    "urlBackground3": "/images/pages/home/background_bottom.svg",
+    "urlBackground2": "/images/pages/home/background_middle.svg",
     "routes": {
         "getList": "/events/getEventList"
     },
-    "urlBackground2": "/images/pages/home/background_middle.svg",
-    "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged":"Vous devez être connecté"
+    "items": [
+        {
+            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
+            "title": "Komisiorik gabeko autokidetza"
+        },
+        {
+            "text": "Libertate numerikoa, Mobicoop-en balore muinean da. Hautu eginez webgunea programa librean ekoitzea, autokidetza erabiltzailetzen dutenen burujabetasun numerikoa eta datuen babesa bermatzen dugu. Bakoitzak iturri kodean parte har dezake eta mugikortasun partekatua, denen ondasun egin dezake.",
+            "title": "Programa librea"
+        },
+        {
+            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, bazkide 1 = boz 1 logikan. Estatus horrek, bazkide, soldatadun, plataforma erabiltzaile eta bezeroen gobernantza ireki bat ahalbideratzen du. Haatik, ez da bazkide izan behar autokidetza zerbitzua erabili ahal izateko.",
+            "title": "Autokidetza kooperatiboa"
+        }
+    ],
+    "articles": {
+        "title": "Zer berri Mobicoop-en?"
+    },
+    "events": {
+        "button2": {
+            "route": "/evenement/creer",
+            "label": "Ekitaldi bat gehitu"
+        },
+        "button1": {
+            "route": "/evenements",
+            "label": "Ekitaldiak ikusi"
+        },
+        "title": "Zure ekitaldientzat autokidetza antolatu"
+    },
+    "solidary": {
+        "button2": {
+            "route": "/covoiturage/publierannonce/solidaire",
+            "label": "Esku ukaldi bat eman"
+        },
+        "button": {
+            "route": "/#/carpools/solidary/home/request",
+            "label": "Esku ukaldi baten eskaera"
+        },
+        "text": "Elkar lagundu lanbide bat atzemateko",
+        "title": "ELKARTASUNEZKO AUTOKIDETZA"
+    },
+    "event": {
+        "button": {
+            "route": "/covoiturages-evenements",
+            "label": "Ekitaldiak ikusi"
+        },
+        "title": "EKITALDIAK",
+        "text": "Ekitaldi berdinera dihoazten autokideak atzeman."
+    },
+    "community": {
+        "button": {
+            "route": "/covoiturage-communaute",
+            "label": "Komunitateak ikusi"
+        },
+        "text": "Nire taldeko edo enpresako kideak ezagutu.",
+        "title": "KOMUNITATEAK"
+    }
 }

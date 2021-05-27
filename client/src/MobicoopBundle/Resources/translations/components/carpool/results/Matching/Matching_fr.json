@@ -4,7 +4,7 @@
     "externalUrl": "/covoiturage/annonce/{id}/externe",
     "matchingUrl": "/covoiturage/recherche/matching",
     "carpoolUrl": "/covoiturage/demande",
-    "contactUrl": "/covoiturage/contact",
+    "contactUrl": "/utilisateur/messages/nouveau",
     "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "ptSearchUrl": "/transport-public/recherche",

@@ -1,3 +1,6 @@
+# Release 1.27.0
+* After a simple contact from search results, the message thread is no longer kept in the mailbox
+
 # Release 1.26.0
 * Display public transport operator in results. Show duration of the journey.
 * CO2 economy is computed by the API and visible in user's public profile and user's profile

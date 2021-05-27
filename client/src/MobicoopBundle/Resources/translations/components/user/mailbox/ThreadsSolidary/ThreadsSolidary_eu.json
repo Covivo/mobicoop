@@ -1,4 +1,4 @@
 {
-    "urlGet": "/utilisateur/messages/solidaires",
-    "noSolidary": "Vous n'avez pas encore solicité un autre inscrit pour un trajet solidaire."
+    "noSolidary": "Ez zira oraindik izena eman duen beste norbaitekin harremanetan jarri elkartsun bidaia batentzako.",
+    "urlGet": "/utilisateur/messages/solidaires"
 }

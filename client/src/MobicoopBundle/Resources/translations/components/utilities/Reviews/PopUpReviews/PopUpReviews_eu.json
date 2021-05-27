@@ -1,7 +1,7 @@
 {
-    "tooltip":"Laisser une évaluation",
-    "intro":{
-        "part1":"Vous pouvez laisser un avis à {user}",
-        "part2":"Ce commentaire sera visible de tous les utilisateurs."
-    }
+    "intro": {
+        "part2": "Oharra erabiltzaile guziek ikusiko dute.",
+        "part1": "{user}-ri iritzi bat utzi iezaiozu"
+    },
+    "tooltip": "Balioztatze bat utzi"
 }

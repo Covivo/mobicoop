@@ -855,7 +855,7 @@ class ResultItem
         if (($this->isSunCheck() || !$hasTime) && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
-        $this->multipleTimes = (count($time) > 1);
+        $this->multipleTimes = (count($time) == 0 || count($time) > 1);
 
         return $this;
     }

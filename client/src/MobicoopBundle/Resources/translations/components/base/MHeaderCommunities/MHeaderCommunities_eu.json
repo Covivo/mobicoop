@@ -1,7 +1,7 @@
 {
-    "urlCommunityDetails": "/autokidetza-komunitatea/{id}/{urlKey}",
-    "urlCommunityList": "/autokidetza-komunitatea",
+    "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}",
+    "urlCommunityList": "/covoiturage-communaute",
     "availableCommunities": "Libro diren komunitateak",
-    "getCommunities": "/erabiltzaile/komunitateak",
+    "getCommunities": "/utilisateur/communautes",
     "title": "Nire komunitateak"
 }

@@ -1,6 +1,6 @@
 {
-    "label":"Vous pouvez écrire votre commentaire",
-    "leaveReviewUri":"/utilisateur/avis/ecrire",
-    "validate":"Valider",
-    "fail":"Erreur dans le dépot de l'avis"
+    "fail": "Abisu pausatzean huts bat agertu da",
+    "validate": "Bali egin",
+    "leaveReviewUri": "/utilisateur/avis/ecrire",
+    "label": "Zure oharrak idatz itzazu"
 }

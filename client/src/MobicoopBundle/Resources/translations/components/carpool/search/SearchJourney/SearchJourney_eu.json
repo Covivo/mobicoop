@@ -1,49 +1,49 @@
 {
-    "title": "Mobicoop",
-    "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
-    "origin": {
-        "label": "Lieu de départ",
-        "error": "Obligatoire"
-    },
-    "destination": {
-        "label": "Lieu d'arrivée",
-        "error": "Obligatoire"
+    "buttons": {
+        "search": {
+            "label": "Bilatu"
+        },
+        "shareAnAd": {
+            "label": "Iragarki bat argitaratu"
+        }
     },
     "swap": {
-        "alt": "Intervertir origine et destination",
-        "help": "Cliquez pour intervertir origine et destination"
+        "help": "Abiatze eta iriste tokia gibelez aitzina ezartzeko klikatu",
+        "alt": "Iriste eta abiatzea gibelez aitzina ezarri"
     },
-    "radio": {
-        "driver": {
-            "label": "Je suis conducteur.rice"
-        },
-        "passenger": {
-            "label": "Je suis passager.ère"
-        },
-        "both": {
-            "label": "Peu importe"
-        }
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
+    "title": "Mobicoop",
+    "fullDate": "ddd Do MMMM YYYY",
+    "outwardDate": {
+        "error": "Beharrezkoa",
+        "label": "Abiatze eguna"
     },
     "switch": {
-        "regular": {
-            "label": "Trajet régulier",
-            "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est occasionnel puis choisissez une date"
-        },
         "punctual": {
-            "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est régulier"
-        }
-    },
-    "outwardDate": {
-        "label": "Date de départ",
-        "error": "Obligatoire"
-    },
-    "buttons": {
-        "shareAnAd": {
-            "label": "Publier une annonce"
+            "help": "Komuntagailua klika ezazu zure bidaia erregularra zehazteko"
         },
-        "search": {
-            "label": "Rechercher"
+        "regular": {
+            "help": "Komutagaailuan klika ezazu zure noiztenkako bidaia zehazteko eta egun bat hauta ezazu",
+            "label": "Bidaia erregularra"
         }
     },
-    "fullDate": "ddd Do MMMM YYYY"
+    "radio": {
+        "both": {
+            "label": "Bata ala bestea"
+        },
+        "passenger": {
+            "label": "Bidaiaria naiz"
+        },
+        "driver": {
+            "label": "Gidaria naiz"
+        }
+    },
+    "destination": {
+        "error": "Beharrezkoa",
+        "label": "Iristeko gunea"
+    },
+    "origin": {
+        "error": "Beharrezkoa",
+        "label": "Abiatzeko gunea"
+    }
 }

@@ -158,7 +158,8 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/carpool/update.html.twig', [
             "ad" => $ad,
             "hasAsks" => $hasAsks,
-            "hasPotentialAds" => $hasPotentialAds
+            "hasPotentialAds" => $hasPotentialAds,
+            "solidaryExclusive" => $ad->isSolidaryExclusive()
         ]);
     }
 
@@ -538,23 +539,6 @@ class CarpoolController extends AbstractController
         }
 
         return $this->json($result);
-    }
-
-    /**
-     * Initiate contact from carpool results
-     * (AJAX POST)
-     */
-    public function carpoolContact(Request $request, AdManager $adManager)
-    {
-        $params = json_decode($request->getContent(), true);
-
-        $ask = $adManager->createAsk($params, false);
-
-        if (!is_null($ask)) {
-            return $this->json($ask);
-        } else {
-            return $this->json("error");
-        }
     }
 
     /**

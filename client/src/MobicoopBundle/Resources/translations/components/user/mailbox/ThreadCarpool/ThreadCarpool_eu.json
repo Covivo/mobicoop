@@ -1,12 +1,12 @@
 {
-    "at": "à",
-    "Mon": "Lun",
-    "Tue": "Mar",
-    "Wed": "Mer",
-    "Thu": "Jeu",
-    "Fri": "Ven",
-    "Sat": "Sam",
-    "Sun": "Dim",
-    "userDelete": "Utilisateur désinscrit",
-    "unread":"{nb} non lus"
+    "unread": "{nb} ez irakurria",
+    "userDelete": "Erabiltzailea desinskriatua da",
+    "Sun": "Ig.",
+    "Sat": "Lr.",
+    "Fri": "Or.",
+    "Thu": "Os.",
+    "Wed": "Az.",
+    "Tue": "As.",
+    "Mon": "Al.",
+    "at": "xxx-ra"
 }

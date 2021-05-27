@@ -1,15 +1,15 @@
 {
-    "title": "Vérification de votre email",
-    "token": "Votre code de vérification",
-    "urlSignUpValidation": "/utilisateur/login-token",
+    "canValid": "Zure kontua baiezta dezakezu <strong>e-mezuko edukian </strong> baieztapen estekan klikatuz edo <strong>kopiatu-kolatu kodea</strong> zuzenean beherean.",
+    "validationMailSend": "Baieztapen e-mezua igorria izan da.",
+    "almostDone": "Izen ematea kasik bukatua da.",
+    "unknown": "Kodea ez da ezagutua",
+    "updateError": "Kode hori ez da kontu grabatu bati lotua",
+    "alreadyValidated": "Zure kontua jadanik baieztatu izan da",
+    "validate": "Zure izen ematea baieztatu",
+    "errorCredentials": "Egiaztatze kodea ez da ezagutua izan",
+    "tokenRequired": "zure egiaztapen kodea baitezpadakoa da",
     "urlEmailValidation": "/utilisateur/login-token/email",
-    "tokenRequired": "Votre code de vérification est obligatoire",
-    "errorCredentials": "Code de vérification non reconnu",
-    "validate": "Confirmer votre inscription",
-    "alreadyValidated": "Votre compte a déjà été confirmé",
-    "updateError": "Ce code ne correspond à aucun compte enregistré",
-    "unknown": "Ce code n'est pas reconnu",
-    "almostDone": "L'inscription est presque finie.",
-    "validationMailSend": "Un email de validation a été envoyé.",
-    "canValid": "Vous pouvez maintenant valider votre compte en <strong>cliquant sur le lien de validation</strong> contenu dans l'email ou bien <strong>copier-coller le code</strong> directement ci-dessous."
+    "urlSignUpValidation": "/utilisateur/login-token",
+    "token": "Zure kodearen egiaztapena",
+    "title": "Zure emailaren egiaztapena"
 }

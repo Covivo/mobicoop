@@ -1,17 +1,17 @@
 {
-    "notLinkedToACarpool": "Ce fil de discussion n'est pas lié à un covoiturage",
-    "roundTrip": "Trajet Aller-Retour",
-    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+    "blockUrl": "/user/block",
+    "block": "Blokatu",
+    "blocked": "Blokatua",
+    "userDelete": "Erabiltzailea desinskriatua da",
+    "priceTooltip": "Prezio adierazgarria",
+    "price": "Prezioa",
+    "seatsAvailable": "Libro diren tokiak",
+    "distanceTooltip": "Autokidetzaren distantzia gidariaren itzulingurua kontatuz",
+    "distance": "Distantzia",
     "regular": {
-        "ask": "Proposer un covoiturage régulier"
+        "ask": "Autokidetza erregular bat proposatu"
     },
-    "distance": "Distance",
-    "distanceTooltip": "Distance covoiturée incluant le détour conducteur",
-    "seatsAvailable": "Places disponibles",
-    "price": "Prix",
-    "priceTooltip": "Tarif indicatif",
-    "userDelete": "Utilisateur désinscrit",
-    "block": "Bloquer",
-    "blocked": "Bloqué",
-    "blockUrl": "/user/block"
+    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+    "roundTrip": "Joan-etorri bidaia",
+    "notLinkedToACarpool": "Solasaldi horrek ez du zerikusirik autokidetza batekin"
 }

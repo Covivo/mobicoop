@@ -1,17 +1,17 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.contact.givenName|capitalize}} {{context.contact.familyName|capitalize}}</b>.</p>
+    <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.contact.givenName|capitalize}} {{context.contact.familyName|capitalize}}</b>.</p>
     <p>
-        {{ "newContactAsk"|trans }}.
+        Bonjour vous avez une nouvelle demande de contact.
     </p>
 
     <ul>
-        <li>{{ "name"|trans }} : {{ context.contact.familyName ? context.contact.familyName : "notMentioned"|trans }}</li>
-        <li>{{ "firstname"|trans }} : {{ context.contact.givenName ? context.contact.givenName : "notMentioned"|trans }}</li>
-        <li>{{ "email"|trans }} : {{ context.contact.email }}</li>
-        <li>{{ "ask"|trans }} : {{ context.contact.demand ? context.contact.demand|trans : "notMentioned"|trans }}</li>
+        <li>Nom : {{ context.contact.familyName ? context.contact.familyName : "Non renseigné" }}</li>
+        <li>Prénom : {{ context.contact.givenName ? context.contact.givenName : "Non renseigné" }}</li>
+        <li>Email : {{ context.contact.email }}</li>
+        <li>Demande : {{ context.contact.demand ? context.contact.demand : "Non renseigné" }}</li>
     </ul>
     <p>{{ context.contact.message|nl2br }}</p>
-    <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+    <p>"A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
 {% endblock %}

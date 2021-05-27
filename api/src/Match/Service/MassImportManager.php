@@ -813,7 +813,7 @@ class MassImportManager
                         } else {
                             $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                         }
-                    } elseif ($fields[$i] == "returnTime") {
+                    } elseif ($fields[$i] == "returnTime" && $tab[$i]!=="") {
                         $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$returntime) {
                             $error = true;

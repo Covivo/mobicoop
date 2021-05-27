@@ -1,11 +1,11 @@
 {
-    "communitiesAvailable": "Communautés disponibles",
-    "myCommunities": "Mes communautés",
-    "createCommunity": "Créer une communauté",
-    "search": "Rechercher",
-    "all": "Tous",
-    "linePerPage": "Nombre de lignes par page",
-    "seeAds": "Voir les annonces",
+    "noCommunity": "Ez da komunitaterik",
     "urlGetCommunities": "/community/getCommunityList",
-    "noCommunity": "Aucune communauté"
+    "seeAds": "Ikus iragarkiak",
+    "linePerPage": "Linea kopurua orrialdeka",
+    "all": "Denak",
+    "search": "Xerkatu",
+    "createCommunity": "Komunitate bat sortu",
+    "myCommunities": "Nire komunitateak",
+    "communitiesAvailable": "Libro diren komunitateak"
 }

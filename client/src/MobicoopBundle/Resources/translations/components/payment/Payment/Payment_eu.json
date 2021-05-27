@@ -1,62 +1,62 @@
 {
-    "wallet": "Emplacement porte monnaie",
-    "donations": "Dons",
-    "titleRegular": "Paiements trajets réguliers",
-    "titlePunctual": "Paiements",
-    "titleConfirmation": "Confirmation paiement passagers",
-    "outward": "Aller",
-    "return": "Retour",
-    "price": "Montant: {price} €",
-    "sumToPay": "Total à payer: {price} €",
-    "electronicPay": "Je paie en ligne",
-    "directPay": "J’ai payé à la main",
-    "directPaymentReceived": "Paiement reçu à la main | Paiements reçus à la main",
-    "report": {
-        "label": "Signaler un impayé",
-        "text1": "Vous déclarez ne pas avoir été payé pour ce covoiturage. Veuillez cliquer sur «Valider» pour confirmer.",
-        "text2": "Une notification sera envoyée au passager. Nous vous invitons à prendre contact via la messagerie, avec le passager, pour régler le problème.",
-        "cancel": "Annuler",
-        "valid": "Valider",
-        "labelIsReported": "Impayé"
+    "tipsEncouragement": {
+        "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre",
+        "textLink": "emaitza bat eginez hemen",
+        "text": "{platformName} zerbitzu librean da, komisiorik eta iragarkirik gabe. Baina plataforma mantentzen laguntzeko, esku ukaldi bat eman dezakezu"
     },
-    "buttons": {
-        "previous": "Précedent",
-        "next": "Suivant",
-        "back": {
-            "label": "Retour",
-            "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
-        },
-        "validate": "Valider",
-        "confirm": "Confirmer",
-        "directPay": "J’ai payé à la main",
-        "directPayConfirm": "Confirmer paiement à la main",
-        "isConfirmed": "Paiement à la main confirmé"
+    "loadingPageText": "Egin edo baieztatu behar diren ordainketen kargatzea",
+    "noMoreItems": "Ez da ordainketarik egin edo baieztatze igurikatzerik.",
+    "noOnlinePayment": {
+        "line2": "Zure helbide osoa bete bahar duzu (karrika izena, zenbakia...) adibidez, eta ez soilik zure bizilekuaren herria.",
+        "line1": "Zure perfila ez denez osoki betea ezin duzu linean ordaindu."
     },
-    "select": {
-        "label": "Période"
+    "to": " arte ",
+    "from": "-tik ",
+    "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
+    "regularInfo": "Zoinbait egunetan ez baduzu{driver} -ekin autokidetza egin, behereko laukia desmarka ezazu.",
+    "tooltip": {
+        "message": "Ezin duzu linean ordaindu, gidariak ez baititu bere banku datuak sartu."
     },
     "payments": {
-        "getPayments": "/payments/get",
-        "postPayments": "/payments/post",
+        "getFirstWeek": "/getFirstWeek",
         "getCalendar": "/getCalendar",
-        "getFirstWeek": "/getFirstWeek"
+        "postPayments": "/payments/post",
+        "getPayments": "/payments/get"
     },
-    "tooltip": {
-        "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires."
+    "select": {
+        "label": "Garaia"
     },
-    "regularInfo": "Si vous n'avez pas covoituré avec {driver} certains jours, vous pouvez les décocher ci-dessous.",
-    "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-    "from": "du ",
-    "to": " au ",
-    "noOnlinePayment": {
-        "line1": "Votre profil n'étant pas complet vous ne pouvez pas payer en ligne.",
-        "line2": "Vous devez par exemple saisir votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence."
+    "buttons": {
+        "isConfirmed": "Eskuz eskuko ordainketa baieztatua",
+        "directPayConfirm": "Eskuz eskuko ordainketa baieztatu",
+        "directPay": "Eskuz esku ordaindu dut",
+        "validate": "Balioztatu",
+        "confirm": "Baieztatu",
+        "back": {
+            "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
+            "label": "Itzuli"
+        },
+        "next": "Hurrengoa",
+        "previous": "Aitzinekoa"
     },
-    "noMoreItems":"Il n'y a plus de paiement à réaliser ou en attente de confirmation.",
-    "loadingPageText":"Chargement des paiements à réaliser ou à confirmer",
-    "tipsEncouragement":{
-        "text":"{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
-        "textLink":"un don ici",
-        "link":"https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre"
-    }
+    "report": {
+        "labelIsReported": "Ordaindugabea",
+        "valid": "Baieztatu",
+        "cancel": "Ezeztatu",
+        "text2": "Bidaiariari notifikazio bat bidaliko zaio. Gonbidatzen zaitugu bidaiariarekin harremanetan jartzen, arazoa konpontzeko.",
+        "text1": "Adierazten duzu autokidetza honentzat ez duzula ordaindu. Baieztatzeko\"Baieztatu\"-n klik egizu.",
+        "label": "Ordaindugabe bat seinalatu"
+    },
+    "directPaymentReceived": "Ordainketa eskuz esku errezibitu dut | ordainketa eskuz errezibitua",
+    "directPay": "Eskuz esku ordaindu dut",
+    "electronicPay": "Linean ordaintzen dut",
+    "sumToPay": "Orotara ondaintzekoa:{price} €",
+    "price": "Diru zama:{price} €",
+    "return": "Etorri",
+    "outward": "Joan",
+    "titleConfirmation": "Bidaiarien ordainketaren baieztapena",
+    "titlePunctual": "Ordainketak",
+    "titleRegular": "Bidaia erregularren ordainketa",
+    "donations": "Emaitza",
+    "wallet": "Diru zorroaren kokalekua"
 }

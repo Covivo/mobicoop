@@ -1,7 +1,7 @@
 {
-    "urlFacebookConnect": "/utilisateur/facebook/connexion",
-    "signup": "Inscription par facebook",
-    "connection": "Connexion par facebook",
-    "fillPublicInfos": "Le formulaire a été pré rempli avec les informations publiques de votre profil Facebook.",
-    "fillRemainingFields": "Merci de compléter les champs obligatoires restants."
+    "fillRemainingFields": "Eskertzen zaitugu baitezpadakoak diren ondoko eremuak betetzea.",
+    "fillPublicInfos": "Formularioa aitzinetik betea izan da zure Facebook perfileko informazio publikoekin.",
+    "connection": "Konexioa facebook-etik",
+    "signup": "Izen ematea facebook-etik",
+    "urlFacebookConnect": "/utilisateur/facebook/connexion"
 }

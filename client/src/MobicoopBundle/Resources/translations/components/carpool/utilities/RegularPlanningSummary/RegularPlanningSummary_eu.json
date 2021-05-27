@@ -1,7 +1,7 @@
 {
-    "outward": "Aller",
-    "return": "Retour",
-    "multiple": "multiples",
-    "fullMultiple": "Les horaires diffèrent selon les jours",
-    "hourMinute": "HH[h]mm"
+    "hourMinute": "HH[h]mm",
+    "fullMultiple": "Tenoreak desberdinak egunen arabera",
+    "multiple": "anitz",
+    "return": "Etorri",
+    "outward": "Joan"
 }

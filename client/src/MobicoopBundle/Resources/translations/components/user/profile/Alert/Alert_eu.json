@@ -1,33 +1,33 @@
 {
-    "alerts": {
-        "carpool_ask_posted": "Sollicitation pour un covoiturage",
-        "communication_internal_message_received": "Nouveau message dans la messagerie",
-        "carpool_matching_new": "Nouveaux covoiturages potentiels",
-        "carpool_ask_accepted": "Covoiturage accepté",
-        "carpool_ask_refused": "Covoiturage refusé",
-        "carpool_ad_renewal": "Renouveler mes trajets en fin de validité",
-        "carpool_proposal_canceled": "Annulation d'un covoiturage *",
-        "*******": "Incitation à évaluer mon covoitureur",
-        "carpool_ask_linked_ad_deleted": "Suppression de l'annonce sujet de ma demande",
-        "passenger_carpool_linked_ad_deleted": "Suppression de l'annonce liée à un covoiturage accepté comme passager",
-        "passenger_carpool_linked_ad_deleted_urgent": "Suppression de l'annonce liée à un covoiturage accepté comme passager et imminent",
-        "driver_carpool_linked_ad_deleted": "Suppression de l'annonce liée à un covoiturage accepté comme conducteur",
-        "driver_carpool_linked_ad_deleted_urgent": "Suppression de l'annonce liée à un covoiturage accepté comme conducteur et imminent",
-        "validate_create_event": "Confirmation de création d'événement",
-        "pay_after_carpool":"Payer un covoiturage effectué",
-        "pay_after_carpool_regular":"Payer une semaine de covoiturage",
-        "confirm_direct_payment":"Confirmer le paiement d'un covoiturage",
-        "confirm_direct_payment_regular":"Confirmer le paiement d'une semaine de covoiturage"
+    "ok": "ADOS",
+    "popup": {
+        "content": "Kasu, ez duzu gehiago kanpoko notifikaziorik aktibatua {alert}-ren kasuan. Gai honetaz informatua izateko plataforman konektatu beharko zira.",
+        "title": "Argibideak"
     },
     "medium": {
-        "media1": "Message",
-        "media2": "Email",
+        "media4": "Push",
         "media3": "SMS",
-        "media4": "Push"
+        "media2": "Email",
+        "media1": "Mezua"
     },
-    "popup": {
-        "title": "Information",
-        "content": "Attention, vous n'avez plus aucune notification extérieure activée en cas de {alert}. Vous ne pourrez être informé à ce sujet qu'en venant par vous-même vous connecter sur la plate-forme."
-    },
-    "ok": "OK"
+    "alerts": {
+        "confirm_direct_payment_regular": "Aste bateko autokidetzaren ordainketaren baieztapena",
+        "confirm_direct_payment": "Autokidetza baten ordainketa baieztatu",
+        "pay_after_carpool_regular": "Asteko autokidetza ordaindu",
+        "pay_after_carpool": "Egindako autokidetza ordaindu",
+        "validate_create_event": "Ekitaldiaren sortzearen baieztapena",
+        "driver_carpool_linked_ad_deleted_urgent": "Gidari gisa eta berehalakoa zen eta onartua izan zen autokidetzaren iragarkia kendua izan da",
+        "driver_carpool_linked_ad_deleted": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
+        "passenger_carpool_linked_ad_deleted_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
+        "passenger_carpool_linked_ad_deleted": "Bidaiari gisa onartua izan zitzaidan autokidetzari loturiko iragarkia kendua izan da",
+        "carpool_ask_linked_ad_deleted": "Nik galdegindako iragarkia ezeztatua",
+        "*******": "Nire autokidea ebaluatzeko sustapena",
+        "carpool_proposal_canceled": "Autokidetza baten ezeztatzea*",
+        "carpool_ad_renewal": "Laster bali izanen ez bidaiak berritu",
+        "carpool_ask_refused": "Autokidetza ez onartuak",
+        "carpool_ask_accepted": "Autokidetza onartuak",
+        "carpool_matching_new": "Autokide potentzial berriak",
+        "communication_internal_message_received": "Mezu berri bat mezutegian",
+        "carpool_ask_posted": "Eskaera bat autokitza batentzat"
+    }
 }

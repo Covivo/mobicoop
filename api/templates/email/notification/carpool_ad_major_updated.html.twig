@@ -16,7 +16,7 @@
                     <tr>
                         <td>
                             <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30px">
-                                <b>{{ "cancelledCarpool"|trans }}</b></p>
+                                <b>Covoiturage annulé</b></p>
                             <hr>
                         </td>
                     </tr>
@@ -28,12 +28,12 @@
                 <table style="width:100%;">
                     <tr>
                         <td style="width:70%">
-                            <p>{{ "hello"|trans }}<b
+                            <p>Bonjour<b
                                         style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
                             </p>
-                            <p>{{ "yourCarpoolWith"|trans }}<b
-                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasBeenCancelledBecause"|trans }}
-                                <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> {{ "hasUpdatedHisAd"|trans }}
+                            <p>Votre covoiturage avec<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a été annulé car
+                                <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a modifié son annonce.
                             </p>
                         </td>
                         <td style="width:30%">
@@ -70,7 +70,7 @@
                         <tr>
                             <td style="width:70%">
                                 <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }}">
-                                    {{ "ownerMessage"|trans|raw}}
+                                    Téléchargez l'application <b>Android</b> ou <b>IOS</b>
                                 </p>
                                 <p>
                                     {{ new.cancellationMessage }}
@@ -85,14 +85,14 @@
             <tr>
                 <td>
                     <a href="{{ context.object.searchLink}}">
-                        {{ "clickNewSearch"|trans }} {{ outwardOrigin.address.displayLabel[0] }} => {{ outwardDestination.address.displayLabel[0] }}
+                        Vous pouvez cliquer sur ce lien afin de relancer votre recherche {{ outwardOrigin.address.displayLabel[0] }} => {{ outwardDestination.address.displayLabel[0] }}
                     </a>
                 </td>
             </tr>
         {% endif %}
         <tr>
             <td>
-                <p>{{ "noPenaltyApplied"|trans|raw }}</p>
+                <p>Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.</p>
             </td>
         </tr>
 

@@ -1,22 +1,22 @@
 shortdaySunday: Ig.
 shortdaySaturday: Lr.
-shortdayFriday: ol.
+shortdayFriday: or.
 shortdayThursday: Og.
 shortdayWednesday: Az.
 shortdayTuesday: As.
 shortdayMonday: Al.
-signature: 'Ondoko hitzordua:'
+signature: 'Ondoko hitzordua'
 FollowUs: Segi gaitzazu
 Download: <b>Android</b> ou <b>IOS</b> aplikazioa telekarga ezazu
-URLEmailsAlerts: erabiltzailea/profila/aldatu/nire profila
+URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
 EmailsAlerts: Zure e-mezu alertak kudea itzazu
 FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
-youHaveAMessage: Mezu berri bat ukan duzu
+youHaveAMessage: Mezu berri bat jaso duzu
 updatedCarpoolDetails: X-(e)k zure {origin}-tik {destination}-rako autokidetzaren
   xehetasun batzuk aldatu ditu
-clickNewSearch: Estekan klika dezakezu zure bilaketa berrabiarazteko
+clickNewSearch: Zure bilaketa berrabiarazteko loturan klik egizu
 ownerMessage: 'Hona iragarki-jabearen mezua:'
 cancelledCarpool: Autokidetza ezeztatua izan da
 no: Ez
@@ -24,9 +24,9 @@ yes: Bai
 new: Berria
 old: Zaharra
 comment: Oharrak
-seatsDriver: Leku hutsak
+seatsDriver: Jarleku hutsak
 luggage: Zaku handiak
-backSeats: 2 gibelean
+backSeats: 2 jarleku gibelean
 bike: Bizikleta
 field: Eremua
 updateFieldsListTitle: 'Hona aldatuak izan diren informazioen xehetasunak:'
@@ -36,7 +36,7 @@ carpoolProposalUpdated: Zure eskaerari loturiko iragarkia aldatua izan da
 justPublished: argitaratu berria da
 toConsultCorrespondingAdsAndMakeContact: araberako iragarkiak ikusteko eta harremanetan
   jartzeko
-linkMyAds: /erabiltzailea/profila/aldatu/nire-iragarkiak
+linkMyAds: /utilisateur/profil/modifier/mes-annonces
 myAds: Nire iragarkiak
 askForCarpool: autoa partekatzeko eskaera bat baduzu.
 return: ETORRI
@@ -58,18 +58,18 @@ isConfirmed: baieztatua da!
 acceptedCarpool: ZURE AUTOKIDETZA BAIEZTATUA DA!
 contactCommunity: Komunitate baten sortzeko eskaera
 contactPartnership: Partaidetza eskaera berria
-contactTechnicalIssues: Sostengu eskaera berri bat
+contactTechnicalIssues: Sostengu eskaera berria
 newCarpoolAdMatchingYourCommute: Zure xxx eta xxx arteko bidaiari dagokion autokidetza
   iragarki berri bat bada
-clickOnLinkToSearchAgain: Lotura honetan klikatu bilaketa berrabiatzeko
-deletedAccountOccasionalCarpool: ' X-(e)k bere kontua kendu du eta ezingo du xx/xx/xx-(e)(a)n
+clickOnLinkToSearchAgain: Bilaketa berrabiatzeko lotura honetan klik egizu
+deletedAccountOccasionalCarpool: ' X-(e)k bere kontua hetsi du eta ezingo du xx/xx/xx-(e)(a)n
   autoa zurekin partekatu '
-pickUp: 'Hartze lekua: '
+pickUp: 'Hartze lekua '
 at: 'xxx-(e)ra '
 hasUpdatedHisAd: bere iragarkia aldatu du.
-header1Data: Autokidetza-ouestgo
-header1Name: X-JEMH-esleitua
-mobileUrlUpdatePassword: /#/carpools/pasahitza berrabiarazi?marka-ikurra=
+header1Data: jira-ouestgo
+header1Name: X-JEMH-assignee
+mobileUrlUpdatePassword: /#/carpools/reset-password?token=
 click: Hemen klika ezazu.
 goToAcceptedCarpoolsTovalidate: 'Zoaza "Autokidetza onartuak" atalera, eskuz-eskuzko
   ordainketa honen baieztatzeko, edo bestenaz seinala ezazu ez dela ordaindua izan.'
@@ -78,21 +78,22 @@ yourAskCarpoolBetween: Zure xxxx eta xxxx arteko autokidetza eskaera
 yourCarpoolBetween: Zure xxxxx eta xxxxxx arteko autokidetza
 yourPasswordIs: Zure pasahitza xxxxxx da
 the: 'xx/xx/xx-(e)an '
-urlPublish: /Autokidetza/iragarkiargitaratu
+urlPublish: /covoiturage/publierannonce
 canceledOccasionalCarpool: ' X-(e)k bere bidaia ezeztatu du eta ezingo du autoa zurekin
   partekatu xx/xx/xx-(e)an '
 canceledRegularCarpool: '  X-(e)k bere ohiko bidaia ezeztatu du eta ezingo du autoa
   zurekin partekatu xx/xx/xx-(e)an '
-deletedAccountRegularCarpool: ' X-(e)k bere kontua kendu du eta ezingo du xx/xx/xx-(e)(a)n
+deletedAccountRegularCarpool: ' X-(e)k bere kontua hetsi du eta ezingo du xx/xx/xx-(e)(a)n
   autoa zurekin partekatu '
 homeAddress: Etxea
-domicile: etxeHelbidea
+domicile: homeAddress
 directPayment: Ordainketa eskuz-esku
 onLinePayment: Ordainketa linea bidez
 paymentNotDone: Ez ordaindua
 passenger: Bidaiaria
 driver: Gidaria
 certified: Egiaztatua
+seeProofsClasses: "voir les classes"
 typeOfpayment: Ordainketa
 amount: Parte hartze zenbatekoa
 dropOffLocality: Uzte lekua
@@ -130,7 +131,7 @@ identityProofRejected: Nortasun agiria ukatua izan da
 yourProofIsAccepted: Helarazi diguzun nortasun agiria egiaztatua eta onartua izan
   da.
 identityProofAccepted: Nortasun agiria onartua
-linkValidatePaymentRoute: /erabiltzailea/perfila/aldatu/nire-autokitzak-onartuak
+linkValidatePaymentRoute: /utilisateur/profil/modifier/mes-covoiturages-acceptes
 linkValidatePaymentLabel: Ordainketa bat baieztatu.
 clickOnlinkToConfirmOrNot: 'Ondoko xxxx loturan klika ezazu, eskuz-eskuzko ordainketa
   honen baieztatzeko, edo bestenaz seinala ezazu ez dela ordaindua izan: '
@@ -156,7 +157,7 @@ toUseTheService: zerbitzu honen erabiltzen! Zure joan-etorriak parteka itzazu et
   zure zoriona aurki ezazu
 nowYouAreMore: Orain xxxxx baino gehiago zarete
 changePassword: Azkarki gomendatzen dizugu pasahitza aldatzea zure ondoko konexioan
-temporaryPassword: '{pasahitza}'
+temporaryPassword: '{password}'
 temporaryPasswordAttributed: Aldi bateko pasahitz bat emana izan zaizu
 massMigrated: Zure autokidetza kontua
 journeyDetailTime: Aurreikusia {journeyDate}-(e)an - {journeyTime}-e(t)an.
@@ -168,7 +169,7 @@ useDirectContact: Bere mezuan, untsalaz utzi dizkizun datuak erabil ditzakezu, h
   zuzenean harremanetan jartzeko.
 noDirectResponse: Erabiltzaile hau beste autokidetza plataforma batean izena eman
   duenez, ezin diozu erantzun  {instanceName}-ren bidez.
-youReceivedExternalContactOrigin: '{jatorria}'
+youReceivedExternalContactOrigin: '{origin}'
 youReceivedExternalContact: 'Bere izena xxxx-(e)an eman duen autokide baten mezua
   ukan duzu'
 rdexMessage: Bere mezua
@@ -176,10 +177,10 @@ externalContact: Kontaktu bat ukan duzu autokidetza batentzat
 unsubscribeEmailAlertFront: '{instanceName} zerbitzuaren Berrietatik desharpidetua
   izan zira. Zure izena berriz emateko, Perfila > Nire kontua helbidera joan zaitez.'
 unsubscribeEmail: Hemen klika ezazu, {instanceName} zerbitzuaren Berrietatik desharpidetzeko
-urlUnsubscribeEmail: /erabiltzailea/desharpidetu
-header3Data: IgorleIzena
+urlUnsubscribeEmail: /utilisateur/unsubscribe
+header3Data: senderName
 header3Name: X-JEMH- Solaskidearen deitura eta izena
-header2Data: E-mezuIgorlea
+header2Data: senderEmail
 header2Name: X-JEMH- Solaskidearen helbide elektronikoa
 yourValidationToken: Zure baieztapen kodea
 updatedSefl: Zure perfilaren aldaketa
@@ -203,7 +204,7 @@ driverAskLinkedAdDeletedUrgent: Kasu - Bidaiari batek ezeztatu du gidari gisa ag
 driverAskLinkedAdDeleted: Bidaiari batek ezeztatu du gidari gisa agertzen zinen iragarki
   bat
 askLinkedAdDeleted: Ihardetsi zenion iragarki bat kendua izan da
-accountDeleted: bere kontua kendu du eta ez du autoa zurekin partekatuko xxxxx-(e)tik
+accountDeleted: bere kontua hetsi du eta ez du autoa zurekin partekatuko xxxxx-(e)tik
 carpoolDeleted: bere bidaia ezeztatu du eta ez du autoa zurekin partekatuko xxxxx-(e)tik
 newAd: 'Iragarkia berria(k) xxxxxx-(e)an '
 newCarpoolAd: Autokidetza iragarki berria(k)
@@ -218,13 +219,13 @@ newMatching: Iragarki berri bat argitaratua izan da zure bidaiarentzat
 appointmentIn: Zoaza "Nire iragarkiak" atalera
 newAdPublished: Zure bidaiari dagokion iragarki berri bat
 goTotheSite: 'Autokidetza berriak atzeman itzazu edo iragarki bat pausa ezazu xxxxx-(e)an '
-refusedAskReguar: 'ez du xxxxxx-ren ohiko autokidetza baieztatu '
-refusedAsk: 'ez du xxxx-ren autokidetza onartu '
-clickHereToValidate: Klika ezazu hemen, autokidetza eskaera honi erantzuteko zure
-  mezutegiaren bidez
+refusedAskReguar: 'ez du xxxxxx-ren autokidetza erregularra baieztatu '
+refusedAsk: 'ez du xxxx-ren autokidetza baieztatu '
+clickHereToValidate: Hemen klik egizu, autokidetza eskaera honi erantzuteko zure mezutegiaren
+  bidez
 askYouCarpool: 'autokidetza bat proposatzen dizu xxxxx-(e)tik'
-findTheProposalIn: 'Eskaera onar edo ezezta ezazu "Nire Mezuak" atalean '
-askYouCarpoolRegular: 'ohiko autokidetza bat prosatzen dizu xxxxxx-(e)tik '
+findTheProposalIn: 'Eskaera onartu edo ezezta ezazu "Nire Mezuak" atalean '
+askYouCarpoolRegular: 'Autokidetza erregular bat prosatzen dizu xxxxxx-(e)tik '
 carpoolAskAccepted: 'XXXX-rekilako autokidetza baieztatua da '
 seeTheAd: 'Ikus iragarkia xxxxx-(e)(a)n '
 from: 'xxx-(e)tik '
@@ -234,8 +235,8 @@ carpoolAskAcceptedRegular: 'xxxxx-rekilako ohiko autokidetza baieztatua da '
 renewYourAdsOn: Zure iragarkia arraberri ezazu xxxxx-(e)an
 inFewDays: Zure autokidetza iragarkiak ez dira gehiago bali izanen zenbait egunen
   buruan
-seeReview: Iritzi hori irakur dezakezu zure perfilera joanez
-reviewReceived: 'Iritzi bat ukan duzu {givenName} {shortFamilyName}-ren ganik'
+seeReview: Ohar hori irakur dezakezu zure profilera joanez
+reviewReceived: 'Ohar bat jaso duzu {givenName} {shortFamilyName}-ren ganik'
 reviewReceivedTitle: Iritzi bat ukan duzu
 detailsTextUserReport: 'Seinalamenduaren xehetasunak:'
 theReporterUser: 'Seinalamendua egin duen erabiltzailearen e-mezua {emailReporter}
@@ -248,13 +249,13 @@ reportThatEvent: ekitaldia seinalatu du
 theUser: Erabiltzailea
 eventReport: Ekitaldi bat seinalatua izan da
 eventReportTitle: Ekitaldi baten seinalatzea
-eventUrl: /autokidetza-ekitaldiak/
+eventUrl: /covoiturages-evenements/
 eventDescription: 'Deskribapena: '
 eventLocation: 'Helbidea: '
 eventName: 'Deitura: '
 eventDetail: 'Hona zure ekitaldiaren xehetasunak:'
-event: ZURE EKITALDIA ERREGISTRATUA DA!
-eventCreated: Zure ekitaldia erregistratua da!
+event: ZURE EKITALDIA GRABATUA DA!
+eventCreated: Zure ekitaldia grabatua da!
 noPenaltyApplied: Ez da ezeztatze zigorrik autokidetza honentzat. Iragarkiaren fidagarritasuna
   bermatzeko eta autokideen ezeztatzeak ez errepikatzeko, iragarkien argitaratzearen
   gelditzeko eskubidea daukagu, autokide batek gehiegi ezeztatzen badu.
@@ -264,15 +265,15 @@ with: xxxx-rekin
 withTheDriver: xxxxxx gidariarekin
 withThePassenger: xxxxx bidaiariarekin
 CheckoutForAnyURLMisspellingOr: mezuak
-urlMailBox: /erabiltzailea/mezuak
-profilUpdate: ZURE PERFILAREN EGUNERATZEA BAIEZTATUA DA!
-theModificationIsConfirmed: Zure perfilaren aldaketa baieztatua da
-emailValidationUrl: /erabiltzailea/e-mezua/baieztapena/
+urlMailBox: /utilisateur/messages
+profilUpdate: ZURE PROFILAREN EGUNERATZEA BAIEZTATUA DA!
+theModificationIsConfirmed: Zure profilaren aldaketa baieztatua da
+emailValidationUrl: /utilisateur/email/validation/
 emailValidation: Zure helbide elektronikoaren baieztapena
 yourPasswordHasBeenSendBySms: Zure pasahitza SMS-ez igorria izan zaizu.
-urlMobileEmailValidation: /#/baieztapena-erregistratu/
-urlEmailValidation: /erabiltzailea/izen ematea/baieztatu/
-orUseTheValidationCode: Edo baieztapen kodea zuzenean erabil ezazu webgunean
+urlMobileEmailValidation: /#/confirm-registration/
+urlEmailValidation: /utilisateur/inscription/validation/
+orUseTheValidationCode: Edo zuzenean baieztapen kodea erabil ezazu webgunean
 clickHereToConfirm: Lotura honetan klika ezazu zure e-mezua baieztatzeko
 wellTakenIntoAccount: kontuan hartua izan da
 yourInscriptionAtByTiers: Zure izen ematea {instanceName} zerbitzuan beste norbaiten
@@ -283,7 +284,7 @@ changeYourPassword: Zure pasahitza alda ezazu
 thanksForUse: Milesker xxxxx erabiltzeagatik
 successfullyChanged: aldatua izan da
 yourPassword: Zure pasahitza
-urlUpdatePassword: /erabiltzailea/pasahitza/berrabiarazi/
+urlUpdatePassword: /utilisateur/mot-de-passe/reset/
 linkChangePassword: Pasahitzaren aldatzeko lotura
 clickHereToChangePassword: Lotura honetan klika ezazu zure pasahitzaren aldatzeko
 askNewPassword: Pasahitz berri bat galdegin duzu
@@ -291,7 +292,7 @@ askNewPasswordTitle: Pasahitz berria
 partnership: Partaidetza eskaera
 technicalIssues: Arazo teknikoak
 infos: Argibideak
-notMentioned: Ez zehaztua
+notMentioned: Zehaztugabea
 thankYou: Milesker
 message: Mezua
 ask: Eskaera
@@ -302,7 +303,7 @@ newContactAsk: Egun on, kontaktu berri baten eskaera baduzu
 mailBox: zure mezutegia
 getProblem: E-mezu honek ituna errespetatzen ez duen mezu bat baldin badu, gurekin
   harremanetan jar zaitez
-clickHere: hemen klikatuz
+clickHere: Hemen klik egizu
 canAnswerViaEmailFrom: Mezu honi erantzun iezaiokezu xxxx-ren mezutegiaren bidez
 hasBeenCancelledBecause: ezeztatua izan da zeren
 seeYouIn: Hitzordua
@@ -310,6 +311,7 @@ refusedRegularCarpool: ' X-(e)k ez du autokidetza baieztatu xx/xx/xx-ko ohiko bi
 refusedOccasionalCarpool: ' X-(e)k ez du autokidetza baieztatu xx/xx/xx-ko bidaiarentzat '
 regularCarpoolAsk: 'xx/xx/xx-ko ohiko autokidetza eskaeraren laburbilduma '
 occasionalCarpoolAsk: 'xx/xx/xx-ko noiztenkako autokidetza eskaeraren laburbilduma '
-dropOff: 'Uzte lekua: '
+dropOff: 'Uzte lekua '
 to: xx/xx/xx-(e)an
 yourCarpoolWith: Zure autokitza xxxxx-rekin
+doNotReply: Milesker e-mezu honi ez erantzutea.

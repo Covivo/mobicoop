@@ -1,89 +1,88 @@
 {
-    "leaveCommunity": {
-        "button": "Quitter la communauté",
-        "route": "/communaute/{id}/quitter",
-        "popup": {
-            "title": "Demande de confirmation",
-            "content": {
-                "isProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté privée, ces annonces seront supprimées.<br>Confirmez-vous ?",
-                "isNotProposalsHidden": "Si vous avez encore des annonces valides associées à cette communauté, ces annonces ne seront plus marquées comme étant liées à la communauté une fois que vous l'aurez quittée.<br>Confirmez-vous ?"
-            }
-        }
+    "widget": {
+        "externalRoute": "/communaute/widget/{id}",
+        "route": "/communaute/widget/get/{id}",
+        "textDetails": {
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p3": "<span class=\"font-weight-bold\">Attention</span> : Wordpress bezala argitaratzeko tresna batzutan plugings bereziak gehitu begar dira iFrame bat erabili ahal izateko.",
+            "p1": "Widget-a integratzeko, beheragoko testua kopita eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
+            "title": "widget integratu"
+        },
+        "label": "Ikus Widget-a"
     },
-    "joinCommunity": {
-        "popup": {
-            "title": "Demande de confirmation",
-            "content": {
-                "printPhoneNumberWarning": "Votre numéro de téléphone sera visible par le référent de la communauté.<br>Confirmez-vous ?"
-            }
-        }
-    },
+    "urlCommunityUser": "/community-user",
     "buttons": {
-        "publish": {
-            "label": "Publier une annonce",
-            "route": "covoiturage/recherche/poster"
-        },
-        "accessAdmin": {
-            "label": "Administrer ma communauté"
-        },
-        "search": {
-            "label": "Rechercher",
-            "route": ""
-        },
-        "join": {
-            "label": "Rejoindre la communauté",
-            "route": "/communaute/{id}/rejoindre"
+        "login": {
+            "route": "/utilisateur/connexion"
         },
         "contact": {
             "route": "/utilisateur/messages/nouveau"
         },
-        "login": {
-            "route": "/utilisateur/connexion"
+        "join": {
+            "route": "/communaute/{id}/rejoindre",
+            "label": "Komunitatean sartu"
+        },
+        "search": {
+            "label": "Bilatu"
+        },
+        "accessAdmin": {
+            "label": "Nire komunitatea administratu"
+        },
+        "publish": {
+            "route": "covoiturage/recherche/poster",
+            "label": "Iragarkia argitaratu"
+        }
+    },
+    "leaveCommunity": {
+        "route": "/communaute/{id}/quitter",
+        "popup": {
+            "content": {
+                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
+            },
+            "title": "Baietapen eskaera"
+        },
+        "button": "Komunitatetik atera"
+    },
+    "no": "ez",
+    "yes": "bai",
+    "infos": {
+        "members": "{members} kideak"
+    },
+    "map": {
+        "search": {
+            "label": "Honi loturiko autokidetzak bilatu"
+        },
+        "regular": "Usaiazko bidaia",
+        "destination": "Helmuga",
+        "origin": "Abiatzea",
+        "findMatchings": "<strong>Loturiko iragarkiak bilatu</strong>"
+    },
+    "title": {
+        "searchCarpool": "Komunitatean bidaia bat bilatu"
+    },
+    "snackbar": {
+        "leaveCommunity": {
+            "textError": "Huts bat agertu da berriz entsea ezazu",
+            "textOk": "Ez zira gehiago komunitatearen parte"
+        },
+        "joinCommunity": {
+            "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
+            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
+            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
         }
     },
     "tooltips": {
-        "connected": "Vous devez être connecté",
-        "validation": "En attente de validation",
-        "domain": "Votre adresse email doit faire partie d'un de ces domaines:"
+        "domain": "Helbide eletronikoak ondoko eremu baten parte izan behar da:",
+        "validation": "Egiaztapena igurikatzen",
+        "connected": "Konektatua izan behar zira"
     },
-    "snackbar": {
-        "joinCommunity": {
-            "textOkManualValidation": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
-            "textOkAutoValidation": "Votre demande d'adhésion est validée.",
-            "textError": "Une erreur est survenue, votre adhésion n'a pas été prise en compte."
-        },
-        "leaveCommunity": {
-            "textOk": "Vous ne faites désormais plus partie de cette communauté",
-            "textError": "Une erreur est survenue veuillez essayer à nouveau"
+    "joinCommunity": {
+        "popup": {
+            "content": {
+                "printPhoneNumberWarning": "Komunitateko erreferenteak zure telefono zenbakia ikusten ahalko du.<br>Baieztatzen duzu?"
+            },
+            "title": "Baieztapen eskaera"
         }
-    },
-    "title": {
-        "searchCarpool": "Chercher un trajet dans la communauté"
-    },
-    "map": {
-        "findMatchings": "<strong>Chercher les annonces correspondant</strong>",
-        "origin": "Départ",
-        "destination": "Destination",
-        "regular": "Trajet régulier",
-        "search": {
-            "label": "Chercher les covoiturages correspondants"
-        }
-    },
-    "urlCommunityUser": "/community-user",
-    "widget": {
-        "label": "Voir le Widget",
-        "route": "/communaute/widget/get/{id}",
-        "externalRoute": "/communaute/widget/{id}",
-        "textDetails": {
-            "title": "Intégrer le widget",
-            "p1": "Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br />Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.",
-            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
-            "p3": "<span class=\"font-weight-bold\">Attention</span> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame."
-        }
-    },
-    "yes": "oui",
-    "no": "non",
-    "infos":{
-        "members":"{members} membres"
     }
 }

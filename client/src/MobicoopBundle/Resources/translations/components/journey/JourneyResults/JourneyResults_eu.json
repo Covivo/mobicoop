@@ -1,11 +1,11 @@
 {
-    "titleFromCity": "Covoiturage depuis {city}",
-    "titleToCity": "Covoiturage vers {city}",
-    "journeyFrom": "Covoiturage de ",
-    "journeyTo": " à ",
-    "listJourneys": "Lister les covoiturages",
-    "nbResults": "Pas d'itinéraire trouvée | 1 itinéraire en covoiturage trouvé | {nb} itinéraires en covoiturage trouvés",
-    "routeFromCity": "/communes/covoiturage/{city}",
+    "routeFromCityToCity": "/covoiturage/{origin}/{destination}",
     "routeToCity": "/communes/covoiturage-vers-{city}",
-    "routeFromCityToCity": "/covoiturage/{origin}/{destination}"
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "nbResults": "Ez da bidairik atzeman | autokidetza bidaia 1 atxeman da| {nb} autokitza bidaia atxeman dira",
+    "listJourneys": "Autokidetzen zerrenda",
+    "journeyTo": " XXX-ra ",
+    "journeyFrom": "Autokidetza XXX-tik ",
+    "titleToCity": "Autoa partekatu{city}-rantz",
+    "titleFromCity": "Autoa partekatu{city}-tik"
 }

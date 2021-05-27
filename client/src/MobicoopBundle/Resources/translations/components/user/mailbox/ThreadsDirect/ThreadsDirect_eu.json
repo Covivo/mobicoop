@@ -1,5 +1,4 @@
 {
-    "urlGet": "/utilisateur/messages/direct",
-    "noMessage": "Vous n'avez pas encore échangé avec un autre inscrit."
-
+    "noMessage": "Ez duzu oraindik izena emana duen beste batekin trukatu.",
+    "urlGet": "/utilisateur/messages/direct"
 }

@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>{{ "inscriptionAt"|trans }}</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE INSCRIPTION EST VALIDÉE!</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -19,10 +19,10 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{ "hello"|trans }}<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p>{{ "yourInscriptionAt" |trans }}  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  {{ "wellTakenIntoAccount" |trans }}.</p>
-                        <p>{{ "temporaryPasswordAttributed"|trans }} : <strong>{{ "temporaryPassword"|trans({'%password%' : context.user.clearPassword}) }}</strong></p>
-                        <p>{{ "changePassword"|trans }}</p>
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>Votre inscription au service  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  est bien prise en compte.</p>
+                        <p>Un mot de passe temporaire vous a été attribué : <strong>{{ context.user.clearPassword }}</strong></p>
+                        <p>Nous vous encourageons fortement à le modifier lors de votre prochaine connexion</p>
                     </td>
                 </tr>
             </table>
@@ -33,7 +33,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>

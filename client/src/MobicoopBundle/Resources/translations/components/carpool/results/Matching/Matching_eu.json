@@ -1,34 +1,34 @@
 {
-    "title": "Résultats de covoiturages entre {cityA} et {cityB}",
-    "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "externalUrl": "/covoiturage/annonce/{id}/externe",
-    "matchingUrl": "/covoiturage/recherche/matching",
-    "carpoolUrl": "/covoiturage/demande",
-    "contactUrl": "/covoiturage/contact",
-    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
-    "externalJourneyUrl": "/covoiturage/rdexJourney",
-    "ptSearchUrl": "/transport-public/recherche",
-    "search": "Recherche en cours...",
-    "search2": "Patience, nous avons beaucoup de covoitureurs potentiels !",
-    "search3": "Encore quelques instants...",
-    "newSearch": "Nouvelle recherche",
-    "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
-    "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
-    "includePassengers": "Voir aussi les annonces passager",
-    "alsoIncludePassengers": "Cette recherche contient également les annonces passager",
-    "snackBar": {
-        "success": "La prise de contact a bien été envoyée",
-        "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
-    },
-    "tabs": {
-        "carpools": "Covoiturages {platform}",
-        "otherCarpools": "Autres covoiturages",
-        "ptresults": "Transport en commun"
-    },
-    "loginOrRegisterTitle": "Connexion ou inscription requise",
-    "loginOrRegister": "Vous devez vous connecter ou vous inscrire pour continuer",
-    "login": "Connexion",
-    "register": "Inscription",
+    "registerUrl": "/utilisateur/inscription/{id}",
     "loginUrl": "/utilisateur/connexion/{id}",
-    "registerUrl": "/utilisateur/inscription/{id}"
+    "register": "Izen ematea",
+    "login": "Konexioa",
+    "loginOrRegister": "Konektatu behar zira edo izena eman behar duzu segitzeko",
+    "loginOrRegisterTitle": "Konxexio edo izena ematea beharrezkoa da",
+    "tabs": {
+        "ptresults": "Garraio publikoak",
+        "otherCarpools": "Beste autokidetzak",
+        "carpools": "Autokidetzak {platform}"
+    },
+    "snackBar": {
+        "error": "Arazo tekniko baten ondorioz, ezin izan dugu harremanetan jartzeko eskera bidali",
+        "success": "Harremaneta jartzeko eskaera igorria izan da"
+    },
+    "alsoIncludePassengers": "Bilaketa honek bidaiari iragarkiak baditu ere",
+    "includePassengers": "Bidaiari iragarkiak ikusi",
+    "matchingNumber": "Ez da autokidetzarik atzeman... | {number} atzemandako autokidetza| {number} atzemandako autokidetza iragarki",
+    "AskNewSearch": "Berriz saia ezazu zure bilaketa aldatuz? Beste bidaia bat?",
+    "newSearch": "Bilaketa berria",
+    "search3": "Igurika pixkat gehiago...",
+    "search2": "Pazientzia, autokidetza potentzial ainiz badugu!",
+    "search": "Bilaketa eiten ari...",
+    "ptSearchUrl": "/transport-public/recherche",
+    "externalJourneyUrl": "/covoiturage/rdexJourney",
+    "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
+    "contactUrl": "/utilisateur/messages/nouveau",
+    "carpoolUrl": "/covoiturage/demande",
+    "matchingUrl": "/covoiturage/recherche/matching",
+    "externalUrl": "/covoiturage/annonce/{id}/externe",
+    "proposalUrl": "/covoiturage/annonce/{id}/detail",
+    "title": "Autokidetzaren emaitzak {cityA} eta{cityB}ren artean"
 }

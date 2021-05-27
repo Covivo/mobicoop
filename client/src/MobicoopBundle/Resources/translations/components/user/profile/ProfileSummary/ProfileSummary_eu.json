@@ -1,9 +1,9 @@
 {
-    "yearsOld":"ans",
-    "getProfileSummaryUri":"/utilisateur/profil/resume",
-    "infos":{
-        "carpoolRealized":"Covoiturages réalisés",
-        "answerPct":"Taux de réponse",
-        "lastConnection":"Dernière connexion"
-    }   
+    "infos": {
+        "lastConnection": "Azken konexioa",
+        "answerPct": "Erantzun tasa",
+        "carpoolRealized": "Egindako autokidetzak"
+    },
+    "getProfileSummaryUri": "/utilisateur/profil/resume",
+    "yearsOld": "urte"
 }

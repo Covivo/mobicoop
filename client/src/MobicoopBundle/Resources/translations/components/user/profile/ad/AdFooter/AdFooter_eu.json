@@ -1,11 +1,11 @@
 {
-    "seat": {
-        "singular": "place",
-        "plural": "places"
-    },
+    "urlResult": "/covoiturage/annonce/{id}/resultats",
     "potentialCarpooler": {
-        "singular": "covoitureur potentiel",
-        "plural": "covoitureurs potentiels"
+        "plural": "autokide potentzialak",
+        "singular": "Autokide potentziala"
     },
-    "urlResult": "/covoiturage/annonce/{id}/resultats"
+    "seat": {
+        "plural": "tokiak",
+        "singular": "toki bat"
+    }
 }

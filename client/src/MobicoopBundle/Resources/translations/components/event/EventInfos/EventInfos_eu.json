@@ -1,12 +1,12 @@
 {
-    "private": "Privé",
-    "startEvent": {
-        "label": "Début"
-    },
-    "endEvent": {
-        "label": "Fin"
-    },
-    "shortCompleteDate": "DD/MM/YYYY",
     "hourMinute": "HH[h]mm",
-    "website": "Site internet"
+    "shortCompleteDate": "YYYY/MM/DD",
+    "endEvent": {
+        "label": "Bukaera"
+    },
+    "startEvent": {
+        "label": "Hastapena"
+    },
+    "private": "Pribatua",
+    "website": "Webgunea"
 }

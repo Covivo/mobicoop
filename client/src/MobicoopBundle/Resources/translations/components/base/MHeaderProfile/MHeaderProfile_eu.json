@@ -1,22 +1,22 @@
 {
-    "myAds": {
-        "label": "Mes annonces",
-        "route": "/utilisateur/profil/modifier/mes-annonces"
-    },
-    "myAcceptedCarpools": {
-        "label": "Covoiturages acceptés",
-        "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
-    },
-    "myProfile": {
-        "label": "Profil",
-        "route": "/utilisateur/profil/modifier/mon-profil"
+    "logOut": {
+        "route": "/user/logout",
+        "label": "Dekonexioa"
     },
     "reviews": {
-        "label": "Avis",
-        "route": "/utilisateur/profil/modifier/avis"
+        "route": "/utilisateur/profil/modifier/avis",
+        "label": "Abisu"
     },
-    "logOut": {
-        "label": "Déconnexion",
-        "route": "/user/logout"
+    "myProfile": {
+        "route": "/utilisateur/profil/modifier/mon-profil",
+        "label": "Perfila"
+    },
+    "myAcceptedCarpools": {
+        "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
+        "label": "Autokidetza onartuak"
+    },
+    "myAds": {
+        "route": "/utilisateur/profil/modifier/mes-annonces",
+        "label": "Nire iragarkiak"
     }
 }

@@ -1,18 +1,18 @@
 {
-    "title": "Liste des membres",
-    "table": {
-        "search": "Rechercher",
-        "lineNumber": "Nombre de lignes par page",
-        "all": "Tous",
-        "colTitle": {
-            "familyName": "Nom",
-            "givenName": "Prénom",
-            "actions": "Actions"
-        }
-    },
-    "hidden": "La liste n'est visible que par les membres de la communauté",
     "urlMembersList": "/community/memberList",
-    "referrer": "Référent",
-    "moderator": "Modérateur",
-    "directMessage": "Envoyer un message direct"
+    "table": {
+        "colTitle": {
+            "familyName": "Deitura",
+            "actions": "Ekintzak",
+            "givenName": "Izena"
+        },
+        "all": "Denak",
+        "lineNumber": "Lerro kopurua orrialdeka",
+        "search": "Bilatu"
+    },
+    "directMessage": "Mezu bat bidali zuzenean",
+    "moderator": "Moderatzailea",
+    "referrer": "Erreferentea",
+    "hidden": "Zerrenda soilik komunitateko kideek ikus dezakete",
+    "title": "Kideen zerrenda"
 }

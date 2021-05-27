@@ -1,18 +1,18 @@
 {
-    "getPublicProfileUri":"/utilisateur/profil/public",
-    "yearsOld":"ans",
-    "carpoolRealized":"Covoiturages réalisés",
-    "lastConnection":"Dernière connexion le",
-    "answerRate":"Taux de réponse",
-    "subscribedOn":"Inscrit le",
-    "savedCo2":" économisé : {savedCo2} t",
-    "params":{
-        "chat":"Je discute",
-        "noChat":"Je ne suis pas bavard",
-        "music":"J'écoute la radio ou de la musique",
-        "noMusic":"Je préfére rouler sans fond sonore",
-        "smoke":"Je fume",
-        "noSmoke":"Je ne fume pas",
-        "noSmokeInCar":"Je ne fume pas en voiture"
-    }
+    "params": {
+        "noSmokeInCar": "Ez dut erretzen autoan",
+        "noSmoke": "Ez dut erretzen",
+        "smoke": "Erretzen dut",
+        "noMusic": "Nahiago dut gidatu giro musikarik gabe",
+        "music": "Irratia edo musika entzuten dut",
+        "noChat": "Ez naiz kalakaria",
+        "chat": "Mintzo naiz"
+    },
+    "savedCo2": " Aurreztua : {savedCo2} t",
+    "subscribedOn": "Izena eman duzu data",
+    "answerRate": "Erantzun tasa",
+    "lastConnection": "Azken konexioa",
+    "carpoolRealized": "Eginiko autokidetzak",
+    "yearsOld": "urte",
+    "getPublicProfileUri": "/utilisateur/profil/public"
 }

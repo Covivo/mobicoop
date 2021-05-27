@@ -1,32 +1,32 @@
 {
-    "title": "Gestion des cookies",
-    "privateLife": "Vie privée",
-    "yourBrowseryourChoice": "Vous avez le choix",
-    "store":"Enregister",
-    "working":{
-        "line1":"Pour son fonctionnement, ce site utilise des cookies",
-        "line2":"Choisissez librement les cookies que vous souhaitez activer"
+    "checkboxes": {
+        "social": {
+            "mandatoryOrNot": "Hautuzko cookie-a",
+            "desc": "Sare sozialeen bidez izena ematea eta konektatzea ahalbideratu"
+        },
+        "stats": {
+            "details": "Estatistika horiek ez dute merkataritza helbururik. Zerbitzua hobetzen laguntzen gaituzte",
+            "mandatoryOrNot": "Hautuzko cookie-ak",
+            "desc": "Zure bisiten estatistika anonimoak partekatu"
+        },
+        "connectionActive": {
+            "mandatoryOrNot": "Beharrezko cookie-ak",
+            "desc": "Zure konexio aktiboa mantendu"
+        }
     },
-    "privacyPolicy":{
-        "text": "Plus de détails sur notre gestion des données dans la",
+    "privacyPolicy": {
         "link": {
-            "label":"Politique de confidentialité",
-            "uri":"/protection-donnees"
-        }
+            "uri": "/datuen-babes",
+            "label": "Konfidentzialtasun politika"
+        },
+        "text": "Gure datu kudeaketei buruzko xehetasun gehiago XXXX-an"
     },
-    "checkboxes":{
-        "connectionActive":{
-            "desc":"Maintenir votre connexion active",
-            "mandatoryOrNot":"Cookie nécessaire"
-        },
-        "stats":{
-            "desc":"Nous partager les statistiques anonymes de votre visite",
-            "mandatoryOrNot":"Cookie optionnel",
-            "details":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service"
-        },
-        "social":{
-            "desc":"Permettre inscription et connexion via les réseaux sociaux",
-            "mandatoryOrNot":"Cookie optionnel"
-        }
-    }
+    "working": {
+        "line2": "Aktibatu nahi zenituzken cookies-ak libroki hauta itzazu",
+        "line1": "Bere funtzionamenduarentzat, webguneak cookies-ak erabiltzen ditu"
+    },
+    "store": "Gorde",
+    "yourBrowseryourChoice": "{appName} -k hautua ematen dizu",
+    "privateLife": "Bizi pribatua",
+    "title": "Cookies-en kudeaketa"
 }

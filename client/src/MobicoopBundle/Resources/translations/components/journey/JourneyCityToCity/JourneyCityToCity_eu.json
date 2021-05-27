@@ -1,22 +1,22 @@
 {
-    "title":{
-        "part1":"De commune...",
-        "part2":"... à commune"
+    "getPopularJourneysUrl": "/covoiturages/populaires/home",
+    "popularJourneys": {
+        "uri": "/covoiturage/{origin}/{destination}",
+        "to": "xxx-ra",
+        "from": "Autokidetzak XXXtik"
     },
-    "links":{
-        "byCity":{
-            "title":"Les covoiturages par communes",
-            "uri":"/covoiturage-par-ville"
+    "links": {
+        "popular": {
+            "uri": "/covoiturage-par-ville/populaires",
+            "title": "Autokidetzak ezagunak diren herrika"
         },
-        "popular":{
-            "title":"Les covoiturages par trajets populaires",
-            "uri":"/covoiturage-par-ville/populaires"
+        "byCity": {
+            "uri": "/covoiturage-par-ville",
+            "title": "Autokidetzak herrika"
         }
     },
-    "popularJourneys":{
-        "from":"Covoiturage de",
-        "to":"à",
-        "uri":"/covoiturage/{origin}/{destination}"
-    },
-    "getPopularJourneysUrl":"/covoiturages/populaires/home"
+    "title": {
+        "part2": "...herrira",
+        "part1": "Herritik..."
+    }
 }

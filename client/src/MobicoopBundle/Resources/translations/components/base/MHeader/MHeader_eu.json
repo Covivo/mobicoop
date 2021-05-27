@@ -1,35 +1,35 @@
 {
+    "snackbar": {
+        "needConnection": "Konekta zaitez edo izena eman iragarkia argitaratzeko"
+    },
     "buttons": {
-        "signup": {
-            "label": "Inscription",
-            "route": "/utilisateur/inscription"
-        },
-        "logIn": {
-            "label": "Connexion",
-            "route": "/utilisateur/connexion"
-        },
-        "shareAnAd": {
-            "label": "Publier une annonce",
-            "route": "/covoiturage/annonce/poster"
-        },
-        "messages": {
-            "label": "Messages",
-            "route": "/utilisateur/messages"
-        },
-        "myProfile": {
-            "label": "Mon profil",
-            "route": "/utilisateur/profil/modifier"
+        "solidary": {
+            "route": "http://solidaires.mobicoop.fr/",
+            "label": "Elkartasunezko gidaria izan"
         },
         "logOut": {
-            "label": "Déconnexion",
-            "route": "/user/logout"
+            "route": "/user/logout",
+            "label": "Deskonektatu"
         },
-        "solidary": {
-            "label": "Devenir conducteur solidaire",
-            "route": "http://solidaires.mobicoop.fr/"
+        "myProfile": {
+            "route": "/utilisateur/profil/modifier",
+            "label": "Nire perfila"
+        },
+        "messages": {
+            "route": "/utilisateur/messages",
+            "label": "Mezuak"
+        },
+        "shareAnAd": {
+            "route": "/covoiturage/publierannonce",
+            "label": "Iragarki bat argitaratu"
+        },
+        "logIn": {
+            "route": "/utilisateur/connexion",
+            "label": "Konexioa"
+        },
+        "signup": {
+            "route": "/utilisateur/inscription",
+            "label": "Izen ematea"
         }
-    },
-    "snackbar": {
-        "needConnection": "Veuillez vous connecter ou vous inscrire pour publier une annonce"
     }
 }

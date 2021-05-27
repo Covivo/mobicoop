@@ -9,7 +9,7 @@ yourInscription: Ihre Registrierung
 passwordChanged: Bestätigung der Passwortrücksetzung
 newPassword: IHR NEUES PASSWORT WURDE GESPEICHERT!
 renewPassword: ANTRAG AUF PASSWORTZURÜCKSETZUNG.
-askPassword: Antrag auf Passwortrücksetzung
+askPassword: Anfrage zum Zurücksetzen des Passworts
 contactYou: '{givenName} kontaktiert Sie'
 passengerAskLinkedAdDeletedUrgent: Dringend – Eine Anzeige, bei der Sie Mitfahr/in
   waren, wurde gelöscht
@@ -133,13 +133,13 @@ carpoolProposalUpdated: Die Anzeige im Zusammenhang mit Ihrer Anfrage wurde geä
 justPublished: wurde gerade veröffentlicht
 toConsultCorrespondingAdsAndMakeContact: um die entsprechenden Anzeigen einzusehen
   und Kontakt aufzunehmen
-URLEmailsAlerts: Benutzer/Profil/bearbeiten/mein-Profil
+URLEmailsAlerts: benutzer/profil/bearbeiten/mein-profil
 linkMyAds: /Benutzer/Profil/bearbeiten/meine-Anzeigen
 myAds: Meine Anzeigen
 seeYouIn: Termin in
 newCarpoolAdMatchingYourCommute: Eine neue Fahrgemeinschaftsanzeige, die Ihre Fahrt
   entspricht, zwischen
-urlPublish: /Fahrgemeinschaft/Anzeige
+urlPublish: /Fahrgemeinschaft/Anzeigeveroeffentlichen
 deletedAccountRegularCarpool: ' hat sein/ihr Konto gelöscht und kann keine Fahrgemeinschaft
   mit Ihnen bilden am '
 deletedAccountOccasionalCarpool: ' hat sein/ihr Konto gelöscht und kann keine Fahrgemeinschaft
@@ -206,7 +206,7 @@ nowYouAreMore: Sie sind jetzt mehr als
 beCarefulFewDaysAnnouncementNotValid: Bitte beachten Sie, dass Ihre gespeicherten
   Fahrten in einigen Tagen in Ihrem Profil nicht mehr gültig sind und daher für andere
   Mitfahrer nicht mehr sichtbar sind
-signature: 'Bis bald '
+signature: 'Bis bald'
 FollowUs: Folgen Sie uns
 Download: Herunterladen Sie die <b>Android</b>- oder <b>iOS</b>-Anwendung
 EmailsAlerts: Ihre E-Mail-Benachrichtigungen verwalten
@@ -228,3 +228,80 @@ eventReportTitle: Meldung eines Ereignisses
 changeYourPassword: Ändern Sie Ihr Passwort
 updatedCarpoolDetails: Einzelheiten Ihrer Fahrgemeinschaft aus {origin} zu {destination}
   wurden geändert von
+homeAddress: Wohnsitz
+directPayment: Zahlung eigenhädig
+onLinePayment: Online-Zahlung
+paymentNotDone: Zahlung nicht deklariert
+passenger: Fahrgast
+driver: Fahrer
+certified: Zertifiziert
+seeProofsClasses: "voir les classes"
+typeOfpayment: Zahlung
+pickUpLocality: Übernahme
+carpooler: Mitfahrgelegenheit
+role: Rolle
+date: Datum
+taxInfo: 'Sie haben im Jahr 2020 mehr als 300,- € erhalten: das Gesetz verlangt, dass
+  Sie dies beim Finanzamt angeben.'
+totalPaid: Total bezahlt
+onTheSite: auf der Website
+haveYouForgotToPayTheDriver: Haben Sie vergessen, Ihren Fahrgemeinschaftsfahrer zu
+  entschädigen?
+click: Klicken Sie hier.
+isDone: ist vorbei.
+haveYouPayedYourDriver: Haben Sie Ihren Mitfahrer entschädigt?
+yourProofIsOutdated: Ihr übermitteltes Ausweisdokument ist abgelaufen. Bitte reichen
+  Sie ein weiteres aktuelles Ausweisdokument ein, um Zahlungen erhalten zu können
+identityProofOutdated: Ausweisdokument abgelaufen
+yourProofIsRejected: Ihr eingereichtes Ausweisdokument wurde abgelehnt. Bitte senden
+  Sie eine weitere aktuelle Ausweisdokument, um Zahlungen erhalten zu können.
+identityProofAccepted: Akzeptiertes Ausweisdokument
+identityProofRejected: Ausweisdokument abgelehnt
+yourProofIsAccepted: Ihr übermitteltes Ausweisdokument wurde geprüft und akzeptiert.
+linkValidatePaymentRoute: /benutzer/profil/bearbeiten/meine-akzeptierte-fahrgemeinschaften
+linkValidatePaymentLabel: Eine Zahlung bestätigen.
+hasIndicatedThatTheWeek: hat die Woche markiert, die von
+hasIndicatedThatCarpool: hat Ihre Fahrgemeinschaft markiert von
+hasPayed: hat er Sie mit Bargeld bezahlt?
+thankYouTeam: Danke, {instanceName}-Team.
+communityNewMembershipRequest: NEU - Ein/e neue/r Benutzer/in möchte Ihrer Gemeinschaft
+  beitreten
+seeYouInAdmin: 'Besuchen Sie das Admin-Modul, um seine Mitgliedschaft zu bestätigen: '
+newMembershipSubscriber: ' hat darum gebeten, der Gemeinschaft beizutreten '
+massPublicTransportPotentialOver: Die Berechnung des öffentlichen Verkehrspotentials
+  des Imports Nr. {massId} ist abgeschlossen
+massPublicTransportPotentialTitle: Berechnung des öffentlichen Verkehrspotenzials
+massMatchedOver: Die Berechnung des Mitfahrpotenzials des Imports Nr. {massId} ist
+  abgeschlossen
+massMatchedOverTitle: Berechnung des Fahrgemeinschaftspotenzials
+massMatched: Berechnung des Fahrgemeinschaftspotenzials Nr. {massId}
+massAnalyzeErrors: Die Analyse des Imports Nr. {massId} enthält Fehler
+errors:
+  alreadyUsed: Diese E-Mail-Adresse wird bereits verwendet
+  wrongDomains: 'Ihre E-Mail-Adresse muss sich in einer der folgenden Domänen befinden:
+    {domains}'
+seeReview: Sie können diese Bewertung einsehen, indem Sie zu Ihrem Profil gehen
+reviewReceived: Sie haben eine Bewertung von {GivenName} {shortFamilyName} erhalten
+reviewReceivedTitle: Sie haben eine Bewertung erhalten
+detailsTextUserReport: 'Details der Meldung:'
+theReporterUser: Die E-Mail-Adresse des Benutzers, der die Meldung gemacht hat, ist
+  {emailReporter}
+theReportedUser: Es geht um {givenName} {familyName} ({email})
+userReport: Ein Benutzer ist gemeldet worden
+userReportTitle: Meldung eines Benutzers
+eventUrl: /fahrgemeinschaften-ereignisse/
+emailValidationUrl: /benutzer/e-mail/bestaetigung/
+emailValidation: Bestätigung Ihrer E-Mail-Adresse
+mobileUrlUpdatePassword: /#/fahrgemeinschaft/zuruecksetzen-passwort?token=
+doNotReply: Bitte beantworten Sie diese E-Mail nicht direkt.
+contactCommunity: Anfrage zur Erstellung einer Gemeinschaft
+contactPartnership: Neue Partnerschaftsanfrage
+contactTechnicalIssues: Neue Hilfesanfrage
+contactInfos: Neue Informationsanfrage
+shortdaySunday: So
+shortdaySaturday: Sa
+shortdayFriday: Fr
+shortdayThursday: Do
+shortdayWednesday: Mi
+shortdayTuesday: Di
+shortdayMonday: Mo

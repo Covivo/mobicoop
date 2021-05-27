@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:22px" ><strong>{{"massPublicTransportPotentialTitle"|trans}}</strong></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:22px" ><strong>Calcul du potentiel de transport en commun</strong></p>
                         <hr>
                     </td>
                 </tr>
@@ -19,7 +19,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="width:70%">
-                        <p>{{"massPublicTransportPotentialOver"|trans({'%massId%' : context.massId})}}.</p>
+                        <p>Le calcul du potentiel de transport en commun de l'import n°{{context.massId}} est terminé.</p>
                     </td>
                 </tr>
             </table>
@@ -30,7 +30,7 @@
             <table  style="width:100%;">
                 <tr style="text-align:left">
                     <td>
-                        <p>{{"signature"|trans}} <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
                 <hr>

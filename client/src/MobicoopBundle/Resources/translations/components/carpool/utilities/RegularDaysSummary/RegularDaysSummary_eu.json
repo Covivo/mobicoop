@@ -1,13 +1,13 @@
 {
-    "mon": "L",
-    "tue": "M",
-    "wed": "Me",
-    "thu": "J",
-    "fri": "V",
-    "sat": "S",
-    "sun": "D",
-    "dateValid": "Valide jusqu'au",
-    "valid": "Validité :",
-    "dateValidUntil": "jusqu'au",
-    "shortCompleteDate": "DD/MM/YYYY"
+    "shortCompleteDate": "YYYY/MM/DD",
+    "dateValidUntil": "XXXXa arte",
+    "valid": "Baliozkotasuna:",
+    "dateValid": "Balio du XXX-a arte",
+    "sun": "Ig.",
+    "sat": "Lr.",
+    "fri": "Or.",
+    "thu": "Os.",
+    "wed": "Az.",
+    "tue": "As.",
+    "mon": "Al."
 }

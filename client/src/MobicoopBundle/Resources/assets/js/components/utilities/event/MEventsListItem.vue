@@ -7,7 +7,7 @@
     height="140"
   >
     <div
-      class="d-flex flex-no-wrap"
+      class="d-flex "
     >
       <v-avatar
         size="140"
@@ -26,13 +26,13 @@
       </v-avatar>
     
       <div
-        style="width:300px"
+        style="min-width:225px;max-width:300px"
         class="d-flex flex-column align-self-center"
       >
         <v-card-title
           class="text-left"
         >
-          <h6 class="text-uppercase">
+          <h6 class="text-uppercase text-truncate">
             <a
               :href="linkToEventShow(item)"
               style="text-decoration:none;"

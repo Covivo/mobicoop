@@ -1,29 +1,29 @@
 {
-    "title": "Covoiturage libre, </br>sans commission et coopératif",
-    "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
-    "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
-    "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
-    "profileLink": "/utilisateur/profil/modifier/mon-profil",
-    "snackbar-account-delete": "Votre compte à été supprimé avec succès.",
-    "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
-    "myProfile": "Profil",
-    "urlArticle": "#",
-    "altUrlArticle": "cliquez-ici",
-    "clickHere": "Cliquez-ici",
-    "urlImageSwap": "/images/PictoInterchanger.svg",
-    "urlBackground": "/images/pages/home/background_top.svg",
-    "items":[
+    "items": [
         {
-            "title":"Une plateforme sans commission",
-            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
+            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
+            "title": "Komisiorik gabeko plataforma bat"
         },
         {
-            "title":"Un logiciel libre",
-            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
+            "text": "Libertate numerikoa, Mobicoop-en balore muinean da. Hautu eginez webgunea programa librean ekoitzea, autokidetza erabiltzailetzen dutenen burujabetasun numerikoa eta datuen babesa bermatzen dugu. Bakoitzak iturri kodean parte har dezake eta mugikortasun partekatua, denen ondasun egin dezake.",
+            "title": "Programa librea"
         },
         {
-            "title":"La coopérative du covoiturage",
-            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
+            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, bazkide 1 = boz 1 logikan. Estatus horrek, bazkide, soldatadun, plataforma erabiltzaile eta bezeroen gobernantza ireki bat ahalbideratzen du. Haatik, ez da bazkide izan behar autokidetza zerbitzua erabili ahal izateko.",
+            "title": "Autokidetza kooperatiboa"
         }
-    ]
+    ],
+    "urlBackground": "/images/pages/home/background_top.svg",
+    "urlImageSwap": "/images/PictoInterchanger.svg",
+    "clickHere": "Hemen klikatu",
+    "altUrlArticle": "Hemen-klikatu",
+    "urlArticle": "#",
+    "myProfile": "Perfila",
+    "snackbar-unsubscribe-email": "Gure emailing zerrendatik desabonatua zira",
+    "snackbar-account-delete": "Zure kontua kendua izan da.",
+    "profileLink": "/utilisateur/profil/modifier/mon-profil",
+    "snackbar2": ", zure autokideak lasaitzeo eta zure abisuak SMS-en bidez errezibitzeko.",
+    "snackbar1": "Zure telefono zenbakia komunikatu duzu. Egiazta ezazu, egiaztatze kode bat igorriz webguneko orrialdetik",
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
+    "title": "Autokidetza librea, </br> komisiorik gabe eta kooperatiboa"
 }

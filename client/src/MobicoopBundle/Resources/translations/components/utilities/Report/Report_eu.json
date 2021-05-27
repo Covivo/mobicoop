@@ -1,40 +1,40 @@
 {
-    "button": "Signaler",
-    "snackbar": {
-      "thankyou": "Merci pour ce signalement",
-      "error": "Une erreur s'est produite durant le signalement"
+    "routes": {
+        "userReport": "/utilisateur/{id}/signaler",
+        "eventReport": "/evenement/{id}/signaler"
     },
     "popup": {
-      "event":{
-        "title": "Signalement d'événement",
-        "content": "Vous avez constaté du contenu inapproprié sur l'événement \"<strong>{eventName}</strong>\" ?<br/>Signalez-le à notre équipe qui prendra les mesures nécessaires.<br/><br/>Merci de préciser ce qui vous paraît inapproprié :"
-      },
-      "user":{
-        "title": "Signalement d'un utilisateur",
-        "content": "Vous souhaitez signaler le comportement inapproprié de \"<strong>{userName}</strong>\" ? "
-      },
-      "form": {
-        "email": {
-          "label": "Merci de renseigner votre email",
-          "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide."
-          }
+        "button": {
+            "cancel": "Ezeztatu",
+            "report": "Seinalatu"
         },
-        "text": {
-          "label": "Explication",
-          "errors": {
-            "required": "Une explication est nécessaire"
-          }
+        "form": {
+            "text": {
+                "errors": {
+                    "required": "Azalpen bat beharrezkoa da"
+                },
+                "label": "Azalpena"
+            },
+            "email": {
+                "errors": {
+                    "valid": "Helbide elektronikoa bali izan behar da.",
+                    "required": "Helbide elektronikoa baitezpadakoa da"
+                },
+                "label": "Milesker zure helbide elektronikoa zehazteagatik"
+            }
+        },
+        "user": {
+            "content": "\"<strong>{userName}</strong>\"-ren jarrera desegoki bat seinalatu nahi zenuke? ",
+            "title": "Erabiltzaile baten seinalamendua"
+        },
+        "event": {
+            "content": "Eduki ezegoki bat ikusi duzu \"<strong>{eventName}</strong>\" ? ekitaldian <br/> Gure taldeari seinala ezazu beharrezko neurriak har ditzan.<br/><br/> Milesker desegokia zaizuna zehazteagatik:",
+            "title": "Ekitaldi baten seinalamendua"
         }
-      },
-      "button": {
-        "report": "Signaler",
-        "cancel": "Annuler"
-      }
     },
-    "routes": {
-      "eventReport": "/evenement/{id}/signaler",
-      "userReport": "/utilisateur/{id}/signaler"
-    }
+    "snackbar": {
+        "error": "Huts bat agertu da seinalamendua egiterakoan",
+        "thankyou": "Milesker seinalamendu hori egiteagatik"
+    },
+    "button": "Seinalatu"
 }
