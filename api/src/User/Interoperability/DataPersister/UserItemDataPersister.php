@@ -45,7 +45,7 @@ final class UserItemDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        var_dump($data->getGivenName());
+        return $this->userManager->updateUser($data);
     }
 
     public function remove($data, array $context = [])

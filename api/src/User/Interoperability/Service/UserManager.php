@@ -27,6 +27,7 @@ use App\User\Interoperability\Ressource\User;
 use App\User\Entity\User as UserEntity;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Service\UserManager as UserEntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -38,11 +39,13 @@ class UserManager
 {
     private $userEntityManager;
     private $security;
+    private $entityManager;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
+        $this->entityManager = $entityManager;
     }
 
     
@@ -72,6 +75,27 @@ class UserManager
         $userEntity = $this->userEntityManager->registerUser($userEntity);
 
         return $this->buildUserFromUserEntity($userEntity);
+    }
+
+    /**
+     * Update the entity User associated to an Interoperability User
+     *
+     * @param User $user The interoperability User
+     * @return User The interoperability User
+     */
+    public function updateUser(User $user): User
+    {
+        if ($userEntity = $this->userEntityManager->getUser($user->getId())) {
+            $userEntity->setGivenName($user->getGivenName());
+            $userEntity->setFamilyName($user->getFamilyName());
+            $userEntity->setGender($user->getGender());
+            $userEntity->setEmail($user->getEmail());
+            $userEntity->setNewsSubscription($user->hasNewsSubscription());
+
+            $this->entityManager->persist($userEntity);
+            $this->entityManager->flush();
+        }
+        return $user;
     }
 
     /**

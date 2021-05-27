@@ -53,9 +53,7 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
         }
 
         if ($operationName == "interop_put") {
-            echo "yop provider";
-            $user = $this->userManager->getUser($id);
-            return $user;
+            return $this->userManager->getUser($id);
         }
     }
 }
