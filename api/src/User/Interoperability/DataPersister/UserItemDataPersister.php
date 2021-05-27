@@ -27,7 +27,7 @@ use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
 
-final class UserDataPersister implements ContextAwareDataPersisterInterface
+final class UserItemDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
     private $security;
@@ -40,20 +40,12 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'interop_post';
+        return $data instanceof User && isset($context['item_operation_name']) && $context['item_operation_name'] == 'interop_put';
     }
 
     public function persist($data, array $context = [])
     {
-        if (is_null($data)) {
-            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
-        }
-
-        if (!in_array($data->getGender(), User::GENDERS)) {
-            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::INVALID_GENDER);
-        }
-
-        return $this->userManager->registerUser($data);
+        var_dump($data->getGivenName());
     }
 
     public function remove($data, array $context = [])

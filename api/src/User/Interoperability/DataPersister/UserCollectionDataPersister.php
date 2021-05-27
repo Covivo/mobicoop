@@ -20,20 +20,17 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Interoperability\DataProvider;
+namespace App\User\Interoperability\DataPersister;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
 
-/**
- * Interoperability User DataProvider
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class UserCollectionDataPersister implements ContextAwareDataPersisterInterface
 {
+    private $request;
+    private $security;
     private $userManager;
 
     public function __construct(UserManager $userManager)
@@ -41,21 +38,26 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
         $this->userManager = $userManager;
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function supports($data, array $context = []): bool
     {
-        return User::class === $resourceClass && ($operationName == "interop_get" || $operationName == "interop_put");
+        return $data instanceof User && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'interop_post';
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
+    public function persist($data, array $context = [])
     {
-        if ($operationName == "interop_get") {
-            return $this->userManager->getUser($id);
+        if (is_null($data)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
         }
 
-        if ($operationName == "interop_put") {
-            echo "yop provider";
-            $user = $this->userManager->getUser($id);
-            return $user;
+        if (!in_array($data->getGender(), User::GENDERS)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::INVALID_GENDER);
         }
+
+        return $this->userManager->registerUser($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
