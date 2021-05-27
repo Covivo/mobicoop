@@ -45,6 +45,18 @@ class UserManager
         $this->security = $security;
     }
 
+    
+    /**
+     * Get a User
+     *
+     * @param integer $id   User's Id
+     * @return User The interoperabily User
+     */
+    public function getUser(int $id): User
+    {
+        return $this->buildUserFromUserEntity($this->userEntityManager->getUser($id));
+    }
+    
     /**
      * Register a User
      *

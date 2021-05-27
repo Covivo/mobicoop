@@ -26,6 +26,7 @@ use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Interoperability\Ressource\User;
+use App\User\Interoperability\Service\UserManager;
 
 /**
  * Interoperability User DataProvider
@@ -33,18 +34,22 @@ use App\User\Interoperability\Ressource\User;
  */
 final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    public function __construct()
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
     {
+        $this->userManager = $userManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName == "interop_get";
+        return User::class === $resourceClass && ($operationName == "interop_get" || $operationName == "interop_put");
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        // For now, not GET item has been implemented (reject by security)
-        return new User($id);
+        if ($operationName == "interop_get") {
+            return $this->userManager->getUser($id);
+        }
     }
 }

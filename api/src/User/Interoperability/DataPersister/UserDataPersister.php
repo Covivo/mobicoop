@@ -45,7 +45,6 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
         if (is_null($data)) {
             throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
         }
