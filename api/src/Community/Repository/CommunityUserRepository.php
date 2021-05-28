@@ -68,14 +68,32 @@ class CommunityUserRepository
         $query->where("cu.community = :community")
         ->join("cu.user", "u")
         ->setParameter('community', $community);
-        // Sort
-        if (isset($context["filters"]) && isset($context["filters"]['order'])) {
-            foreach ($context["filters"]['order'] as $sort => $order) {
-                switch ($sort) {
-                    case "givenName":
-                    case "familyName":$query->addOrderBy("u.".$sort, $order);
-                        break;
-                    default: $query->addOrderBy("cu.".$sort, $order);
+        
+        // Sort and Filters
+        if (isset($context["filters"])) {
+
+            // Filters
+            $excludedFilters = ["page","perPage","order"];
+            foreach ($context["filters"] as $filter => $value) {
+                if (!in_array($filter, $excludedFilters)) {
+                    switch ($filter) {
+                        case "givenName":
+                        case "familyName":$query->andWhere("u.".$filter." like '%".$value."%'");
+                            break;
+                        default: $query->andWhere("cu.".$filter." like '%".$value."%'");
+                    }
+                }
+            }
+
+            // Sort
+            if (isset($context["filters"]['order'])) {
+                foreach ($context["filters"]['order'] as $sort => $order) {
+                    switch ($sort) {
+                        case "givenName":
+                        case "familyName":$query->addOrderBy("u.".$sort, $order);
+                            break;
+                        default: $query->addOrderBy("cu.".$sort, $order);
+                    }
                 }
             }
         }
