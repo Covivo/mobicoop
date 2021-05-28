@@ -1540,6 +1540,20 @@ class UserManager
     }
 
     /**
+     * Get a User by it's SsoId
+     *
+     * @param string $ssoId
+     * @return User|null
+     */
+    public function getUserBySsoId(string $ssoId): ?User
+    {
+        if ($user = $this->userRepository->findOneBy(['ssoId'=>$ssoId])) {
+            return $user;
+        }
+        return null;
+    }
+
+    /**
      * Get the profile summary of a User
      *
      * @param User $user   The User

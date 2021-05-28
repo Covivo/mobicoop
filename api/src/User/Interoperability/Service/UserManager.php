@@ -26,6 +26,7 @@ namespace App\User\Interoperability\Service;
 use App\User\Interoperability\Ressource\User;
 use App\User\Entity\User as UserEntity;
 use App\User\Exception\BadRequestInteroperabilityUserException;
+use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Service\UserManager as UserEntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -101,6 +102,26 @@ class UserManager
             $this->entityManager->flush();
         }
         return $user;
+    }
+
+    /**
+     * Erase the SsoId and the SsoProvider informations of the user account
+     *
+     * @param DetachSso $detachSso The data about the sso account to detach
+     * @return DetachSso
+     */
+    public function detachUser(DetachSso $detachSso): DetachSso
+    {
+        if ($userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid())) {
+            $userEntity->setSsoId(null);
+            $userEntity->setSsoProvider(null);
+
+            $this->entityManager->persist($userEntity);
+            $this->entityManager->flush();
+
+            $detachSso->setUserId($userEntity->getId());
+        }
+        return $detachSso;
     }
 
     /**

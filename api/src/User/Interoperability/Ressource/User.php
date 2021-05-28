@@ -113,15 +113,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *               "summary"="Update a User created via interoperability",
  *               "tags"={"Interoperability"}
  *             }
- *          },
- *          "interop_detach_sso"={
- *             "path"="/users/{id}/detachSso",
- *             "method"="PUT",
- *             "security"="is_granted('interop_user_update',object)",
- *             "swagger_context" = {
- *               "summary"="Erase the SsoId and the SsoProvider informations of the user account",
- *               "tags"={"Interoperability"}
- *             }
  *          }
  *      }
  * )
