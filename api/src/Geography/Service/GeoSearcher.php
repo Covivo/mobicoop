@@ -172,7 +172,7 @@ class GeoSearcher
         // 2 - sig addresses
 
         // The query always include SIG_GEOCODER_PRIORITIZE_COORDINATES (see services.yaml Georouter.query_data_plugin)
-        // But for Google maps we use the Bound param so we need to detect if it's only a point or a viewbox
+        // But some SIG use the Bound param for a viewbox/zone so we need to detect if it's only a point or a viewbox
 
         // Check the options (priozitize, viewbox, region...)
         $optionUserPrioritize = $optionBounds = $optionRegion = false;
