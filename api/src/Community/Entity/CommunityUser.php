@@ -238,6 +238,18 @@ class CommunityUser
     private $username;
 
     /**
+     * @var string The givenName of the member
+     * @Groups("aRead")
+     */
+    private $givenName;
+
+    /**
+     * @var string The familyName of the member
+     * @Groups("aRead")
+     */
+    private $familyName;
+
+    /**
      * @var string|null The member avatar
      * @Groups({"aRead"})
      */
@@ -385,9 +397,19 @@ class CommunityUser
         return $this;
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getGivenName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName()));
+    }
+    
+    public function getFamilyName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getFamilyName()));
     }
 
     public function hasNewsSubscription()
