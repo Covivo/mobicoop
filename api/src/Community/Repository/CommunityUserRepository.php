@@ -66,7 +66,21 @@ class CommunityUserRepository
     {
         $query = $this->repository->createQueryBuilder('cu');
         $query->where("cu.community = :community")
+        ->join("cu.user", "u")
         ->setParameter('community', $community);
+        // Sort
+        if (isset($context["filters"]) && isset($context["filters"]['order'])) {
+            foreach ($context["filters"]['order'] as $sort => $order) {
+                switch ($sort) {
+                    case "givenName":
+                    case "familyName":$query->addOrderBy("u.".$sort, $order);
+                        break;
+                    default: $query->addOrderBy("cu.".$sort, $order);
+                }
+            }
+        }
+
+
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
