@@ -1,3 +1,5 @@
 {
-    "urlToSelectLanguage": "/setLanguage"
+    "urlToSelectLanguage": "/setLanguage",
+    "urlToUpdateLanguage": "/user/updateLanguage"
+
 }
