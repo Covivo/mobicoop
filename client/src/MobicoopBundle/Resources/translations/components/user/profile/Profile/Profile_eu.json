@@ -1,36 +1,36 @@
 {
     "getMyCarpools": "/getMyCarpools",
-    "save": "Gorde",
+    "save": "Grabatu",
     "errors": {
-        "number": "Pasahitzak zenbaki bat eduki behar du.",
-        "lower": "Pasahitzak minuskula bat eduki behar du.",
-        "upper": "Pasahitzak maiuskula bat eduki behar du.",
+        "number": "Pasahitzak zifra bat ukan behar du.",
+        "lower": "Pasahitzak minuskula bat ukan behar du.",
+        "upper": "Pasahitzak maiuskula bat ukan behar du.",
         "min": "Pasahitzak gutienez 8 karaktere behar ditu.",
         "required": "Pasahitza baitezpadakoa da"
     },
     "publicProfile": {
         "close": "Hetsi",
-        "see": "Ikus publiko perfila",
-        "title": "Publiko perfila"
+        "see": "Ikus perfil publikoa",
+        "title": "Perfil publikoa"
     },
     "snackBar": {
-        "textSnackError": "Huts bat pasahitzaren eguneraketan",
-        "passwordUpdated": "Pasahitza eguneratua"
+        "textSnackError": "Huts bat bada pasahitzaren eguneraketan",
+        "passwordUpdated": "Pasahitz eguneratua"
     },
     "form": {
         "errors": {
             "notIdentiquals": "Pasahitzak ez dira berdinak",
             "required": "Pasahitza baitezpadakoa da"
         },
-        "newPasswordRepeat": "Pasahitza berria (baieztapena)",
+        "newPasswordRepeat": "Pasahitz berria (baieztapena)",
         "newPassword": "Pasahitza berria"
     },
     "tabs": {
-        "reviews": "Abisuak",
+        "reviews": "Iritziak",
         "myAccount": "Kontua",
         "carpoolsAccepted": "Onartuak diren autokidetzak",
-        "bankCoordinates": "Banku agiria",
-        "alerts": "Abisuak",
+        "bankCoordinates": "Bankuko Nortasun Agiria",
+        "alerts": "Alertak",
         "carpoolSettings": "Hobespenak",
         "myAds": "Nire iragarkiak",
         "password": "Pasahitza",
