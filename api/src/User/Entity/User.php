@@ -462,16 +462,6 @@ use App\User\Controller\UserSendValidationEmail;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "patch"={
- *              "path"="/users/{id}",
- *              "method"="PATCH",
- *              "normalization_context"={"groups"={"readUser"}},
- *              "denormalization_context"={"groups"={"write"}},
- *              "security"="is_granted('user_update',object)",
- *              "swagger_context" = {
- *                  "tags"={"Users"}
- *              }
- *          },
  *          "delete_user"={
  *              "method"="DELETE",
  *              "path"="/users/{id}",
