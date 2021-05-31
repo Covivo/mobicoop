@@ -1,1 +1,33 @@
-{}
+{
+    "ok": "OK",
+    "popup": {
+        "content": "Opgelet: u hebt geen enkele geactiveerde externe melding meer in geval van {alert}. U kunt hierover dus niet geïnformeerd worden tenzij u zich zelf aanmeldt op het platform.",
+        "title": "Informatie"
+    },
+    "medium": {
+        "media4": "Push",
+        "media3": "SMS",
+        "media2": "E-mail",
+        "media1": "Bericht"
+    },
+    "alerts": {
+        "confirm_direct_payment_regular": "De betaling van een carpoolingweek bevestigen",
+        "confirm_direct_payment": "De betaling van een carpooling bevestigen",
+        "pay_after_carpool_regular": "Een carpoolingweek betalen",
+        "pay_after_carpool": "Een uitgevoerde carpooling betalen",
+        "validate_create_event": "Bevestiging van aanmaken evenement",
+        "driver_carpool_linked_ad_deleted_urgent": "Verwijdering van de advertentie die betrekking heeft op een carpooling die u aanvaard hebt als bestuurder en nakend is",
+        "driver_carpool_linked_ad_deleted": "Verwijdering van de advertentie die betrekking heeft op een carpooling die u aanvaard hebt als bestuurder",
+        "passenger_carpool_linked_ad_deleted_urgent": "Verwijdering van de advertentie die betrekking heeft op een carpooling die u aanvaard hebt als passagier en die nakend is",
+        "passenger_carpool_linked_ad_deleted": "Verwijdering van de advertentie die betrekking heeft op een carpooling die aanvaard werd als passagier",
+        "carpool_ask_linked_ad_deleted": "Verwijdering van de advertentie die het voorwerp uitmaakt van mijn aanvraag",
+        "*******": "Aansporing om mijn carpooler te evalueren",
+        "carpool_proposal_canceled": "Annulering van een carpooling *",
+        "carpool_ad_renewal": "Mijn trajecten met nakende geldigheidsdatum vernieuwen",
+        "carpool_ask_refused": "Carpooling geweigerd",
+        "carpool_ask_accepted": "Carpooling aanvaard",
+        "carpool_matching_new": "Nieuwe potentiële carpoolings",
+        "communication_internal_message_received": "Nieuw bericht in het berichtensysteem",
+        "carpool_ask_posted": "Aanvraag voor een carpooling"
+    }
+}
