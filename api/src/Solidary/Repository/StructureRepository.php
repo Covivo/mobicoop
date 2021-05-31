@@ -58,18 +58,13 @@ class StructureRepository
     }
 
     /**
-     * Find the structures of a User
+     * Find the structures where a User is beneficiary
      *
      * @param User $user    The user
      * @return array|null
      */
     public function findByUser(User $user): ?array
     {
-
-        // @TODO: Remove this ugly hack
-        // I've added it to be able to work on the admin during API fix
-        // return $this->repository->findById(1);
-
         $query = $this->repository->createQueryBuilder('s')
         ->join('s.solidaryUserStructures', 'sus')
         ->join('sus.solidaryUser', 'su')

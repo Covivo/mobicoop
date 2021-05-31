@@ -191,7 +191,7 @@ class Event
     /**
      * @var boolean Private event. Should be filtered when event list is publicly displayed.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default":0})
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $private;

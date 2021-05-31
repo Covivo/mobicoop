@@ -682,6 +682,10 @@ services:
                 music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
                 smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'  
 
+    'App\Solidary\Admin\DataProvider\SolidaryCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # User
     App\User\Admin\Service\UserManager:
         arguments:

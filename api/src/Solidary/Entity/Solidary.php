@@ -32,6 +32,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Geography\Entity\Address;
+use DateTime;
 
 /**
  * A solidary record.
@@ -62,8 +67,16 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="POST",
  *              "path"="/solidaries/postUl",
  *              "security_post_denormalize"="is_granted('solidary_create',object)"
- *          }
- *
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidaries",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -80,8 +93,39 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          },
  *          "delete"={
  *             "security"="is_granted('solidary_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidaries/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "security"="is_granted('admin_structure_read',object)"
+ *          },
  *      }
+ * )
+ * @ApiFilter(
+ *      SearchFilter::class,
+ *      properties={
+ *          "givenName":"partial",
+ *          "familyName":"partial",
+ *          "solidaryUserStructure.solidaryUser.user.givenName":"partial",
+ *          "solidaryUserStructure.solidaryUser.user.familyName":"partial"
+ *      }
+ * )
+ * @ApiFilter(
+ *      OrderFilter::class,
+ *      properties={
+ *          "id",
+ *          "givenName",
+ *          "familyName",
+ *          "telephone",
+ *          "subject",
+ *          "lastActionDate",
+ *          "solidaryUserStructure.solidaryUser.user.givenName",
+ *          "solidaryUserStructure.solidaryUser.user.familyName",
+ *          "solidaryUserStructure.solidaryUser.user.telephone",
+ *          "subject.label"
+ *      },
+ *      arguments={"orderParameterName"="order"}
  * )
  *
  *  Exemples for regular :
@@ -116,6 +160,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class Solidary
 {
@@ -127,9 +172,171 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
+
+    /**
+     * @var ArrayCollection|null Diary entry.
+     * Ordered desc to get the last entry first.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "DESC"})
+     */
+    private $diaries;
+
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+        $this->diaries = new ArrayCollection();
+        $this->needs = new ArrayCollection();
+        $this->solidarySolutions = new ArrayCollection();
+        $this->solidaryMatchings = new ArrayCollection();
+        $this->proofs = [];
+        $this->origin = [];
+        $this->destination = [];
+        $this->days = [];
+        $this->homeAddress = [];
+        $this->solutions = [];
+    }
+
+    
+    /**
+     * @var string|null Subject of the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdminsubject(): ?string
+    {
+        return $this->getSubject()->getLabel();
+    }
+
+    /**
+     * @var string|null Given name of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdmingivenName(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGivenName();
+    }
+
+    /**
+     * @var string|null Family name of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdminfamilyName(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getFamilyName();
+    }
+
+    /**
+     * @var string|null Telephone of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdmintelephone(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getTelephone();
+    }
+
+    /**
+     * @var string|null Progression of the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdminprogression(): ?string
+    {
+        return $this->getDiaries()[0]->getProgression();
+    }
+
+    /**
+     * @var string|null Last action for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return string|null
+     */
+    public function getAdminlastAction(): ?string
+    {
+        return $this->getDiaries()[0]->getAction()->getName();
+    }
+
+    /**
+     * @var DateTime|null Last action date for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return DateTime|null
+     */
+    public function getAdminlastActionDate(): ?DateTime
+    {
+        return $this->getDiaries()[0]->getCreatedDate();
+    }
+
+    /**
+     * @var Address|null Origin for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return Address|null
+     */
+    public function getAdminorigin(): ?Address
+    {
+        return $this->getProposal()->getWaypoints()[0]->getAddress();
+    }
+
+    /**
+     * @var Address|null Destination for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return Address|null
+     */
+    public function getAdmindestination(): ?Address
+    {
+        foreach ($this->getProposal()->getWaypoints() as $waypoint) {
+            if ($waypoint->isDestination()) {
+                return $waypoint->getAddress();
+            }
+        }
+        return null;
+    }
+
+
+
+    public function getDiaries()
+    {
+        return $this->diaries->getValues();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * @var int Ask status (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
@@ -197,7 +404,7 @@ class Solidary
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","readSolidary","writeSolidary"})
      */
     private $subject;
 
@@ -422,19 +629,7 @@ class Solidary
      */
     private $solutions;
     
-    public function __construct()
-    {
-        $this->id = self::DEFAULT_ID;
-        $this->needs = new ArrayCollection();
-        $this->solidarySolutions = new ArrayCollection();
-        $this->solidaryMatchings = new ArrayCollection();
-        $this->proofs = [];
-        $this->origin = [];
-        $this->destination = [];
-        $this->days = [];
-        $this->homeAddress = [];
-        $this->solutions = [];
-    }
+    
 
     public function getId(): int
     {

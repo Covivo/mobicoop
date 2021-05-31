@@ -105,6 +105,7 @@ class StructureManager
                 if (array_key_exists('label', $aneed) && $aneed['label'] !== null) {
                     $need = new Need();
                     $need->setLabel($aneed['label']);
+                    $need->setLabelVolunteer(isset($aneed['labelVolunteer']) ? $aneed['labelVolunteer'] : null);
                     $need->addStructure($structure);
                     $structure->addNeed($need);
                     $this->entityManager->persist($need);
@@ -292,6 +293,7 @@ class StructureManager
                     foreach ($structure->getNeeds() as $need) {
                         if ($need->getId() === $aneed['id']) {
                             $need->setLabel($aneed['label']);
+                            $need->setLabelVolunteer(isset($aneed['labelVolunteer']) ? $aneed['labelVolunteer'] : null);
                             break;
                         }
                     }
@@ -303,6 +305,7 @@ class StructureManager
                     // new need
                     $need = new Need();
                     $need->setLabel($aneed['label']);
+                    $need->setLabelVolunteer(isset($aneed['labelVolunteer']) ? $aneed['labelVolunteer'] : null);
                     $need->addStructure($structure);
                     $structure->addNeed($need);
                     $this->entityManager->persist($need);

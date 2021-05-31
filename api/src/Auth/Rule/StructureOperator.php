@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,15 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the solidary module is available
+ *  Check that the requester is an operator in a structuree
  */
-class SolidaryAvailable implements AuthRuleInterface
+class StructureOperator implements AuthRuleInterface
 {
     /**
      * {@inheritdoc}
      */
     public function execute($requester, $item, $params)
     {
-        if (isset($params['solidary'])) {
-            return $params['solidary'];
-        }
         return true;
     }
 }

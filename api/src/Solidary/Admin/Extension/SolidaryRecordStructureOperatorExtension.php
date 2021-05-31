@@ -21,26 +21,28 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Admin\Extension;
+namespace App\Solidary\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\User\Entity\User;
-use App\Auth\Service\AuthManager;
-use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
+use App\Auth\Service\AuthManager;
+use App\Solidary\Entity\Solidary;
+use App\User\Entity\User;
+use App\Solidary\Entity\Operate;
 
 /**
-  *  Extension used to add an automatic filter to the admin get collection request for community managers
-  *  Non-admin community managers can only manage and see the users that belong to their communities
-*/
-
-final class UserCommunityManagerFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+ * Extension used to limit the list of solidary records to the ones where the requester is operator in the solidary record structure.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ *
+ */
+final class SolidaryRecordStructureOperatorExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    private $security;
     private $authManager;
+    private $security;
 
     public function __construct(Security $security, AuthManager $authManager)
     {
@@ -50,37 +52,44 @@ final class UserCommunityManagerFilterExtension implements QueryCollectionExtens
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        // concerns only admin get collection
-        if ($resourceClass == User::class && $operationName == "ADMIN_get") {
+        if ($resourceClass == Solidary::class && $operationName === 'ADMIN_get') {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        return;
+        if ($resourceClass == Solidary::class && $operationName === 'ADMIN_get') {
+            $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        }
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
-            // user is admin => not concerned
-            return;
-        }
-
-        if ($this->authManager->isAuthorized('ROLE_SOLIDARY_OPERATOR')) {
-            // user is solidary operator => not concerned
-            return;
-        }
-
+        /**
+         * @var User $user
+         */
         $user = $this->security->getUser();
+
+        // exclude pure admins
+        if ($this->authManager->isAuthorized('ROLE_ADMIN')) {
+            return;
+        }
+
+        // get the list of structures id where the requester is operator
+        $ids = [];
+        foreach ($user->getOperates() as $operate) {
+            /**
+             * @var Operate $operate
+             */
+            $ids[] = $operate->getStructure()->getId();
+        }
+
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->join(sprintf("%s.communityUsers", $rootAlias), 'ucmfe_cu')
-            ->join(sprintf("%s.communityUsers", $rootAlias), 'ucmfe_cu2')
-            ->andWhere('ucmfe_cu.user = :user AND ucmfe_cu.status = :status AND ucmfe_cu2.community = ucmfe_cu.community')
-        ;
-        $queryBuilder->setParameter('user', $user);
-        $queryBuilder->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR);
+        ->join(sprintf("%s.solidaryUserStructure", $rootAlias), 'srso_sus')
+        ->join(sprintf("srso_sus.structure", $rootAlias), 'srso_structure')
+        ->andWhere('srso_structure.id IN (:ids)')
+        ->setParameter('ids', $ids);
     }
 }

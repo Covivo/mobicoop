@@ -71,10 +71,17 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @MaxDepth(1)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $label;
+
+    /**
+     * @var string Label of the need from the volunteer point of view.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","readNeeds"})
+     */
+    private $labelVolunteer;
 
     /**
      * @var bool The need is not publicly available.
@@ -167,6 +174,18 @@ class Need
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getLabelVolunteer(): ?string
+    {
+        return $this->labelVolunteer ? $this->labelVolunteer : $this->label;
+    }
+
+    public function setLabelVolunteer(?string $labelVolunteer): self
+    {
+        $this->labelVolunteer = $labelVolunteer;
 
         return $this;
     }

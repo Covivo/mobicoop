@@ -156,6 +156,14 @@ class Structure
     private $telephone;
 
     /**
+     * @var bool Auto approval of beneficiaries.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
+     */
+    private $beneficiaryAutoApproval;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -586,6 +594,18 @@ class Structure
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function hasBeneficiaryAutoApproval(): ?bool
+    {
+        return $this->beneficiaryAutoApproval ? true : false;
+    }
+    
+    public function setBeneficiaryAutoApproval(bool $beneficiaryAutoApproval): self
+    {
+        $this->beneficiaryAutoApproval = $beneficiaryAutoApproval;
 
         return $this;
     }

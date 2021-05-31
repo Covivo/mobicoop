@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\Solidary\Admin\Service;
 
-use App\Auth\Interfaces\AuthRuleInterface;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
- *  Check that the solidary module is available
+ * Solidary manager in admin context.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-class SolidaryAvailable implements AuthRuleInterface
+class SolidaryManager
 {
+    private $entityManager;
+
     /**
-     * {@inheritdoc}
+     * Constructor
+     *
+     * @param EntityManagerInterface $entityManager
      */
-    public function execute($requester, $item, $params)
+    public function __construct(
+        EntityManagerInterface $entityManager
+    ) {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * Get Solidary records
+     *
+     * @param PaginatorInterface $solidaries  The solidary objects
+     * @return array|null The solidary records
+     */
+    public function getSolidaries(PaginatorInterface $solidaries)
     {
-        if (isset($params['solidary'])) {
-            return $params['solidary'];
-        }
-        return true;
+        return $solidaries;
     }
 }
