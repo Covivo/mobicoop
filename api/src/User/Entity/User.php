@@ -3077,6 +3077,13 @@ class User implements UserInterface, EquatableInterface
         return $this->rolesTerritory;
     }
 
+    public function setRolesTerritory(?array $rolesTerritory): self
+    {
+        $this->rolesTerritory = $rolesTerritory;
+
+        return $this;
+    }
+
     
     // DOCTRINE EVENTS
 
