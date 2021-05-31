@@ -267,7 +267,7 @@ class MassPerson
     /**
      * @var string The clear password of the user when migrated (not persisted)
      *
-     * @Groups({"massMigrate","write"})
+     * @Groups({"write"})
      */
     private $clearPassword;
 

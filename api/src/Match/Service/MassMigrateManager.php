@@ -260,6 +260,7 @@ class MassMigrateManager
                 $massPerson->setProposal($this->proposalManager->get($ad->getId()));
                 $this->entityManager->persist($massPerson);
 
+                // Finally we send an event to inform the user of its migration
                 $event = new MassMigrateUserMigratedEvent($massPerson);
                 $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
             }
