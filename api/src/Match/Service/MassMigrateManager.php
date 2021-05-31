@@ -280,7 +280,7 @@ class MassMigrateManager
         $mass->setMigratedUsers($migratedUsers);
 
         // Launch import and mass matching
-        if (self::LAUNCH_IMPORT) {
+        if (self::LAUNCH_IMPORT && $mass->getMassType() !== Mass::TYPE_MIGRATION) {
             $this->logger->info('Mass Migrate | Start user import | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
         }
