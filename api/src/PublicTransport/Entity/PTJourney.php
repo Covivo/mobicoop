@@ -44,6 +44,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "get"={
  *              "path"="/journeys",
  *              "swagger_context" = {
+ *                  "tags"={"Public Transport"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "origin_latitude",
@@ -113,7 +114,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              }
  *          }
  *      },
- *      itemOperations={"get"={"path"="/journeys/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/journeys/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>

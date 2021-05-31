@@ -11,9 +11,9 @@
         :class="textClass"
         v-on="on"
       >
-        <v-icon>
-          mdi-translate
-        </v-icon>
+        <p class="mt-4">
+          {{ displayedLanguage }}
+        </p>
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
@@ -67,13 +67,15 @@ export default {
   data(){
     return {
       selectedLanguage: this.language,
+      displayedLanguage: this.language,
       // check if we have more than 1 language
       enabled: Object.keys(this.languages).length > 1
     }
   },
   methods:{
     selectLanguage(item, key) {
-      this.selectedLanguage = item
+      this.selectedLanguage = item;
+      this.displayedLanguage = key;
       this.$emit('languageSelected', key);
       axios.post(this.$t('urlToSelectLanguage'), {locale:key});
     },

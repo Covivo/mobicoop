@@ -41,15 +41,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('solidary_animation_list',object)"
+ *              "security"="is_granted('solidary_animation_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_animation_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_animation_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *      }
  * )

@@ -42,6 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
  *          "get"={
  *              "path"="/stops",
  *              "swagger_context" = {
+ *                  "tags"={"Public Transport"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "provider",
@@ -62,7 +63,14 @@ use Doctrine\ORM\Mapping as ORM;
  *              }
  *          }
  *     },
- *      itemOperations={"get"={"path"="/stop/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/stop/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

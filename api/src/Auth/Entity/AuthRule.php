@@ -38,8 +38,35 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      }
  * )
  */
 class AuthRule

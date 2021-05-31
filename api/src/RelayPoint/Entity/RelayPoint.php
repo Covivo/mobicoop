@@ -58,15 +58,24 @@ use App\RelayPoint\Filter\TerritoryFilter;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('relay_point_list',object)"
+ *              "security_post_denormalize"="is_granted('relay_point_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "public"={
  *              "method"="GET",
  *              "security_post_denormalize"="is_granted('relay_point_list',object)",
- *              "path"="/relay_points/public"
+ *              "path"="/relay_points/public",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('relay_point_create',object)"
+ *              "security_post_denormalize"="is_granted('relay_point_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/relaypoints",
@@ -75,45 +84,69 @@ use App\RelayPoint\Filter\TerritoryFilter;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_relay_point_list',object)"
+ *              "security"="is_granted('admin_relay_point_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/relaypoints",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_create',object)"
+ *              "security"="is_granted('admin_relay_point_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('relay_point_read',object)"
+ *              "security"="is_granted('relay_point_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "put"={
- *              "security"="is_granted('relay_point_update',object)"
+ *              "security"="is_granted('relay_point_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('relay_point_delete',object)"
+ *              "security"="is_granted('relay_point_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/relaypoints/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_relay_point_read',object)"
+ *              "security"="is_granted('admin_relay_point_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/relaypoints/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_update',object)"
+ *              "security"="is_granted('admin_relay_point_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/relaypoints/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_relay_point_delete',object)"
+ *              "security"="is_granted('admin_relay_point_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

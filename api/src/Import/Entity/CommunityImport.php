@@ -26,12 +26,18 @@ use App\Import\Controller\ImportImageCommunityController;
  *              "path"="/import/images-from-v1/community",
  *              "controller"=ImportImageCommunityController::class,
  *              "read"=false,
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Import"}
+ *              }
  *          },
  *      }
  * )

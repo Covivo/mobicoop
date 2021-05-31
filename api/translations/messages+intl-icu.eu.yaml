@@ -93,6 +93,7 @@ paymentNotDone: Ez ordaindua
 passenger: Bidaiaria
 driver: Gidaria
 certified: Egiaztatua
+seeProofsClasses: "voir les classes"
 typeOfpayment: Ordainketa
 amount: Parte hartze zenbatekoa
 dropOffLocality: Uzte lekua

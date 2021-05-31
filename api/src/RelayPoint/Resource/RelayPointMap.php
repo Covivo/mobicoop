@@ -39,8 +39,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     collectionOperations={
  *          "get"={
- *             "security"="is_granted('relay_point_map_list',object)"
+ *             "security"="is_granted('relay_point_map_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
  *      }
  * )
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>

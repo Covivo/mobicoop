@@ -41,18 +41,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "interop_get"={
  *             "method"="GET",
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *             "swagger_context" = {
+ *               "tags"={"Interoperability"}
+ *             }
  *          },
  *          "interop_post"={
  *             "method"="POST",
  *             "security_post_denormalize"="is_granted('user_register',object)",
  *             "swagger_context" = {
+ *                  "tags"={"Interoperability"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "givenName",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "User's given name"
+ *                          "description" = "User's given name!"
  *                      },
  *                      {
  *                          "name" = "familyName",
@@ -92,7 +96,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "interop_get"={
  *             "method"="GET",
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *             "swagger_context" = {
+ *               "tags"={"Interoperability"}
+ *             }
  *          }
  *      }
  * )

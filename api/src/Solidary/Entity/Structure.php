@@ -51,16 +51,25 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('structure_list',object)"
+ *             "security"="is_granted('structure_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('structure_create',object)"
+ *             "security_post_denormalize"="is_granted('structure_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "structure_geolocation"={
  *              "method"="GET",
  *              "path"="/structures/geolocation",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('structure_list',object)"
+ *              "security"="is_granted('structure_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/structures",
@@ -77,17 +86,26 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_structure_create',object)"
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('structure_read',object)"
+ *             "security"="is_granted('structure_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "put"={
- *             "security"="is_granted('structure_update',object)"
+ *             "security"="is_granted('structure_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "delete"={
- *             "security"="is_granted('structure_delete',object)"
+ *             "security"="is_granted('structure_delete',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/structures/{id}",
@@ -108,7 +126,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_structure_delete',object)"
- *          },
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})

@@ -48,21 +48,36 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('subject_list',object)"
+ *             "security"="is_granted('subject_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('subject_create',object)"
+ *             "security_post_denormalize"="is_granted('subject_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('subject_read',object)"
+ *             "security"="is_granted('subject_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "put"={
- *             "security"="is_granted('subject_update',object)"
+ *             "security"="is_granted('subject_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "delete"={
- *             "security"="is_granted('subject_delete',object)"
+ *             "security"="is_granted('subject_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      }
  * )

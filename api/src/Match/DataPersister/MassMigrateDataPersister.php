@@ -50,9 +50,15 @@ final class MassMigrateDataPersister implements ContextAwareDataPersisterInterfa
     public function persist($data, array $context = [])
     {
         // Only qualified Masses can be migrated
-        if ($data->getMassType()!==1) {
-            throw new MassException("bad Mass type");
+        if ($data->getMassType()<=1) {
+            throw new MassException(MassException::BAD_TYPE);
         }
+
+        // Only analyzed Mass can be migrated
+        if (is_null($data->getAnalyzedDate())) {
+            throw new MassException(MassException::MASS_NOT_ANALYZED);
+        }
+
 
         return $this->massMigrateManager->migrate($data);
     }

@@ -37,12 +37,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('app_versioning_read',object)"
+ *              "security"="is_granted('app_versioning_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
  *          }
  *      }
  * )

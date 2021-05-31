@@ -51,13 +51,24 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *          "denormalization_context"={"groups"={"write_campaign"}}
  *      },
  *      collectionOperations={
- *          "get",
- *          "post",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
  *          "owned"={
  *              "method"="GET",
  *              "path"="/campaigns/owned",
  *              "normalization_context"={"groups"={"read_campaign"}, "enable_max_depth"="true"},
- *              "security_post_denormalize"="is_granted('community_list',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/campaigns",
@@ -66,52 +77,84 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_campaign_list',object)"
+ *              "security"="is_granted('admin_campaign_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/campaigns",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_campaign_create',object)"
+ *              "security"="is_granted('admin_campaign_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
  *          "put"={
  *              "normalization_context"={"groups"={"update_campaign"}, "enable_max_depth"="true"},
  *              "denormalization_context"={"groups"={"update_campaign"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
  *          },
- *          "delete",
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
  *          "send"={
  *              "method"="GET",
  *              "controller"=CampaignSend::class,
- *              "path"="/campaigns/send/{id}"
+ *              "path"="/campaigns/send/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
  *          },
  *          "send-test"={
  *              "method"="GET",
  *              "controller"=CampaignSendTest::class,
- *              "path"="/campaigns/send-test/{id}"
+ *              "path"="/campaigns/send-test/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/campaigns/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_campaign_read',object)"
+ *              "security"="is_granted('admin_campaign_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/campaigns/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_campaign_update',object)"
+ *              "security"="is_granted('admin_campaign_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/campaigns/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_campaign_delete',object)"
+ *              "security"="is_granted('admin_campaign_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          }
  *      }
  * )

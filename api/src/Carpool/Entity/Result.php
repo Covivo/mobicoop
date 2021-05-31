@@ -70,6 +70,7 @@ class Result
      */
     private $frequencyResult;
 
+
     /**
      * @var Address The origin address to display.
      * @Groups({"results","externalJourney"})
@@ -118,6 +119,18 @@ class Result
      */
     private $destinationPassenger;
 
+    /**
+     * @var Address The pickup outward address
+     * @Groups({"results","externalJourney"})
+     */
+    private $pickUpOutward;
+
+    /**
+     * @var Address The pickup return address
+     * @Groups({"results","externalJourney"})
+     */
+    private $pickUpReturn;
+    
     /**
      * @var \DateTimeInterface|null The date to display.
      * @Groups({"results","externalJourney"})
@@ -481,6 +494,30 @@ class Result
     public function setDestinationPassenger(?Address $destinationPassenger): self
     {
         $this->destinationPassenger = $destinationPassenger;
+
+        return $this;
+    }
+
+    public function getPickUpOutward(): ?Address
+    {
+        return $this->pickUpOutward;
+    }
+
+    public function setPickUpOutward(?Address $pickUpOutward): self
+    {
+        $this->pickUpOutward = $pickUpOutward;
+
+        return $this;
+    }
+    
+    public function getPickUpReturn(): ?Address
+    {
+        return $this->pickUpReturn;
+    }
+
+    public function setPickUpReturn(?Address $pickUpReturn): self
+    {
+        $this->pickUpReturn = $pickUpReturn;
 
         return $this;
     }

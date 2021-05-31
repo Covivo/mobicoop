@@ -41,7 +41,14 @@ use App\Carpool\Entity\IndividualStop;
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"={"path"="/arrivals/{id}"}}
+ *      itemOperations={
+ *          "get"={
+ *              "path"="/arrivals/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Public Transport"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>

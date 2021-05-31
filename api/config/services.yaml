@@ -154,6 +154,15 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\Carpool\Service\AntiFraudManager:
+        arguments:
+            $params: 
+                active: '%env(bool:ANTIFRAUD_ACTIVE)%'
+                distanceMinCheck: '%env(int:ANTIFRAUD_DISTANCE_MIN_CHECK)%'
+                nbCarpoolsMax: '%env(int:ANTIFRAUD_NB_CARPOOLS_MAX)%'
+        tags:
+            - { name: monolog.logger, channel: carpool }
+            
     App\Carpool\Service\AskManager:
         arguments:
             $paymentActive: '%env(string:PAYMENT_ACTIVE)%'

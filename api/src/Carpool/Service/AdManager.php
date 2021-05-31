@@ -50,6 +50,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Exception\AntiFraudException;
 use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\MatchingRepository;
@@ -86,6 +87,7 @@ class AdManager
     private $subjectRepository;
     private $addressManager;
     private $appManager;
+    private $antiFraudManager;
 
     private $currentMargin = null;
 
@@ -95,8 +97,29 @@ class AdManager
      * @param EntityManagerInterface $entityManager
      * @param ProposalManager $proposalManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalManager $proposalManager, UserManager $userManager, MatchingRepository $matchingRepository, CommunityRepository $communityRepository, EventManager $eventManager, ResultManager $resultManager, LoggerInterface $logger, array $params, ProposalRepository $proposalRepository, CriteriaRepository $criteriaRepository, ProposalMatcher $proposalMatcher, AskManager $askManager, EventDispatcherInterface $eventDispatcher, Security $security, AuthManager $authManager, ProofManager $proofManager, SubjectRepository $subjectRepository, AddressManager $addressManager, AppManager $appManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ProposalManager $proposalManager,
+        UserManager $userManager,
+        MatchingRepository $matchingRepository,
+        CommunityRepository $communityRepository,
+        EventManager $eventManager,
+        ResultManager $resultManager,
+        LoggerInterface $logger,
+        array $params,
+        ProposalRepository $proposalRepository,
+        CriteriaRepository $criteriaRepository,
+        ProposalMatcher $proposalMatcher,
+        AskManager $askManager,
+        EventDispatcherInterface $eventDispatcher,
+        Security $security,
+        AuthManager $authManager,
+        ProofManager $proofManager,
+        SubjectRepository $subjectRepository,
+        AddressManager $addressManager,
+        AppManager $appManager,
+        AntiFraudManager $antiFraudManager
+    ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
         $this->userManager = $userManager;
@@ -117,6 +140,7 @@ class AdManager
         $this->subjectRepository = $subjectRepository;
         $this->addressManager = $addressManager;
         $this->appManager = $appManager;
+        $this->antiFraudManager = $antiFraudManager;
         if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
             $this->params["paymentActiveDate"]->setTime(0, 0);
             $this->params["paymentActive"] = true;
@@ -138,6 +162,13 @@ class AdManager
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
+        
+        /** Anti-Fraud check **/
+        $antiFraudResponse = $this->antiFraudManager->validAd($ad);
+        if (!$antiFraudResponse->isValid()) {
+            throw new AntiFraudException($antiFraudResponse->getMessage());
+        }
+
         // $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->logger->info("AdManager : start " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 

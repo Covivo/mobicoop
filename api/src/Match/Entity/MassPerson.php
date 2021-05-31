@@ -25,6 +25,7 @@ namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -43,8 +44,20 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "normalization_context"={"groups"={"mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
+ *          }
+ *      }
  * )
  *
  */
@@ -204,7 +217,7 @@ class MassPerson
      * @var boolean The person accepts to be a driver.
      *
      * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
+     * @Assert\NotNull
      * @ORM\Column(type="boolean")
      * @Groups({"mass","massCompute"})
      */
@@ -214,7 +227,7 @@ class MassPerson
      * @var boolean The person accepts to be a passenger.
      *
      * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
+     * @Assert\NotNull
      * @ORM\Column(type="boolean")
      * @Groups({"mass","massCompute"})
      */
@@ -237,13 +250,22 @@ class MassPerson
     private $updatedDate;
 
     /**
-     * @var User|null The User created base on this MassPerson
+     * @var User|null The User created based on this MassPerson
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @MaxDepth(1)
      * @Groups({"read"})
      */
     private $user;
+
+    /**
+     * @var Proposal|null The Proposal created based on this MassPerson journey (only the outward for round trip)
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @MaxDepth(1)
+     * @Groups({"read"})
+     */
+    private $proposal;
 
     /**
      * @var ArrayCollection|null The MassPTJourneys linked to this mass person
@@ -536,6 +558,18 @@ class MassPerson
         return $this;
     }
 
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+    
+    public function setProposal(Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+        
+        return $this;
+    }
+    
     public function getMassPTJourneys()
     {
         return $this->massPTJourneys->getValues();

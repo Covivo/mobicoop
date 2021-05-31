@@ -58,7 +58,10 @@ use Doctrine\Common\Collections\Collection;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('mass_list',object)"
+ *              "security"="is_granted('mass_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
@@ -67,38 +70,56 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=CreateMassImportAction::class,
  *              "defaults"={"_api_receive"=false},
- *              "security_post_denormalize"="is_granted('mass_create',object)"
+ *              "security_post_denormalize"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"mass"}},
- *              "security"="is_granted('mass_read',object)"
+ *              "security"="is_granted('mass_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('mass_delete',object)"
+ *              "security"="is_granted('mass_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "reanalyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/reanalyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassReAnalyzeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
  *              "normalization_context"={"groups"={"massCompute"}},
  *              "controller"=MassComputeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "match"={
  *              "method"="GET",
@@ -107,6 +128,7 @@ use Doctrine\Common\Collections\Collection;
  *              "controller"=MassMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",
@@ -159,6 +181,7 @@ use Doctrine\Common\Collections\Collection;
  *              "controller"=MassReMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",
@@ -209,25 +232,37 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/workingplaces",
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
  *              "controller"=MassWorkingPlacesAction::class,
- *              "security"="is_granted('mass_read',object)"
+ *              "security"="is_granted('mass_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "migrate"={
  *              "method"="PUT",
  *              "path"="/masses/{id}/migrate",
  *              "security"="is_granted('mass_create',object)",
- *              "normalization_context"={"groups"={"massMigrate"}}
+ *              "normalization_context"={"groups"={"massMigrate"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "getPTPotential"={
  *              "method"="GET",
  *              "path"="/masses/{id}/getPTPotential",
  *              "normalization_context"={"groups"={"mass","pt"}},
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "computePTPotential"={
  *              "method"="GET",
  *              "path"="/masses/{id}/computePTPotential",
  *              "normalization_context"={"groups"={"massPTPotential"}},
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          }
  *      }
  * )
@@ -248,9 +283,10 @@ class Mass
 
     const TYPE_ANONYMOUS = 0;
     const TYPE_QUALIFIED = 1;
+    const TYPE_MIGRATION = 2;
 
     const NB_WORKING_DAY = 228;
-    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
     const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
     const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
@@ -449,7 +485,7 @@ class Mass
     /**
      * @var Community The community created after the migration of this mass users
      *
-     * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
      * @Groups({"mass","massMigrate"})
      */
     private $community;
@@ -475,6 +511,19 @@ class Mass
      * @Groups({"mass"})
      */
     private $migratedDate;
+
+    /**
+     * @var bool Set the first address as the home address of the users that will be migrated
+     * @Groups({"mass","massMigrate"})
+     */
+    private $setHomeAddress;
+    
+    /**
+     * @var int The id of an existing community. The migrated users will be joining this community.
+     * If there is a communityId, the other community fields (name, desc etc...) will be ignored
+     * @Groups({"mass","massMigrate"})
+     */
+    private $communityId;
 
     /**
      * @var string The name of the new community that will be created if we migrate the users.
@@ -897,6 +946,26 @@ class Mass
         $this->migratedDate = $migratedDate;
 
         return $this;
+    }
+
+    public function hasSetHomeAddress(): ?bool
+    {
+        return $this->setHomeAddress;
+    }
+
+    public function setSetHomeAddress(?bool $setHomeAddress)
+    {
+        $this->setHomeAddress = $setHomeAddress;
+    }
+    
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
     }
 
     public function getCommunityName(): ?string
