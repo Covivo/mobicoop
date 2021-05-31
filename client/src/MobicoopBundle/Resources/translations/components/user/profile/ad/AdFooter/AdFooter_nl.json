@@ -1,1 +1,11 @@
-{}
+{
+    "urlResult": "/carpooling/advertentie/{id}/resultaten",
+    "potentialCarpooler": {
+        "plural": "potentiële carpoolers",
+        "singular": "potentiële carpooler"
+    },
+    "seat": {
+        "plural": "plaatsen",
+        "singular": "plaats"
+    }
+}
