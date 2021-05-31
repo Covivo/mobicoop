@@ -384,7 +384,7 @@ class NotificationManager
                     $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
                     // no break
                 case MassPerson::class:
-                    $titleContext = "";
+                    $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'clearPassword'=>$object->getClearPassword()];
                 break;
                 case CarpoolItem::class:
