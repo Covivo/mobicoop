@@ -54,7 +54,7 @@ class MassSubscriber implements EventSubscriberInterface
 
     public function onMassMigrateUserMigrated(MassMigrateUserMigratedEvent $event)
     {
-        $this->notificationManager->notifies(MassMigrateUserMigratedEvent::NAME, $event->getUser());
+        $this->notificationManager->notifies(MassMigrateUserMigratedEvent::NAME, $event->getMassPerson()->getUser(), $event->getMassPerson());
     }
 
     public function onMassAnalyzeErrors(MassAnalyzeErrorsEvent $event)

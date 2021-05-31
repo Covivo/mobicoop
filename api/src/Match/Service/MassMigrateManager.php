@@ -199,7 +199,7 @@ class MassMigrateManager
                     // Set an encrypted password
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));
-                    $user->setClearPassword($password); // Used to be send by email (not persisted)
+                    $massPerson->setClearPassword($password); // Used to be send by email (not persisted)
                     $user->setNewsSubscription(true); // We need to send emails to this person
 
                     // auto valid the registration
@@ -259,11 +259,10 @@ class MassMigrateManager
                 // We link the proposal with the MassPerson
                 $massPerson->setProposal($this->proposalManager->get($ad->getId()));
                 $this->entityManager->persist($massPerson);
-            }
 
-            // Trigger an event to send a email
-            $event = new MassMigrateUserMigratedEvent($user);
-            $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
+                $event = new MassMigrateUserMigratedEvent($massPerson);
+                $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
+            }
         }
         
         // Finally, we set status of the Mass at Migrated and save the migrated date

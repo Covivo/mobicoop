@@ -592,7 +592,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The clear password of the user, used for delegation (not persisted !).
      *
-     * @Groups({"massMigrate","write"})
+     * @Groups({"write"})
      */
     private $clearPassword;
 
