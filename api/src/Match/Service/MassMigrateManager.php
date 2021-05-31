@@ -200,6 +200,7 @@ class MassMigrateManager
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));
                     $user->setClearPassword($password); // Used to be send by email (not persisted)
+                    $user->setNewsSubscription(true); // We need to send emails to this person
 
                     // auto valid the registration
                     $user->setValidatedDate(new \DateTime());
@@ -216,17 +217,13 @@ class MassMigrateManager
                         $personalAddress = clone $massPerson->getPersonalAddress();
                         $personalAddress->setUser($user);
                         $personalAddress->setHome(true);
+                        $user->addAddress($personalAddress);
                     }
 
-                    $user->addAddress($personalAddress);
 
                     $migratedUsers[] = $user; // For the return
 
                     $this->entityManager->persist($user);
-
-                    // Trigger an event to send a email
-                    $event = new MassMigrateUserMigratedEvent($user);
-                    $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
             }
 
@@ -263,6 +260,10 @@ class MassMigrateManager
                 $massPerson->setProposal($this->proposalManager->get($ad->getId()));
                 $this->entityManager->persist($massPerson);
             }
+
+            // Trigger an event to send a email
+            $event = new MassMigrateUserMigratedEvent($user);
+            $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
         }
         
         // Finally, we set status of the Mass at Migrated and save the migrated date

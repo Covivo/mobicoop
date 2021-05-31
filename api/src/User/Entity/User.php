@@ -592,7 +592,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The clear password of the user, used for delegation (not persisted !).
      *
-     * @Groups("write")
+     * @Groups({"massMigrate","write"})
      */
     private $clearPassword;
 
@@ -1339,6 +1339,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->communityUsers = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
