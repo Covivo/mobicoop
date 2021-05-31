@@ -1,1 +1,17 @@
-{}
+{
+    "unpaid": "Onbetaald",
+    "route": "/betalingen/{id}/{frequency}/{type}/{week}",
+    "tooltip": {
+        "paymentElectronicNotActive": "De betaling en de carpooling bevestigen",
+        "paymentElectronicActive": "Online betalen of de cash betaling en de carpooling bevestigen"
+    },
+    "passenger": {
+        "pendingElectronicNotActive": "Bevestigen",
+        "pending": "Betalen of bevestigen",
+        "paid": "Reeds betaald"
+    },
+    "driver": {
+        "pending": "Betaling valideren",
+        "paid": "Reeds betaald"
+    }
+}
