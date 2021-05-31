@@ -44,7 +44,7 @@ final class ArticleDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Article && ((isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') || (isset($context['item_operation_name']) &&  $context['item_operation_name'] == ('ADMIN_patch' || 'ADMIN_delete')));
+        return $data instanceof Article && ((isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') || (isset($context['item_operation_name']) && $context['item_operation_name'] == 'ADMIN_patch' || $context['item_operation_name'] == 'ADMIN_delete'));
     }
 
     public function persist($data, array $context = [])
