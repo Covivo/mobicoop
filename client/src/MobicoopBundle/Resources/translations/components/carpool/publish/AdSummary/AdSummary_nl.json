@@ -1,1 +1,14 @@
-{}
+{
+    "hourMinute": "UU[u]mm",
+    "fullDate": "ddd Do MMMM YYYY",
+    "sun": "Zo",
+    "sat": "Za",
+    "fri": "V",
+    "tue": "Di",
+    "thu": "Do",
+    "wed": "W",
+    "mon": "M",
+    "return": "Terug",
+    "outward": "Heen",
+    "places": "plaats | plaatsen"
+}
