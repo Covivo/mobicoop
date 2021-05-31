@@ -916,8 +916,8 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var string User language
-     * @Groups({"readUser","write"})
      * @ORM\Column(name="language", type="string", length=10, nullable=true)
+     * @Groups({"readUser","write"})
      */
     private $language;
 

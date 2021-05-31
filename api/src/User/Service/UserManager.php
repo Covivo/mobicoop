@@ -1736,4 +1736,19 @@ class UserManager
 
         return $this->geoTools->getCO2($savedDistance);
     }
+
+    /**
+    * Update the activity of an user
+    *
+    * @param User      $user               The user to update
+    */
+    public function patchUser(User $user)
+    {
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        
+        // return the user
+        return $user;
+    }
 }
