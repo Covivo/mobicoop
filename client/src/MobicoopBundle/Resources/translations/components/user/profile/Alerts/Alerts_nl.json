@@ -1,1 +1,5 @@
-{}
+{
+    "asterisk": "* als een carpooling geannuleerd wordt, wordt er steeds een e-mail gestuurd.",
+    "errorUpdateAlert": "De wijziging kon niet bewaard worden door een technisch probleem",
+    "urlUpdate": "/gebruiker/melding/wijziging"
+}
