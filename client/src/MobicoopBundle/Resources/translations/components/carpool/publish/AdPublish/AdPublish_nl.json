@@ -1,1 +1,111 @@
-{}
+{
+    "no": "nee",
+    "yes": "ja",
+    "snackBarErrorPublish": "Traject niet compatibel met uw reeds gepubliceerde advertenties. Indien uw op deze datum reeds gepubliceerde advertentie niet meer geldig is, moet u deze op pauze zetten, wijzigen of verwijderen.",
+    "route": {
+        "roundPrice": "/prijs/afronden",
+        "myAds": "/gebruiker/profiel/wijzigen/mijn-advertenties",
+        "update": "carpooling/advertentie/{id}/wijzigen",
+        "publish": "carpooling/advertentiepubliceren"
+    },
+    "messageRoundedPrice": "We hebben het tarief van uw advertentie afgerond om uw ervaring en die van de andere gebruikers te verbeteren. We danken u voor uw begrip.",
+    "participation": {
+        "text": "De vermelde prijsindicaties zijn gebaseerd op overheidsaanbevelingen voor privéreizen met privévoertuigen en zijn niet bindend voor de deelnemers, het platform of IBM. Het enige doel van de dienst is immers gebruikers op een eenvoudige manier met elkaar in contact te brengen. Meer informatie vindt u in de <a href='/FAQ'>FAQ</a>.",
+        "forbidden": "De prijs van uw traject ligt hoger dan de maximale drempel die door ons platform werd vastgelegd (€ 0,50/km ). Uw traject zal niet gepubliceerd kunnen worden.",
+        "high": "De prijs van uw traject, die zeer hoog is, ligt boven de gemiddelde belastingschaal (€ 0,30/km): uw kansen om gecontacteerd te worden zullen dus zeer beperkt zijn. Bovendien is het verboden om betaalde vervoersdiensten aan te bieden die niet meer passen in het kader van het delen van de kosten via carpooling.",
+        "mid": "De prijs van uw traject is hoger dan het gemiddelde en uw kansen om gecontacteerd te worden zijn dus beperkter."
+    },
+    "messageSolidaryExclusiveAd": {
+        "switch": {
+            "label": "Exclusieve solidaire carpoolingadvertentie"
+        },
+        "message": " Deze advertentie zal een exclusieve solidaire carpoolingadvertentie zijn, als u de onderstaande optie behoudt. Ze zal dan alleen zichtbaar zijn voor de solidaire operatoren om u in contact te brengen met een solidaire aanvrager. Als u deze optie uitvinkt, wordt uw advertentie een gewone advertentie die zichtbaar is voor zowel andere carpoolers als solidaire operatoren."
+    },
+    "messageFirstAd": {
+        "alert": "Om nu gewaarschuwd te worden voor nieuwe advertenties die overeenstemmen met uw meest frequente traject, publiceert u zonder verwijlen uw eerste advertentie voor een regelmatig traject zodat u snel kunt carpoolen.",
+        "signUpDone": "Bravo {givenName} ! Uw inschrijving is voltooid"
+    },
+    "stepper": {
+        "buttons": {
+            "notValid": "U moet aangemeld zijn om een advertentie te publiceren en alle informatie over het traject hebben doorgegeven",
+            "update_ad": "Mijn advertentie wijzigen",
+            "publish_ad": "Mijn advertentie publiceren",
+            "previous": "Vorige",
+            "next": "Volgende"
+        },
+        "driverLicense": {
+            "route": "/cgu",
+            "link": "(Charter)",
+            "text": "Door mijn advertentie te publiceren, attesteer ik dat ik over een geldig rijbewijs en een geldige en up-to-date verzekering beschik"
+        },
+        "content": {
+            "map": {
+                "myproposal": "Uw trajectaanbieding"
+            },
+            "summary": "Overzicht",
+            "message": {
+                "label": "Laat in uw advertentie een bericht achter dat voor iedereen zichtbaar is",
+                "title": {
+                    "passenger": "Mijn bericht aan de bestuurders",
+                    "driver": "Mijn bericht aan de passagiers",
+                    "both": "Mijn bericht"
+                }
+            },
+            "participation": {
+                "passengers": " per passagier",
+                "price": "Deelname van "
+            },
+            "passengers": {
+                "backSeats": {
+                    "help": "Vink dit vakje aan als u garandeert dat de passagiers met niet meer dan 2 achterin zullen zitten",
+                    "label": "Maximaal 2 personen achterin"
+                },
+                "bike": {
+                    "help": "Vink dit vakje aan als uw voertuig een fiets kan vervoeren",
+                    "label": "Ik kan een fiets vervoeren"
+                },
+                "luggage": {
+                    "help": "Vink dit vakje aan als uw voertuig grote reiskoffers kan vervoeren",
+                    "label": "Ik heb plaats voor grote reiskoffers"
+                },
+                "seats": {
+                    "passengers": " passagier(s)",
+                    "question": "Ik heb plaats voor "
+                }
+            }
+        },
+        "header": {
+            "summary": "Overzicht",
+            "message": "Bericht",
+            "participation": "Deelname",
+            "passengers": "Passagiers",
+            "map": "Traject",
+            "planification": "Planning",
+            "search_journey": "Uw advertentie aanmaken"
+        }
+    },
+    "update": {
+        "unavailable": "U kunt deze advertentie niet wijzigen.",
+        "error": "Er heeft zich een fout voorgedaan bij het wijzigen van uw advertentie.",
+        "success": "Uw advertentie werd met succes gewijzigd.",
+        "popup": {
+            "minor_update_asks": {
+                "content": "Er werden reeds een of meer aanvragen ingediend met betrekking tot deze advertentie. De details van uw wijziging zullen worden verzonden naar alle gebruikers die deze aanvragen hebben ingediend.<br>Bevestigt u uw wijziging?",
+                "title": "Er bestaan aanvragen voor deze advertentie"
+            },
+            "major_update_ads": {
+                "content": "Een gebruiker heeft uw advertentie al opgemerkt als overeenstemmend met een behoefte en werd mogelijk verwittigd via SMS of e-mail. Uw wijziging zal ervoor zorgen dat de huidige versie van uw advertentie verwijderd wordt en dat er een nieuwe aangemaakt wordt.",
+                "title": "Een gebruiker heeft uw advertentie al opgemerkt"
+            },
+            "major_update_asks": {
+                "content": "Er zijn al een of meer aanvragen gedaan met betrekking tot deze advertentie. Als u essentiële informatie wijzigt, zal de huidige versie van uw advertentie verwijderd worden om een nieuwe aan te maken en zullen dus alle lopende aanvragen afgewezen worden.<br>Als u uw wijziging bevestigt, welk bericht wilt u dan sturen naar de carpoolers wier aanvragen u afwijst?",
+                "title": "Er bestaat minstens één aanvraag voor deze advertentie"
+            }
+        },
+        "title": "Uw advertentie wijzigen"
+    },
+    "create": {
+        "subtitle": "Uw advertentie aanmaken",
+        "title": "Een advertentie publiceren"
+    }
+}
