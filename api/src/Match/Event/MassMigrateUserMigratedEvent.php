@@ -24,7 +24,6 @@
 namespace App\Match\Event;
 
 use App\Match\Entity\MassPerson;
-use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
