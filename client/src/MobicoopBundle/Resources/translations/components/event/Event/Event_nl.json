@@ -2,7 +2,10 @@
     "buttons": {
         "widget": {
             "textDetails": {
-                "title": "De widget integreren"
+                "title": "De widget integreren",
+                "p3": "<span class=\"font-weight-bold\">Opgelet</span> : sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
+                "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+                "p1": "Om de widget te integreren, kopieert u de onderstaande tekst en plakt u die op uw website.<br />U kunt de vetgedrukte elementen wijzigen om uw widget aan te passen."
             },
             "externalRoute": "/evenement/widget/{id}",
             "route": "/evenement/widget/get/{id}/{urlKey}",
@@ -14,6 +17,24 @@
         "publish": {
             "route": "carpooling/zoekopdracht/poster",
             "label": "Een advertentie publiceren"
+        },
+        "contact": {
+            "route": "/gebruiker/berichten/nieuw"
+        },
+        "search": {
+            "label": "Zoeken"
         }
+    },
+    "urlCommunityUser": "/community-user",
+    "map": {
+        "origin": "Vertrek"
+    },
+    "title": {
+        "searchCarpool": "Een traject zoeken voor het evenement"
+    },
+    "tooltips": {
+        "domain": "Uw e-mailadres moet deel uitmaken van één van deze domeinen:",
+        "validation": "In afwachting van validatie",
+        "connected": "U moet aangemeld zijn"
     }
 }
