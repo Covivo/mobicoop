@@ -382,11 +382,11 @@ class NotificationManager
                 case Mass::class:
                     $titleContext = ['massId'=>$object->getId()];
                     $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
-                    // no break
+                    break;
                 case MassPerson::class:
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'clearPassword'=>$object->getClearPassword()];
-                break;
+                    break;
                 case CarpoolItem::class:
                     $titleContext = ['deptor'=>$object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
