@@ -65,6 +65,7 @@
             :seats="result.seats"
             :price="result.roundedPrice"
             :solidary-exclusive="result.solidaryExclusive"
+            :hide-pick-up="externalRdexJourneys"
           />
 
           <v-divider />
