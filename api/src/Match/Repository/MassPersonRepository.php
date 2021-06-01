@@ -51,6 +51,16 @@ class MassPersonRepository
     }
 
     /**
+     * Find All the PassPerson by criteria
+     *
+     * @return User|null
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+    
+    /**
      * Return all destinations for a mass.
      *
      * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The destinations (Address) found

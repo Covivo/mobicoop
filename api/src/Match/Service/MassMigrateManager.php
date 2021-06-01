@@ -199,7 +199,8 @@ class MassMigrateManager
                     // Set an encrypted password
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));
-                    $user->setClearPassword($password); // Used to be send by email (not persisted)
+                    $massPerson->setClearPassword($password); // Used to be send by email (not persisted)
+                    $user->setNewsSubscription(true); // We need to send emails to this person
 
                     // auto valid the registration
                     $user->setValidatedDate(new \DateTime());
@@ -216,17 +217,13 @@ class MassMigrateManager
                         $personalAddress = clone $massPerson->getPersonalAddress();
                         $personalAddress->setUser($user);
                         $personalAddress->setHome(true);
+                        $user->addAddress($personalAddress);
                     }
 
-                    $user->addAddress($personalAddress);
 
                     $migratedUsers[] = $user; // For the return
 
                     $this->entityManager->persist($user);
-
-                    // Trigger an event to send a email
-                    $event = new MassMigrateUserMigratedEvent($user);
-                    $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
                 }
             }
 
@@ -244,6 +241,8 @@ class MassMigrateManager
                     $communityUser = new CommunityUser();
                     $communityUser->setCommunity($community);
                     $communityUser->setUser($user);
+                    $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+                    $communityUser->setAcceptedDate(new \DateTime('now'));
                     $this->entityManager->persist($communityUser);
                 }
             }
@@ -262,6 +261,10 @@ class MassMigrateManager
                 // We link the proposal with the MassPerson
                 $massPerson->setProposal($this->proposalManager->get($ad->getId()));
                 $this->entityManager->persist($massPerson);
+
+                // Finally we send an event to inform the user of its migration
+                $event = new MassMigrateUserMigratedEvent($massPerson);
+                $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
             }
         }
         
@@ -280,7 +283,7 @@ class MassMigrateManager
         $mass->setMigratedUsers($migratedUsers);
 
         // Launch import and mass matching
-        if (self::LAUNCH_IMPORT) {
+        if (self::LAUNCH_IMPORT && $mass->getMassType() !== Mass::TYPE_MIGRATION) {
             $this->logger->info('Mass Migrate | Start user import | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->importManager->treatUserImport(self::MOBIMATCH_IMPORT_PREFIX, $mass->getId());
         }

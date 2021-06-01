@@ -23,7 +23,7 @@
 
 namespace App\Match\Event;
 
-use App\User\Entity\User;
+use App\Match\Entity\MassPerson;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -33,15 +33,15 @@ class MassMigrateUserMigratedEvent extends Event
 {
     public const NAME = 'mass_migrate_user_migrated';
 
-    protected $user;
+    protected $massPerson;
 
-    public function __construct(User $user)
+    public function __construct(MassPerson $massPerson)
     {
-        $this->user = $user;
+        $this->massPerson = $massPerson;
     }
 
-    public function getUser()
+    public function getMassPerson()
     {
-        return $this->user;
+        return $this->massPerson;
     }
 }
