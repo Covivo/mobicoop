@@ -1,1 +1,18 @@
-{}
+{
+    "directMessage": "Een rechtstreeks bericht sturen",
+    "moderator": "Moderator",
+    "referrer": "Aanspreekpunt",
+    "urlMembersList": "/community/memberList",
+    "table": {
+        "colTitle": {
+            "givenName": "Voornaam",
+            "familyName": "Naam",
+            "actions": "Acties"
+        },
+        "all": "Alle",
+        "lineNumber": "Aantal regels per pagina",
+        "search": "Zoeken"
+    },
+    "hidden": "De lijst kan alleen bekeken worden door de leden van de community",
+    "title": "Ledenlijst"
+}
