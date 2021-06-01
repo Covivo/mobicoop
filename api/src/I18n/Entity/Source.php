@@ -26,6 +26,7 @@ namespace App\I18n\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A Source.
@@ -97,6 +98,19 @@ class Source
      */
     private $property;
 
+    /**
+    * @var ArrayCollection|null A Source can have multiple entry in Translate
+    *
+    * @ORM\OneToMany(targetEntity="\App\I18n\Entity\translate", mappedBy="source")
+    * @MaxDepth(1)
+    */
+    private $translates;
+
+    public function __construct()
+    {
+        $this->translates = new ArrayCollection();
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -123,6 +137,37 @@ class Source
     {
         $this->property = $property;
         
+        return $this;
+    }
+
+    /**
+    * @return ArrayCollection|Translate[]
+    */
+    public function getTranslates(): ArrayCollection
+    {
+        return $this->translates;
+    }
+
+    public function addTranslate(Translate $translate): self
+    {
+        if (!$this->translates->contains($translate)) {
+            $this->translates[] = $translate;
+            $translate->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTranslate(Translate $translate): self
+    {
+        if ($this->translates->contains($translate)) {
+            $this->translates->removeElement($translate);
+            // set the owning side to null (unless already changed)
+            if ($translate->getSource() === $this) {
+                $translate->setSource(null);
+            }
+        }
+
         return $this;
     }
 }

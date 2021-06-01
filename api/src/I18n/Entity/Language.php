@@ -102,11 +102,19 @@ class Language
     */
     private $users;
 
+    /**
+     * @var ArrayCollection|null A Language can have multiple entry in Translate
+     *
+     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\translate", mappedBy="language")
+     * @MaxDepth(1)
+     */
+    private $translates;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->translates = new ArrayCollection();
     }
-
 
     public function getId(): int
     {
@@ -125,10 +133,12 @@ class Language
         return $this;
     }
 
-
-    public function getUsers()
+    /**
+    * @return ArrayCollection|User[]
+    */
+    public function getUsers(): ArrayCollection
     {
-        return $this->users->getValues();
+        return $this->users;
     }
 
     public function addUser(User $user): self
@@ -148,6 +158,37 @@ class Language
             // set the owning side to null (unless already changed)
             if ($user->getLanguage() === $this) {
                 $user->setLanguage(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+    * @return ArrayCollection|Translate[]
+    */
+    public function getTranslates(): ArrayCollection
+    {
+        return $this->translates;
+    }
+
+    public function addTranslate(Translate $translate): self
+    {
+        if (!$this->translates->contains($translate)) {
+            $this->translates[] = $translate;
+            $translate->setLanguage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTranslate(Translate $translate): self
+    {
+        if ($this->translates->contains($translate)) {
+            $this->translates->removeElement($translate);
+            // set the owning side to null (unless already changed)
+            if ($translate->getLanguage() === $this) {
+                $translate->setLanguage(null);
             }
         }
 
