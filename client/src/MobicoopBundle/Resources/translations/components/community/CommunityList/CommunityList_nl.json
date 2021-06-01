@@ -1,1 +1,11 @@
-{}
+{
+    "noCommunity": "Geen community",
+    "urlGetCommunities": "/community/getCommunityList",
+    "seeAds": "De advertenties bekijken",
+    "linePerPage": "Aantal regels per pagina",
+    "all": "Alle",
+    "search": "Zoeken",
+    "createCommunity": "Een community aanmaken",
+    "myCommunities": "Mijn community's",
+    "communitiesAvailable": "Beschikbare community's"
+}
