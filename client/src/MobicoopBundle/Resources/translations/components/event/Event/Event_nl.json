@@ -1,1 +1,19 @@
-{}
+{
+    "buttons": {
+        "widget": {
+            "textDetails": {
+                "title": "De widget integreren"
+            },
+            "externalRoute": "/evenement/widget/{id}",
+            "route": "/evenement/widget/get/{id}/{urlKey}",
+            "label": "De Widget weergeven"
+        },
+        "login": {
+            "route": "/gebruiker/verbinding"
+        },
+        "publish": {
+            "route": "carpooling/zoekopdracht/poster",
+            "label": "Een advertentie publiceren"
+        }
+    }
+}
