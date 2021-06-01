@@ -1,1 +1,12 @@
-{}
+{
+    "website": "Website",
+    "hourMinute": "UU[u]mm",
+    "shortCompleteDate": "DD/MM/YYYY",
+    "endEvent": {
+        "label": "Einde"
+    },
+    "startEvent": {
+        "label": "Start"
+    },
+    "private": "Privé"
+}
