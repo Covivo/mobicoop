@@ -1410,6 +1410,25 @@ class UserController extends AbstractController
         return new JsonResponse();
     }
 
+    /**
+     * Get the Review Dashboard of a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userUpdateLanguage(Request $request)
+    {
+        if ($request->isMethod('POST') && $this->userManager->getLoggedUser()) {
+            $user = $this->userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+           
+            $user->setLanguage($data['language']);
+            $this->userManager->updateUserLanguage($user);
+            return new JsonResponse(["success"=>true]);
+        }
+        return new JsonResponse();
+    }
+
     /**********
      * ADMIN *
      *********/

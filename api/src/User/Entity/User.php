@@ -916,11 +916,17 @@ class User implements UserInterface, EquatableInterface
     private $mobile;
 
     /**
+<<<<<<< HEAD
      * @var Language|null The language of the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
      * @Groups({"read","write"})
      * @MaxDepth(1)
+=======
+     * @var string User language
+     * @ORM\Column(name="language", type="string", length=10, nullable=true)
+     * @Groups({"readUser","write"})
+>>>>>>> dev
      */
     private $language;
 

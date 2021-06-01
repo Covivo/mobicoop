@@ -456,6 +456,14 @@ user_review_write:
         en: /user/review/write
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewWrite
 
+# Set User's language (AJAX)
+user_update_language:
+    methods: [POST]
+    path:
+        fr: /user/updateLanguage
+        en: /user/updateLanguage
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdateLanguage
+
 ##################
 # carpool routes #
 ##################

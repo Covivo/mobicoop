@@ -346,9 +346,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * Language de l'utilisateur.
      *
      * @var string $language
-     * @Groups({"put","post", "api"})
+     * @Groups({"put","post", "api","language"})
      */
-    private $language= 'fr_FR';
+    private $language;
 
     /**
      * @var string|null Facebook ID of the user
@@ -1109,7 +1109,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      * @return string
      */
-    public function getLanguage(): string
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
@@ -1119,7 +1119,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      * @param string $language
      */
-    public function setLanguage(string $language)
+    public function setLanguage(?string $language)
     {
         $this->language = $language;
     }
@@ -1328,7 +1328,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'unreadCarpoolMessageNumber'    => $this->getUnreadCarpoolMessageNumber(),
             'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
             'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
-            'savedCo2'   => $this->getSavedCo2()
+            'savedCo2'   => $this->getSavedCo2(),
+            'language'              => $this->getLanguage()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
