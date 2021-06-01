@@ -918,7 +918,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var Language|null The language of the user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users", nullable=true)
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

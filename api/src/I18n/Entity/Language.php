@@ -25,10 +25,12 @@ namespace App\I18n\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\User\Entity\User;
+use App\I18n\Entity\Translate;
 
 /**
  * A Language.
@@ -73,13 +75,13 @@ use App\User\Entity\User;
  */
 class Language
 {
-   
     /**
      * @var int The id of this language.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      * @Groups({"aRead","read"})
      */
     private $id;

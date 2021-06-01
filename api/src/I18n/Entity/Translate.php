@@ -25,6 +25,7 @@ namespace App\I18n\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
@@ -78,7 +79,7 @@ class Translate
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ApiText(identifier=true)
+     * @ApiProperty(identifier=true)
      * @Groups({"aRead","read","write"})
      */
     private $id;
