@@ -1,1 +1,74 @@
-{}
+{
+    "fullDate": "ddd Do MMMM YYYY",
+    "popUp": {
+        "cancel": "Annuleren",
+        "validation": "Het evenement publiceren",
+        "label": "Ik begrijp dat deze functie NIET bedoeld is voor het publiceren van mijn persoonlijke carpoolingadvertentie, maar voor het aanmaken van een ruimte die specifiek gewijd is aan het evenement dat ik organiseer (om alle trajecten die ernaartoe leiden of er vertrekken te groeperen).\nOm uw persoonlijke advertentie te publiceren, registreert u zich (of meldt u zich aan als u al geregistreerd bent) en maakt u uw nieuwe advertentie aan vanuit uw profiel.",
+        "title": "Bevestiging van aanmaken evenement"
+    },
+    "endTime": {
+        "label": "Einduur"
+    },
+    "startTime": {
+        "label": "Startuur"
+    },
+    "endDate": {
+        "error": "Verplicht",
+        "label": "Einddatum*"
+    },
+    "startDate": {
+        "error": "Verplicht",
+        "label": "Begindatum*"
+    },
+    "error": {
+        "image": "De afbeelding werd niet opgeslagen",
+        "event": {
+            "length": "Korte beschrijving te lang (maximaal 512 tekens).",
+            "required": "Alle velden met een sterretje zijn verplicht",
+            "create": "Het evenement kon niet worden aangemaakt",
+            "name": "Dit evenement bestaat al. Gebruik een andere naam"
+        }
+    },
+    "redirect": {
+        "route": "/carpoolings-evenementen"
+    },
+    "form": {
+        "private": {
+            "tooltip": "U zult de rechtstreekse link die u ontvangen hebt via de bevestigingsmail kunnen doorsturen",
+            "label": "Privaat evenement (verschijnt niet in de evenementenlijst)"
+        },
+        "urlEvent": {
+            "error": "Voer een website met een geldig formaat in",
+            "tooltips": "Het adres van de website van de evenement",
+            "label": "URL van het evenement"
+        },
+        "address": {
+            "required": "Het adres van het evenement is vereist",
+            "label": "Adres van het evenement*"
+        },
+        "avatar": {
+            "size": "U hebt de maximumgrootte van de afbeelding overschreden",
+            "required": "De afbeelding van het evenement is vereist",
+            "label": "Afbeelding van het evenement*"
+        },
+        "fullDescription": {
+            "required": "De gedetailleerde beschrijving van het evenement is vereist",
+            "label": "Gedetailleerde beschrijving van het evenement*"
+        },
+        "description": {
+            "required": "De korte beschrijving van het evenement is vereist",
+            "label": "Korte beschrijving van het evenement*"
+        },
+        "name": {
+            "required": "De naam van het evenement is vereist",
+            "label": "Naam van het evenement*"
+        }
+    },
+    "buttons": {
+        "create": {
+            "route": "/evenement/aanmaken",
+            "label": "Het evenement aanmaken"
+        }
+    },
+    "title": "Maak uw evenement aan"
+}
