@@ -1,1 +1,38 @@
-{}
+{
+    "days": {
+        "thu": {
+            "longName": "Donderdag",
+            "shortName": "Do"
+        },
+        "sun": {
+            "longName": "Zondag",
+            "shortName": "Zo"
+        },
+        "sat": {
+            "longName": "Zaterdag",
+            "shortName": "Za"
+        },
+        "fri": {
+            "longName": "Vrijdag",
+            "shortName": "V"
+        },
+        "tue": {
+            "shortName": "Di",
+            "longName": "Dinsdag"
+        },
+        "wed": {
+            "longName": "Woensdag",
+            "shortName": "W"
+        },
+        "mon": {
+            "longName": "Maandag",
+            "shortName": "M"
+        },
+        "list": [
+            "maa",
+            "din",
+            "woe",
+            "don"
+        ]
+    }
+}
