@@ -241,6 +241,8 @@ class MassMigrateManager
                     $communityUser = new CommunityUser();
                     $communityUser->setCommunity($community);
                     $communityUser->setUser($user);
+                    $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+                    $communityUser->setAcceptedDate(new \DateTime('now'));
                     $this->entityManager->persist($communityUser);
                 }
             }
