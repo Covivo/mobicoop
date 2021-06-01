@@ -33,7 +33,7 @@ class MassMigrateUserMigratedEvent extends Event
 {
     public const NAME = 'mass_migrate_user_migrated';
 
-    protected $user;
+    protected $massPerson;
 
     public function __construct(MassPerson $massPerson)
     {
