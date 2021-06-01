@@ -1,1 +1,32 @@
-{}
+{
+    "checkboxes": {
+        "social": {
+            "mandatoryOrNot": "Optionele cookie",
+            "desc": "Inschrijving en aanmelding via de sociale media mogelijk maken"
+        },
+        "stats": {
+            "details": "Aan deze statistieken zijn geen commerciële doeleinden verbonden. Ze helpen ons onze dienstverlening te verbeteren",
+            "mandatoryOrNot": "Optionele cookie",
+            "desc": "De anonieme statistieken van ons bezoek met ons delen"
+        },
+        "connectionActive": {
+            "mandatoryOrNot": "Cookie nodig",
+            "desc": "Uw verbinding actief houden"
+        }
+    },
+    "privacyPolicy": {
+        "link": {
+            "uri": "/privacy",
+            "label": "Privacybeleid"
+        },
+        "text": "Meer details over ons gegevensbeheer in het"
+    },
+    "working": {
+        "line2": "Kies vrij welke cookies u wenst te activeren",
+        "line1": "Deze website maakt gebruik van cookies om de goede werking ervan te garanderen"
+    },
+    "store": "Opslaan",
+    "yourBrowseryourChoice": "{appName} biedt u de keuze",
+    "privateLife": "Privacy",
+    "title": "Beheer van cookies"
+}
