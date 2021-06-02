@@ -48,13 +48,11 @@ final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
 
         if (is_array($value)) {
             // Multiple territories
-            $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->andWhere('acat.id in ('.implode(",", $value).')')
             ;
         } else {
             // One territory
-            $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->andWhere('acat.id = :territoryId')
                 ->setParameter('territoryId', $value)
