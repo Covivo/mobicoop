@@ -1,1 +1,5 @@
-{}
+{
+    "events": "Evenementen",
+    "relayPoints": "Knooppunten",
+    "required": "Een adres is vereist"
+}
