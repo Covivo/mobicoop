@@ -23,54 +23,13 @@
 
 namespace App\I18n\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\I18n\Entity\Translate;
+use Doctrine\Common\Collections\Collection;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Translate;
 
 /**
  * A Source.
  *
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "post"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "put"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "delete"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          }
- *      }
- * )
  */
 class Source
 {
@@ -78,35 +37,27 @@ class Source
     /**
      * @var int The id of this source.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
-     * @Groups({"aRead","read"})
+    * @Groups({"get","post","put"})
      */
     private $id;
             
     /**
      * @var string The domain of the source.
      *
-     * @ORM\Column(type="string", length=45)
-     * @Groups({"aRead","read","write"})
+    * @Groups({"get","post","put"})
      */
     private $domain;
 
     /**
      * @var string The property of the source.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","read","write"})
+    * @Groups({"get","post","put"})
      */
     private $property;
 
     /**
-    * @var ArrayCollection|null A Source can have multiple entry in Translate
-    *
-    * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="source")
-    * @MaxDepth(1)
+    * @var Translate[]|null A Source can have multiple entry in Translate
+    * @Groups({"get","post","put"})
     */
     private $translates;
 
@@ -144,10 +95,7 @@ class Source
         return $this;
     }
 
-    /**
-    * @return ArrayCollection|Translate[]
-    */
-    public function getTranslates(): ArrayCollection
+    public function getTranslates(): Collection
     {
         return $this->translates;
     }
