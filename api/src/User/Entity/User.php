@@ -106,6 +106,7 @@ use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
 use App\User\Controller\UserSendValidationEmail;
+use App\I18n\Entity\Language;
 
 /**
  * A user.
@@ -915,9 +916,11 @@ class User implements UserInterface, EquatableInterface
     private $mobile;
 
     /**
-     * @var string User language
-     * @ORM\Column(name="language", type="string", length=10, nullable=true)
-     * @Groups({"readUser","write"})
+     * @var Language|null The language of the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     * @Groups({"read","readUser","write"})
+     * @MaxDepth(1)
      */
     private $language;
 
@@ -1844,14 +1847,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getLanguage(): ?string
+    public function getLanguage(): ?Language
     {
         return $this->language;
     }
 
-    public function setLanguage(?string $language): self
+    public function setLanguage(?Language $language): self
     {
-        $this->language= $language;
+        $this->language = $language;
+
         return $this;
     }
 
