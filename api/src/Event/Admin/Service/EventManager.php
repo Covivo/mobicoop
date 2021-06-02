@@ -29,6 +29,7 @@ use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Entity\Address;
 use App\User\Repository\UserRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Event manager for admin context.
@@ -148,5 +149,16 @@ class EventManager
     public function getInternalEvents()
     {
         return $this->eventRepository->getInternalEvents();
+    }
+
+    /**
+     * Get internal events QueryBuilder (exclude external events)
+     * It's used to get only the querybuilder to apply filters on it on custom DataProvider
+     *
+     * @return QueryBuilder
+     */
+    public function getInternalEventsQueryBuilder(): QueryBuilder
+    {
+        return $this->eventRepository->getInternalEventsQueryBuilder();
     }
 }

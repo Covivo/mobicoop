@@ -23,12 +23,13 @@
 
 namespace App\Event\Admin\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Event\Admin\Service\EventManager;
 use App\Event\Entity\Event;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection member data provider in admin context.
@@ -40,11 +41,13 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
 {
     protected $request;
     private $eventManager;
+    private $collectionFilters;
 
-    public function __construct(RequestStack $requestStack, EventManager $eventManager)
+    public function __construct(RequestStack $requestStack, EventManager $eventManager, iterable $collectionFilters)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->eventManager = $eventManager;
+        $this->collectionFilters = $collectionFilters;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,6 +57,14 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        return $this->eventManager->getInternalEvents();
+        // We get only the QueryBuilder object. That way, we can apply filter on it
+        $queryBuilder = $this->eventManager->getInternalEventsQueryBuilder();
+
+        // We're browsing every available filters
+        foreach ($this->collectionFilters as $collectionFilter) {
+            $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), $resourceClass, $operationName, $context);
+        }
+        
+        return $queryBuilder->getQuery()->getResult();
     }
 }
