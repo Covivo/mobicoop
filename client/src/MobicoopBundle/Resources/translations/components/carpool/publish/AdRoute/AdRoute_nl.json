@@ -1,0 +1,29 @@
+{
+    "distance": "Afstand",
+    "communities": {
+        "route": "/gebruiker/community's",
+        "label": "De advertentie in deze community's publiceren"
+    },
+    "avoidMotorway": "Autosnelweg vermijden",
+    "waypoint4": {
+        "label": "Etappe 4"
+    },
+    "waypoint3": {
+        "label": "Etappe 3"
+    },
+    "waypoint2": {
+        "label": "Etappe 2"
+    },
+    "waypoint1": {
+        "label": "Etappe 1"
+    },
+    "destination": {
+        "error": "Verplicht",
+        "label": "Bestemming"
+    },
+    "origin": {
+        "error": "Verplicht",
+        "label": "Vertrekplaats"
+    },
+    "addWaypoint": "Een etappe toevoegen"
+}

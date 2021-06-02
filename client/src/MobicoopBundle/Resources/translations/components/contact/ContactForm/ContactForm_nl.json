@@ -1,0 +1,59 @@
+{
+    "getContactItemsUri": "/contact/getItems",
+    "error": "Er heeft zich een fout voorgedaan.",
+    "success": "Uw bericht werd succesvol verzonden.",
+    "dataPolicy": {
+        "route": "/privacy",
+        "link": "ons privacybeleid",
+        "text": "Om uw rechten te kennen en uit te oefenen, met name om uw toestemming voor het gebruik van de via dit formulier verzamelde gegevens in te trekken, raadpleegt u"
+    },
+    "buttons": {
+        "send": {
+            "route": "contact/send",
+            "label": "Verzenden"
+        }
+    },
+    "message": {
+        "errors": {
+            "required": "Het bericht is vereist."
+        },
+        "hint": " ",
+        "placeholder": "Uw bericht",
+        "label": "Uw bericht"
+    },
+    "demand": {
+        "errors": {
+            "required": "Het onderwerp van uw aanvraag is vereist"
+        },
+        "items": {
+            "community": "Aanmaken community",
+            "partnership": "Partnerschap",
+            "technicalIssues": "Technisch probleem",
+            "infos": "Inlichtingen"
+        },
+        "placeholder": "Uw aanvraag",
+        "label": "Uw aanvraag"
+    },
+    "email": {
+        "errors": {
+            "valid": "U moet een geldig e-mailadres opgeven.",
+            "required": "Uw e-mailadres is vereist"
+        },
+        "placeholder": "Uw e-mailadres",
+        "label": "Uw e-mailadres"
+    },
+    "firstName": {
+        "errors": {
+            "required": "De voornaam is vereist"
+        },
+        "placeholder": "Uw voornaam",
+        "label": "Uw voornaam"
+    },
+    "lastName": {
+        "errors": {
+            "required": "De naam is vereist"
+        },
+        "placeholder": "Uw naam",
+        "label": "Uw naam"
+    }
+}

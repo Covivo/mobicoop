@@ -1,0 +1,88 @@
+{
+    "infos": {
+        "members": "{members} leden"
+    },
+    "no": "nee",
+    "yes": "ja",
+    "widget": {
+        "textDetails": {
+            "p3": "<span class=\"font-weight-bold\">Opgelet</span> : sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p1": "Om de widget te integreren, kopieert u de onderstaande tekst en plakt u die op uw website.<br />U kunt de vetgedrukte elementen wijzigen om uw widget aan te passen.",
+            "title": "De widget integreren"
+        },
+        "externalRoute": "/community/widget/{id}",
+        "route": "/community/widget/get/{id}",
+        "label": "De Widget weergeven"
+    },
+    "urlCommunityUser": "/community-user",
+    "map": {
+        "search": {
+            "label": "De overeenstemmende carpoolings zoeken"
+        },
+        "regular": "Regelmatig traject",
+        "destination": "Bestemming",
+        "origin": "Vertrek",
+        "findMatchings": "<strong>De overeenstemmende advertenties zoeken</strong>"
+    },
+    "title": {
+        "searchCarpool": "Een traject zoeken in de community"
+    },
+    "snackbar": {
+        "leaveCommunity": {
+            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw.",
+            "textOk": "U bent voortaan geen lid meer van deze community"
+        },
+        "joinCommunity": {
+            "textError": "Er heeft zich een fout voorgedaan. Uw lidmaatschap werd niet geregistreerd.",
+            "textOkAutoValidation": "Uw aanvraag tot lidmaatschap is gevalideerd.",
+            "textOkManualValidation": "Uw aanvraag tot lidmaatschap werd naar het aanspreekpunt verzonden. U zult per e-mail op de hoogte worden gehouden."
+        }
+    },
+    "tooltips": {
+        "domain": "Uw e-mailadres moet deel uitmaken van één van deze domeinen:",
+        "validation": "In afwachting van validatie",
+        "connected": "U moet aangemeld zijn"
+    },
+    "buttons": {
+        "login": {
+            "route": "/gebruiker/verbinding"
+        },
+        "contact": {
+            "route": "/gebruiker/berichten/nieuw"
+        },
+        "join": {
+            "route": "/community/{id}/lid-worden",
+            "label": "Lid worden van de community"
+        },
+        "search": {
+            "label": "Zoeken"
+        },
+        "accessAdmin": {
+            "label": "Mijn community beheren"
+        },
+        "publish": {
+            "route": "carpooling/zoekopdracht/poster",
+            "label": "Een advertentie publiceren"
+        }
+    },
+    "joinCommunity": {
+        "popup": {
+            "content": {
+                "printPhoneNumberWarning": "Uw telefoonnummer zal zichtbaar zijn voor het aanspreekpunt van de community.<br>Bevestigen?"
+            },
+            "title": "Bevestigingsaanvraag"
+        }
+    },
+    "leaveCommunity": {
+        "popup": {
+            "content": {
+                "isNotProposalsHidden": "Als u nog geldige advertenties hebt die zijn gekoppeld aan deze community, zullen deze advertenties niet langer worden gemarkeerd als zijnde gekoppeld aan de community zodra u deze laatste verlaat.<br>Bevestigen?",
+                "isProposalsHidden": "Als u nog geldige advertenties hebt die zijn gekoppeld aan deze besloten community, zullen deze advertenties worden verwijderd.<br>Bevestigen?"
+            },
+            "title": "Bevestigingsaanvraag"
+        },
+        "route": "/community/{id}/verlaten",
+        "button": "De community verlaten"
+    }
+}
