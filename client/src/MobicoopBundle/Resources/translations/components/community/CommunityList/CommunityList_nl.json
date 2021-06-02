@@ -1,7 +1,7 @@
 {
     "noCommunity": "Geen community",
     "urlGetCommunities": "/community/getCommunityList",
-    "seeAds": "De advertenties bekijken",
+    "seeAds": "De advertenties weergeven",
     "linePerPage": "Aantal regels per pagina",
     "all": "Alle",
     "search": "Zoeken",
