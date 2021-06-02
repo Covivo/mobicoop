@@ -11,7 +11,10 @@
         <v-list-item two-line>
           <v-list-item-content>
             <!-- Pickup -->
-            <v-list-item-title class="text-body-2">
+            <v-list-item-title
+              v-if="!hidePickUp"
+              class="text-body-2"
+            >
               {{ pickupDisplay }}
             </v-list-item-title>
             <!-- Date and time -->
@@ -134,7 +137,11 @@ export default {
     solidaryExclusive: {
       type: Boolean,
       default: false
-    }  
+    },
+    hidePickUp: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -155,7 +162,7 @@ export default {
       return null;
     },
     pickupDisplay() {
-      return (this.pickUp.addressLocality) ? this.pickUp.addressLocality : ''
+      return (this.pickUp.addressLocality) ? this.pickUp.addressLocality : '';
     },
   },
   created() {
