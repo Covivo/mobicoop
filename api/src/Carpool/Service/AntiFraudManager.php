@@ -100,7 +100,6 @@ class AntiFraudManager
         
         // If the journey is above the $distanceMinCheck paramaters we need to check it otherwise, it's an immediate validation
         if (($route[0]->getDistance()/1000) > $this->distanceMinCheck) {
-
             /****************** FIRST CHECK ********************** */
             $response = $this->validAdFirstCheck($ad);
             if (!$response->isValid()) {
@@ -135,12 +134,6 @@ class AntiFraudManager
 
 
         $proposals = $this->proposalRepository->findByDate($dateTime, $user, true, $this->distanceMinCheck*1000);
-
-        foreach ($proposals as $proposal) {
-            echo $proposal->getId().": ".$proposal->getCriteria()->getDirectionDriver()->getDistance()."\n";
-        }
-
-        die;
 
         if (!is_null($proposals) && is_array($proposals) && count($proposals)>=$this->nbCarpoolsMax) {
             return new AntiFraudResponse(false, AntiFraudException::TOO_MANY_AD);
