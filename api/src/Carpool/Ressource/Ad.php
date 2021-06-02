@@ -84,7 +84,8 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "controller"=UpdateCarpoolsLimits::class,
  *              "swagger_context" = {
  *                  "tags"={"Carpool"}
- *              }
+ *              },
+ *              "security"="is_granted('ad_search_create',object)"
  *          },
  *          "getMyCarpools"={
  *              "method"="GET",

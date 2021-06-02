@@ -156,7 +156,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
- * @ApiFilter(OrderFilter::class, properties={"id","status","user.givenName","acceptedDate","createdDate","refusedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id","status","givenName","familyName","user.givenName","acceptedDate","createdDate","refusedDate"}, arguments={"orderParameterName"="order"})
  */
 class CommunityUser
 {
@@ -270,6 +270,18 @@ class CommunityUser
      * @Groups("aRead")
      */
     private $username;
+
+    /**
+     * @var string The givenName of the member
+     * @Groups("aRead")
+     */
+    private $givenName;
+
+    /**
+     * @var string The familyName of the member
+     * @Groups("aRead")
+     */
+    private $familyName;
 
     /**
      * @var string|null The member avatar
@@ -419,9 +431,19 @@ class CommunityUser
         return $this;
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getGivenName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName()));
+    }
+    
+    public function getFamilyName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getFamilyName()));
     }
 
     public function hasNewsSubscription()

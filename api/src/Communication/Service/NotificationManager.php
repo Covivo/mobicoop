@@ -55,6 +55,7 @@ use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
 use App\Match\Entity\Mass;
+use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\User\Entity\Review;
@@ -381,7 +382,11 @@ class NotificationManager
                 case Mass::class:
                     $titleContext = ['massId'=>$object->getId()];
                     $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
-                break;
+                    break;
+                case MassPerson::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient, 'clearPassword'=>$object->getClearPassword()];
+                    break;
                 case CarpoolItem::class:
                     $titleContext = ['deptor'=>$object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {

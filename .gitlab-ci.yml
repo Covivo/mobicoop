@@ -27,6 +27,7 @@ stages:
   - tests
   - deploy
   - prod_deploy
+  - admin_test_deploy
   - doc
   - reports
 
@@ -324,6 +325,45 @@ prod_deploy:
     - node_modules/
     - admin/node_modules/
     expire_in: 1 week
+
+
+###############################################################################################
+########## Admin                                                            ###################
+###############################################################################################
+
+
+admin_test_deploy:
+  image: alpine:3.6
+  stage: admin_test_deploy
+  environment:
+    name: test
+    url: https://bo.test.mobicoop.io/
+  only:
+    - /^*.-next$/
+  # variables:
+  #   APP_ENV: test   # /!\ important : symfony env variable /!\
+  before_script:
+    - apk update && apk add openssh-client bash
+  script:
+    # run ssh-agent
+    - eval $(ssh-agent -s)
+    # add ssh key stored in SSH_TEST_PRIVATE_KEY variable to the agent store
+    - bash -c 'ssh-add <(echo "$SSH_TEST_PRIVATE_KEY")'
+    # create ssh directory
+    - mkdir -p ~/.ssh
+    # add server prod ip to known hosts
+    - ssh-keyscan -H $SSH_TEST_IP >> ~/.ssh/known_hosts
+    # disable strict host key checking, to avoid error if server ip changes !
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    # ru docker container
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker run -d --env-file=/var/www/test/mobicoop/admin.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}"
+  when: manual      # /!\ important : job executed manually /!\  
+  except:
+    refs:
+      - tags    # job not executed on tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
+
 
 ###############################################################################################
 ########## Deploy the produciton documentation based on  master branch ###################

@@ -459,6 +459,8 @@ services:
             $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
             $geoDataFixes: '%env(json:file:resolve:SIG_GEOCODER_FIXER_DATA)%'
             $distanceOrder: '%env(bool:SIG_GEOCODER_PRIORITIZE_ORDER)%'
+            $sigPrioritizeCoordinates: '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
+            $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
 
     App\Geography\Service\TerritoryManager:
         tags:
