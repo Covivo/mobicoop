@@ -42,17 +42,9 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
             ->leftJoin('phaodtf.waypoints', 'whaodtf')
             ->leftJoin('whaodtf.address', 'ahaodtf')
             ->leftJoin('ahaodtf.territories', 'tahaodtf')
+            ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
+            ->setParameter('value', $value)
         ;
-
-        if (is_array($value)) {
-            // Multiple territories
-            $queryBuilder
-            ->andWhere(sprintf('((tahaodtf.id in (%s) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (%s) AND homeAddress.home=1))', implode(",", $value), implode(",", $value)));
-        } else {
-            // One territory
-            $queryBuilder
-            ->andWhere(sprintf('((tahaodtf.id = %s AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id = %s AND homeAddress.home=1))', $value, $value));
-        }
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

@@ -23,6 +23,7 @@
 
 namespace App\Event\Admin\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
@@ -63,8 +64,12 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
         // We're browsing every available filters
         foreach ($this->collectionFilters as $collectionFilter) {
             $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), $resourceClass, $operationName, $context);
+
+            if ($collectionFilter instanceof QueryResultCollectionExtensionInterface && $collectionFilter->supportsResult($resourceClass, $operationName)) {
+                return $collectionFilter->getResult($queryBuilder, $resourceClass, $operationName);
+            }
         }
-        
+
         return $queryBuilder->getQuery()->getResult();
     }
 }

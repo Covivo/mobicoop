@@ -20,7 +20,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\Filter;
+namespace App\RelayPoint\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
@@ -29,14 +29,13 @@ use Doctrine\ORM\QueryBuilder;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
+final class RelayPointAddressTerritoryFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "communityAddressTerritoryFilter") {
+        if ($property != "relayPointAddressTerritoryFilter") {
             return;
         }
-
 
         // One territory
         $rootAlias = $queryBuilder->getRootAliases()[0];
@@ -62,8 +61,8 @@ final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
                 'type' => 'array',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on communities that have its address in the given territories',
-                    'name' => 'communityAddressTerritory',
+                    'description' => 'Filter on relay points that have its address in the given territories',
+                    'name' => 'territory',
                     'type' => 'array',
                 ],
             ];

@@ -42,21 +42,9 @@ final class EventAddressTerritoryFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->leftJoin($rootAlias.".address", 'acatf')
             ->leftJoin('acatf.territories', 'acat')
+            ->andWhere('acat.id in (:value)')
+            ->setParameter('value', $value)
         ;
-
-
-        if (is_array($value)) {
-            // Multiple territories
-            $queryBuilder
-                ->andWhere('acat.id in ('.implode(",", $value).')')
-            ;
-        } else {
-            // One territory
-            $queryBuilder
-                ->andWhere('acat.id = :territoryId')
-                ->setParameter('territoryId', $value)
-            ;
-        }
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
