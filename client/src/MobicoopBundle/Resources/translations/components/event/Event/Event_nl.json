@@ -12,7 +12,7 @@
             "label": "De Widget weergeven"
         },
         "login": {
-            "route": "/gebruiker/verbinding"
+            "route": "/gebruiker/aanmelden"
         },
         "publish": {
             "route": "carpooling/zoekopdracht/poster",
