@@ -4,6 +4,19 @@
         "label": "Mijn advertenties"
     },
     "myAcceptedCarpools": {
-        "label": "Aanvaarde carpoolings"
+        "label": "Aanvaarde carpoolings",
+        "route": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings"
+    },
+    "logOut": {
+        "route": "/user/logout",
+        "label": "Afmelden"
+    },
+    "reviews": {
+        "route": "/gebruiker/profiel/wijzigen/reviews",
+        "label": "Reviews"
+    },
+    "myProfile": {
+        "route": "/gebruiker/profiel/wijzigen/mijn-profiel",
+        "label": "Profiel"
     }
 }
