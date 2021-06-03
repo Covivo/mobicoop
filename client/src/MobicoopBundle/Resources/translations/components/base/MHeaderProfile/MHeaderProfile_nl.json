@@ -2,5 +2,8 @@
     "myAds": {
         "route": "/gebruiker/profiel/wijzigen/mijn-advertenties",
         "label": "Mijn advertenties"
+    },
+    "myAcceptedCarpools": {
+        "label": "Aanvaarde carpoolings"
     }
 }
