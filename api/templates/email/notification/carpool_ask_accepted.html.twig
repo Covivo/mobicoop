@@ -35,6 +35,7 @@
                         {% else %}
                             <p>Récapitulatif de votre trajet régulier du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
+                        <p>Vous pouvez le contacter par téléphone : {{sender.telephone}}</p>
                     </td>
                     <td style="width:30%">
                         <img  style="border-radius:50px" src="{{sender.avatars[0]}}" alt="Avatar"/>
