@@ -1,1 +1,18 @@
-{}
+{
+    "getPopularJourneysUrl": "/carpoolings/populaire",
+    "links": {
+        "popularJourneys": {
+            "uri": "/carpooling/{origin}/{destination}",
+            "to": "naar",
+            "from": "Carpooling van"
+        },
+        "cityByCity": {
+            "uri": "/carpooling-per-gemeente",
+            "label": "de carpoolings per gemeente"
+        }
+    },
+    "popularJourneys": "De populairste trajecten",
+    "intro": "Overloop hieronder de lijst van de populairste carpooltrajecten of raadpleeg ",
+    "subtitle": "Bekijk de carpoolings die u interesseren",
+    "title": "Carpoolings per populaire trajecten"
+}
