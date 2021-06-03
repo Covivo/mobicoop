@@ -377,7 +377,7 @@ class UserManager
      */
     public function updateUserLanguage(User $user)
     {
-        $response = $this->dataProvider->put($user, ['language']);
+        $response = $this->dataProvider->putSpecial($user, ['language'], "updateLanguage");
         if ($response->getCode() == 200) {
             $this->logger->info('User Language Update | Start');
             return $response->getValue();

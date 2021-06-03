@@ -35,31 +35,21 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Translate;
  */
 class Language implements ResourceInterface, \JsonSerializable
 {
-    const LANGUAGES = [
-        ["id"=>1,"code"=>"fr"],
-        ["id"=>2,"code"=>"en"],
-        ["id"=>3,"code"=>"eu"],
-        ["id"=>4,"code"=>"it"],
-        ["id"=>5,"code"=>"de"],
-        ["id"=>6,"code"=>"es"],
-        ["id"=>7,"code"=>"nl"]
-    ];
-
     /**
      * @var int The id of this language.
-     * @Groups({"get","post","put","language"})
+     * @Groups({"get","post","put"})
      */
     private $id;
 
     /**
     * @var string|null The iri of this language.
-    * @Groups({"get","post","put","language"})
+    * @Groups({"get","post","put"})
     */
     private $iri;
             
     /**
      * @var string The code of the language.
-     * @Groups({"get","post","put"})
+     * @Groups({"get","post","put","language"})
      */
     private $code;
 
@@ -87,7 +77,7 @@ class Language implements ResourceInterface, \JsonSerializable
         $this->translates = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -99,7 +89,7 @@ class Language implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
-    public function getIri()
+    public function getIri(): ?string
     {
         return $this->iri;
     }
@@ -180,7 +170,8 @@ class Language implements ResourceInterface, \JsonSerializable
     {
         $languageSerialized = [
             'id'                    => $this->getId(),
-            'code'                  => $this->getCode()
+            'code'                  => $this->getCode(),
+            'iri'                   => $this->getIri()
         ];
         return $languageSerialized;
     }

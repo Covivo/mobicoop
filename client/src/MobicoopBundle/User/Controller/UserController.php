@@ -1427,15 +1427,11 @@ class UserController extends AbstractController
             $user = $this->userManager->getLoggedUser();
             $data = json_decode($request->getContent(), true);
            
-            $language = null;
+            $language = new Language;
+            $language->setCode($data['language']);
 
-            foreach (Language::LANGUAGES as $langua) {
-                if ($langua['code'] == $data['language']) {
-                    $language = $this->languageManager->getLanguage(($langua['id']));
-                    $user->setLanguage($language);
-                }
-            }
-           
+            $user->setLanguage($language);
+            
             $this->userManager->updateUserLanguage($user);
             return new JsonResponse(["success"=>true]);
         }

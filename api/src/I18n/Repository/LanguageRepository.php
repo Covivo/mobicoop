@@ -26,7 +26,6 @@ namespace App\I18n\Repository;
 use App\I18n\Entity\Language;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Psr\Log\LoggerInterface;
 
 class LanguageRepository
 {
@@ -35,16 +34,25 @@ class LanguageRepository
      */
     private $repository;
 
-    private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Language::class);
-        $this->logger = $logger;
     }
 
     public function find(int $id): ?Language
     {
         return $this->repository->find($id);
+    }
+
+    /**
+     * Find one language by criteria
+     *
+     * @param array $criteria
+     * @return Language|null
+     */
+    public function findOneBy(array $criteria): Language
+    {
+        return $this->repository->findOneBy($criteria);
     }
 }

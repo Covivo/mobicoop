@@ -346,7 +346,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * @var Language|null The language of the user.
      *
-     * @Groups({"put","post", "api","language"})
+     * @Groups({"put","post","api","language"})
      */
     private $language;
 

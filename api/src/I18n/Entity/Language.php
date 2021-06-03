@@ -108,7 +108,7 @@ class Language
     /**
     * @var ArrayCollection|null The users of the section.
     *
-    * @ORM\OneToMany(targetEntity="\App\User\Entity\User", mappedBy="language")
+    * @ORM\OneToMany(targetEntity="\App\User\Entity\User", mappedBy="language", cascade={"persist"})
     * @Groups({"write"})
     * @MaxDepth(1)
     */
@@ -117,7 +117,7 @@ class Language
     /**
      * @var ArrayCollection|null A Language can have multiple entry in Translate
      *
-     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language")
+     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language", cascade={"persist","remove"})
      * @MaxDepth(1)
      */
     private $translates;
