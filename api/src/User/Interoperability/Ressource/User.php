@@ -101,7 +101,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="GET",
  *             "security"="is_granted('interop_user_read',object)",
  *             "swagger_context" = {
- *               "summary"="Update a User created via interoperability",
+ *               "summary"="Get a User created via interoperability",
  *               "tags"={"Interoperability"}
  *             }
  *          },

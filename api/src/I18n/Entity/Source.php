@@ -105,7 +105,7 @@ class Source
     /**
     * @var ArrayCollection|null A Source can have multiple entry in Translate
     *
-    * @ORM\OneToMany(targetEntity="\App\I18n\Entity\translate", mappedBy="source")
+    * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="source")
     * @MaxDepth(1)
     */
     private $translates;
