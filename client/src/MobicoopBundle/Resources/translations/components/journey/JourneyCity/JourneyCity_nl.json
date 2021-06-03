@@ -1,0 +1,10 @@
+{
+    "routeToCity": "/gemeentes/carpooling-naar-{city}",
+    "routeFromCity": "/gemeentes/carpooling/{city}",
+    "journeyToCity": "Carpooling naar {city}",
+    "journeyFromCity": "Carpooling van {city}",
+    "toCity": "... naar gemeente",
+    "fromCity": "Van gemeente...",
+    "subtitle": "Bekijk de carpoolings van uw gemeente",
+    "title": "Carpoolings per gemeente"
+}

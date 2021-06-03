@@ -1,0 +1,13 @@
+{
+    "errors": {
+        "notLogged": "U moet aangemeld zijn",
+        "badCredentials": "Onjuiste identificatoren",
+        "required": "Dit veld is verplicht"
+    },
+    "join": "Lid worden van de community",
+    "urlSignIn": "/community/{id}/beveiligd/inschrijving",
+    "credential2": "2e identificator",
+    "credential1": "1e identificator",
+    "titleWithName": "Lid worden van de community",
+    "title": "Lid worden van een beveiligde community"
+}

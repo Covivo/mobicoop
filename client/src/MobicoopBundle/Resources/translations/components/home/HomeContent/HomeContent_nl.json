@@ -1,0 +1,64 @@
+{
+    "mustMeLogged": "U moet aangemeld zijn",
+    "urlBackground3": "/afbeeldingen/pagina's/home/background_bottom.svg",
+    "urlBackground2": "/afbeeldingen/pagina's/home/background_middle.svg",
+    "routes": {
+        "getList": "/evenementen/getEventList"
+    },
+    "items": [
+        {
+            "text": "Mobicoop draagt de waarden van het vrij carpoolen uit. Het is dan ook een gratis carpoolingdienst. Dat betekent dat de website geen enkele commissie op de trajecten inhoudt, en dit zonder reclame! De trajecten zijn dus goedkoper voor de carpoolers die er de kosten van delen.",
+            "title": "Carpooling zonder commissie"
+        },
+        {
+            "text": "Digitale vrijheid is één van de kernwaarden van Mobicoop. Door te kiezen voor een website die volledig is gebaseerd op een open source software, garanderen wij de digitale soevereiniteit van alle gebruikers van de carpooling en verzekeren wij ook de privacy. Iedereen kan bijdragen aan de broncode en van de gedeelde mobiliteit een gemeenschappelijk goed maken.",
+            "title": "Een open source software"
+        },
+        {
+            "text": "Mobicoop is een coöperatie. Het platform behoort dus toe aan haar leden in de logica van 1 lid = 1 stem. Deze statuut maakt een open bestuur mogelijk tussen leden, werknemers, gebruikers van het platform en klanten. Het is echter niet verplicht om lid te zijn om van de carpooldienst gebruik te maken.",
+            "title": "De carpoolcoöperatie"
+        }
+    ],
+    "articles": {
+        "title": "Is er nieuws van Mobicoop?"
+    },
+    "events": {
+        "button2": {
+            "route": "/evenement/aanmaken",
+            "label": "Een evenement toevoegen"
+        },
+        "button1": {
+            "route": "/evenementen",
+            "label": "De evenementen weergeven"
+        },
+        "title": "Organiseer carpooling voor uw evenementen"
+    },
+    "solidary": {
+        "button2": {
+            "route": "/carpooling/advertentiepubliceren/solidair",
+            "label": "Een handje helpen"
+        },
+        "button": {
+            "route": "/#/carpools/solidary/home/request",
+            "label": "Ik vraag om een helpende hand"
+        },
+        "text": "Elkaar helpen bij het vinden van werk",
+        "title": "SOLIDAIRE CARPOOLING"
+    },
+    "event": {
+        "button": {
+            "route": "/carpoolings-evenementen",
+            "label": "De evenementen weergeven"
+        },
+        "text": "Carpoolers vinden die naar hetzelfde evenement gaan.",
+        "title": "EVENEMENTEN"
+    },
+    "community": {
+        "button": {
+            "route": "/carpooling-community",
+            "label": "De community's weergeven"
+        },
+        "text": "De leden van mijn club of mijn bedrijf herkennen.",
+        "title": "COMMUNITY'S"
+    }
+}

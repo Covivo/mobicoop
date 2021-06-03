@@ -1,0 +1,48 @@
+{
+    "error": {
+        "image": "De afbeelding werd niet opgeslagen",
+        "community": {
+            "required": "Alle velden met een sterretje zijn verplicht",
+            "create": "De community kon niet worden aangemaakt",
+            "name": "Deze community bestaat al. Gebruik een andere naam"
+        }
+    },
+    "redirect": {
+        "route": "/community's"
+    },
+    "form": {
+        "domain": {
+            "error": "Voer een domeinnaam in het juiste formaat in",
+            "tooltips": "Als u de toegang tot de community wilt beperken tot specifieke e-mailadressen, voert u deze domeinnamen in (bv. mycompany.com), gescheiden door een ;",
+            "label": "Domeinbeperking"
+        },
+        "address": {
+            "required": "Het adres van de community is vereist",
+            "label": "Adres van de community*"
+        },
+        "avatar": {
+            "size": "U hebt de maximumgrootte van de avatar overschreden",
+            "required": "De avatar van de community is vereist",
+            "label": "Avatar van de community*"
+        },
+        "fullDescription": {
+            "required": "De gedetailleerde beschrijving van de community is vereist",
+            "label": "Gedetailleerde beschrijving van de community*"
+        },
+        "description": {
+            "required": "De korte beschrijving van de community is vereist",
+            "label": "Korte beschrijving van de community"
+        },
+        "name": {
+            "required": "De naam van de community is vereist",
+            "label": "Naam van de community*"
+        }
+    },
+    "buttons": {
+        "create": {
+            "route": "/community/aanmaken",
+            "label": "De community aanmaken"
+        }
+    },
+    "title": "Maak uw community aan"
+}

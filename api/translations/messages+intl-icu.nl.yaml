@@ -1,0 +1,317 @@
+return: TERUG
+outward: HEEN
+to: tot
+regularCarpool: Overzicht van uw regelmatig traject van
+occasionalCarpool: Overzicht van uw occasioneel traject van
+isConfirmed: is bevestigd!
+yourCarpoolWith: Uw carpooling met
+acceptedCarpool: UW CARPOOLING IS BEVESTIGD!
+toUseTheService: die van de dienst gebruik maken! Deel uw trajecten en vind uw gading
+beCarefulFewDaysAnnouncementNotValid: 'Opgelet: binnen een aantal dagen zullen uw
+  bewaarde trajecten niet langer geldig zijn op uw profiel en zullen ze dus niet meer
+  zichtbaar zijn voor andere carpoolers'
+contactCommunity: Aanvraag voor aanmaken community
+contactPartnership: Nieuwe partnerschapsaanvraag
+contactTechnicalIssues: Nieuwe ondersteuningsaanvraag
+contactInfos: Nieuwe informatieaanvraag
+shortdaySunday: Zo
+shortdaySaturday: Za
+shortdayFriday: Vr
+shortdayThursday: Do
+shortdayWednesday: Wo
+shortdayTuesday: Di
+shortdayMonday: Ma
+signature: Tot binnenkort op
+FollowUs: Volg ons
+Download: Download de <b>Android</b>- of <b>IOS</b>-applicatie
+URLEmailsAlerts: gebruiker/profiel/wijzigen/mijn-profiel
+EmailsAlerts: Uw e-mailmeldingen beheren
+FAQ: FAQ
+AQuestion: Een vraag?
+hello: Hallo
+homeAddress: Domicilie
+domicile: homeAddress
+directPayment: Cash betaling
+onLinePayment: Online betaling
+paymentNotDone: Betaling niet uitgevoerd
+passenger: Passagier
+driver: Bestuurder
+seeProofsClasses: zie de klassen
+certified: Gecertificeerd
+typeOfpayment: betaling
+amount: Bijdrage
+dropOffLocality: Afzetten
+pickUpLocality: Ophalen
+carpooler: Carpooler
+role: Rol
+date: Datum
+taxInfo: 'U hebt in 2020 meer dan € 300,00 ontvangen: de wet verplicht u om dit aan
+  te geven in uw belastingen.'
+totalReceived: Ontvangen totaalbedrag
+totalPaid: Betaald totaalbedrag
+onTheSite: op de website
+carpoolRealizedBy: Carpoolings gedaan door
+listCrapoolPayments: Lijst Betalingen en carpoolings
+byJourney: (per traject)
+forTheCarpoolsYouHadTogether: die u hem schuldig bent voor de carpoolings die jullie
+  samen hebben gedaan.
+signalThatYouhaveToPay: meldt dat u hem nog niet vergoed hebt voor
+iContactYouAgainAboutPayment: Ik ben zo vrij u te herinneren aan de betaling van de
+  carpoolings die we samen hebben gedaan voor een bedrag van
+haveYouForgotToPayTheDriver: Bent u uw carpooler vergeten te betalen?
+click: Klik hier.
+yourWeekOfCarpool: 'U week van regelmatige carpooling, met '
+haveYouPayedYourDriverForTheWeek: Hebt u de carpoolings van vorige week betaald?
+goToAcceptedCarpools: Ga naar 'Aanvaarde carpoolings' om hem te markeren als cash
+  betaald of om hem online te betalen.
+clickOnLinkToPay: 'Klik op de volgende link om dit te markeren als cash betaald als
+  u de bestuurder als hebt vergoed of om hem online te betalen als u hem nog niet
+  hebt vergoed:'
+isDone: is voltooid.
+haveYouPayedYourDriver: Hebt u uw carpooler vergoed?
+yourProofIsOutdated: Het identiteitsdocument dat u ons hebt bezorgd, is vervallen.
+  Stuur een ander up-to-date document om betalingen te kunnen ontvangen
+identityProofOutdated: Identiteitsdocument vervallen
+yourProofIsRejected: Het identiteitsdocument dat u ons hebt bezorgd, werd afgewezen.
+  Stuur ons een ander up-to-date identiteitsdocument om betalingen te kunnen ontvangen.
+identityProofRejected: Identiteitsdocument afgewezen
+yourProofIsAccepted: Het identiteitsdocument dat u ons hebt bezorgd, werd gecontroleerd
+  en aanvaard.
+identityProofAccepted: Identiteitsdocument aanvaard
+linkValidatePaymentRoute: /gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings
+linkValidatePaymentLabel: Een betaling valideren.
+clickOnlinkToConfirmOrNot: 'Klik op de volgende link om deze cash betaling te bevestigen,
+  of - integendeel - een onbetaald bedrag te melden: '
+goToAcceptedCarpoolsTovalidate: Ga naar 'Aanvaarde carpoolings' om deze cash betaling
+  te bevestigen of - integendeel - een onbetaald bedrag te melden.
+asPayed: zoals cash betaald.
+carpoolRegular: carpooling tussen
+hasIndicatedThatTheWeek: heeft de week gemarkeerd van
+hasIndicatedThatCarpool: heeft uw carpooling gemarkeerd van
+hasPayed: heeft u wel degelijk cash betaald?
+thankYouTeam: Bedankt, het {instanceName}-team.
+communityNewMembershipRequest: NIEUW - Een nieuwe gebruiker wil lid worden van uw
+  community
+seeYouInAdmin: 'Afspraak in de beheermodule voor validatie van uw lidmaatschap: '
+newMembershipSubscriber: ' heeft gevraagd om lid te worden van de community '
+solidaryContact: Een solidaire administrator neemt contact met u op
+massPublicTransportPotentialOver: De berekening van het potentieel van het openbaar
+  vervoer van import nr. {massId} is voltooid
+massPublicTransportPotentialTitle: Berekening van het potentieel van het openbaar
+  vervoer
+massMatchedOver: De berekening van het carpoolingpotentieel van de import nr. {massId}
+  is voltooid
+massMatchedOverTitle: Berekening van het carpoolingpotentieel
+massMatched: Berekening van het carpoolingpotentieel nr. {massId}
+massAnalyzeErrors: De analyse van de import nr. {massId} bevat fouten
+changePassword: We moedigen u sterk aan om dit te wijzigen wanneer u zich de volgende
+  keer aanmeldt
+temporaryPassword: '{password}'
+temporaryPasswordAttributed: Er werd u een tijdelijk wachtwoord toegekend
+massMigrated: Uw carpoolingaccount
+journeyDetailTime: gepland op {journeyDate} om {journeyTime}.
+journeyDetailDestination: '{journeyDestination}'
+journeyDetailTo: naar
+journeyDetailOrigin: '{journeyOrigin}'
+journeyDetail: Dit bericht heeft betrekking op uw traject van
+useDirectContact: U kunt de contact gegevens gebruiken die hij (in principe) heeft
+  vermeld in zijn bericht om rechtstreeks contact met hem op te nemen.
+noDirectResponse: Aangezien deze gebruiker is ingeschreven op een carpoolingplatform,
+  kunt u hem niet antwoorden via {instanceName}.
+youReceivedExternalContactOrigin: '{origin}'
+youReceivedExternalContact: U hebt een bericht ontvangen van een carpooler die is
+  ingeschreven op
+rdexMessage: Zijn bericht
+externalContact: Contact voor een carpooling
+unsubscribeEmailAlertFront: U bent uitgeschreven voor het nieuws van de dienst {instanceName}.
+  Om u later opnieuw in te schrijven, kunt u naar Profiel > Mijn account gaan.
+unsubscribeEmail: Klik hier om uw uit te schrijven van het Nieuws van de dienst {instanceName}
+urlUnsubscribeEmail: /gebruiker/uitschrijven
+header3Data: senderName
+header3Name: X-JEMH-Naam en voornaam gesprekspartner
+header2Data: senderEmail
+header2Name: X-JEMH-E-mailadres gesprekspartner
+header1Data: jira-ouestgo
+header1Name: X-JEMH-toegewezen
+yourValidationToken: Uw validatiecode
+updatedSefl: Wijziging van uw profiel
+errors:
+  alreadyUsed: Dit e-mailadres werd al gebruikt
+  wrongDomains: 'Uw e-mailadres moet er één van de volgende domeinen zijn: {domains}'
+yourInscription: Uw inschrijving
+passwordChanged: Bevestiging voor opnieuw instellen van wachtwoord
+newPassword: UW WACHTWOORD WERD GEREGISTREERD!
+renewPassword: AANVRAAG VOOR OPNIEUW INSTELLEN VAN WACHTWOORD.
+askPassword: Aanvraag voor opnieuw instellen van wachtwoord
+contactYou: '{givenName} neemt contact met u op'
+findNewCarpool: 'Zoek niet carpoolings of plaats een advertentie op '
+passengerAskLinkedAdDeletedUrgent: Dringend - Een advertentie waarvoor u passagier
+  was, werd verwijderd
+passengerAskLinkedAdDeleted: Een advertentie waarvoor u passagiers was, werd verwijderd
+driverAskLinkedAdDeletedUrgent: Dringend - Een advertentie waarvoor u bestuurder was,
+  werd geweigerd
+driverAskLinkedAdDeleted: Een advertentie waarvoor u bestuurder was, werd verwijderd
+askLinkedAdDeleted: Een advertentie waarvoor u had gesolliciteerd, werd verwijderd
+accountDeleted: heeft zijn account verwijderd en zal niet kunnen carpoolen met u vanaf
+carpoolDeleted: heeft zijn traject geannuleerd en zal niet kunnen carpoolen met u
+  vanaf
+newAd: 'Nieuwe advertentie(s) op '
+newCarpoolAd: Nieuwe carpoolingadvertentie(s)
+carpoolWaitingForValidation: Carpooling in afwachting van validatie
+askRefused: Carpoolingaanvraag afgewezen
+carpoolAsk: Carpoolingaanvraag
+carpoolRecap: Overzicht carpooling
+renewYourAd: Vergeet uw carpoolingadvertentie niet te vernieuwen
+lookYourMessaging: "Afspraak in 'Mijn berichten' op "
+newMessage: U hebt een nieuw bericht ontvangen van
+newMatching: Een nieuwe advertentie werd gepubliceerd voor uw traject
+appointmentIn: Afspraak in 'Mijn advertenties' op
+newAdPublished: Een nieuwe advertentie stemt overeen met uw traject
+goTotheSite: 'Vind nieuwe carpoolingtrajecten of plaats een advertentie op '
+refusedAskReguar: 'heeft de regelmatige carpooling niet bevestigd van '
+refusedAsk: 'heeft de carpooling niet bevestigd van '
+clickHereToValidate: Klik hier om deze carpoolingaanvraag te beantwoorden via uw berichtensysteem
+askYouCarpool: biedt u een carpooling aan van
+findTheProposalIn: "Aanvaard of weiger de aanvraag in 'Mijn Berichten' op "
+askYouCarpoolRegular: 'biedt u een regelmatige carpooling aan van '
+carpoolAskAccepted: 'Carpooling bevestigd met '
+seeTheAd: 'Advertentie bekijken op '
+at: 'om '
+from: 'van '
+the: 'op '
+and: 'en '
+between: 'tussen '
+carpoolAskAcceptedRegular: 'Regelmatige carpooling bevestigd met '
+renewYourAdsOn: Hernieuw uw advertentie op
+inFewDays: Uw carpoolingadvertenties zullen binnen enkele dagen niet meer geldig zijn
+seeReview: U kunt deze review raadplegen door naar uw profiel te gaan
+reviewReceived: U hebt een review ontvangen van {givenName} {shortFamilyName}
+reviewReceivedTitle: U hebt een review ontvangen
+detailsTextUserReport: 'Details over de signalering:'
+theReporterUser: Het e-mailadres van de gebruiker die de signalering heeft gedaan
+  is {emailReporter}
+theReportedUser: Het gaat om {givenName} {familyName} ({email})
+userReport: Er werd een gebruiker gesignaleerd
+userReportTitle: Signalering van een gebruiker
+detailsTextEventReport: 'Details van de signalering:'
+reportThatEvent: heeft het evenement gesignaleerd
+theUser: De gebruiker
+eventReport: Er werd een evenement gesignaleerd
+eventReportTitle: Signalering van een evenement
+eventUrl: /carpoolings-evenementen/
+eventDescription: 'Beschrijving: '
+eventLocation: 'Adres: '
+eventName: 'Naam: '
+eventDetail: 'Dit zijn de details van uw evenement:'
+event: UW EVENEMENT WERD GEREGISTREERD!
+eventCreated: Uw evenement werd geregistreerd!
+noPenaltyApplied: Er is geen boete voor de annulering van deze carpooling. Om de betrouwbaarheid
+  van de advertenties te garanderen en de carpoolers te beschermen tegen herhaalde
+  afzeggingen, behouden wij ons echter het recht voor om de mogelijkheid tot publicatie
+  van advertenties op te schorten indien een carpooler te vaak afzegt.
+clickOnLinkToSearchAgain: Klik op deze link om een nieuwe zoekopdracht te starten
+hasDeletedTheAssociateAd: heeft zijn gekoppelde advertentie verwijderd.
+isCanceledBecause: werd geannuleerd omdat
+with: met
+withTheDriver: met de bestuurder/bestuurster
+withThePassenger: met de passagier
+yourAskCarpoolBetween: Uw carpoolingaanvraag tussen
+yourCarpoolBetween: Uw carpooling tussen
+CheckoutForAnyURLMisspellingOr: berichten
+urlMailBox: /gebruiker/berichten
+profilUpdate: UPDATE VAN UW BEVESTIGD PROFIEL!
+theModificationIsConfirmed: De wijziging van uw profiel werd bevestigd
+emailValidationUrl: /gebruiker/e-mail/validatie/
+emailValidation: Validatie van uw e-mailadres
+yourPasswordHasBeenSendBySms: Uw wachtwoord werd u per sms toegezonden.
+yourPasswordIs: Uw wachtwoord is
+urlMobileEmailValidation: /#/confirm-registration/
+urlEmailValidation: /gebruiker/inschrijving/validatie/
+orUseTheValidationCode: Of gebruik de validatiecode rechtstreeks op de website
+clickHereToConfirm: Klik op deze link om uw e-mailadres te bevestigen
+wellTakenIntoAccount: werd goed ontvangen
+yourInscriptionAtByTiers: Uw inschrijving voor de dienst {instanceName} door een derde
+yourInscriptionAt: Uw inschrijving voor de dienst
+inscriptionAt: UW INSCHRIJVING WERD GEVALIDEERD!
+changeYourPassword: Wijzig uw wachtwoord
+thanksForUse: Gebruik
+successfullyChanged: werd gewijzigd
+yourPassword: Uw wachtwoord
+mobileUrlUpdatePassword: /#/carpools/reset-password?token=
+urlUpdatePassword: /gebruiker/wachtwoord/reset/
+linkChangePassword: Link voor wijziging van wachtwoord
+clickHereToChangePassword: Klik op de link om uw wachtwoord te wijzigen
+askNewPassword: U hebt een nieuw wachtwoord aangevraagd
+askNewPasswordTitle: Nieuw wachtwoord
+partnership: Partnerschapsaanvraag
+technicalIssues: Technische problemen
+infos: Informatie
+notMentioned: Niet vermeld
+thankYou: Dank u
+message: Bericht
+ask: Aanvraag
+email: E-mail
+firstname: Voornaam
+name: Naam
+newContactAsk: Hallo, u hebt een nieuwe contactaanvraag ontvangen
+mailBox: uw berichtensysteem
+getProblem: Als deze e-mail een bericht bevat dat niet voldoet aan het charter, aarzel
+  dan niet om contact met ons op te nemen
+doNotReply: Beantwoord deze e-mail niet rechtstreeks.
+clickHere: door hier te klikken
+canAnswerViaEmailFrom: U kunt dit bericht beantwoorden via het berichtensysteem van
+youHaveAMessage: U hebt een nieuw bericht ontvangen
+updatedCarpoolDetails: Er werden gegevens van uw carpooling van {origin} naar {destination}
+  gewijzigd door
+clickNewSearch: U kunt op deze link klikken om een nieuwe zoekopdracht te starten
+ownerMessage: 'Dit is het bericht van de eigenaar van de advertentie:'
+cancelledCarpool: Carpooling geannuleerd
+hasUpdatedHisAd: heeft zijn advertentie gewijzigd.
+hasBeenCancelledBecause: werd geannuleerd omdat
+no: Nee
+yes: Ja
+new: Nieuwe
+old: Oude
+comment: Opmerking
+seatsDriver: Beschikbare zitplaatsen
+luggage: Grote reiskoffers
+backSeats: 2 achteraan
+bike: Fiets
+field: Veld
+updateFieldsListTitle: 'Hier vindt u de details van de gewijzigde informatie:'
+hasBeenUpdated: werd gewijzigd
+updatedCarpool: Carpooling gewijzigd
+carpoolProposalUpdated: De advertentie met betrekking tot uw aanvraag werd gewijzigd
+justPublished: werd zonet gepubliceerd
+toConsultCorrespondingAdsAndMakeContact: om de overeenstemmende advertenties te raadplegen
+  en contact op te nemen met
+linkMyAds: /gebruiker/profiel/wijzigen/mijn-advertenties
+myAds: Mijn advertenties
+seeYouIn: Afspraak binnen
+newCarpoolAdMatchingYourCommute: Een nieuw carpoolingadvertentie die overeenstemt
+  met uw traject tussen
+urlPublish: /covoiturage/publierannonce
+canceledRegularCarpool: '  heeft zijn regelmatige traject geannuleerd en zal niet
+  kunnen carpoolen met u vanaf '
+deletedAccountRegularCarpool: ' heeft zijn account geannuleerd en zal niet kunnen
+  carpoolen met u vanaf '
+deletedAccountOccasionalCarpool: ' heeft zijn account verwijderd en zal niet kunnen
+  carpoolen met u op '
+canceledOccasionalCarpool: ' heeft zijn traject geannuleerd en zal niet kunnen carpoolen
+  met u op '
+canceledCarpool: UW CARPOOLING WERD GEANNULEERD.
+noPanic: Geen paniek, u kunt een nieuw traject zoeken of een advertentie publiceren.
+refusedRegularCarpool: ' heeft de carpooling voor het regelmatige traject van niet
+  gevalideerd '
+refusedOccasionalCarpool: ' heeft de carpooling voor het traject van niet gevalideerd '
+refusedCarpool: UW CARPOOLING WERD NIET GEVALIDEERD.
+regularCarpoolAsk: 'Overzicht van de aanvraag tot regelmatige carpooling van '
+occasionalCarpoolAsk: 'Overzicht van de aanvraag tot occasionele carpooling op '
+askForCarpool: vraagt u om een carpooling.
+newCarpoolAsk: U HEBT EEN AANVRAAG VOOR CARPOOLING ONTVANGEN!
+indicativePrice: 'Indicatieve prijs: '
+seatsSelected: 'Gereserveerde plaats(en): '
+dropOff: 'Afzetten om '
+pickUp: 'Ophalen om '
+multipleShedules: Meerdere uurroosters
+nowYouAreMore: Nu bent u met meer dan

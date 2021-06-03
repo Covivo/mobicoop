@@ -1,0 +1,47 @@
+{
+    "error": "Er heeft zich een fout voorgedaan",
+    "uri": {
+        "addCoordinates": "/gebruiker/bankgegevens/toevoegen",
+        "deleteCoordinates": "/gebruiker/bankgegevens/verwijderen",
+        "getCoordinates": "/gebruiker/bankgegevens"
+    },
+    "modalSuppr": {
+        "no": "nee",
+        "yes": "ja",
+        "line3": "Wilt u deze actie bevestigen?",
+        "line2": "U zult niet geen elektronische betalingen meer kunnen ontvangen.",
+        "line1": "Uw bankgegevens gaan verwijderd worden.",
+        "title": "Bankgegevens verwijderen?"
+    },
+    "register": "Opslaan",
+    "form": {
+        "errors": {
+            "cityRequired": "De gemeente is verplicht",
+            "cpRequired": "De postcode is verplicht",
+            "wayRequired": "Het huisnummer en de straat zijn verplicht",
+            "bicRequired": "Het BIC-nummer is verplicht",
+            "bic": "Het BIC-nummer moet geldig zijn",
+            "ibanRequired": "Het IBAN-nummer is verplicht",
+            "iban": "Het moet om een geldig IBAN-nummer gaan"
+        },
+        "tooltip": {
+            "iban": "Voer uw IBAN in zonder spaties"
+        },
+        "label": {
+            "address": {
+                "city": "Stad",
+                "cp": "Postcode",
+                "way": "Straat en nummer",
+                "check": "Zoek uw volledige adres"
+            },
+            "bic": "BIC",
+            "iban": "IBAN"
+        }
+    },
+    "titleAlreadyRegistered": "Mijn bankgegevens",
+    "textAddressDetails": "De volgende velden zullen ingevuld worden dankzij de bovenstaande zoekopdracht. Controleer de conformiteit van de gegevens.",
+    "textAddress": "Zoek uw volledige adres (straat, nummer, ...) en niet alleen de gemeente waarin u woont.",
+    "titleAddress": "2. Volledig adres",
+    "textInfo": "Om online betalingen te ontvangen, moeten de onderstaande gegevens opgegeven worden.",
+    "titleCoordinates": "1. Bankgegevens"
+}
