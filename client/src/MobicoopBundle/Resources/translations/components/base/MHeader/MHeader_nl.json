@@ -1,1 +1,35 @@
-{}
+{
+    "snackbar": {
+        "needConnection": "Om een advertentie te publiceren moet u zich aanmelden of registreren"
+    },
+    "buttons": {
+        "solidary": {
+            "route": "http://solidaires.mobicoop.fr/",
+            "label": "Solidaire bestuurder worden"
+        },
+        "logOut": {
+            "route": "/user/logout",
+            "label": "Afmelden"
+        },
+        "myProfile": {
+            "route": "/gebruiker/profiel/wijzigen",
+            "label": "Mijn profiel"
+        },
+        "messages": {
+            "route": "/gebruiker/berichten",
+            "label": "Berichten"
+        },
+        "shareAnAd": {
+            "route": "/carpooling/advertentiepubliceren",
+            "label": "Een advertentie publiceren"
+        },
+        "logIn": {
+            "route": "/gebruiker/aanmelden",
+            "label": "Aanmelden"
+        },
+        "signup": {
+            "route": "/gebruiker/registratie",
+            "label": "Registreren"
+        }
+    }
+}
