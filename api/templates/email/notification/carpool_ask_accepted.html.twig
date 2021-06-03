@@ -30,12 +30,12 @@
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}</b></p>
                         <p>Votre covoiturage avec<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> est confirmé!</p>
+                        <p>Vous pouvez le contacter par téléphone : {{sender.telephone}}</p>
                         {% if ad.results[0].frequency == 1 %}
                             <p>Récapitulatif de votre trajet occasionnel du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].date|date("d/m/Y") }}</b>:</p>
                         {% else %}
                             <p>Récapitulatif de votre trajet régulier du <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{ ad.results[0].toDate|date("d/m/Y") }}</b> :</p>
                         {% endif %}
-                        <p>Vous pouvez le contacter par téléphone : {{sender.telephone}}</p>
                     </td>
                     <td style="width:30%">
                         <img  style="border-radius:50px" src="{{sender.avatars[0]}}" alt="Avatar"/>
