@@ -1,1 +1,4 @@
-{}
+{
+    "canBePaid": "U kunt betalingen ontvangen",
+    "cannotBePaid": "Er werd geen betaling ontvangen: er ontbreken bankidentiteitsgegevens"
+}
