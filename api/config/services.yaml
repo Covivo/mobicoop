@@ -367,6 +367,9 @@ services:
     App\Event\Command\EventImportCommand:
         arguments:
             $eventImportEnabled: '%env(bool:EVENT_IMPORT_ENABLED)%'
+    App\Event\Admin\DataProvider\EventCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
 
     # External Connection
     App\ExternalJourney\Service\ExternalConnectionManager:

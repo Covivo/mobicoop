@@ -43,6 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Filter\TerritoryFilter;
+use App\Event\Filter\EventAddressTerritoryFilter;
 use App\App\Entity\App;
 
 /**
@@ -185,6 +186,7 @@ use App\App\Entity\App;
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
+ * @ApiFilter(EventAddressTerritoryFilter::class, properties={"eventAddressTerritoryFilter"})
  */
 class Event
 {
