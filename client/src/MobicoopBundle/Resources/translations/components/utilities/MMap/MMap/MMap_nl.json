@@ -1,1 +1,7 @@
-{}
+{
+    "dialog": {
+        "destination": "Bestemming",
+        "origin": "Vertrekplaats",
+        "title": "Dit knooppunt selecteren als:"
+    }
+}
