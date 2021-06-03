@@ -333,7 +333,7 @@ class JourneyManager
     /**
      * Set the right day status (check or not) and the right time (outward or return)
      * According to RDEX+ specs we can have several regularSchedule
-     * WARNING : If two schedules contain the same day for the same wat (outward or return), we are keeping the last time given
+     * WARNING : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given
      *
      * @param array $schedules          The current Ad schedule
      * @param WaySchedule $waySchedule  The WaySchedule (outward or return)

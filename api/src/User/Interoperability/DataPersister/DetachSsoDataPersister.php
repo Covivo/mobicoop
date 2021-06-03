@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,29 +20,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Interoperability\DataPersister;
+namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Interoperability\Ressource\Ad;
-use App\Carpool\Interoperability\Service\AdManager;
+use App\App\Entity\App;
+use App\User\Exception\BadRequestInteroperabilityUserException;
+use App\User\Interoperability\Ressource\DetachSso;
+use App\User\Interoperability\Service\UserManager;
+use Symfony\Component\Security\Core\Security;
 
-final class AdPostDataPersister implements ContextAwareDataPersisterInterface
+final class DetachSsoDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $adManager;
+    private $security;
+    private $userManager;
 
-    public function __construct(AdManager $adManager)
+    public function __construct(UserManager $userManager, Security $security)
     {
-        $this->adManager = $adManager;
+        $this->userManager = $userManager;
+        $this->security = $security;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'interop_post';
+        return $data instanceof DetachSso && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'interop_detach_sso';
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->adManager->createAd($data);
+        if (!($this->security->getUser() instanceof App)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
+        }
+        return $this->userManager->detachUser($data);
     }
 
     public function remove($data, array $context = [])

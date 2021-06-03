@@ -23,38 +23,35 @@
 namespace App\User\Interoperability\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\App\Entity\App;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
+use Symfony\Component\Security\Core\Security;
 
-final class UserDataPersister implements ContextAwareDataPersisterInterface
+final class UserItemDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
     private $security;
     private $userManager;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, Security $security)
     {
         $this->userManager = $userManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'interop_post';
+        return $data instanceof User && isset($context['item_operation_name']) && $context['item_operation_name'] == 'interop_put';
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        if (is_null($data)) {
-            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::NO_USER_PROVIDED);
+        if (!($this->security->getUser() instanceof App)) {
+            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
         }
 
-        if (!in_array($data->getGender(), User::GENDERS)) {
-            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::INVALID_GENDER);
-        }
-
-        return $this->userManager->registerUser($data);
+        return $this->userManager->updateUser($data);
     }
 
     public function remove($data, array $context = [])

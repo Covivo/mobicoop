@@ -34,11 +34,11 @@ api_platform:
     This document contains all endpoints of the API.
 
 
-    - If you're only looking for the **Interoperability routes** <a href='#operations-tag-Interoperability'>jump right to them</a>
-
     - If you're only looking for the **[RDEX](https://www.feduco.org/articles/actus/rdex/) protocol routes** <a href='#operations-tag-RDEX'>get to them</a>
 
     - If you're only looking for the **[RDEX+](https://rdex.fabmob.io/) protocol routes** <a href='#operations-tag-RDEX\\+'>get to them</a>
+
+    - If you're only looking for the **Interoperability routes** <a href='#operations-tag-Interoperability'>jump right to them</a>
 
     
     **License** : [GNU Affero AGPL-v3](https://www.gnu.org/licenses/agpl.html)
@@ -101,7 +101,6 @@ api_platform:
         - '%kernel.project_dir%/src/Article/Ressource'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Carpool/Ressource'
-        - '%kernel.project_dir%/src/Carpool/Interoperability/Ressource'
         - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/Community/Resource'

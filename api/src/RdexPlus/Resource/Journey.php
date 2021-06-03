@@ -36,7 +36,67 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * RDEX+ : Journey
  * Documentation : https://rdex.fabmob.io/
- *
+ * Exemple of a regular round trip
+ *{
+ *   "type":"planned",
+ *   "user":{
+ *       "id":"18"
+ *   },
+ *  "isRoundTrip":true,
+ *  "frequency":"regular",
+ *  "price":{
+ *      "amount":0.06,
+ *      "type":"variable"
+ *  },
+ *  "carpoolerType":"driver",
+ *  "from":{
+ *    "latitude": 48.690303,
+ *    "longitude": 6.178289,
+ *    "city": "Nancy"
+ *  },
+ *  "to":{
+ *    "latitude": 49.115164,
+ *    "longitude": 6.17963,
+ *    "city": "Metz"
+ *  },
+ *  "numberOfWaypoints":1,
+ *  "waypoints":[
+ *    {
+ *        "latitude": 48.7658301,
+ *        "longitude": 6.1229922,
+ *        "city": "Pompey"
+ *    },
+ *    {
+ *        "latitude": 48.9025946,
+ *        "longitude": 6.0547691,
+ *        "city": "Pont-à-Mousson"
+ *    }
+ *   ],
+ *  "outward":{
+ *    "departureDate":1622448000,
+ *    "regularSchedule":[
+ *        {
+ *            "mondayTime":"08:00",
+ *            "wednesdayTime":"08:00"
+ *        },
+ *        {
+ *            "fridayTime":"09:00"
+ *        }
+ *    ]
+ *  },
+ *  "return":{
+ *    "departureDate":1622484000,
+ *    "regularSchedule":[
+ *        {
+ *            "mondayTime":"18:00",
+ *            "wednesdayTime":"18:00"
+ *        },
+ *        {
+ *            "fridayTime":"19:00"
+ *        }
+ *    ]
+ *  }
+ *}
  * The RDEX+ protocol does'nt require the POST route. We did it anyway.
  *
  * @ApiResource(
