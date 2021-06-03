@@ -46,7 +46,7 @@
     },
     "buttons": {
         "login": {
-            "route": "/gebruiker/verbinding"
+            "route": "/gebruiker/aanmelden"
         },
         "contact": {
             "route": "/gebruiker/berichten/nieuw"
