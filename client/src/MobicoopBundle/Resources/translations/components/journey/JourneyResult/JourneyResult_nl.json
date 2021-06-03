@@ -1,1 +1,8 @@
-{}
+{
+    "redirectForCarpoolSearch": "/carpooling/advertentie/{proposalId}/resultaten",
+    "createSearchFromProposalUrl": "/carpooling/aanmaken-zoeken/{proposalId}",
+    "regular": "Regelmatig traject",
+    "punctual": "Eenmalig traject",
+    "nbResults": "Geen carpooladvertentie gevonden | 1 carpooladvertentie gevonden | {nb} carpooladvertenties gevonden",
+    "title": "Carpooling van {origin} naar {destination}"
+}
