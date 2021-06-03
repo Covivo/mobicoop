@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,29 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Filter;
+namespace App\RelayPoint\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+final class RelayPointAddressTerritoryFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "homeAddressODTerritory") {
+        if ($property != "relayPointAddressTerritoryFilter") {
             return;
         }
 
+        // One territory
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->leftJoin(sprintf("%s.addresses", $rootAlias), 'homeAddress')
-            ->leftJoin('homeAddress.territories', 'thaodtf')
-            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'phaodtf')
-            ->leftJoin('phaodtf.waypoints', 'whaodtf')
-            ->leftJoin('whaodtf.address', 'ahaodtf')
-            ->leftJoin('ahaodtf.territories', 'tahaodtf')
-            ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
+            ->leftJoin($rootAlias.".address", 'acatf')
+            ->leftJoin('acatf.territories', 'acat')
+            ->andWhere('acat.id in (:value)')
             ->setParameter('value', $value)
         ;
     }
@@ -58,13 +58,12 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
         foreach ($this->properties as $property => $strategy) {
             $description["$property"] = [
                 'property' => $property,
-                'type' => 'number',
-                'format' => 'integer',
+                'type' => 'array',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have the origin or the destination of one of their Ad, or their home address, in the given territory',
+                    'description' => 'Filter on relay points that have its address in the given territories',
                     'name' => 'territory',
-                    'type' => 'integer',
+                    'type' => 'array',
                 ],
             ];
         }

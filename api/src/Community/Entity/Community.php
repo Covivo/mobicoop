@@ -44,6 +44,7 @@ use App\Community\Controller\JoinAction;
 use App\RelayPoint\Entity\RelayPoint;
 use App\Community\Filter\TerritoryFilter;
 use App\Match\Entity\Mass;
+use App\Community\Filter\CommunityAddressTerritoryFilter;
 
 /**
  * A community : a group of users sharing common interests.
@@ -238,6 +239,7 @@ use App\Match\Entity\Mass;
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
+ * @ApiFilter(CommunityAddressTerritoryFilter::class, properties={"communityAddressTerritoryFilter"})
  */
 class Community
 {

@@ -67,7 +67,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
+            $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'actfe');
             $where = "(";
             /**
              * @var Territory $territory
@@ -77,7 +77,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
                     $where .= " OR ";
                 }
                 $territoryFrom = 'territory'.$territory;
-                $queryBuilder->leftJoin('a.territories', $territoryFrom);
+                $queryBuilder->leftJoin('actfe.territories', $territoryFrom);
                 $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
             }
             $where .= ")";

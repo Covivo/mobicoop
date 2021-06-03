@@ -33,6 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use DateTime;
 
 /**
@@ -343,10 +344,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $mobile;
 
     /**
-     * Language de l'utilisateur.
+     * @var Language|null The language of the user.
      *
-     * @var string $language
-     * @Groups({"put","post", "api","language"})
+     * @Groups({"put","post","api","language"})
      */
     private $language;
 
@@ -1107,9 +1107,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * get the native language of the client.
      *
-     * @return string
+     * @return Language
      */
-    public function getLanguage(): ?string
+    public function getLanguage(): ?Language
     {
         return $this->language;
     }
@@ -1117,9 +1117,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     /**
      * Set the native language of the client.
      *
-     * @param string $language
+     * @param Language $language
      */
-    public function setLanguage(?string $language)
+    public function setLanguage(?Language $language)
     {
         $this->language = $language;
     }
