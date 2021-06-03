@@ -489,6 +489,16 @@ use App\I18n\Entity\Language;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "updateLanguage"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/updateLanguage",
+ *  *           "normalization_context"={"groups"={"readUser"}},
+ *              "denormalization_context"={"groups"={"write"}},
+ *              "security"="is_granted('user_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users", "I18n"}
+ *              }
+ *          },
  *          "getCarpoolExport"={
  *              "method"="GET",
  *              "path"="/users/{id}/carpool_export",

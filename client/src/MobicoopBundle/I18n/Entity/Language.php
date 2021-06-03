@@ -21,116 +21,82 @@
  *    LICENSE
  **************************/
 
-namespace App\I18n\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\I18n\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\User\Entity\User;
-use App\I18n\Entity\Translate;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Translate;
 
 /**
  * A Language.
- *
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "post"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "path"="/languages/{id}",
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "put"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          },
- *          "delete"={
- *              "swagger_context" = {
- *                  "tags"={"I18n"}
- *              }
- *          }
- *      }
- * )
  */
-class Language
+class Language implements ResourceInterface, \JsonSerializable
 {
-    const LANGUAGES = [
-        ["id"=>1,"code"=>"fr"],
-        ["id"=>2,"code"=>"en"],
-        ["id"=>3,"code"=>"eu"],
-        ["id"=>4,"code"=>"it"],
-        ["id"=>5,"code"=>"de"],
-        ["id"=>6,"code"=>"es"],
-        ["id"=>7,"code"=>"nl"]
-    ];
-
     /**
      * @var int The id of this language.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
-     * @Groups({"aRead","read", "readUser"})
+     * @Groups({"get","post","put"})
      */
     private $id;
+
+    /**
+    * @var string|null The iri of this language.
+    * @Groups({"get","post","put"})
+    */
+    private $iri;
             
     /**
      * @var string The code of the language.
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","read","write", "readUser"})
+     * @Groups({"get","post","put","language"})
      */
     private $code;
 
     /**
-    * @var ArrayCollection|null The users of the section.
+    * @var User[]|null The users of the section.
     *
-    * @ORM\OneToMany(targetEntity="\App\User\Entity\User", mappedBy="language", cascade={"persist"})
-    * @Groups({"write"})
-    * @MaxDepth(1)
+    * @Groups({"get","post","put"})
     */
     private $users;
 
     /**
-     * @var ArrayCollection|null A Language can have multiple entry in Translate
+     * @var Translate[]|null A Language can have multiple entry in Translate
      *
-     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language", cascade={"persist","remove"})
-     * @MaxDepth(1)
+     * @Groups({"get","post","put"})
      */
     private $translates;
 
-    public function __construct()
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/languages/".$id);
+        }
         $this->users = new ArrayCollection();
         $this->translates = new ArrayCollection();
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+    
+    public function getIri(): ?string
+    {
+        return $this->iri;
+    }
+
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
             
     public function getCode(): string
@@ -145,10 +111,7 @@ class Language
         return $this;
     }
 
-    /**
-    * @return ArrayCollection|User[]
-    */
-    public function getUsers(): ArrayCollection
+    public function getUsers(): Collection
     {
         return $this->users;
     }
@@ -176,10 +139,7 @@ class Language
         return $this;
     }
 
-    /**
-    * @return ArrayCollection|Translate[]
-    */
-    public function getTranslates(): ArrayCollection
+    public function getTranslates(): Collection
     {
         return $this->translates;
     }
@@ -205,5 +165,14 @@ class Language
         }
 
         return $this;
+    }
+    public function jsonSerialize()
+    {
+        $languageSerialized = [
+            'id'                    => $this->getId(),
+            'code'                  => $this->getCode(),
+            'iri'                   => $this->getIri()
+        ];
+        return $languageSerialized;
     }
 }
