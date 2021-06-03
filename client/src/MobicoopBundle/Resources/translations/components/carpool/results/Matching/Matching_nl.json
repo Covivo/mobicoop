@@ -1,1 +1,34 @@
-{}
+{
+    "loginUrl": "/gebruiker/aanmelden/{id}",
+    "registerUrl": "/gebruiker/registratie/{id}",
+    "register": "Registreren",
+    "login": "Aanmelden",
+    "loginOrRegister": "U moet zich aanmelden of registreren om verder te gaan",
+    "loginOrRegisterTitle": "Aanmelden of registreren verplicht",
+    "tabs": {
+        "ptresults": "Openbaar vervoer",
+        "otherCarpools": "Andere carpoolings",
+        "carpools": "Carpoolings {platform}"
+    },
+    "snackBar": {
+        "error": "De contactopname kon niet verzonden worden door een technisch probleem",
+        "success": "De contactopname werd verzonden"
+    },
+    "alsoIncludePassengers": "Deze zoekopdracht bevat ook de passagiersadvertenties",
+    "includePassengers": "Ook de advertenties van passagiers weergeven",
+    "matchingNumber": "Geen carpooladvertenties gevonden... | {number} carpooladvertentie gevonden | {number} carpooladvertenties gevonden",
+    "AskNewSearch": "Opnieuw proberen door uw zoekopdracht aan te passen? Een andere reisroute?",
+    "newSearch": "Nieuwe zoekopdracht",
+    "search3": "Nog een ogenblik geduld...",
+    "search2": "Even geduld, we hebben vele potentiële medecarpoolers!",
+    "search": "Zoeken bezig...",
+    "ptSearchUrl": "/openbaar-vervoer/zoeken",
+    "externalJourneyUrl": "/carpooling/rdexJourney",
+    "mailboxUrl": "/gebruiker/berichten/carpooling/{askId}",
+    "contactUrl": "/gebruiker/berichten/nieuw",
+    "carpoolUrl": "/carpooling/aanvraag",
+    "matchingUrl": "/carpooling/zoeken/matching",
+    "externalUrl": "/carpooling/advertentie/{id}/extern",
+    "proposalUrl": "/carpooling/advertentie/{id}/detail",
+    "title": "Carpoolresultaten tussen {cityA} en {cityB}"
+}
