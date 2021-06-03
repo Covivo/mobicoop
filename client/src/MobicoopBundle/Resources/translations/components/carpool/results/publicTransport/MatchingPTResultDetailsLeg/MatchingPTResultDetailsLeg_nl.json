@@ -1,1 +1,9 @@
-{}
+{
+    "hopOff": "uitstappen",
+    "hopOn": "Instappen",
+    "direction": "Richting",
+    "waiting": "Wachten {duration}",
+    "estimatedDuration": "Geschatte duur: {duration}",
+    "walkFromToDestination": "Stappen van <span class='primary--text'>{departure}</span> naar <span class='primary--text'>{arrival}</span>",
+    "walkFromToStop": "Stappen van <span class='primary--text'>{departure}</span> naar <span class='primary--text'>{arrival}</span>"
+}
