@@ -1,1 +1,40 @@
-{}
+{
+    "routes": {
+        "userReport": "/gebruiker/{id}/melden",
+        "eventReport": "/evenement/{id}/melden"
+    },
+    "popup": {
+        "button": {
+            "cancel": "Annuleren",
+            "report": "Melden"
+        },
+        "form": {
+            "text": {
+                "errors": {
+                    "required": "U moet een uitleg geven"
+                },
+                "label": "Uitleg"
+            },
+            "email": {
+                "errors": {
+                    "valid": "U moet een geldig e-mailadres opgeven.",
+                    "required": "Het e-mailadres is vereist"
+                },
+                "label": "Geef uw e-mailadres in"
+            }
+        },
+        "user": {
+            "content": "U wilt het ongepaste gedrag van '<strong>{userName}</strong>' melden? ",
+            "title": "Melding van een gebruiker"
+        },
+        "event": {
+            "title": "Melding van een evenement",
+            "content": "U hebt ongepaste inhoud vastgesteld op het evenement '<strong>{eventName}</strong>'?<br/>Meld het aan ons team dat de nodige maatregelen zal treffen.<br/><br/>Preciseer wat u ongepast lijkt:"
+        }
+    },
+    "snackbar": {
+        "error": "Er heeft zich een fout voorgedaan tijdens de melding",
+        "thankyou": "Bedankt voor deze melding"
+    },
+    "button": "Melden"
+}
