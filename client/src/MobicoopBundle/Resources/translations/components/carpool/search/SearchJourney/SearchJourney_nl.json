@@ -1,1 +1,49 @@
-{}
+{
+    "fullDate": "ddd Do MMMM YYYY",
+    "buttons": {
+        "search": {
+            "label": "Zoeken"
+        },
+        "shareAnAd": {
+            "label": "Een advertentie publiceren"
+        }
+    },
+    "outwardDate": {
+        "error": "Verplicht",
+        "label": "Vertrekdatum"
+    },
+    "switch": {
+        "punctual": {
+            "help": "Klik op deze schakelaar om aan te geven dat uw traject regelmatig is"
+        },
+        "regular": {
+            "help": "Klik op deze schakelaar om aan te geven dat uw traject occasioneel is en kies vervolgens een datum",
+            "label": "Regelmatig traject"
+        }
+    },
+    "radio": {
+        "both": {
+            "label": "Heeft weinig belang"
+        },
+        "passenger": {
+            "label": "Ik ben passagier"
+        },
+        "driver": {
+            "label": "Ik ben bestuurder"
+        }
+    },
+    "swap": {
+        "help": "Klik hier om vertrek en bestemming om te keren",
+        "alt": "Vertrek en bestemming omkeren"
+    },
+    "destination": {
+        "error": "Verplicht",
+        "label": "Aankomstplaats"
+    },
+    "origin": {
+        "error": "Verplicht",
+        "label": "Vertrekplaats"
+    },
+    "subtitle": "Een gebruiksvriendelijke en solidaire carpoolingdienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
+    "title": "Mobicoop"
+}
