@@ -1,1 +1,22 @@
-{}
+{
+    "getPopularJourneysUrl": "/carpoolings/populaire/home",
+    "popularJourneys": {
+        "uri": "/carpooling/{origin}/{destination}",
+        "to": "naar",
+        "from": "Carpooling van"
+    },
+    "links": {
+        "popular": {
+            "uri": "/carpooling-per-gemeente/populaire",
+            "title": "Carpoolings per populaire trajecten"
+        },
+        "byCity": {
+            "uri": "/carpooling-per-gemeente",
+            "title": "De carpoolings per gemeente"
+        }
+    },
+    "title": {
+        "part2": "... naar gemeente",
+        "part1": "Van gemeente..."
+    }
+}
