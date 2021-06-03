@@ -1,1 +1,7 @@
-{}
+{
+    "hourMinute": "UU[u]mm",
+    "shortDate": "ddd DD/MM",
+    "multipleTimesSlots": "Meerdere tijdsloten",
+    "return": "Terug",
+    "outward": "Heen"
+}
