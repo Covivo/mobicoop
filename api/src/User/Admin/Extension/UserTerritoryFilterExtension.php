@@ -75,7 +75,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         if ($isItem) {
         } else {
             switch ($operationName) {
-                case "get":
+                case "ADMIN_get":
                     $territories = $this->authManager->getTerritoriesForItem("user_list");
             }
         }

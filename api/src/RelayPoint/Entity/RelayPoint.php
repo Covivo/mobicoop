@@ -43,6 +43,7 @@ use App\Image\Entity\Image;
 use App\Import\Entity\RelayPointImport;
 use App\Solidary\Entity\Structure;
 use App\RelayPoint\Filter\TerritoryFilter;
+use App\RelayPoint\Filter\RelayPointAddressTerritoryFilter;
 
 /**
  * A relay point.
@@ -155,6 +156,7 @@ use App\RelayPoint\Filter\TerritoryFilter;
  * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact","relayPointType.id":"exact"})
  * @ApiFilter(RangeFilter::class, properties={"address.longitude","address.latitude"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
+ * @ApiFilter(RelayPointAddressTerritoryFilter::class, properties={"relayPointAddressTerritoryFilter"})
  */
 class RelayPoint
 {
