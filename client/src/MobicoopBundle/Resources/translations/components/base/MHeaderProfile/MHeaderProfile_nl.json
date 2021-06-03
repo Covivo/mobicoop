@@ -1,1 +1,6 @@
-{}
+{
+    "myAds": {
+        "route": "/gebruiker/profiel/wijzigen/mijn-advertenties",
+        "label": "Mijn advertenties"
+    }
+}
