@@ -1,5 +1,5 @@
 {
-    "urlLogin": "/gebruiker/aanmelden",
+    "urlLogin": "",
     "socialServicesUnavailableWithoutConsent": "Om gebruikt te kunnen worden, moet de functie voor het aanmelden via sociale media aanvaard worden dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
     "consent": "Om u te kunnen aanmelden, moet u zich akkoord verklaard hebben met 'Uw verbinding actief houden' dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
     "passwordRequired": "Het wachtwoord is vereist",
@@ -9,7 +9,7 @@
     "password": "Wachtwoord",
     "connection": "Aanmelden",
     "urlGetSsoServices": "/gebruiker/getSsoServices",
-    "urlSignUp": "/gebruiker/registratie",
+    "urlSignUp": "/gebruiker/registreren",
     "signUp": "U bent nog niet geregistreerd?",
     "textRecovery": "Wachtwoord vergeten?",
     "urlRecovery": "/gebruiker/wachtwoord/opvragen",
