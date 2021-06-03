@@ -369,6 +369,24 @@ class UserManager
     }
 
     /**
+     * Update a user password
+     *
+     * @param User $user The user to update the password
+     *
+     * @return User|null The user updated or null if error.
+     */
+    public function updateUserLanguage(User $user)
+    {
+        $response = $this->dataProvider->put($user, ['language']);
+        if ($response->getCode() == 200) {
+            $this->logger->info('User Language Update | Start');
+            return $response->getValue();
+        }
+        $this->logger->info('User Language Update | Fail');
+        return null;
+    }
+
+    /**
      * Update a user password from the reset form
      * @param string $token     The token to retrieve the user
      * @param string $password  The new password

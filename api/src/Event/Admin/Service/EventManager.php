@@ -25,6 +25,7 @@ namespace App\Event\Admin\Service;
 
 use App\Event\Entity\Event;
 use App\Event\Exception\EventException;
+use App\Event\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Entity\Address;
 use App\User\Repository\UserRepository;
@@ -33,11 +34,13 @@ use App\User\Repository\UserRepository;
  * Event manager for admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class EventManager
 {
     private $entityManager;
     private $userRepository;
+    private $eventRepository;
 
     /**
      * Constructor
@@ -46,10 +49,12 @@ class EventManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        EventRepository $eventRepository
     ) {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+        $this->eventRepository = $eventRepository;
     }
 
     /**
@@ -133,5 +138,15 @@ class EventManager
     {
         $this->entityManager->remove($event);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Get internal events (exclude external events)
+     *
+     * @return void
+     */
+    public function getInternalEvents()
+    {
+        return $this->eventRepository->getInternalEvents();
     }
 }

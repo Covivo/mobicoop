@@ -171,7 +171,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint", "writeSolidary","readPayment"})
-     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $street;
 
@@ -188,7 +188,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"aRead", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
-     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $postalCode;
 
@@ -205,7 +205,7 @@ class Address implements \JsonSerializable
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport"})
-     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $addressLocality;
 

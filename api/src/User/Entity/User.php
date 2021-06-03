@@ -106,6 +106,7 @@ use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Controller\UserCanUseEmail;
 use App\User\Controller\UserSendValidationEmail;
+use App\I18n\Entity\Language;
 
 /**
  * A user.
@@ -684,7 +685,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The clear password of the user, used for delegation (not persisted !).
      *
-     * @Groups("write")
+     * @Groups({"write"})
      */
     private $clearPassword;
 
@@ -915,9 +916,11 @@ class User implements UserInterface, EquatableInterface
     private $mobile;
 
     /**
-     * @var string User language
-     * @Groups({"readUser","write"})
-     * @ORM\Column(name="language", type="string", length=10, nullable=true)
+     * @var Language|null The language of the user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     * @Groups({"read","readUser","write"})
+     * @MaxDepth(1)
      */
     private $language;
 
@@ -1431,6 +1434,7 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->communityUsers = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -1844,14 +1848,15 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getLanguage(): ?string
+    public function getLanguage(): ?Language
     {
         return $this->language;
     }
 
-    public function setLanguage(?string $language): self
+    public function setLanguage(?Language $language): self
     {
-        $this->language= $language;
+        $this->language = $language;
+
         return $this;
     }
 
@@ -3167,6 +3172,13 @@ class User implements UserInterface, EquatableInterface
             }
         }
         return $this->rolesTerritory;
+    }
+
+    public function setRolesTerritory(?array $rolesTerritory): self
+    {
+        $this->rolesTerritory = $rolesTerritory;
+
+        return $this;
     }
 
     

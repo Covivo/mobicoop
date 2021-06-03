@@ -78,6 +78,7 @@ export default {
       this.displayedLanguage = key;
       this.$emit('languageSelected', key);
       axios.post(this.$t('urlToSelectLanguage'), {locale:key});
+      axios.post(this.$t('urlToUpdateLanguage'), {language:key});
     },
   }
 }

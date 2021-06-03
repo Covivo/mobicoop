@@ -24,80 +24,31 @@
             </td>
         </tr>
         {%  for parts in arrayForTemplate %}
-
         <tr>
             <td style="padding:10px;">
                 <center>
                     <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:100%;">
                         <tr>
 
-                            {%  if parts['type'] == 'titre' %}
+                            {%  if parts['type'] == 'title' %}
                                 <td>
                                     <h1>{{  parts['content']  }}</h1>
                                 </td>
-                            {%  elseif parts['type'] == 'texte'  %}
+                            {%  elseif parts['type'] == 'text'  %}
                                 <td>
                                     {{  parts['content']|raw }}
                                 </td>
                             {%  elseif parts['type'] == 'image'  %}
                                 <td>
-                                    <img alt="Image campaign api" src="{{  parts['content'].src }}">
+                                    <img alt="Image campaign api" src="{{  parts['content'] }}">
                                 </td>
                             {%  endif %}
                         </tr>
                     </table>
                 </center>
             </td>
+        </tr>    
         {% endfor %}
-        <tr>
-            <td>
-                *|IF:unsubscribeToken|*
-                    <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/unsubscribe/*|URL:unsubscribeToken|*">{{ 'Cliquez ici pour vous désabonner des Actualités du service' ({'%instanceName%' : api_env('EMAILS_PLATFORM_NAME')}) }}</a>
-                *|END:IF|*
-                <!-- Footer-->
-                {# <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
-                    <tr>
-                        <td style="width:10%;">&nbsp;</td>
-                        <td style="padding-top:10px;border-top:2px solid #C93A8E;">
-                            <p style="font-size:22px;font-weight:bold;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:center;">
-                                Mobicoop</p>
-                            <p style="font-size:14px;font-weight:400;margin:0;padding:0;text-align:center;">
-                                <a href="https://www.mobicoop.fr" title="mobicoop.fr"
-                                    style="color:#000000;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;">www.mobicoop.fr</a>
-                            </p>
-                            <p style="font-size:14px;font-weight:400;margin:0;padding:0;text-align:center;">
-                                <a href="https://lacampagne.mobicoop.fr/"
-                                    title="lacampagne.mobicoop.fr"
-                                    style="color:#000000;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.3;">lacampagne.mobicoop.fr</a>
-                            </p>
-                        </td>
-                        <td style="padding-top:10px;border-top:2px solid #C93A8E;">
-                            <p style="font-size:22px;font-weight:bold;line-height:1.3;margin:0;margin-bottom:10px;padding:0;text-align:center;">
-                                Réseaux sociaux</p>
-                            <p style="text-align: center;"> <a
-                                    href="https://www.facebook.com/Mobicoop/"
-                                    title="Facebook Mobicoop"><img
-                                        src="https://www.mobicoop.fr/images/Mobicoop/email/facebook.png"
-                                        alt=""
-                                        style="width:50px;height:50px;border-style:none;" /></a>
-                                <a href="https://twitter.com/MobicoopCovoit?lang=fr"
-                                    title="Twitter Mobicoop"><img
-                                        src="https://www.mobicoop.fr/images/Mobicoop/email/twitter.png"
-                                        alt=""
-                                        style="width:50px;height:50px;border-style:none;" /></a>
-                                <a href="https://www.instagram.com/mobicoopcovoiturage/"
-                                    title="Instagram Mobicoop"><img
-                                        src="https://www.mobicoop.fr/images/Mobicoop/email/instagram.png"
-                                        alt=""
-                                        style="width:50px;height:50px;border-style:none;" /></a>
-                            </p>
-                        </td>
-                        <td style="width:10%;">&nbsp;</td>
-                    </tr>
-            </table> #}
-
-            </td>
-        </tr>
     </table>
 </center>
 </body>

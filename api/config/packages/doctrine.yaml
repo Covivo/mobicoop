@@ -109,6 +109,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Geography/Entity'
                 prefix: 'App\Geography\Entity'
                 alias: Geography
+            I18n:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/I18n/Entity'
+                prefix: 'App\I18n\Entity'
+                alias: I18n    
             Image:
                 is_bundle: false
                 type: annotation
