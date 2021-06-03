@@ -37,7 +37,7 @@
     "email": {
         "errors": {
             "valid": "U moet een geldig e-mailadres opgeven.",
-            "required": "Uw e-mailadres is vereist"
+            "required": "Het e-mailadres is vereist"
         },
         "placeholder": "Uw e-mailadres",
         "label": "Uw e-mailadres"
