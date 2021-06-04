@@ -15,13 +15,19 @@
       </v-col>
       <v-col
         cols="2"        
-        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+        class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
           :href="$t('pad.mobility.link')"
           :alt="$t('pad.mobility.title')"
           target="_blank"
-        >{{ $t('pad.mobility.title') }}</a>
+        >{{ $t('pad.mobility.title') }}</a><br>
+        <a
+          :href="$t('pad.mobility.link')"
+          :alt="$t('pad.mobility.title')"
+          target="_blank"
+          class="font-italic text-lowercase"
+        >{{ $t('pad.mobility.subtitle') }}</a>
       </v-col>
       <v-col
         cols="2"        
@@ -441,6 +447,7 @@ export default {
   background-color:#007B85;
   margin:0px;
   color:white;
+  font-family: Poppins, sans-serif !important;
   a{
     text-decoration: none;
     color:white;
