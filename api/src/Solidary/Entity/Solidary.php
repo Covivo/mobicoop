@@ -87,6 +87,13 @@ use DateTime;
  *                  "skip_null_values"=false
  *              },
  *              "security"="is_granted('admin_solidary_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/solidaries",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_create',object)"
  *          }
  *      },
  *      itemOperations={
@@ -189,6 +196,60 @@ class Solidary
 {
     const DEFAULT_ID = 999999999999;
 
+    const STATUS_ASKED = 0;
+    const STATUS_REFUSED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_LOOKING_FOR_SOLUTION = 3;
+    const STATUS_FOLLOW_UP = 4;
+    const STATUS_CLOSED = 5;
+
+    const STATUSES = [
+        self::STATUS_ASKED,
+        self::STATUS_REFUSED,
+        self::STATUS_PENDING,
+        self::STATUS_LOOKING_FOR_SOLUTION,
+        self::STATUS_FOLLOW_UP,
+        self::STATUS_CLOSED
+    ];
+
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_DATE = 1;    // chosen date
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_7 = 2;       // in the next 7 days
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_15 = 3;      // in the next 15 days
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_30 = 4;      // in the next 30 days
+
+    const PUNCTUAL_OUTWARD_DATE_CHOICES = [
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_DATE,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_7,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_15,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_30
+    ];
+
+    const PUNCTUAL_TIME_CHOICE_TIME = 1;    // chosen time
+    const PUNCTUAL_TIME_CHOICE_M = 2;       // structure morning range
+    const PUNCTUAL_TIME_CHOICE_A = 3;       // structure afternoon range
+    const PUNCTUAL_TIME_CHOICE_E = 4;       // structure evening range
+
+    const PUNCTUAL_TIME_CHOICES = [
+        self::PUNCTUAL_TIME_CHOICE_TIME,
+        self::PUNCTUAL_TIME_CHOICE_M,
+        self::PUNCTUAL_TIME_CHOICE_A,
+        self::PUNCTUAL_TIME_CHOICE_E
+    ];
+
+    const PUNCTUAL_RETURN_DATE_CHOICE_NULL = 1;     // no return
+    const PUNCTUAL_RETURN_DATE_CHOICE_1 = 2;        // one hour later
+    const PUNCTUAL_RETURN_DATE_CHOICE_2 = 3;        // 2 hours later
+    const PUNCTUAL_RETURN_DATE_CHOICE_3 = 4;        // 3 hours later
+    const PUNCTUAL_RETURN_DATE_CHOICE_DATE = 5;     // chosen date and time
+
+    const PUNCTUAL_RETURN_DATE_CHOICES = [
+        self::PUNCTUAL_RETURN_DATE_CHOICE_NULL,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_1,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_2,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_3,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_DATE
+    ];
+
     /**
      * @var int $id The id of this solidary record.
      *
@@ -200,6 +261,55 @@ class Solidary
     private $id;
 
     /**
+     * @var int Status of the record (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
+     *
+     * @Assert\NotBlank(groups={"writeSolidary"})
+     * @ORM\Column(type="smallint")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $status;
+
+    /**
+     * @var int Original frequency of the proposal (a punctual proposal could be transformed to a regular proposal in case of a flexible demand).
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $frequency;
+
+    /**
+     * @var string Detail for regular ask.
+     *
+     * @ORM\Column(type="string", nullable=true, length=255)
+     * @Groups({"readSolidary"})
+     */
+    private $regularDetail;
+
+    /**
+     * @var \DateTimeInterface Deadline date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $deadlineDate;
+
+    /**
+     * @var \DateTimeInterface Creation date of the solidary record.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups({"readSolidary"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readSolidary"})
+     */
+    private $updatedDate;
+
+    /**
      * @var ArrayCollection|null Diary entry.
      * Ordered desc to get the last entry first.
      *
@@ -207,6 +317,64 @@ class Solidary
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $diaries;
+
+    /**
+     * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
+     * @Groups({"writeSolidary", "readSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryUserStructure;
+
+    /**
+     * @var Proposal The proposal.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
+
+    /**
+     * @var Subject Subject of the solidary record.
+     *
+     * @Assert\NotBlank(groups={"writeSolidary"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"aRead","readSolidary","writeSolidary"})
+     */
+    private $subject;
+
+    /**
+     * @var ArrayCollection|null The special needs for this solidary record.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
+     * @Groups({"readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $needs;
+
+    /**
+     * @var ArrayCollection|null Solidary solutions.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"writeSolidary"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $solidarySolutions;
+
+    /**
+     * @var ArrayCollection|null Solidary matchings.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchings;
+
 
     public function __construct()
     {
@@ -223,6 +391,7 @@ class Solidary
         $this->solutions = [];
     }
 
+    // ADMIN CUSTOM PROPERTIES
     
     /**
      * @var string|null Subject of the solidary record
@@ -335,6 +504,7 @@ class Solidary
         return $this->diaries->getValues();
     }
 
+    
 
 
 
@@ -343,121 +513,6 @@ class Solidary
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * @var int Ask status (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $status;
-
-    /**
-     * @var string Detail for regular ask.
-     *
-     * @ORM\Column(type="string", nullable=true, length=255)
-     * @Groups({"readSolidary"})
-     */
-    private $regularDetail;
-
-    /**
-     * @var \DateTimeInterface Deadline date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary","writeSolidary"})
-     */
-    private $deadlineDate;
-
-    /**
-     * @var \DateTimeInterface Creation date of the solidary record.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups({"readSolidary"})
-     */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readSolidary"})
-     */
-    private $updatedDate;
-
-    /**
-     * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
-     * @Groups({"writeSolidary", "readSolidary"})
-     * @MaxDepth(1)
-     */
-    private $solidaryUserStructure;
-
-    /**
-     * @var Proposal The proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $proposal;
-
-    /**
-     * @var Subject Subject of the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"aRead","readSolidary","writeSolidary"})
-     */
-    private $subject;
-
-    /**
-     * @var ArrayCollection|null The special needs for this solidary record.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
-     * @Groups({"readSolidary","writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $needs;
-
-    /**
-     * @var ArrayCollection|null Solidary solutions.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"writeSolidary"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
-     */
-    private $solidarySolutions;
-
-    /**
-     * @var ArrayCollection|null Solidary matchings.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
-     * @Groups({"writeSolidary"})
-     * @MaxDepth(1)
-     */
-    private $solidaryMatchings;
 
     /**
      * @var float Progression of this solidary
@@ -580,12 +635,6 @@ class Solidary
      * @Groups ({"writeSolidary"})
      */
     private $structure;
-
-    /**
-     * @var Int|null frequency of the solidary demand
-     * @Groups ({"writeSolidary", "readSolidary"})
-     */
-    private $frequency;
 
     /**
      * @var Array|null Days for the solidary if it's regular

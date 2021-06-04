@@ -101,4 +101,8 @@ class SolidaryException extends \LogicException
 
     // Territory
     const TERRITORY_INVALID = "Invalid territory";
+
+
+    // Admin exception
+    const BENEFICIARY_REQUIRED = "Beneficiary is required";
 }

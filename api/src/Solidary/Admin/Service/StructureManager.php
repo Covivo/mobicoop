@@ -25,7 +25,6 @@ namespace App\Solidary\Admin\Service;
 
 use App\Auth\Entity\AuthItem;
 use App\Auth\ServiceAdmin\AuthManager;
-use App\Geography\Entity\Territory;
 use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Operate;
@@ -33,7 +32,6 @@ use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Exception\SolidaryException;
-use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 

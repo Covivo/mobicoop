@@ -821,6 +821,7 @@ class SolidaryUser
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        $user->setSolidaryUser($this);
 
         return $this;
     }

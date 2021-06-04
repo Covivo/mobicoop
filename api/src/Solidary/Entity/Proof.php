@@ -287,9 +287,11 @@ class Proof
         return $this->file;
     }
     
-    public function setFile(?File $file)
+    public function setFile(?File $file): self
     {
         $this->file = $file;
+
+        return $this;
     }
 
     public function getSolidaryUserStructure(): ?SolidaryUserStructure
@@ -297,9 +299,11 @@ class Proof
         return $this->solidaryUserStructure;
     }
     
-    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure)
+    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure): self
     {
         $this->solidaryUserStructure = $solidaryUserStructure;
+
+        return $this;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

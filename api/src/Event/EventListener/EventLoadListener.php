@@ -52,7 +52,7 @@ class EventLoadListener
             // Check if http or https is given in url
             // If not, we use https by default
             $parsedUrl = parse_url($event->getUrl());
-            if (!isset($parsedUrl['scheme'])) {
+            if (!isset($parsedUrl['scheme']) && $event->getUrl() != "") {
                 $event->setUrl("https://".$event->getUrl());
             }
 

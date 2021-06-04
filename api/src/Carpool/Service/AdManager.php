@@ -315,7 +315,7 @@ class AdManager
                 || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
                 || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
             if (!$hasSchedule && !$ad->isSearch()) {
-                // for a post, we need aschedule !
+                // for a post, we need a schedule !
                 throw new AdException('At least one day should be selected for a regular trip');
             } elseif (!$hasSchedule) {
                 // for a search we set the schedule to every day
