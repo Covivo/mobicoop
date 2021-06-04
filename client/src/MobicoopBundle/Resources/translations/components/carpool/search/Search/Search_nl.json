@@ -1,0 +1,32 @@
+{
+    "urlDate": "YMMDD",
+    "tooltips": {
+        "needConnection": "Om een advertentie te publiceren moet u zich aanmelden of registreren"
+    },
+    "buttons": {
+        "search": {
+            "widgetRoute": "event/{id}/zoeken/carpooling",
+            "route": "carpooling/zoeken",
+            "label": "Zoeken"
+        },
+        "publish": {
+            "route": "carpooling/zoekopdracht/poster",
+            "label": "Een advertentie publiceren"
+        }
+    },
+    "datePicker": {
+        "label": "Vertrekdatum"
+    },
+    "switch": {
+        "help": "Klik op deze schakelaar om aan te geven dat uw traject regelmatig is",
+        "label": "Regelmatig traject"
+    },
+    "swap": {
+        "help": "Klik hier om vertrek en bestemming om te keren",
+        "alt": "Vertrek en bestemming omkeren"
+    },
+    "destination": "Aankomstplaats",
+    "origin": "Vertrekplaats",
+    "subtitle": "Een gebruiksvriendelijke en solidaire carpoolingdienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
+    "title": "Mobicoop"
+}

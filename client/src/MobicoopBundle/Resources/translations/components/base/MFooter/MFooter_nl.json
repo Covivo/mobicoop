@@ -1,0 +1,90 @@
+{
+    "urlFramasphereLogo": "/afbeeldingen/footer/framasphere.svg",
+    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+    "urlTwitterLogo": "/afbeeldingen/footer/twitter.svg",
+    "urlTwitter": "https://twitter.com/Mobicoop",
+    "urlInstagramLogo": "/afbeeldingen/footer/instagram.svg",
+    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+    "urlFacebookLogo": "/afbeeldingen/footer/facebook.svg",
+    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+    "urlAndroidLogo": "/afbeeldingen/footer/android.svg",
+    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
+    "urlIosLogo": "/afbeeldingen/footer/IOS.svg",
+    "need": {
+        "community": {
+            "link": "carpooling-community",
+            "title": "Maak een community aan op mobicoop.fr!"
+        }
+    },
+    "contacts": {
+        "presse": {
+            "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
+            "title": "Pers"
+        },
+        "hotline": {
+            "link": "/contact",
+            "title": "Hotline"
+        }
+    },
+    "tools": {
+        "cookies": {
+            "link": "#",
+            "title": "Beheer van cookies"
+        },
+        "dataPolicy": {
+            "link": "/privacy",
+            "title": "Privacy"
+        },
+        "cgu": {
+            "link": "/agv",
+            "title": "AGV"
+        },
+        "faq": {
+            "link": "/FAQ",
+            "title": "FAQ"
+        },
+        "events": {
+            "link": "/carpoolevenementen",
+            "title": "Carpoolevenementen"
+        },
+        "map": {
+            "link": "/knooppunten",
+            "title": "De kaart met carpoolparkings"
+        }
+    },
+    "services": {
+        "covievent": {
+            "link": "https://www.covievent.org/",
+            "title": "www.covievent.org"
+        },
+        "mobicoop": {
+            "link": "https://pro.mobicoop.fr/",
+            "title": "pro.mobicoop.fr"
+        }
+    },
+    "cooperative": {
+        "joinUs": {
+            "link": "https://lacampagne.mobicoop.fr/",
+            "title": "Lid worden"
+        },
+        "talkAboutUs": {
+            "link": "https://pro.mobicoop.fr/cooperative/",
+            "title": "Wie zijn we?"
+        }
+    },
+    "category": {
+        "download": "DOWNLOAD DE MOBICOOP-APP",
+        "need": "Een carpooloplossing nodig voor uw structuur?",
+        "contacts": "Contacten",
+        "tools": "Hulpmiddelen",
+        "cooperative": "Coöperatie",
+        "services": "Mobicoop-diensten"
+    },
+    "buttons": {
+        "contact": {
+            "label": "Contact met ons opnemen",
+            "route": "/contact"
+        }
+    }
+}

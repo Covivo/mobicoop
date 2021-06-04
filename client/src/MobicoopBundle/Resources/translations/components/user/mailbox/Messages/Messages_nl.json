@@ -1,0 +1,23 @@
+{
+    "fraudWarningText": {
+        "part2": "of met een lokale en vrije munt. Wij raden onze gebruikers aan om geen andere betalingsmethoden, zoals PCS- of Transcash-bonnen, te aanvaarden omdat deze over het algemeen worden geassocieerd met frauduleuze praktijken. U kunt melding maken van een gebruiker via zijn profiel.",
+        "textLink": "cash of online ",
+        "link": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings",
+        "part1": "Op Mobicoop gebeuren de betalingen voor uw carpoolings voornamelijk "
+    },
+    "tooltip": {
+        "message": "Berichten die niet gelinkt zijn aan een advertentie"
+    },
+    "headersCategories": {
+        "titleSolidary": "Solidair",
+        "titleLive": "Rechtstreeks",
+        "titleCarpool": "Carpooling"
+    },
+    "urlUpdateAsk": "/gebruiker/berichten/updateAsk",
+    "urlSend": "/gebruiker/berichten/verzenden",
+    "headers": {
+        "context": "Advertentie",
+        "messages": "Berichten"
+    },
+    "title": "Berichtensysteem"
+}

@@ -1,0 +1,24 @@
+{
+    "i18n": {
+        "time": {
+            "format": {
+                "hourMinute": "UU[u]mm"
+            }
+        },
+        "date": {
+            "format": {
+                "fullDate": "ddd Do MMMM YYYY"
+            }
+        }
+    },
+    "notSelected": "Niet gecarpoold",
+    "sun": "Zondag",
+    "sat": "Zaterdag",
+    "fri": "Vrijdag",
+    "thu": "Donderdag",
+    "wed": "Woensdag",
+    "tue": "Dinsdag",
+    "mon": "Maandag",
+    "return": "Terug",
+    "outward": "Heen"
+}

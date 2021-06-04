@@ -1,0 +1,18 @@
+{
+    "driver": {
+        "hide": "de bestuurder verbergen",
+        "show": "de bestuurder weergeven"
+    },
+    "passengers": {
+        "hide": "de passagier verbergen | de passagiers verbergen",
+        "show": "de passagier weergeven | de passagiers weergeven"
+    },
+    "seat": {
+        "booked": "0 | 1 gereserveerde plaats | {bookedSeats} / {seats} gereserveerde plaatsen"
+    },
+    "ui": {
+        "button": {
+            "cancel": "Annuleren"
+        }
+    }
+}
