@@ -1,1 +1,13 @@
-{}
+{
+    "button": {
+        "refuse": "Weigeren",
+        "accept": "Aanvaarden",
+        "askCarpoolAsPassenger": "Een carpooling aanvragen als passagier",
+        "askCarpoolAsDriver": "Een carpooling aanvragen als bestuurder",
+        "askCarpool": "Een carpooling aanvragen"
+    },
+    "askRefused": "De carpooling werd geweigerd",
+    "askAccepted": "De carpooling werd aanvaard",
+    "askPending": "Er werd een formele aanvraag verzonden",
+    "onlyAskUser": "Alleen de initiatiefnemer van het contact kan een carpool voorstellen"
+}
