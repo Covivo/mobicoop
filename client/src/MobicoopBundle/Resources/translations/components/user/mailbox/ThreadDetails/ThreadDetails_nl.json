@@ -1,1 +1,6 @@
-{}
+{
+    "sendBy": "Verzonden via {name}",
+    "messageDelete": "Bericht gewist",
+    "urlCompleteThread": "/gebruiker/berichten/{idMessage}/thread",
+    "notThreadSelected": "Geen thread geselecteerd"
+}
