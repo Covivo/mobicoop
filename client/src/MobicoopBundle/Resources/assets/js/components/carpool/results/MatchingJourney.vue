@@ -95,14 +95,27 @@
 
             <!-- Route / carpooler -->
             <v-row
-              align="center"
+              align="top"
               dense
             > 
               <!-- Route -->
               <v-col
                 cols="8"
               >
-                <v-row>
+                <v-row
+                  v-if="lResult.noticeableDetour"
+                  class="subtitle-2"
+                  dense
+                >
+                  <v-col v-if="lResult.role == 1">
+                    <v-icon>mdi-clock</v-icon> {{ $t('detour.onlyDriver') }}
+                  </v-col>
+                  <v-col v-else>
+                    <v-icon>mdi-clock</v-icon> {{ $t('detour.default') }}
+                  </v-col>
+                </v-row>
+
+                <v-row dense>
                   <v-col>
                     <v-journey
                       :time="lResult.time || lResult.outwardTime ? true : false"

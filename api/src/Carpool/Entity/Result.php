@@ -53,6 +53,13 @@ class Result
     private $resultPassenger;
 
     /**
+     * @var int The role of this result (see Ad roles for constants)
+     *
+     * @Groups({"results"})
+     */
+    private $role;
+
+    /**
      * @var User The carpooler found.
      * @Groups({"results","externalJourney"})
      */
@@ -384,6 +391,18 @@ class Result
         return $this;
     }
 
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+
+    public function setRole(int $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+        
     public function getCarpooler(): ?User
     {
         return $this->carpooler;

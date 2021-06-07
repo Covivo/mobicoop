@@ -519,7 +519,12 @@ class ResultManager
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
         $communities = [];
-            
+
+        // Will be used to determine the role (driver, pasenger, both) of the result
+        $driver = false;
+        $passenger = false;
+        
+
         /************/
         /*  REQUEST */
         /************/
@@ -1034,6 +1039,7 @@ class ResultManager
             // seats
             $resultDriver->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger() ? $proposal->getCriteria()->getSeatsPassenger() : 1);
             $result->setResultDriver($resultDriver);
+            $passenger = true;
         }
 
         /************/
@@ -1579,6 +1585,15 @@ class ResultManager
             // seats
             $resultPassenger->setSeatsDriver($matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() : 1);
             $result->setResultPassenger($resultPassenger);
+            $driver = true;
+        }
+
+        if ($driver && $passenger) {
+            $result->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($passenger) {
+            $result->setRole(Ad::ROLE_PASSENGER);
+        } else {
+            $result->setRole(Ad::ROLE_DRIVER);
         }
 
         $result->setCommunities($communities);

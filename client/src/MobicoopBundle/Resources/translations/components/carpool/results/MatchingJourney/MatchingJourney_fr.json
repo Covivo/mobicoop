@@ -49,5 +49,9 @@
         "link":"/utilisateur/profil/modifier/mes-covoiturages-acceptes",
         "textLink":"à la main ou en ligne ",
         "part2":"ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    },
+    "detour":{
+        "default":"Ce trajet calculé contient un détour.",
+        "onlyDriver":"Ce trajet calculé comporte un détour. Contacter le conducteur."
     }
 }
