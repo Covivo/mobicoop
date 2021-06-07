@@ -451,7 +451,7 @@ class CarpoolController extends AbstractController
             'externalId' => $externalId,
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'externalRDEXJourneys' => false, // No External Rdex result for an RDex external link
             'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
