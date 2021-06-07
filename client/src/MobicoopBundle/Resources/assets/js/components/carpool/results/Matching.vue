@@ -534,7 +534,7 @@ export default {
           })
           .then((response) => {
             this.results = response.data;
-            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
+            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : (!isNaN(response.data.length)) ? response.data.length : "-"
             this.lOrigin = {
               addressLocality:this.originLiteral
             }
