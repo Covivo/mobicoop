@@ -899,11 +899,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['request']->getAcceptedDetourDistance());
                 $item->setNewDistance($matching['request']->getNewDistance());
                 $item->setDetourDistance($matching['request']->getDetourDistance());
+                $result->setDetourDistance($matching['request']->getDetourDistance());
                 $item->setDetourDistancePercent($matching['request']->getDetourDistancePercent());
                 $item->setOriginalDuration($matching['request']->getOriginalDuration());
                 $item->setAcceptedDetourDuration($matching['request']->getAcceptedDetourDuration());
                 $item->setNewDuration($matching['request']->getNewDuration());
                 $item->setDetourDuration($matching['request']->getDetourDuration());
+                $result->setDetourDuration($matching['request']->getDetourDuration());
                 $item->setDetourDurationPercent($matching['request']->getDetourDurationPercent());
                 $item->setCommonDistance($matching['request']->getCommonDistance());
             } else {
@@ -911,11 +913,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['request']->getFilters()['acceptedDetourDistance']);
                 $item->setNewDistance($matching['request']->getFilters()['newDistance']);
                 $item->setDetourDistance($matching['request']->getFilters()['detourDistance']);
+                $result->setDetourDistance($matching['request']->getFilters()['detourDistance']);
                 $item->setDetourDistancePercent($matching['request']->getFilters()['detourDistancePercent']);
                 $item->setOriginalDuration($matching['request']->getFilters()['originalDuration']);
                 $item->setAcceptedDetourDuration($matching['request']->getFilters()['acceptedDetourDuration']);
                 $item->setNewDuration($matching['request']->getFilters()['newDuration']);
                 $item->setDetourDuration($matching['request']->getFilters()['detourDuration']);
+                $result->setDetourDuration($matching['request']->getFilters()['detourDuration']);
                 $item->setDetourDurationPercent($matching['request']->getFilters()['detourDurationPercent']);
                 $item->setCommonDistance($matching['request']->getFilters()['commonDistance']);
             }
@@ -1436,11 +1440,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['offer']->getAcceptedDetourDistance());
                 $item->setNewDistance($matching['offer']->getNewDistance());
                 $item->setDetourDistance($matching['offer']->getDetourDistance());
+                $result->setDetourDistance($matching['offer']->getDetourDistance());
                 $item->setDetourDistancePercent($matching['offer']->getDetourDistancePercent());
                 $item->setOriginalDuration($matching['offer']->getOriginalDuration());
                 $item->setAcceptedDetourDuration($matching['offer']->getAcceptedDetourDuration());
                 $item->setNewDuration($matching['offer']->getNewDuration());
                 $item->setDetourDuration($matching['offer']->getDetourDuration());
+                $result->setDetourDuration($matching['offer']->getDetourDuration());
                 $item->setDetourDurationPercent($matching['offer']->getDetourDurationPercent());
                 $item->setCommonDistance($matching['offer']->getCommonDistance());
             } else {
@@ -1448,11 +1454,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['offer']->getFilters()['acceptedDetourDistance']);
                 $item->setNewDistance($matching['offer']->getFilters()['newDistance']);
                 $item->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
+                $result->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
                 $item->setDetourDistancePercent($matching['offer']->getFilters()['detourDistancePercent']);
                 $item->setOriginalDuration($matching['offer']->getFilters()['originalDuration']);
                 $item->setAcceptedDetourDuration($matching['offer']->getFilters()['acceptedDetourDuration']);
                 $item->setNewDuration($matching['offer']->getFilters()['newDuration']);
                 $item->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
+                $result->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
                 $item->setDetourDurationPercent($matching['offer']->getFilters()['detourDurationPercent']);
                 $item->setCommonDistance($matching['offer']->getFilters()['commonDistance']);
             }

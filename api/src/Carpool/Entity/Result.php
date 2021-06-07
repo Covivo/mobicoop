@@ -192,6 +192,18 @@ class Result
     private $comment;
 
     /**
+     * @var int The detour distance in metres.
+     * @Groups("results")
+     */
+    private $detourDistance;
+
+    /**
+     * @var int The detour duration in seconds.
+     * @Groups("results")
+     */
+    private $detourDuration;
+
+    /**
      * @var boolean|null The journey is available on mondays (if regular).
      * @Groups({"results","externalJourney"})
      */
@@ -635,6 +647,30 @@ class Result
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function getDetourDistance(): ?int
+    {
+        return $this->detourDistance;
+    }
+
+    public function setDetourDistance(int $detourDistance): self
+    {
+        $this->detourDistance = $detourDistance;
+
+        return $this;
+    }
+
+    public function getDetourDuration(): ?int
+    {
+        return $this->detourDuration;
+    }
+
+    public function setDetourDuration(int $detourDuration): self
+    {
+        $this->detourDuration = $detourDuration;
+
         return $this;
     }
 
