@@ -88,13 +88,13 @@
               class="text-left"
             >
               <v-switch
-                v-if="role!=3"
+                v-if="role!=3 && externalId==''"
                 v-model="includePassenger"
                 class="ma-2"
                 :label="$t('includePassengers')"
               />
               <v-alert
-                v-else
+                v-else-if="externalId==''"
                 class="accent white--text"
                 dense
                 dismissible
