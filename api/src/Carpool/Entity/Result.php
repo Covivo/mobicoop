@@ -204,6 +204,12 @@ class Result
     private $detourDuration;
 
     /**
+     * @var bool true : The detour is important enough to be "noticeable" (see .env)
+     * @Groups("results")
+     */
+    private $noticeableDetour;
+
+    /**
      * @var boolean|null The journey is available on mondays (if regular).
      * @Groups({"results","externalJourney"})
      */
@@ -670,6 +676,18 @@ class Result
     public function setDetourDuration(int $detourDuration): self
     {
         $this->detourDuration = $detourDuration;
+
+        return $this;
+    }
+
+    public function hasNoticeableDetour(): ?bool
+    {
+        return $this->noticeableDetour;
+    }
+
+    public function setNoticeableDetour(bool $noticeableDetour): self
+    {
+        $this->noticeableDetour = $noticeableDetour;
 
         return $this;
     }

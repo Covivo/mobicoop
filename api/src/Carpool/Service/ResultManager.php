@@ -59,6 +59,8 @@ class ResultManager
     private $reviewRepository;
     private $reviewManager;
     private $userReview;
+    private $carpoolNoticeableDetourDuration;
+    private $carpoolNoticeableDetourDistance;
 
     /**
      * Constructor.
@@ -77,7 +79,9 @@ class ResultManager
         BlockManager $blockManager,
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
-        bool $userReview
+        bool $userReview,
+        int $carpoolNoticeableDetourDuration,
+        int $carpoolNoticeableDetourDistance
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -88,6 +92,8 @@ class ResultManager
         $this->reviewRepository = $reviewRepository;
         $this->reviewManager = $reviewManager;
         $this->userReview = $userReview;
+        $this->carpoolNoticeableDetourDuration = $carpoolNoticeableDetourDuration;
+        $this->carpoolNoticeableDetourDistance = $carpoolNoticeableDetourDistance;
     }
 
     // set the params
@@ -924,6 +930,11 @@ class ResultManager
                 $item->setCommonDistance($matching['request']->getFilters()['commonDistance']);
             }
             
+            // Check if the detour is "noticeable"
+            $result->setNoticeableDetour(false);
+            if ($result->getDetourDistance() >= $this->carpoolNoticeableDetourDistance || $result->getDetourDuration() >= $this->carpoolNoticeableDetourDuration) {
+                $result->setNoticeableDetour(true);
+            }
 
             // prices
 
@@ -1463,6 +1474,12 @@ class ResultManager
                 $result->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
                 $item->setDetourDurationPercent($matching['offer']->getFilters()['detourDurationPercent']);
                 $item->setCommonDistance($matching['offer']->getFilters()['commonDistance']);
+            }
+
+            // Check if the detour is "noticeable"
+            $result->setNoticeableDetour(false);
+            if ($result->getDetourDistance() >= $this->carpoolNoticeableDetourDistance || $result->getDetourDuration() >= $this->carpoolNoticeableDetourDuration) {
+                $result->setNoticeableDetour(true);
             }
 
             // prices
