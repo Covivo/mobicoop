@@ -33,7 +33,7 @@
     },
     "phone": {
         "errors": {
-            "valid": "U moet een geldig telefoonnummer opgeven",
+            "valid": "Het telefoonnummer moet geldig zijn",
             "required": "Het telefoonnummer is vereist"
         },
         "placeholder": "Mobiele telefoon"
