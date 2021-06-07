@@ -1,1 +1,71 @@
-{}
+{
+    "success": "Uw hulpaanvraag werd verzonden!",
+    "other": {
+        "placeholder": "Andere",
+        "label": "Andere"
+    },
+    "structure": {
+        "placeholder": "Begeleidende structuur",
+        "label": "Begeleidende structuur"
+    },
+    "subject": {
+        "placeholder": "Voorwerp van de verplaatsing",
+        "label": "Voorwerp van de verplaatsing"
+    },
+    "hasRSA": {
+        "placeholder": "Begunstigde van het RSA",
+        "label": "Begunstigde van het RSA"
+    },
+    "yearOfBirth": {
+        "placeholder": "Geboortejaar",
+        "label": "Geboortejaar"
+    },
+    "ui": {
+        "buttons": {
+            "cancel": {
+                "label": "Annuleren"
+            },
+            "validate": {
+                "route": "/solidariteit/aanvraag",
+                "label": "Bevestigen"
+            }
+        }
+    },
+    "phone": {
+        "errors": {
+            "valid": "U moet een geldig telefoonnummer opgeven",
+            "required": "Het telefoonnummer is vereist"
+        },
+        "placeholder": "Mobiele telefoon"
+    },
+    "email": {
+        "errors": {
+            "valid": "U moet een geldig e-mailadres opgeven",
+            "required": "Het e-mailadres is vereist"
+        },
+        "placeholder": "E-mail"
+    },
+    "givenName": {
+        "errors": {
+            "required": "De voornaam is vereist"
+        },
+        "placeholder": "Voornaam"
+    },
+    "familyName": {
+        "errors": {
+            "required": "De naam is vereist"
+        },
+        "placeholder": "Naam"
+    },
+    "gender": {
+        "errors": {
+            "required": "De aanspreektitel is vereist"
+        },
+        "values": {
+            "other": "Andere",
+            "female": "Mevrouw",
+            "male": "Mijnheer"
+        },
+        "placeholder": "Aanspreektitel"
+    }
+}
