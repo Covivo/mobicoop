@@ -200,6 +200,20 @@
                 </v-card>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12">
+                <m-map
+                  ref="mmap"
+                  type-map="community"
+                  :points="pointsToMap"
+                  :ways="directionWay"
+                  :markers-draggable="false"
+                  :clusters="false"
+                  class="pa-4 mt-5"
+                  :relay-points="true"
+                />
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-stepper-content>
 
@@ -511,6 +525,8 @@ import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import MMap from "@components/utilities/MMap/MMap";
+import L from "leaflet";
 
 export default {
   components: {
@@ -518,7 +534,8 @@ export default {
     RegularDaysSummary,
     RegularAsk,
     ProfileSummary,
-    PublicProfile
+    PublicProfile,
+    MMap
   },
   i18n: {
     messages: {
@@ -660,7 +677,10 @@ export default {
       returnSunTime: this.defaultReturnSunTime,
       outwardTrip: this.defaultOutwardTrip,
       returnTrip: this.defaultReturnTrip,
-      refreshPublicProfile: false
+      refreshPublicProfile: false,
+      pointsToMap: [],
+      relayPointsMap: [],
+      directionWay: []
     }
   },
   computed: {
@@ -759,6 +779,7 @@ export default {
   mounted() {
     this.computeMaxDate();
     this.computeTimes();
+    this.buildMarkers();
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -936,6 +957,43 @@ export default {
     },
     refreshProfileSummary(data){
       this.$emit("profileSummaryRefresh",data);
+    },
+    buildMarkers(){
+      this.waypoints.forEach((waypoint, index) => {
+        this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude));
+      });
+      this.$refs.mmap.redrawMap();
+    },
+    buildPoint: function(
+      lat,
+      lng,
+      title = "",
+      pictoUrl = "",
+      size = [],
+      anchor = [],
+      popupDesc = ""
+    ) {
+      let point = {
+        title: title,
+        latLng: L.latLng(lat, lng),
+        icon: {},
+      };
+
+      if (pictoUrl !== "") {
+        point.icon = {
+          url: pictoUrl,
+          size: size,
+          anchor: anchor,
+        };
+      }
+
+      if (popupDesc !== "") {
+        point.popup = {
+          title: title,
+          description: popupDesc,
+        };
+      }
+      return point;
     }
   }
 };

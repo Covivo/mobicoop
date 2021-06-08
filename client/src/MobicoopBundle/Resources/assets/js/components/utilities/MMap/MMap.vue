@@ -12,55 +12,30 @@
           :url="url"
           :attribution="attributionWithLinks"
         />
+        <!-- Markers in clusters -->
         <v-marker-cluster
+          v-if="clusters"
           :options="clusterOptions"
         >
-          <l-marker
+          <m-marker
             v-for="(point, index) in points"
             :key="index"
-            :lat-lng="point.latLng"
-            :draggable="markersDraggable"
-            @update:latLng="updateLatLng"
-            @click="clickOnPoint(point.address)"
-          >
-            <l-icon
-              v-if="point.icon.url!==undefined"
-              :icon-size="point.icon.size"
-              :icon-anchor="point.icon.anchor"
-              :icon-url="point.icon.url"
-            />
-            <l-tooltip
-              v-if="point.title!==''"
-            >
-              <p
-                class="font-weight-bold"
-                v-html="point.title"
-              />
-              <p
-                v-if="point.popup"
-                id="description-tooltip"
-                v-html="point.popup.description"
-              />
-              <MMapRelayPointDescription
-                v-if="relayPoints && point.misc"
-                :data="point.misc"
-              />
-            </l-tooltip>
-
-            <l-popup v-if="point.popup">
-              <h3 v-html="point.popup.title" />
-              <img
-                v-if="point.popup.images && point.popup.images[0]"
-                :src="point.popup.images[0]['versions']['square_100']"
-                alt="avatar"
-              >
-              <p v-html="point.popup.description" />
-              <p v-if="point.popup.date_begin && point.popup.date_end">
-                {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
-              </p>
-            </l-popup>
-          </l-marker>
+            :point="point"
+            :markers-draggable="markersDraggable"
+            @updateLatLng="updateLatLng"
+            @clickOnPoint="clickOnPoint(point.address)"
+          />
         </v-marker-cluster>
+        <!-- Only markers, no cluster -->
+        <m-marker
+          v-for="(point, index) in points"
+          v-else
+          :key="index"
+          :point="point"
+          :markers-draggable="markersDraggable"
+          @updateLatLng="updateLatLng"
+          @clickOnPoint="clickOnPoint(point.address)"
+        />        
         <v-dialog
           v-model="dialog"
           max-width="400"
@@ -113,7 +88,7 @@
 <script>
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
-import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
+import MMarker from "@components/utilities/MMap/MMarker"
 import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MMap/MMap";
 
 export default {
@@ -126,7 +101,7 @@ export default {
   },
   components: {
     VMarkerCluster,
-    MMapRelayPointDescription
+    MMarker
   },
   props: {
     provider: {
@@ -173,6 +148,10 @@ export default {
     relayPoints: {
       type: Boolean,
       default: false
+    },
+    clusters: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
