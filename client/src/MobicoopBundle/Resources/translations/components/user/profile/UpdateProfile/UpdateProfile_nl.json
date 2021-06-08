@@ -4,7 +4,7 @@
     "yes": "ja",
     "save": "Opslaan",
     "homeTown": {
-        "label": "Woongemeente"
+        "label": "Gemeente waar u woont"
     },
     "birthDay": {
         "errors": {
