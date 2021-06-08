@@ -59,8 +59,8 @@ class ResultManager
     private $reviewRepository;
     private $reviewManager;
     private $userReview;
-    private $carpoolNoticeableDetourDuration;
-    private $carpoolNoticeableDetourDistance;
+    private $carpoolNoticeableDetourDurationPercent;
+    private $carpoolNoticeableDetourDistancePercent;
 
     /**
      * Constructor.
@@ -80,8 +80,8 @@ class ResultManager
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
         bool $userReview,
-        int $carpoolNoticeableDetourDuration,
-        int $carpoolNoticeableDetourDistance
+        int $carpoolNoticeableDetourDurationPercent,
+        int $carpoolNoticeableDetourDistancePercent
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -92,8 +92,8 @@ class ResultManager
         $this->reviewRepository = $reviewRepository;
         $this->reviewManager = $reviewManager;
         $this->userReview = $userReview;
-        $this->carpoolNoticeableDetourDuration = $carpoolNoticeableDetourDuration;
-        $this->carpoolNoticeableDetourDistance = $carpoolNoticeableDetourDistance;
+        $this->carpoolNoticeableDetourDurationPercent = $carpoolNoticeableDetourDurationPercent;
+        $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
     }
 
     // set the params
@@ -937,7 +937,14 @@ class ResultManager
             
             // Check if the detour is "noticeable"
             $result->setNoticeableDetour(false);
-            if ($result->getDetourDistance() >= $this->carpoolNoticeableDetourDistance || $result->getDetourDuration() >= $this->carpoolNoticeableDetourDuration) {
+
+            $driverOriginalDistance = $proposal->getCriteria()->getDirectionDriver()->getDistance();
+            $driverOriginalDuration = $proposal->getCriteria()->getDirectionDriver()->getDuration();
+
+            $minDetourDistanceToBeNoticeable = ($this->carpoolNoticeableDetourDistancePercent!==0) ? $driverOriginalDistance * $this->carpoolNoticeableDetourDistancePercent / 100 : $driverOriginalDistance;
+            $minDetourDurationToBeNoticeable = ($this->carpoolNoticeableDetourDurationPercent!==0) ? $driverOriginalDuration * $this->carpoolNoticeableDetourDurationPercent / 100 : $driverOriginalDuration;
+
+            if ($result->getDetourDistance() >= $minDetourDistanceToBeNoticeable || $result->getDetourDuration() >= $minDetourDurationToBeNoticeable) {
                 $result->setNoticeableDetour(true);
             }
 
@@ -1484,7 +1491,14 @@ class ResultManager
 
             // Check if the detour is "noticeable"
             $result->setNoticeableDetour(false);
-            if ($result->getDetourDistance() >= $this->carpoolNoticeableDetourDistance || $result->getDetourDuration() >= $this->carpoolNoticeableDetourDuration) {
+
+            $driverOriginalDistance = $matching['offer']->getProposalOffer()->getCriteria()->getDirectionDriver()->getDistance();
+            $driverOriginalDuration = $matching['offer']->getProposalOffer()->getCriteria()->getDirectionDriver()->getDuration();
+
+            $minDetourDistanceToBeNoticeable = ($this->carpoolNoticeableDetourDistancePercent!==0) ? $driverOriginalDistance * $this->carpoolNoticeableDetourDistancePercent / 100 : $driverOriginalDistance;
+            $minDetourDurationToBeNoticeable = ($this->carpoolNoticeableDetourDurationPercent!==0) ? $driverOriginalDuration * $this->carpoolNoticeableDetourDurationPercent / 100 : $driverOriginalDuration;
+
+            if ($result->getDetourDistance() >= $minDetourDistanceToBeNoticeable || $result->getDetourDuration() >= $minDetourDurationToBeNoticeable) {
                 $result->setNoticeableDetour(true);
             }
 
