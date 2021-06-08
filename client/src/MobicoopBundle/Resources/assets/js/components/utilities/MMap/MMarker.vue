@@ -1,12 +1,13 @@
 <template>
   <l-marker
+    v-if="!circleMarker"
     :lat-lng="point.latLng"
     :draggable="markersDraggable"
     @update:latLng="updateLatLng"
     @click="clickOnPoint(point.address)"
   >
     <l-icon
-      v-if="point.icon.url!==undefined"
+      v-if="point.icon.url!==undefined && !point.circleMarker"
       :icon-size="point.icon.size"
       :icon-anchor="point.icon.anchor"
       :icon-url="point.icon.url"
@@ -42,6 +43,13 @@
       </p>
     </l-popup>
   </l-marker>
+  <l-circle-marker
+    v-else
+    :lat-lng="point.latLng"
+    :color="color"
+    :fill-color="color"
+    :fill-opacity="0.5"
+  />
 </template>
 <script>
 import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
@@ -62,6 +70,14 @@ export default {
       type: Boolean,
       default: false
     },
+    circleMarker: {
+      type: Boolean,
+      default: false
+    },
+    color:{
+      type: String,
+      default: ""
+    }
   },
   methods:{
     updateLatLng(data){

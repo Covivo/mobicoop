@@ -5,7 +5,7 @@ import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
 import {fr, en} from 'vuetify/es5/locale'
 import '@mdi/font/scss/materialdesignicons.scss'
-import {LMap, LTileLayer, LMarker, LTooltip, LPopup, LIcon, LPolyline} from 'vue2-leaflet'
+import {LMap, LTileLayer, LMarker, LCircleMarker, LCircle, LTooltip, LPopup, LIcon, LPolyline} from 'vue2-leaflet'
 
 import { Icon }  from 'leaflet'
 
@@ -48,7 +48,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VCardText,
     //Vue2Leaflet
-    LMap, LTileLayer, LMarker, LTooltip, LPopup, LIcon, LPolyline
+    LMap, LTileLayer, LMarker, LCircleMarker, LCircle, LTooltip, LPopup, LIcon, LPolyline
   }
 })
 

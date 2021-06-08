@@ -32,7 +32,9 @@
           v-else
           :key="index"
           :point="point"
+          :color="point.color"
           :markers-draggable="markersDraggable"
+          :circle-marker="(point.circleMarker) ? point.circleMarker : false"
           @updateLatLng="updateLatLng"
           @clickOnPoint="clickOnPoint(point.address)"
         />        

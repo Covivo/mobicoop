@@ -680,7 +680,9 @@ export default {
       refreshPublicProfile: false,
       pointsToMap: [],
       relayPointsMap: [],
-      directionWay: []
+      directionWay: [],
+      primaryColor: this.$vuetify.theme.themes.light.primary,
+      secondaryColor: this.$vuetify.theme.themes.light.secondary
     }
   },
   computed: {
@@ -958,11 +960,45 @@ export default {
     refreshProfileSummary(data){
       this.$emit("profileSummaryRefresh",data);
     },
+    getIcon(type,role) {
+      if (role == 'driver') {
+        if (type == 'origin') return "/images/cartography/pictos/home.svg";
+        if (type == 'destination') return "/images/cartography/pictos/flag.svg";
+        if (type == 'step') return "";
+      } else {
+        if (type == 'origin') return "pickup";
+        if (type == 'destination') return "dropoff";
+        if (type == 'step') return "";
+      }
+    },    
     buildMarkers(){
+      let currentProposal = { latLngs: [] };
+
       this.waypoints.forEach((waypoint, index) => {
-        this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude));
+
+        // Determine the icon
+        let icon = this.getIcon(waypoint.type,waypoint.role);
+        
+        this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,"",icon,[36, 42],[10, 25]));
+
+        currentProposal.latLngs.push(L.latLng(waypoint.address.latitude, waypoint.address.longitude));
+        currentProposal.color = this.getColorJourney();
+
       });
+      this.directionWay.push(currentProposal);
       this.$refs.mmap.redrawMap();
+    },
+    getColorCircleMarker(){
+      if(this.lResult.role == 1 || this.lResult.role == 2){
+        return this.primaryColor;
+      }
+      return this.secondaryColor;
+    },
+    getColorJourney(){
+      if(this.lResult.role == 1 || this.lResult.role == 2){
+        return this.secondaryColor;
+      }
+      return this.primaryColor;
     },
     buildPoint: function(
       lat,
@@ -979,7 +1015,12 @@ export default {
         icon: {},
       };
 
-      if (pictoUrl !== "") {
+      if(pictoUrl == "pickup" || pictoUrl == "dropoff"){
+        point.circleMarker = true;
+        point.color = this.getColorCircleMarker();
+      }
+
+      if (pictoUrl !== "" && !point.circleMarker) {
         point.icon = {
           url: pictoUrl,
           size: size,
@@ -993,6 +1034,7 @@ export default {
           description: popupDesc,
         };
       }
+
       return point;
     }
   }
