@@ -519,6 +519,7 @@
 
 <script>
 import moment from "moment";
+import axios from "axios";
 import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
@@ -682,7 +683,9 @@ export default {
       relayPointsMap: [],
       directionWay: [],
       primaryColor: this.$vuetify.theme.themes.light.primary,
-      secondaryColor: this.$vuetify.theme.themes.light.secondary
+      secondaryColor: this.$vuetify.theme.themes.light.secondary,
+      geoRouteUrl:"/georoute",
+      route:[]
     }
   },
   computed: {
@@ -776,11 +779,15 @@ export default {
       if(this.step==4){
         this.refreshPublicProfile = true;
       }
+    },
+    route(){
+      this.buildJourney();
     }
   },
   mounted() {
     this.computeMaxDate();
     this.computeTimes();
+    this.getRoute();
     this.buildMarkers();
   },
   created() {
@@ -972,20 +979,13 @@ export default {
       }
     },    
     buildMarkers(){
-      let currentProposal = { latLngs: [] };
-
       this.waypoints.forEach((waypoint, index) => {
 
         // Determine the icon
         let icon = this.getIcon(waypoint.type,waypoint.role);
         
         this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,"",icon,[36, 42],[10, 25]));
-
-        currentProposal.latLngs.push(L.latLng(waypoint.address.latitude, waypoint.address.longitude));
-        currentProposal.color = this.getColorJourney();
-
       });
-      this.directionWay.push(currentProposal);
       this.$refs.mmap.redrawMap();
     },
     getColorCircleMarker(){
@@ -999,6 +999,15 @@ export default {
         return this.secondaryColor;
       }
       return this.primaryColor;
+    },
+    buildJourney(){
+      let currentProposal = {
+        latLngs:this.route.directPoints,
+        color:this.getColorJourney()
+      };
+
+      this.directionWay.push(currentProposal);
+      this.$refs.mmap.redrawMap();
     },
     buildPoint: function(
       lat,
@@ -1036,8 +1045,29 @@ export default {
       }
 
       return point;
+    },
+    getRoute() {
+      let params = "?";
+      let nbWaypoints = 0;
+      this.waypoints.forEach((item,key) => {
+        if (item.address) {
+          nbWaypoints++;
+          params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+        }
+      });
+      nbWaypoints++;
+      axios
+        .get(`${this.geoRouteUrl}${params}`)
+        .then(res => {
+          console.log(res.data)
+          this.route = res.data.member[0];
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
-  }
+
+  },
 };
 </script>
 <style lang="scss" scoped>
