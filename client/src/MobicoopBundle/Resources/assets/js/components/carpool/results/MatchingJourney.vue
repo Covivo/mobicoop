@@ -120,6 +120,7 @@
                     <v-journey
                       :time="lResult.time || lResult.outwardTime ? true : false"
                       :waypoints="waypoints"
+                      :noticeable-detour="lResult.noticeableDetour"
                     />
                   </v-col>
                 </v-row>
