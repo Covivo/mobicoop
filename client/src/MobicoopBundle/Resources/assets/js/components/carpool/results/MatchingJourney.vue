@@ -27,10 +27,10 @@
         <!-- Step 1 : journey detail -->
         <v-stepper-content step="1">
           <!-- Journey details and carpooler -->
-          <v-row>
+          <v-row dense>
             <v-col cols="8">
               <!-- Journey Details -->
-              <v-row>
+              <v-row dense>
                 <v-col cols="12">
                   <v-card
                     v-if="fraudWarningDisplay"
@@ -41,7 +41,7 @@
                 </v-col>
               </v-row>
 
-              <v-row>
+              <v-row dense>
                 <v-col cols="12">
                   <v-card-text>
                     <!-- Date / seats / price -->
@@ -52,7 +52,7 @@
                       <!-- Date -->
                       <v-col
                         v-if="!regular"
-                        cols="5"
+                        cols="7"
                         class="text-h6 text-center"
                       >
                         {{ computedDate }}
@@ -60,7 +60,7 @@
 
                       <v-col
                         v-else
-                        cols="5"
+                        cols="7"
                         class="text-h6 text-center"
                       >
                         <regular-days-summary 
@@ -76,7 +76,7 @@
 
                       <!-- Seats -->
                       <v-col
-                        cols="3"
+                        cols="2"
                         class="text-h6 text-center"
                       >
                         {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
@@ -84,7 +84,7 @@
 
                       <!-- Price -->
                       <v-col
-                        cols="4"
+                        cols="3"
                         class="text-h6 text-center"
                       >
                         {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
@@ -114,7 +114,7 @@
                     > 
                       <!-- Route -->
                       <v-col
-                        cols="8"
+                        cols="12"
                       >
                         <v-row
                           v-if="lResult.noticeableDetour"
@@ -219,7 +219,7 @@
           </v-row>
           <!-- end Journey details and carpooler -->
           <!-- Map -->
-          <v-row>
+          <v-row dense>
             <v-col cols="12">
               <m-map
                 ref="mmap"

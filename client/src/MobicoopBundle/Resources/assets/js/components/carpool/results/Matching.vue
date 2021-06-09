@@ -212,7 +212,7 @@
     <!-- carpool dialog -->
     <v-dialog
       v-model="carpoolDialog"
-      max-width="800"
+      max-width="900"
     >
       <matching-journey
         :result="result"
