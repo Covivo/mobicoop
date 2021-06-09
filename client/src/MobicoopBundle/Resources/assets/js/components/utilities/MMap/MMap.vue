@@ -1,5 +1,4 @@
 <template>
-  <!-- Start of cartography experiment -->
   <v-row>
     <v-col class="col-12">
       <l-map
@@ -84,7 +83,6 @@
       </l-map>
     </v-col>
   </v-row>
-  <!-- end of cartography experiment -->
 </template>
 
 <script>
