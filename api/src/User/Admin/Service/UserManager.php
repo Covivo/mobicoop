@@ -298,7 +298,7 @@ class UserManager
             $user->setGender($auser['gender']);
         }
         if (isset($auser['birthDate'])) {
-            $user->setBirthDate($auser['birthDate']);
+            $user->setBirthDate(new \DateTime($auser['birthDate']));
         }
 
         if (!isset($auser['password'])) {

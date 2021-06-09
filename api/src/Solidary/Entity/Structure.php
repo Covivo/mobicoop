@@ -1114,7 +1114,10 @@ class Structure
 
     public function getSubjects()
     {
-        return $this->subjects->getValues();
+        // only return non private subjects
+        return $this->subjects->filter(function (Subject $subject) {
+            return !$subject->isPrivate();
+        });
     }
 
     public function addSubject(Subject $subject): self

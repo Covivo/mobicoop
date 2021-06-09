@@ -50,5 +50,16 @@ class SolidaryException extends \LogicException
     // structure proof
     const STRUCTURE_PROOF_ID_REQUIRED = "Structure proof id is required";
     const STRUCTURE_PROOF_VALUE_REQUIRED = "Structure proof value is required for proof #%s";
+    const STRUCTURE_PROOF_FILE_REQUIRED = "Structure proof file is required for proof #%s";
     const STRUCTURE_PROOF_NOT_FOUND = "Structure proof #%s not found";
+
+    // subject
+    const SUBJECT_NOT_FOUND = "Subject #%s not found";
+
+    // need
+    const NEED_NOT_FOUND = "Need #%s not found";
+
+    // solidary
+    const SOLIDARY_ID_REQUIRED = "Solidary id is required";
+    const SOLIDARY_NOT_FOUND = "Solidary record #%s not found";
 }

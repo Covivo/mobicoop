@@ -670,6 +670,10 @@ services:
         resource: '../src/Solidary/Controller'
         tags: ['controller.service_arguments']
 
+    App\Solidary\Admin\Controller\:
+        resource: '../src/Solidary/Admin/Controller'
+        tags: ['controller.service_arguments']
+
     App\Solidary\Service\SolidaryMatcher:
         arguments:
             $params:

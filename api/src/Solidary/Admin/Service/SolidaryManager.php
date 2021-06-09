@@ -36,19 +36,26 @@ use App\Geography\Entity\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Admin\Exception\SolidaryException;
+use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\Subject;
+use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Repository\NeedRepository;
+use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
+use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
 use DateTime;
 use DateInterval;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -73,6 +80,10 @@ class SolidaryManager
     private $proposalRepository;
     private $authItemRepository;
     private $userAuthAssignmentRepository;
+    private $subjectRepository;
+    private $needRepository;
+    private $eventDispatcher;
+    private $solidaryRepository;
 
     /**
      * Constructor
@@ -91,7 +102,11 @@ class SolidaryManager
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
-        UserAuthAssignmentRepository $userAuthAssignmentRepository
+        UserAuthAssignmentRepository $userAuthAssignmentRepository,
+        SubjectRepository $subjectRepository,
+        NeedRepository $needRepository,
+        EventDispatcherInterface $eventDispatcher,
+        SolidaryRepository $solidaryRepository
     ) {
         $this->poster = $security->getUser();
         $this->entityManager = $entityManager;
@@ -105,6 +120,10 @@ class SolidaryManager
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
+        $this->subjectRepository = $subjectRepository;
+        $this->needRepository = $needRepository;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->solidaryRepository = $solidaryRepository;
     }
 
     /**
@@ -131,8 +150,9 @@ class SolidaryManager
         // 1. create a SolidaryUser if the beneficiary is not already a solidary user
         // 2. create a SolidaryUserStructure, reflecting the status of the beneficiary within the structure (if the beneficiary has not already a SolidaryRecord in that structure)
         // 3. create SolidaryProofs if needed, linked to the SolidaryUserStructure
-        // 4. create a Proposal, reflecting the journey needed for the beneficiary
-        // 5. create a SolidaryRecord, linked to the SolidaryUserStructure, the Proposal, a Subject and Needs
+        // 4. prepare the SolidaryRecord with the Subject, which must be related to the proposal
+        // 5. create a Proposal, reflecting the journey needed for the beneficiary
+        // 6. create a SolidaryRecord, linked to the SolidaryUserStructure, the Proposal, the Subject and Needs
 
 
         // first we perform some checkings !
@@ -182,6 +202,7 @@ class SolidaryManager
 
         // 1 - create the SolidaryUser
         $beneficiary = null;
+        $newUser = false;
         if (isset($fields['beneficiary']['id'])) {
             // check beneficiary is a valid user
             if (!$beneficiary = $this->userRepository->find($fields['beneficiary']['id'])) {
@@ -286,6 +307,7 @@ class SolidaryManager
         } else {
             // new user
             $beneficiary = $this->userManager->createUserFromArray($fields['beneficiary']);
+            $newUser = true;
         }
         // add the solidary role if not already granted
         $authItem = $this->authItemRepository->find($structure->hasBeneficiaryAutoApproval() ? AuthItem::ROLE_SOLIDARY_BENEFICIARY : AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE);
@@ -298,7 +320,10 @@ class SolidaryManager
 
         // check if the beneficiary is already a SolidaryUser
         $solidaryUser = null;
-        if (isset($fields['beneficiary']['id']) && !$solidaryUser = $this->solidaryUserRepository->findByUserId($fields['beneficiary']['id'])) {
+        if (
+            (isset($fields['beneficiary']['id']) && !$solidaryUser = $this->solidaryUserRepository->findByUserId($fields['beneficiary']['id'])) ||
+            $newUser
+            ) {
             // not already a solidary user, we need to create a new one
             $solidaryUser = new SolidaryUser();
             $solidaryUser->setBeneficiary(true);
@@ -330,6 +355,8 @@ class SolidaryManager
             $this->entityManager->persist($solidaryUserStructure);
         }
 
+        $solidary->setSolidaryUserStructure($solidaryUserStructure);
+
         
         // 3 - create the proofs
         // we only set the basic proofs, not the files that would be sent on a separate call
@@ -358,16 +385,35 @@ class SolidaryManager
             }
         }
 
+
+        // 4 - prepare the subject
+        if (isset($fields['adminsubject'])) {
+            if ($subject = $this->subjectRepository->find($fields['adminsubject'])) {
+                $solidary->setSubject($subject);
+            } else {
+                throw new SolidaryException(sprintf(SolidaryException::SUBJECT_NOT_FOUND, $fields['adminsubject']));
+            }
+        }
+        if (isset($fields['additionalSubject'])) {
+            $subject = new Subject();
+            $subject->setLabel($fields['additionalSubject']);
+            $subject->setStructure($structure);
+            $subject->setPrivate(true);
+            $this->entityManager->persist($subject);
+            $solidary->setSubject($subject);
+        }
+
         // we need to flush here has we are now about to post the ad => the users need to be persisted
         $this->entityManager->flush();
         
-        // 4 - create the proposal
+        // 5 - create the proposal
         $params = [
             'origin' => $fields['origin'],
             'destination' => isset($fields['destinationAny']) && $fields['destinationAny'] ? null : $fields['destination'],
             'regular' => $fields['regular'],
             'poster' => $this->poster->getId(),
-            'beneficiary' => $beneficiary->getId()
+            'beneficiary' => $beneficiary->getId(),
+            'subject' => $subject->getId()
         ];
         if (isset($fields['punctualOutwardMinDate'])) {
             $params['punctualOutwardMinDate'] = $fields['punctualOutwardMinDate'];
@@ -406,7 +452,7 @@ class SolidaryManager
         $solidary->setProposal($this->proposalRepository->find($ad->getId()));
 
 
-        // 5 - create the SolidaryRecord
+        // 6 - create the SolidaryRecord
 
         // set original frequency
         $solidary->setFrequency($fields['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
@@ -414,12 +460,36 @@ class SolidaryManager
         // set status
         $solidary->setStatus(Solidary::STATUS_ASKED);
 
+        // create needs
+        if (isset($fields['needs'])) {
+            foreach ($fields['needs'] as $need) {
+                if ($need = $this->needRepository->find($need)) {
+                    $solidary->addNeed($need);
+                } else {
+                    throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
+                }
+            }
+        }
+        if (isset($fields['additionalNeed'])) {
+            $need = new Need();
+            $need->setLabel($fields['additionalNeed']);
+            $need->setPrivate(true);
+            // set the solidary as origin
+            $need->setSolidary($solidary);
+            $this->entityManager->persist($need);
+            $solidary->addNeed($need);
+        }
         
         // persist the solidary record
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
 
-        return $solidary;
+        // send an event to warn that a SolidaryRecord has been created
+        $event = new SolidaryCreatedEvent($beneficiary, $this->poster, $solidary);
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+
+        // read the solidary record again to get the last data (events should have update it !)
+        return $this->solidaryRepository->find($solidary->getId());
     }
 
     /**
@@ -487,6 +557,9 @@ class SolidaryManager
         // users
         $ad->setPosterId($aad['poster']);
         $ad->setUserId($aad['beneficiary']);
+
+        // subject
+        $ad->setSubjectId($aad['subject']);
 
         // origin & destination
         $origin = new Address();
@@ -679,6 +752,7 @@ class SolidaryManager
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_NULL:
                     break;
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_1:
+                    $ad->setOneWay(false);
                     // add 1 hour to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -693,6 +767,7 @@ class SolidaryManager
                     }
                     break;
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_2:
+                    $ad->setOneWay(false);
                     // add 2 hours to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -707,6 +782,7 @@ class SolidaryManager
                     }
                     break;
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_3:
+                    $ad->setOneWay(false);
                     // add 3 hours to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -721,99 +797,16 @@ class SolidaryManager
                     }
                     break;
                 case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_DATE:
+                    $ad->setOneWay(false);
                     // chosen return date and time => only punctual
                     $ad->setReturnDate(new DateTime($aad['punctualReturnDate']));
                     $ad->setReturnTime($aad['punctualReturnTime']);
                     break;
             }
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-                $ad->setSchedule($schedule);
+                $ad->setSchedule([$schedule]);
             }
         }
-
-
-        // not a round-trip ??
-        //$ad->setOneWay(true);
-
-
-        // // We set the date and time of the demand
-        // $ad->setOutwardDate($solidary->getOutwardDatetime());
-        // $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
-        // $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
-        // $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
-        // if ($solidary->getFrequency() === criteria::FREQUENCY_REGULAR) {
-        //     $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
-
-        //     // we set the schedule and the limit date of the regular demand
-        //     $ad->setOutwardLimitDate($solidary->getOutwardDeadlineDatetime());
-        //     $ad->setReturnLimitDate($solidary->getReturnDeadlineDatetime() ? $solidary->getReturnDeadlineDatetime() : null);
-
-        //     $days = $solidary->getDays();
-        //     // Check if there is a outward time for each given day
-        //     $outwardTimes = $solidary->getOutwardTimes();
-        //     if (is_null($outwardTimes)) {
-        //         throw new SolidaryException(SolidaryException::NO_OUTWARD_TIMES);
-        //     }
-        //     foreach ($days as $outwardDay => $outwardDayChecked) {
-        //         if (
-        //             !array_key_exists($outwardDay, $outwardTimes) ||
-        //             ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
-        //         ) {
-        //             throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
-        //         }
-        //     }
-
-        //     if (!is_null($solidary->getReturnDatetime())) {
-        //         $returnTimes = $solidary->getReturnTimes();
-        //         if (is_null($returnTimes)) {
-        //             throw new SolidaryException(SolidaryException::NO_RETURN_TIMES);
-        //         }
-
-        //         // Check if there is a return time for each given day
-        //         foreach ($days as $returnDay => $returnDayChecked) {
-        //             if (
-        //                 !array_key_exists($returnDay, $returnTimes) ||
-        //                 (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
-        //             ) {
-        //                 throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
-        //             }
-        //         }
-        //         $ad->setOneWay(false);
-        //     }
-
-        //     // We build the schedule
-        //     $buildedSchedules = $this->buildSchedulesForAd($solidary->getDays(), $solidary->getOutwardTimes(), $solidary->getReturnTimes());
-
-        //     $ad->setSchedule($buildedSchedules);
-        // }
-        // // we set the margin time of the demand
-        // $ad->setMarginDuration($solidary->getMarginDuration() ? $solidary->getMarginDuration() : null);
-
-        // // If the destination is not specified we use the origin
-        // if ($destination == null) {
-        //     $destination = $origin;
-        // }
-        // // Outward waypoint
-        // $outwardWaypoints = [
-        //     clone $origin,
-        //     clone $destination
-        // ];
-
-        // $ad->setOutwardWaypoints($outwardWaypoints);
-
-        // // return waypoint
-        // $returnWaypoints = [
-        //     clone $destination,
-        //     clone $origin
-        // ];
-
-        // $ad->setReturnWaypoints($returnWaypoints);
-        
-        // // The User
-        // $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
-
-        // // The subject
-        // $ad->setSubjectId($solidary->getSubject()->getId());
 
         return $this->adManager->createAd($ad);
     }

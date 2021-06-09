@@ -120,6 +120,15 @@ class Subject
     private $structure;
 
     /**
+     * @var bool The subject is not publicly available.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @MaxDepth(1)
+     * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
+     */
+    private $private;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -198,6 +207,18 @@ class Subject
     {
         $this->structure = $structure;
 
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+    
+    public function setPrivate(?bool $isPrivate): self
+    {
+        $this->private = $isPrivate;
+        
         return $this;
     }
 

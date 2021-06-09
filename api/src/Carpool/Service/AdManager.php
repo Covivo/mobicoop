@@ -647,7 +647,6 @@ class AdManager
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
-        // var_dump($schedules);die;
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
@@ -687,7 +686,6 @@ class AdManager
                 }
             }
         }
-
         return $criteria;
     }
 

@@ -91,7 +91,7 @@ use DateTime;
  *          "ADMIN_post"={
  *              "path"="/admin/solidaries",
  *              "method"="POST",
- *              "normalization_context"={"groups"={"aRead"}},
+ *              "normalization_context"={"groups"={"aReadCreated"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_solidary_create',object)"
  *          }
@@ -256,7 +256,7 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aReadCol","readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"aReadCol","aReadCreated","readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 

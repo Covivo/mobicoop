@@ -108,43 +108,6 @@ class ActionManager
         }
     }
 
-    /**
-     * Check if a diary registration is required and do it
-     *
-     * @param Action $action
-     * @param User $user
-     * @param User $author
-     * @param string $comment
-     * @param Solidary $solidary
-     * @param SolidarySolution $solidarySolution
-     * @param float $progression
-     * @return void
-     */
-    public function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
-    {
-        if ($action->isInDiary()) {
-            $this->diaryManager->addDiaryEntry(
-                $action,
-                $user,
-                $author,
-                $comment,
-                $solidary,
-                $solidarySolution,
-                $progression
-            );
-        }
-    }
-
-    /**
-     * TO DO : Check if a log registration is required and do it
-     *
-     * @return void
-     */
-    public function treatLog()
-    {
-        // To Do
-    }
-
     private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAcceptedEvent $event)
     {
         $user = $event->getSolidaryUserStructure()->getSolidaryUser()->getUser();
@@ -287,5 +250,42 @@ class ActionManager
     private function onLoginDelegate(Action $action, LoginDelegateEvent $event)
     {
         $this->treatDiary($action, $event->getUserDelegated(), $event->getUser());
+    }
+
+    /**
+     * Check if a diary registration is required and do it
+     *
+     * @param Action $action
+     * @param User $user
+     * @param User $author
+     * @param string $comment
+     * @param Solidary $solidary
+     * @param SolidarySolution $solidarySolution
+     * @param float $progression
+     * @return void
+     */
+    private function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
+    {
+        if ($action->isInDiary()) {
+            $this->diaryManager->addDiaryEntry(
+                $action,
+                $user,
+                $author,
+                $comment,
+                $solidary,
+                $solidarySolution,
+                $progression
+            );
+        }
+    }
+
+    /**
+     * TO DO : Check if a log registration is required and do it
+     *
+     * @return void
+     */
+    public function treatLog()
+    {
+        // To Do
     }
 }
