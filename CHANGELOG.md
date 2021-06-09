@@ -1,3 +1,6 @@
+# Release 1.30.0
+* Rework of journey's details : Map, new layout...
+
 # Release 1.29.0
 * POST an RDEX+ entity Journey
 * Rework of the API documentation
