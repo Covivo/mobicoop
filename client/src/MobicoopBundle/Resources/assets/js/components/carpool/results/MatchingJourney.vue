@@ -160,7 +160,9 @@
             </v-col>
             <v-col cols="4">
               <!-- Carpooler -->
-              <v-card>
+              <v-card
+                outlined
+              >
                 <ProfileSummary
                   :user-id="result.carpooler.id"
                   :refresh="profileSummaryRefresh"
