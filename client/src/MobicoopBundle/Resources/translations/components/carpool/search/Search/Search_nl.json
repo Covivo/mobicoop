@@ -10,7 +10,7 @@
             "label": "Zoeken"
         },
         "publish": {
-            "route": "carpooling/zoekopdracht/poster",
+            "route": "covoiturage/recherche/poster",
             "label": "Een advertentie publiceren"
         }
     },
@@ -27,6 +27,6 @@
     },
     "destination": "Aankomstplaats",
     "origin": "Vertrekplaats",
-    "subtitle": "Een gebruiksvriendelijke en solidaire carpoolingdienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
+    "subtitle": "Een gebruiksvriendelijke en solidaire carpooldienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
     "title": "Mobicoop"
 }
