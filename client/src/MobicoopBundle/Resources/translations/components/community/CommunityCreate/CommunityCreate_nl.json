@@ -8,7 +8,7 @@
         }
     },
     "redirect": {
-        "route": "/community's"
+        "route": "/communautes"
     },
     "form": {
         "domain": {
@@ -40,7 +40,7 @@
     },
     "buttons": {
         "create": {
-            "route": "/community/aanmaken",
+            "route": "/communaute/creer",
             "label": "De community aanmaken"
         }
     },
