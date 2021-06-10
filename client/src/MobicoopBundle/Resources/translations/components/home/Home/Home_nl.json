@@ -1,7 +1,7 @@
 {
     "items": [
         {
-            "text": "Mobicoop draagt de waarden van het vrij carpoolen uit. Het is dan ook een gratis carpoolingdienst. Dat betekent dat de website geen enkele commissie op de trajecten inhoudt, en dit zonder reclame! De trajecten zijn dus goedkoper voor de carpoolers die er de kosten van delen.",
+            "text": "Mobicoop draagt de waarden van het vrij carpoolen uit. Het is dan ook een gratis carpooldienst. Dat betekent dat de website geen enkele commissie op de trajecten inhoudt, en dit zonder reclame! De trajecten zijn dus goedkoper voor de carpoolers die er de kosten van delen.",
             "title": "Een platform zonder commissie"
         },
         {
@@ -9,7 +9,7 @@
             "text": "Digitale vrijheid is één van de kernwaarden van Mobicoop. Door te kiezen voor een website die volledig is gebaseerd op een open source software, garanderen wij de digitale soevereiniteit van alle gebruikers van de carpooling en verzekeren wij ook de privacy. Iedereen kan bijdragen aan de broncode en van de gedeelde mobiliteit een gemeenschappelijk goed maken."
         },
         {
-            "text": "Mobicoop is een coöperatie. Het platform behoort dus toe aan haar leden in de logica van 1 lid = 1 stem. Deze statuut maakt een open bestuur mogelijk tussen leden, werknemers, gebruikers van het platform en klanten. Het is echter niet verplicht om lid te zijn om van de carpooldienst gebruik te maken.",
+            "text": "Mobicoop is een coöperatie. Het platform behoort dus toe aan haar leden in de logica van 1 lid = 1 stem. Dit statuut maakt een open bestuur mogelijk tussen leden, werknemers, gebruikers van het platform en klanten. Het is echter niet verplicht om lid te zijn om van de carpooldienst gebruik te maken.",
             "title": "De carpoolcoöperatie"
         }
     ],
@@ -21,9 +21,9 @@
     "myProfile": "Profiel",
     "snackbar-unsubscribe-email": "U bent uitgeschreven van onze e-mailinglijst",
     "snackbar-account-delete": "Uw account werd met succes verwijderd.",
-    "profileLink": "/gebruiker/profiel/wijzigen/mijn-profiel",
+    "profileLink": "/utilisateur/profil/modifier/mon-profil",
     "snackbar2": ", om uw medecarpoolers op hun gemak te stellen en uw meldingen ook per sms te ontvangen.",
     "snackbar1": "U hebt een telefoonnummer ingevoerd. Laat het nummer verifiëren door een verificatiecode te verzenden via de pagina",
-    "subtitle": "Een gebruiksvriendelijke en solidaire carpoolingdienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
-    "title": "Vrije carpooling, </br>zonder commissie en tot medewerking bereid"
+    "subtitle": "Een gebruiksvriendelijke en solidaire carpooldienst in de buurt.<br />Vind vanaf nu uw carpooling en bied uw traject aan.",
+    "title": "Vrije carpooling, </br>zonder commissie en coöperatief"
 }
