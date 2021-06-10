@@ -3,7 +3,7 @@
     "optional": "facultatief",
     "errorReturnTime": "Het uur van terugkomst ligt te dicht bij het vertrekuur.",
     "marginTooltip": "Uw advertentie zal in de zoekopdrachten verschijnen met een marge van {margin} minuten rond deze uurregeling",
-    "addSchedule": "Aan tijdslot toevoegen",
+    "addSchedule": "Een tijdslot toevoegen",
     "returnTrip": {
         "label": "Terugkomst"
     },
@@ -20,7 +20,7 @@
         "label": "Vertrekuur"
     },
     "returnDate": {
-        "label": "Datum van terugkomst"
+        "label": "Terugkeerdatum"
     },
     "outwardDate": {
         "label": "Vertrekdatum"
