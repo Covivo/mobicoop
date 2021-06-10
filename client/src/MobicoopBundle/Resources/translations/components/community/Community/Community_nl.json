@@ -6,13 +6,13 @@
     "yes": "ja",
     "widget": {
         "textDetails": {
-            "p3": "<span class=\"font-weight-bold\">Opgelet</span> : sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
+            "p3": "<span class=\"font-weight-bold\">Opgelet</span>: sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p1": "Om de widget te integreren, kopieert u de onderstaande tekst en plakt u die op uw website.<br />U kunt de vetgedrukte elementen wijzigen om uw widget aan te passen.",
             "title": "De widget integreren"
         },
         "externalRoute": "/community/widget/{id}",
-        "route": "/community/widget/get/{id}",
+        "route": "/communaute/widget/get/{id}",
         "label": "De Widget weergeven"
     },
     "urlCommunityUser": "/community-user",
@@ -30,7 +30,7 @@
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw.",
+            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw",
             "textOk": "U bent voortaan geen lid meer van deze community"
         },
         "joinCommunity": {
@@ -46,13 +46,13 @@
     },
     "buttons": {
         "login": {
-            "route": "/gebruiker/aanmelden"
+            "route": "/utilisateur/connexion"
         },
         "contact": {
-            "route": "/gebruiker/berichten/nieuw"
+            "route": "/utilisateur/messages/nouveau"
         },
         "join": {
-            "route": "/community/{id}/lid-worden",
+            "route": "/communaute/{id}/rejoindre",
             "label": "Lid worden van de community"
         },
         "search": {
@@ -62,7 +62,7 @@
             "label": "Mijn community beheren"
         },
         "publish": {
-            "route": "carpooling/zoekopdracht/poster",
+            "route": "covoiturage/recherche/poster",
             "label": "Een advertentie publiceren"
         }
     },
@@ -82,7 +82,7 @@
             },
             "title": "Bevestigingsaanvraag"
         },
-        "route": "/community/{id}/verlaten",
+        "route": "/communaute/{id}/quitter",
         "button": "De community verlaten"
     }
 }
