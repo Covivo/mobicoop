@@ -1,11 +1,11 @@
 {
-    "exportUrl": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings/export",
+    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export",
     "tooltip": "Actief zodra er carpoolings gevalideerd worden",
     "export": "Exporteren",
     "clickAndGetFile": "Door op 'Exporteren' te klikken kunt u al uw carpoolings downloaden in PDF-formaat.",
-    "needCarpoolProofs": "Een carpoolingbewijs nodig?",
+    "needCarpoolProofs": "Een carpoolbewijs nodig?",
     "carpools": {
-        "archived": "Verlopen carpoolings",
-        "active": "Lopende carpoolings"
+        "archived": "Afgelopen carpoolings",
+        "active": "Carpoolings in uitvoering"
     }
 }
