@@ -221,11 +221,13 @@
         :profile-summary-refresh="profileSummaryRefresh"
         :fraud-warning-display="fraudWarningDisplay"
         :age-display="ageDisplay"
+        :refresh-map="refreshMapMatchingJourney"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
         @profileSummaryRefresh="refreshProfileSummary"
+        @mapRefreshed="mapRefreshed"
       />
     </v-dialog>
     
@@ -386,7 +388,8 @@ export default {
       lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false,
       profileSummaryRefresh: false,
-      page:1
+      page:1,
+      refreshMapMatchingJourney: false
     };
   },
   computed: {
@@ -450,6 +453,7 @@ export default {
     carpool(carpool) {
       this.result = carpool;
       // open the dialog
+      this.refreshMapMatchingJourney = true;
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
       this.profileSummaryRefresh = true;
@@ -737,6 +741,9 @@ export default {
     },
     refreshProfileSummary(){
       this.profileSummaryRefresh = false;
+    },
+    mapRefreshed(){
+      this.refreshMapMatchingJourney = false;
     }
   }
 };

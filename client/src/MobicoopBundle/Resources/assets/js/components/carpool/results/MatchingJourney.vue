@@ -665,6 +665,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    refreshMap: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
@@ -803,14 +807,21 @@ export default {
       }
     },
     route(){
-      this.buildJourney(this.route);
+      if(this.route.directPoints) this.buildJourney(this.route);
     },
     routeCarpooler(){
-      this.buildJourney(this.routeCarpooler, false);
+      if(this.routeCarpooler.directPoints) this.buildJourney(this.routeCarpooler, false);
     },
     routeRequester(){
-      this.buildJourney(this.routeRequester, true);
+      if(this.routeRequester.directPoints) this.buildJourney(this.routeRequester, true);
     },
+    refreshMap(){
+      if(this.refreshMap){
+        this.cleanMap();
+        this.getRoute();
+        this.buildMarkers();
+      }
+    }
   },
   mounted() {
     this.computeMaxDate();
@@ -1042,6 +1053,7 @@ export default {
 
       this.directionWay.push(currentProposal);
       this.$refs.mmap.redrawMap();
+      this.$emit('mapRefreshed');
     },
     buildPoint: function(
       lat,
@@ -1137,6 +1149,15 @@ export default {
         .catch(err => {
           console.error(err);
         });
+    },
+    cleanMap(){
+      this.route = [];
+      this.routeCarpooler = [];
+      this.routeRequester = [];
+      this.pointsToMap = [];
+      this.relayPointsMap = [];
+      this.directionWay = [];
+      this.$refs.mmap.redrawMap();      
     }
 
   },
