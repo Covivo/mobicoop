@@ -4,11 +4,11 @@
         "text": "U kunt teruggaan"
     },
     "404": {
-        "desc": "De pagina die u wilt weergeven is ontoegankelijk. Probeer het later opnieuw of laat ons weten wat het probleem is via het daartoe bestemde formulier.",
+        "desc": "De pagina die u wilt weergeven is niet toegankelijk. Probeer het later opnieuw of laat ons weten wat het probleem is via het daartoe bestemde formulier.",
         "title": "Houston, we have a problem..."
     },
     "default": {
-        "desc": "De pagina die u wilt weergeven is ontoegankelijk. Probeer het later opnieuw of laat ons weten wat het probleem is via het daartoe bestemde formulier.",
+        "desc": "De pagina die u wilt weergeven is niet toegankelijk. Probeer het later opnieuw of laat ons weten wat het probleem is via het daartoe bestemde formulier.",
         "title": "Houston, we have a problem..."
     }
 }
