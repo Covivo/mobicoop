@@ -1217,6 +1217,7 @@ export default {
           if (response.data) {
             if(response.data.result == undefined){
               this.snackErrorPublish.show = true;
+              this.loading = false;
             }
             else{
               window.location.href = this.$t('route.myAds');
