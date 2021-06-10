@@ -1,5 +1,5 @@
 {
-    "urlResult": "/carpooling/advertentie/{id}/resultaten",
+    "urlResult": "/covoiturage/annonce/{id}/resultats",
     "potentialCarpooler": {
         "plural": "potentiële carpoolers",
         "singular": "potentiële carpooler"
