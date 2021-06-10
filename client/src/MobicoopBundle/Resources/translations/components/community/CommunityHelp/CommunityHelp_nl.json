@@ -1,17 +1,17 @@
 {
-    "whoCanCreate": "Elke persoon of structuur die dat wenst, kan op Mobicoop een community aanmaken. Een community aanmaken is een betalende dienst die u toegang geeft tot de beheerder om uw gemeenschap te kunnen animeren. Om er meer over te weten of om een nieuwe community te laten aanmaken, kunt u contact opnemen met de hotline en aangeven dat contact opneemt voor het aanmaken van een community.",
+    "whoCanCreate": "Elke persoon of structuur die dat wenst, kan op Mobicoop een community aanmaken. Een community aanmaken is een betalende dienst die u toegang geeft tot de systeembeheerder om uw community te kunnen animeren. Om er meer over te weten of om een nieuwe community te laten aanmaken, kunt u contact opnemen met de hotline en aangeven dat u contact opneemt voor het aanmaken van een community.",
     "communityforwhat": {
         "list": {
-            "fourthLine": "de persoon die de community heeft aangemaakt, beschikt over statistieken over de abonnees en de carpoolers van zijn community",
+            "fourthLine": "de persoon die de community heeft aangemaakt, beschikt over statistieken over de leden en de carpoolers van zijn community",
             "thirdLine": "de leden beschikken over een gepersonaliseerde widget die bijvoorbeeld op een intranet en/of webpagina geïnstalleerd kan worden",
             "secondLine": "de carpoolers vinden elkaar makkelijker en het vertrouwen tussen de leden is groter",
             "firstLine": "de leden van de community kunnen elkaar contacteren en samen carpoolen"
         },
         "title": "Een community aanmaken maakt het volgende mogelijk:"
     },
-    "whatsCommunity": "Een community is een groep abonnees met een gemeenschappelijke interesse. Zo kunnen de werknemers van een onderneming, van een bedrijvenzone, de bezoekers van een theater of zelfs de inwoners van een gemeente geïdentificeerd worden om carpoolers gemakkelijker in contact met elkaar te brengen.",
+    "whatsCommunity": "Een community is een groep geregistreerden met een gemeenschappelijke interesse. Zo kunnen de werknemers van een onderneming, van een bedrijvenzone, de bezoekers van een theater of zelfs de inwoners van een gemeente geïdentificeerd worden om carpoolers gemakkelijker in contact met elkaar te brengen.",
     "thirdQuestion": "Wie kan een community aanmaken?",
     "secondQuestion": "Waar dient een community voor?",
     "firstQuestion": "Wat is een community?",
-    "title": "De carpoolingcommunity's"
+    "title": "De carpoolcommunity's"
 }
