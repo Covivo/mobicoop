@@ -516,6 +516,7 @@ class ResultManager
     {
         $result = new Result();
         $result->setId($proposal->getId());
+        $result->setUserId($proposal->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
         $communities = [];

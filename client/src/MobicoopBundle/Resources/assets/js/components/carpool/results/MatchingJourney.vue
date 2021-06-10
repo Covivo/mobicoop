@@ -705,7 +705,9 @@ export default {
       primaryColor: this.$vuetify.theme.themes.light.primary,
       secondaryColor: this.$vuetify.theme.themes.light.secondary,
       geoRouteUrl:"/georoute",
-      route:[]
+      route:[],
+      routeRequester:[],
+      routeCarpooler:[]
     }
   },
   computed: {
@@ -801,10 +803,17 @@ export default {
       }
     },
     route(){
-      this.buildJourney();
-    }
+      this.buildJourney(this.route);
+    },
+    routeCarpooler(){
+      this.buildJourney(this.routeCarpooler, false);
+    },
+    routeRequester(){
+      this.buildJourney(this.routeRequester, true);
+    },
   },
   mounted() {
+    //this.lResult.role = 3;
     this.computeMaxDate();
     this.computeTimes();
     this.getRoute();
@@ -1014,16 +1023,24 @@ export default {
       }
       return this.secondaryColor;
     },
-    getColorJourney(){
-      if(this.lResult.role == 1 || this.lResult.role == 2){
+    getColorJourney(requester = null){
+      if(requester == null){
+        if(this.lResult.role == 1 || this.lResult.role == 2){
+          return this.secondaryColor;
+        }
+      }
+      else if(requester){
+        return this.primaryColor;
+      }
+      else{
         return this.secondaryColor;
       }
       return this.primaryColor;
     },
-    buildJourney(){
+    buildJourney(route, requester = null){
       let currentProposal = {
-        latLngs:this.route.directPoints,
-        color:this.getColorJourney()
+        latLngs:route.directPoints,
+        color:this.getColorJourney(requester)
       };
 
       this.directionWay.push(currentProposal);
@@ -1067,20 +1084,64 @@ export default {
       return point;
     },
     getRoute() {
-      let params = "?";
-      let nbWaypoints = 0;
-      this.waypoints.forEach((item,key) => {
-        if (item.address) {
-          nbWaypoints++;
-          params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+
+      if(this.lResult.role == 3){
+        console.log('peu importe');
+
+        let paramsRequester = "?";
+        let paramsCarpooler = "?";
+        let nbWaypointsRequester = 0;
+        let nbWaypointsCarpooler = 0;
+        this.waypoints.forEach((item,key) => {
+          if (item.address) {
+            if(item.person=="carpooler"){
+              nbWaypointsCarpooler++;
+              paramsCarpooler += `&points[${nbWaypointsCarpooler}][longitude]=${item.address.longitude}&points[${nbWaypointsCarpooler}][latitude]=${item.address.latitude}`;
+            }
+            else{
+              nbWaypointsRequester++;
+              paramsRequester += `&points[${nbWaypointsRequester}][longitude]=${item.address.longitude}&points[${nbWaypointsRequester}][latitude]=${item.address.latitude}`;
+            }
+          }
+        });
+
+        if(this.lResult.userId == this.user.id){
+          this.callSig(paramsCarpooler,false);
+          this.callSig(paramsRequester,true);
         }
-      });
-      nbWaypoints++;
+        else{
+          this.callSig(paramsRequester,true);
+          this.callSig(paramsCarpooler,false);
+        }
+
+      }
+      else{
+        let params = "?";
+        let nbWaypoints = 0;
+        this.waypoints.forEach((item,key) => {
+          if (item.address) {
+            nbWaypoints++;
+            params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+          }
+        });
+        this.callSig(params);
+        nbWaypoints++;
+      }
+
+    },
+    callSig(params, requester = null){
       axios
         .get(`${this.geoRouteUrl}${params}`)
         .then(res => {
-          console.log(res.data)
-          this.route = res.data.member[0];
+          if(requester == null){
+            this.route = res.data.member[0];
+          }
+          else if(requester){
+            this.routeRequester = res.data.member[0];
+          }
+          else{
+            this.routeCarpooler = res.data.member[0];
+          }
         })
         .catch(err => {
           console.error(err);
