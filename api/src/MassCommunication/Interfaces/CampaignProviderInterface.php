@@ -38,14 +38,14 @@ interface CampaignProviderInterface
     /**
      * Create an email campaign
      *
-     * @param string $name      The name of the campaign
-     * @param Sender $sender    The sender of the campaign
-     * @param string $subject   The subject of the email
-     * @param string $body      The body of the email
-     * @param array $lists      The lists of contacts to send the email to
+     * @param string $name              The name of the campaign
+     * @param Sender $sender            The sender of the campaign
+     * @param string $subject           The subject of the email
+     * @param string $body              The body of the email
+     * @param Recipient[] $recipients   The recipients to send the email to
      * @return void
      */
-    public function createCampaign(string $name, Sender $sender, string $subject, string $body, array $lists);
+    public function createCampaign(string $name, Sender $sender, string $subject, string $body, array $recipients);
 
     /**
      * Send an email campaign

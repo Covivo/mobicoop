@@ -104,4 +104,18 @@ class EventRepository
     {
         return $this->repository->findOneBy($criteria);
     }
+
+    /**
+     * Get all internal events (exclude external events)
+     *
+     * @return void
+     */
+    public function getInternalEvents()
+    {
+        $query = $this->repository->createQueryBuilder('e')
+        ->where('e.externalSource is NULL')
+        ->andWhere('e.externalId is NULL')
+        ->getQuery()->getResult();
+        return $query;
+    }
 }

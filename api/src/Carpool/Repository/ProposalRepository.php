@@ -1198,4 +1198,58 @@ class ProposalRepository
 
         return $proposals;
     }
+
+    /**
+     * Get the proposals (private only) valid for a specific date (optional : a specific user)
+     *
+     * @param \Datetime $date                   The date we want the Proposal valid for
+     * @param User $user                        Optional : A specific User
+     * @param bool $onlyOneWayOrOutward         Optional : Return only oneway and ouward proposals
+     * @param int $minDistanceDriver            Optional : Return only if driver's direction distance is > $minDistanceDriver (in meters)
+     * @param int $minDistancePassenger         Optional : Return only if passenger's direction distance is > $minDistancePassenger (in meters)
+     * @return Proposal[]
+     */
+    public function findByDate(\Datetime $date, User $user=null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null): array
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->join('p.criteria', 'c')
+        ->where('(c.frequency = :punctualFrequency and c.fromDate = :date) or 
+                    (c.frequency = :regularFrequency and c.fromDate <= :date and c.toDate >= :date and c.'.strtolower($date->format("D")).'Check=1) ')
+        ->andWhere('p.private = 0')
+        ->andWhere('p.paused = 0')
+        ->setParameter('punctualFrequency', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
+        ->setParameter('date', $date->format('Ymd'))
+        ;
+
+        if (!is_null($onlyOneWayOrOutward)) {
+            $query->andWhere('p.type = :typeOneWay or p.type = :typeOutward')
+            ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
+            ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
+            ;
+        }
+
+        if (!is_null($user)) {
+            $query->andWhere("p.user = :user")
+            ->setParameter('user', $user)
+            ;
+        }
+
+        if (!is_null($minDistanceDriver)) {
+            $query->join("c.directionDriver", "dv")
+            ->andWhere("dv.distance > :minDistanceDriver")
+            ->setParameter('minDistanceDriver', $minDistanceDriver)
+            ;
+        }
+
+        if (!is_null($minDistancePassenger)) {
+            $query->join("c.directionPassenger", "dp")
+            ->andWhere("dp.distance > :minDistancePassenger")
+            ->setParameter('minDistancePassenger', $minDistancePassenger)
+            ;
+        }
+
+        return $query->getQuery()->getResult();
+        ;
+    }
 }

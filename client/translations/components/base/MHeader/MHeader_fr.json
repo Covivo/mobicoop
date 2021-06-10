@@ -1,1 +1,39 @@
-{}
+{
+    "pad":{
+        "carpool":{
+            "title":"Covoiturer",
+            "link":"https://www.mobicoop.fr"
+        },
+        "mobility":{
+            "title":"Offres mobilités",
+            "subtitle":"pour les pros",
+            "link":"https://pro.mobicoop.fr"
+        },
+        "events":{
+            "title":"Vos événements",
+            "link":"https://www.mobicoop.fr/covoiturages-evenements"
+        },
+        "subscribe":{
+            "title":"Prendre une part",
+            "link":"https://lacampagne.mobicoop.fr"
+        },
+        "blog":{
+            "title":"Blog",
+            "link":"https://pro.mobicoop.fr/covoiturage-transports-alternatifs-et-nouvelles-mobilites/"
+        },
+        "social":{
+            "facebook":{
+                "title":"Facebook Mobicoop",
+                "link":"https://www.facebook.com/Mobicoop/"
+            },
+            "twitter":{
+                "title":"Twitter Mobicoop",
+                "link":"https://twitter.com/mobicoop?lang=fr"
+            },
+            "linkedin":{
+                "title":"LinkedIn Mobicoop",
+                "link":"https://www.linkedin.com/company/mobicoopcovoiturage?originalSubdomain=fr"
+            }
+        }
+    }
+}

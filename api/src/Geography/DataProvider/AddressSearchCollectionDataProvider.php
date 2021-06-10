@@ -53,7 +53,7 @@ final class AddressSearchCollectionDataProvider implements CollectionDataProvide
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if ($this->request->get("q") !== null) {
-            return $this->geoSearcher->geoCode($this->request->get("q"), $this->request->get("token"));
+            return $this->geoSearcher->geoCode($this->request->get("q"));
         }
         return [];
     }

@@ -1,5 +1,96 @@
 <template>
   <div>
+    <v-row
+      id="pad"
+    >
+      <v-col
+        cols="2"        
+        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+      >
+        <a
+          :href="$t('pad.carpool.link')"
+          :alt="$t('pad.carpool.title')"
+          target="_blank"
+        >{{ $t('pad.carpool.title') }}</a>
+      </v-col>
+      <v-col
+        cols="2"        
+        class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+      >
+        <a
+          :href="$t('pad.mobility.link')"
+          :alt="$t('pad.mobility.title')"
+          target="_blank"
+        >{{ $t('pad.mobility.title') }}</a><br>
+        <a
+          :href="$t('pad.mobility.link')"
+          :alt="$t('pad.mobility.title')"
+          target="_blank"
+          class="font-italic text-lowercase"
+        >{{ $t('pad.mobility.subtitle') }}</a>
+      </v-col>
+      <v-col
+        cols="2"        
+        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+      >
+        <a
+          :href="$t('pad.events.link')"
+          :alt="$t('pad.events.title')"
+          target="_blank"
+        >{{ $t('pad.events.title') }}</a>
+      </v-col>
+      <v-col
+        cols="2"
+        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+      >
+        <a
+          :href="$t('pad.subscribe.link')"
+          :alt="$t('pad.subscribe.title')"
+          target="_blank"
+        >{{ $t('pad.subscribe.title') }}</a>
+      </v-col>
+      <v-col
+        cols="2"        
+        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+      >
+        <a
+          :href="$t('pad.blog.link')"
+          :alt="$t('pad.blog.title')"
+          target="_blank"
+        >{{ $t('pad.blog.title') }}</a>
+      </v-col>
+      <v-col
+        cols="2"        
+        class="d-lg-flex social justify-center align-center text-center text-center text-uppercase text-body-2 pa-1 justify-spacebetween"
+      >
+        <a
+          :href="$t('pad.social.facebook.link')"
+          :alt="$t('pad.social.facebook.title')"
+          target="_blank"
+        >
+          <v-icon class="white--text mx-2">
+            mdi-facebook
+          </v-icon></a>
+        <a
+          :href="$t('pad.social.facebook.link')"
+          :alt="$t('pad.social.facebook.title')"
+          target="_blank"
+        >
+          <v-icon class="white--text mx-2">
+            mdi-twitter
+          </v-icon>
+        </a>
+        <a
+          :href="$t('pad.social.facebook.link')"
+          :alt="$t('pad.social.facebook.title')"
+          target="_blank"
+        >
+          <v-icon class="white--text mx-2">
+            mdi-linkedin
+          </v-icon>
+        </a>
+      </v-col>      
+    </v-row>
     <v-toolbar
       flat
       color="primary"
@@ -351,3 +442,25 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+#pad{
+  background-color:#007B85;
+  margin:0px;
+  color:white;
+  font-family: Poppins, sans-serif !important;
+  a{
+    text-decoration: none;
+    color:white;
+  }
+  .section{
+    border-right: 1px solid white;
+    margin:0px;
+    vertical-align: middle;
+  }
+  .social{
+    margin:0px;
+    padding:0px;
+    vertical-align: middle;
+  }
+}
+</style>

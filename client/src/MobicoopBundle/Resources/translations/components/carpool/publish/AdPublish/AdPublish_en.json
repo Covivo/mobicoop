@@ -105,6 +105,7 @@
         "myAds": "/utilisateur/profil/modifier/mes-annonces",
         "roundPrice": "/prix/arrondir"
     },
+    "snackBarErrorPublish":"Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
     "yes": "yes",
     "no": "no"
 }

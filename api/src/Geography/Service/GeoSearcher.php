@@ -37,6 +37,7 @@ use App\User\Repository\UserRepository;
 use App\Image\Repository\IconRepository;
 use App\Geography\ProviderFactory\PeliasAddress;
 use App\User\Entity\User;
+use Geocoder\Model\Bounds;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -69,6 +70,8 @@ class GeoSearcher
     private $defaultEventResultNumber;
     private $geoDataFixes;
     private $distanceOrder;
+    private $sigPrioritizeCoordinates;
+    private $sigPrioritizeRegion;
 
     /**
      * Constructor.
@@ -90,7 +93,9 @@ class GeoSearcher
         string $defaultRelayPointResultNumber,
         string $defaultEventResultNumber,
         array $geoDataFixes,
-        bool $distanceOrder
+        bool $distanceOrder,
+        array $sigPrioritizeCoordinates,
+        string $sigPrioritizeRegion
     ) {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -109,16 +114,17 @@ class GeoSearcher
         $this->defaultEventResultNumber = $defaultEventResultNumber;
         $this->geoDataFixes = $geoDataFixes;
         $this->distanceOrder = $distanceOrder;
+        $this->sigPrioritizeCoordinates = $sigPrioritizeCoordinates;
+        $this->sigPrioritizeRegion = $sigPrioritizeRegion;
     }
 
     /**
      * Returns an array of result addresses (named addresses, relaypoints, sig addresses...)
      *
      * @param string $input     The string representing the user input
-     * @param string $token     The geographic token authorization
      * @return array            The results
      */
-    public function geoCode(string $input, string $token=null)
+    public function geoCode(string $input)
     {
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
@@ -152,7 +158,7 @@ class GeoSearcher
             if (count($namedAddresses)>0) {
                 $i = 0;
                 foreach ($namedAddresses as $address) {
-                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
                     $result[] = $address;
                     $i++;
@@ -164,17 +170,70 @@ class GeoSearcher
         }
         
         // 2 - sig addresses
-        if (!is_null($userPrioritize)) {
-            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('userPrioritize', $userPrioritize))
-            ->all();
-        } else {
-            $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber))
-            ->all();
+
+        // The query always include SIG_GEOCODER_PRIORITIZE_COORDINATES (see services.yaml Georouter.query_data_plugin)
+        // But some SIG use the Bound param for a viewbox/zone so we need to detect if it's only a point or a viewbox
+
+        // Check the options (priozitize, viewbox, region...)
+        $optionUserPrioritize = $optionBounds = $optionRegion = false;
+
+        // If there is viewbox in .env SIG_GEOCODER_PRIORITIZE_COORDINATES
+        if (
+            isset($this->sigPrioritizeCoordinates['minLatitude']) &&
+            isset($this->sigPrioritizeCoordinates['maxLatitude']) &&
+            isset($this->sigPrioritizeCoordinates['minLongitude']) &&
+            isset($this->sigPrioritizeCoordinates['maxLongitude'])
+        ) {
+            $optionBounds = true;
         }
+
+        // Centroid on user's home address
+        if (!is_null($userPrioritize)) {
+            $optionUserPrioritize = true;
+        }
+
+        // Specific region using ccTLD standard (https://en.wikipedia.org/wiki/CcTLD)
+        $optionRegion = $this->sigPrioritizeRegion!=="";
+
+        // Considering the options, we build the request
         
+        if ($optionUserPrioritize && !$optionBounds && !$optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('userPrioritize', $userPrioritize);
+        } elseif (!$optionUserPrioritize && $optionBounds && !$optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+        } elseif (!$optionUserPrioritize && !$optionBounds && $optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('region', $this->sigPrioritizeRegion);
+        } elseif ($optionUserPrioritize && $optionBounds && !$optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('userPrioritize', $userPrioritize)
+            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+        } elseif (!$optionUserPrioritize && $optionBounds && $optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('region', $this->sigPrioritizeRegion)
+            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+        } elseif ($optionUserPrioritize && $optionBounds && $optionRegion) {
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber)
+            ->withData('userPrioritize', $userPrioritize)
+            ->withData('region', $this->sigPrioritizeRegion)
+            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+        } else {
+            // Not specific option
+            $query = GeocodeQuery::create($input)
+            ->withLimit($this->defaultSigResultNumber);
+        }
+
+        $geoResults = $this->geocoder->geocodeQuery($query)->all();
+        
+
         foreach ($geoResults as $geoResult) {
             /**
              * @var PeliasAddress $geoResult
@@ -253,7 +312,7 @@ class GeoSearcher
                 $address = $this->fixAddress($geoResult->getId(), $address);
             }
 
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
 
             $result[] = $address;
         }
@@ -301,7 +360,7 @@ class GeoSearcher
                         $address->setIcon($this->dataPath.$this->iconPath.$relayPointType->getIcon()->getFileName());
                     }
                 }
-                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                 $result[] = $address;
                 $i++;
                 if ($i>=$this->defaultRelayPointResultNumber) {
@@ -317,7 +376,7 @@ class GeoSearcher
         foreach ($events as $event) {
             $address = $event->getAddress();
             $address->setEvent($event);
-            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
             $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
             $result[] = $address;
             $i++;

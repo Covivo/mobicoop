@@ -70,6 +70,7 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *              "method"="GET",
  *              "path"="/carpools/updateCarpoolsLimits",
  *              "controller"=UpdateCarpoolsLimits::class,
+ *              "security"="is_granted('ad_search_create',object)"
  *          },
  *          "getMyCarpools"={
  *              "method"="GET",

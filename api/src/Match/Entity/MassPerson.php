@@ -264,6 +264,13 @@ class MassPerson
      */
     private $massPTJourneys;
 
+    /**
+     * @var string The clear password of the user when migrated (not persisted)
+     *
+     * @Groups({"write"})
+     */
+    private $clearPassword;
+
     public function __construct()
     {
         $this->matchingsAsDriver = new ArrayCollection();
@@ -581,6 +588,18 @@ class MassPerson
         return $this;
     }
 
+    public function getClearPassword(): ?string
+    {
+        return $this->clearPassword;
+    }
+
+    public function setClearPassword(?string $clearPassword): self
+    {
+        $this->clearPassword = $clearPassword;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
     
     /**

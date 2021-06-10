@@ -62,6 +62,40 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "post"={
  *              "security_post_denormalize"="is_granted('community_join',object)"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/communities/{id}/members",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_read',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/community_members",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_membership',object)"
+ *          },
+ *          "ADMIN_associate_campaign"={
+ *              "path"="/admin/community_members/associate-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_membership',object)"
+ *          },
+ *          "ADMIN_send_campaign"={
+ *              "path"="/admin/community_members/send-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_community_membership',object)"
+ *          },
  *          "add"={
  *              "method"="POST",
  *              "path"="/community_users/add",
@@ -76,12 +110,19 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          },
  *          "delete"={
  *              "controller"=LeaveCommunityAction::class
- *          }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/community_members/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_member_update',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
- * @ApiFilter(OrderFilter::class, properties={"id","status","user.givenName","acceptedDate","createdDate","refusedDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id","status","givenName","familyName","user.givenName","acceptedDate","createdDate","refusedDate"}, arguments={"orderParameterName"="order"})
  */
 class CommunityUser
 {
@@ -96,7 +137,7 @@ class CommunityUser
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readCommunity","readCommunityUser","readUserAdmin","readUser"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","readUserAdmin","readUser"})
      */
     private $id;
 
@@ -106,7 +147,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
+     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -118,7 +159,7 @@ class CommunityUser
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readUserAdmin"})
+     * @Groups({"aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readUserAdmin"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -128,7 +169,7 @@ class CommunityUser
      * @var int The status of the membership.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readCommunity","readCommunityUser","write","readUserAdmin"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","readUserAdmin"})
      */
     private $status;
 
@@ -145,7 +186,7 @@ class CommunityUser
     * @var \DateTimeInterface Creation date of the community user.
     *
     * @ORM\Column(type="datetime")
-    * @Groups({"readCommunityUser","write"})
+    * @Groups({"aRead","readCommunityUser","write"})
     */
     private $createdDate;
 
@@ -160,7 +201,7 @@ class CommunityUser
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"readCommunity","readCommunityUser","write"})
+    * @Groups({"aRead","readCommunity","readCommunityUser","write"})
     */
     private $acceptedDate;
 
@@ -168,7 +209,7 @@ class CommunityUser
     * @var \DateTimeInterface Refusal date.
     *
     * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"readCommunityUser","write"})
+    * @Groups({"aRead","readCommunityUser","write"})
     */
     private $refusedDate;
 
@@ -189,6 +230,37 @@ class CommunityUser
      * @Groups("readCommunityUser")
      */
     private $creator;
+
+    /**
+     * @var string The username of the member
+     * @Groups("aRead")
+     */
+    private $username;
+
+    /**
+     * @var string The givenName of the member
+     * @Groups("aRead")
+     */
+    private $givenName;
+
+    /**
+     * @var string The familyName of the member
+     * @Groups("aRead")
+     */
+    private $familyName;
+
+    /**
+     * @var string|null The member avatar
+     * @Groups({"aRead"})
+     */
+    private $avatar;
+
+    /**
+     * @var bool The member accepts emailing
+     * @Groups("aRead")
+     */
+    private $newsSubscription;
+
 
     public function getId(): ?int
     {
@@ -325,6 +397,34 @@ class CommunityUser
         return $this;
     }
 
+    public function getUsername(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+    }
+
+    public function getGivenName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getGivenName()));
+    }
+    
+    public function getFamilyName(): ?string
+    {
+        return ucfirst(strtolower($this->getUser()->getFamilyName()));
+    }
+
+    public function hasNewsSubscription()
+    {
+        return $this->getUser()->hasNewsSubscription();
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (count($this->getUser()->getAvatars())>0) {
+            return $this->getUser()->getAvatars()[0];
+        }
+        return null;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -357,7 +457,7 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && !$this->getCommunity()->getValidationType() == Community::MANUAL_VALIDATION) {
+        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() != Community::MANUAL_VALIDATION) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
         } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
             $this->setStatus(self::STATUS_PENDING);
@@ -374,8 +474,16 @@ class CommunityUser
     {
         if ($this->status == self::STATUS_ACCEPTED_AS_MEMBER && is_null($this->acceptedDate)) {
             $this->setAcceptedDate(new \Datetime());
+            $this->setRefusedDate(null);
+        } elseif ($this->status == self::STATUS_ACCEPTED_AS_MODERATOR && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \Datetime());
+            $this->setRefusedDate(null);
         } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
             $this->setRefusedDate(new \Datetime());
+            $this->setAcceptedDate(null);
+        } elseif ($this->status == self::STATUS_PENDING) {
+            $this->setAcceptedDate(null);
+            $this->setRefusedDate(null);
         }
     }
 }

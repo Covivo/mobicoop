@@ -45,6 +45,11 @@ class ParagraphRepository
         $this->repository = $entityManager->getRepository(Paragraph::class);
     }
 
+    public function find(int $id): ?Paragraph
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Find the following paragraph of a given paragraph.
      *

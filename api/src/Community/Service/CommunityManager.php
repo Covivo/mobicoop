@@ -289,10 +289,10 @@ class CommunityManager
     /**
      * retrive communities owned by a user
      *
-     * @param Int $userId
+     * @param int $userId
      * @return array
      */
-    public function getOwnedCommunities(Int $userId): ?array
+    public function getOwnedCommunities(int $userId): ?array
     {
         $ownedCommunities = $this->communityRepository->getOwnedCommunities($userId);
         foreach ($ownedCommunities as $community) {

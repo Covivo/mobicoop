@@ -52,7 +52,6 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad user id is provided"));
         }
-
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
             $data = $this->userManager->registerUser($data, true);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'userRegistration') {

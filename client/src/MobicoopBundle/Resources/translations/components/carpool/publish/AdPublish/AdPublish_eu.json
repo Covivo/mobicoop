@@ -106,5 +106,6 @@
             "label": "Elkartasunezko autokidetza esklusiboa"
         },
         "message": " Iragarki hori elkartasuneko autokidetza esklusiboa izanen da, ondoko opzioa atxikitza baduzu. Bakarrik elkartasunezko operadoreek ikusten ahalko dute elkaratsunezko galdegileekin harremanetan sartu ahal izateko. Opzio hori kentzen baduzu, zure iragarki, iragariki arrunta bilakatuko da, ikusgai izanen dena gainerateko autokideentzat eta elkartasunezko operadoreentzat."
-    }
+    },
+    "snackBarErrorPublish":"Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
 }
