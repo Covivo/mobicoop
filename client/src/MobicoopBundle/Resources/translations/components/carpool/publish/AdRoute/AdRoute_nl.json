@@ -1,7 +1,7 @@
 {
     "distance": "Afstand",
     "communities": {
-        "route": "/gebruiker/community's",
+        "route": "/utilisateur/communautes",
         "label": "De advertentie in deze community's publiceren"
     },
     "avoidMotorway": "Autosnelweg vermijden",
