@@ -12,14 +12,14 @@
             "label": "De Widget weergeven"
         },
         "login": {
-            "route": "/gebruiker/aanmelden"
+            "route": "/utilisateur/connexion"
         },
         "publish": {
-            "route": "carpooling/zoekopdracht/poster",
+            "route": "covoiturage/recherche/poster",
             "label": "Een advertentie publiceren"
         },
         "contact": {
-            "route": "/gebruiker/berichten/nieuw"
+            "route": "/utilisateur/messages/nouveau"
         },
         "search": {
             "label": "Zoeken"
