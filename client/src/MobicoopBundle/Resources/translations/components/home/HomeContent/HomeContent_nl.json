@@ -7,7 +7,7 @@
     },
     "items": [
         {
-            "text": "Mobicoop draagt de waarden van het vrij carpoolen uit. Het is dan ook een gratis carpoolingdienst. Dat betekent dat de website geen enkele commissie op de trajecten inhoudt, en dit zonder reclame! De trajecten zijn dus goedkoper voor de carpoolers die er de kosten van delen.",
+            "text": "Mobicoop draagt de waarden van het vrij carpoolen uit. Het is dan ook een gratis carpooldienst. Dat betekent dat de website geen enkele commissie op de trajecten inhoudt, en dit zonder reclame! De trajecten zijn dus goedkoper voor de carpoolers die er de kosten van delen.",
             "title": "Carpooling zonder commissie"
         },
         {
@@ -15,7 +15,7 @@
             "title": "Een open source software"
         },
         {
-            "text": "Mobicoop is een coöperatie. Het platform behoort dus toe aan haar leden in de logica van 1 lid = 1 stem. Deze statuut maakt een open bestuur mogelijk tussen leden, werknemers, gebruikers van het platform en klanten. Het is echter niet verplicht om lid te zijn om van de carpooldienst gebruik te maken.",
+            "text": "Mobicoop is een coöperatie. Het platform behoort dus toe aan haar leden in de logica van 1 lid = 1 stem. Dit statuut maakt een open bestuur mogelijk tussen leden, werknemers, gebruikers van het platform en klanten. Het is echter niet verplicht om lid te zijn om van de carpooldienst gebruik te maken.",
             "title": "De carpoolcoöperatie"
         }
     ],
@@ -55,7 +55,7 @@
     },
     "community": {
         "button": {
-            "route": "/carpooling-community",
+            "route": "/covoiturage-communaute",
             "label": "De community's weergeven"
         },
         "text": "De leden van mijn club of mijn bedrijf herkennen.",
