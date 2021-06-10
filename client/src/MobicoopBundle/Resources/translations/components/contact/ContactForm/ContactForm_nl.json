@@ -3,7 +3,7 @@
     "error": "Er heeft zich een fout voorgedaan.",
     "success": "Uw bericht werd succesvol verzonden.",
     "dataPolicy": {
-        "route": "/privacy",
+        "route": "/protection-donnees",
         "link": "ons privacybeleid",
         "text": "Om uw rechten te kennen en uit te oefenen, met name om uw toestemming voor het gebruik van de via dit formulier verzamelde gegevens in te trekken, raadpleegt u"
     },
