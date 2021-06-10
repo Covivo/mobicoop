@@ -59,6 +59,8 @@ class ResultManager
     private $reviewRepository;
     private $reviewManager;
     private $userReview;
+    private $carpoolNoticeableDetourDurationPercent;
+    private $carpoolNoticeableDetourDistancePercent;
 
     /**
      * Constructor.
@@ -77,7 +79,9 @@ class ResultManager
         BlockManager $blockManager,
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
-        bool $userReview
+        bool $userReview,
+        int $carpoolNoticeableDetourDurationPercent,
+        int $carpoolNoticeableDetourDistancePercent
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -88,6 +92,8 @@ class ResultManager
         $this->reviewRepository = $reviewRepository;
         $this->reviewManager = $reviewManager;
         $this->userReview = $userReview;
+        $this->carpoolNoticeableDetourDurationPercent = $carpoolNoticeableDetourDurationPercent;
+        $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
     }
 
     // set the params
@@ -510,10 +516,16 @@ class ResultManager
     {
         $result = new Result();
         $result->setId($proposal->getId());
+        $result->setUserId($proposal->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
         $communities = [];
-            
+
+        // Will be used to determine the role (driver, pasenger, both) of the result
+        $driver = false;
+        $passenger = false;
+        
+
         /************/
         /*  REQUEST */
         /************/
@@ -899,11 +911,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['request']->getAcceptedDetourDistance());
                 $item->setNewDistance($matching['request']->getNewDistance());
                 $item->setDetourDistance($matching['request']->getDetourDistance());
+                $result->setDetourDistance($matching['request']->getDetourDistance());
                 $item->setDetourDistancePercent($matching['request']->getDetourDistancePercent());
                 $item->setOriginalDuration($matching['request']->getOriginalDuration());
                 $item->setAcceptedDetourDuration($matching['request']->getAcceptedDetourDuration());
                 $item->setNewDuration($matching['request']->getNewDuration());
                 $item->setDetourDuration($matching['request']->getDetourDuration());
+                $result->setDetourDuration($matching['request']->getDetourDuration());
                 $item->setDetourDurationPercent($matching['request']->getDetourDurationPercent());
                 $item->setCommonDistance($matching['request']->getCommonDistance());
             } else {
@@ -911,15 +925,29 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['request']->getFilters()['acceptedDetourDistance']);
                 $item->setNewDistance($matching['request']->getFilters()['newDistance']);
                 $item->setDetourDistance($matching['request']->getFilters()['detourDistance']);
+                $result->setDetourDistance($matching['request']->getFilters()['detourDistance']);
                 $item->setDetourDistancePercent($matching['request']->getFilters()['detourDistancePercent']);
                 $item->setOriginalDuration($matching['request']->getFilters()['originalDuration']);
                 $item->setAcceptedDetourDuration($matching['request']->getFilters()['acceptedDetourDuration']);
                 $item->setNewDuration($matching['request']->getFilters()['newDuration']);
                 $item->setDetourDuration($matching['request']->getFilters()['detourDuration']);
+                $result->setDetourDuration($matching['request']->getFilters()['detourDuration']);
                 $item->setDetourDurationPercent($matching['request']->getFilters()['detourDurationPercent']);
                 $item->setCommonDistance($matching['request']->getFilters()['commonDistance']);
             }
             
+            // Check if the detour is "noticeable"
+            $result->setNoticeableDetour(false);
+
+            $driverOriginalDistance = $proposal->getCriteria()->getDirectionDriver()->getDistance();
+            $driverOriginalDuration = $proposal->getCriteria()->getDirectionDriver()->getDuration();
+
+            $minDetourDistanceToBeNoticeable = ($this->carpoolNoticeableDetourDistancePercent!==0) ? $driverOriginalDistance * $this->carpoolNoticeableDetourDistancePercent / 100 : $driverOriginalDistance;
+            $minDetourDurationToBeNoticeable = ($this->carpoolNoticeableDetourDurationPercent!==0) ? $driverOriginalDuration * $this->carpoolNoticeableDetourDurationPercent / 100 : $driverOriginalDuration;
+
+            if ($result->getDetourDistance() >= $minDetourDistanceToBeNoticeable || $result->getDetourDuration() >= $minDetourDurationToBeNoticeable) {
+                $result->setNoticeableDetour(true);
+            }
 
             // prices
 
@@ -1019,6 +1047,7 @@ class ResultManager
             // seats
             $resultDriver->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger() ? $proposal->getCriteria()->getSeatsPassenger() : 1);
             $result->setResultDriver($resultDriver);
+            $passenger = true;
         }
 
         /************/
@@ -1436,11 +1465,13 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['offer']->getAcceptedDetourDistance());
                 $item->setNewDistance($matching['offer']->getNewDistance());
                 $item->setDetourDistance($matching['offer']->getDetourDistance());
+                $result->setDetourDistance($matching['offer']->getDetourDistance());
                 $item->setDetourDistancePercent($matching['offer']->getDetourDistancePercent());
                 $item->setOriginalDuration($matching['offer']->getOriginalDuration());
                 $item->setAcceptedDetourDuration($matching['offer']->getAcceptedDetourDuration());
                 $item->setNewDuration($matching['offer']->getNewDuration());
                 $item->setDetourDuration($matching['offer']->getDetourDuration());
+                $result->setDetourDuration($matching['offer']->getDetourDuration());
                 $item->setDetourDurationPercent($matching['offer']->getDetourDurationPercent());
                 $item->setCommonDistance($matching['offer']->getCommonDistance());
             } else {
@@ -1448,13 +1479,28 @@ class ResultManager
                 $item->setAcceptedDetourDistance($matching['offer']->getFilters()['acceptedDetourDistance']);
                 $item->setNewDistance($matching['offer']->getFilters()['newDistance']);
                 $item->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
+                $result->setDetourDistance($matching['offer']->getFilters()['detourDistance']);
                 $item->setDetourDistancePercent($matching['offer']->getFilters()['detourDistancePercent']);
                 $item->setOriginalDuration($matching['offer']->getFilters()['originalDuration']);
                 $item->setAcceptedDetourDuration($matching['offer']->getFilters()['acceptedDetourDuration']);
                 $item->setNewDuration($matching['offer']->getFilters()['newDuration']);
                 $item->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
+                $result->setDetourDuration($matching['offer']->getFilters()['detourDuration']);
                 $item->setDetourDurationPercent($matching['offer']->getFilters()['detourDurationPercent']);
                 $item->setCommonDistance($matching['offer']->getFilters()['commonDistance']);
+            }
+
+            // Check if the detour is "noticeable"
+            $result->setNoticeableDetour(false);
+
+            $driverOriginalDistance = $matching['offer']->getProposalOffer()->getCriteria()->getDirectionDriver()->getDistance();
+            $driverOriginalDuration = $matching['offer']->getProposalOffer()->getCriteria()->getDirectionDriver()->getDuration();
+
+            $minDetourDistanceToBeNoticeable = ($this->carpoolNoticeableDetourDistancePercent!==0) ? $driverOriginalDistance * $this->carpoolNoticeableDetourDistancePercent / 100 : $driverOriginalDistance;
+            $minDetourDurationToBeNoticeable = ($this->carpoolNoticeableDetourDurationPercent!==0) ? $driverOriginalDuration * $this->carpoolNoticeableDetourDurationPercent / 100 : $driverOriginalDuration;
+
+            if ($result->getDetourDistance() >= $minDetourDistanceToBeNoticeable || $result->getDetourDuration() >= $minDetourDurationToBeNoticeable) {
+                $result->setNoticeableDetour(true);
             }
 
             // prices
@@ -1554,6 +1600,15 @@ class ResultManager
             // seats
             $resultPassenger->setSeatsDriver($matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeatsDriver() : 1);
             $result->setResultPassenger($resultPassenger);
+            $driver = true;
+        }
+
+        if ($driver && $passenger) {
+            $result->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
+        } elseif ($passenger) {
+            $result->setRole(Ad::ROLE_PASSENGER);
+        } else {
+            $result->setRole(Ad::ROLE_DRIVER);
         }
 
         $result->setCommunities($communities);

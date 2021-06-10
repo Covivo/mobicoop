@@ -256,6 +256,8 @@ services:
     App\Carpool\Service\ResultManager:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
+            $carpoolNoticeableDetourDurationPercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%'
+            $carpoolNoticeableDetourDistancePercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%'
 
     # Communication
     App\Communication\Controller\: 

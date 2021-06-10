@@ -46,7 +46,9 @@
           <v-icon v-if="waypoint.avatar">
             {{ getIcon(waypoint.type,waypoint.role) }} 
           </v-icon>
-          <span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          <v-icon v-if="noticeableDetour && waypoint.role=='passenger'">
+            mdi-clock
+          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>
     </v-timeline-item>
@@ -80,6 +82,10 @@ export default {
       type: String,
       default: null
     },
+    noticeableDetour:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

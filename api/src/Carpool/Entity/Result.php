@@ -53,6 +53,13 @@ class Result
     private $resultPassenger;
 
     /**
+     * @var int The role of this result (see Ad roles for constants)
+     *
+     * @Groups({"results"})
+     */
+    private $role;
+
+    /**
      * @var User The carpooler found.
      * @Groups({"results","externalJourney"})
      */
@@ -192,6 +199,24 @@ class Result
     private $comment;
 
     /**
+     * @var int The detour distance in metres.
+     * @Groups("results")
+     */
+    private $detourDistance;
+
+    /**
+     * @var int The detour duration in seconds.
+     * @Groups("results")
+     */
+    private $detourDuration;
+
+    /**
+     * @var bool true : The detour is important enough to be "noticeable" (see .env)
+     * @Groups("results")
+     */
+    private $noticeableDetour;
+
+    /**
      * @var boolean|null The journey is available on mondays (if regular).
      * @Groups({"results","externalJourney"})
      */
@@ -325,6 +350,12 @@ class Result
      */
     private $solidaryExclusive;
 
+    /**
+     * @var boolean UserId of the announcer of this ResultItem
+     * @Groups("results")
+     */
+    private $userId;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -366,6 +397,18 @@ class Result
         return $this;
     }
 
+    public function getRole(): ?int
+    {
+        return $this->role;
+    }
+
+    public function setRole(int $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+        
     public function getCarpooler(): ?User
     {
         return $this->carpooler;
@@ -638,6 +681,42 @@ class Result
         return $this;
     }
 
+    public function getDetourDistance(): ?int
+    {
+        return $this->detourDistance;
+    }
+
+    public function setDetourDistance(int $detourDistance): self
+    {
+        $this->detourDistance = $detourDistance;
+
+        return $this;
+    }
+
+    public function getDetourDuration(): ?int
+    {
+        return $this->detourDuration;
+    }
+
+    public function setDetourDuration(int $detourDuration): self
+    {
+        $this->detourDuration = $detourDuration;
+
+        return $this;
+    }
+
+    public function hasNoticeableDetour(): ?bool
+    {
+        return $this->noticeableDetour;
+    }
+
+    public function setNoticeableDetour(bool $noticeableDetour): self
+    {
+        $this->noticeableDetour = $noticeableDetour;
+
+        return $this;
+    }
+
     public function isMonCheck(): ?bool
     {
         return $this->monCheck;
@@ -898,6 +977,18 @@ class Result
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
         
+        return $this;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): self
+    {
+        $this->userId = $userId;
+
         return $this;
     }
 }
