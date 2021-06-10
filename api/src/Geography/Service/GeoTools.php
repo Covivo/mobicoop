@@ -24,6 +24,8 @@
 namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
+use App\User\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class InvalidParameterException extends \Exception
@@ -184,7 +186,7 @@ class GeoTools
      * @param Address $address
      * @return array
      */
-    public function getDisplayLabel(Address $address): array
+    public function getDisplayLabel(Address $address, ?UserInterface $user = null): array
     {
         // Determine the more logical display label considering the params
         // We return an array like this :
@@ -226,7 +228,7 @@ class GeoTools
 
         // named address
         if (isset($this->params['displayNamed']) && trim($this->params['displayNamed'])==="true") {
-            if (trim($address->getName())!=="") {
+            if (trim($address->getName())!=="" && !is_null($address->getUser()) && !is_null($user) && $user instanceof User && $user->getId() == $address->getUser()->getId()) {
                 $displayLabelTab[0][] = !is_null($this->translator) ? $this->translator->trans($address->getName()) : $address->getName();
             }
         }

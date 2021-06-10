@@ -166,6 +166,7 @@ class BasicFixturesManager
         $user->setGivenName($tab[1]);
         $user->setFamilyName($tab[2]);
         $user->setTelephone($tab[5]);
+        $user->setNewsSubscription($tab[9]);
         $user->setPassword(password_hash($tab[6], PASSWORD_BCRYPT));
         $user = $this->userManager->prepareUser($user);
         

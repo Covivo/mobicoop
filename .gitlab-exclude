@@ -85,8 +85,12 @@
 /api/public/import/Community/*.*
 /api/public/import/Event/*.*
 /api/public/import/RelaisPoint/*.*
-/api/public/upload/masscommunication/
-/api/public/upload/masscommunication/*.*
+/api/public/upload/masscommunication/images/*.jpg
+/api/public/upload/masscommunication/images/*.jpeg
+/api/public/upload/masscommunication/images/*.png
+/api/public/upload/masscommunication/images/versions/*.jpg
+/api/public/upload/masscommunication/images/versions/*.jpeg
+/api/public/upload/masscommunication/images/versions/*.png
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local

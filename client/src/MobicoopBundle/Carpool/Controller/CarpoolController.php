@@ -118,8 +118,12 @@ class CarpoolController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-
-            return $this->json(['result'=>$adManager->createAd($data)]);
+            $result = $adManager->createAd($data);
+            if ($result instanceof Ad) {
+                return $this->json(['result'=>$result]);
+            } else {
+                return $this->json($result);
+            }
         }
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
             "pricesRange" => [

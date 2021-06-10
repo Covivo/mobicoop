@@ -92,8 +92,14 @@ final class CreateImageAction
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the owner and the image
             $owner->addImage($image);
-            // we search the position of the image
-            $image->setPosition($this->imageManager->getNextPosition($image));
+            // we search the position of the image if not provided
+            if (is_null($image->getPosition())) {
+                $image->setPosition($this->imageManager->getNextPosition($image));
+            } else {
+                // the image position is provided, we remove the existing image at this position
+                $this->imageManager->removeImageAtPosition($owner, $image->getPosition());
+            }
+            
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image));
             if (is_null($image->getName())) {

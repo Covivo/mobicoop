@@ -325,10 +325,11 @@ class ImageManager
 
     /**
      * Delete the image base and delete the Entry in DB
-     * @param Image $image
+     * @param Image $image  The image to delete
+     * @param bool $flush   Flush immediately
      * @throws \ReflectionException
      */
-    public function deleteBase(Image $image): void
+    public function deleteBase(Image $image, bool $flush = true): void
     {
         $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
@@ -338,7 +339,9 @@ class ImageManager
             unlink($baseImage);
         }
         $this->entityManager->remove($image);
-        $this->entityManager->flush();
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     
@@ -410,7 +413,25 @@ class ImageManager
         return $randomName;
     }
 
-
+    /**
+     * Remove the image at the given position, for the owner of the image
+     *
+     * @param object $image     The owner
+     * @param integer $position The position of the image
+     * @return void
+     */
+    public function removeImageAtPosition(object $owner, int $position)
+    {
+        if (method_exists($owner, 'getImages')) {
+            foreach ($owner->getImages() as $image) {
+                if ($image->getPosition() == $position) {
+                    $this->deleteVersions($image);
+                    $this->deleteBase($image, true);
+                    break;
+                }
+            }
+        }
+    }
 
     /** TODO : create methods to :
      * - modify the position and filename of images of a set if positions change (switch between images)

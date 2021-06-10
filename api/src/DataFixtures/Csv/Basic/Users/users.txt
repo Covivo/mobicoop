@@ -15,3 +15,4 @@ role :
     12 = solidary beneficiary,
     171 = solidary volunteer candidate,
     172 = solidary beneficiary candidate
+newsSubscription : 0 = false, 1 = true    

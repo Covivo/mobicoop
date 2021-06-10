@@ -1,3 +1,7 @@
+# Release 1.28.0
+* First version of an anti-fraud system.
+* Driver's origin / destination always shown in result. We added a pickup info instead.
+
 # Release 1.27.0
 * After a simple contact from search results, the message thread is no longer kept in the mailbox
 

@@ -26,7 +26,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class FamillyAndGivenNameFilter extends AbstractContextAwareFilter
+final class FamilyAndGivenNameFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
@@ -34,8 +34,10 @@ final class FamillyAndGivenNameFilter extends AbstractContextAwareFilter
             return;
         }
 
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+
         $queryBuilder
-            ->andWhere("u.givenName LIKE '%".$value."%' OR u.familyName LIKE '%".$value."%' OR CONCAT(u.givenName,' ',u.familyName) LIKE '%".$value."%' OR CONCAT(u.familyName,' ',u.givenName) LIKE '%".$value."%'");
+            ->andWhere("$rootAlias.givenName LIKE '%".$value."%' OR $rootAlias.familyName LIKE '%".$value."%' OR CONCAT($rootAlias.givenName,' ',$rootAlias.familyName) LIKE '%".$value."%' OR CONCAT($rootAlias.familyName,' ',$rootAlias.givenName) LIKE '%".$value."%'");
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -52,7 +54,7 @@ final class FamillyAndGivenNameFilter extends AbstractContextAwareFilter
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter for sign up validation purpose',
+                    'description' => 'Filter by givenName and/or familyName',
                     'name' => 'q',
                     'type' => 'string',
                 ],

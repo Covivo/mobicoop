@@ -67,7 +67,12 @@ use App\Auth\Controller\PermissionCheck;
  *                      },
  *                   }
  *              }
- *          }
+ *          },
+ *          "ADMIN_grantable"={
+ *              "method"="GET",
+ *              "path"="/permissions/grantable",
+ *              "security"="is_granted('permission',object)"
+ *          },
  *      }
  * )
  */

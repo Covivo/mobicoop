@@ -57,6 +57,22 @@ use App\Image\Entity\Icon;
  *          "post"={
  *              "security_post_denormalize"="is_granted('relay_point_type_create',object)"
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/relaypoint_types",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_relay_point_type_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/relaypoint_types",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_relay_point_type_create',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -67,7 +83,27 @@ use App\Image\Entity\Icon;
  *          },
  *          "delete"={
  *              "security"="is_granted('relay_point_type_delete',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/relaypoint_types/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_relay_point_type_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/relaypoint_types/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_relay_point_type_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/relaypoint_types/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_relay_point_type_delete',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
@@ -82,7 +118,7 @@ class RelayPointType
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups("readRelayPoint")
+     * @Groups({"aRead","readRelayPoint"})
      */
     private $id;
 
@@ -91,7 +127,7 @@ class RelayPointType
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $name;
 
@@ -130,6 +166,37 @@ class RelayPointType
      * @Groups({"readRelayPoint"})
      */
     private $updatedDate;
+
+    /**
+     * @var int|null The relay point type icon id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $iconId;
+
+    /**
+     * @var string|null The relay point type icon name
+     * @Groups("aRead")
+     */
+    private $iconName;
+
+    /**
+     * @var string|null The relay point type private icon name
+     * @Groups("aRead")
+     */
+    private $iconPrivateName;
+
+    /**
+     * @var string|null The relay point type icon url
+     * @Groups("aRead")
+     */
+    private $iconUrl;
+
+    /**
+     * @var string|null The relay point type private icon url
+     * @Groups("aRead")
+     */
+    private $iconPrivateUrl;
+
 
     public function __construct()
     {
@@ -223,6 +290,52 @@ class RelayPointType
 
         return $this;
     }
+
+    public function getIconId(): int
+    {
+        if (is_null($this->iconId)) {
+            return $this->getIcon()->getId();
+        }
+        return $this->iconId;
+    }
+
+    public function setIconId(?int $iconId)
+    {
+        $this->iconId = $iconId;
+    }
+
+    public function getIconName(): ?string
+    {
+        if ($this->getIcon()) {
+            return $this->getIcon()->getName();
+        }
+        return null;
+    }
+
+    public function getIconPrivateName(): ?string
+    {
+        if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
+            return $this->getIcon()->getPrivateIconLinked()->getName();
+        }
+        return null;
+    }
+
+    public function getIconUrl(): ?string
+    {
+        if ($this->getIcon()) {
+            return $this->getIcon()->getUrl();
+        }
+        return null;
+    }
+
+    public function getIconPrivateUrl(): ?string
+    {
+        if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
+            return $this->getIcon()->getPrivateIconLinked()->getUrl();
+        }
+        return null;
+    }
+
 
     // DOCTRINE EVENTS
     

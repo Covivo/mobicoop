@@ -46,4 +46,14 @@ class IconRepository
     {
         return $this->repository->find($id);
     }
+
+    public function findAll(): array
+    {
+        return $this->repository->findAll();
+    }
+
+    public function findBy(array $criteria): array
+    {
+        return $this->repository->findBy($criteria);
+    }
 }

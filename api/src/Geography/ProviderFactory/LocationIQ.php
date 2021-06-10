@@ -123,17 +123,12 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $url = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $query->getLimit());
 
         // Check if there is a viewbox
-        if (
-            !is_null($query->getData('minLatitude')) &&
-            !is_null($query->getData('maxLatitude')) &&
-            !is_null($query->getData('minLongitude')) &&
-            !is_null($query->getData('maxLongitude'))
-        ) {
+        if ($query->getBounds()) {
             $url .= self::VIEWBOX;
-            $url = str_replace('%min_lon%', $query->getData('minLongitude'), $url);
-            $url = str_replace('%min_lat%', $query->getData('minLatitude'), $url);
-            $url = str_replace('%max_lon%', $query->getData('maxLongitude'), $url);
-            $url = str_replace('%max_lat%', $query->getData('maxLatitude'), $url);
+            $url = str_replace('%min_lon%', (string)$query->getBounds()->getWest(), $url);
+            $url = str_replace('%min_lat%', (string)$query->getBounds()->getSouth(), $url);
+            $url = str_replace('%max_lon%', (string)$query->getBounds()->getEast(), $url);
+            $url = str_replace('%max_lat%', (string)$query->getBounds()->getNorth(), $url);
         }
         
         $content = $this->executeQuery($url, $query->getLocale());

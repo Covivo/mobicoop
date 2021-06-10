@@ -80,7 +80,7 @@ use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
-use App\User\Filter\FamillyAndGivenNameFilter;
+use App\User\Filter\FamilyAndGivenNameFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
@@ -119,7 +119,7 @@ use App\User\Controller\UserSendValidationEmail;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -271,7 +271,41 @@ use App\User\Controller\UserSendValidationEmail;
  *              "normalization_context"={"groups"={"readUser","readUserAdmin"}},
  *              "method"="GET",
  *              "path"="/users/accesFromAdminReact",
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/users",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/users",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_user_create',object)"
+ *          },
+ *          "ADMIN_associate_campaign"={
+ *              "path"="/admin/users/associate-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
+ *          "ADMIN_send_campaign"={
+ *              "path"="/admin/users/send-campaign",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -379,12 +413,32 @@ use App\User\Controller\UserSendValidationEmail;
  *              "path"="/users/{id}/carpool_export",
  *              "normalization_context"={"groups"={"carpoolExport"}},
  *              "security"="is_granted('user_update',object)"
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_user_read',object)"
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_user_update',object)"
+ *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/users/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_user_delete',object)"
+ *          },
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
- * @ApiFilter(FamillyAndGivenNameFilter::class, properties={"q"})
+ * @ApiFilter(FamilyAndGivenNameFilter::class, properties={"q"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(DirectionTerritoryFilter::class, properties={"directionTerritory"})
  * @ApiFilter(IsInCommunityFilter::class)
@@ -405,7 +459,7 @@ use App\User\Controller\UserSendValidationEmail;
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -457,7 +511,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -467,7 +521,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","readCommunityUser","results","write"})
+     * @Groups({"aRead","aWrite","readUser","readCommunityUser","results","write"})
      */
     private $status;
 
@@ -475,7 +529,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
+     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
      */
     private $givenName;
 
@@ -483,14 +537,14 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
+     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
      */
     private $familyName;
 
     /**
      * @var string|null The shorten family name of the user.
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
+     * @Groups({"aRead","readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $shortFamilyName;
 
@@ -508,7 +562,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
      */
     private $email;
 
@@ -538,7 +592,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string The clear password of the user, used for delegation (not persisted !).
      *
-     * @Groups("write")
+     * @Groups({"write"})
      */
     private $clearPassword;
 
@@ -553,7 +607,7 @@ class User implements UserInterface, EquatableInterface
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","results","write","externalJourney"})
+     * @Groups({"aRead","aWrite","readUser","results","write","externalJourney"})
      */
     private $gender;
 
@@ -561,7 +615,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The nationality of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $nationality;
 
@@ -569,7 +623,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      *
      * @ApiProperty(
      *     attributes={
@@ -590,7 +644,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write","checkPhoneToken","results", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser","write","checkPhoneToken","results", "readSolidary"})
      */
     private $telephone;
 
@@ -605,7 +659,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"readUser","write","results"})
+     * @Groups({"aRead","aWrite","readUser","write","results"})
      */
     private $phoneDisplay;
 
@@ -648,7 +702,7 @@ class User implements UserInterface, EquatableInterface
      * 2 = i smoke
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $smoke;
 
@@ -658,7 +712,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = i listen to music or radio
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $music;
 
@@ -666,7 +720,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Music favorites.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $musicFavorites;
 
@@ -676,7 +730,7 @@ class User implements UserInterface, EquatableInterface
      * 1 = chat
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $chat;
 
@@ -684,7 +738,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null Chat favorite subjects.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $chatFavorites;
 
@@ -692,7 +746,7 @@ class User implements UserInterface, EquatableInterface
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"readUser","write","readCommunity","readCommunityUser"})
+     * @Groups({"aRead","aWrite","readUser","write","readCommunity","readCommunityUser"})
      */
     private $newsSubscription;
 
@@ -700,7 +754,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("readUser")
+     * @Groups({"aRead","readUser"})
      */
     private $createdDate;
 
@@ -992,7 +1046,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var string|null Default avatar of the user
-     * @Groups({"readUser","readPublicProfile","readReview"})
+     * @Groups({"aRead","readUser","readPublicProfile","readReview"})
      */
     private $avatar;
 
@@ -1113,7 +1167,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Last user activity date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"aRead","readUser","write"})
      */
     private $lastActivityDate;
 
@@ -1238,6 +1292,26 @@ class User implements UserInterface, EquatableInterface
      */
     private $savedCo2;
 
+    // ADMIN
+
+    /**
+     * @var string|null The user main image
+     * @Groups({"aRead","aWrite"})
+     */
+    private $image;
+
+    /**
+     * @var Address The user home address
+     * @Groups({"aRead","aWrite"})
+     */
+    private $homeAddress;
+
+    /**
+     * @var array|null The user roles
+     * @Groups({"aRead","aWrite"})
+     */
+    private $rolesTerritory;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1265,8 +1339,10 @@ class User implements UserInterface, EquatableInterface
         $this->carpoolProofsAsPassenger = new ArrayCollection();
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
+        $this->communityUsers = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
+        $this->rolesTerritory = [];
         $this->bankAccounts = [];
         $this->wallets = [];
         if (is_null($status)) {
@@ -2035,6 +2111,16 @@ class User implements UserInterface, EquatableInterface
         }
 
         return $this;
+    }
+
+    public function removeUserAuthAssignments()
+    {
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            $this->userAuthAssignments->removeElement($userAuthAssignment);
+            if ($userAuthAssignment->getUser() === $this) {
+                $userAuthAssignment->setUser(null);
+            }
+        }
     }
 
     public function getMasses()
@@ -2925,7 +3011,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-
     public function getUnreadSolidaryMessageNumber(): ?int
     {
         return $this->unreadSolidaryMessageNumber;
@@ -2950,6 +3035,57 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    // ADMIN
+
+    public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getHomeAddress(): ?Address
+    {
+        if (is_null($this->homeAddress)) {
+            foreach ($this->addresses as $address) {
+                if ($address->isHome()) {
+                    $this->homeAddress = $address;
+                    break;
+                }
+            }
+        }
+        return $this->homeAddress;
+    }
+
+    public function setHomeAddress(?Address $homeAddress): self
+    {
+        $this->homeAddress = $homeAddress;
+
+        return $this;
+    }
+
+    public function getRolesTerritory(): ?array
+    {
+        foreach ($this->userAuthAssignments as $userAuthAssignment) {
+            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+                $this->rolesTerritory[] = [
+                    'role' => $userAuthAssignment->getAuthItem()->getId(),
+                    'territory' => $userAuthAssignment->getTerritory() ? $userAuthAssignment->getTerritory()->getId() : null
+                ];
+            }
+        }
+        return $this->rolesTerritory;
+    }
+
+    public function setRolesTerritory(?array $rolesTerritory): self
+    {
+        $this->rolesTerritory = $rolesTerritory;
+
+        return $this;
+    }
+
+    
     // DOCTRINE EVENTS
 
     /**
