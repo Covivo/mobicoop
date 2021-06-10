@@ -5,12 +5,12 @@
     "join": "Lid worden van de community",
     "communityDetails": "De community bekijken",
     "routes": {
-        "communitySecuredRegister": "/community/{id}/beveiligd/inschrijving",
-        "community": "/carpooling-community/{id}/{urlKey}"
+        "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
+        "community": "/covoiturage-communaute/{id}/{urlKey}"
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw.",
+            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw",
             "textOk": "U bent voortaan geen lid meer van deze community"
         }
     },
@@ -22,7 +22,7 @@
             },
             "title": "Bevestigingsaanvraag"
         },
-        "route": "/community/{id}/verlaten",
+        "route": "/communaute/{id}/quitter",
         "button": "De community verlaten"
     }
 }
