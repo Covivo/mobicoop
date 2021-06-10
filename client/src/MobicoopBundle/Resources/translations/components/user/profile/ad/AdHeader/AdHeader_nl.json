@@ -1,6 +1,6 @@
 {
     "update": {
-        "route": "/carpooling/advertentie/{id}/wijzigen"
+        "route": "/covoiturage/annonce/{id}/modifier"
     },
     "delete": {
         "dialog": {
@@ -21,7 +21,7 @@
         },
         "error": "Er heeft zich een fout voorgedaan bij het verwijderen van uw advertentie.",
         "success": "Uw advertentie werd met succes verwijderd.",
-        "route": "/carpooling/advertentie/verwijderen"
+        "route": "/covoiturage/annonce/supprimer"
     },
     "pause": {
         "info": "Opgelet: advertentie gepauzeerd!",
