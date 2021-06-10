@@ -69,6 +69,7 @@
           :key="'w'+i"
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
+          :dash-array="(way.dashArray) ? way.dashArray : ''"
           @click="clickOnPolyline"
         >        
           <l-tooltip v-if="way.title !==undefined && way.title!==''">
@@ -152,6 +153,10 @@ export default {
     clusters: {
       type: Boolean,
       default: true
+    },
+    dashArray:{
+      type: String,
+      default: null
     }
   },
   data() {

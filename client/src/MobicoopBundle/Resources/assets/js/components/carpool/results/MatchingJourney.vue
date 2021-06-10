@@ -813,7 +813,6 @@ export default {
     },
   },
   mounted() {
-    //this.lResult.role = 3;
     this.computeMaxDate();
     this.computeTimes();
     this.getRoute();
@@ -1018,10 +1017,7 @@ export default {
       this.$refs.mmap.redrawMap();
     },
     getColorCircleMarker(){
-      if(this.lResult.role == 1 || this.lResult.role == 2){
-        return this.primaryColor;
-      }
-      return this.secondaryColor;
+      return this.primaryColor;
     },
     getColorJourney(requester = null){
       if(requester == null){
@@ -1040,7 +1036,8 @@ export default {
     buildJourney(route, requester = null){
       let currentProposal = {
         latLngs:route.directPoints,
-        color:this.getColorJourney(requester)
+        color:this.getColorJourney(requester),
+        dashArray:(requester !== null && requester) ? '12' : null
       };
 
       this.directionWay.push(currentProposal);
@@ -1105,14 +1102,8 @@ export default {
           }
         });
 
-        if(this.lResult.userId == this.user.id){
-          this.callSig(paramsCarpooler,false);
-          this.callSig(paramsRequester,true);
-        }
-        else{
-          this.callSig(paramsRequester,true);
-          this.callSig(paramsCarpooler,false);
-        }
+        this.callSig(paramsCarpooler,false);
+        this.callSig(paramsRequester,true);
 
       }
       else{
