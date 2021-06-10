@@ -3,7 +3,7 @@
     "popUp": {
         "cancel": "Annuleren",
         "validation": "Het evenement publiceren",
-        "label": "Ik begrijp dat deze functie NIET bedoeld is voor het publiceren van mijn persoonlijke carpoolingadvertentie, maar voor het aanmaken van een ruimte die specifiek gewijd is aan het evenement dat ik organiseer (om alle trajecten die ernaartoe leiden of er vertrekken te groeperen).\nOm uw persoonlijke advertentie te publiceren, registreert u zich (of meldt u zich aan als u al geregistreerd bent) en maakt u uw nieuwe advertentie aan vanuit uw profiel.",
+        "label": "Ik begrijp dat deze functie NIET bedoeld is voor het publiceren van mijn persoonlijke carpooladvertentie, maar voor het aanmaken van een ruimte die specifiek gewijd is aan het evenement dat ik organiseer (om alle trajecten die ernaartoe leiden of er vertrekken te groeperen).\nOm uw persoonlijke advertentie te publiceren, registreert u zich (of meldt u zich aan als u al geregistreerd bent) en maakt u uw nieuwe advertentie aan vanuit uw profiel.",
         "title": "Bevestiging van aanmaken evenement"
     },
     "endTime": {
@@ -30,7 +30,7 @@
         }
     },
     "redirect": {
-        "route": "/carpoolings-evenementen"
+        "route": "/covoiturages-evenements"
     },
     "form": {
         "private": {
@@ -39,7 +39,7 @@
         },
         "urlEvent": {
             "error": "Voer een website met een geldig formaat in",
-            "tooltips": "Het adres van de website van de evenement",
+            "tooltips": "Het adres van de website van het evenement",
             "label": "URL van het evenement"
         },
         "address": {
@@ -66,7 +66,7 @@
     },
     "buttons": {
         "create": {
-            "route": "/evenement/aanmaken",
+            "route": "/evenement/creer",
             "label": "Het evenement aanmaken"
         }
     },
