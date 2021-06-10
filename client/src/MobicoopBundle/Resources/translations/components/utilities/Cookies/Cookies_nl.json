@@ -16,7 +16,7 @@
     },
     "privacyPolicy": {
         "link": {
-            "uri": "/privacy",
+            "uri": "/protection-donnees",
             "label": "Privacybeleid"
         },
         "text": "Meer details over ons gegevensbeheer in het"
