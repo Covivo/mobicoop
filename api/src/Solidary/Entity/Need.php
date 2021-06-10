@@ -98,7 +98,7 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","readUser","readSolidary","writeSolidary","readNeeds"})
+     * @Groups({"aRead","aReadItem","readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $label;
 

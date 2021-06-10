@@ -24,11 +24,13 @@
 namespace App\Solidary\Admin\Service;
 
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Repository\UserAuthAssignmentRepository;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
@@ -42,6 +44,7 @@ use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
+use App\Action\Entity\Diary;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\SolidaryRepository;
@@ -124,6 +127,123 @@ class SolidaryManager
         $this->needRepository = $needRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->solidaryRepository = $solidaryRepository;
+    }
+
+    /**
+     * Get a Solidary record
+     *
+     * @param int $id  The solidary id
+     * @return array|null The solidary record
+     */
+    public function getSolidary(int $id)
+    {
+        $solidary = $this->solidaryRepository->find($id);
+
+        // create schedules
+        $schedules = [];
+        $days = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
+        foreach ($days as $num => $day) {
+            $this->treatDay($solidary->getProposal(), $num, $day, $schedules);
+        }
+        $solidary->setAdminschedules($schedules);
+
+        if ($solidary->getAdminfrequency() == Criteria::FREQUENCY_FLEXIBLE) {
+            // set min and max time for flexible proposal
+            // for a flexible proposal, we have only one schedule, with all days checked
+            $solidary->setAdminoutwardMinTime($solidary->getProposal()->getCriteria()->getMonMinTime());
+            $solidary->setAdminoutwardTime($solidary->getProposal()->getCriteria()->getMonTime());
+            $solidary->setAdminoutwardMaxTime($solidary->getProposal()->getCriteria()->getMonMaxTime());
+            if ($solidary->getProposal()->getProposalLinked()) {
+                $solidary->setAdminreturnMinTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getMonMinTime());
+                $solidary->setAdminreturnTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime());
+                $solidary->setAdminreturnMaxTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getMonMaxTime());
+            }
+        } elseif ($solidary->getAdminfrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            // set time for punctual proposal
+            $solidary->setAdminoutwardMinTime($solidary->getProposal()->getCriteria()->getMinTime());
+            $solidary->setAdminoutwardTime($solidary->getProposal()->getCriteria()->getFromTime());
+            $solidary->setAdminoutwardMaxTime($solidary->getProposal()->getCriteria()->getMaxTime());
+            if ($solidary->getProposal()->getProposalLinked()) {
+                $solidary->setAdminreturnMinTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getMinTime());
+                $solidary->setAdminreturnTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime());
+                $solidary->setAdminreturnMaxTime($solidary->getProposal()->getProposalLinked()->getCriteria()->getMaxTime());
+            }
+        }
+
+        // set operator informations
+        $diaries = $this->solidaryRepository->getDiaries($solidary);
+        if (count($diaries)>0) {
+            foreach ($diaries as $diary) {
+                /**
+                 * @var Diary $diary
+                 */
+                if ($diary->getAction()->getId() === Action::SOLIDARY_CREATE && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                    $solidary->setAdminoperatorGivenName($diary->getAuthor()->getGivenName());
+                    $solidary->setAdminoperatorFamilyName($diary->getAuthor()->getFamilyName());
+                    $solidary->setAdminoperatorAvatar($diary->getAuthor()->getAvatar());
+                }
+            }
+        }
+
+        return $solidary;
+    }
+
+    private function treatDay(Proposal $proposal, int $num, string $day, array &$schedules)
+    {
+        $checkMethod = "is".$day."Check";
+        $timeMethod = "get".$day."Time";
+        $outwardChecked = $proposal->getCriteria()->$checkMethod() && $proposal->getCriteria()->$timeMethod();
+        $returnChecked =
+            $proposal->getType() == Proposal::TYPE_OUTWARD &&
+            $proposal->getProposalLinked() &&
+            $proposal->getProposalLinked()->getCriteria()->$checkMethod() &&
+            $proposal->getProposalLinked()->getCriteria()->$timeMethod();
+        
+        if ($outwardChecked || $returnChecked) {
+            $foundSchedule = false;
+            foreach ($schedules as $key => $schedule) {
+                if ($outwardChecked && $returnChecked) {
+                    if (
+                        $schedule['outwardTime'] == $proposal->getCriteria()->$timeMethod() &&
+                        $schedule['returnTime'] == $proposal->getProposalLinked()->getCriteria()->$timeMethod()
+                    ) {
+                        $schedules[$key][strtolower($day)] = true;
+                        $foundSchedule = true;
+                        break;
+                    }
+                } elseif ($outwardChecked) {
+                    if ($schedule['outwardTime'] == $proposal->getCriteria()->$timeMethod() && $schedule['returnTime'] == null) {
+                        $schedules[$key][strtolower($day)] = true;
+                        $foundSchedule = true;
+                        break;
+                    }
+                } elseif ($returnChecked) {
+                    if ($schedule['returnTime'] == $proposal->getProposalLinked()->getCriteria()->$timeMethod() && $schedule['outwardTime'] == null) {
+                        $schedules[$key][strtolower($day)] = true;
+                        $foundSchedule = true;
+                        break;
+                    }
+                }
+            }
+            if (!$foundSchedule) {
+                $schedules[] = $this->createSchedule($num, $proposal->getCriteria()->$timeMethod(), $returnChecked ? $proposal->getProposalLinked()->getCriteria()->$timeMethod() : null);
+            }
+        }
+    }
+
+    private function createSchedule($num, $outwardTime = null, $returnTime = null)
+    {
+        return [
+            'mon' => $num == 0,
+            'tue' => $num == 1,
+            'wed' => $num == 2,
+            'thu' => $num == 3,
+            'fri' => $num == 4,
+            'sat' => $num == 5,
+            'sun' => $num == 6,
+            'outwardTime' => $outwardTime,
+            'returnTime' => $returnTime
+        ];
     }
 
     /**
@@ -426,12 +546,15 @@ class SolidaryManager
         }
         if (isset($fields['punctualOutwardDateChoice'])) {
             $params['punctualOutwardDateChoice'] = $fields['punctualOutwardDateChoice'];
+            $solidary->setPunctualOutwardDateChoice($fields['punctualOutwardDateChoice']);
         }
         if (isset($fields['punctualOutwardTimeChoice'])) {
             $params['punctualOutwardTimeChoice'] = $fields['punctualOutwardTimeChoice'];
+            $solidary->setPunctualOutwardTimeChoice($fields['punctualOutwardTimeChoice']);
         }
         if (isset($fields['punctualReturnDateChoice'])) {
             $params['punctualReturnDateChoice'] = $fields['punctualReturnDateChoice'];
+            $solidary->setPunctualReturnDateChoice($fields['punctualReturnDateChoice']);
         }
         if (isset($fields['punctualReturnDate'])) {
             $params['punctualReturnDate'] = $fields['punctualReturnDate'];

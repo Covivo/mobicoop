@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,15 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\DataProvider;
+namespace App\Solidary\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\Solidary;
-use App\Solidary\Service\SolidaryManager;
+use App\Solidary\Admin\Service\SolidaryManager;
 
 /**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 final class SolidaryItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -42,14 +41,11 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass && $operationName == 'get';
+        return Solidary::class === $resourceClass && $operationName == 'ADMIN_get';
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
     {
-        if ($operationName=="contactsList") {
-            return $this->solidaryManager->getAsksList($id);
-        }
         return $this->solidaryManager->getSolidary($id);
     }
 }
