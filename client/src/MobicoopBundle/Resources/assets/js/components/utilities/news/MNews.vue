@@ -24,6 +24,7 @@
           color="secondary"
           :href="this.$t('news.button.route')"
           class="white--text"
+          target="_blank"
         >
           {{ $t('news.button.label') }}
         </v-btn>
