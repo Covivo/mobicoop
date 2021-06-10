@@ -3,27 +3,27 @@
     "yes": "ja",
     "snackBarErrorPublish": "Traject niet compatibel met uw reeds gepubliceerde advertenties. Indien uw op deze datum reeds gepubliceerde advertentie niet meer geldig is, moet u deze op pauze zetten, wijzigen of verwijderen.",
     "route": {
-        "roundPrice": "/prijs/afronden",
-        "myAds": "/gebruiker/profiel/wijzigen/mijn-advertenties",
-        "update": "carpooling/advertentie/{id}/wijzigen",
-        "publish": "carpooling/advertentiepubliceren"
+        "roundPrice": "/prix/arrondir",
+        "myAds": "/utilisateur/profil/modifier/mes-annonces",
+        "update": "covoiturage/annonce/{id}/modifier",
+        "publish": "covoiturage/publierannonce"
     },
     "messageRoundedPrice": "We hebben het tarief van uw advertentie afgerond om uw ervaring en die van de andere gebruikers te verbeteren. We danken u voor uw begrip.",
     "participation": {
         "text": "De vermelde prijsindicaties zijn gebaseerd op overheidsaanbevelingen voor privéreizen met privévoertuigen en zijn niet bindend voor de deelnemers, het platform of IBM. Het enige doel van de dienst is immers gebruikers op een eenvoudige manier met elkaar in contact te brengen. Meer informatie vindt u in de <a href='/FAQ'>FAQ</a>.",
         "forbidden": "De prijs van uw traject ligt hoger dan de maximale drempel die door ons platform werd vastgelegd (€ 0,50/km ). Uw traject zal niet gepubliceerd kunnen worden.",
-        "high": "De prijs van uw traject, die zeer hoog is, ligt boven de gemiddelde belastingschaal (€ 0,30/km): uw kansen om gecontacteerd te worden zullen dus zeer beperkt zijn. Bovendien is het verboden om betaalde vervoersdiensten aan te bieden die niet meer passen in het kader van het delen van de kosten via carpooling.",
+        "high": "De prijs van uw traject, die zeer hoog is, ligt boven de gemiddelde belastingschaal (€ 0,30/km): uw kansen om gecontacteerd te worden zullen dus zeer beperkt zijn. Bovendien is het verboden om betaalde vervoersdiensten aan te bieden die niet meer passen in het kader van het delen van de kosten op basis van carpooling.",
         "mid": "De prijs van uw traject is hoger dan het gemiddelde en uw kansen om gecontacteerd te worden zijn dus beperkter."
     },
     "messageSolidaryExclusiveAd": {
         "switch": {
-            "label": "Exclusieve solidaire carpoolingadvertentie"
+            "label": "Uitsluitend solidaire carpooladvertentie"
         },
-        "message": " Deze advertentie zal een exclusieve solidaire carpoolingadvertentie zijn, als u de onderstaande optie behoudt. Ze zal dan alleen zichtbaar zijn voor de solidaire operatoren om u in contact te brengen met een solidaire aanvrager. Als u deze optie uitvinkt, wordt uw advertentie een gewone advertentie die zichtbaar is voor zowel andere carpoolers als solidaire operatoren."
+        "message": " Deze advertentie zal een uitsluitend solidaire carpooladvertentie zijn, als u de onderstaande optie behoudt. Ze zal dan alleen zichtbaar zijn voor de solidaire operatoren om u in contact te brengen met een solidaire aanvrager. Als u deze optie uitvinkt, wordt uw advertentie een gewone advertentie die zichtbaar is voor zowel andere carpoolers als solidaire operatoren."
     },
     "messageFirstAd": {
-        "alert": "Om nu gewaarschuwd te worden voor nieuwe advertenties die overeenstemmen met uw meest frequente traject, publiceert u zonder verwijlen uw eerste advertentie voor een regelmatig traject zodat u snel kunt carpoolen.",
-        "signUpDone": "Bravo {givenName} ! Uw inschrijving is voltooid"
+        "alert": "Om nu meldingen te ontvangen voor nieuwe advertenties die overeenstemmen met uw meest frequente traject, publiceert u zonder verwijlen uw eerste advertentie voor een regelmatig traject zodat u snel kunt carpoolen.",
+        "signUpDone": "Bravo {givenName} ! Uw registratie is voltooid"
     },
     "stepper": {
         "buttons": {
@@ -34,7 +34,7 @@
             "next": "Volgende"
         },
         "driverLicense": {
-            "route": "/cgu",
+            "route": "/agv",
             "link": "(Charter)",
             "text": "Door mijn advertentie te publiceren, attesteer ik dat ik over een geldig rijbewijs en een geldige en up-to-date verzekering beschik"
         },
@@ -90,11 +90,11 @@
         "success": "Uw advertentie werd met succes gewijzigd.",
         "popup": {
             "minor_update_asks": {
-                "content": "Er werden reeds een of meer aanvragen ingediend met betrekking tot deze advertentie. De details van uw wijziging zullen worden verzonden naar alle gebruikers die deze aanvragen hebben ingediend.<br>Bevestigt u uw wijziging?",
+                "content": "Er werd(en) reeds een of meer aanvragen ingediend met betrekking tot deze advertentie. De details van uw wijziging zullen worden verzonden naar alle gebruikers die deze aanvragen hebben ingediend.<br>Bevestigt u uw wijziging?",
                 "title": "Er bestaan aanvragen voor deze advertentie"
             },
             "major_update_ads": {
-                "content": "Een gebruiker heeft uw advertentie al opgemerkt als overeenstemmend met een behoefte en werd mogelijk verwittigd via SMS of e-mail. Uw wijziging zal ervoor zorgen dat de huidige versie van uw advertentie verwijderd wordt en dat er een nieuwe aangemaakt wordt.",
+                "content": "Een gebruiker heeft al opgemerkt dat uw advertentie overeenstemt met een behoefte en werd mogelijk verwittigd via SMS of e-mail. Uw wijziging zal ervoor zorgen dat de huidige versie van uw advertentie verwijderd wordt en dat er een nieuwe aangemaakt wordt.",
                 "title": "Een gebruiker heeft uw advertentie al opgemerkt"
             },
             "major_update_asks": {
