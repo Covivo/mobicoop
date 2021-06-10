@@ -1,7 +1,7 @@
 {
     "route": {
         "user": {
-            "message": "/gebruiker/berichten"
+            "message": "/utilisateur/messages"
         }
     },
     "inDev": "In ontwikkeling.",
@@ -12,7 +12,7 @@
                 "error": "Het bericht kon niet worden verzonden door een technisch probleem",
                 "ok": "Het bericht werd verzonden."
             },
-            "urlSendContact": "/carpooling/rdexConnection",
+            "urlSendContact": "/covoiturage/rdexConnection",
             "popup": {
                 "send": "Verzenden",
                 "textarea": {
@@ -41,6 +41,6 @@
         },
         "go": "Ernaar toegaan"
     },
-    "seeDetails": "zie details",
+    "seeDetails": "details weergeven",
     "birthYears": "jaar"
 }
