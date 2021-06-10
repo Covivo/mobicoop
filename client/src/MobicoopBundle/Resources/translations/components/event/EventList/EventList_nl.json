@@ -1,8 +1,8 @@
 {
     "routes": {
-        "login": "/gebruiker/verbinding",
-        "getList": "/evenementen/getEventList",
-        "event": "/carpoolingevenementen/{id}/{urlKey}"
+        "login": "/utilisateur/connexion",
+        "getList": "/evenements/getEventList",
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
     },
     "noEvent": "Geen evenementen",
     "endEvent": "Einde",
@@ -14,5 +14,5 @@
     "createEvent": "Een evenement aanmaken",
     "eventsPassed": "Afgelopen evenementen",
     "eventsAvailable": "Beschikbare evenementen",
-    "events": "De carpoolingevenementen"
+    "events": "De carpoolevenementen"
 }
