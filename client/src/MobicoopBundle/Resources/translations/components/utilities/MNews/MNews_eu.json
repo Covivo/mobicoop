@@ -2,7 +2,7 @@
     "news": {
         "title": "Actualités",
         "subtitle": "Mobicoop et Rezo Pouce fusionnent leurs services !",
-        "text": "A deux on va plus loin : Mobicoop fusionne avec la coopérative d’autostop Rezo Pouce pour offrir plus de services liés à la mobilité partagée tout en conservant nos valeurs d’écologie, de solidarité et de bien commun ! La SCIC fusionnée conserve le nom de Mobicoop et nous resterons toujours sans commission.",
+        "text": "A deux on va plus loin : Mobicoop fusionne avec la coopérative Rezo Pouce pour offrir plus de services liés à la mobilité partagée tout en conservant nos valeurs d’écologie, de solidarité et de bien commun ! La SCIC fusionnée conserve le nom de Mobicoop et nous resterons toujours sans commission.",
         "button": {
             "label":"En savoir plus sur Rezo Pouce",
             "route":"https://rezopouce.fr/page/Qui_sommes_nous"
