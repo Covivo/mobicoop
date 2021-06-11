@@ -21,7 +21,8 @@
     },
     "ranges": [
         "1 week",
-        "1 maand"
+        "1 maand",
+        "3 maanden"
     ],
     "maxDate": "tot",
     "fromDate": "Vanaf",
@@ -47,5 +48,9 @@
     "carpool": "Carpoolen",
     "places": "{seats} plaats | {seats} plaatsen",
     "detailTitle": "Details van de carpooling",
-    "priceTooltip": "Indicatief tarief"
+    "priceTooltip": "Indicatief tarief",
+    "detour": {
+        "onlyDriver": "Dit berekende traject bevat een omleiding. Contact opnemen met de bestuurder.",
+        "default": "Dit berekende traject bevat een omleiding."
+    }
 }
