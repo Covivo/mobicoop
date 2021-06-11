@@ -12,23 +12,23 @@
             "label": "Afmelden"
         },
         "myProfile": {
-            "route": "/gebruiker/profiel/wijzigen",
+            "route": "/utilisateur/profil/modifier",
             "label": "Mijn profiel"
         },
         "messages": {
-            "route": "/gebruiker/berichten",
+            "route": "/utilisateur/messages",
             "label": "Berichten"
         },
         "shareAnAd": {
-            "route": "/carpooling/advertentiepubliceren",
+            "route": "/covoiturage/publierannonce",
             "label": "Een advertentie publiceren"
         },
         "logIn": {
-            "route": "/gebruiker/aanmelden",
+            "route": "/utilisateur/connexion",
             "label": "Aanmelden"
         },
         "signup": {
-            "route": "/gebruiker/registratie",
+            "route": "/utilisateur/inscription",
             "label": "Registreren"
         }
     }
