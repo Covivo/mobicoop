@@ -9,7 +9,7 @@
     "password": "Wachtwoord",
     "connection": "Aanmelden",
     "urlGetSsoServices": "/user/getSsoServices",
-    "urlSignUp": "/gebruiker/registreren",
+    "urlSignUp": "/utilisateur/inscription",
     "signUp": "U bent nog niet geregistreerd?",
     "textRecovery": "Wachtwoord vergeten?",
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
