@@ -1,5 +1,5 @@
 {
-    "canValid": "U kunt uw account nu valideren door  <strong>op de validatielink in de e-mail te klikken </strong>of door <strong>de code te kopiëren en hieronder te plakken</strong>.",
+    "canValid": "U kunt uw account nu valideren door <strong>op de validatielink in de e-mail te klikken </strong>of door <strong>de code te kopiëren en hieronder te plakken</strong>.",
     "validationMailSend": "Er werd een e-mail verzonden ter validatie.",
     "almostDone": "De registratie is bijna voltooid.",
     "unknown": "Deze code is niet gekend",
@@ -8,8 +8,8 @@
     "validate": "Uw registratie bevestigen",
     "errorCredentials": "Verificatiecode is niet gekend",
     "tokenRequired": "Uw verificatiecode is verplicht",
-    "urlEmailValidation": "/gebruiker/login-token/e-mail",
-    "urlSignUpValidation": "/gebruiker/login-token",
+    "urlEmailValidation": "/utilisateur/login-token/email",
+    "urlSignUpValidation": "/utilisateur/login-token",
     "token": "Uw verificatiecode",
     "title": "Verificatie van uw e-mailadres"
 }
