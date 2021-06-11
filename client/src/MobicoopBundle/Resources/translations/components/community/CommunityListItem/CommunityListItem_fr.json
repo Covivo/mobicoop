@@ -24,5 +24,6 @@
     "join": "Rejoindre la communauté",
     "protected": "Cette communauté n'est visible que par ses membres",
     "yes": "oui",
-    "no": "non"
+    "no": "non",
+    "members":"{members} membres"
 }

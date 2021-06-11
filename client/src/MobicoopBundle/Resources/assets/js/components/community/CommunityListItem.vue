@@ -35,7 +35,15 @@
         <v-card-title>
           <div>
             <h4>
-              <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
+              <a :href="linkToCommunityShow(item)">{{ item.name }}</a><br>
+              <v-chip
+                v-if="item.nbMembers"
+                color="secondary"
+                small
+                label
+              >
+                {{ $t('members', {members:item.nbMembers}) }}
+              </v-chip>              
             </h4>
           </div>
         </v-card-title>
