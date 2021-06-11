@@ -1,5 +1,6 @@
 # Release 1.30.0
 * Rework of journey's details : Map, new layout...
+* Number of members in communities list
 
 # Release 1.29.0
 * POST an RDEX+ entity Journey
