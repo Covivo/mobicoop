@@ -14,5 +14,5 @@
     "lastConnection": "Laatst aangemeld op",
     "carpoolRealized": "Gerealiseerde carpoolings",
     "yearsOld": "jaar",
-    "getPublicProfileUri": "/gebruiker/profiel/openbaar"
+    "getPublicProfileUri": "/utilisateur/profil/public"
 }
