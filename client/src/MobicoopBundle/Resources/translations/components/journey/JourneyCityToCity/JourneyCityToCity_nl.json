@@ -1,18 +1,18 @@
 {
-    "getPopularJourneysUrl": "/carpoolings/populaire/home",
+    "getPopularJourneysUrl": "/covoiturages/populaires/home",
     "popularJourneys": {
-        "uri": "/carpooling/{origin}/{destination}",
+        "uri": "/covoiturage/{origin}/{destination}",
         "to": "naar",
         "from": "Carpooling van"
     },
     "links": {
         "popular": {
-            "uri": "/carpooling-per-gemeente/populaire",
+            "uri": "/covoiturage-par-ville/populaires",
             "title": "Carpoolings per populaire trajecten"
         },
         "byCity": {
-            "uri": "/carpooling-per-gemeente",
-            "title": "De carpoolings per gemeente"
+            "uri": "/covoiturage-par-ville",
+            "title": "Carpoolings per gemeente"
         }
     },
     "title": {
