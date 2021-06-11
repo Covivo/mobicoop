@@ -3,5 +3,5 @@
     "fillPublicInfos": "Het formulier werd automatisch ingevuld met de openbare gegevens van uw Facebook-profiel.",
     "signup": "Registreren via Facebook",
     "connection": "Aanmelden via Facebook",
-    "urlFacebookConnect": "/gebruiker/facebook/aanmelden"
+    "urlFacebookConnect": "/utilisateur/facebook/connexion"
 }
