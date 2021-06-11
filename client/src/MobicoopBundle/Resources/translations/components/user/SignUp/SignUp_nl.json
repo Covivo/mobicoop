@@ -3,7 +3,7 @@
         "socialServicesUnavailableWithoutConsent": "Om gebruikt te kunnen worden, moet de functie voor het aanmelden via sociale media aanvaard worden dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
         "consent": "Om u te kunnen aanmelden, moet u zich akkoord verklaard hebben met 'Uw verbinding actief houden' dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
         "link": {
-            "route": "/agv",
+            "route": "/cgu",
             "label": "Voor meer informatie over het beheer van uw gegevens en uw rechten."
         },
         "infos": "De via dit formulier verzamelde gegevens zijn nodig om gebruik te kunnen maken van de diensten die door de Mobicoop-app worden aangeboden."
@@ -13,7 +13,7 @@
         "next": "Volgende",
         "previous": "Vorige"
     },
-    "urlLogin": "/gebruiker/aanmelden/",
+    "urlLogin": "/utilisateur/connexion/",
     "login": "U hebt al een account? Meld u aan!",
     "snackbar": {
         "joinCommunity": {
@@ -27,11 +27,11 @@
         "4": "Geboortedatum",
         "3": "Geslacht",
         "2": "Identiteit",
-        "1": "Inloggegevens"
+        "1": "Identificatoren"
     },
     "step": "Stap",
     "communities": {
-        "route": "/gebruiker/registyratie/lijst-met-community's",
+        "route": "/utilisateur/inscription/liste-des-communautes",
         "label": "Lid worden van een community"
     },
     "legalAge": {
@@ -49,7 +49,7 @@
     },
     "checkEmail": {
         "error": "Dit e-mailadres is al in gebruik",
-        "url": "/gebruiker/verif/e-mail"
+        "url": "/utilisateur/verif/email"
     },
     "password": {
         "errors": {
@@ -111,9 +111,9 @@
         "placeholder": "Aanspreektitel",
         "label": "Aanspreektitel"
     },
-    "urlRedirectAfterSignUpResult": "/gebruiker/aanmelden/{id}",
-    "urlRedirectAfterSignUp": "/gebruiker/registreren/validatie/{email}",
-    "urlSignUpResult": "/gebruiker/registreren/{id}",
-    "urlSignUp": "/gebruiker/registreren",
+    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+    "urlSignUpResult": "/utilisateur/inscription/{id}",
+    "urlSignUp": "/utilisateur/inscription",
     "title": "Registreren"
 }
