@@ -16,20 +16,20 @@ events:
   event:
     title: Evenement
   events:
-    title: De evenementen
+    title: Evenementen
 communities:
   widget:
     title: Widget community
   create:
     title: Een community aanmaken
   communities:
-    title: De comminty's
+    title: Community's
   community:
     title: Community
 solidary:
   title: Een solidaire carpooling aanvragen
 contact:
-  title: Contact ons op te nemen
+  title: Contact met ons op te nemen
 journey:
   from_to:
     title2: ' naar '
@@ -42,11 +42,11 @@ journey:
     title: Carpoolings per gemeente
 carpool:
   results:
-    title: Carpoolingresultaten
+    title: Carpoolresultaten
   ad_update:
-    title: Uw carpoolingadvertentie wijzigen
+    title: Uw carpooladvertentie wijzigen
   ad_create:
-    title: Een carpoolingadvertentie publiceren
+    title: Een carpooladvertentie publiceren
 user:
   password_recovery:
     title: Wachtwoord opnieuw opvragen
