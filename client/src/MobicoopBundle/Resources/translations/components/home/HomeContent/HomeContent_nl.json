@@ -3,7 +3,7 @@
     "urlBackground3": "/afbeeldingen/pagina's/home/background_bottom.svg",
     "urlBackground2": "/afbeeldingen/pagina's/home/background_middle.svg",
     "routes": {
-        "getList": "/evenementen/getEventList"
+        "getList": "/events/getEventList"
     },
     "items": [
         {
