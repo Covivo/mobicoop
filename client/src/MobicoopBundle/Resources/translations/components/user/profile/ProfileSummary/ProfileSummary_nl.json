@@ -2,8 +2,8 @@
     "infos": {
         "carpoolRealized": "Gerealiseerde carpoolings",
         "lastConnection": "Laatst aangemeld",
-        "answerPct": "Antwoordprecentage"
+        "answerPct": "Antwoordpercentage"
     },
-    "getProfileSummaryUri": "/gebruiker/profiel/resume",
+    "getProfileSummaryUri": "/utilisateur/profil/resume",
     "yearsOld": "jaar"
 }
