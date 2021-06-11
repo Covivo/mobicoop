@@ -28,7 +28,7 @@
         "label": "Voornaam"
     },
     "email": {
-        "verificationRoute": "/gebruiker/e-mail/validatie",
+        "verificationRoute": "/utilisateur/email/validation",
         "buttons": {
             "label": {
                 "generateEmailAgain": "Een verificatiemail opnieuw verzenden",
@@ -36,8 +36,8 @@
             }
         },
         "tooltips": {
-            "notVerified": "Uw e-mailadres wordt niet gecontroleerd",
-            "verified": "Uw e-mailadres wordt gecontroleerd"
+            "notVerified": "Uw e-mailadres wordt niet geverifieerd",
+            "verified": "Uw e-mailadres werd geverifieerd"
         },
         "errors": {
             "valid": "Het e-mailadres moet het juiste formaat hebben"
@@ -52,7 +52,7 @@
     },
     "address": {
         "update": {
-            "route": "/gebruiker/profiel/wijzigen/adres",
+            "route": "/utilisateur/profil/modifier/adresse",
             "label": "Adres opslaan"
         }
     },
@@ -73,9 +73,9 @@
             "confirmDelete": "Ik bevestig de verwijdering"
         },
         "content": {
-            "errorCommunities": "Als aanspreekpunt van een community kunt u uw account niet verijderen zolang u aanspreekpunt blijft.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om een ander aanspreekpunt in te stellen of deze community te verwijderen. <br/>",
+            "errorCommunities": "Als aanspreekpunt van een community kunt u uw account niet verwijderen zolang u aanspreekpunt blijft.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om een ander aanspreekpunt in te stellen of deze community te verwijderen. <br/>",
             "errorEvents": "Als auteur van een evenement in de toekomst,<br/> kunt u uw account niet verwijderen zolang u er de auteur van bent en dit evenement in de toekomst ligt.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om de auteur van het evenement te wijzigen of te vragen om het evenement te verwijderen, of wacht tot het evenement voorbij is.",
-            "deleteAccount": "Bent u zeker dat u uw account wilt verwijderen?<br/> Deze actie is onomkeerbaar.<br/> De gevolgen hiervan zijn:<br/> - verwijderen van al uw persoonsgegevens<br/>- verwijderen van al uw berichten die u hebt uitgewisseld met andere gebruikers<br/>- u wordt geanonimiseerd in de carpoolarchieven van andere carpoolers<br/>- verwijderen van al uw carpoolingadvertenties die eventueel nog actief zijn <br/>- afwijzen van alle lopende carpoolingaanvragen die u ontvangen hebt<br/>- annuleren van alle geplande carpoolings<br/><br/>Bevestigt u?"
+            "deleteAccount": "Bent u zeker dat u uw account wilt verwijderen?<br/> Deze actie is onomkeerbaar.<br/> De gevolgen hiervan zijn:<br/> - verwijderen van al uw persoonsgegevens<br/>- verwijderen van al uw berichten die u hebt uitgewisseld met andere gebruikers<br/>- u wordt geanonimiseerd in de carpoolarchieven van andere carpoolers<br/>- verwijderen van al uw carpooladvertenties die eventueel nog actief zijn <br/>- afwijzen van alle lopende carpoolaanvragen die u ontvangen hebt<br/>- annuleren van alle geplande carpoolings<br/><br/>Bevestigt u?"
         },
         "titles": {
             "deletionImpossible": "Uw account kan niet verwijderd worden",
@@ -99,10 +99,10 @@
         },
         "token": {
             "inputError": "De validatiecode bestaat uit 4 cijfers.",
-            "route": "/gebruiker/telefoon/token"
+            "route": "/utilisateur/telephone/token"
         },
         "validation": {
-            "route": "/gebruiker/telefoon/validatie",
+            "route": "/utilisateur/telephone/validation",
             "label": "Uw verificatiecode"
         },
         "buttons": {
@@ -130,20 +130,20 @@
     },
     "news": {
         "confirmation": {
-            "content": "Opgelet: nadat u uitschrijft voor het nieuws over de service, zult u geen informatie meer ontvangen over de volgende onderwerpen:<br><ul><li>nieuwe functies en nieuwe diensten van het platform</li><li>nieuws over carpooling in uw streek</li><li>nieuws over uw community's</li><li>gepersonaliseerde begeleiding</li></ul><br>Bent u zeker dat u zich wilt uitschrijven?",
+            "content": "Opgelet: nadat u uitschrijft voor het nieuws over de dienst, zult u geen informatie meer ontvangen over de volgende onderwerpen:<br><ul><li>nieuwe functies en nieuwe diensten van het platform</li><li>nieuws over carpooling in uw streek</li><li>nieuws over uw community's</li><li>gepersonaliseerde begeleiding</li></ul><br>Bent u zeker dat u zich wilt uitschrijven?",
             "title": "Bevestiging van uitschrijving"
         },
-        "tooltip": "Het nieuws over de service zijn e-mails die enkel beantwoorden aan het doel u op de hoogte te houden van de evoluties van de service en het carpoolen in de praktijk voor u te bevorderen. Zoals updates van het platform of e-mails van het aanspreekpunt van een community waartoe u behoort. Deze informatie kan betrekking hebben op updates van het platform. Deze e-mails hebben geen commerciële doeleinden.",
+        "tooltip": "Het nieuws over de dienst zijn e-mails die enkel beantwoorden aan het doel u op de hoogte te houden van de evoluties van de dienst en het carpoolen in de praktijk voor u te bevorderen. Zoals updates van het platform of e-mails van het aanspreekpunt van een community waartoe u behoort. Deze informatie kan betrekking hebben op updates van het platform. Deze e-mails hebben geen commerciële doeleinden.",
         "label": "Nieuws over {platform}  (nuttige info om te carpoolen, en nieuwe diensten en nieuwe functies)"
     },
     "route": {
-        "supprimer": "/gebruiker/profiel/verwijderen",
-        "update": "/gebruiker/profiel/wijzigen"
+        "supprimer": "/utilisateur/profil/supprimer",
+        "update": "/utilisateur/profil/modifier"
     },
     "avatar": {
         "delete": {
             "label": "De afbeeldingen verwijderen",
-            "route": "/gebruiker/profiel/avatar/verwijderen"
+            "route": "/utilisateur/profil/avatar/supprimer"
         },
         "size": "De maximale grootte van de avatar werd overschreven",
         "label": "Foto"
