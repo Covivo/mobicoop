@@ -1580,4 +1580,36 @@ class Solidary
     {
         return $this->getCreatedDate();
     }
+
+    /**
+     * @var array Solutions for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminsolutions;
+    public function getAdminsolutions(): array
+    {
+        return $this->adminsolutions;
+    }
+    public function setAdminsolutions(array $adminsolutions): self
+    {
+        $this->adminsolutions = $adminsolutions;
+
+        return $this;
+    }
+
+    /**
+     * @var array Diary entries for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admindiary;
+    public function getAdmindiary(): array
+    {
+        return $this->admindiary;
+    }
+    public function setAdmindiary(array $admindiary): self
+    {
+        $this->admindiary = $admindiary;
+
+        return $this;
+    }
 }

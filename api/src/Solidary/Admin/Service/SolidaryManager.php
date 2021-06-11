@@ -45,6 +45,8 @@ use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
 use App\Action\Entity\Diary;
+use App\Solidary\Entity\SolidaryMatching;
+use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\SolidaryRepository;
@@ -54,6 +56,7 @@ use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
+use App\Carpool\Entity\Matching;
 use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
 use DateTime;
@@ -184,6 +187,56 @@ class SolidaryManager
                 }
             }
         }
+
+        // set solutions
+        $solutions = [];
+        foreach ($solidary->getSolidarySolutions() as $solution) {
+            /**
+             * @var SolidarySolution $solution
+             */
+            if ($solution->getSolidaryMatching()->getSolidaryUser()) {
+                $solutions[] = [
+                    'id' => $solution->getId(),
+                    'type' => SolidarySolution::TRANSPORTER,
+                    'givenName' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName(),
+                    'familyName' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName(),
+                    'telephone' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone(),
+                    'avatar' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getAvatar(),
+                    'userId' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId()
+                ];
+            } elseif ($solution->getSolidaryMatching()->getMatching()) {
+                $solutions[] = [
+                    'id' => $solution->getId(),
+                    'type' => SolidarySolution::CARPOOLER,
+                    'givenName' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName(),
+                    'familyName' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName(),
+                    'telephone' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone(),
+                    'avatar' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getAvatar(),
+                    'userId' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId()
+                ];
+            }
+        }
+        $solidary->setAdminsolutions($solutions);
+
+        // set diary
+        $diaries = [];
+        foreach ($solidary->getDiaries() as $diary) {
+            /**
+             * @var Diary $diary
+             */
+            $diaries[] = [
+                'action' => $diary->getAction()->getName(),
+                'progression' => $diary->getProgression(),
+                'authorGivenName' => $diary->getAuthor()->getGivenName(),
+                'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
+                'authorAvatar' => $diary->getAuthor()->getAvatar(),
+                'givenName' => $diary->getUser()->getGivenName(),
+                'familyName' => $diary->getUser()->getFamilyName(),
+                'avatar' => $diary->getUser()->getAvatar(),
+                'date' => $diary->getCreatedDate()
+            ];
+        }
+        $solidary->setAdmindiary($diaries);
 
         return $solidary;
     }
@@ -602,6 +655,18 @@ class SolidaryManager
             $this->entityManager->persist($need);
             $solidary->addNeed($need);
         }
+
+        // create the solidary matchings
+        foreach ($solidary->getProposal()->getMatchingOffers() as $matchingOffer) {
+            /**
+             * @var Matching $matchingOffer
+             */
+            $solidaryMatching = new SolidaryMatching();
+            $solidaryMatching->setMatching($matchingOffer);
+            $solidaryMatching->setSolidary($solidary);
+            $solidary->addSolidaryMatching($solidaryMatching);
+            $this->entityManager->persist($solidaryMatching);
+        }
         
         // persist the solidary record
         $this->entityManager->persist($solidary);
@@ -879,12 +944,12 @@ class SolidaryManager
                     // add 1 hour to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 2, 2));
+                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new DateInterval('PT1H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
-                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 2, 2));
+                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 3, 2));
                         $now->add(new DateInterval('PT1H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
@@ -894,12 +959,12 @@ class SolidaryManager
                     // add 2 hours to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 2, 2));
+                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new DateInterval('PT2H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
-                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 2, 2));
+                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 3, 2));
                         $now->add(new DateInterval('PT2H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
@@ -909,12 +974,12 @@ class SolidaryManager
                     // add 3 hours to outward time
                     $now = new DateTime();
                     if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 2, 2));
+                        $now->setTime((int)substr($ad->getOutwardTime(), 0, 2), (int)substr($ad->getOutwardTime(), 3, 2));
                         $now->add(new DateInterval('PT3H'));
                         $ad->setReturnTime($now->format('H:i'));
                         $ad->setReturnDate($ad->getOutwardDate());
                     } else {
-                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 2, 2));
+                        $now->setTime((int)substr($schedule['outwardTime'], 0, 2), (int)substr($schedule['outwardTime'], 3, 2));
                         $now->add(new DateInterval('PT3H'));
                         $schedule['returnTime'] = $now->format('H:i');
                     }
