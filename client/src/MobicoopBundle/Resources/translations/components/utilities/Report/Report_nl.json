@@ -1,7 +1,7 @@
 {
     "routes": {
-        "userReport": "/gebruiker/{id}/melden",
-        "eventReport": "/evenement/{id}/melden"
+        "userReport": "/utilisateur/{id}/signaler",
+        "eventReport": "/evenement/{id}/signaler"
     },
     "popup": {
         "button": {
@@ -36,5 +36,5 @@
         "error": "Er heeft zich een fout voorgedaan tijdens de melding",
         "thankyou": "Bedankt voor deze melding"
     },
-    "button": "Melden"
+    "button": "Een melding doen"
 }
