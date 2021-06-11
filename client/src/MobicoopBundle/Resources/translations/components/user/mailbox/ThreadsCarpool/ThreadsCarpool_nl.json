@@ -1,4 +1,4 @@
 {
     "noCarpool": "U hebt nog geen contact opgenomen met een andere geregistreerde persoon voor een carpooling.",
-    "urlGet": "/gebruiker/berichten/carpooling"
+    "urlGet": "/utilisateur/messages/covoiturage"
 }
