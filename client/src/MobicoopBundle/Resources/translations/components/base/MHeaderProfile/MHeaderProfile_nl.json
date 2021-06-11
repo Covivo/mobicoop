@@ -1,22 +1,22 @@
 {
     "myAds": {
-        "route": "/gebruiker/profiel/wijzigen/mijn-advertenties",
+        "route": "/utilisateur/profil/modifier/mes-annonces",
         "label": "Mijn advertenties"
     },
     "myAcceptedCarpools": {
         "label": "Aanvaarde carpoolings",
-        "route": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings"
+        "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
     },
     "logOut": {
         "route": "/user/logout",
         "label": "Afmelden"
     },
     "reviews": {
-        "route": "/gebruiker/profiel/wijzigen/reviews",
+        "route": "/utilisateur/profil/modifier/avis",
         "label": "Reviews"
     },
     "myProfile": {
-        "route": "/gebruiker/profiel/wijzigen/mijn-profiel",
+        "route": "/utilisateur/profil/modifier/mon-profil",
         "label": "Profiel"
     }
 }
