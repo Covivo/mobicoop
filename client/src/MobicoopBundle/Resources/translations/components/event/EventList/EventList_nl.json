@@ -1,0 +1,18 @@
+{
+    "routes": {
+        "login": "/utilisateur/connexion",
+        "getList": "/evenements/getEventList",
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
+    },
+    "noEvent": "Geen evenementen",
+    "endEvent": "Einde",
+    "startEvent": "Start",
+    "all": "Alle",
+    "seeAds": "De advertenties weergeven",
+    "linePerPage": "Aantal regels per pagina",
+    "search": "Zoeken",
+    "createEvent": "Een evenement aanmaken",
+    "eventsPassed": "Afgelopen evenementen",
+    "eventsAvailable": "Beschikbare evenementen",
+    "events": "De carpoolevenementen"
+}

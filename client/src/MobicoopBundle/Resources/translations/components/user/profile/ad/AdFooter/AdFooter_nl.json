@@ -1,0 +1,11 @@
+{
+    "urlResult": "/covoiturage/annonce/{id}/resultats",
+    "potentialCarpooler": {
+        "plural": "potentiële carpoolers",
+        "singular": "potentiële carpooler"
+    },
+    "seat": {
+        "plural": "plaatsen",
+        "singular": "plaats"
+    }
+}

@@ -1,0 +1,66 @@
+rssfeeds:
+  title: Rss feeds
+payment:
+  title: Betalingen
+relaypoints:
+  title: Knooppunten
+toolbox:
+  title: Toolbox
+widget:
+  title: Widget
+events:
+  widget:
+    title: Widget evenement
+  create:
+    title: Een evenement aanmaken
+  event:
+    title: Evenement
+  events:
+    title: De evenementen
+communities:
+  widget:
+    title: Widget community
+  create:
+    title: Een community aanmaken
+  communities:
+    title: De comminty's
+  community:
+    title: Community
+solidary:
+  title: Een solidaire carpooling aanvragen
+contact:
+  title: Contact ons op te nemen
+journey:
+  from_to:
+    title2: ' naar '
+    title1: 'Carpooling zonder commissie van '
+  from:
+    title: 'Carpoolings met vertrek vanaf '
+  to:
+    title: 'Carpoolings met aankomst in '
+  cities:
+    title: Carpoolings per gemeente
+carpool:
+  results:
+    title: Carpoolingresultaten
+  ad_update:
+    title: Uw carpoolingadvertentie wijzigen
+  ad_create:
+    title: Een carpoolingadvertentie publiceren
+user:
+  password_recovery:
+    title: Wachtwoord opnieuw opvragen
+  messages:
+    title: Berichtensysteem
+  profile_password_update:
+    title: Mijn wachtwoord bijwerken
+  profile_update:
+    title: Mijn profiel bijwerken
+  profile:
+    title: Mijn profiel
+  signup:
+    title: Registreren
+  login:
+    title: Aanmelden
+  signupValidation:
+    title: Verificatie van uw e-mailadres

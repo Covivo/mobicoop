@@ -1,0 +1,42 @@
+{
+    "getMyCarpools": "/getMyCarpools",
+    "save": "Opslaan",
+    "errors": {
+        "number": "Het wachtwoord moet 1 cijfer bevatten.",
+        "lower": "Het wachtwoord moet 1 kleine letter bevatten.",
+        "upper": "Het wachtwoord moet 1 hoofdletter bevatten.",
+        "min": "Het wachtwoord moet minstens 8 tekens bevatten.",
+        "required": "Het wachtwoord is vereist"
+    },
+    "publicProfile": {
+        "close": "Sluiten",
+        "see": "Openbaar profiel weergeven",
+        "title": "Openbaar profiel"
+    },
+    "snackBar": {
+        "textSnackError": "Fout in de bijwerking van het wachtwoord",
+        "passwordUpdated": "Wachtwoord bijgewerkt"
+    },
+    "form": {
+        "errors": {
+            "notIdentiquals": "De wachtwoorden zijn niet identiek",
+            "required": "Het wachtwoord is vereist"
+        },
+        "newPasswordRepeat": "Nieuw wachtwoord (bevestiging)",
+        "newPassword": "Nieuw wachtwoord"
+    },
+    "tabs": {
+        "reviews": "Reviews",
+        "myAccount": "Account",
+        "carpoolsAccepted": "Aanvaarde carpoolings",
+        "bankCoordinates": "Bankidentiteit",
+        "alerts": "Alarmen",
+        "carpoolSettings": "Voorkeuren",
+        "myAds": "Mijn advertenties",
+        "password": "Wachtwoord",
+        "myProfile": "Profiel"
+    },
+    "page": {
+        "title": "Profiel"
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "urlCommunityDetails": "/carpooling-community/{id}/{urlKey}",
+    "urlCommunityList": "/carpooling-community",
+    "availableCommunities": "Beschikbare community's",
+    "getCommunities": "/gebruiker/community's",
+    "title": "Mijn community's"
+}

@@ -1,0 +1,13 @@
+{
+    "shortCompleteDate": "DD/MM/YYYY",
+    "dateValidUntil": "tot",
+    "valid": "Geldigheid:",
+    "dateValid": "Geldig tot",
+    "sun": "Zo",
+    "sat": "Za",
+    "fri": "V",
+    "thu": "Do",
+    "wed": "W",
+    "tue": "Di",
+    "mon": "M"
+}

@@ -1,0 +1,18 @@
+{
+    "params": {
+        "noSmokeInCar": "Ik rook niet in de auto",
+        "noSmoke": "Ik rook niet",
+        "smoke": "Ik rook",
+        "noMusic": "Ik rijd liever zonder geluid in de achtergrond",
+        "music": "Ik luister naar de radio of naar muziek",
+        "noChat": "Ik ben geen prater",
+        "chat": "Ik praat graag"
+    },
+    "savedCo2": " bespaard: {savedCo2} t",
+    "subscribedOn": "Geregistreerd op",
+    "answerRate": "Antwoordpercentage",
+    "lastConnection": "Laatst aangemeld op",
+    "carpoolRealized": "Gerealiseerde carpoolings",
+    "yearsOld": "jaar",
+    "getPublicProfileUri": "/gebruiker/profiel/openbaar"
+}

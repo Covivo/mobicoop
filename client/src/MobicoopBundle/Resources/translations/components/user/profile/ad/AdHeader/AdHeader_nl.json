@@ -1,0 +1,46 @@
+{
+    "update": {
+        "route": "/covoiturage/annonce/{id}/modifier"
+    },
+    "delete": {
+        "dialog": {
+            "validate": "Bevestigen",
+            "cancel": "Annuleren",
+            "pending": {
+                "text": "Er werden al een of meer aanvragen gedaan met betrekking tot deze advertentie. Uw verwijdering zal dus alle lopende aanvragen afwijzen. Als u uw verwijdering bevestigt, welk bericht wilt u dan sturen naar de carpoolers van wie u de aanvragen afwijst?",
+                "title": "Er bestaat minstens één aanvraag voor deze advertentie"
+            },
+            "accepted": {
+                "text": "Een of meer carpoolings zijn al gepland met betrekking tot deze advertentie. Uw verwijdering zal deze aanvaarde carpoolings dus annuleren. Als u uw verwijdering bevestigt, welk bericht wilt u dan sturen naar de carpoolers met wie u annuleert?",
+                "title": "Er bestaat minstens één geplande carpooling voor deze advertentie"
+            },
+            "base": {
+                "text": "De verwijdering van een advertentie is steeds definitief. Bent u zeker dat u deze advertentie wilt verwijderen?",
+                "title": "Bent u zeker dat u deze advertentie wilt verwijderen?"
+            }
+        },
+        "error": "Er heeft zich een fout voorgedaan bij het verwijderen van uw advertentie.",
+        "success": "Uw advertentie werd met succes verwijderd.",
+        "route": "/covoiturage/annonce/supprimer"
+    },
+    "pause": {
+        "info": "Opgelet: advertentie gepauzeerd!",
+        "success": {
+            "unpause": "Uw advertentie is nu actief.",
+            "pause": "Uw advertentie werd nu op pauze gezet."
+        },
+        "error": {
+            "unpause": "Er heeft zich een fout voorgedaan. Uw advertentie werd niet geactiveerd",
+            "pause": "Er heeft zich een fout voorgedaan. Uw advertentie werd niet op pauze gezet."
+        }
+    },
+    "ads": {
+        "tooltips": {
+            "diverOrPassenger": "Maakt niet uit: ik zal bestuurder of passagier zijn",
+            "passenger": "Ik zal passagier zijn",
+            "driver": "Ik zal bestuurder zijn"
+        },
+        "archived": "Gearchiveerde advertenties",
+        "ongoing": "Lopende advertenties"
+    }
+}
