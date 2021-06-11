@@ -3,17 +3,17 @@
     "urlFramasphere": "https://framasphere.org/tags/mobicoop",
     "urlTwitterLogo": "/afbeeldingen/footer/twitter.svg",
     "urlTwitter": "https://twitter.com/Mobicoop",
-    "urlInstagramLogo": "/afbeeldingen/footer/instagram.svg",
+    "urlInstagramLogo": "/images/footer/instagram.svg",
     "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
     "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
-    "urlFacebookLogo": "/afbeeldingen/footer/facebook.svg",
+    "urlFacebookLogo": "/images/footer/facebook.svg",
     "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
-    "urlAndroidLogo": "/afbeeldingen/footer/android.svg",
+    "urlAndroidLogo": "/images/footer/android.svg",
     "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
-    "urlIosLogo": "/afbeeldingen/footer/IOS.svg",
+    "urlIosLogo": "/images/footer/IOS.svg",
     "need": {
         "community": {
-            "link": "carpooling-community",
+            "link": "covoiturage-communaute",
             "title": "Maak een community aan op mobicoop.fr!"
         }
     },
@@ -45,11 +45,11 @@
             "title": "FAQ"
         },
         "events": {
-            "link": "/carpoolevenementen",
+            "link": "/covoiturages-evenements",
             "title": "Carpoolevenementen"
         },
         "map": {
-            "link": "/knooppunten",
+            "link": "/points-relais",
             "title": "De kaart met carpoolparkings"
         }
     },
