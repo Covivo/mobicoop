@@ -2,6 +2,6 @@
     "hourMinute": "UU[u]mm",
     "shortDate": "ddd DD/MM",
     "places": "{seats} plaats | {seats} plaatsen",
-    "priceTooltipSolidaryExclusive": "Exclusieve solidaire advertentie",
+    "priceTooltipSolidaryExclusive": "Uitsluitend solidaire advertentie",
     "priceTooltip": "Indicatief tarief"
 }
