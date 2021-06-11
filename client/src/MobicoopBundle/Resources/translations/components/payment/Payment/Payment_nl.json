@@ -12,7 +12,7 @@
     },
     "to": " tot ",
     "from": "van ",
-    "redirectAfterPayment": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings",
+    "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
     "regularInfo": "Als u op bepaalde dagen niet met {driver} hebt gecarpoold, kunt u deze hieronder uitvinken.",
     "tooltip": {
         "message": "U kunt niet online betalen omdat de bestuurder zijn bankgegevens niet heeft ingevuld."
@@ -31,9 +31,9 @@
         "directPayConfirm": "Bevestiging cash betaling",
         "directPay": "Ik heb cash betaald",
         "confirm": "Bevestigen",
-        "validate": "Bevestigen",
+        "validate": "Valideren",
         "back": {
-            "route": "/gebruiker/profiel/wijzigen/mijn-aanvaarde-carpoolings",
+            "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
             "label": "Terug"
         },
         "next": "Volgende",
