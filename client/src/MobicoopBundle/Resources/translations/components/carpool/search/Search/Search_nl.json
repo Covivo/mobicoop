@@ -5,8 +5,8 @@
     },
     "buttons": {
         "search": {
-            "widgetRoute": "event/{id}/zoeken/carpooling",
-            "route": "carpooling/zoeken",
+            "widgetRoute": "event/{id}/recherche/covoiturage",
+            "route": "covoiturage/recherche",
             "label": "Zoeken"
         },
         "publish": {
