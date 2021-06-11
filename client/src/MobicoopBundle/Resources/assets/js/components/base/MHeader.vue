@@ -106,7 +106,7 @@
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             alt="Mobicoop"
             height="50"
-            width="280"
+            width="210"
             contain
             eager
           >
@@ -159,6 +159,7 @@
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -177,6 +178,7 @@
         color="secondary"
         :href="$t('buttons.solidary.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
@@ -262,6 +264,18 @@
                 :href="$t('buttons.shareAnAd.route')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :disabled="!user"
+                :href="$t('buttons.solidary.route')"
+              >
+                {{ $t('buttons.solidary.label') }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
