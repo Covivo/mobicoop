@@ -1,6 +1,6 @@
 {
-    "routeToCity": "/gemeentes/carpooling-naar-{city}",
-    "routeFromCity": "/gemeentes/carpooling/{city}",
+    "routeToCity": "/communes/covoiturage-vers-{city}",
+    "routeFromCity": "/communes/covoiturage/{city}",
     "journeyToCity": "Carpooling naar {city}",
     "journeyFromCity": "Carpooling van {city}",
     "toCity": "... naar gemeente",
