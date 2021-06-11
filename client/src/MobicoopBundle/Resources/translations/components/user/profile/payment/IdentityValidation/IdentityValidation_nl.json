@@ -1,10 +1,10 @@
 {
-    "sendUrl": "/gebruiker/document-validatie-identiteit/verzenden",
+    "sendUrl": "/utilisateur/document-validation-identite/envoyer",
     "status": {
         "refused": {
             "9": "Document geweigerd omdat het onvolledig is",
             "8": "Document geweigerd omdat het onleesbaar is",
-            "7": "Document geweigerd omdat de gegevens niet overeenstemmen met die v an de gebruiker",
+            "7": "Document geweigerd omdat de gegevens niet overeenstemmen met die van de gebruiker",
             "6": "Document geweigerd omdat dit type document niet wordt aanvaard",
             "5": "Document geweigerd omdat het document niet meer geldig is",
             "4": "Document geweigerd omdat het bestand leeg is",
@@ -23,6 +23,6 @@
         "error": "Het document mag niet groter zijn dan 6 MB",
         "label": "Geldig identiteitsdocument"
     },
-    "text": "<p>De identietiescontrole op basis van een identiteitsdocument (identiteteitskaart recto-verso, paspoort, rijbewijs) is een wettelijke verplichting om betalingen te ontvangen. Deze verplichting is ingegeven door de strijd tegen het witwassen van geld.</p><p>De voor de betaling vereiste identiteitscontrole gebeurt door vergelijking van de in uw profiel ingevoerde voor- en achternaam met die op uw identiteitsbewijs. Zorg er dus voor dat de gegevens in uw profiel correct zijn.</p><p>U kunt de voorwaarden voor validatie van een identiteitsdocument bij onze partner lezen <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
-    "title": "3. Identitietscontrole"
+    "text": "<p>De identiteitscontrole op basis van een identiteitsdocument (identiteitskaart recto-verso, paspoort, rijbewijs) is een wettelijke verplichting om betalingen te ontvangen. Deze verplichting is ingegeven door de strijd tegen het witwassen van geld.</p><p>De voor de betaling vereiste identiteitscontrole gebeurt door vergelijking van de in uw profiel ingevoerde voor- en achternaam met die op uw identiteitsbewijs. Zorg er dus voor dat de gegevens in uw profiel correct zijn.</p><p>U kunt de voorwaarden voor validatie van een identiteitsdocument bij onze partner <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>hier</a> lezen.</p>",
+    "title": "3. Identiteitscontrole"
 }
