@@ -1,12 +1,12 @@
 {
     "widget": {
         "textDetails": {
-            "p3": "<<span class=\"font-weight-bold\">>Attention</span> : sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
+            "p3": "<<span class=\"font-weight-bold\">>Opgelet</span> : sommige publicatietools zoals Wordpress vereisen specifieke plug-ins om een iFrame te kunnen gebruiken.",
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p1": "Om de widget te integreren, kopieert u de onderstaande tekst en plakt u die op uw website.<br />U kunt de vetgedrukte elementen wijzigen om uw widget aan te passen.",
             "title": "De widget integreren"
         },
-        "urlLogo": "/afbeeldingen/logo.png",
+        "urlLogo": "/images/logo.png",
         "externalRoute": "/widget",
         "route": "/widget/get",
         "label": "De Widget weergeven",
