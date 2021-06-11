@@ -11,7 +11,7 @@
     "regular": {
         "ask": "Een regelmatig carpooltraject aanbieden"
     },
-    "urlGetAdAsk": "/gebruiker/berichten/acties/info",
+    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
     "roundTrip": "Heen-terugtraject",
     "notLinkedToACarpool": "Deze thread is niet gerelateerd aan carpoolen"
 }
