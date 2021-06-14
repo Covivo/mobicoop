@@ -1,0 +1,17 @@
+{
+    "blockUrl": "/user/block",
+    "blocked": "Geblokkeerd",
+    "block": "Blokkeren",
+    "userDelete": "Gebruiker niet meer geregistreerd",
+    "priceTooltip": "Indicatief tarief",
+    "price": "Prijs",
+    "seatsAvailable": "Beschikbare plaatsen",
+    "distanceTooltip": "Gecarpoolde afstand inclusief de omweg van de bestuurder",
+    "distance": "Afstand",
+    "regular": {
+        "ask": "Een regelmatig carpooltraject aanbieden"
+    },
+    "urlGetAdAsk": "/utilisateur/messages/actions/infos",
+    "roundTrip": "Heen-terugtraject",
+    "notLinkedToACarpool": "Deze thread is niet gerelateerd aan carpoolen"
+}

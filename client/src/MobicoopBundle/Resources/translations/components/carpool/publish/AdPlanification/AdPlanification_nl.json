@@ -1,0 +1,28 @@
+{
+    "fullDate": "ddd Do MMMM YYYY",
+    "optional": "facultatief",
+    "errorReturnTime": "Het uur van terugkomst ligt te dicht bij het vertrekuur.",
+    "marginTooltip": "Uw advertentie zal in de zoekopdrachten verschijnen met een marge van {margin} minuten rond deze uurregeling",
+    "addSchedule": "Een tijdslot toevoegen",
+    "returnTrip": {
+        "label": "Terugkomst"
+    },
+    "regularReturnTime": {
+        "label": "Terugkomst om"
+    },
+    "regularOutwardTime": {
+        "label": "Vertrek om"
+    },
+    "returnTime": {
+        "label": "Uur van terugkeer"
+    },
+    "outwardTime": {
+        "label": "Vertrekuur"
+    },
+    "returnDate": {
+        "label": "Terugkeerdatum"
+    },
+    "outwardDate": {
+        "label": "Vertrekdatum"
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "urlLogin": "/utilisateur/connexion",
+    "socialServicesUnavailableWithoutConsent": "Om gebruikt te kunnen worden, moet de functie voor het aanmelden via sociale media aanvaard worden dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
+    "consent": "Om u te kunnen aanmelden, moet u zich akkoord verklaard hebben met 'Uw verbinding actief houden' dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
+    "passwordRequired": "Het wachtwoord is vereist",
+    "emailInvalid": "Het e-mailadres moet geldig zijn",
+    "emailRequired": "Het e-mailadres is vereist",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "connection": "Aanmelden",
+    "urlGetSsoServices": "/user/getSsoServices",
+    "urlSignUp": "/utilisateur/inscription",
+    "signUp": "U bent nog niet geregistreerd?",
+    "textRecovery": "Wachtwoord vergeten?",
+    "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
+    "urlLoginResult": "/utilisateur/connexion/{id}",
+    "userFBNotFound": "Deze Facebook-gebruiker is niet geregistreerd op het platform",
+    "errorCredentialsFacebook": "Fout bij het aanmelden via Facebook",
+    "Unable to get an API token.": "Fout bij het aanmelden.",
+    "Bad credentials.": "Gebruikersnaam of wachtwoord niet juist.",
+    "title": "Aanmelden"
+}

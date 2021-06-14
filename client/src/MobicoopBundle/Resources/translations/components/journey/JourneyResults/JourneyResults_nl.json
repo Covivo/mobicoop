@@ -1,0 +1,11 @@
+{
+    "routeFromCityToCity": "/covoiturage/{origin}/{destination}",
+    "routeToCity": "/communes/covoiturage-vers-{city}",
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "nbResults": "Geen route gevonden | 1 carpoolroute gevonden | {nb} carpoolroutes gevonden",
+    "listJourneys": "De carpoolings oplijsten",
+    "journeyTo": " naar ",
+    "journeyFrom": "Carpooling van ",
+    "titleToCity": "Carpooling naar {city}",
+    "titleFromCity": "Carpooling van {city}"
+}

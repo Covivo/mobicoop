@@ -1,0 +1,80 @@
+{
+    "chips": {
+        "community": {
+            "label": "Community"
+        },
+        "gender": {
+            "value": {
+                "3": "Andere",
+                "2": "Mijnheer",
+                "1": "Mevrouw"
+            },
+            "label": "Aanspreektitel"
+        },
+        "role": {
+            "value": {
+                "3": "Bestuurder en passagier",
+                "2": "Passagier",
+                "1": "Bestuurder"
+            },
+            "label": "Type"
+        },
+        "hour": "Uur",
+        "date": {
+            "value": {
+                "DESC": "aflopend",
+                "ASC": "oplopend"
+            },
+            "label": "Datum"
+        }
+    },
+    "select": {
+        "hour": {
+            "help": "Weergave van de advertenties vanaf een geselecteerd uur.",
+            "label": "Uur"
+        },
+        "filter": {
+            "community": {
+                "label": "Community"
+            },
+            "gender": {
+                "other": {
+                    "value": "3",
+                    "label": "Andere"
+                },
+                "male": {
+                    "value": "2",
+                    "label": "Mijnheer"
+                },
+                "female": {
+                    "value": "1",
+                    "label": "Mevrouw"
+                },
+                "label": "Aanspreektitel"
+            },
+            "role": {
+                "both": {
+                    "value": "3",
+                    "label": "Bestuurder en passagier"
+                },
+                "passenger": {
+                    "value": "2",
+                    "label": "Passagier"
+                },
+                "driver": {
+                    "value": "1",
+                    "label": "Bestuurder"
+                },
+                "label": "Type advertentie"
+            }
+        },
+        "order": {
+            "date": {
+                "decreasing": "Per aflopende datum",
+                "increasing": "Per oplopende datum"
+            },
+            "label": "Volgorde"
+        }
+    },
+    "filters": "Filters"
+}

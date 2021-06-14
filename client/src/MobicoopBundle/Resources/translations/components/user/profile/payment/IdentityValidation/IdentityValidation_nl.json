@@ -1,0 +1,28 @@
+{
+    "sendUrl": "/utilisateur/document-validation-identite/envoyer",
+    "status": {
+        "refused": {
+            "9": "Document geweigerd omdat het onvolledig is",
+            "8": "Document geweigerd omdat het onleesbaar is",
+            "7": "Document geweigerd omdat de gegevens niet overeenstemmen met die van de gebruiker",
+            "6": "Document geweigerd omdat dit type document niet wordt aanvaard",
+            "5": "Document geweigerd omdat het document niet meer geldig is",
+            "4": "Document geweigerd omdat het bestand leeg is",
+            "3": "Document geweigerd omdat het vervalst werd",
+            "2": "Document geweigerd omdat u meerderjarig moet zijn",
+            "1": "Uw persoonsgegevens zijn veranderd. Valideer uw identiteit opnieuw",
+            "0": "Document geweigerd"
+        },
+        "outdated": "Document niet meer geldig",
+        "validated": "Identiteit gecontroleerd",
+        "pending": "Document wordt gevalideerd"
+    },
+    "send": "Verzenden",
+    "fileInput": {
+        "tooltip": "Het document moet in het formaat jpg, jpeg, png of pdf aangeleverd worden en mag niet groter zijn dan 6 MB",
+        "error": "Het document mag niet groter zijn dan 6 MB",
+        "label": "Geldig identiteitsdocument"
+    },
+    "text": "<p>De identiteitscontrole op basis van een identiteitsdocument (identiteitskaart recto-verso, paspoort, rijbewijs) is een wettelijke verplichting om betalingen te ontvangen. Deze verplichting is ingegeven door de strijd tegen het witwassen van geld.</p><p>De voor de betaling vereiste identiteitscontrole gebeurt door vergelijking van de in uw profiel ingevoerde voor- en achternaam met die op uw identiteitsbewijs. Zorg er dus voor dat de gegevens in uw profiel correct zijn.</p><p>U kunt de voorwaarden voor validatie van een identiteitsdocument bij onze partner <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>hier</a> lezen.</p>",
+    "title": "3. Identiteitscontrole"
+}
