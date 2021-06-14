@@ -23,11 +23,13 @@
 
 namespace App\I18n\Service;
 
+use App\App\Entity\App;
 use App\Article\Entity\Article;
 use App\I18n\Entity\Language;
 use App\I18n\Repository\LanguageRepository;
 use App\I18n\Repository\TranslateRepository;
 use ReflectionClass;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Language manager service.
@@ -38,6 +40,8 @@ class LanguageManager
 {
     private $languageRepository;
     private $translateRepository;
+    private $security;
+    private $defaultLanguage;
 
     const SETTER_PREFIX = "set";
 
@@ -46,10 +50,12 @@ class LanguageManager
         *
         * @param EntityManagerInterface $entityManager
         */
-    public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository)
+    public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository, Security $security, int $defaultLanguage)
     {
         $this->languageRepository = $languageRepository;
         $this->translateRepository = $translateRepository;
+        $this->security = $security;
+        $this->defaultLanguage = $defaultLanguage;
     }
 
     /**
@@ -66,16 +72,38 @@ class LanguageManager
     /**
      * Get the translated object if there is any
      *
-     * @param integer $idLanguage   Language for the translation
      * @param string $domain        Domaine of the translation
      * @param integer $idEntity     Id of the object we want the translation
      * @param object $object        The object to translate
      * @return object   The translated object (or the original if there is no translation)
      */
-    public function getTranslation(int $idLanguage, string $domain, int $idEntity, object $object): object
+    public function getTranslation(string $domain, int $idEntity, object $object): object
     {
-        if ($language = $this->getLanguage($idLanguage)) {
+        // We check if the user has a language and if it's not de default language of the platform
+        // Otherwise, we return the original object and do nothing
+        if ($this->security->getUser() instanceof App) {
+            return $object;
+        }
+        echo get_class($object);
+        // Set the id to the default language
+        $idLanguage = $this->defaultLanguage;
 
+        // Get the user language
+        $userLanguage = $this->security->getUser()->getLanguage();
+        if (is_null($userLanguage)) {
+            // The user has no specific language. We do nothing.
+            return $object;
+        } else {
+            if ($userLanguage->getId() == $this->defaultLanguage) {
+                // The user and the platform use the same language. We do nothing.
+                return $object;
+            } else {
+                // The user and the platform use different language. We set the User's language and try to find translation
+                $idLanguage = $userLanguage->getId();
+            }
+        }
+
+        if ($language = $this->getLanguage($idLanguage)) {
             // Check if the Object implements TRANSLATATBLE_ITEMS constant
             $class = get_class($object);
             $reflect = new ReflectionClass($class);
@@ -95,6 +123,7 @@ class LanguageManager
                 }
             }
         }
+        
 
         return $object;
     }

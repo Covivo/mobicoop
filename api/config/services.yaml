@@ -57,8 +57,6 @@ services:
     # Article Load Listener
     mobicoop.article.article_load_listener:
         class: App\Article\EventListener\ArticleLoadListener
-        arguments:
-            $defaultLanguage: '%env(int:DEFAULT_LANGUAGE)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
@@ -531,6 +529,11 @@ services:
     App\Journey\Repository\JourneyRepository:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    # Translation
+    App\I18n\Service\LanguageManager:
+        arguments:
+            $defaultLanguage: '%env(int:DEFAULT_LANGUAGE)%'
 
     # Mass Communication
     App\MassCommunication\Controller\:

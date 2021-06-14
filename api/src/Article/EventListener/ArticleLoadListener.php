@@ -35,13 +35,11 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 class ArticleLoadListener
 {
     private $eventManager;
-    private $defaultLanguage;
     private $languageManager;
 
-    public function __construct(EventManager $eventManager, LanguageManager $languageManager, int $defaultLanguage)
+    public function __construct(EventManager $eventManager, LanguageManager $languageManager)
     {
         $this->eventManager = $eventManager;
-        $this->defaultLanguage = $defaultLanguage;
         $this->languageManager = $languageManager;
     }
 
@@ -50,7 +48,7 @@ class ArticleLoadListener
         $article = $args->getEntity();
 
         if ($article instanceof Article) {
-            $this->languageManager->getTranslation($this->defaultLanguage, "Article", $article->getId(), $article);
+            $article = $this->languageManager->getTranslation("Article", $article->getId(), $article);
         }
     }
 }
