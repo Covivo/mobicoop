@@ -432,7 +432,7 @@ export default {
       snackbar: false,
       urlEvent: null,
       urlEventRules: [
-        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
+        v => !v || /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(v) || this.$t("form.urlEvent.error")
       ],
       dialog: false,
       endDatePickerMinDate: null,
