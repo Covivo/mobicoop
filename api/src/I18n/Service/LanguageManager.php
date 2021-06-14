@@ -23,8 +23,11 @@
 
 namespace App\I18n\Service;
 
+use App\Article\Entity\Article;
 use App\I18n\Entity\Language;
 use App\I18n\Repository\LanguageRepository;
+use App\I18n\Repository\TranslateRepository;
+use ReflectionClass;
 
 /**
  * Language manager service.
@@ -34,16 +37,19 @@ use App\I18n\Repository\LanguageRepository;
 class LanguageManager
 {
     private $languageRepository;
+    private $translateRepository;
 
+    const SETTER_PREFIX = "set";
 
     /**
         * Constructor.
         *
         * @param EntityManagerInterface $entityManager
         */
-    public function __construct(LanguageRepository $languageRepository)
+    public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository)
     {
         $this->languageRepository = $languageRepository;
+        $this->translateRepository = $translateRepository;
     }
 
     /**
@@ -52,8 +58,35 @@ class LanguageManager
      * @param integer $id
      * @return Language|null
      */
-    public function getLanguage(int $id)
+    public function getLanguage(int $id): ?Language
     {
         return $this->languageRepository->find($id);
+    }
+
+    public function getTranslation(int $idLanguage, string $domain, int $idEntity, object $object): object
+    {
+        if($language = $this->getLanguage($idLanguage)){
+
+            // Check if the Object implements TRANSLATATBLE_ITEMS constant
+            $class = get_class($object);
+            $reflect = new ReflectionClass($class);
+            if(array_key_exists("TRANSLATABLE_ITEMS", $reflect->getConstants())){
+                foreach($object::TRANSLATABLE_ITEMS as $key => $item){
+                    if($translate = $this->translateRepository->findOneBy([
+                        "property"=>$item,
+                        "language"=>$language,
+                        "domain"=>$domain,
+                        "idEntity"=>$idEntity
+                    ])){
+                        $setter = self::SETTER_PREFIX.ucwords($item);
+                        if (method_exists($object, $setter)) {
+                            $object->$setter($translate->getText());
+                        }
+                    }
+                }
+            }
+        }
+
+        return $object;
     }
 }

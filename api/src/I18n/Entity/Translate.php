@@ -109,7 +109,7 @@ class Translate
      * @ORM\Column(type="string", length=45)
      * @Groups({"aRead","read","write"})
      */
-    private $idEntity;    
+    private $idEntity;
 
     /**
      * @var string The translated property (i.e "title" for the title of the article of id = 1 for the given language)

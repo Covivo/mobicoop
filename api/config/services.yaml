@@ -54,6 +54,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
     
+    # Article Load Listener
+    mobicoop.article.article_load_listener:
+        class: App\Article\EventListener\ArticleLoadListener
+        arguments:
+            $defaultLanguage: '%env(int:DEFAULT_LANGUAGE)%'
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:
         class: App\Geography\EventListener\DirectionLoadListener
