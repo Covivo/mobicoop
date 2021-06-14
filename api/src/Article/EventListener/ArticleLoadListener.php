@@ -50,7 +50,7 @@ class ArticleLoadListener
         $article = $args->getEntity();
 
         if ($article instanceof Article) {
-            $this->languageManager->getTranslation($this->defaultLanguage,"Article",$article->getId(),$article);
+            $this->languageManager->getTranslation($this->defaultLanguage, "Article", $article->getId(), $article);
         }
     }
 }

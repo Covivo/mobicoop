@@ -63,21 +63,30 @@ class LanguageManager
         return $this->languageRepository->find($id);
     }
 
+    /**
+     * Get the translated object if there is any
+     *
+     * @param integer $idLanguage   Language for the translation
+     * @param string $domain        Domaine of the translation
+     * @param integer $idEntity     Id of the object we want the translation
+     * @param object $object        The object to translate
+     * @return object   The translated object (or the original if there is no translation)
+     */
     public function getTranslation(int $idLanguage, string $domain, int $idEntity, object $object): object
     {
-        if($language = $this->getLanguage($idLanguage)){
+        if ($language = $this->getLanguage($idLanguage)) {
 
             // Check if the Object implements TRANSLATATBLE_ITEMS constant
             $class = get_class($object);
             $reflect = new ReflectionClass($class);
-            if(array_key_exists("TRANSLATABLE_ITEMS", $reflect->getConstants())){
-                foreach($object::TRANSLATABLE_ITEMS as $key => $item){
-                    if($translate = $this->translateRepository->findOneBy([
+            if (array_key_exists("TRANSLATABLE_ITEMS", $reflect->getConstants())) {
+                foreach ($object::TRANSLATABLE_ITEMS as $key => $item) {
+                    if ($translate = $this->translateRepository->findOneBy([
                         "property"=>$item,
                         "language"=>$language,
                         "domain"=>$domain,
                         "idEntity"=>$idEntity
-                    ])){
+                    ])) {
                         $setter = self::SETTER_PREFIX.ucwords($item);
                         if (method_exists($object, $setter)) {
                             $object->$setter($translate->getText());
