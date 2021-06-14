@@ -23,16 +23,15 @@
 
 namespace App\Article\EventListener;
 
-use App\Article\Entity\Article;
-use App\Event\Service\EventManager;
+use App\Article\Entity\Section;
 use App\I18n\Service\LanguageManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Article Event listener
+ * Section Event listener
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ArticleLoadListener
+class SectionLoadListener
 {
     private $languageManager;
 
@@ -45,7 +44,7 @@ class ArticleLoadListener
     {
         $object = $args->getEntity();
 
-        if ($object instanceof Article) {
+        if ($object instanceof Section) {
             $object = $this->languageManager->getTranslation($object);
         }
     }
