@@ -326,6 +326,9 @@ class DataProvider
                 case 'json':
                     $headers['accept'] = 'application/json';
                     break;
+                case !is_null($this->session->get("language")):
+                    $headers['X-LOCALE'] = $this->session->get("language");
+                    break;
             }
         }
 

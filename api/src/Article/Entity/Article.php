@@ -166,6 +166,11 @@ class Article
     const STATUS_PUBLISHED = 1;
     const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
 
+    // List of the translatable items of this entity
+    const TRANSLATABLE_ITEMS = [
+        "title"
+    ];
+
     /**
      * @var int The id of this article.
      *
