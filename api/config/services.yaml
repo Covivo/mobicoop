@@ -262,6 +262,8 @@ services:
     App\Carpool\Service\ResultManager:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
+            $carpoolNoticeableDetourDurationPercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%'
+            $carpoolNoticeableDetourDistancePercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%'
 
     # Communication
     App\Communication\Controller\: 
@@ -373,6 +375,9 @@ services:
     App\Event\Command\EventImportCommand:
         arguments:
             $eventImportEnabled: '%env(bool:EVENT_IMPORT_ENABLED)%'
+    App\Event\Admin\DataProvider\EventCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
 
     # External Connection
     App\ExternalJourney\Service\ExternalConnectionManager:
@@ -465,6 +470,8 @@ services:
             $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
             $geoDataFixes: '%env(json:file:resolve:SIG_GEOCODER_FIXER_DATA)%'
             $distanceOrder: '%env(bool:SIG_GEOCODER_PRIORITIZE_ORDER)%'
+            $sigPrioritizeCoordinates: '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
+            $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
 
     App\Geography\Service\TerritoryManager:
         tags:

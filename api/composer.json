@@ -33,7 +33,7 @@
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/console": "*",
         "symfony/dotenv": "*",
-        "symfony/flex": "^1.1",
+        "symfony/flex": "^1.13",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
         "symfony/security-bundle": "^4.0",

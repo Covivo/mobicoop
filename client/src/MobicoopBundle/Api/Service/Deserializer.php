@@ -90,6 +90,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 
 /**
  * Custom deserializer service.
@@ -246,6 +247,9 @@ class Deserializer
             case ContactType::class:
                 return $this->deserializeContactType($data) ;
                 break;
+            case Language::class:
+                return $this->deserializeLanguage($data) ;
+                break;
             default:
                 break;
         }
@@ -280,6 +284,9 @@ class Deserializer
                 $bankAccounts[] = $this->deserializeBankAccount($bankAccount);
             }
             $user->setBankAccounts($bankAccounts);
+        }
+        if (isset($data["language"])) {
+            $user->setLanguage($this->deserializeLanguage($data['language']));
         }
         return $user;
     }
@@ -1014,6 +1021,18 @@ class Deserializer
         $contactType = new ContactType();
         $contactType = $this->autoSet($contactType, $data);
         return $contactType;
+    }
+
+    private function deserializeLanguage(array $data): ?Language
+    {
+        $language = new Language();
+        $language = $this->autoSet($language, $data);
+        if (isset($data["users"])) {
+            foreach ($data["users"] as $user) {
+                $user->addUser($this->deserializeUser($user));
+            }
+        }
+        return $language;
     }
 
     private function autoSet($object, $data)

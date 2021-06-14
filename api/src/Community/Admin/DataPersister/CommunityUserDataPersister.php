@@ -43,7 +43,21 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof CommunityUser && ((isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') || (isset($context['item_operation_name']) &&  $context['item_operation_name'] == ('ADMIN_patch' || 'ADMIN_delete')));
+        if ($data instanceof CommunityUser) {
+            switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return $context['collection_operation_name'] == 'ADMIN_post';
+                    break;
+                case isset($context['item_operation_name']):
+                    return $context['item_operation_name'] == 'ADMIN_patch' || $context['item_operation_name'] == 'ADMIN_delete';
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function persist($data, array $context = [])

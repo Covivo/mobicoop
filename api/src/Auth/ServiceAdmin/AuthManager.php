@@ -47,39 +47,16 @@ class AuthManager
             AuthItem::ROLE_SUPER_ADMIN,
             AuthItem::ROLE_ADMIN,
             AuthItem::ROLE_USER_REGISTERED_FULL,
-            AuthItem::ROLE_USER_REGISTERED_MINIMAL,
-            AuthItem::ROLE_MASS_MATCH,
-            AuthItem::ROLE_COMMUNITY_MANAGER,
-            AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC,
-            AuthItem::ROLE_COMMUNITY_MANAGER_PRIVATE,
-            AuthItem::ROLE_SOLIDARY_MANAGER,
-            AuthItem::ROLE_SOLIDARY_VOLUNTEER,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY,
-            AuthItem::ROLE_COMMUNICATION_MANAGER,
-            AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            AuthItem::ROLE_MASS_MATCH
         ],
         AuthItem::ROLE_ADMIN => [
             AuthItem::ROLE_ADMIN,
-            AuthItem::ROLE_USER_REGISTERED_FULL,
-            AuthItem::ROLE_USER_REGISTERED_MINIMAL,
-            AuthItem::ROLE_COMMUNITY_MANAGER,
-            AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC,
-            AuthItem::ROLE_COMMUNITY_MANAGER_PRIVATE,
-            AuthItem::ROLE_SOLIDARY_MANAGER,
-            AuthItem::ROLE_SOLIDARY_VOLUNTEER,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY,
-            AuthItem::ROLE_COMMUNICATION_MANAGER,
-            AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            AuthItem::ROLE_USER_REGISTERED_FULL
         ],
         AuthItem::ROLE_SOLIDARY_MANAGER => [
             AuthItem::ROLE_USER_REGISTERED_FULL,
-            AuthItem::ROLE_USER_REGISTERED_MINIMAL,
             AuthItem::ROLE_SOLIDARY_VOLUNTEER,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY,
-            AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE
+            AuthItem::ROLE_SOLIDARY_BENEFICIARY
         ],
     ];
 

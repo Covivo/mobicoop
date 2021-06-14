@@ -56,6 +56,7 @@ class WaySchedule
     /**
      * @var WeekSchedule[] If frequency=regular, this parameter specifies the schedule of expected regular journey.
      * If several WeekSchedule objects are passed in the array, the journey is expected to happened on all given time slots (two departures the same day is considered a possible case).
+     * <span style='color:red;'>WARNING</span> : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -64,7 +65,7 @@ class WaySchedule
     /**
      * @var int Time margin in seconds
      * RDEX+: If frequency=regular, this timeDelta is taken into account only if no other value is specified for the specific day
-     * WARNING : For now, Mobicoop only use the outward timeDelta and ignore the rest
+     * <span style='color:red;'>WARNING</span> : For now, Mobicoop only use the outward timeDelta and ignore the rest
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $timeDelta;

@@ -21,33 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Interoperability\DataPersister;
+namespace Mobicoop\Bundle\MobicoopBundle\I18n\Service;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Interoperability\Ressource\Ad;
-use App\Carpool\Interoperability\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 
-final class AdPostDataPersister implements ContextAwareDataPersisterInterface
+/**
+ * Language management service.
+ */
+class LanguageManager
 {
-    private $adManager;
+    private $dataProvider;
 
-    public function __construct(AdManager $adManager)
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
+    public function __construct(DataProvider $dataProvider)
     {
-        $this->adManager = $adManager;
-    }
-  
-    public function supports($data, array $context = []): bool
-    {
-        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'interop_post';
-    }
-
-    public function persist($data, array $context = [])
-    {
-        return $this->adManager->createAd($data);
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Language::class);
     }
 
-    public function remove($data, array $context = [])
+    /**
+     * Get one language
+     *
+     * @return Language|null
+     */
+    public function getLanguage($id)
     {
-        // call your persistence layer to delete $data
+        $response = $this->dataProvider->getItem($id);
+        return $response->getValue();
     }
 }

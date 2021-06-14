@@ -226,3 +226,7 @@ services:
         arguments:
             $payment_electronic_active: '%env(bool:PAYMENT_ELECTRONIC_ACTIVE)%'
             $tipsEncouragement: '%env(bool:PAYMENT_TIPS_ENCOURAGEMENT)%'
+    
+    # I18n
+    Mobicoop\Bundle\MobicoopBundle\I18n\Service\:
+        resource: '@MobicoopBundle/I18n/Service/*'

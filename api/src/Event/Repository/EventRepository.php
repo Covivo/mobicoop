@@ -26,6 +26,7 @@ namespace App\Event\Repository;
 use App\Event\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class EventRepository
 {
@@ -103,5 +104,32 @@ class EventRepository
     public function findOneBy(array $criteria): ?Event
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Get all internal events (exclude external events)
+     *
+     * @return void
+     */
+    public function getInternalEvents()
+    {
+        $query = $this->repository->createQueryBuilder('e')
+        ->where('e.externalSource is NULL')
+        ->andWhere('e.externalId is NULL')
+        ->getQuery()->getResult();
+        return $query;
+    }
+
+    /**
+     * Get all internal events QueryBuilder (exclude external events)
+     * It's used to get only the querybuilder to apply filters on it on custom DataProvider
+     * @return QueryBuilder
+     */
+    public function getInternalEventsQueryBuilder(): QueryBuilder
+    {
+        $query = $this->repository->createQueryBuilder('e')
+        ->where('e.externalSource is NULL')
+        ->andWhere('e.externalId is NULL');
+        return $query;
     }
 }

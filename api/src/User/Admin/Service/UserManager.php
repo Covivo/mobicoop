@@ -94,7 +94,6 @@ class UserManager
     {
         // add delegation
         $user->setUserDelegate($this->security->getUser());
-
         // check if roles were set
         if (count($user->getRolesTerritory())>0) {
             // roles are set => add each role
