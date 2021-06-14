@@ -72,19 +72,17 @@ class LanguageManager
     /**
      * Get the translated object if there is any
      *
-     * @param string $domain        Domaine of the translation
-     * @param integer $idEntity     Id of the object we want the translation
      * @param object $object        The object to translate
      * @return object   The translated object (or the original if there is no translation)
      */
-    public function getTranslation(string $domain, int $idEntity, object $object): object
+    public function getTranslation(object $object): object
     {
         // We check if the user has a language and if it's not de default language of the platform
         // Otherwise, we return the original object and do nothing
         if ($this->security->getUser() instanceof App) {
             return $object;
         }
-        echo get_class($object);
+
         // Set the id to the default language
         $idLanguage = $this->defaultLanguage;
 
@@ -112,8 +110,8 @@ class LanguageManager
                     if ($translate = $this->translateRepository->findOneBy([
                         "property"=>$item,
                         "language"=>$language,
-                        "domain"=>$domain,
-                        "idEntity"=>$idEntity
+                        "domain"=>$reflect->getShortName(),
+                        "idEntity"=>$object->getId()
                     ])) {
                         $setter = self::SETTER_PREFIX.ucwords($item);
                         if (method_exists($object, $setter)) {

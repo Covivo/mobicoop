@@ -45,10 +45,10 @@ class ArticleLoadListener
 
     public function postLoad(LifecycleEventArgs $args)
     {
-        $article = $args->getEntity();
+        $object = $args->getEntity();
 
-        if ($article instanceof Article) {
-            $article = $this->languageManager->getTranslation("Article", $article->getId(), $article);
+        if ($object instanceof Article) {
+            $object = $this->languageManager->getTranslation($object);
         }
     }
 }
