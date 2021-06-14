@@ -30,6 +30,7 @@ use App\I18n\Repository\LanguageRepository;
 use App\I18n\Repository\TranslateRepository;
 use ReflectionClass;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Language manager service.
@@ -42,6 +43,7 @@ class LanguageManager
     private $translateRepository;
     private $security;
     private $defaultLanguage;
+    private $request;
 
     const SETTER_PREFIX = "set";
 
@@ -50,12 +52,13 @@ class LanguageManager
         *
         * @param EntityManagerInterface $entityManager
         */
-    public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository, Security $security, int $defaultLanguage)
+    public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository, Security $security, int $defaultLanguage, RequestStack $requestStack)
     {
         $this->languageRepository = $languageRepository;
         $this->translateRepository = $translateRepository;
         $this->security = $security;
         $this->defaultLanguage = $defaultLanguage;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
@@ -77,29 +80,48 @@ class LanguageManager
      */
     public function getTranslation(object $object): object
     {
-        // We check if the user has a language and if it's not de default language of the platform
-        // Otherwise, we return the original object and do nothing
-        if ($this->security->getUser() instanceof App) {
-            return $object;
-        }
-
         // Set the id to the default language
         $idLanguage = $this->defaultLanguage;
+        
+        if ($this->security->getUser() instanceof App) {
+            // If the user is an App, we check if there is a locale given
+            if ($this->request->headers->has('X-LOCALE')) {
+                // We try to locate the language id using x-locale value
+                foreach (Language::LANGUAGES as $key => $currentLanguage) {
+                    if ($currentLanguage['code']==$this->request->headers->get('X-LOCALE')) {
+                        $idLanguage = $currentLanguage['id'];
+                        break;
+                    }
+                }
 
-        // Get the user language
-        $userLanguage = $this->security->getUser()->getLanguage();
-        if (is_null($userLanguage)) {
-            // The user has no specific language. We do nothing.
-            return $object;
+                if ($idLanguage == $this->defaultLanguage) {
+                    // The app and the platform use the same language. We do nothing.
+                    return $object;
+                }
+            } else {
+                // No local, we do nothing
+                return $object;
+            }
         } else {
-            if ($userLanguage->getId() == $this->defaultLanguage) {
-                // The user and the platform use the same language. We do nothing.
+            // Not an App
+            // We check if the user has a language and if it's not de default language of the platform
+            // Otherwise, we return the original object and do nothing
+            // Get the user language
+            $userLanguage = $this->security->getUser()->getLanguage();
+            if (is_null($userLanguage)) {
+                // The user has no specific language. We do nothing.
                 return $object;
             } else {
-                // The user and the platform use different language. We set the User's language and try to find translation
-                $idLanguage = $userLanguage->getId();
+                if ($userLanguage->getId() == $this->defaultLanguage) {
+                    // The user and the platform use the same language. We do nothing.
+                    return $object;
+                } else {
+                    // The user and the platform use different language. We set the User's language and try to find translation
+                    $idLanguage = $userLanguage->getId();
+                }
             }
         }
+
 
         if ($language = $this->getLanguage($idLanguage)) {
             // Check if the Object implements TRANSLATATBLE_ITEMS constant
