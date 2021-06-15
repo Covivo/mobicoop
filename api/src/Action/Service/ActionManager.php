@@ -26,6 +26,7 @@ namespace App\Action\Service;
 use Symfony\Contracts\EventDispatcher\Event;
 use App\Action\Entity\Action;
 use App\Action\Entity\Animation;
+use App\Action\Event\AnimationMadeEvent;
 use App\Action\Exception\ActionException;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
@@ -105,6 +106,7 @@ class ActionManager
             case SolidaryAnimationPostedEvent::NAME:$this->onSolidaryAnimationPosted($event);
                 break;
             case LoginDelegateEvent::NAME:$this->onLoginDelegate($action, $event);
+                break;
         }
     }
 

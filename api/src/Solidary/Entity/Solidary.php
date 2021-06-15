@@ -87,15 +87,33 @@ use DateTime;
  *                  "groups"={"aReadCol"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_solidary_list',object)"
+ *              "security"="is_granted('admin_solidary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_actions_get"={
+ *              "path"="/admin/solidaries/actions",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/solidaries",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aReadCreated"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_solidary_create',object)"
- *          }
+ *              "security"="is_granted('admin_solidary_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -129,7 +147,20 @@ use DateTime;
  *              "path"="/admin/solidaries/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aReadItem"}},
- *              "security"="is_granted('admin_solidary_read',object)"
+ *              "security"="is_granted('admin_solidary_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/solidaries/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )
@@ -413,7 +444,7 @@ class Solidary
     private $asksList;
 
     /**
-     * @var SolidaryUser SolidaryUser associated ti the ask
+     * @var SolidaryUser SolidaryUser associated to the ask
      * @Groups ({"writeSolidary", "readSolidary"})
      * @MaxDepth(1)
      */
@@ -1228,6 +1259,17 @@ class Solidary
     }
 
     /**
+     * @var string|null Id of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     *
+     * @return int
+     */
+    public function getAdminuserId(): int
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId();
+    }
+
+    /**
      * @var string|null Given name of the beneficiary
      * @Groups({"aReadCol", "aReadItem"})
      *
@@ -1397,14 +1439,14 @@ class Solidary
     }
 
     /**
-     * @var int Proposal type for the solidary record
-     * @Groups("aReadItem")
+     * @var string Proposal type for the solidary record
+     * @Groups({"aReadCol","aReadItem"})
      *
-     * @return int
+     * @return string
      */
-    public function getAdminproposalType(): int
+    public function getAdminproposalType(): string
     {
-        return $this->getProposal()->getType();
+        return $this->getProposal()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return';
     }
 
     /**
@@ -1561,7 +1603,7 @@ class Solidary
      * @Groups("aReadItem")
      */
     private $adminschedules;
-    public function getAdminschedules(): array
+    public function getAdminschedules(): ?array
     {
         return $this->adminschedules;
     }
@@ -1582,22 +1624,6 @@ class Solidary
     }
 
     /**
-     * @var array Solutions for the solidary record
-     * @Groups("aReadItem")
-     */
-    private $adminsolutions;
-    public function getAdminsolutions(): array
-    {
-        return $this->adminsolutions;
-    }
-    public function setAdminsolutions(array $adminsolutions): self
-    {
-        $this->adminsolutions = $adminsolutions;
-
-        return $this;
-    }
-
-    /**
      * @var array Diary entries for the solidary record
      * @Groups("aReadItem")
      */
@@ -1609,6 +1635,54 @@ class Solidary
     public function setAdmindiary(array $admindiary): self
     {
         $this->admindiary = $admindiary;
+
+        return $this;
+    }
+
+    /**
+     * @var array Carpools for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admincarpools;
+    public function getAdmincarpools(): array
+    {
+        return $this->admincarpools;
+    }
+    public function setAdmincarpools(array $admincarpools): self
+    {
+        $this->admincarpools = $admincarpools;
+
+        return $this;
+    }
+
+    /**
+     * @var array Transporters for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admintransporters;
+    public function getAdmintransporters(): array
+    {
+        return $this->admintransporters;
+    }
+    public function setAdmintransporters(array $admintransporters): self
+    {
+        $this->admintransporters = $admintransporters;
+
+        return $this;
+    }
+
+    /**
+     * @var array Solutions for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminsolutions;
+    public function getAdminsolutions(): array
+    {
+        return $this->adminsolutions;
+    }
+    public function setAdminsolutions(array $adminsolutions): self
+    {
+        $this->adminsolutions = $adminsolutions;
 
         return $this;
     }

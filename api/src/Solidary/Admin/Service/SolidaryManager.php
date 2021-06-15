@@ -45,6 +45,9 @@ use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\Subject;
 use App\Action\Entity\Diary;
+use App\Carpool\Entity\Waypoint;
+use App\Action\Event\AnimationMadeEvent;
+use App\Action\Repository\ActionRepository;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Event\SolidaryCreatedEvent;
@@ -57,6 +60,8 @@ use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
+use App\Action\Entity\Animation;
+use App\Communication\Entity\Message;
 use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
 use DateTime;
@@ -90,6 +95,7 @@ class SolidaryManager
     private $needRepository;
     private $eventDispatcher;
     private $solidaryRepository;
+    private $actionRepository;
 
     /**
      * Constructor
@@ -112,7 +118,8 @@ class SolidaryManager
         SubjectRepository $subjectRepository,
         NeedRepository $needRepository,
         EventDispatcherInterface $eventDispatcher,
-        SolidaryRepository $solidaryRepository
+        SolidaryRepository $solidaryRepository,
+        ActionRepository $actionRepository
     ) {
         $this->poster = $security->getUser();
         $this->entityManager = $entityManager;
@@ -130,6 +137,7 @@ class SolidaryManager
         $this->needRepository = $needRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->solidaryRepository = $solidaryRepository;
+        $this->actionRepository = $actionRepository;
     }
 
     /**
@@ -188,6 +196,115 @@ class SolidaryManager
             }
         }
 
+        // set carpools and transporters
+        $carpools = [
+            'outward' => [],
+            'return' => []
+        ];
+        foreach ($solidary->getProposal()->getMatchingOffers() as $offer) {
+            /**
+             * @var Matching $offer
+             */
+            $carpool = [
+                'carpoolerId' => $offer->getProposalOffer()->getUser()->getId(),
+                'carpoolerGivenName' => $offer->getProposalOffer()->getUser()->getGivenName(),
+                'carpoolerFamilyName' => $offer->getProposalOffer()->getUser()->getFamilyName(),
+                'carpoolerAvatar' => $offer->getProposalOffer()->getUser()->getAvatar(),
+                'frequency' => $offer->getProposalOffer()->getCriteria()->getFrequency(),
+                'type' => $offer->getProposalOffer()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return',
+                'passenger' => $offer->getProposalOffer()->getCriteria()->isPassenger(),
+                'driver' => $offer->getProposalOffer()->getCriteria()->isDriver(),
+                'solidaryExclusive' => $offer->getProposalOffer()->getCriteria()->isSolidaryExclusive(),
+                'fromDate' => $offer->getProposalOffer()->getCriteria()->getFromDate(),
+                'fromTime' => $offer->getProposalOffer()->getCriteria()->getFromTime(),
+                'toDate' => $offer->getProposalOffer()->getCriteria()->getToDate()
+            ];
+            if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $carpool['schedule'] = [
+                    'mon' => $offer->getProposalOffer()->getCriteria()->isMonCheck(),
+                    'tue' => $offer->getProposalOffer()->getCriteria()->isTueCheck(),
+                    'wed' => $offer->getProposalOffer()->getCriteria()->isWedCheck(),
+                    'thu' => $offer->getProposalOffer()->getCriteria()->isThuCheck(),
+                    'fri' => $offer->getProposalOffer()->getCriteria()->isFriCheck(),
+                    'sat' => $offer->getProposalOffer()->getCriteria()->isSatCheck(),
+                    'sun' => $offer->getProposalOffer()->getCriteria()->isSunCheck()
+                ];
+            }
+            foreach ($offer->getProposalOffer()->getWaypoints() as $waypoint) {
+                /**
+                 * @var Waypoint $waypoint
+                 */
+                if ($waypoint->getPosition() == 0) {
+                    $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
+                    if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                        $destinationTime = clone $offer->getProposalOffer()->getCriteria()->getFromTime();
+                        $destinationTime->add(new \DateInterval('PT' . $offer->getOriginalDuration() . 'S'));
+                        $carpool['destinationTime'] = $destinationTime;
+                    }
+                }
+                if ($waypoint->isDestination()) {
+                    $carpool['destination'] = $waypoint->getAddress()->jsonSerialize();
+                }
+                $carpool['detourDuration'] = $offer->getDetourDuration();
+                $carpool['detourDistance'] = $offer->getDetourDistance();
+            }
+            $carpools['outward'][] = $carpool;
+        }
+        if ($solidary->getProposal()->getProposalLinked()) {
+            foreach ($solidary->getProposal()->getProposalLinked()->getMatchingOffers() as $offer) {
+                /**
+                 * @var Matching $offer
+                 */
+                $carpool = [
+                    'carpoolerId' => $offer->getProposalOffer()->getUser()->getId(),
+                    'carpoolerGivenName' => $offer->getProposalOffer()->getUser()->getGivenName(),
+                    'carpoolerFamilyName' => $offer->getProposalOffer()->getUser()->getFamilyName(),
+                    'carpoolerAvatar' => $offer->getProposalOffer()->getUser()->getAvatar(),
+                    'frequency' => $offer->getProposalOffer()->getCriteria()->getFrequency(),
+                    'type' => $offer->getProposalOffer()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return',
+                    'passenger' => $offer->getProposalOffer()->getCriteria()->isPassenger(),
+                    'driver' => $offer->getProposalOffer()->getCriteria()->isDriver(),
+                    'solidaryExclusive' => $offer->getProposalOffer()->getCriteria()->isSolidaryExclusive(),
+                    'fromDate' => $offer->getProposalOffer()->getCriteria()->getFromDate(),
+                    'fromTime' => $offer->getProposalOffer()->getCriteria()->getFromTime(),
+                    'toDate' => $offer->getProposalOffer()->getCriteria()->getToDate()
+                ];
+                if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                    $carpool['schedule'] = [
+                        'mon' => $offer->getProposalOffer()->getCriteria()->isMonCheck(),
+                        'tue' => $offer->getProposalOffer()->getCriteria()->isTueCheck(),
+                        'wed' => $offer->getProposalOffer()->getCriteria()->isWedCheck(),
+                        'thu' => $offer->getProposalOffer()->getCriteria()->isThuCheck(),
+                        'fri' => $offer->getProposalOffer()->getCriteria()->isFriCheck(),
+                        'sat' => $offer->getProposalOffer()->getCriteria()->isSatCheck(),
+                        'sun' => $offer->getProposalOffer()->getCriteria()->isSunCheck()
+                    ];
+                }
+                foreach ($offer->getProposalOffer()->getWaypoints() as $waypoint) {
+                    /**
+                     * @var Waypoint $waypoint
+                     */
+                    if ($waypoint->getPosition() == 0) {
+                        $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
+                    }
+                    if ($waypoint->isDestination()) {
+                        $carpool['destination'] = $waypoint->getAddress()->jsonSerialize();
+                        if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                            $destinationTime = clone $offer->getProposalOffer()->getCriteria()->getFromTime();
+                            $destinationTime->add(new \DateInterval('PT' . $offer->getOriginalDuration() . 'S'));
+                            $carpool['destinationTime'] = $destinationTime;
+                        }
+                    }
+                    $carpool['detourDuration'] = $offer->getDetourDuration();
+                    $carpool['detourDistance'] = $offer->getDetourDistance();
+                }
+                $carpools['return'][] = $carpool;
+            }
+        }
+        $solidary->setAdmincarpools($carpools);
+
+        $solidary->setAdmintransporters([]);
+
         // set solutions
         $solutions = [];
         foreach ($solidary->getSolidarySolutions() as $solution) {
@@ -226,10 +343,12 @@ class SolidaryManager
              */
             $diaries[] = [
                 'action' => $diary->getAction()->getName(),
+                'comment' => $diary->getComment(),
                 'progression' => $diary->getProgression(),
                 'authorGivenName' => $diary->getAuthor()->getGivenName(),
                 'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
                 'authorAvatar' => $diary->getAuthor()->getAvatar(),
+                'userId' => $diary->getUser()->getId(),
                 'givenName' => $diary->getUser()->getGivenName(),
                 'familyName' => $diary->getUser()->getFamilyName(),
                 'avatar' => $diary->getUser()->getAvatar(),
@@ -308,6 +427,16 @@ class SolidaryManager
     public function getSolidaries(PaginatorInterface $solidaries)
     {
         return $solidaries;
+    }
+
+    /**
+     * Get manually available triggered actions
+     *
+     * @return array
+     */
+    public function getActions()
+    {
+        return $this->actionRepository->getSolidaryActions();
     }
 
     /**
@@ -687,8 +816,54 @@ class SolidaryManager
      * @param array         $fields                 The updated fields
      * @return Solidary     The solidary updated
      */
-    public function patchSolidary(solidary $solidary, array $fields)
+    public function patchSolidary(Solidary $solidary, array $fields)
     {
+        // check if a new action has been requested
+        if (array_key_exists('animation', $fields)) {
+            if (!array_key_exists('action', $fields['animation'])) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_REQUIRED);
+            }
+            if (!array_key_exists('user', $fields['animation'])) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_USER_REQUIRED);
+            }
+            if (!$action = $this->actionRepository->find($fields['animation']['action'])) {
+                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_NOT_FOUND, $fields['animation']['action']));
+            }
+            if (!$user = $this->userRepository->find($fields['animation']['user'])) {
+                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_USER_NOT_FOUND, $fields['animation']['user']));
+            }
+            $animation = new Animation();
+            $animation->setSolidary($solidary);
+            $animation->setAction($action);
+            $animation->setUser($user);
+            $animation->setAuthor($this->poster);
+            if (array_key_exists('comment', $fields['animation'])) {
+                $animation->setComment($fields['animation']['comment']);
+            }
+            if (array_key_exists('message', $fields['animation'])) {
+                // there's a message associated with the animation, we need to build a Message object
+                $message = new Message();
+                $message->setText($fields['animation']['message']);
+                if (array_key_exists('messageDelegated', $fields['animation']) && $fields['animation']['messageDelegated'] == 1) {
+                    // message sent as delegated ('in the name of')
+                    $message->setUser($solidary->getUser());
+                    $message->setUserDelegate($this->poster);
+                } else {
+                    $message->setUser($this->poster);
+                }
+                $animation->setMessage($message);
+            }
+            if (array_key_exists('progression', $fields['animation'])) {
+                $animation->setProgression($fields['animation']['progression']);
+            }
+            // send event to warn that an animation has been made
+            $event = new AnimationMadeEvent($animation);
+            $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
+            
+            // we don't go further, although we need a complete solidary !
+            return $this->getSolidary($solidary->getId());
+        }
+
         // persist the solidary record
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();

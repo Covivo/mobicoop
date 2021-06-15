@@ -24,6 +24,7 @@ namespace App\Action\Service;
 
 use App\Action\Entity\Action;
 use App\Action\Entity\Diary;
+use App\Action\Entity\Animation;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
@@ -71,5 +72,30 @@ class DiaryManager
 
         $this->entityManager->persist($diary);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Handle an animation
+     *
+     * @param Animation $animation    The animation that has been made
+     * @return void
+     */
+    public function handleAnimation(Animation $animation)
+    {
+        // if the action linked with the animation is not meant to be logged in the diary, we exit immediately
+        if (!$animation->getAction()->isInDiary()) {
+            return;
+        }
+
+        // add an entry in diary
+        $this->addDiaryEntry(
+            $animation->getAction(),
+            $animation->getUser(),
+            $animation->getAuthor(),
+            $animation->getComment(),
+            $animation->getSolidary(),
+            $animation->getSolidarySolution(),
+            $animation->getProgression()
+        );
     }
 }
