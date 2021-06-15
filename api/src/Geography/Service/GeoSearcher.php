@@ -65,6 +65,7 @@ class GeoSearcher
     private $dataPath;
     private $eventRepository;
     private $defaultSigResultNumber;
+    private $defaultSigReturnedResultNumber;
     private $defaultNamedResultNumber;
     private $defaultRelayPointResultNumber;
     private $defaultEventResultNumber;
@@ -89,6 +90,7 @@ class GeoSearcher
         string $iconPath,
         string $dataPath,
         string $defaultSigResultNumber,
+        int $defaultSigReturnedResultNumber,
         string $defaultNamedResultNumber,
         string $defaultRelayPointResultNumber,
         string $defaultEventResultNumber,
@@ -109,6 +111,7 @@ class GeoSearcher
         $this->dataPath = $dataPath;
         $this->eventRepository = $eventRepository;
         $this->defaultSigResultNumber = $defaultSigResultNumber;
+        $this->defaultSigReturnedResultNumber = $defaultSigReturnedResultNumber;
         $this->defaultNamedResultNumber = $defaultNamedResultNumber;
         $this->defaultRelayPointResultNumber = $defaultRelayPointResultNumber;
         $this->defaultEventResultNumber = $defaultEventResultNumber;
@@ -314,6 +317,13 @@ class GeoSearcher
 
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
 
+            // We set the similarity (algorithm method)
+            $address->setSimilarityWithSearch(levenshtein($input, $address->getAddressLocality()));
+
+            usort($result, function ($a, $b) {
+                return $a->getSimilarityWithSearch()>$b->getSimilarityWithSearch();
+            });
+
             $result[] = $address;
         }
 
@@ -323,6 +333,7 @@ class GeoSearcher
             });
         }
         
+        $result = array_slice($result, 0, $this->defaultSigReturnedResultNumber);
         
 
         // 3 - relay points
