@@ -69,10 +69,9 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if ($this->request->get("showAllEvents")=="" || !$this->request->get("showAllEvents")) {
-            } else {
+            if ($this->request->get("showAllEvents")=="") {
                 switch ($operationName) {
-                    case "get":
+                    case "ADMIN_get":
                         $territories = $this->authManager->getTerritoriesForItem("event_list");
                 }
             }
