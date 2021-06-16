@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Extension;
+namespace App\Event\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
@@ -69,10 +69,9 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if ($this->request->get("showAllEvents")=="" || !$this->request->get("showAllEvents")) {
-            } else {
+            if ($this->request->get("showAllEvents")=="") {
                 switch ($operationName) {
-                    case "get":
+                    case "ADMIN_get":
                         $territories = $this->authManager->getTerritoriesForItem("event_list");
                 }
             }
