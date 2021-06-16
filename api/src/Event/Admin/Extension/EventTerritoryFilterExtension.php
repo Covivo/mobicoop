@@ -49,31 +49,24 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
+        // concerns only admin get collection
+        if ($resourceClass == Event::class && $operationName == "ADMIN_get") {
+            $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
+        }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        // concerns only Event resource, and User users (not Apps)
-        if (Event::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
-            return;
-        }
-
         $territories = [];
-
-        // we check if the user has limited territories
-        if ($isItem) {
-        } else {
-            if ($this->request->get("showAllEvents")=="") {
-                switch ($operationName) {
-                    case "ADMIN_get":
-                        $territories = $this->authManager->getTerritoriesForItem("event_list");
-                }
+        if ($this->request->get("showAllEvents")=="") {
+            switch ($operationName) {
+                case "ADMIN_get":
+                    $territories = $this->authManager->getTerritoriesForItem("event_list");
             }
         }
         
