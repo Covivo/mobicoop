@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,79 +21,58 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Extension;
+namespace App\RelayPoint\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\App\Entity\App;
-use App\Event\Entity\Event;
 use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
+use App\RelayPoint\Entity\RelayPoint;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
-final class EventTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+/**
+ * Extension used to limit the list of relaypoints to the territories allowed for the requester (admin)
+ */
+final class RelayPointTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    private $security;
     private $authManager;
-    private $request;
 
     public function __construct(Security $security, AuthManager $authManager, RequestStack $request)
     {
-        $this->security = $security;
         $this->authManager = $authManager;
-        $this->request = $request->getCurrentRequest();
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
+        // concerns only admin get collection
+        if ($resourceClass == RelayPoint::class && $operationName == "ADMIN_get") {
+            $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
+        }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        // concerns only Event resource, and User users (not Apps)
-        if (Event::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
-            return;
-        }
-
         $territories = [];
 
         // we check if the user has limited territories
-        if ($isItem) {
-        } else {
-            if ($this->request->get("showAllEvents")=="" || !$this->request->get("showAllEvents")) {
-            } else {
-                switch ($operationName) {
-                    case "get":
-                        $territories = $this->authManager->getTerritoriesForItem("event_list");
-                }
-            }
-        }
+        $territories = $this->authManager->getTerritoriesForItem("relay_point_list");
         
-
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
-            $where = "(";
-            foreach ($territories as $territory) {
-                if ($where != '(') {
-                    $where .= " OR ";
-                }
-                $territoryFrom = 'territory'.$territory;
-                $queryBuilder->leftJoin('a.territories', $territoryFrom);
-                $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
-            }
-            $where .= ")";
             $queryBuilder
-            ->andWhere($where);
+            ->leftJoin($rootAlias.".address", 'arptfe')
+            ->leftJoin("arptfe.territories", 'trptfe')
+            ->andWhere('trptfe.id in (:territories)')
+            ->setParameter('territories', $territories)
+            ;
         }
     }
 }

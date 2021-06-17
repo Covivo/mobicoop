@@ -25,6 +25,7 @@ namespace App\DataFixtures;
 
 use App\Carpool\Service\ProposalManager;
 use App\DataFixtures\Service\BasicFixturesManager;
+use App\Geography\Service\TerritoryManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
@@ -36,6 +37,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
     private $fixturesManager;
     private $proposalManager;
+    private $territoryManager;
 
     private $fixturesEnabled;
     private $fixturesClearBase;
@@ -44,6 +46,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     public function __construct(
         BasicFixturesManager $fixturesManager,
         ProposalManager $proposalManager,
+        TerritoryManager $territoryManager,
         bool $fixturesEnabled,
         bool $fixturesClearBase,
         bool $fixturesBasic
@@ -53,6 +56,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         $this->fixturesEnabled = $fixturesEnabled;
         $this->fixturesClearBase = $fixturesClearBase;
         $this->fixturesBasic = $fixturesBasic;
+        $this->territoryManager = $territoryManager;
     }
 
     public function load(ObjectManager $manager)
@@ -192,6 +196,9 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
             }
         }
         
+        // Link addresses and territories
+        $this->territoryManager->updateAddressesAndDirections();
+
         // // we compute the directions and default values for the generated proposals
         // echo "Creating directions and matchings... ";
         // $this->proposalManager->setDirectionsAndDefaultsForAllCriterias(self::BATCH);
