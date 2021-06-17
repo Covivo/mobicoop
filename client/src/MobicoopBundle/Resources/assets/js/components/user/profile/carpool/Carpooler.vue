@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/carpool/CarpoolFooter/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/CarpoolFooter/";
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary.vue';
 import RouteSummary from '@components/carpool/utilities/RouteSummary.vue';
 import CarpoolerIdentity from "@components/carpool/utilities/CarpoolerIdentity";
@@ -130,6 +130,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

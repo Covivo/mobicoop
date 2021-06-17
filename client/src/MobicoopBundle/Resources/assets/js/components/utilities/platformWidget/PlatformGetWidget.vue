@@ -39,7 +39,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/PlatformWidget/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/PlatformWidget/";
 
 export default {
   components: {
@@ -47,6 +47,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

@@ -90,12 +90,13 @@
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
 import MMarker from "@components/utilities/MMap/MMarker"
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MMap/MMap";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/MMap/MMap";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

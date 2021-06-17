@@ -189,12 +189,13 @@ import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/Profile/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Profile/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

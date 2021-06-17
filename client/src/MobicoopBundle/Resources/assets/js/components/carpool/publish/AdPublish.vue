@@ -705,8 +705,8 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/publish/AdPublish/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/carpool/publish/AdPublish/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdPublish/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/publish/AdPublish/";
 
 import axios from "axios";
 import { merge, isEmpty, isEqual } from "lodash";
@@ -720,6 +720,7 @@ import MMap from '@components/utilities/MMap/MMap'
 import L from "leaflet";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -727,6 +728,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     },

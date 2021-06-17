@@ -69,13 +69,14 @@
 <script>
 
 import { omit } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/ad/Ads/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/Ads/";
 import Ad from "@components/user/profile/ad/Ad.vue";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

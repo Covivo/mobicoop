@@ -240,7 +240,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/ThreadActions/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadActions/";
 import ThreadsActionsButtons from '@components/user/mailbox/ThreadsActionsButtons';
 import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary';
 import VJourney from '@components/carpool/utilities/VJourney';
@@ -253,6 +253,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

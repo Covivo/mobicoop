@@ -214,12 +214,13 @@
 <script>
 import moment from "moment";
 import GeoComplete from "@components/utilities/GeoComplete";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/search/SearchJourney/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },

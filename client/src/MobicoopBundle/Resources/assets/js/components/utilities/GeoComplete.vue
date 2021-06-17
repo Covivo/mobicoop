@@ -59,7 +59,7 @@
 import axios from "axios";
 import debounce from "lodash/debounce";
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/GeoComplete/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/GeoComplete/";
 
 const defaultString = {
   type: String,
@@ -69,6 +69,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

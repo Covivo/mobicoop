@@ -148,10 +148,11 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/contact/ContactForm/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/contact/ContactForm/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/contact/ContactForm/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/contact/ContactForm/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -159,6 +160,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     },
