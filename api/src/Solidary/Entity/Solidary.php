@@ -1379,6 +1379,17 @@ class Solidary
     }
 
     /**
+     * @var int Mode of the solidary record
+     * @Groups("aReadItem")
+     *
+     * @return int
+     */
+    public function getAdminmode(): int
+    {
+        return $this->getSolidaryUserStructure()->getStructure()->getMode() ? $this->getSolidaryUserStructure()->getStructure()->getMode() : 0;
+    }
+
+    /**
      * @var string|null Progression of the solidary record
      * @Groups({"aReadCol", "aReadItem"})
      *

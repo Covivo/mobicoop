@@ -177,7 +177,7 @@ class ProposalManager
      *
      * @param Proposal $proposal
      * @param Boolean $sendEvent
-     * @return void
+     * @return Proposal
      */
     public function prepareProposal(Proposal $proposal, bool $sendEvent=true): Proposal
     {

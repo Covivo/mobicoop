@@ -68,4 +68,10 @@ class SolidaryException extends \LogicException
     const SOLIDARY_ACTION_USER_REQUIRED = "User is required";
     const SOLIDARY_ACTION_NOT_FOUND = "Solidary action #%s not found";
     const SOLIDARY_ACTION_USER_NOT_FOUND = "User #%s not found";
+
+    // solidary solution
+    const SOLIDARY_SOLUTION_MATCHING_REQUIRED= "A matching id is required";
+    const SOLIDARY_SOLUTION_MATCHING_NOT_FOUND = "Solidary matching #%s not found";
+    const SOLIDARY_SOLUTION_ROLE_REQUIRED = "A carpooler or transporter is required";
+    const SOLIDARY_SOLUTION_USER_NOT_FOUND = "User #%s not found";
 }

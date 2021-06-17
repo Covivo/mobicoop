@@ -62,12 +62,14 @@ use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Action\Entity\Animation;
 use App\Communication\Entity\Message;
+use App\Solidary\Repository\SolidaryMatchingRepository;
 use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
 use DateTime;
 use DateInterval;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
+use Psr\Log\LoggerInterface;
 
 /**
  * Solidary manager in admin context.
@@ -96,6 +98,8 @@ class SolidaryManager
     private $eventDispatcher;
     private $solidaryRepository;
     private $actionRepository;
+    private $solidaryMatchingRepository;
+    private $logger;
 
     /**
      * Constructor
@@ -104,6 +108,7 @@ class SolidaryManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
         Security $security,
         UserManager $userManager,
         AdManager $adManager,
@@ -119,8 +124,10 @@ class SolidaryManager
         NeedRepository $needRepository,
         EventDispatcherInterface $eventDispatcher,
         SolidaryRepository $solidaryRepository,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        SolidaryMatchingRepository $solidaryMatchingRepository
     ) {
+        $this->logger = $logger;
         $this->poster = $security->getUser();
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
@@ -138,6 +145,7 @@ class SolidaryManager
         $this->eventDispatcher = $eventDispatcher;
         $this->solidaryRepository = $solidaryRepository;
         $this->actionRepository = $actionRepository;
+        $this->solidaryMatchingRepository = $solidaryMatchingRepository;
     }
 
     /**
@@ -201,108 +209,65 @@ class SolidaryManager
             'outward' => [],
             'return' => []
         ];
-        foreach ($solidary->getProposal()->getMatchingOffers() as $offer) {
+        foreach ($solidary->getSolidaryMatchings() as $solidaryMatching) {
             /**
-             * @var Matching $offer
+             * @var SolidaryMatching $solidaryMatching
              */
-            $carpool = [
-                'carpoolerId' => $offer->getProposalOffer()->getUser()->getId(),
-                'carpoolerGivenName' => $offer->getProposalOffer()->getUser()->getGivenName(),
-                'carpoolerFamilyName' => $offer->getProposalOffer()->getUser()->getFamilyName(),
-                'carpoolerAvatar' => $offer->getProposalOffer()->getUser()->getAvatar(),
-                'frequency' => $offer->getProposalOffer()->getCriteria()->getFrequency(),
-                'type' => $offer->getProposalOffer()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return',
-                'passenger' => $offer->getProposalOffer()->getCriteria()->isPassenger(),
-                'driver' => $offer->getProposalOffer()->getCriteria()->isDriver(),
-                'solidaryExclusive' => $offer->getProposalOffer()->getCriteria()->isSolidaryExclusive(),
-                'fromDate' => $offer->getProposalOffer()->getCriteria()->getFromDate(),
-                'fromTime' => $offer->getProposalOffer()->getCriteria()->getFromTime(),
-                'toDate' => $offer->getProposalOffer()->getCriteria()->getToDate()
-            ];
-            if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-                $carpool['schedule'] = [
-                    'mon' => $offer->getProposalOffer()->getCriteria()->isMonCheck(),
-                    'tue' => $offer->getProposalOffer()->getCriteria()->isTueCheck(),
-                    'wed' => $offer->getProposalOffer()->getCriteria()->isWedCheck(),
-                    'thu' => $offer->getProposalOffer()->getCriteria()->isThuCheck(),
-                    'fri' => $offer->getProposalOffer()->getCriteria()->isFriCheck(),
-                    'sat' => $offer->getProposalOffer()->getCriteria()->isSatCheck(),
-                    'sun' => $offer->getProposalOffer()->getCriteria()->isSunCheck()
-                ];
-            }
-            foreach ($offer->getProposalOffer()->getWaypoints() as $waypoint) {
-                /**
-                 * @var Waypoint $waypoint
-                 */
-                if ($waypoint->getPosition() == 0) {
-                    $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
-                    if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                        $destinationTime = clone $offer->getProposalOffer()->getCriteria()->getFromTime();
-                        $destinationTime->add(new \DateInterval('PT' . $offer->getOriginalDuration() . 'S'));
-                        $carpool['destinationTime'] = $destinationTime;
-                    }
-                }
-                if ($waypoint->isDestination()) {
-                    $carpool['destination'] = $waypoint->getAddress()->jsonSerialize();
-                }
-                $carpool['detourDuration'] = $offer->getDetourDuration();
-                $carpool['detourDistance'] = $offer->getDetourDistance();
-            }
-            $carpools['outward'][] = $carpool;
-        }
-        if ($solidary->getProposal()->getProposalLinked()) {
-            foreach ($solidary->getProposal()->getProposalLinked()->getMatchingOffers() as $offer) {
-                /**
-                 * @var Matching $offer
-                 */
+            if ($solidaryMatching->getMatching()) {
+                // carpool matching
                 $carpool = [
-                    'carpoolerId' => $offer->getProposalOffer()->getUser()->getId(),
-                    'carpoolerGivenName' => $offer->getProposalOffer()->getUser()->getGivenName(),
-                    'carpoolerFamilyName' => $offer->getProposalOffer()->getUser()->getFamilyName(),
-                    'carpoolerAvatar' => $offer->getProposalOffer()->getUser()->getAvatar(),
-                    'frequency' => $offer->getProposalOffer()->getCriteria()->getFrequency(),
-                    'type' => $offer->getProposalOffer()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return',
-                    'passenger' => $offer->getProposalOffer()->getCriteria()->isPassenger(),
-                    'driver' => $offer->getProposalOffer()->getCriteria()->isDriver(),
-                    'solidaryExclusive' => $offer->getProposalOffer()->getCriteria()->isSolidaryExclusive(),
-                    'fromDate' => $offer->getProposalOffer()->getCriteria()->getFromDate(),
-                    'fromTime' => $offer->getProposalOffer()->getCriteria()->getFromTime(),
-                    'toDate' => $offer->getProposalOffer()->getCriteria()->getToDate()
+                    'matchingId' => $solidaryMatching->getId(),
+                    'carpoolerId' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getId(),
+                    'carpoolerGivenName' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName(),
+                    'carpoolerFamilyName' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getFamilyName(),
+                    'carpoolerAvatar' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getAvatar(),
+                    'frequency' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency(),
+                    'type' => $solidaryMatching->getMatching()->getProposalOffer()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return',
+                    'passenger' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isPassenger(),
+                    'driver' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isDriver(),
+                    'solidaryExclusive' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isSolidaryExclusive(),
+                    'fromDate' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFromDate(),
+                    'fromTime' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFromTime(),
+                    'toDate' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getToDate()
                 ];
-                if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                if ($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $carpool['schedule'] = [
-                        'mon' => $offer->getProposalOffer()->getCriteria()->isMonCheck(),
-                        'tue' => $offer->getProposalOffer()->getCriteria()->isTueCheck(),
-                        'wed' => $offer->getProposalOffer()->getCriteria()->isWedCheck(),
-                        'thu' => $offer->getProposalOffer()->getCriteria()->isThuCheck(),
-                        'fri' => $offer->getProposalOffer()->getCriteria()->isFriCheck(),
-                        'sat' => $offer->getProposalOffer()->getCriteria()->isSatCheck(),
-                        'sun' => $offer->getProposalOffer()->getCriteria()->isSunCheck()
+                        'mon' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isMonCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getMonTime() : false,
+                        'tue' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isTueCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getTueTime() : false,
+                        'wed' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isWedCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getWedTime() : false,
+                        'thu' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isThuCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getThuTime() : false,
+                        'fri' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isFriCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFriTime() : false,
+                        'sat' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isSatCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getSatTime() : false,
+                        'sun' => $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->isSunCheck() ? $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getSunTime() : false
                     ];
                 }
-                foreach ($offer->getProposalOffer()->getWaypoints() as $waypoint) {
+                foreach ($solidaryMatching->getMatching()->getProposalOffer()->getWaypoints() as $waypoint) {
                     /**
                      * @var Waypoint $waypoint
                      */
                     if ($waypoint->getPosition() == 0) {
                         $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
-                    }
-                    if ($waypoint->isDestination()) {
-                        $carpool['destination'] = $waypoint->getAddress()->jsonSerialize();
-                        if ($offer->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-                            $destinationTime = clone $offer->getProposalOffer()->getCriteria()->getFromTime();
-                            $destinationTime->add(new \DateInterval('PT' . $offer->getOriginalDuration() . 'S'));
+                        if ($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                            $destinationTime = clone $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
+                            $destinationTime->add(new \DateInterval('PT' . $solidaryMatching->getMatching()->getOriginalDuration() . 'S'));
                             $carpool['destinationTime'] = $destinationTime;
                         }
                     }
-                    $carpool['detourDuration'] = $offer->getDetourDuration();
-                    $carpool['detourDistance'] = $offer->getDetourDistance();
+                    if ($waypoint->isDestination()) {
+                        $carpool['destination'] = $waypoint->getAddress()->jsonSerialize();
+                    }
+                    $carpool['detourDuration'] = $solidaryMatching->getMatching()->getDetourDuration();
+                    $carpool['detourDistance'] = $solidaryMatching->getMatching()->getDetourDistance();
                 }
-                $carpools['return'][] = $carpool;
+                if ($solidaryMatching->getMatching()->getProposalOffer()->getType() !== Proposal::TYPE_RETURN) {
+                    $carpools['outward'][] = $carpool;
+                } else {
+                    $carpools['return'][] = $carpool;
+                }
             }
         }
-        $solidary->setAdmincarpools($carpools);
 
+        $solidary->setAdmincarpools($carpools);
         $solidary->setAdmintransporters([]);
 
         // set solutions
@@ -312,6 +277,7 @@ class SolidaryManager
              * @var SolidarySolution $solution
              */
             if ($solution->getSolidaryMatching()->getSolidaryUser()) {
+                // solution is a transporter
                 $solutions[] = [
                     'id' => $solution->getId(),
                     'type' => SolidarySolution::TRANSPORTER,
@@ -319,18 +285,33 @@ class SolidaryManager
                     'familyName' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getFamilyName(),
                     'telephone' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone(),
                     'avatar' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getAvatar(),
-                    'userId' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId()
+                    'userId' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId(),
                 ];
             } elseif ($solution->getSolidaryMatching()->getMatching()) {
-                $solutions[] = [
+                // solution is a carpooler
+                $asolution = [
                     'id' => $solution->getId(),
+                    'matchingId' => $solution->getSolidaryMatching()->getId(),
                     'type' => SolidarySolution::CARPOOLER,
                     'givenName' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getGivenName(),
                     'familyName' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getFamilyName(),
                     'telephone' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone(),
                     'avatar' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getAvatar(),
-                    'userId' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId()
+                    'userId' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId(),
+                    'way' => $solution->getSolidaryMatching()->getMatching()->getProposalRequest()->getType()
                 ];
+                foreach ($solution->getSolidaryMatching()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
+                    /**
+                     * @var Waypoint $waypoint
+                     */
+                    if ($waypoint->getPosition() == 0) {
+                        $asolution['origin'] = $waypoint->getAddress()->jsonSerialize();
+                    }
+                    if ($waypoint->isDestination()) {
+                        $asolution['destination'] = $waypoint->getAddress()->jsonSerialize();
+                    }
+                }
+                $solutions[] = $asolution;
             }
         }
         $solidary->setAdminsolutions($solutions);
@@ -795,6 +776,17 @@ class SolidaryManager
             $solidaryMatching->setSolidary($solidary);
             $solidary->addSolidaryMatching($solidaryMatching);
             $this->entityManager->persist($solidaryMatching);
+            $this->logger->info("SolidaryManager : persist the SolidaryMatching outward for matching " . $matchingOffer->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        if ($solidary->getProposal()->getProposalLinked()) {
+            foreach ($solidary->getProposal()->getProposalLinked()->getMatchingOffers() as $matchingOffer) {
+                $solidaryMatchingReturn = new SolidaryMatching();
+                $solidaryMatchingReturn->setMatching($matchingOffer);
+                $solidaryMatchingReturn->setSolidary($solidary);
+                $solidary->addSolidaryMatching($solidaryMatchingReturn);
+                $this->entityManager->persist($solidaryMatchingReturn);
+                $this->logger->info("SolidaryManager : persist the SolidaryMatching return for matching " . $matchingOffer->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            }
         }
         
         // persist the solidary record
@@ -861,6 +853,34 @@ class SolidaryManager
             $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
             
             // we don't go further, although we need a complete solidary !
+            return $this->getSolidary($solidary->getId());
+        }
+
+        // check if a new driver has been selected
+        if (array_key_exists('solution', $fields)) {
+            if (!array_key_exists('matching', $fields['solution'])) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MATCHING_REQUIRED);
+            }
+            if (!$solidaryMatching = $this->solidaryMatchingRepository->find($fields['solution']['matching'])) {
+                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_MATCHING_NOT_FOUND, $fields['solution']['matching']));
+            }
+            if (!array_key_exists('carpooler', $fields['solution']) && !array_key_exists('transporter', $fields['solution'])) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_ROLE_REQUIRED);
+            }
+            if (array_key_exists('carpooler', $fields['solution']) && !$user = $this->userRepository->find($fields['solution']['carpooler'])) {
+                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $fields['solution']['carpooler']));
+            }
+            if (array_key_exists('transporter', $fields['solution']) && !$user = $this->userRepository->find($fields['solution']['transporter'])) {
+                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $fields['solution']['transporter']));
+            }
+            // create solution
+            $solidarySolution = new SolidarySolution();
+            $solidarySolution->setSolidaryMatching($solidaryMatching);
+            $solidarySolution->setSolidary($solidaryMatching->getSolidary());
+            $solidary->addSolidarySolution($solidarySolution);
+            $this->entityManager->persist($solidarySolution);
+            $this->entityManager->flush();
+            // we need a complete solidary
             return $this->getSolidary($solidary->getId());
         }
 

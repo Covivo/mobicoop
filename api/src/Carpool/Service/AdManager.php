@@ -502,6 +502,7 @@ class AdManager
         if (!$ad->isOneWay()) {
             $this->logger->info("AdManager : start related link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
+            $this->matchingRepository->linkRelatedMatchings($returnProposal->getId());
             $proposalRefresh = true;
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
@@ -2235,7 +2236,7 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 if ($ad->getReturnTime()) {
-                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));

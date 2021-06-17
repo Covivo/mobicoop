@@ -182,6 +182,16 @@ class Structure
     private $beneficiaryAutoApproval;
 
     /**
+     * @var int|null Solidary record create mode :
+     * - 0 or null : full mode
+     * - 1 : light mode
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $mode;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -625,6 +635,18 @@ class Structure
     {
         $this->beneficiaryAutoApproval = $beneficiaryAutoApproval;
 
+        return $this;
+    }
+
+    public function getMode(): ?int
+    {
+        return $this->mode;
+    }
+
+    public function setMode(int $mode): self
+    {
+        $this->mode = $mode;
+        
         return $this;
     }
 

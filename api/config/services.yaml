@@ -706,6 +706,10 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    App\Solidary\Admin\Service\SolidaryManager:
+        tags:
+            - { name: monolog.logger, channel: solidary }
+
     # User
     App\User\Admin\Service\UserManager:
         arguments:

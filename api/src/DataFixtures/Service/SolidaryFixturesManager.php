@@ -166,6 +166,8 @@ class SolidaryFixturesManager
         $structure->setEMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[34]));
         $structure->setEmail($tab[35]);
         $structure->setTelephone($tab[36]);
+        $structure->setBeneficiaryAutoApproval($tab[37]);
+        $structure->setMode($tab[38]);
         $this->entityManager->persist($structure);
         $this->entityManager->flush();
     }
