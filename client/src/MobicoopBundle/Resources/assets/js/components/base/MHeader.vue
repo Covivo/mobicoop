@@ -15,13 +15,19 @@
       </v-col>
       <v-col
         cols="2"        
-        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+        class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
           :href="$t('pad.mobility.link')"
           :alt="$t('pad.mobility.title')"
           target="_blank"
-        >{{ $t('pad.mobility.title') }}</a>
+        >{{ $t('pad.mobility.title') }}</a><br>
+        <a
+          :href="$t('pad.mobility.link')"
+          :alt="$t('pad.mobility.title')"
+          target="_blank"
+          class="font-italic text-lowercase"
+        >{{ $t('pad.mobility.subtitle') }}</a>
       </v-col>
       <v-col
         cols="2"        
@@ -100,7 +106,7 @@
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             alt="Mobicoop"
             height="50"
-            width="280"
+            width="210"
             contain
             eager
           >
@@ -153,6 +159,7 @@
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -171,6 +178,7 @@
         color="secondary"
         :href="$t('buttons.solidary.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
@@ -256,6 +264,18 @@
                 :href="$t('buttons.shareAnAd.route')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
+                :disabled="!user"
+                :href="$t('buttons.solidary.route')"
+              >
+                {{ $t('buttons.solidary.label') }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -446,6 +466,7 @@ export default {
   a{
     text-decoration: none;
     color:white;
+    font-family: Poppins, sans-serif !important;
   }
   .section{
     border-right: 1px solid white;

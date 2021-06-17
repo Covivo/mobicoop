@@ -50,7 +50,7 @@
           <v-row justify="center">
             <v-col >
               <v-avatar
-                color="grey lighten-3"
+                color="lighten-3"
                 size="225px"
               >
                 <img

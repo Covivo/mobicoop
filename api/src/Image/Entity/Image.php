@@ -104,6 +104,9 @@ use App\Image\Admin\Controller\PostImageAction;
  *             "swagger_context" = {
  *                  "tags"={"Pictures"}
  *             }
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('image_delete',object)",
  *          }
  *      }
  * )

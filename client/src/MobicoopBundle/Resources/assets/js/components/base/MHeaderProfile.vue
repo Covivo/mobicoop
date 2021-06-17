@@ -18,6 +18,7 @@
           <img
             v-if="avatar"
             :src="avatar"
+            style="width:auto;"
           >
           <v-icon
             v-else

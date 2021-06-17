@@ -445,20 +445,20 @@ class CarpoolController extends AbstractController
     public function carpoolSearchResultFromRdexLink(Request $request, UserManager $userManager, string $externalId, AdManager $adManager, Deserializer $deserializer)
     {
         $ad = $adManager->getAdFromExternalId($externalId);
-        $origin = $ad->getResults()[0]['origin'];
-        $destination = $ad->getResults()[0]['destination'];
+        $origin = $ad->getOutwardWaypoints()[0]['address']['addressLocality'];
+        $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints())-1]['address']['addressLocality'];
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'externalId' => $externalId,
             'user' => $userManager->getLoggedUser(),
             'platformName' => $this->platformName,
-            'externalRDEXJourneys' => $this->carpoolRDEXJourneys,
+            'externalRDEXJourneys' => false, // No External Rdex result for an RDex external link
             'ptSearch' => false, // No PT Results, this not a new search
             'defaultRole'=>$this->defaultRole,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
-            'originTitle' => $origin['addressLocality'],
-            'originLiteral' => $origin['addressLocality'],
-            'destinationTitle' => $destination['addressLocality'],
-            'destinationLiteral' => $destination['addressLocality'],
+            'originTitle' => $origin,
+            'originLiteral' => $origin,
+            'destinationTitle' => $destination,
+            'destinationLiteral' => $destination,
             'ageDisplay' => $this->ageDisplay
         ]);
     }

@@ -404,6 +404,14 @@ class Address implements \JsonSerializable
     private $providedBy;
 
     /**
+     * @var int|null The similarity of the address with a search
+     * In autocomplete context using Levenstein algorithm between the search termes and the addressLocality
+     *
+     * @Groups({"read"})
+     */
+    private $similarityWithSearch;
+
+    /**
      * @var array|null The distance to the focus point if relevant.
      *
      * @Groups({"read"})
@@ -718,6 +726,16 @@ class Address implements \JsonSerializable
         return $this;
     }
 
+    public function getSimilarityWithSearch(): ?int
+    {
+        return $this->similarityWithSearch;
+    }
+
+    public function setSimilarityWithSearch($similarityWithSearch)
+    {
+        $this->similarityWithSearch = $similarityWithSearch;
+    }
+
     public function getProvidedBy(): ?string
     {
         return $this->providedBy;
@@ -869,7 +887,8 @@ class Address implements \JsonSerializable
                 'icon'                 => $this->getIcon(),
                 'venue'                => $this->getVenue(),
                 'event'                => $this->getEvent(),
-                'layer'                => $this->getLayer()
+                'layer'                => $this->getLayer(),
+                'similarityWithSearch' => $this->getSimilarityWithSearch()
             ];
     }
 }
