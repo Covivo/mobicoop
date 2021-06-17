@@ -140,11 +140,12 @@ import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import Report from "@components/utilities/Report";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/PublicProfile/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/PublicProfile/";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

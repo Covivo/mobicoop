@@ -73,12 +73,13 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/journey/JourneyResults/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/journey/JourneyResults/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },

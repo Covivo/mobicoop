@@ -1,0 +1,14 @@
+{
+    "cooperative": {
+        "title":"Participez à l’amélioration du service de covoiturage",
+        "text": "Mobicoop.fr est un service gratuit.</br><strong>Grâce au moteur de recherche Lilo, vous pouvez nous financer sans frais</strong> en nous donnant les gouttes d'eau que vous gagnez à chaque recherche pour que la mobilité partagée reste un bien commun.</br></br><strong> Merci pour votre soutien !</strong>",
+        "button1": {
+            "label": "Déjà sur Lilo ? Donnez-nous vos gouttes",
+            "route": "https://www.lilo.org/mobicoop-covoiturage-libre/?utm_source=covoiturage-libre-fr"
+        },
+        "button2": {
+            "label": "Contribuez au projet",
+            "route": "/become-partner"
+        }
+    }
+}

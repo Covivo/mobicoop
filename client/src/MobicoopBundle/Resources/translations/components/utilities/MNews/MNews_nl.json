@@ -1,0 +1,11 @@
+{
+    "news": {
+        "title": "Actualités",
+        "subtitle": "Soutenez la 1ère plateforme nationale de covoiturage libre !",
+        "text": "Mobicoop est fière de vous présenter son nouveau site web entièrement conçu en logiciel libre. Nous avons planché de longs mois pour vous proposer de nombreuses améliorations sur l’interface ! Maintenir une plateforme de grande envergure et y ajouter de nouvelles fonctionnalités représentent des coûts. Pour continuer à faire grandir Mobicoop comme solution alternative de mobilité, nous avons besoin de vous !",
+        "button": {
+            "label":"Faites un don pour nous soutenir",
+            "route":"https://www.zeste.coop/fr/mobicoop"
+        }
+    }
+}
