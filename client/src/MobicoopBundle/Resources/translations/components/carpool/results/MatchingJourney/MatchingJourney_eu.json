@@ -22,7 +22,8 @@
     "ranges": [
         "Aste 1",
         "Hilabete 1",
-        "3 hilabete"
+        "3 hilabete",
+        "XXX-raino"
     ],
     "maxDate": "ondoko eguna arte",
     "fromDate": "Ondoko egunetik goiti",
@@ -48,5 +49,9 @@
     "carpool": "Autokidetza egin",
     "places": "{seats} toki | {seats} toki",
     "detailTitle": "Autokidetzaren xehetasunak",
-    "priceTooltip": "Prezio adierazgarria"
+    "priceTooltip": "Prezio adierazgarria",
+    "detour": {
+        "onlyDriver": "Bidaia kalkulatu horrek tzulinguru bat badu. Gidariarekin harremanetan jar zaitez.",
+        "default": "Bidaia kalkulatu horrek itzulinguru bat badu."
+    }
 }
