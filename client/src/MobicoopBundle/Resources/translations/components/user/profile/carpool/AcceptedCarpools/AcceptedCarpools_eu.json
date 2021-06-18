@@ -2,10 +2,10 @@
     "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export",
     "tooltip": "Aktiboa izanen da, autokidetzak baieztatuak izanen direlarik",
     "export": "Esportatu",
-    "clickAndGetFile": "\"Esportatu\"-n klik eginez zure autokidetzak pdf formatuan telekarga ditzakezu.",
+    "clickAndGetFile": "\"Esportatu\"-n klik eginez, zure autokidetzak pdf formatuan telekarga ditzakezu.",
     "needCarpoolProofs": "Autokidetza frogagiri baten beharra ote duzu?",
     "carpools": {
-        "archived": "Pasa diren autokidetzak",
-        "active": "Bidean diren autokidetzak"
+        "archived": "Iraganak diren autokidetzak",
+        "active": "Eginen diren autokidetzak"
     }
 }
