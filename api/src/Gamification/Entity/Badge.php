@@ -23,7 +23,9 @@
 
 namespace App\Gamification\Entity;
 
+use App\Geography\Entity\Territory;
 use App\Image\Entity\Image;
+use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -146,6 +148,13 @@ class Badge
     private $sequenceItems;
 
     /**
+     * @var ArrayCollection|null The territories of this Badge.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     */
+    private $territories;
+    
+    /**
      * @var \DateTimeInterface Badge's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -164,6 +173,7 @@ class Badge
     public function __construct()
     {
         $this->sequenceItems = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -322,6 +332,28 @@ class Badge
         return $this;
     }
 
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        return $this;
+    }
+    
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
