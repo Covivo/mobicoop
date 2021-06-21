@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Entity;
 
+use App\Image\Entity\Image;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -90,6 +91,33 @@ class Badge
      * @Groups({"readGamification","writeGamification"})
      */
     private $public;
+
+    /**
+     * @var Image The Badges Icon
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge")
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $icon;
+
+    /**
+     * @var Image The Badges reward Image
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage")
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $image;
+
+    /**
+     * @var Image The Badges reward Image
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight")
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $imageLight;
 
     /**
      * @var \DateTimeInterface Start Date of the active period of this Badge (if there is any)
@@ -191,6 +219,42 @@ class Badge
     public function setPublic(?bool $public): self
     {
         $this->public = $public;
+
+        return $this;
+    }
+
+    public function getIcon(): ?Image
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?Image $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    public function setImage(?Image $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageLight(): ?Image
+    {
+        return $this->imageLight;
+    }
+
+    public function setImageLight(?Image $imageLight): self
+    {
+        $this->imageLight = $imageLight;
 
         return $this;
     }
