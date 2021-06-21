@@ -94,6 +94,16 @@ class SequenceItem
      */
     private $badge;
 
+    /**
+     * @var GamificationAction The GamificationAction this SequenceItem is linked
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\GamificationAction", inversedBy="sequenceItems")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"readGamification","writeGamification"})
+     * @MaxDepth(1)
+     */
+    private $gamificationAction;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -162,6 +172,18 @@ class SequenceItem
     public function setBadge(?Badge $badge): self
     {
         $this->badge = $badge;
+
+        return $this;
+    }
+
+    public function getGamificationAction(): ?GamificationAction
+    {
+        return $this->gamificationAction;
+    }
+
+    public function setGamificationAction(?GamificationAction $gamificationAction): self
+    {
+        $this->gamificationAction = $gamificationAction;
 
         return $this;
     }
