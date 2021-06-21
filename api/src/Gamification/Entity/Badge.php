@@ -24,6 +24,7 @@
 namespace App\Gamification\Entity;
 
 use App\Image\Entity\Image;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -136,6 +137,15 @@ class Badge
     private $endDate;
 
     /**
+     * @var ArrayCollection|null A Badge needs multiple SequenceItems to be earned
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="badge", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
+     * @MaxDepth(1)
+     */
+    private $sequenceItems;
+
+    /**
      * @var \DateTimeInterface Badge's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -151,6 +161,11 @@ class Badge
      */
     private $updatedDate;
 
+    public function __construct()
+    {
+        $this->sequenceItems = new ArrayCollection();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -211,7 +226,7 @@ class Badge
         return $this;
     }
 
-    public function getPublic(): bool
+    public function isPublic(): bool
     {
         return $this->public;
     }
@@ -279,6 +294,30 @@ class Badge
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getSequenceItems()
+    {
+        return $this->sequenceItems->getValues();
+    }
+
+    public function addSequenceItem(SequenceItem $sequenceItem): self
+    {
+        if (!$this->sequenceItems->contains($sequenceItem)) {
+            $this->sequenceItems[] = $sequenceItem;
+            $sequenceItem->getBadge($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSequenceItem(SequenceItem $sequenceItem): self
+    {
+        if ($this->sequenceItems->contains($sequenceItem)) {
+            $this->sequenceItems->removeElement($sequenceItem);
+        }
 
         return $this;
     }
