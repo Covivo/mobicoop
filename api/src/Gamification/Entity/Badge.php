@@ -1,0 +1,267 @@
+<?php
+
+/**
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
+namespace App\Gamification\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
+/**
+* Gamification : A Badge that can be won/achieved by a User
+* @author Maxime Bardot <maxime.bardot@mobicoop.org>
+*
+* @ORM\Entity
+* @ORM\HasLifecycleCallbacks
+*/
+class Badge
+{
+    const STATUS_DRAFT = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 2;
+
+    /**
+     * @var int The Badge's id
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $id;
+
+    /**
+     * @var string Badge's name. Mostly used for intern managment
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $name;
+
+    /**
+     * @var string Badge's title. Used for display.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $title;
+
+    /**
+     * @var string Badge's text, description.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $text;
+
+    /**
+     * @var int Badge's status. (0 : Draft, 1 : Active, 2 : Inactive)
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $status;
+
+    /**
+     * @var boolean If it's a public badge or not. If it can be seen by anybody.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $public;
+
+    /**
+     * @var \DateTimeInterface Start Date of the active period of this Badge (if there is any)
+     *
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $startDate;
+
+    /**
+     * @var \DateTimeInterface End Date of the active period of this Badge (if there is any)
+     *
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $endDate;
+
+    /**
+     * @var \DateTimeInterface Badge's creation date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Badge's update date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     */
+    private $updatedDate;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(?string $text): self
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(?bool $public): self
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(?\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
+    }
+}
