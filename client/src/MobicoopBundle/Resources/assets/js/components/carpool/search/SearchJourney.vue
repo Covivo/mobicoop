@@ -288,6 +288,7 @@ export default {
   },
   data() {
     return {
+      locale: localStorage.getItem("X-LOCALE"),
       date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
@@ -300,7 +301,6 @@ export default {
       requiredErrorOrigin: this.$t("origin.error"),
       requiredErrorDestination: this.$t("destination.error"),
       requiredErrorOutwardDate: this.$t("outwardDate.error"),
-      locale: localStorage.getItem("X-LOCALE"),
       origin: this.initOrigin,
       destination: this.initDestination,
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,
