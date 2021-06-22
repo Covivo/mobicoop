@@ -57,7 +57,6 @@
 
 <script>
 import axios from "axios";
-import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/GeoComplete/";
@@ -181,7 +180,7 @@ export default {
       this.cancelRequest(); // CANCEL PREVIOUS REQUEST
       this.cancelSource = axios.CancelToken.source();
 
-      maxios
+      axios
         .get(`${this.url}${val}`, {
           headers: { Authorization: 'Bearer ' + this.dtoken },
           cancelToken: this.cancelSource.token

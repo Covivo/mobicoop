@@ -309,7 +309,7 @@ export default {
   },
   data(){
     return{
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       loading:this.loadingInit,
       dataLoadingBtn:this.loadingBtn,
       infosComplete:[],

@@ -706,7 +706,7 @@ export default {
       },
       communities: [],
       selectedCommunity: null,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       consent:false,
       consentSocial: false
     };

@@ -177,7 +177,7 @@ export default {
     return{
       publicProfile:null,
       loading:true,
-      locale: this.$i18n.locale
+      locale: localStorage.getItem("X-LOCALE")
     }
   },
   computed:{

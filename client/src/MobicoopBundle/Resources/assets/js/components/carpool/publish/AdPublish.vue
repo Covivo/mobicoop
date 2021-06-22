@@ -842,7 +842,7 @@ export default {
   },
   data() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       distance: 0, 
       duration: 0,
       outwardDate: this.initDate,

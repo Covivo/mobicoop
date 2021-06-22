@@ -215,7 +215,7 @@ export default {
       time: null,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
     };
   },
   computed: {

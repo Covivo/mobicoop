@@ -656,7 +656,7 @@ export default {
       hasOwnedCommunities: false,
       disabledOwnedCommunities: false,
       disabledCreatedEvents: false,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       emailChanged: false,
       dialogEmail: false
 

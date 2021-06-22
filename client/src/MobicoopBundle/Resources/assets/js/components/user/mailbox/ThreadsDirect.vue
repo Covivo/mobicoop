@@ -67,7 +67,7 @@ export default {
   },
   data(){
     return{
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       messages:[],
       boilerplate: false,
       tile: false,

@@ -305,7 +305,7 @@ export default {
   },
   data () {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       search: '',
       searchPassed : '',
       itemsPerPageOptions: [1,10, 20, 50, 100],

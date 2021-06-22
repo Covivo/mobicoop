@@ -98,7 +98,7 @@ export default {
   },
   data () {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       params: null,
       defaultDestination: null,
     }

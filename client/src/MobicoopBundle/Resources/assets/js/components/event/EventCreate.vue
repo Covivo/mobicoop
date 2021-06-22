@@ -401,7 +401,7 @@ export default {
       menuReturnDate: false,
       menuStartTime: false,
       menuEndTime: false,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
         v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"

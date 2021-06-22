@@ -300,7 +300,7 @@ export default {
       requiredErrorOrigin: this.$t("origin.error"),
       requiredErrorDestination: this.$t("destination.error"),
       requiredErrorOutwardDate: this.$t("outwardDate.error"),
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       origin: this.initOrigin,
       destination: this.initDestination,
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,

@@ -106,7 +106,7 @@ export default {
       textToSend:"",
       items:[],
       currentAsk:null,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       boilerplate: false,
       tile: false,
       type: 'article',
