@@ -23,23 +23,23 @@
 
 namespace App\Gamification\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A GamificationActionRule
+* Gamification : A RewarStep. A previously validated sequenceItem on the way to earn a Badge.
 * @author Maxime Bardot <maxime.bardot@mobicoop.org>
 *
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
 */
-class GamificationActionRule
+class RewardStep
 {
 
     /**
-     * @var int The GamificationActionRule's id
+     * @var int The RewardStep's id
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -50,29 +50,30 @@ class GamificationActionRule
     private $id;
 
     /**
-     * @var string The GamificationAction's name (for internal purpose)
+     * @var SequenceItem The SequenceItem's of this RewardStep
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="smallint")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
-    private $name;
+    private $sequenceItem;
 
     /**
-     * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
+     * @var User The User who validated this RewardStep
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="gamificationActionRule", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
-    private $gamificationActions;
+    private $user;
 
-    public function __construct()
-    {
-        $this->gamificationActions = new ArrayCollection();
-    }
-
+    /**
+     * @var \DateTimeInterface RewardStep's creation date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification"})
+     */
+    private $createdDate;
 
     public function getId(): ?int
     {
@@ -86,39 +87,51 @@ class GamificationActionRule
         return $this;
     }
 
-    public function getname(): ?string
+    public function getSequenceItem(): ?SequenceItem
     {
-        return $this->name;
+        return $this->sequenceItem;
     }
 
-    public function setname(?string $name): self
+    public function setSequenceItem(?SequenceItem $sequenceItem): self
     {
-        $this->name = $name;
+        $this->sequenceItem = $sequenceItem;
 
         return $this;
     }
 
-    public function getGamificationActions()
+    public function getUser(): ?User
     {
-        return $this->gamificationActions->getValues();
+        return $this->user;
     }
 
-    public function addGamificationAction(GamificationAction $gamificationAction): self
+    public function setUser(?User $user): self
     {
-        if (!$this->gamificationActions->contains($gamificationAction)) {
-            $this->gamificationActions[] = $gamificationAction;
-            $gamificationAction->getAction($this);
-        }
+        $this->user = $user;
 
         return $this;
     }
 
-    public function removeGamificationAction(GamificationAction $gamificationAction): self
+    public function getCreatedDate(): ?\DateTimeInterface
     {
-        if ($this->gamificationActions->contains($gamificationAction)) {
-            $this->gamificationActions->removeElement($gamificationAction);
-        }
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(?\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
 
         return $this;
+    }
+
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
     }
 }
