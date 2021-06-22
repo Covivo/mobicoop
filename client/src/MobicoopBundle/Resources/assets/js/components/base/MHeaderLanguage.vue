@@ -73,12 +73,23 @@ export default {
       enabled: Object.keys(this.languages).length > 1
     }
   },
+  mounted(){
+    if(localStorage.getItem('X-LOCALE') && localStorage.getItem('X-LOCALE') !== ''){
+      this.selectedLanguage = localStorage.getItem('X-LOCALE');
+      this.displayedLanguage = localStorage.getItem('X-LOCALE');
+      if(this.language !== this.selectedLanguage){
+        // If not the default language of the platform, we change it
+        this.$emit('languageSelected', this.selectedLanguage);
+      }
+    }
+  },
   methods:{
     selectLanguage(item, key) {
       this.selectedLanguage = item;
       this.displayedLanguage = key;
+      localStorage.setItem('X-LOCALE',key);
+
       this.$emit('languageSelected', key);
-      maxios.post(this.$t('urlToSelectLanguage'), {locale:key});
       maxios.post(this.$t('urlToUpdateLanguage'), {language:key});
     },
   }

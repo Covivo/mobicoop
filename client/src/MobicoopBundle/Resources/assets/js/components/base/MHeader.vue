@@ -441,16 +441,10 @@ export default {
     }
   },
   mounted() {
-    if(localStorage.getItem('X-LOCALE') && localStorage.getItem('X-LOCALE') !== ''){
-      console.log('io');
-      this.dlocale = localStorage.getItem('X-LOCALE');
-    }
-    else{
-      if (has(this.languages, this.locale)) {
-        this.dlocale = this.locale;
-      } else {
-        this.dlocale = this.defaultLocale;
-      }
+    if (has(this.languages, this.locale)) {
+      this.dlocale = this.locale;
+    } else {
+      this.dlocale = this.defaultLocale;
     }
   },
   created() {
@@ -460,7 +454,6 @@ export default {
   methods:{
     updateLanguage(language) {
       this.$root.$i18n.locale = language
-      localStorage.setItem('X-LOCALE', language);
     },
   }
 };
