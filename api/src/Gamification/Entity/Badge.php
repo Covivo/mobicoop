@@ -151,14 +151,24 @@ class Badge
      * @var ArrayCollection|null The territories of this Badge.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @Groups({"readGamification"})
      */
     private $territories;
     
     /**
+     * @var ArrayCollection|null The Users owning this Badge
+     *
+     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="users")
+     * @ORM\JoinTable(name="reward")
+     * @Groups({"readGamification"})
+     */
+    private $users;
+
+    /**
      * @var \DateTimeInterface Badge's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"readGamification"})
      */
     private $createdDate;
 
@@ -166,7 +176,7 @@ class Badge
      * @var \DateTimeInterface Badge's update date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"readGamification"})
      */
     private $updatedDate;
 
@@ -174,6 +184,7 @@ class Badge
     {
         $this->sequenceItems = new ArrayCollection();
         $this->territories = new ArrayCollection();
+        $this->badges = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -354,6 +365,28 @@ class Badge
         return $this;
     }
     
+    public function getUsers()
+    {
+        return $this->users->getValues();
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+        
+        return $this;
+    }
+    
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
