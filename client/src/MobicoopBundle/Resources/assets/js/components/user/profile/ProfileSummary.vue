@@ -97,7 +97,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ProfileSummary/";
@@ -160,7 +160,7 @@ export default {
   methods:{
     getProfileSummary(){
       this.loading = true;
-      axios.post(this.$t('getProfileSummaryUri'),{'userId':this.userId})
+      maxios.post(this.$t('getProfileSummaryUri'),{'userId':this.userId})
         .then(response => {
           //console.log(response.data);
           this.profileSummary = response.data;

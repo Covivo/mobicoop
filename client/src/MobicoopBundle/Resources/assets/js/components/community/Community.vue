@@ -369,7 +369,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
@@ -554,7 +554,7 @@ export default {
       let params = {
         'communityId': this.community.id
       };
-      axios
+      maxios
         .post("/community/relay-point/map/",params)
         .then(res => {
           this.relayPointsMap = res.data;
@@ -583,7 +583,7 @@ export default {
     getCommunityUser() {
       if (this.user) {
         this.checkValidation = true;
-        axios
+        maxios
           .post(this.$t("urlCommunityUser"), {
             communityId: this.community.id,
             userId: this.user.id,
@@ -604,7 +604,7 @@ export default {
     },
     joinCommunity() {
       this.loading = true;
-      axios
+      maxios
         .post(this.$t("buttons.join.route", { id: this.community.id }), {
           headers: {
             "content-type": "application/json",
@@ -655,7 +655,7 @@ export default {
     },
     postLeavingRequest() {
       this.loading = true;
-      axios
+      maxios
         .post(this.$t("leaveCommunity.route", { id: this.community.id }), {
           headers: {
             "content-type": "application/json",

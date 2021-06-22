@@ -35,7 +35,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadsSolidary/";
 import ThreadCarpool from '@components/user/mailbox/ThreadCarpool'
@@ -114,7 +114,7 @@ export default {
     },
     getThreads(idMessageSelected=null){
       this.SkeletonHidden = false;
-      axios.get(this.$t("urlGet"))
+      maxios.get(this.$t("urlGet"))
         .then(response => {
           this.SkeletonHidden = true;
           this.messages = response.data.threads;

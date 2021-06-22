@@ -135,7 +135,7 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Reviews from "@components/utilities/Reviews/Reviews";
@@ -250,7 +250,7 @@ export default {
   },
   methods:{
     getPublicProfile(){
-      axios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
+      maxios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
         .then(response => {
           //console.log(response.data);
           this.publicProfile = response.data;

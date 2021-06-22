@@ -249,7 +249,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventList/";
@@ -430,7 +430,7 @@ export default {
           'name':this.searchPassed
         }
       }
-      axios
+      maxios
         .post(this.$t('routes.getList'),params)
         .then(response => {
           //console.error(response.data);

@@ -129,7 +129,7 @@
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityCreate/";
 import GeoComplete from "@components/utilities/GeoComplete";
-import axios from "axios";
+import maxios from "@utils/maxios";
 
 export default {
   i18n: {
@@ -205,7 +205,7 @@ export default {
         newCommunity.append("address", JSON.stringify(this.communityAddress));
         if (this.domain) newCommunity.append("domain", this.domain);
 
-        axios 
+        maxios 
           .post(this.$t('buttons.create.route'), newCommunity, {
             headers:{
               'content-type': 'multipart/form-data'

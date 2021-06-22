@@ -708,7 +708,7 @@
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdPublish/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/publish/AdPublish/";
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge, isEmpty, isEqual } from "lodash";
 import moment from 'moment';
 
@@ -1210,7 +1210,7 @@ export default {
     postAd() {
       let postObject = this.buildAdObject();
       this.loading = true;
-      axios.post(this.buildUrl(this.$t('route.publish')),postObject,{
+      maxios.post(this.buildUrl(this.$t('route.publish')),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -1250,7 +1250,7 @@ export default {
         postObject.cancellationMessage = this.cancellationMessage;
       }
       this.loading = true;
-      axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
+      maxios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -1338,7 +1338,7 @@ export default {
     roundPrice (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {
         this.loadingPrice = true;
-        axios.post(this.$t('route.roundPrice'), {
+        maxios.post(this.$t('route.roundPrice'), {
           value: price,
           frequency: frequency
         }).then(resp => {

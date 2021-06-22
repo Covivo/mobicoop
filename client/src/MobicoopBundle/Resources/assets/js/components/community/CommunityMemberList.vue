@@ -78,7 +78,7 @@
 
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityMemberList/";
 
 export default {
@@ -150,7 +150,7 @@ export default {
       let data = {
         "id":this.communityId
       }
-      axios 
+      maxios 
         .post(this.$t("urlMembersList"), data)
         .then(res => {
           this.users = res.data.users;

@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/PaymentPaid/";
 
 export default {
@@ -107,7 +107,7 @@ export default {
         let params = {
           "paymentPaymentId":self.paymentPaymentId
         }
-        axios.post(self.$t("checkUrl"),params)
+        maxios.post(self.$t("checkUrl"),params)
           .then(response => {
             //console.log(response.data);
             self.paymentStatus = response.data.status;

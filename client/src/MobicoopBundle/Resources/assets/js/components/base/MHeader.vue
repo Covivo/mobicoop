@@ -442,6 +442,7 @@ export default {
   },
   mounted() {
     if(localStorage.getItem('X-LOCALE') && localStorage.getItem('X-LOCALE') !== ''){
+      console.log('io');
       this.dlocale = localStorage.getItem('X-LOCALE');
     }
     else{

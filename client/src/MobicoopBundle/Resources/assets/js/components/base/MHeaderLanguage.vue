@@ -39,7 +39,7 @@
   </v-menu>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeaderLanguage/";
 
 export default {
@@ -78,8 +78,8 @@ export default {
       this.selectedLanguage = item;
       this.displayedLanguage = key;
       this.$emit('languageSelected', key);
-      axios.post(this.$t('urlToSelectLanguage'), {locale:key});
-      axios.post(this.$t('urlToUpdateLanguage'), {language:key});
+      maxios.post(this.$t('urlToSelectLanguage'), {locale:key});
+      maxios.post(this.$t('urlToUpdateLanguage'), {language:key});
     },
   }
 }

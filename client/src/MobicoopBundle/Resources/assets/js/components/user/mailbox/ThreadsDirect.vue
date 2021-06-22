@@ -30,7 +30,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadsDirect/";
 import ThreadDirect from '@components/user/mailbox/ThreadDirect'
@@ -109,7 +109,7 @@ export default {
     },
     getThreads(idMessageSelected=null){
       this.SkeletonHidden = false;
-      axios.get(this.$t("urlGet"))
+      maxios.get(this.$t("urlGet"))
         .then(response => {
           this.SkeletonHidden = true;
           // I'm pushing the new "virtual" thread

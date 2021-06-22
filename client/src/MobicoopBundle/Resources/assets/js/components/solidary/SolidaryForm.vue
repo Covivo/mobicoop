@@ -263,7 +263,7 @@
 
 <script>
 import {find} from "lodash";
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/solidary/SolidaryForm/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
@@ -411,7 +411,7 @@ export default {
       this.resetAlert();
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios.post(this.$t('ui.buttons.validate.route'), this.form)
+        maxios.post(this.$t('ui.buttons.validate.route'), this.form)
           .then(function (response) {
             console.log(response.data);
             if (response.data && response.data.message) {

@@ -539,7 +539,7 @@
 
 <script>
 import moment from "moment";
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
@@ -1134,7 +1134,7 @@ export default {
 
     },
     callSig(params, requester = null){
-      axios
+      maxios
         .get(`${this.geoRouteUrl}${params}`)
         .then(res => {
           if(requester == null){

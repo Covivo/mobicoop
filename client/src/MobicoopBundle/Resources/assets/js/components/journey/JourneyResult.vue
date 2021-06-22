@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import JourneyResultPunctual from './JourneyResultPunctual';
 import JourneyResultRegular from './JourneyResultRegular';
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
@@ -182,7 +182,7 @@ export default {
       if(undefined !== data.proposalId && this.logged){
         // Create a "search" with the original proposal parameters
         this.loading = true;
-        axios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
+        maxios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
           .then(response => {
             // console.log(response.data);
             if(undefined !== response.data.proposalId){

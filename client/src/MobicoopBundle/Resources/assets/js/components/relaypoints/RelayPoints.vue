@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
 import MMap from "@components/utilities/MMap/MMap"
@@ -137,7 +137,7 @@ export default {
   },
   methods:{
     getRelayPoints() {
-      axios
+      maxios
         .post(this.$t("relayPointList"))
         .then(res => {
           //console.error(res.data);
