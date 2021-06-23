@@ -31,7 +31,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class DriverAskAdDeletedEvent extends Event
 {
-    public const NAME = 'driver_carpool_linked_ad_deleted';
+    public const NAME = 'carpool_ad_deleted_with_pending_drivers';
 
     private $ask;
     private $deleterId;

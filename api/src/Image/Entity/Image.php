@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Entity\Event;
 use App\Community\Entity\Community;
+use App\Gamification\Entity\Badge;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
@@ -339,6 +340,33 @@ class Image
      */
     private $relayPointType;
 
+    /**
+     * @var Badge The Badge for which this image is used as icon
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $badge;
+
+    /**
+     * @var Badge The Badge for which this image is used as reward image
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $badgeImage;
+
+    /**
+     * @var Badge The Badge for which this image is used as reward image light
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readGamification"})
+     * @MaxDepth(1)
+     */
+    private $badgeImageLight;
+    
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="relayPointType", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
@@ -736,6 +764,42 @@ class Image
         return $this;
     }
     
+    public function getBadge(): ?Badge
+    {
+        return $this->badge;
+    }
+    
+    public function setBadge(?Badge $badge): self
+    {
+        $this->badge = $badge;
+        
+        return $this;
+    }
+
+    public function getBadgeImage(): ?Badge
+    {
+        return $this->badgeImage;
+    }
+    
+    public function setBadgeImage(?Badge $badgeImage): self
+    {
+        $this->badgeImage = $badgeImage;
+        
+        return $this;
+    }
+
+    public function getBadgeImageLight(): ?Badge
+    {
+        return $this->badgeImageLight;
+    }
+    
+    public function setBadgeImageLight(?Badge $badgeImageLight): self
+    {
+        $this->badgeImageLight = $badgeImageLight;
+        
+        return $this;
+    }
+
     public function getRelayPointTypeFile(): ?File
     {
         return $this->relayPointTypeFile;

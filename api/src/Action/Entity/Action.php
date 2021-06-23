@@ -30,6 +30,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Action\Filter\TypeFilter;
+use App\Gamification\Entity\GamificationAction;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * An action that can be logged and / or trigger notifications.
@@ -149,6 +151,15 @@ class Action
     private $position;
 
     /**
+     * @var ArrayCollection|null An Action can have multiple GamificationActions related
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="action", cascade={"persist","remove"})
+     * @Groups({"readUser", "write"})
+     * @MaxDepth(1)
+     */
+    private $gamificationActions;
+
+    /**
      * @var \DateTimeInterface Creation date.
      * Nullable for now as actions are manually inserted.
      *
@@ -260,6 +271,30 @@ class Action
     public function setPosition(int $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getGamificationActions()
+    {
+        return $this->gamificationActions->getValues();
+    }
+
+    public function addGamificationAction(GamificationAction $gamificationAction): self
+    {
+        if (!$this->gamificationActions->contains($gamificationAction)) {
+            $this->gamificationActions[] = $gamificationAction;
+            $gamificationAction->getAction($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGamificationAction(GamificationAction $gamificationAction): self
+    {
+        if ($this->gamificationActions->contains($gamificationAction)) {
+            $this->gamificationActions->removeElement($gamificationAction);
+        }
 
         return $this;
     }

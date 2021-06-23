@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,27 +21,26 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Event;
+namespace App\Gamification\Rule;
 
-use Symfony\Contracts\EventDispatcher\Event;
-use App\Event\Entity\Event as EventEntity;
+use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Event sent when an event is created.
+ *  Check that the requester is the author of the related Ad
  */
-class EventCreatedEvent extends Event
+class IsSolidaryExclusive implements GamificationRuleInterface
 {
-    public const NAME = 'event_created';
-
-    protected $event;
-
-    public function __construct(EventEntity $event)
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($requester, $item, $params)
     {
-        $this->event = $event;
-    }
+        /** To do : implement the rule*/
+        return true;
 
-    public function getEvent()
-    {
-        return $this->event;
+        // We check if there is the right object
+        // if (!isset($params['ad'])) {
+        //     return false;
+        // }
     }
 }

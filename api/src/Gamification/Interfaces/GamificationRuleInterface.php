@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,27 +21,25 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Event;
+namespace App\Gamification\Interfaces;
 
-use Symfony\Contracts\EventDispatcher\Event;
-use App\Event\Entity\Event as EventEntity;
+use App\Gamification\Entity\GamificationAction;
 
 /**
- * Event sent when an event is created.
+ * Gamification Rule interface.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
  */
-class EventCreatedEvent extends Event
+interface GamificationRuleInterface
 {
-    public const NAME = 'event_created';
-
-    protected $event;
-
-    public function __construct(EventEntity $event)
-    {
-        $this->event = $event;
-    }
-
-    public function getEvent()
-    {
-        return $this->event;
-    }
+    /**
+     * Code to execute to validate the rule.
+     *
+     * @param User|App              $requester  The requester
+     * @param GamificationAction    $gamificationAction   The gamificationAction
+     * @param array                 $params     The params needed for the validation
+     * @return bool True if the rule is validated, false either
+     */
+    public function execute(object $requester, GamificationAction $gamificationAction, array $params);
 }
