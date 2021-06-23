@@ -1298,6 +1298,14 @@ Mobility:
         nl: /mobility-package
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobility
 
+# display mobility package page
+LegalNotice:
+    path:
+        fr: /mentions-legales
+        en: /legal-notice
+        nl: /legal-notice
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showLegalNotice
+
 # Get the last external articles (AJAX)
 LastExternalArticles:
     methods: [POST]
