@@ -31,7 +31,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UserGeneratePhoneTokenAskedEvent extends Event
 {
-    public const NAME = 'user_generate_phone_token_asked';
+    public const NAME = 'user_phone_validation_asked';
 
     protected $user;
 

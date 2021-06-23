@@ -31,7 +31,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class ProposalCanceledEvent extends Event
 {
-    public const NAME = 'carpool_proposal_canceled';
+    public const NAME = 'carpool_ad_deleted';
 
     protected $proposal;
 
