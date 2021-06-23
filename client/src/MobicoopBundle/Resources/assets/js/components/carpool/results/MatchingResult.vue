@@ -142,7 +142,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
     }
   },
   computed: {

@@ -74,7 +74,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE -php /opt/phpbrew/php/php-7.2.10/bin/php
+    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/client/public/externalCgu

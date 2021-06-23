@@ -549,7 +549,7 @@ export default {
       menuReturnTime: false,
       returnTrip: !!(this.initReturnDate && this.initReturnTime),
       marginDuration: this.defaultMarginDuration,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
       maxDateFromOutward : null,

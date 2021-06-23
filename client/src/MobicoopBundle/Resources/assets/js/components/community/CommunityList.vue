@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityList/";
 import CommunityListItem from "@components/community/CommunityListItem";
@@ -243,7 +243,7 @@ export default {
         'showAllCommunities':true
       }
 
-      axios
+      maxios
         .post(this.$t('urlGetCommunities'),params)
         .then(response => {
           //console.error(response.data);

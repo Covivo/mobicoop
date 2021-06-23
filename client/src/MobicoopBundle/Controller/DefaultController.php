@@ -117,8 +117,6 @@ class DefaultController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $session= $this->get('session');
-            $session->set('language', $data['locale']);
         }
         return new JsonResponse();
     }

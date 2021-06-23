@@ -85,7 +85,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/Report/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/utilities/Report/";
@@ -187,7 +187,7 @@ export default {
         "text": this.text
       }
 
-      axios
+      maxios
         .post(url, params)
         .then(res => {
           if(200 === res.status && res.data.success) {

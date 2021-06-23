@@ -359,7 +359,7 @@
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventCreate/";
 import GeoComplete from "@components/utilities/GeoComplete";
 import moment from "moment";
-import axios from "axios";
+import maxios from "@utils/maxios";
 
 export default {
   i18n: {
@@ -401,7 +401,7 @@ export default {
       menuReturnDate: false,
       menuStartTime: false,
       menuEndTime: false,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
         v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
@@ -477,7 +477,7 @@ export default {
         if (this.endTime) newEvent.append("endTime", this.endTime);
         if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
-        axios 
+        maxios 
           .post(this.$t('buttons.create.route'), newEvent, {
             headers:{
               'content-type': 'multipart/form-data'

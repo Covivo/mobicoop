@@ -14,7 +14,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SsoLoginReturn/";
 
 export default {
@@ -43,7 +43,7 @@ export default {
   },
   methods:{
     getUser(){
-      axios.post("/user/sso/login/treat", {'id':this.data['id']}).then((res) => {
+      maxios.post("/user/sso/login/treat", {'id':this.data['id']}).then((res) => {
         console.log(res.data);
         if(res.data.length>0){
           //this.loginUser(res.data[0].id);

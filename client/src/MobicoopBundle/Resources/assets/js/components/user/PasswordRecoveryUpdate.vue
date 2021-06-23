@@ -67,7 +67,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/PasswordRecoveryUpdate/";
 
 export default {
@@ -125,7 +125,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true;
         
-        axios.post(this.$t('urlUpdatePassword', {'token':this.token}),
+        maxios.post(this.$t('urlUpdatePassword', {'token':this.token}),
           {
             password:this.pwd
           },{

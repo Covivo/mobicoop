@@ -19,7 +19,7 @@
 
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge } from "lodash";
 import MRssArticlesItem from "@components/utilities/rssArticle/MRssArticlesItem";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/rssArticle/RssArticle/";
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     getRssArticle(){
-      axios.post(this.$t("externalRoute"))
+      maxios.post(this.$t("externalRoute"))
         .then(response => {
           // console.error(response.data);
           this.articles = response.data;

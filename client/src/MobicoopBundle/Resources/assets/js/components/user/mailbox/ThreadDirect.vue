@@ -100,7 +100,7 @@ export default {
   data() {
     return {
       selected: this.selectedDefault,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       currentUnreadMessages: this.unreadMessages
     }
   },

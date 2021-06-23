@@ -17,7 +17,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/home/HomeContent/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/home/HomeContent/";
@@ -67,7 +67,7 @@ export default {
         'perPage':this.perPage,
         'page':this.page
       }
-      axios
+      maxios
         .post(this.$t('routes.getList'),params)
         .then(response => {
           // console.error(response.data);

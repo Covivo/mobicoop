@@ -8,7 +8,7 @@
     >
       <v-col
         cols="7"
-        class="text-right"
+        class="text-right align-self-center"
       >
         <h3 class="primary--text font-italic">
           {{ $t('news.title') }}
@@ -31,10 +31,13 @@
       </v-col>
       <v-spacer />
 
-      <v-col cols="4">
+
+      <v-col 
+        cols="4"           
+        class="align-self-center"
+      >
         <v-img
           :src="imageLink + '210112_MBP_VisuelSite.png'"
-          class="align-self-center"
           cover
         />
       </v-col>

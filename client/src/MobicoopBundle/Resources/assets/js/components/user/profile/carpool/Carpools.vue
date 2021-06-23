@@ -84,7 +84,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/AcceptedCarpools/";
 import Carpool from "@components/user/profile/carpool/Carpool.vue";
 
@@ -125,7 +125,7 @@ export default {
   },
   methods:{
     getExport(){
-      axios.post(this.$t("exportUrl"))
+      maxios.post(this.$t("exportUrl"))
         .then(res => {
           this.openFileDownload(res);
         })

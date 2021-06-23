@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import SsoLogin from '@components/user/SsoLogin';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SsoLogins/";
 export default {
@@ -35,7 +35,7 @@ export default {
   },
   methods:{
     getSso(){
-      axios.post(this.$t("urlGetSsoServices"))
+      maxios.post(this.$t("urlGetSsoServices"))
         .then(response => {
           this.ssoConnections = response.data;
         });      

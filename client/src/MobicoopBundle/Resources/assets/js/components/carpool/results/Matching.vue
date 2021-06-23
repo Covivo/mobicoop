@@ -241,7 +241,7 @@
 </template>
 <script>
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
@@ -357,7 +357,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       carpoolDialog: false,
       loginOrRegisterDialog: false,
       results: null,
@@ -496,7 +496,7 @@ export default {
         let postParams = {
           "filters": this.filters,
         };
-        axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
+        maxios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -531,7 +531,7 @@ export default {
         let postParams = {
           "filters": this.filters
         };
-        axios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
+        maxios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -581,7 +581,7 @@ export default {
           "filters": this.filters,
           "role": this.role
         };
-        axios.post(this.$t("matchingUrl"), postParams,
+        maxios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -615,7 +615,7 @@ export default {
         "to_latitude": this.destination.latitude,
         "to_longitude": this.destination.longitude
       };
-      axios.post(this.$t("externalJourneyUrl"), postParams,
+      maxios.post(this.$t("externalJourneyUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -640,7 +640,7 @@ export default {
         "to_longitude": this.destination.longitude,
         "date": this.date
       };
-      axios.post(this.$t("ptSearchUrl"), postParams,
+      maxios.post(this.$t("ptSearchUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -703,7 +703,7 @@ export default {
       form.submit();      
     },
     launchCarpool(params) {
-      axios.post(this.$t("carpoolUrl"), params,
+      maxios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
             'content-type': 'application/json'
