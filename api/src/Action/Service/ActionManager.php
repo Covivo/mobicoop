@@ -288,4 +288,14 @@ class ActionManager
     {
         $this->treatDiary($action, $event->getUserDelegated(), $event->getUser());
     }
+
+    public function onAction(Action $action)
+    {
+        // if inLog do something
+        var_dump($action->isInLog());
+        die;
+
+        //
+        // dsipatch un LogEvent
+    }
 }
