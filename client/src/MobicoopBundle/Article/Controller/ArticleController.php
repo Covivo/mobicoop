@@ -70,6 +70,7 @@ class ArticleController extends AbstractController
     const ACCESSIBILITY = 30;
     const ABOUT_US = 31;
     const MOBILITY = 32;
+    const LEGAL_NOTICE = 33;
 
 
     /**
@@ -362,6 +363,15 @@ class ArticleController extends AbstractController
     public function showMobility(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::MOBILITY));
+    }
+
+    /**
+    * Display of the LEGAL NOTICE page
+    *
+    */
+    public function showLegalNotice(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::LEGAL_NOTICE));
     }
 
     /**
