@@ -51,15 +51,15 @@ final class Version20210623110600 extends AbstractMigration
         $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (2, 'HasAtLeastNAd');");
         $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (3, 'AdInCommunity');");
         $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (4, 'IsCarpoolAccepter');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (5, 'carpoolInCommunity');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (6, 'isSolidaryExclusive');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (7, 'hasAtLeastNCarpooledKm');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (8, 'hasAtLeastNCarpooledCo2Saved');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (9, 'firstMessageAnswer');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (10, 'hasARelayPointAsWaypoint');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (5, 'CarpoolInCommunity');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (6, 'IsSolidaryExclusive');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (7, 'HasAtLeastNCarpooledKm');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (8, 'HasAtLeastNCarpooledCo2Saved');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (9, 'FirstMessageAnswer');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (10, 'HasARelayPointAsWaypoint');");
         $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (11, 'AdInEvent');");
         $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (12, 'HasOnlyOneElectronicPayment');");
-        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (13, 'carpoolInEvent');");
+        $this->addSql("INSERT INTO `gamification_action_rule` (`id`, `name`) VALUES (13, 'CarpoolInEvent');");
 
         // GamificationAction
         $this->addSql("INSERT INTO `gamification_action` (`id`, `action_id`, `gamification_action_rule_id`, `name`) VALUES (1, '91', NULL, 'user_mail_validation');");
