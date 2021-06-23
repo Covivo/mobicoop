@@ -75,6 +75,14 @@ class RewardStep
      */
     private $createdDate;
 
+    /**
+     * @var \DateTimeInterface RewardStep's update date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification"})
+     */
+    private $updatedDate;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,6 +131,18 @@ class RewardStep
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -133,5 +153,15 @@ class RewardStep
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }
