@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/contact/ContactForm/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/contact/ContactForm/";
@@ -229,7 +229,7 @@ export default {
       this.resetAlert();
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios.post(this.$t('buttons.send.route'), {
+        maxios.post(this.$t('buttons.send.route'), {
           email: this.form.email,
           givenName: this.form.givenName,
           familyName: this.form.familyName,
@@ -276,7 +276,7 @@ export default {
       }
     },
     getContactItems(){
-      axios.post(this.$t('getContactItemsUri'))
+      maxios.post(this.$t('getContactItemsUri'))
         .then(response => {
           // console.log(response.data);
           this.contactTypes = response.data;

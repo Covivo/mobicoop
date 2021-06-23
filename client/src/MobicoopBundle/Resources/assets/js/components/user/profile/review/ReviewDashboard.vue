@@ -76,7 +76,7 @@
   </v-tabs>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/review/ReviewDashboard/";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import WriteReview from "@components/utilities/Reviews/WriteReview"
@@ -107,7 +107,7 @@ export default {
   methods:{
     getDashboard(){
       this.loading = true;
-      axios
+      maxios
         .post(this.$t('getDashboardUri'))
         .then(res => {
           this.givenReviews = res.data.givenReviews;

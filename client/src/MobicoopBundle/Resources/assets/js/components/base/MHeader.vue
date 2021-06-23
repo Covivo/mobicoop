@@ -449,7 +449,10 @@ export default {
   },
   created() {
     this.$root.token = this.token;
-    this.$root.$i18n.locale = this.dlocale
+    if(this.user){
+      localStorage.setItem('X-LOCALE',this.dlocale);
+    }
+    this.$root.$i18n.locale = this.dlocale;
   },
   methods:{
     updateLanguage(language) {

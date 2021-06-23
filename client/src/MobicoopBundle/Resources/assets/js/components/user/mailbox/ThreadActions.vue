@@ -246,7 +246,7 @@ import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary
 import VJourney from '@components/carpool/utilities/VJourney';
 import MatchingJourney from '@components/carpool/results/MatchingJourney';
 import Report from "@components/utilities/Report";
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 
 export default {
@@ -309,7 +309,7 @@ export default {
   },
   data(){
     return{
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       loading:this.loadingInit,
       dataLoadingBtn:this.loadingBtn,
       infosComplete:[],
@@ -379,7 +379,7 @@ export default {
             idAsk: this.idAsk,
             idRecipient: this.idRecipient
           }
-          axios.post(this.$t("urlGetAdAsk"), params)
+          maxios.post(this.$t("urlGetAdAsk"), params)
             .then(response => {
               this.infosComplete = response.data;
 
@@ -546,7 +546,7 @@ export default {
         let params = {
           "blockedUserId":this.idRecipient
         }
-        axios.post(this.$t("blockUrl"), params)
+        maxios.post(this.$t("blockUrl"), params)
           .then(response => {
             if(this.dataBlockerId == null){
               this.dataBlockerId = this.idUser;

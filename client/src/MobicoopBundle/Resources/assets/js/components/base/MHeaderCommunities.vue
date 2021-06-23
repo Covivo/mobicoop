@@ -39,7 +39,7 @@
 </template>
 <script>
 import { merge } from "lodash";
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeaderCommunities/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MHeaderCommunities/"
 
@@ -80,7 +80,7 @@ export default {
     let params = {
       'userId':this.userId,
     }
-    axios.post(this.$t("getCommunities"), params)
+    maxios.post(this.$t("getCommunities"), params)
       .then(res => {
         this.items = res.data;
       })

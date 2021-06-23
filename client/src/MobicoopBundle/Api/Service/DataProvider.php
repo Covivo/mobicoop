@@ -53,6 +53,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -118,6 +119,8 @@ class DataProvider
     private $cache;
     private $inflector;
 
+    private $request;
+
     /**
      * Constructor.
      *
@@ -135,7 +138,7 @@ class DataProvider
      * @param Deserializer $deserializer    The deserializer
      * @param SessionInterface  $session    The session
      */
-    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $loginDelegatePath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session)
+    public function __construct(string $uri, string $username, string $emailToken = null, string $passwordToken = null, string $password, string $authPath, string $loginPath, string $loginDelegatePath, string $refreshPath, string $loginTokenPath, string $loginSsoPath, string $tokenId, Deserializer $deserializer, SessionInterface $session, RequestStack $requestStack)
     {
         $this->uri = $uri;
         $this->username = $username;
@@ -154,6 +157,7 @@ class DataProvider
         $this->private = false;
         $this->cache = new FilesystemAdapter();
         $this->inflector = InflectorFactory::create()->build();
+        $this->request = $requestStack->getCurrentRequest();
 
         // use the following for debugging token related problems !
         // $this->cache->deleteItem($this->tokenId.'.jwt.token');
@@ -320,14 +324,14 @@ class DataProvider
         // automatically add the bearer token
         $headers['Authorization'] = 'Bearer ' . $this->jwtToken->getToken();
 
+        // Add the locale
+        $headers['X-LOCALE'] = $this->request->headers->get("x-locale");
+
         // additional headers
         foreach ($headers as $header) {
             switch ($header) {
                 case 'json':
                     $headers['accept'] = 'application/json';
-                    break;
-                case !is_null($this->session->get("language")):
-                    $headers['X-LOCALE'] = $this->session->get("language");
                     break;
             }
         }

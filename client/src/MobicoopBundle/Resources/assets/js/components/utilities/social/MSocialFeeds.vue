@@ -37,7 +37,7 @@
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/social/MSocialFeeds/";
 import MSocialFeedsItem from "@components/utilities/social/MSocialFeedsItem";
-import axios from "axios";
+import maxios from "@utils/maxios";
 export default {
   i18n: {
     messages: {
@@ -65,7 +65,7 @@ export default {
     getArticles(){
       let params = {};
       this.loading = true;
-      axios.post(this.$t("urlGetArticles"), params)
+      maxios.post(this.$t("urlGetArticles"), params)
         .then(response => {
           // console.error(response.data);
           this.items = response.data;

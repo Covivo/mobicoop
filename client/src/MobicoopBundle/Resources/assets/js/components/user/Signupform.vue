@@ -490,7 +490,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
@@ -706,7 +706,7 @@ export default {
       },
       communities: [],
       selectedCommunity: null,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       consent:false,
       consentSocial: false
     };
@@ -779,7 +779,7 @@ export default {
     },
     validate: function(e) {
       this.loading = true;
-      axios
+      maxios
         .post(
           this.action,
           {
@@ -857,7 +857,7 @@ export default {
     },
     checkEmail() {
       this.loadingCheckEmailAldreadyTaken = true;
-      axios
+      maxios
         .post(
           this.$t("checkEmail.url"),
           {
@@ -915,7 +915,7 @@ export default {
 
     // should be get all communities
     getCommunities() {
-      axios.post(this.$t("communities.route")).then((res) => {
+      maxios.post(this.$t("communities.route")).then((res) => {
         this.communities = res.data;
       });
     },

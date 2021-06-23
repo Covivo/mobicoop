@@ -108,7 +108,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/IdentityValidation/";
 
 export default {
@@ -185,7 +185,7 @@ export default {
       let sendDocument = new FormData();
       sendDocument.append("document", this.document);
       this.loading = true;
-      axios
+      maxios
         .post(this.$t('sendUrl'), sendDocument,
           {
             headers:{

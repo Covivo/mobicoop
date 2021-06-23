@@ -60,7 +60,7 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Profile/";
 
@@ -122,7 +122,7 @@ export default {
       let params = new FormData();
       params.append("password", this.password);
       this.loading = true;
-      axios.post("/user/password/update", params).then(res => {
+      maxios.post("/user/password/update", params).then(res => {
         this.errorUpdate = res.data.state;
         this.loading = false;
         this.snackbar = true;

@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import UpdateProfile from "@components/user/profile/UpdateProfile";
 import Ads from "@components/user/profile/ad/Ads";
 import Carpools from "@components/user/profile/carpool/Carpools";
@@ -278,7 +278,7 @@ export default {
     }
   },
   mounted(){
-    axios.get(this.$t("getMyCarpools"))
+    maxios.get(this.$t("getMyCarpools"))
       .then(res => {
         this.publishedAds = res.data.published;
         this.acceptedAds = res.data.accepted;
