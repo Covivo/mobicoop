@@ -44,84 +44,126 @@ use App\Carpool\Controller\UpdateCarpoolsLimits;
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools",
- *              "security_post_denormalize"="is_granted('ad_list',object)"
- *          },
+ *              "security_post_denormalize"="is_granted('ad_list',object)",
+  *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+*          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/carpools",
  *              "normalization_context"={"groups"={"results"}},
- *              "security_post_denormalize"="is_granted('ad_search_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "post_ask"={
  *              "method"="POST",
  *              "path"="/carpools/ask",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="ask"},
- *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "post_contact"={
  *              "method"="POST",
  *              "path"="/carpools/contact",
  *              "controller"=AdAskPost::class,
  *              "defaults"={"type"="contact"},
- *              "security_post_denormalize"="is_granted('ad_ask_create',object)"
+ *              "security_post_denormalize"="is_granted('ad_ask_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "updateCarpoolsLimits"={
  *              "method"="GET",
  *              "path"="/carpools/updateCarpoolsLimits",
  *              "controller"=UpdateCarpoolsLimits::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              },
  *              "security"="is_granted('ad_search_create',object)"
  *          },
  *          "getMyCarpools"={
  *              "method"="GET",
  *              "path"="/carpools/accepted",
- *              "security_post_denormalize"="is_granted('ad_list',object)"
+ *              "security_post_denormalize"="is_granted('ad_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "path"="/carpools/{id}",
- *              "security"="is_granted('ad_read',object)"
+ *              "security"="is_granted('ad_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "get_external"={
  *              "method"="GET",
  *              "path"="/carpools/{id}/external",
- *              "security"="is_granted('ad_read_external',object)"
+ *              "security"="is_granted('ad_read_external',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "get_full"={
  *              "method"="GET",
  *              "path"="/carpools/{id}/full",
- *              "security"="is_granted('ad_read',object)"
+ *              "security"="is_granted('ad_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "claim"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}/claim",
  *              "read"=false,
- *              "security"="is_granted('ad_claim',object)"
+ *              "security"="is_granted('ad_claim',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "put_ask"={
  *              "method"="PUT",
  *              "path"="/carpools/ask/{id}",
  *              "read"=false,
- *              "security"="is_granted('ad_ask_update',object)"
+ *              "security"="is_granted('ad_ask_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "get_ask"={
  *              "method"="GET",
  *              "path"="/carpools/ask/{id}",
  *              "controller"=AdAskGet::class,
  *              "read"=false,
- *              "security"="is_granted('ad_ask_read',object)"
+ *              "security"="is_granted('ad_ask_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}",
- *              "security"="is_granted('ad_update',object)"
+ *              "security"="is_granted('ad_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "delete"={
  *              "method"="DELETE",
  *              "path"="/carpools/{id}",
- *              "security"="is_granted('ad_delete',object)"
+ *              "security"="is_granted('ad_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *       }
  * )

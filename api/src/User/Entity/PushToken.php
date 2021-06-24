@@ -41,18 +41,30 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('push_token_create',object)"
+ *              "security_post_denormalize"="is_granted('push_token_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('push_token_delete',object)"
+ *              "security"="is_granted('push_token_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

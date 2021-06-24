@@ -38,14 +38,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "denormalization_context"={"groups"={"write"}},
  *     },
  *     collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
+ *          },
  *          "round"={
  *              "method"="POST",
  *              "path"="/prices/round",
  *              "controller"=RoundPrice::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Misc"}
+ *              }
+ *          },
+ *      }
  * )
  */
 class Price

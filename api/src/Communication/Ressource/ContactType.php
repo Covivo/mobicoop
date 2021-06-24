@@ -38,14 +38,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"writeContactType"}}
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
+ *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('reject',object)"
+ *              "security_post_denormalize"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "is_granted('reject',object)"
+ *              "is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *          }
  *      }
  * )

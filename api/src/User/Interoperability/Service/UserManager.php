@@ -26,7 +26,9 @@ namespace App\User\Interoperability\Service;
 use App\User\Interoperability\Ressource\User;
 use App\User\Entity\User as UserEntity;
 use App\User\Exception\BadRequestInteroperabilityUserException;
+use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Service\UserManager as UserEntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -38,13 +40,32 @@ class UserManager
 {
     private $userEntityManager;
     private $security;
+    private $entityManager;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
+        $this->entityManager = $entityManager;
     }
 
+    
+    /**
+     * Get a User
+     *
+     * @param integer $id   User's Id
+     * @return User The interoperabily User
+     */
+    public function getUser(int $id): ?User
+    {
+        $userEntity = $this->userEntityManager->getUser($id);
+        $user = null;
+        if ($userEntity) {
+            $user = $this->buildUserFromUserEntity($userEntity);
+        }
+        return $user;
+    }
+    
     /**
      * Register a User
      *
@@ -60,6 +81,47 @@ class UserManager
         $userEntity = $this->userEntityManager->registerUser($userEntity);
 
         return $this->buildUserFromUserEntity($userEntity);
+    }
+
+    /**
+     * Update the entity User associated to an Interoperability User
+     *
+     * @param User $user The interoperability User
+     * @return User The interoperability User
+     */
+    public function updateUser(User $user): User
+    {
+        if ($userEntity = $this->userEntityManager->getUser($user->getId())) {
+            $userEntity->setGivenName($user->getGivenName());
+            $userEntity->setFamilyName($user->getFamilyName());
+            $userEntity->setGender($user->getGender());
+            $userEntity->setEmail($user->getEmail());
+            $userEntity->setNewsSubscription($user->hasNewsSubscription());
+
+            $this->entityManager->persist($userEntity);
+            $this->entityManager->flush();
+        }
+        return $user;
+    }
+
+    /**
+     * Erase the SsoId and the SsoProvider informations of the user account
+     *
+     * @param DetachSso $detachSso The data about the sso account to detach
+     * @return DetachSso
+     */
+    public function detachUser(DetachSso $detachSso): DetachSso
+    {
+        if ($userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid())) {
+            $userEntity->setSsoId(null);
+            $userEntity->setSsoProvider(null);
+
+            $this->entityManager->persist($userEntity);
+            $this->entityManager->flush();
+
+            $detachSso->setUserId($userEntity->getId());
+        }
+        return $detachSso;
     }
 
     /**

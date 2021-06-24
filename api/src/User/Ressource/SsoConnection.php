@@ -41,12 +41,17 @@ use App\User\Entity\User;
  *      },
  *      collectionOperations={
  *          "get"={
- *
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          }
  *      }
  * )

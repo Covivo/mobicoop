@@ -43,27 +43,42 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeDynamic","results"}},
- *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)"
+ *              "security_post_denormalize"="is_granted('dynamic_ad_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "active"={
  *              "method"="GET",
  *              "path"="/dynamics/active",
- *              "security"="is_granted('dynamic_ad_create',object)"
+ *              "security"="is_granted('dynamic_ad_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "unfinished"={
  *              "method"="GET",
  *              "path"="/dynamics/unfinished",
- *              "security"="is_granted('dynamic_ad_create',object)"
+ *              "security"="is_granted('dynamic_ad_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "read"=false,
- *              "security"="is_granted('dynamic_ad_read',object)"
+ *              "security"="is_granted('dynamic_ad_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -71,7 +86,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "normalization_context"={"groups"={"updateDynamic","results"}},
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
- *              "security"="is_granted('dynamic_ad_update',object)"
+ *              "security"="is_granted('dynamic_ad_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      }
  * )

@@ -54,11 +54,23 @@ use App\Solidary\Entity\Subject;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
- *          "get",
- *          "put"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})

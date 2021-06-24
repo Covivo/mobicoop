@@ -48,17 +48,26 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "get"={
  *              "method"="GET",
  *              "path"="/pages",
- *              "security"="is_granted('article_list',object)"
+ *              "security"="is_granted('article_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "externalArticles"={
  *              "method"="GET",
  *              "path"="/pages/external",
- *              "security"="is_granted('article_list',object)"
+ *              "security"="is_granted('article_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/pages",
- *              "security_post_denormalize"="is_granted('article_create',object)"
+ *              "security_post_denormalize"="is_granted('article_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/articles",
@@ -67,56 +76,83 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_article_list',object)"
+ *              "security"="is_granted('admin_article_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/articles",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_create',object)"
+ *              "security"="is_granted('admin_article_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "path"="/pages/{id}",
- *              "security"="is_granted('article_read',object)"
+ *              "security"="is_granted('article_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "getArticle"={
  *              "method"="GET",
  *              "path"="/articles/{id}",
- *              "security"="is_granted('article_read',object)"
- *          },
+ *              "security"="is_granted('article_read',object)",
+  *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
+*          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/pages/{id}",
- *              "security"="is_granted('article_update',object)"
+ *              "security"="is_granted('article_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "delete"={
  *              "method"="DELETE",
  *              "path"="/pages/{id}",
- *              "security"="is_granted('article_delete',object)"
+ *              "security"="is_granted('article_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/articles/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_article_read',object)"
+ *              "security"="is_granted('admin_article_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/articles/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_update',object)"
+ *              "security"="is_granted('admin_article_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/articles/{id}",
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_delete',object)"
+ *              "security"="is_granted('admin_article_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  *

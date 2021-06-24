@@ -43,12 +43,23 @@ use App\User\Entity\User;
  *          "post"={
  *              "method"="POST",
  *              "normalization_context"={"groups"={"writeClassicProof"}},
- *              "security_post_denormalize"="is_granted('carpool_proof_create',object)"
- *          },"get"
+ *              "security_post_denormalize"="is_granted('carpool_proof_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+ *          },
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('carpool_proof_read',object)"
+ *              "security"="is_granted('carpool_proof_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
  *          },
  *          "put"={
  *              "method"="PUT",
@@ -56,7 +67,10 @@ use App\User\Entity\User;
  *              "normalization_context"={"groups"={"updateClassicProof"}},
  *              "denormalization_context"={"groups"={"updateClassicProof"}},
  *              "validation_groups"={"updateClassicProof"},
- *              "security"="is_granted('carpool_proof_update',object)"
+ *              "security"="is_granted('carpool_proof_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
  *          },
  *          "cancel"={
  *              "method"="PUT",
@@ -65,7 +79,10 @@ use App\User\Entity\User;
  *              "normalization_context"={"groups"={"cancelClassicProof"}},
  *              "denormalization_context"={"groups"={"cancelClassicProof"}},
  *              "validation_groups"={"cancelClassicProof"},
- *              "security"="is_granted('carpool_proof_update',object)"
+ *              "security"="is_granted('carpool_proof_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Proofs"}
+ *              }
  *          }
  *      }
  * )

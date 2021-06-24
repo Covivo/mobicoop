@@ -58,7 +58,10 @@ use Doctrine\Common\Collections\Collection;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('mass_list',object)"
+ *              "security"="is_granted('mass_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "post"={
  *              "method"="POST",
@@ -67,38 +70,56 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=CreateMassImportAction::class,
  *              "defaults"={"_api_receive"=false},
- *              "security_post_denormalize"="is_granted('mass_create',object)"
+ *              "security_post_denormalize"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"mass"}},
- *              "security"="is_granted('mass_read',object)"
+ *              "security"="is_granted('mass_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "delete"={
- *              "security"="is_granted('mass_delete',object)"
+ *              "security"="is_granted('mass_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "reanalyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/reanalyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassReAnalyzeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
  *              "normalization_context"={"groups"={"massCompute"}},
  *              "controller"=MassComputeAction::class,
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "match"={
  *              "method"="GET",
@@ -107,6 +128,7 @@ use Doctrine\Common\Collections\Collection;
  *              "controller"=MassMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",
@@ -159,6 +181,7 @@ use Doctrine\Common\Collections\Collection;
  *              "controller"=MassReMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
+ *                  "tags"={"Mobimatch"},
  *                  "parameters"={
  *                     {
  *                         "name" = "maxDetourDurationPercent",
@@ -209,25 +232,37 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/workingplaces",
  *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
  *              "controller"=MassWorkingPlacesAction::class,
- *              "security"="is_granted('mass_read',object)"
+ *              "security"="is_granted('mass_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "migrate"={
  *              "method"="PUT",
  *              "path"="/masses/{id}/migrate",
  *              "security"="is_granted('mass_create',object)",
- *              "normalization_context"={"groups"={"massMigrate"}}
+ *              "normalization_context"={"groups"={"massMigrate"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "getPTPotential"={
  *              "method"="GET",
  *              "path"="/masses/{id}/getPTPotential",
  *              "normalization_context"={"groups"={"mass","pt"}},
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          },
  *          "computePTPotential"={
  *              "method"="GET",
  *              "path"="/masses/{id}/computePTPotential",
  *              "normalization_context"={"groups"={"massPTPotential"}},
- *              "security"="is_granted('mass_create',object)"
+ *              "security"="is_granted('mass_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Mobimatch"}
+ *              }
  *          }
  *      }
  * )

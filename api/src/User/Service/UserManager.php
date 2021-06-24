@@ -81,6 +81,7 @@ use App\User\Exception\UserNotFoundException;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
 use App\Payment\Repository\PaymentProfileRepository;
+use App\I18n\Repository\LanguageRepository;
 
 /**
  * User manager service.
@@ -114,6 +115,7 @@ class UserManager
     private $internalMessageManager;
     private $reviewManager;
     private $paymentActive;
+    private $languageRepository;
 
     // Default carpool settings
     private $chat;
@@ -168,7 +170,8 @@ class UserManager
         $passwordTokenValidity,
         string $paymentActive,
         PaymentProfileRepository $paymentProfileRepository,
-        GeoTools $geoTools
+        GeoTools $geoTools,
+        LanguageRepository $languageRepository
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -204,6 +207,7 @@ class UserManager
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->paymentActive = $paymentActive;
         $this->geoTools = $geoTools;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -583,7 +587,7 @@ class UserManager
                 }
             }
         }
-       
+               
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -1540,6 +1544,20 @@ class UserManager
     }
 
     /**
+     * Get a User by it's SsoId
+     *
+     * @param string $ssoId
+     * @return User|null
+     */
+    public function getUserBySsoId(string $ssoId): ?User
+    {
+        if ($user = $this->userRepository->findOneBy(['ssoId'=>$ssoId])) {
+            return $user;
+        }
+        return null;
+    }
+
+    /**
      * Get the profile summary of a User
      *
      * @param User $user   The User
@@ -1735,5 +1753,22 @@ class UserManager
         }
 
         return $this->geoTools->getCO2($savedDistance);
+    }
+    
+    /**
+     * Update user's language
+     *
+     * @param User $user
+     * @return User
+     */
+    public function updateLanguage(User $user)
+    {
+        $language = $this->languageRepository->findOneBy(['code'=>$user->getLanguage()->getCode()]);
+        $user->setLanguage($language);
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 }

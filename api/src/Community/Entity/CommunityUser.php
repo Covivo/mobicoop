@@ -57,10 +57,16 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security_post_denormalize"="is_granted('community_list',object)"
+ *              "security_post_denormalize"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('community_join',object)"
+ *              "security_post_denormalize"="is_granted('community_join',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/communities/{id}/members",
@@ -69,14 +75,20 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_community_read',object)"
+ *              "security"="is_granted('admin_community_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/community_members",
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_community_membership',object)"
+ *              "security"="is_granted('admin_community_membership',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_associate_campaign"={
  *              "path"="/admin/community_members/associate-campaign",
@@ -85,7 +97,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_community_membership',object)"
+ *              "security"="is_granted('admin_community_membership',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "ADMIN_send_campaign"={
  *              "path"="/admin/community_members/send-campaign",
@@ -94,29 +109,48 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_community_membership',object)"
+ *              "security"="is_granted('admin_community_membership',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *          "add"={
  *              "method"="POST",
  *              "path"="/community_users/add",
- *              "security_post_denormalize"="is_granted('community_membership',object)"
+ *              "security_post_denormalize"="is_granted('community_membership',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          }
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
- *              "security"="is_granted('community_update',object)"
+ *              "security"="is_granted('community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "delete"={
- *              "controller"=LeaveCommunityAction::class
+ *              "controller"=LeaveCommunityAction::class,
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
  *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/community_members/{id}",
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_community_member_update',object)"
+ *              "security"="is_granted('admin_community_member_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      }
  * )

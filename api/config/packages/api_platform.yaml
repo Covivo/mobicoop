@@ -1,13 +1,51 @@
 api_platform:
 
     # The title of the API.
-    title: 'Mobicoop API'
+    title: 'Mobicoop Platform API'
 
     # The description of the API.
-    description: 'The mobility API.'
+    description: "
+    Mobicoop Platform API is an Open Source carpooling platform.
+
+
+    It's operated by many public authorities and private organizations.
+
+    ## Authentification
+    
+    This API use **JWT Token authentification**. To get the security token you must send a **POST** request on one of this two routes depending of your own context :
+    
+    - /login
+
+    - /auth
+    
+    
+    The body of this request must be a JSON object based on this definition :
+
+
+    ```
+    {
+        \"username\":\"API_USERNAME\",
+        \"password\":\"API_PASSWORD\"        
+    }
+    ```
+    
+    ## Specific domains
+    
+    This document contains all endpoints of the API.
+
+
+    - If you're only looking for the **[RDEX](https://www.feduco.org/articles/actus/rdex/) protocol routes** <a href='#operations-tag-RDEX'>get to them</a>
+
+    - If you're only looking for the **[RDEX+](https://rdex.fabmob.io/) protocol routes** <a href='#operations-tag-RDEX\\+'>get to them</a>
+
+    - If you're only looking for the **Interoperability routes** <a href='#operations-tag-Interoperability'>jump right to them</a>
+
+    
+    **License** : [GNU Affero AGPL-v3](https://www.gnu.org/licenses/agpl.html)
+    "
 
     # The version of the API.
-    version: '0.6.0'
+    version: 'AGPL-v3'
 
     collection:
         pagination:
@@ -16,10 +54,10 @@ api_platform:
 
     # we disable the original swagger to change the path of the documentation
     enable_swagger_ui: true
-    
+
     # enable token bearer
     swagger:
-         api_keys:
+        api_keys:
              apiKey:
                 name: Authorization
                 type: header
@@ -37,6 +75,7 @@ api_platform:
             '%kernel.project_dir%/src/Event/Entity',
             '%kernel.project_dir%/src/ExternalJourney/Entity',
             '%kernel.project_dir%/src/Geography/Entity',
+            '%kernel.project_dir%/src/I18n/Entity',
             '%kernel.project_dir%/src/Image/Entity',
             '%kernel.project_dir%/src/Import/Entity',
             '%kernel.project_dir%/src/Journey/Entity',
@@ -46,6 +85,7 @@ api_platform:
             '%kernel.project_dir%/src/Price/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
+            '%kernel.project_dir%/src/RdexPlus/Entity',
             '%kernel.project_dir%/src/RelayPoint/Entity',
             '%kernel.project_dir%/src/Solidary/Entity',
             '%kernel.project_dir%/src/Travel/Entity',
@@ -61,7 +101,6 @@ api_platform:
         - '%kernel.project_dir%/src/Article/Ressource'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Carpool/Ressource'
-        - '%kernel.project_dir%/src/Carpool/Interoperability/Ressource'
         - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/Community/Resource'
@@ -69,6 +108,7 @@ api_platform:
         - '%kernel.project_dir%/src/ExternalJourney/Ressource'
         - '%kernel.project_dir%/src/Event/Entity'
         - '%kernel.project_dir%/src/Geography/Entity'
+        - '%kernel.project_dir%/src/I18n/Entity'
         - '%kernel.project_dir%/src/Image/Entity'
         - '%kernel.project_dir%/src/Import/Entity'
         - '%kernel.project_dir%/src/Import/Ressource'
@@ -80,6 +120,7 @@ api_platform:
         - '%kernel.project_dir%/src/Price/Entity'
         - '%kernel.project_dir%/src/PublicTransport/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
+        - '%kernel.project_dir%/src/RdexPlus/Resource'
         - '%kernel.project_dir%/src/RelayPoint/Entity'
         - '%kernel.project_dir%/src/Solidary/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'

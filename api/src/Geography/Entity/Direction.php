@@ -52,6 +52,7 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  *              "path"="/directions/search",
  *              "normalization_context"={"groups"={"read"}},
  *              "swagger_context" = {
+ *                  "tags"={"Geography"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "points",
@@ -65,7 +66,13 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          }
+ *      }
  * )
  *
  */

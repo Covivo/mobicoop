@@ -45,7 +45,8 @@
         "event": {
             "name": "Cet événement existe déjà veuillez utiliser un autre nom",
             "create": "La création de l'événement a échoué",
-            "required": "Tous les champs marqués d'une étoile sont requis"
+            "required": "Tous les champs marqués d'une étoile sont requis",
+            "length": "Description courte trop longue (512 caractères maximum)."
         },
         "image": "L'image n'a pas été enregistrée"
     },

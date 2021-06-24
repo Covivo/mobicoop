@@ -40,21 +40,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          },
  *          "post"={
- *              "security"="is_granted('external_connection_create',object)"
+ *              "security"="is_granted('external_connection_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
- *          },
- *          "put"={
- *              "security"="is_granted('reject',object)"
- *          },
- *          "delete"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
  *          }
  *      }
  * )

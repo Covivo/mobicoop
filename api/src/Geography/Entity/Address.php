@@ -58,6 +58,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/addresses/search",
  *              "swagger_context"={
+ *                  "tags"={"Geography"},
  *                  "parameters"={
  *                     {
  *                         "name" = "q",
@@ -79,6 +80,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "method"="GET",
  *              "path"="/addresses/reverse",
  *              "swagger_context"={
+ *                  "tags"={"Geography"},
  *                  "parameters"={
  *                     {
  *                         "name" = "latitude",
@@ -99,17 +101,31 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "completion"={
  *              "method"="GET",
  *              "path"="/addresses/completion",
- *              "security"="is_granted('import_create',object)"
+ *              "security"="is_granted('import_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
  *          },
  *          "ADMIN_search"={
  *              "method"="GET",
  *              "path"="/addresses/admin/search",
  *              "normalization_context"={"groups"={"aRead"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
  *      },
  *      itemOperations={
- *          "get",
- *          "put"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
@@ -386,6 +402,14 @@ class Address implements \JsonSerializable
      * @Groups({"read"})
      */
     private $providedBy;
+
+    /**
+     * @var int|null The similarity of the address with a search
+     * In autocomplete context using Levenstein algorithm between the search termes and the addressLocality
+     *
+     * @Groups({"read"})
+     */
+    private $similarityWithSearch;
 
     /**
      * @var array|null The distance to the focus point if relevant.
@@ -702,6 +726,16 @@ class Address implements \JsonSerializable
         return $this;
     }
 
+    public function getSimilarityWithSearch(): ?int
+    {
+        return $this->similarityWithSearch;
+    }
+
+    public function setSimilarityWithSearch($similarityWithSearch)
+    {
+        $this->similarityWithSearch = $similarityWithSearch;
+    }
+
     public function getProvidedBy(): ?string
     {
         return $this->providedBy;
@@ -853,7 +887,8 @@ class Address implements \JsonSerializable
                 'icon'                 => $this->getIcon(),
                 'venue'                => $this->getVenue(),
                 'event'                => $this->getEvent(),
-                'layer'                => $this->getLayer()
+                'layer'                => $this->getLayer(),
+                'similarityWithSearch' => $this->getSimilarityWithSearch()
             ];
     }
 }

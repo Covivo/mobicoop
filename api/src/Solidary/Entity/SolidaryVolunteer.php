@@ -44,21 +44,36 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *         "get"={
- *             "security"="is_granted('solidary_volunteer_list',object)"
+ *             "security"="is_granted('solidary_volunteer_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_volunteer_register',object)"
+ *             "security_post_denormalize"="is_granted('solidary_volunteer_register',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('solidary_volunteer_read',object)"
+ *             "security"="is_granted('solidary_volunteer_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "put"={
  *             "security"="is_granted('solidary_volunteer_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "delete"={
- *             "security"="is_granted('solidary_volunteer_delete',object)"
+ *             "security"="is_granted('solidary_volunteer_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *
  *      }

@@ -75,7 +75,7 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         if ($isItem) {
         } else {
             switch ($operationName) {
-                case "get":
+                case "ADMIN_get":
                     $territories = $this->authManager->getTerritoriesForItem("user_list");
             }
         }
@@ -83,34 +83,14 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
-            ->leftJoin(sprintf("%s.addresses", $rootAlias), 'autfe')
-            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'putfe')
+            ->leftJoin($rootAlias.".addresses", 'autfe')
+            ->leftJoin("autfe.territories", 'atutfe')
+            ->leftJoin($rootAlias.".proposals", 'putfe')
             ->leftJoin("putfe.waypoints", 'wutfe')
             ->leftJoin("wutfe.address", 'a2utfe')
-            ->andWhere("(putfe.private <> 1 AND autfe.home = 1 AND (wutfe.position = 0 OR wutfe.destination = 1))")
-            ;
-
-            $where = "(";
-            /**
-             * @var Territory $territory
-             */
-            foreach ($territories as $territory) {
-                if ($where != '(') {
-                    $where .= " OR ";
-                }
-                //Check if the home address is in territory
-                $territoryFrom = 'territory'.$territory;
-                $queryBuilder->leftJoin('autfe.territories', $territoryFrom);
-                $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
-
-                //Check if the proposal address is in territory
-                $territoryFromOD = 'territoryod'.$territory;
-                $queryBuilder->leftJoin('a2utfe.territories', $territoryFromOD);
-                $where .= sprintf(" OR %s.id = %s", $territoryFromOD, $territory);
-            }
-            $where .= ")";
-            $queryBuilder
-            ->andWhere($where);
+            ->leftJoin("a2utfe.territories", 'awptutfe')
+            ->andWhere("(autfe.home = 1 AND atutfe.id in (:territories)) OR (putfe.private <> 1 AND (wutfe.position = 0 OR wutfe.destination = 1) AND awptutfe.id in (:territories))")
+            ->setParameter('territories', $territories);
         }
     }
 }

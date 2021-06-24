@@ -35,7 +35,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
  *      },
- *      collectionOperations={"get"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          }
+ *      }
  * )
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
