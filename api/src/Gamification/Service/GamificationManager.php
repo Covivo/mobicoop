@@ -23,8 +23,14 @@
 
 namespace App\Gamification\Service;
 
+use App\Action\Entity\Action;
 use App\Action\Entity\Log;
+use App\Action\Repository\LogRepository;
 use App\Gamification\Entity\GamificationAction;
+use App\Gamification\Repository\SequenceItemRepository;
+use App\User\Entity\User;
+use App\Gamification\Entity\SequenceItem;
+use App\Gamification\Entity\ValidationStep;
 
 /**
  * Gamification Manager
@@ -33,12 +39,17 @@ use App\Gamification\Entity\GamificationAction;
  */
 class GamificationManager
 {
-    public function __construct()
+    private $sequenceItemRepository;
+    private $logRepository;
+
+    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository)
     {
+        $this->sequenceItemRepository = $sequenceItemRepository;
+        $this->logRepository = $logRepository;
     }
     
     /**
-     * Handle log
+     * When a new log entry is detected, we treat it to determine if there is something to do (i.e Gamification)
      *
      * @param Log $log          Event of the action
      * @return void
@@ -50,11 +61,62 @@ class GamificationManager
         if (is_array($gamificationActions) && count($gamificationActions)>1) {
             // This action has gamification action, we need to treat it
             foreach ($gamificationActions as $gamificationAction) {
-                /**
-                 * @var GamificationAction $gamificationAction
-                 */
-                echo $gamificationAction->getName();
+                $validationSteps = $this->treatGamificationAction($gamificationAction, $log->getUser());
+                //var_dump($validationSteps);
             }
         }
+    }
+
+    /**
+     * Treatment and evaluation of a GamificationAction
+     *
+     * @param GamificationAction $gamificationAction
+     * @param User $user
+     * @return ValidationStep[]
+     */
+    private function treatGamificationAction(GamificationAction $gamificationAction, User $user): array
+    {
+        // We check if this action is in a sequenceItem
+        $validationSteps = [];
+
+        $sequenceItems = $this->sequenceItemRepository->findBy(['gamificationAction'=>$gamificationAction]);
+        if (is_array($sequenceItems) && count($sequenceItems)>1) {
+            // This action has gamification action, we need to treat it
+            foreach ($sequenceItems as $sequenceItem) {
+                
+                /**
+                 * @var SequenceItem $sequenceItem
+                 */
+
+                $validationStep = new ValidationStep();
+                $validationStep->setValid(true); // By default, the sequenceItem is valid
+
+                // This related action needs to be made a minimum amount of time
+                if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
+                    $validationStep->setValid($validationStep->isValid() && $this->checkMinCount($gamificationAction->getAction(), $user, $sequenceItem->getMinCount()));
+                }
+            }
+        }
+
+        return $validationSteps;
+    }
+
+    /**
+     * Check if the MinCount criteria is verified
+     *
+     * @param Action $action    The action to count
+     * @param User $user        The User we count for
+     * @param int $minCount     The min count to be valid
+     * @return boolean  True for valid
+     */
+    private function checkMinCount(Action $action, User $user, int $minCount): bool
+    {
+        // We get in the log table all the Action $action made by this User $user
+        $logs = $this->logRepository->findBy(['action'=>$action, 'user'=>$user]);
+        if (is_array($logs) && count($logs)>=$minCount) {
+            return true;
+        }
+
+        return false;
     }
 }
