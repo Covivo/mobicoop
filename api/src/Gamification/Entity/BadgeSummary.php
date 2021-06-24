@@ -39,6 +39,18 @@ class BadgeSummary
     private $badgeId;
 
     /**
+     * @var string Badge's name
+     * @Groups({"readGamification"})
+     */
+    private $badgeName;
+
+    /**
+     * @var string Badge's title
+     * @Groups({"readGamification"})
+     */
+    private $badgeTitle;
+
+    /**
      * @var SequenceStatus Badge's sequence status
      * @Groups({"readGamification"})
      */
@@ -53,6 +65,30 @@ class BadgeSummary
     public function setBadgeId(int $badgeId): self
     {
         $this->badgeId = $badgeId;
+
+        return $this;
+    }
+
+    public function getBadgeName(): ?string
+    {
+        return $this->badgeName;
+    }
+
+    public function setBadgeName(string $badgeName): self
+    {
+        $this->badgeName = $badgeName;
+
+        return $this;
+    }
+
+    public function getBadgeTitle(): ?string
+    {
+        return $this->badgeTitle;
+    }
+
+    public function setBadgeTitle(string $badgeTitle): self
+    {
+        $this->badgeTitle = $badgeTitle;
 
         return $this;
     }

@@ -43,12 +43,12 @@ class BadgeProgression
      */
     private $earned;
 
-    public function getBadge(): ?BadgeSummary
+    public function getBadgeSummary(): ?BadgeSummary
     {
         return $this->badgeSummary;
     }
 
-    public function setBadge(BadgeSummary $badgeSummary): self
+    public function setBadgeSummary(BadgeSummary $badgeSummary): self
     {
         $this->badgeSummary = $badgeSummary;
 

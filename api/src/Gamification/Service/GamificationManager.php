@@ -34,6 +34,7 @@ use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
+use App\Gamification\Entity\BadgeSummary;
 use App\Gamification\Resource\BadgesBoard;
 
 /**
@@ -160,7 +161,24 @@ class GamificationManager
         
         // Get all the active badges of the platform
         $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
+        $badges = [];
+        foreach ($activeBadges as $activeBadge) {
+            $badgeProgression = new BadgeProgression();
+            
+            // By default, the badge is not earned by the current User
+            $badgeProgression->setEarned(false);
+            // TO DO : Determine if the badge is earned
 
+            $badgeSummary = new BadgeSummary();
+            $badgeSummary->setBadgeId($activeBadge->getId());
+            $badgeSummary->setBadgeName($activeBadge->getName());
+            $badgeSummary->setBadgeTitle($activeBadge->getTitle());
+            $badgeProgression->setBadgeSummary($badgeSummary);
+
+            $badges[] = $badgeProgression;
+        }
+        $badgesBoard->setBadges($badges);
+        
         return $badgesBoard;
     }
 }
