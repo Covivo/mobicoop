@@ -70,6 +70,29 @@ class SolidaryMatchingRepository
     }
 
     /**
+     * Link related solidary matchings for a Solidary
+     * (link outward and return matchings)
+     *
+     * @param integer $solidaryId   The solidary id
+     * @return void
+     */
+    public function linkRelatedSolidaryMatchings(int $solidaryId)
+    {
+        $conn = $this->entityManager->getConnection();
+        $sql = "
+            UPDATE solidary_matching AS SM1
+            INNER JOIN matching as M1 ON M1.id = SM1.matching_id
+            SET solidary_matching_linked_id = (
+                SELECT SM2.id FROM solidary_matching AS SM2
+                INNER JOIN matching as M2 ON M2.id = SM2.matching_id
+                WHERE SM2.matching_id = M1.matching_linked_id
+            ) 
+            WHERE SM1.solidary_matching_linked_id IS NULL AND SM1.solidary_id = " . $solidaryId;
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    }
+
+    /**
      * Find the previous solidary Matching for a solidary in Transport context
      *
      * @param Solidary $proposal

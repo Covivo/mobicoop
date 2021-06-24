@@ -25,6 +25,7 @@ namespace App\Action\Service;
 use App\Action\Entity\Action;
 use App\Action\Entity\Diary;
 use App\Action\Entity\Animation;
+use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
@@ -33,10 +34,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class DiaryManager
 {
     private $entityManager;
+    private $diaryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, DiaryRepository $diaryRepository)
     {
         $this->entityManager = $entityManager;
+        $this->diaryRepository = $diaryRepository;
     }
 
     /**
@@ -68,7 +71,16 @@ class DiaryManager
             $diary->setSolidarySolution($solidarySolution);
         }
 
-        (!is_null($progression)) ? $diary->setProgression($progression) : $diary->setProgression($action->getProgression());
+        if (!is_null($progression)) {
+            $diary->setProgression($progression);
+        } elseif ((float)$action->getProgression()>0) {
+            $diary->setProgression($action->getProgression());
+        } elseif ($solidary && (float)$action->getProgression()<0) {
+            // set progression to last progression
+            if ($lastEntry = $this->diaryRepository->findLastEntryForSolidary($solidary)) {
+                $diary->setProgression((string)$lastEntry->getProgression());
+            }
+        }
 
         $this->entityManager->persist($diary);
         $this->entityManager->flush();

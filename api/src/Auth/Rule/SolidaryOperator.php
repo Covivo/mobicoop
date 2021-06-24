@@ -24,21 +24,21 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Solidary\Entity\Structure;
+use App\Solidary\Entity\Solidary;
 use App\User\Entity\User;
 use App\Solidary\Entity\Operate;
 
 /**
- *  Check that the requester is an operator in a structure
+ *  Check that the requester is an operator of the structure for the given solidary record
  */
-class StructureOperator implements AuthRuleInterface
+class SolidaryOperator implements AuthRuleInterface
 {
     /**
      * {@inheritdoc}
      */
     public function execute($requester, $item, $params)
     {
-        if (!isset($params['structure']) || !($params['structure'] instanceof Structure)) {
+        if (!isset($params['solidary']) || !($params['solidary'] instanceof Solidary)) {
             return false;
         }
         $structures = [];
@@ -51,6 +51,6 @@ class StructureOperator implements AuthRuleInterface
              */
             $structures[] = $operate->getStructure()->getId();
         }
-        return in_array($params['structure']->getId(), $structures);
+        return in_array($params['solidary']->getSolidaryUserStructure()->getStructure()->getId(), $structures);
     }
 }

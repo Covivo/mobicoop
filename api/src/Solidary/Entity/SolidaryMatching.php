@@ -124,6 +124,15 @@ class SolidaryMatching
     private $solidarySolution;
 
     /**
+     * @var SolidaryMatching|null The linked solidary matching for return trips.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchingLinked;
+
+    /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
@@ -210,6 +219,24 @@ class SolidaryMatching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    public function getSolidaryMatchingLinked(): ?self
+    {
+        return $this->solidaryMatchingLinked;
+    }
+
+    public function setSolidaryMatchingLinked(?self $solidaryMatchingLinked): self
+    {
+        $this->solidaryMatchingLinked = $solidaryMatchingLinked;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newSolidaryMatchingLinked = $solidaryMatchingLinked === null ? null : $this;
+        if (!is_null($solidaryMatchingLinked) && $newSolidaryMatchingLinked !== $solidaryMatchingLinked->getSolidaryMatchingLinked()) {
+            $solidaryMatchingLinked->setSolidaryMatchingLinked($newSolidaryMatchingLinked);
+        }
 
         return $this;
     }

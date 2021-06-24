@@ -50,6 +50,8 @@ use App\Action\Event\AnimationMadeEvent;
 use App\Action\Repository\ActionRepository;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\SolidaryRepository;
@@ -61,8 +63,13 @@ use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Action\Entity\Animation;
+use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
+use App\Communication\Repository\MessageRepository;
+use App\Communication\Service\InternalMessageManager;
 use App\Solidary\Repository\SolidaryMatchingRepository;
+use App\Solidary\Repository\SolidarySolutionRepository;
 use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
 use DateTime;
@@ -85,6 +92,7 @@ class SolidaryManager
     private $entityManager;
     private $userManager;
     private $adManager;
+    private $internalMessageManager;
     private $userRepository;
     private $structureProofRepository;
     private $solidaryUserRepository;
@@ -99,6 +107,8 @@ class SolidaryManager
     private $solidaryRepository;
     private $actionRepository;
     private $solidaryMatchingRepository;
+    private $solidarySolutionRepository;
+    private $messageRepository;
     private $logger;
 
     /**
@@ -112,6 +122,7 @@ class SolidaryManager
         Security $security,
         UserManager $userManager,
         AdManager $adManager,
+        InternalMessageManager $internalMessageManager,
         UserRepository $userRepository,
         StructureProofRepository $structureProofRepository,
         SolidaryUserRepository $solidaryUserRepository,
@@ -125,13 +136,16 @@ class SolidaryManager
         EventDispatcherInterface $eventDispatcher,
         SolidaryRepository $solidaryRepository,
         ActionRepository $actionRepository,
-        SolidaryMatchingRepository $solidaryMatchingRepository
+        SolidaryMatchingRepository $solidaryMatchingRepository,
+        SolidarySolutionRepository $solidarySolutionRepository,
+        MessageRepository $messageRepository
     ) {
         $this->logger = $logger;
         $this->poster = $security->getUser();
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->adManager = $adManager;
+        $this->internalMessageManager = $internalMessageManager;
         $this->userRepository = $userRepository;
         $this->structureProofRepository = $structureProofRepository;
         $this->solidaryUserRepository = $solidaryUserRepository;
@@ -146,6 +160,8 @@ class SolidaryManager
         $this->solidaryRepository = $solidaryRepository;
         $this->actionRepository = $actionRepository;
         $this->solidaryMatchingRepository = $solidaryMatchingRepository;
+        $this->solidarySolutionRepository = $solidarySolutionRepository;
+        $this->messageRepository = $messageRepository;
     }
 
     /**
@@ -248,6 +264,9 @@ class SolidaryManager
                     if ($waypoint->getPosition() == 0) {
                         $carpool['origin'] = $waypoint->getAddress()->jsonSerialize();
                         if ($solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                            /**
+                             * @var DateTime $destinationTime
+                             */
                             $destinationTime = clone $solidaryMatching->getMatching()->getProposalOffer()->getCriteria()->getFromTime();
                             $destinationTime->add(new \DateInterval('PT' . $solidaryMatching->getMatching()->getOriginalDuration() . 'S'));
                             $carpool['destinationTime'] = $destinationTime;
@@ -270,15 +289,19 @@ class SolidaryManager
         $solidary->setAdmincarpools($carpools);
         $solidary->setAdmintransporters([]);
 
-        // set solutions
-        $solutions = [];
+        // set solutions and threads
+        $solutions = [
+            'drivers' => [],
+            'threads' => []
+        ];
         foreach ($solidary->getSolidarySolutions() as $solution) {
             /**
              * @var SolidarySolution $solution
              */
+            // set drivers
             if ($solution->getSolidaryMatching()->getSolidaryUser()) {
                 // solution is a transporter
-                $solutions[] = [
+                $solutions['drivers'][] = [
                     'id' => $solution->getId(),
                     'type' => SolidarySolution::TRANSPORTER,
                     'givenName' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getGivenName(),
@@ -286,6 +309,7 @@ class SolidaryManager
                     'telephone' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getTelephone(),
                     'avatar' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getAvatar(),
                     'userId' => $solution->getSolidaryMatching()->getSolidaryUser()->getUser()->getId(),
+                    'status' => $solution->getSolidaryAsk() ? $solution->getSolidaryAsk()->getStatus() : null
                 ];
             } elseif ($solution->getSolidaryMatching()->getMatching()) {
                 // solution is a carpooler
@@ -298,7 +322,8 @@ class SolidaryManager
                     'telephone' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone(),
                     'avatar' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getAvatar(),
                     'userId' => $solution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId(),
-                    'way' => $solution->getSolidaryMatching()->getMatching()->getProposalRequest()->getType()
+                    'way' => $solution->getSolidaryMatching()->getMatching()->getProposalRequest()->getType(),
+                    'status' => $solution->getSolidaryAsk() ? $solution->getSolidaryAsk()->getStatus() : SolidaryAsk::STATUS_ASKED
                 ];
                 foreach ($solution->getSolidaryMatching()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                     /**
@@ -311,9 +336,21 @@ class SolidaryManager
                         $asolution['destination'] = $waypoint->getAddress()->jsonSerialize();
                     }
                 }
-                $solutions[] = $asolution;
+                $solutions['drivers'][] = $asolution;
+            }
+            // set threads
+            $solutions['threads'][$solution->getId()] = $this->getThreadForSolution($solution);
+        }
+        // group outward and return (only one should have a thread => we use the same thread)
+        foreach ($solidary->getSolidarySolutions() as $solution) {
+            /**
+             * @var SolidarySolution $solution
+             */
+            if ($solutions['threads'][$solution->getId()] == [] && $solution->getSolidarySolutionLinked() && isset($solutions['threads'][$solution->getSolidarySolutionLinked()->getId()]) && $solutions['threads'][$solution->getSolidarySolutionLinked()->getId()] !== []) {
+                $solutions['threads'][$solution->getId()] = $solutions['threads'][$solution->getSolidarySolutionLinked()->getId()];
             }
         }
+
         $solidary->setAdminsolutions($solutions);
 
         // set diary
@@ -341,6 +378,15 @@ class SolidaryManager
         return $solidary;
     }
 
+    /**
+     * Internal method used to get the regular schedules for a given proposal and a given day
+     *
+     * @param Proposal $proposal    The proposal
+     * @param integer $num          The number of the day in the week
+     * @param string $day           The shorten name of the day (3 letters)
+     * @param array $schedules      The resulting schedules (passed by reference)
+     * @return void
+     */
     private function treatDay(Proposal $proposal, int $num, string $day, array &$schedules)
     {
         $checkMethod = "is".$day."Check";
@@ -384,7 +430,15 @@ class SolidaryManager
         }
     }
 
-    private function createSchedule($num, $outwardTime = null, $returnTime = null)
+    /**
+     * Internal method used to build a schedule array
+     *
+     * @param int $num                      The number of the day in the week
+     * @param \DateTime|null $outwardTime   The outward time
+     * @param \DateTime|null $returnTime    The return time
+     * @return array                        The schedule
+     */
+    private function createSchedule(int $num, ?\DateTime $outwardTime = null, ?\DateTime $returnTime = null)
     {
         return [
             'mon' => $num == 0,
@@ -397,6 +451,54 @@ class SolidaryManager
             'outwardTime' => $outwardTime,
             'returnTime' => $returnTime
         ];
+    }
+
+    /**
+     * Get a full message thread for a given SolidarySolution
+     *
+     * @param SolidarySolution $solution    The solidary solution
+     * @return array                        The thread, as a list of messages ordered by date desc
+     */
+    private function getThreadForSolution(SolidarySolution $solution)
+    {
+        $thread = [];
+        // if the solution has no associated ask, there are no messages !
+        if (!$solution->getSolidaryAsk()) {
+            return $thread;
+        }
+
+        // we will loop through the ask histories to find the first ask history with an associated message
+        // then, from this first message, we will be able to get the whole thread
+        foreach ($solution->getSolidaryAsk()->getSolidaryAskHistories() as $solidaryAskHistory) {
+            /**
+             * @var SolidaryAskHistory $solidaryAskHistory
+             */
+            if ($solidaryAskHistory->getMessage()) {
+                $completeThread = $this->internalMessageManager->getCompleteThread($solidaryAskHistory->getMessage()->getId());
+                // we complete the messages with all the necessary informations
+                foreach ($completeThread as $message) {
+                    /**
+                     * @var Message $message
+                     */
+                    $thread[] = [
+                        'posterId' => $message->getUser()->getId(),
+                        'posterGivenName' => $message->getUser()->getGivenName(),
+                        'posterFamilyName' => $message->getUser()->getFamilyName(),
+                        'posterAvatar' => $message->getUser()->getAvatar(),
+                        'delegateGivenName' => $message->getUserDelegate() ? $message->getUserDelegate()->getGivenName() : null,
+                        'delegateFamilyName' => $message->getUserDelegate() ? $message->getUserDelegate()->getFamilyName() : null,
+                        'delegateAvatar' => $message->getUserDelegate() ? $message->getUserDelegate()->getAvatar() : null,
+                        'recipientGivenName' => $message->getRecipients()[0]->getUser()->getGivenName(),
+                        'recipientFamilyName' => $message->getRecipients()[0]->getUser()->getFamilyName(),
+                        'recipientAvatar' => $message->getRecipients()[0]->getUser()->getAvatar(),
+                        'text' => $message->getText(),
+                        'date' => $message->getCreatedDate()
+                    ];
+                }
+                break;
+            }
+        }
+        return $thread;
     }
 
     /**
@@ -686,7 +788,7 @@ class SolidaryManager
             $solidary->setSubject($subject);
         }
 
-        // we need to flush here has we are now about to post the ad => the users need to be persisted
+        // we need to flush here as we are now about to post the ad => the users need to be persisted
         $this->entityManager->flush();
         
         // 5 - create the proposal
@@ -780,6 +882,9 @@ class SolidaryManager
         }
         if ($solidary->getProposal()->getProposalLinked()) {
             foreach ($solidary->getProposal()->getProposalLinked()->getMatchingOffers() as $matchingOffer) {
+                /**
+                 * @var Matching $matchingOffer
+                 */
                 $solidaryMatchingReturn = new SolidaryMatching();
                 $solidaryMatchingReturn->setMatching($matchingOffer);
                 $solidaryMatchingReturn->setSolidary($solidary);
@@ -792,6 +897,9 @@ class SolidaryManager
         // persist the solidary record
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
+
+        // link potential outward and return solidaryMatchings
+        $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
 
         // send an event to warn that a SolidaryRecord has been created
         $event = new SolidaryCreatedEvent($beneficiary, $this->poster, $solidary);
@@ -810,78 +918,19 @@ class SolidaryManager
      */
     public function patchSolidary(Solidary $solidary, array $fields)
     {
-        // check if a new action has been requested
+        // check if a new animation has been made
         if (array_key_exists('animation', $fields)) {
-            if (!array_key_exists('action', $fields['animation'])) {
-                throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_REQUIRED);
-            }
-            if (!array_key_exists('user', $fields['animation'])) {
-                throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_USER_REQUIRED);
-            }
-            if (!$action = $this->actionRepository->find($fields['animation']['action'])) {
-                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_NOT_FOUND, $fields['animation']['action']));
-            }
-            if (!$user = $this->userRepository->find($fields['animation']['user'])) {
-                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_USER_NOT_FOUND, $fields['animation']['user']));
-            }
-            $animation = new Animation();
-            $animation->setSolidary($solidary);
-            $animation->setAction($action);
-            $animation->setUser($user);
-            $animation->setAuthor($this->poster);
-            if (array_key_exists('comment', $fields['animation'])) {
-                $animation->setComment($fields['animation']['comment']);
-            }
-            if (array_key_exists('message', $fields['animation'])) {
-                // there's a message associated with the animation, we need to build a Message object
-                $message = new Message();
-                $message->setText($fields['animation']['message']);
-                if (array_key_exists('messageDelegated', $fields['animation']) && $fields['animation']['messageDelegated'] == 1) {
-                    // message sent as delegated ('in the name of')
-                    $message->setUser($solidary->getUser());
-                    $message->setUserDelegate($this->poster);
-                } else {
-                    $message->setUser($this->poster);
-                }
-                $animation->setMessage($message);
-            }
-            if (array_key_exists('progression', $fields['animation'])) {
-                $animation->setProgression($fields['animation']['progression']);
-            }
-            // send event to warn that an animation has been made
-            $event = new AnimationMadeEvent($animation);
-            $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
-            
-            // we don't go further, although we need a complete solidary !
-            return $this->getSolidary($solidary->getId());
+            return $this->addAnimation($solidary, $fields['animation']);
         }
 
         // check if a new driver has been selected
         if (array_key_exists('solution', $fields)) {
-            if (!array_key_exists('matching', $fields['solution'])) {
-                throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MATCHING_REQUIRED);
-            }
-            if (!$solidaryMatching = $this->solidaryMatchingRepository->find($fields['solution']['matching'])) {
-                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_MATCHING_NOT_FOUND, $fields['solution']['matching']));
-            }
-            if (!array_key_exists('carpooler', $fields['solution']) && !array_key_exists('transporter', $fields['solution'])) {
-                throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_ROLE_REQUIRED);
-            }
-            if (array_key_exists('carpooler', $fields['solution']) && !$user = $this->userRepository->find($fields['solution']['carpooler'])) {
-                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $fields['solution']['carpooler']));
-            }
-            if (array_key_exists('transporter', $fields['solution']) && !$user = $this->userRepository->find($fields['solution']['transporter'])) {
-                throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $fields['solution']['transporter']));
-            }
-            // create solution
-            $solidarySolution = new SolidarySolution();
-            $solidarySolution->setSolidaryMatching($solidaryMatching);
-            $solidarySolution->setSolidary($solidaryMatching->getSolidary());
-            $solidary->addSolidarySolution($solidarySolution);
-            $this->entityManager->persist($solidarySolution);
-            $this->entityManager->flush();
-            // we need a complete solidary
-            return $this->getSolidary($solidary->getId());
+            return $this->addSolution($solidary, $fields['solution']);
+        }
+
+        // check if a new message has been sent
+        if (array_key_exists('message', $fields)) {
+            return $this->addMessage($solidary, $fields['message']);
         }
 
         // persist the solidary record
@@ -889,6 +938,179 @@ class SolidaryManager
         $this->entityManager->flush();
 
         return $solidary;
+    }
+
+    /**
+     * Add an animation to a solidary record.
+     *
+     * @param Solidary      $solidary               The solidary to update
+     * @param array         $animation              The animation fields
+     * @return Solidary     The solidary updated
+     */
+    private function addAnimation(Solidary $solidary, array $animation)
+    {
+        if (!array_key_exists('action', $animation)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_REQUIRED);
+        }
+        if (!array_key_exists('user', $animation)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_USER_REQUIRED);
+        }
+        if (!$action = $this->actionRepository->find($animation['action'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_NOT_FOUND, $animation['action']));
+        }
+        if (!$user = $this->userRepository->find($animation['user'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_ACTION_USER_NOT_FOUND, $animation['user']));
+        }
+        $newAnimation = new Animation();
+        $newAnimation->setSolidary($solidary);
+        $newAnimation->setAction($action);
+        $newAnimation->setUser($user);
+        $newAnimation->setAuthor($this->poster);
+        if (array_key_exists('comment', $animation)) {
+            $newAnimation->setComment($animation['comment']);
+        }
+        if (array_key_exists('message', $animation)) {
+            // there's a message associated with the animation, we need to build a Message object
+            $message = new Message();
+            $message->setText($animation['message']);
+            if (array_key_exists('messageDelegated', $animation) && $animation['messageDelegated'] == 1) {
+                // message sent as delegated ('in the name of')
+                $message->setUser($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+                $message->setUserDelegate($this->poster);
+            } else {
+                $message->setUser($this->poster);
+            }
+            $newAnimation->setMessage($message);
+        }
+        if (array_key_exists('progression', $animation)) {
+            if ($animation['progression']>0) {
+                $newAnimation->setProgression($animation['progression']);
+            }
+        }
+        // send event to warn that an animation has been made
+        $event = new AnimationMadeEvent($newAnimation);
+        $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
+        
+        // we don't go further, the event subscribers have done the job to persist the data, although we need a complete solidary !
+        return $this->getSolidary($solidary->getId());
+    }
+
+    /**
+     * Add a solution to a solidary record.
+     *
+     * @param Solidary      $solidary               The solidary to update
+     * @param array         $solution               The solution fields
+     * @return Solidary     The solidary updated
+     */
+    private function addSolution(Solidary $solidary, array $solution)
+    {
+        if (!array_key_exists('matching', $solution)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MATCHING_REQUIRED);
+        }
+        if (!$solidaryMatching = $this->solidaryMatchingRepository->find($solution['matching'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_MATCHING_NOT_FOUND, $solution['matching']));
+        }
+        if (!array_key_exists('carpooler', $solution) && !array_key_exists('transporter', $solution)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_ROLE_REQUIRED);
+        }
+        if (array_key_exists('carpooler', $solution) && !$user = $this->userRepository->find($solution['carpooler'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $solution['carpooler']));
+        }
+        if (array_key_exists('transporter', $solution) && !$user = $this->userRepository->find($solution['transporter'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_SOLUTION_USER_NOT_FOUND, $solution['transporter']));
+        }
+        // create solution
+        $solidarySolution = new SolidarySolution();
+        $solidarySolution->setSolidaryMatching($solidaryMatching);
+        $solidarySolution->setSolidary($solidaryMatching->getSolidary());
+        $solidary->addSolidarySolution($solidarySolution);
+        // link possible outward/return solution
+        foreach ($solidaryMatching->getSolidary()->getSolidarySolutions() as $solution) {
+            /**
+             * @var SolidarySolution $solution
+             */
+            if ($solution->getSolidaryMatching()->getSolidaryMatchingLinked() &&  $solution->getSolidaryMatching()->getSolidaryMatchingLinked()->getId() == $solidaryMatching->getId()) {
+                $solidarySolution->setSolidarySolutionLinked($solution);
+            }
+        }
+
+        $this->entityManager->persist($solidarySolution);
+        $this->entityManager->flush();
+        // we need a complete solidary
+        return $this->getSolidary($solidary->getId());
+    }
+
+    /**
+     * Add a message to a solidary record.
+     *
+     * @param Solidary      $solidary               The solidary to update
+     * @param array         $message                The message fields
+     * @return Solidary     The solidary updated
+     */
+    private function addMessage(Solidary $solidary, array $message)
+    {
+        if (!array_key_exists('solution', $message)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_MESSAGE_SOLUTION_REQUIRED);
+        }
+        if (!$solidarySolution = $this->solidarySolutionRepository->find($message['solution'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_MESSAGE_SOLUTION_NOT_FOUND, $message['solution']));
+        }
+        if (!array_key_exists('text', $message)) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_MESSAGE_TEXT_REQUIRED);
+        }
+
+        // create new message
+        // first we check if there's already a solidaryAsk related with the solution
+        $solidaryAsk = $solidarySolution->getSolidaryAsk();
+        $firstMessage = null;
+        if (!$solidaryAsk) {
+            // create the solidaryAsk
+            $solidaryAsk = new SolidaryAsk();
+            $solidaryAsk->setStatus(SolidaryAsk::STATUS_ASKED);
+            $solidaryAsk->setSolidarySolution($solidarySolution);
+            // uncomment and complete for full mode
+            // if ($solidarySolution->getSolidaryMatching()->getMatching()) {
+            //     // the solution is a carpooler, we need to create an associated Ask
+            //     $ask = new Ask();
+            //     ...
+            //     $solidaryAsk->setAsk($ask);
+            // }
+            $this->entityManager->persist($solidaryAsk);
+        } else {
+            $firstMessage = $this->messageRepository->findFirstForSolidaryAsk($solidaryAsk);
+        }
+        
+        // create the message and recipient
+        $newMessage = new Message();
+        $newMessage->setText(nl2br(strip_tags($message['text'])));
+        $newMessage->setUserDelegate($this->poster);
+        $newMessage->setUser($solidarySolution->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser());
+        if ($firstMessage) {
+            $newMessage->setMessage($firstMessage);
+        }
+        $recipient = new Recipient();
+        $recipient->setStatus(Recipient::STATUS_PENDING);
+        if ($solidarySolution->getSolidaryMatching()->getMatching()) {
+            // the solution is a carpooler
+            $recipient->setUser($solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser());
+        } else {
+            // the solution is a volunteer
+            $recipient->setUser($solidarySolution->getSolidaryMatching()->getSolidaryUser()->getUser());
+        }
+        $newMessage->addRecipient($recipient);
+        
+        // create the solidaryAskHistory
+        $solidaryAskHistory = new SolidaryAskHistory();
+        $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+        $solidaryAskHistory->setMessage($newMessage);
+        $solidaryAsk->addSolidaryAskHistory($solidaryAskHistory);
+
+        $this->entityManager->persist($solidaryAskHistory);
+        $this->entityManager->persist($newMessage);
+        $this->entityManager->flush();
+
+        // we need a complete solidary
+        return $this->getSolidary($solidarySolution->getSolidary()->getId());
     }
 
     /**

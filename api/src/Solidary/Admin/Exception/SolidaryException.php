@@ -74,4 +74,9 @@ class SolidaryException extends \LogicException
     const SOLIDARY_SOLUTION_MATCHING_NOT_FOUND = "Solidary matching #%s not found";
     const SOLIDARY_SOLUTION_ROLE_REQUIRED = "A carpooler or transporter is required";
     const SOLIDARY_SOLUTION_USER_NOT_FOUND = "User #%s not found";
+
+    // solidary message
+    const SOLIDARY_MESSAGE_SOLUTION_REQUIRED= "A solution id is required";
+    const SOLIDARY_MESSAGE_SOLUTION_NOT_FOUND = "Solidary solution #%s not found";
+    const SOLIDARY_MESSAGE_TEXT_REQUIRED = "A text message is required";
 }

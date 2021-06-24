@@ -187,7 +187,7 @@ class Structure
      * - 1 : light mode
      *
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aRead","aWrite"})
+     * @Groups({"aRead","aReadCol","aWrite"})
      */
     private $mode;
 

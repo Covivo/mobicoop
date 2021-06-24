@@ -67,13 +67,14 @@ class Action
     const TYPE_SOLUTION_FINDING = 2;
     const TYPE_FOLLOW_UP_CARPOOL = 3;
     const TYPE_CLOSING_ASK = 4;
+    const TYPE_FREE = 5;
 
-    const  SOLIDARY_CREATE = 37;
+    const SOLIDARY_CREATE = 37;
 
     const DOMAIN_TYPE_SOLIDARY = "solidary";
 
     const TYPE_FILTER = [
-        self::DOMAIN_TYPE_SOLIDARY => [1,2,3,4]
+        self::DOMAIN_TYPE_SOLIDARY => [1,2,3,4,5]
     ];
 
     const TYPE_NAME = [
@@ -81,7 +82,8 @@ class Action
         self::TYPE_TAKING_ACCOUNT_ASK => "Prise en compte de la demande",
         self::TYPE_SOLUTION_FINDING => "Recherche de solution",
         self::TYPE_FOLLOW_UP_CARPOOL => "Suivi du covoiturage",
-        self::TYPE_CLOSING_ASK => "Clôture de la demande"
+        self::TYPE_CLOSING_ASK => "Clôture de la demande",
+        self::TYPE_FREE => "Action libre"
     ];
 
     /**
