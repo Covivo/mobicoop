@@ -24,6 +24,7 @@
 namespace App\Gamification\Service;
 
 use App\Action\Entity\Log;
+use App\Gamification\Entity\GamificationAction;
 
 /**
  * Gamification Manager
@@ -44,5 +45,16 @@ class GamificationManager
      */
     public function handleLog(Log $log)
     {
+        // A new log has been recorded. We need to check if there is a gamification action to take
+        $gamificationActions = $log->getAction()->getGamificationActions();
+        if (is_array($gamificationActions) && count($gamificationActions)>1) {
+            // This action has gamification action, we need to treat it
+            foreach ($gamificationActions as $gamificationAction) {
+                /**
+                 * @var GamificationAction $gamificationAction
+                 */
+                echo $gamificationAction->getName();
+            }
+        }
     }
 }

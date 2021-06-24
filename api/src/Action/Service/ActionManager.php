@@ -26,6 +26,9 @@ namespace App\Action\Service;
 use Symfony\Contracts\EventDispatcher\Event;
 use App\Action\Entity\Action;
 use App\Action\Entity\Animation;
+use App\Action\Entity\Log;
+use App\Action\Event\ActionEvent;
+use App\Action\Event\LogEvent;
 use App\Action\Exception\ActionException;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
@@ -48,6 +51,8 @@ use App\Solidary\Exception\SolidaryException;
 use App\User\Entity\User;
 use App\User\Event\LoginDelegateEvent;
 use Symfony\Component\Security\Core\Security;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Action Manager
@@ -60,13 +65,32 @@ class ActionManager
     private $diaryManager;
     private $actionRepository;
     private $security;
+    private $entityManager;
+    private $eventDispatcher;
 
-    public function __construct(NotificationManager $notificationManager, DiaryManager $diaryManager, ActionRepository $actionRepository, Security $security)
+    public function __construct(NotificationManager $notificationManager, DiaryManager $diaryManager, ActionRepository $actionRepository, Security $security, EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->notificationManager = $notificationManager;
         $this->diaryManager = $diaryManager;
         $this->actionRepository = $actionRepository;
         $this->security = $security;
+        $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+    
+    /**
+     * Get an Action by its name
+     *
+     * @param string $name  The action's name
+     * @return Action
+     */
+    public function getActionByName(string $name): Action
+    {
+        $action = $this->actionRepository->findOneBy(['name'=>$name]);
+        if (is_null($action)) {
+            throw new ActionException(ActionException::BAD_ACTION);
+        }
+        return $action;
     }
     
     /**
@@ -289,11 +313,64 @@ class ActionManager
         $this->treatDiary($action, $event->getUserDelegated(), $event->getUser());
     }
 
-    public function onAction(Action $action)
+    public function onAction(ActionEvent $actionEvent)
     {
-        // if inLog do something
-        var_dump($action->isInLog());
-        die;
+        // if Action needs to be logged
+        if ($actionEvent->getAction()->isInLog()) {
+            $log = new Log();
+            $log->setAction($actionEvent->getAction());
+
+            if (!is_null($actionEvent->getUser())) {
+                $log->setUser($actionEvent->getUser());
+            }
+            if (!is_null($actionEvent->getUserDelegate())) {
+                $log->setUserDelegate($actionEvent->getUserDelegate());
+            }
+            if (!is_null($actionEvent->getUserRelated())) {
+                $log->setUserRelated($actionEvent->getUserRelated());
+            }
+            if (!is_null($actionEvent->getProposal())) {
+                $log->setProposal($actionEvent->getProposal());
+            }
+            if (!is_null($actionEvent->getMatching())) {
+                $log->setMatching($actionEvent->getMatching());
+            }
+            if (!is_null($actionEvent->getAsk())) {
+                $log->setAsk($actionEvent->getAsk());
+            }
+            if (!is_null($actionEvent->getArticle())) {
+                $log->setArticle($actionEvent->getArticle());
+            }
+            if (!is_null($actionEvent->getEvent())) {
+                $log->setEvent($actionEvent->getEvent());
+            }
+            if (!is_null($actionEvent->getCommunity())) {
+                $log->setCommunity($actionEvent->getCommunity());
+            }
+            if (!is_null($actionEvent->getSolidary())) {
+                $log->setSolidary($actionEvent->getSolidary());
+            }
+            if (!is_null($actionEvent->getTerritory())) {
+                $log->setTerritory($actionEvent->getTerritory());
+            }
+            if (!is_null($actionEvent->getCar())) {
+                $log->setCar($actionEvent->getCar());
+            }
+            if (!is_null($actionEvent->getMessage())) {
+                $log->setMessage($actionEvent->getMessage());
+            }
+            if (!is_null($actionEvent->getCampaign())) {
+                $log->setCampaign($actionEvent->getCampaign());
+            }
+
+            $this->entityManager->persist($log);
+            $this->entityManager->flush();
+
+            // Dispatch a LogEvent
+            $event = new LogEvent($log);
+            $this->eventDispatcher->dispatch(LogEvent::NAME, $event);
+        }
+        
 
         //
         // dsipatch un LogEvent

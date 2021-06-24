@@ -61,6 +61,6 @@ class ActionSubscriber implements EventSubscriberInterface
      */
     public function onAction(ActionEvent $event)
     {
-        $this->actionManager->onAction($event->getAction());
+        $this->actionManager->onAction($event);
     }
 }

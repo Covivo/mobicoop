@@ -23,6 +23,8 @@
 
 namespace App\Community\Service;
 
+use App\Action\Event\ActionEvent;
+use App\Action\Service\ActionManager;
 use App\Carpool\Repository\ProposalRepository;
 use App\Community\Entity\Community;
 use Psr\Log\LoggerInterface;
@@ -63,6 +65,7 @@ class CommunityManager
     private $userManager;
     private $adManager;
     private $eventDispatcher;
+    private $actionManager;
 
     /**
      * Constructor
@@ -80,7 +83,8 @@ class CommunityManager
         AuthItemRepository $authItemRepository,
         UserManager $userManager,
         AdManager $adManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ActionManager $actionManager
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -92,6 +96,7 @@ class CommunityManager
         $this->userManager = $userManager;
         $this->adManager = $adManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->actionManager = $actionManager;
     }
 
     /**
@@ -219,6 +224,11 @@ class CommunityManager
      */
     public function getCommunity(int $communityId, User $user=null)
     {
+        // ** ONLY FOR TESTING OF GAMIFICATION !!!! ***
+        // $event = new ActionEvent($this->actionManager->getActionByName("user_password_change_asked"), $user);
+        // $this->eventDispatcher->dispatch(ActionEvent::NAME, $event);
+        // ** ONLY FOR TESTING OF GAMIFICATION !!!! ***
+        
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
             $this->getAdsOfCommunity($community);
