@@ -23,64 +23,48 @@
 
 namespace App\Gamification\Entity;
 
-use App\User\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
+use App\Gamification\Entity\Badge;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Validation Step to determine of a specific SequenceItem is valid
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
-class ValidationStep
+ * Gamification : The Badge progress summary
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class BadgeSummary
 {
     /**
-     * @var SequenceItem The SequenceItem we check
+     * @var int Badge's id
+     * @Groups({"readGamification"})
      */
-    private $sequenceItem;
+    private $badgeId;
 
     /**
-     * @var User The User we check the SequenceItem
+     * @var SequenceStatus Badge's sequence status
+     * @Groups({"readGamification"})
      */
-    private $user;
+    private $sequence;
 
-    /**
-     * @var boolean Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
-     */
-    private $valid;
 
-    public function getSequenceItem(): ?SequenceItem
+    public function getBadgeId(): ?int
     {
-        return $this->sequenceItem;
+        return $this->badgeId;
     }
 
-    public function setSequenceItem(?SequenceItem $sequenceItem): self
+    public function setBadgeId(int $badgeId): self
     {
-        $this->sequenceItem = $sequenceItem;
+        $this->badgeId = $badgeId;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getSequence(): ?SequenceStatus
     {
-        return $this->user;
+        return $this->sequence;
     }
 
-    public function setUser(?User $user): self
+    public function setSequence(SequenceStatus $sequence): self
     {
-        $this->user = $user;
-
-        return $this;
-    }
-    
-    public function isValid(): ?bool
-    {
-        return $this->valid;
-    }
-
-    public function setValid(?bool $valid): self
-    {
-        $this->valid = $valid;
+        $this->sequence = $sequence;
 
         return $this;
     }

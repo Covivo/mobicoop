@@ -23,64 +23,48 @@
 
 namespace App\Gamification\Entity;
 
-use App\User\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
+use App\Gamification\Entity\Badge;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Validation Step to determine of a specific SequenceItem is valid
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
-class ValidationStep
+ * Gamification : A SequenceStatus
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class SequenceStatus
 {
     /**
-     * @var SequenceItem The SequenceItem we check
+     * @var int sequenceItemId of the related SequenceItem
+     * @Groups({"readGamification"})
      */
-    private $sequenceItem;
+    private $sequenceItemId;
 
     /**
-     * @var User The User we check the SequenceItem
+     * @var bool sequenceItem validated or not
+     * @Groups({"readGamification"})
      */
-    private $user;
+    private $validated;
 
-    /**
-     * @var boolean Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
-     */
-    private $valid;
 
-    public function getSequenceItem(): ?SequenceItem
+    public function getSequenceItemId(): ?int
     {
-        return $this->sequenceItem;
+        return $this->sequenceItemId;
     }
 
-    public function setSequenceItem(?SequenceItem $sequenceItem): self
+    public function setSequenceItemId(int $sequenceItemId): self
     {
-        $this->sequenceItem = $sequenceItem;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
+        $this->sequenceItemId = $sequenceItemId;
 
         return $this;
     }
     
-    public function isValid(): ?bool
+    public function isValidated(): ?bool
     {
-        return $this->valid;
+        return $this->validated;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValidated(bool $validated): self
     {
-        $this->valid = $valid;
+        $this->validated = $validated;
 
         return $this;
     }

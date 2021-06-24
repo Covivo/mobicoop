@@ -33,6 +33,8 @@ use App\User\Entity\User;
 use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Repository\BadgeRepository;
+use App\Gamification\Entity\BadgeProgression;
+use App\Gamification\Resource\BadgesBoard;
 
 /**
  * Gamification Manager
@@ -144,5 +146,21 @@ class GamificationManager
         }
 
         return false;
+    }
+
+    /**
+     * Get the Badges board of a User
+     *
+     * @param User $user    The User
+     * @return BadgesBoard
+     */
+    public function getBadgesBoard(User $user): BadgesBoard
+    {
+        $badgesBoard = new BadgesBoard();
+        
+        // Get all the active badges of the platform
+        $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
+
+        return $badgesBoard;
     }
 }

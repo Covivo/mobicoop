@@ -23,64 +23,46 @@
 
 namespace App\Gamification\Entity;
 
-use App\User\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Validation Step to determine of a specific SequenceItem is valid
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
-class ValidationStep
+ * Gamification : The current progression of a Badge
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class BadgeProgression
 {
     /**
-     * @var SequenceItem The SequenceItem we check
+     * @var BadgeSummary The BadgeSummary of this BadgeProgression
+     * @Groups({"readGamification"})
      */
-    private $sequenceItem;
+    private $badgeSummary;
 
     /**
-     * @var User The User we check the SequenceItem
+     * @var bool If the Badge is earned
+     * @Groups({"readGamification"})
      */
-    private $user;
+    private $earned;
 
-    /**
-     * @var boolean Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
-     */
-    private $valid;
-
-    public function getSequenceItem(): ?SequenceItem
+    public function getBadge(): ?BadgeSummary
     {
-        return $this->sequenceItem;
+        return $this->badgeSummary;
     }
 
-    public function setSequenceItem(?SequenceItem $sequenceItem): self
+    public function setBadge(BadgeSummary $badgeSummary): self
     {
-        $this->sequenceItem = $sequenceItem;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
+        $this->badgeSummary = $badgeSummary;
 
         return $this;
     }
     
-    public function isValid(): ?bool
+    public function isEarned(): ?bool
     {
-        return $this->valid;
+        return $this->earned;
     }
 
-    public function setValid(?bool $valid): self
+    public function setEarned(bool $earned): self
     {
-        $this->valid = $valid;
+        $this->earned = $earned;
 
         return $this;
     }
