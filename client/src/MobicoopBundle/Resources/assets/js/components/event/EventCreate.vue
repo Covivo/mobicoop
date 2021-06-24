@@ -51,6 +51,7 @@
                 v-model="description"
                 :rules="descriptionRules"
                 :label="$t('form.description.label')"
+                counter="512"
               />
             </v-col>
           </v-row>
@@ -63,6 +64,7 @@
                 auto-grow
                 clearable
                 outlined
+                counter
                 row-height="24"
               />
             </v-col>
@@ -411,6 +413,7 @@ export default {
       description: null,
       descriptionRules: [
         v => !!v || this.$t("form.description.required"),
+        v => (v||'').length <= 512 || this.$t("error.event.length"),
       ],
       fullDescription: null,
       fullDescriptionRules: [
@@ -429,7 +432,7 @@ export default {
       snackbar: false,
       urlEvent: null,
       urlEventRules: [
-        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
+        v => !v || /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(v) || this.$t("form.urlEvent.error")
       ],
       dialog: false,
       endDatePickerMinDate: null,

@@ -49,6 +49,8 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -84,6 +86,7 @@ class UserController extends AbstractController
     private $paymentElectronicActive;
     private $userManager;
     private $paymentManager;
+    private $languageManager;
     private $validationDocsAuthorizedExtensions;
     private $ssoManager;
     private $required_community;
@@ -114,6 +117,7 @@ class UserController extends AbstractController
         UserManager $userManager,
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
+        LanguageManager $languageManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
@@ -134,6 +138,7 @@ class UserController extends AbstractController
         $this->paymentElectronicActive = $paymentElectronicActive;
         $this->userManager = $userManager;
         $this->paymentManager = $paymentManager;
+        $this->languageManager = $languageManager;
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
         $this->loginDelegate = $loginDelegate;
@@ -1406,6 +1411,29 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             return new JsonResponse($reviewManager->reviewDashboard());
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Get the Review Dashboard of a User
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userUpdateLanguage(Request $request)
+    {
+        if ($request->isMethod('POST') && $this->userManager->getLoggedUser()) {
+            $user = $this->userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+           
+            $language = new Language;
+            $language->setCode($data['language']);
+
+            $user->setLanguage($language);
+            
+            $this->userManager->updateUserLanguage($user);
+            return new JsonResponse(["success"=>true]);
         }
         return new JsonResponse();
     }

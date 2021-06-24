@@ -37,12 +37,18 @@ use App\Auth\Controller\PermissionCheck;
  *              "method"="GET",
  *              "controller"=Permissions::class,
  *              "path"="/permissions",
- *              "security"="is_granted('permission',object)"
+ *              "security"="is_granted('permission',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
  *          },
  *          "roles_granted_for_creation"={
  *              "method"="GET",
  *              "path"="/permissions/roles-granted-for-creation",
- *              "security"="is_granted('permission',object)"
+ *              "security"="is_granted('permission',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
  *          },
  *          "granted"={
  *              "method"="GET",
@@ -50,6 +56,7 @@ use App\Auth\Controller\PermissionCheck;
  *              "path"="/permissions/check",
  *              "security"="is_granted('permission',object)",
  *              "swagger_context"={
+ *                  "tags"={"Authentification"},
  *                  "parameters"={
  *                      {
  *                          "name" = "item",
@@ -71,8 +78,19 @@ use App\Auth\Controller\PermissionCheck;
  *          "ADMIN_grantable"={
  *              "method"="GET",
  *              "path"="/permissions/grantable",
- *              "security"="is_granted('permission',object)"
+ *              "security"="is_granted('permission',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          },
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
  *      }
  * )
  */

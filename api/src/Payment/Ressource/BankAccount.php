@@ -42,10 +42,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('bank_account_create',object)"
+ *             "security_post_denormalize"="is_granted('bank_account_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          },
  *          "disable"={
  *              "normalization_context"={"groups"={"readPayment"}},
@@ -54,6 +60,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "read"="false",
  *              "security"="is_granted('bank_account_disable',object)",
  *              "swagger_context" = {
+ *                  "tags"={"Payment"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "idBankAccount",
@@ -67,7 +74,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Payment"}
+ *              }
  *          }
  *      }
  * )

@@ -41,8 +41,35 @@ use App\User\Entity\User;
  *          "normalization_context"={"groups"={"authRead"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"authWrite"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      }
  * )
  */
 class UserAuthAssignment

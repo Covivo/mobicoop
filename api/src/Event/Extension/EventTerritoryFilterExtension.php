@@ -83,9 +83,6 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
             $where = "(";
-            /**
-             * @var Territory $territory
-             */
             foreach ($territories as $territory) {
                 if ($where != '(') {
                     $where .= " OR ";

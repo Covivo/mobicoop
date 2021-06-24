@@ -41,15 +41,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "get"={
  *              "path"="/articles",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *          "post"={
  *              "path"="/articles",
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
  *              "path"="/articles/{id}",
+ *              "swagger_context" = {
+ *                  "tags"={"Articles"}
+ *              }
  *          }
  *      }
  * )

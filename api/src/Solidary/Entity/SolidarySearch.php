@@ -42,12 +42,18 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={
  *          "get"={
  *             "normalization_context"={"groups"={"readSolidarySearch"}},
- *             "security"="is_granted('solidary_read',object)"
+ *             "security"="is_granted('solidary_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      }
  * )

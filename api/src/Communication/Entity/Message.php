@@ -50,18 +50,27 @@ use App\Solidary\Entity\SolidaryAskHistory;
  *      },
  *      collectionOperations={
  *          "post"={
- *              "security_post_denormalize"="is_granted('user_message_create',object)"
+ *              "security_post_denormalize"="is_granted('user_message_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *          },
  *          "completeThread"={
  *              "method"="GET",
  *              "path"="/messages/completeThread",
  *              "normalization_context"={"groups"={"thread"}},
- *              "security_post_denormalize"="is_granted('user_message_read', object)"
+ *              "security_post_denormalize"="is_granted('user_message_read', object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *           }
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('user_message_read',object)"
+ *              "security"="is_granted('user_message_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *          }
  *      }
  * )

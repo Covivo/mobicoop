@@ -40,14 +40,25 @@ use App\Communication\Ressource\ContactType;
  *          "denormalization_context"={"groups"={"write"}},
  *     },
  *     itemOperations={
- *          "get"
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
+ *          },
  *     },
  *     collectionOperations={
- *          "get",
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
+ *          },
  *          "post"={
  *              "method"="POST",
  *              "path"="/contacts",
- *              "security_post_denormalize"="is_granted('communication_contact',object)"
+ *              "security_post_denormalize"="is_granted('communication_contact',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communication"}
+ *              }
  *          },
  *      },
  * )

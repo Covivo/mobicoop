@@ -41,15 +41,24 @@ use App\User\Entity\User;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "security"="is_granted('reject',object)"
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Report"}
+ *              }
  *          },
  *          "post"={
- *              "security_post_denormalize"="is_granted('report_create',object)"
+ *              "security_post_denormalize"="is_granted('report_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Report"}
+ *              }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *              "is_granted('reject',object)"
+ *              "is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Report"}
+ *              }
  *          }
  *      }
  * )

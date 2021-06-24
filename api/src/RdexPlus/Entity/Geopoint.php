@@ -21,58 +21,67 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Interoperability\Entity;
+namespace App\RdexPlus\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Interoperability Waypoint
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * RDEX+ : A Geopoint
+ * Documentation : https://rdex.fabmob.io/
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class Waypoint
+class Geopoint
 {
-   
-    /**
-     * @var string|null Waypoint's latitude
-     * @Groups({"adWrite"})
-     */
-    private $latitude;
     
     /**
-     * @var string|null Waypoint's longitude
-     * @Groups({"adWrite"})
+     * @var float Geopoint's longitude
+     * @Assert\NotBlank
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $longitude;
 
     /**
-     * @var string|null Waypoint's street number
-     * @Groups({"adWrite"})
+     * @var float Geopoint's latitude
+     * @Assert\NotBlank
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
-    private $streetNumber;
+    private $latitude;
 
     /**
-     * @var string|null Waypoint's street
-     * @Groups({"adWrite"})
+     * @var string Geopoint's address
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
-    private $street;
+    private $address;
 
     /**
-     * @var string|null Waypoint's postal code
-     * @Groups({"adWrite"})
+     * @var string Geopoint's city
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $city;
+
+    /**
+     * @var string Geopoint's postal code
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $postalCode;
-
+    
     /**
-     * @var string|null Waypoint's address locality
-     * @Groups({"adWrite"})
-     */
-    private $addressLocality;
-
-    /**
-     * @var string|null Waypoint's country
-     * @Groups({"adWrite"})
+     * @var string Geopoint's country
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $country;
+
+    /**
+     * @var string Geopoint's name
+     *
+     * @Groups({"rdexPlusRead","rdexPlusWrite"})
+     */
+    private $poiName;
 
     public function getLatitude(): ?string
     {
@@ -85,7 +94,7 @@ class Waypoint
 
         return $this;
     }
-
+    
     public function getLongitude(): ?string
     {
         return $this->longitude;
@@ -98,26 +107,26 @@ class Waypoint
         return $this;
     }
 
-    public function getStreetNumber(): ?string
+    public function getAddress(): ?string
     {
-        return $this->streetNumber;
+        return $this->address;
     }
 
-    public function setStreetNumber(?string $streetNumber): self
+    public function setAddress(?string $address): self
     {
-        $this->streetNumber = $streetNumber;
+        $this->address = $address;
 
         return $this;
     }
-
-    public function getStreet(): ?string
+    
+    public function getCity(): ?string
     {
-        return $this->street;
+        return $this->city;
     }
 
-    public function setStreet(?string $street): self
+    public function setCity(?string $city): self
     {
-        $this->street = $street;
+        $this->city = $city;
 
         return $this;
     }
@@ -127,25 +136,13 @@ class Waypoint
         return $this->postalCode;
     }
 
-    public function setPostalCode(?string $postalCoder): self
+    public function setPostalCode(?string $postalCode): self
     {
-        $this->postalCoder = $postalCoder;
+        $this->postalCode = $postalCode;
 
         return $this;
     }
 
-    public function getAddressLocality(): ?string
-    {
-        return $this->addressLocality;
-    }
-
-    public function setAddressLocality(?string $addressLocality): self
-    {
-        $this->addressLocality = $addressLocality;
-
-        return $this;
-    }
-    
     public function getCountry(): ?string
     {
         return $this->country;
@@ -154,6 +151,18 @@ class Waypoint
     public function setCountry(?string $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+    
+    public function getPoiName(): ?string
+    {
+        return $this->poiName;
+    }
+
+    public function setPoiName(?string $poiName): self
+    {
+        $this->poiName = $poiName;
 
         return $this;
     }

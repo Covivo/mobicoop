@@ -62,13 +62,27 @@ use App\Image\Admin\Controller\PostImageAction;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('image_list',object)"
+ *             "security"="is_granted('image_list',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
  *          },
  *          "post"={
  *              "method"="POST",
  *              "controller"=CreateImageAction::class,
  *              "deserialize"=false,
- *              "security_post_denormalize"="is_granted('image_create',object)"
+ *              "security_post_denormalize"="is_granted('image_create',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
+ *          },
+ *          "regenVersions"={
+ *              "method"="GET",
+ *              "path"="/images/regenversions",
+ *              "security"="is_granted('images_regenversions',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
  *          },
  *          "ADMIN_post"={
  *              "path"="/admin/images",
@@ -78,17 +92,21 @@ use App\Image\Admin\Controller\PostImageAction;
  *              "defaults"={"_api_receive"=false},
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security_post_denormalize"="is_granted('admin_image_post',object)"
- *          },
- *          "regenVersions"={
- *              "method"="GET",
- *              "path"="/images/regenversions",
- *              "security"="is_granted('images_regenversions',object)"
+ *              "security_post_denormalize"="is_granted('admin_image_post',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *             }
  *          }
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('image_read',object)"
+ *             "security"="is_granted('image_read',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Pictures"}
+ *             }
+ *          },
+ *          "delete"={
+ *             "security"="is_granted('image_delete',object)",
  *          }
  *      }
  * )

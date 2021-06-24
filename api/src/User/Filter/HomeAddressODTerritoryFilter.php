@@ -34,28 +34,17 @@ final class HomeAddressODTerritoryFilter extends AbstractContextAwareFilter
             return;
         }
 
-        // we sanitize the value to be sure it's an int and not an iri
-        if (strrpos($value, '/')) {
-            $value = substr($value, strrpos($value, '/') + 1);
-        }
-        
-        // $queryBuilder
-        //     ->leftJoin('u.addresses', 'homeAddress')
-        //     ->leftJoin('u.proposals', 'p')
-        //     ->leftJoin('p.waypoints', 'w')
-        //     ->leftJoin('w.address', 'a')
-        //     ->join('\App\Geography\Entity\Territory', 'homeAddressODTerritory')
-        //     ->andWhere(sprintf('(homeAddressODTerritory.id = %s AND ((w.position=0 OR w.destination=true) AND(ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,a.geoJson)=1)  OR (ST_INTERSECTS(homeAddressODTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1)))', $value));
-
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
             ->leftJoin(sprintf("%s.addresses", $rootAlias), 'homeAddress')
-            ->leftJoin('homeAddress.territories', 't')
-            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'p')
-            ->leftJoin('p.waypoints', 'w')
-            ->leftJoin('w.address', 'a')
-            ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1 AND (w.position=0 OR w.destination=1)) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
+            ->leftJoin('homeAddress.territories', 'thaodtf')
+            ->leftJoin(sprintf("%s.proposals", $rootAlias), 'phaodtf')
+            ->leftJoin('phaodtf.waypoints', 'whaodtf')
+            ->leftJoin('whaodtf.address', 'ahaodtf')
+            ->leftJoin('ahaodtf.territories', 'tahaodtf')
+            ->andWhere('((tahaodtf.id in (:value) AND phaodtf.private <> 1 AND (whaodtf.position=0 OR whaodtf.destination=1)) OR (thaodtf.id in (:value) AND homeAddress.home=1))')
+            ->setParameter('value', $value)
+        ;
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

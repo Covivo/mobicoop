@@ -46,40 +46,63 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      },
  *      collectionOperations={
  *          "get"={
- *             "security"="is_granted('solidary_list',object)"
+ *             "security"="is_granted('solidary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "getMySolidaries"={
  *              "method"="GET",
  *              "path"="/solidaries/mySolidaries",
  *              "normalization_context"={"groups"={"readSolidary"}},
- *              "security"="is_granted('solidary_list_self',object)"
- *
+ *              "security"="is_granted('solidary_list_self',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "post"={
- *             "security_post_denormalize"="is_granted('solidary_create',object)"
+ *             "security_post_denormalize"="is_granted('solidary_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "postUl"={
  *              "method"="POST",
  *              "path"="/solidaries/postUl",
- *              "security_post_denormalize"="is_granted('solidary_create',object)"
+ *              "security_post_denormalize"="is_granted('solidary_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *
  *      },
  *      itemOperations={
  *          "get"={
- *             "security"="is_granted('solidary_read',object)"
+ *             "security"="is_granted('solidary_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "contactsList"={
  *              "method"="GET",
  *              "path"="/solidaries/{id}/contactsList",
  *              "normalization_context"={"groups"={"asksList"}},
- *              "security"="is_granted('solidary_read',object)"
+ *              "security"="is_granted('solidary_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "put"={
- *             "security"="is_granted('solidary_update',object)"
+ *             "security"="is_granted('solidary_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          },
  *          "delete"={
- *             "security"="is_granted('solidary_delete',object)"
+ *             "security"="is_granted('solidary_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
  *          }
  *      }
  * )

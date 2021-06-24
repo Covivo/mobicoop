@@ -41,18 +41,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      collectionOperations={
  *          "interop_get"={
  *             "method"="GET",
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('reject',object)",
+ *             "swagger_context" = {
+ *               "summary"="Not permitted",
+ *               "tags"={"Interoperability"}
+ *             }
  *          },
  *          "interop_post"={
  *             "method"="POST",
- *             "security_post_denormalize"="is_granted('user_register',object)",
+ *             "security_post_denormalize"="is_granted('interop_user_create',object)",
  *             "swagger_context" = {
+ *                  "summary"="Create a User created via interoperability",
+ *                  "tags"={"Interoperability"},
  *                  "parameters" = {
  *                      {
  *                          "name" = "givenName",
  *                          "type" = "string",
  *                          "required" = true,
- *                          "description" = "User's given name"
+ *                          "description" = "User's given name!"
  *                      },
  *                      {
  *                          "name" = "familyName",
@@ -91,8 +97,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *          "interop_get"={
+ *             "path"="/users/{id}",
  *             "method"="GET",
- *             "security"="is_granted('reject',object)"
+ *             "security"="is_granted('interop_user_read',object)",
+ *             "swagger_context" = {
+ *               "summary"="Get a User created via interoperability",
+ *               "tags"={"Interoperability"}
+ *             }
+ *          },
+ *          "interop_put"={
+ *             "path"="/users/{id}",
+ *             "method"="PUT",
+ *             "security"="is_granted('interop_user_update',object)",
+ *             "swagger_context" = {
+ *               "summary"="Update a User created via interoperability",
+ *               "tags"={"Interoperability"}
+ *             }
  *          }
  *      }
  * )
@@ -124,7 +144,7 @@ class User
      * @var string|null The first name of the user.
      *
      * @Assert\NotBlank
-     * @Groups({"writeUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $givenName;
 
@@ -132,7 +152,7 @@ class User
      * @var string|null The family name of the user.
      *
      * @Assert\NotBlank
-     * @Groups({"writeUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $familyName;
 
@@ -141,7 +161,7 @@ class User
      *
      * @Assert\NotBlank
      * @Assert\Email()
-     * @Groups({"writeUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $email;
 
@@ -155,14 +175,14 @@ class User
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      * @Assert\NotBlank
-     * @Groups({"writeUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $gender;
 
     /**
      * @var boolean|null The user accepts to receive news about the platform.
      *
-     * @Groups({"writeUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $newsSubscription;
 

@@ -44,8 +44,35 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *          "normalization_context"={"groups"={"authRead"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"authWrite"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "post"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "put"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          },
+ *          "delete"={
+ *              "swagger_context" = {
+ *                  "tags"={"Authentification"}
+ *              }
+ *          }
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"type"})
  * @ApiFilter(OrderFilter::class, properties={"id", "type", "name"}, arguments={"orderParameterName"="order"})
