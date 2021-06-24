@@ -26,11 +26,13 @@ namespace App\Gamification\Service;
 use App\Action\Entity\Action;
 use App\Action\Entity\Log;
 use App\Action\Repository\LogRepository;
+use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationAction;
 use App\Gamification\Repository\SequenceItemRepository;
 use App\User\Entity\User;
 use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Entity\ValidationStep;
+use App\Gamification\Repository\BadgeRepository;
 
 /**
  * Gamification Manager
@@ -41,12 +43,30 @@ class GamificationManager
 {
     private $sequenceItemRepository;
     private $logRepository;
+    private $badgeRepository;
 
-    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository)
+    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository, BadgeRepository $badgeRepository)
     {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
+        $this->badgeRepository = $badgeRepository;
     }
+    
+    
+    /**
+     * Get all the Badges of the instance
+     * @param int $status  Get only the Badges of this status (default : null, every badges are returned)
+     * @return Badges[]|null
+     */
+    public function getBadges(int $status=null): ?array
+    {
+        if (is_null($status)) {
+            return $this->badgeRepository->findAll();
+        } else {
+            return $this->badgeRepository->findBy(["status"=>$status]);
+        }
+    }
+    
     
     /**
      * When a new log entry is detected, we treat it to determine if there is something to do (i.e Gamification)
@@ -56,15 +76,22 @@ class GamificationManager
      */
     public function handleLog(Log $log)
     {
+        $validationSteps = [];
+        
         // A new log has been recorded. We need to check if there is a gamification action to take
         $gamificationActions = $log->getAction()->getGamificationActions();
-        if (is_array($gamificationActions) && count($gamificationActions)>1) {
+        if (is_array($gamificationActions) && count($gamificationActions)>0) {
             // This action has gamification action, we need to treat it
             foreach ($gamificationActions as $gamificationAction) {
-                $validationSteps = $this->treatGamificationAction($gamificationAction, $log->getUser());
-                //var_dump($validationSteps);
+                $newValidationSteps = $this->treatGamificationAction($gamificationAction, $log->getUser());
+                foreach ($newValidationSteps as $newValidationStep) {
+                    $validationSteps[] = $newValidationStep;
+                }
             }
         }
+
+        var_dump($validationSteps);
+        die;
     }
 
     /**
@@ -78,16 +105,13 @@ class GamificationManager
     {
         // We check if this action is in a sequenceItem
         $validationSteps = [];
-
         $sequenceItems = $this->sequenceItemRepository->findBy(['gamificationAction'=>$gamificationAction]);
-        if (is_array($sequenceItems) && count($sequenceItems)>1) {
+        if (is_array($sequenceItems) && count($sequenceItems)>0) {
             // This action has gamification action, we need to treat it
+            /**
+             * @var SequenceItem $sequenceItem
+             */
             foreach ($sequenceItems as $sequenceItem) {
-                
-                /**
-                 * @var SequenceItem $sequenceItem
-                 */
-
                 $validationStep = new ValidationStep();
                 $validationStep->setValid(true); // By default, the sequenceItem is valid
 
@@ -95,6 +119,8 @@ class GamificationManager
                 if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
                     $validationStep->setValid($validationStep->isValid() && $this->checkMinCount($gamificationAction->getAction(), $user, $sequenceItem->getMinCount()));
                 }
+
+                $validationSteps[] = $validationStep;
             }
         }
 
