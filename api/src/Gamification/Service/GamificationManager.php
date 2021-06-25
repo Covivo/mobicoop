@@ -35,6 +35,8 @@ use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
 use App\Gamification\Entity\BadgeSummary;
+use App\Gamification\Entity\SequenceStatus;
+use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Resource\BadgesBoard;
 
 /**
@@ -47,12 +49,14 @@ class GamificationManager
     private $sequenceItemRepository;
     private $logRepository;
     private $badgeRepository;
+    private $rewardStepRepository;
 
-    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository, BadgeRepository $badgeRepository)
+    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository, BadgeRepository $badgeRepository, RewardStepRepository $rewardStepRepository)
     {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
         $this->badgeRepository = $badgeRepository;
+        $this->rewardStepRepository = $rewardStepRepository;
     }
     
     
@@ -162,23 +166,58 @@ class GamificationManager
         // Get all the active badges of the platform
         $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
         $badges = [];
+
+        /**
+         * @var Badge $activeBadge
+         */
         foreach ($activeBadges as $activeBadge) {
+            
             $badgeProgression = new BadgeProgression();
             
-            // By default, the badge is not earned by the current User
+            // Determine if the badge is already earned
             $badgeProgression->setEarned(false);
-            // TO DO : Determine if the badge is earned
+            foreach($activeBadge->getUsers() as $userInReward){
+                if($userInReward->getId() == $user->getId()){
+                    $badgeProgression->setEarned(true);
+                    break;
+                }
+            }
 
+            // Minimum data about the current badge
             $badgeSummary = new BadgeSummary();
             $badgeSummary->setBadgeId($activeBadge->getId());
             $badgeSummary->setBadgeName($activeBadge->getName());
             $badgeSummary->setBadgeTitle($activeBadge->getTitle());
+
+            // We get the rewardStep if this user and store the sequenceId already validated
+            $rewardSteps = $this->rewardStepRepository->findBy(['user'=>$user]);
+            $alreadyValidatedSequence = [];
+            foreach($rewardSteps as $rewardStep){
+                if($rewardStep->getUser()->getId() == $user->getId()){
+                    $alreadyValidatedSequence[] = $rewardStep->getSequenceItem()->getId();
+                }
+            }
+            
+            // We get the sequence and check if the current user validated it
+            $sequences = [];
+            foreach($activeBadge->getSequenceItems() as $sequenceItem){
+                $sequenceStatus = new SequenceStatus();
+                $sequenceStatus->setSequenceItemId($sequenceItem->getId());
+                $sequenceStatus->setValidated(false);
+                if(in_array($sequenceItem->getId(),$alreadyValidatedSequence)){
+                    $sequenceStatus->setValidated(true);
+                }
+                $sequences[] = $sequenceStatus;
+            }
+            $badgeSummary->setSequences($sequences);
             $badgeProgression->setBadgeSummary($badgeSummary);
+
 
             $badges[] = $badgeProgression;
         }
-        $badgesBoard->setBadges($badges);
         
+        $badgesBoard->setBadges($badges);
+
         return $badgesBoard;
     }
 }

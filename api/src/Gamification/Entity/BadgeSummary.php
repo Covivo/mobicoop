@@ -51,10 +51,10 @@ class BadgeSummary
     private $badgeTitle;
 
     /**
-     * @var SequenceStatus Badge's sequence status
+     * @var SequenceStatus[] Badge's sequence status
      * @Groups({"readGamification"})
      */
-    private $sequence;
+    private $sequences;
 
 
     public function getBadgeId(): ?int
@@ -93,14 +93,14 @@ class BadgeSummary
         return $this;
     }
 
-    public function getSequence(): ?SequenceStatus
+    public function getSequences(): ?array
     {
-        return $this->sequence;
+        return $this->sequences;
     }
 
-    public function setSequence(SequenceStatus $sequence): self
+    public function setSequences(array $sequences): self
     {
-        $this->sequence = $sequence;
+        $this->sequences = $sequences;
 
         return $this;
     }
