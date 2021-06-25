@@ -171,13 +171,12 @@ class GamificationManager
          * @var Badge $activeBadge
          */
         foreach ($activeBadges as $activeBadge) {
-            
             $badgeProgression = new BadgeProgression();
             
             // Determine if the badge is already earned
             $badgeProgression->setEarned(false);
-            foreach($activeBadge->getUsers() as $userInReward){
-                if($userInReward->getId() == $user->getId()){
+            foreach ($activeBadge->getUsers() as $userInReward) {
+                if ($userInReward->getId() == $user->getId()) {
                     $badgeProgression->setEarned(true);
                     break;
                 }
@@ -192,19 +191,19 @@ class GamificationManager
             // We get the rewardStep if this user and store the sequenceId already validated
             $rewardSteps = $this->rewardStepRepository->findBy(['user'=>$user]);
             $alreadyValidatedSequence = [];
-            foreach($rewardSteps as $rewardStep){
-                if($rewardStep->getUser()->getId() == $user->getId()){
+            foreach ($rewardSteps as $rewardStep) {
+                if ($rewardStep->getUser()->getId() == $user->getId()) {
                     $alreadyValidatedSequence[] = $rewardStep->getSequenceItem()->getId();
                 }
             }
             
             // We get the sequence and check if the current user validated it
             $sequences = [];
-            foreach($activeBadge->getSequenceItems() as $sequenceItem){
+            foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
                 $sequenceStatus = new SequenceStatus();
                 $sequenceStatus->setSequenceItemId($sequenceItem->getId());
                 $sequenceStatus->setValidated(false);
-                if(in_array($sequenceItem->getId(),$alreadyValidatedSequence)){
+                if (in_array($sequenceItem->getId(), $alreadyValidatedSequence)) {
                     $sequenceStatus->setValidated(true);
                 }
                 $sequences[] = $sequenceStatus;
