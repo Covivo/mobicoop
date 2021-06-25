@@ -38,6 +38,7 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Geography\Entity\Address;
+use App\I18n\Entity\Language;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryDiaryEntry;
 use App\Solidary\Entity\SolidaryVolunteer;
@@ -52,6 +53,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Solidary\Repository\StructureProofRepository;
 use App\User\Service\UserManager;
 use App\Solidary\Repository\NeedRepository;
+use App\I18n\Repository\LanguageRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -72,6 +74,7 @@ class SolidaryUserManager
     private $encoder;
     private $userManager;
     private $needRepository;
+    private $languageRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -87,6 +90,7 @@ class SolidaryUserManager
         StructureProofRepository $structureProofRepository,
         UserManager $userManager,
         NeedRepository $needRepository,
+        LanguageRepository $languageRepository,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -103,6 +107,7 @@ class SolidaryUserManager
         $this->encoder = $encoder;
         $this->userManager = $userManager;
         $this->needRepository = $needRepository;
+        $this->languageRepository = $languageRepository;
     }
 
     // Probably obsolete... to do check !
@@ -717,7 +722,8 @@ class SolidaryUserManager
                 $user->setMusic($this->params['music']);
                 $user->setChat($this->params['chat']);
                 // To do : Dynamic Language
-                $user->setLanguage('fr_FR');
+                $language = $this->languageRepository->findOneBy(['code'=>'fr']);
+                $user->setLanguage($language);
 
                 // Set password
                 $user->setPassword($solidaryVolunteer->getPassword());
