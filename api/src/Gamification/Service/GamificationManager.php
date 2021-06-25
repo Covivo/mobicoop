@@ -35,9 +35,12 @@ use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
 use App\Gamification\Entity\BadgeSummary;
+use App\Gamification\Entity\RewardStep;
 use App\Gamification\Entity\SequenceStatus;
-use App\Gamification\Repository\RewardStepRepository;
+use App\Gamification\Event\ValidationStepEvent;
 use App\Gamification\Resource\BadgesBoard;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Gamification Manager
@@ -49,14 +52,21 @@ class GamificationManager
     private $sequenceItemRepository;
     private $logRepository;
     private $badgeRepository;
-    private $rewardStepRepository;
+    private $entityManager;
+    private $eventDispatcher;
 
-    public function __construct(SequenceItemRepository $sequenceItemRepository, LogRepository $logRepository, BadgeRepository $badgeRepository, RewardStepRepository $rewardStepRepository)
-    {
+    public function __construct(
+        SequenceItemRepository $sequenceItemRepository,
+        LogRepository $logRepository,
+        BadgeRepository $badgeRepository,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
         $this->badgeRepository = $badgeRepository;
-        $this->rewardStepRepository = $rewardStepRepository;
+        $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
     
     
@@ -83,22 +93,14 @@ class GamificationManager
      */
     public function handleLog(Log $log)
     {
-        $validationSteps = [];
-        
         // A new log has been recorded. We need to check if there is a gamification action to take
         $gamificationActions = $log->getAction()->getGamificationActions();
         if (is_array($gamificationActions) && count($gamificationActions)>0) {
             // This action has gamification action, we need to treat it
             foreach ($gamificationActions as $gamificationAction) {
-                $newValidationSteps = $this->treatGamificationAction($gamificationAction, $log->getUser());
-                foreach ($newValidationSteps as $newValidationStep) {
-                    $validationSteps[] = $newValidationStep;
-                }
+                $this->treatGamificationAction($gamificationAction, $log->getUser());
             }
         }
-
-        var_dump($validationSteps);
-        die;
     }
 
     /**
@@ -106,9 +108,9 @@ class GamificationManager
      *
      * @param GamificationAction $gamificationAction
      * @param User $user
-     * @return ValidationStep[]
+     * @return void
      */
-    private function treatGamificationAction(GamificationAction $gamificationAction, User $user): array
+    private function treatGamificationAction(GamificationAction $gamificationAction, User $user)
     {
         // We check if this action is in a sequenceItem
         $validationSteps = [];
@@ -120,18 +122,20 @@ class GamificationManager
              */
             foreach ($sequenceItems as $sequenceItem) {
                 $validationStep = new ValidationStep();
-                $validationStep->setValid(true); // By default, the sequenceItem is valid
+                $validationStep->setUser($user);
+                $validationStep->setSequenceItem($sequenceItem);
+                $validationStep->setValidated(true); // By default, the sequenceItem is valid
 
                 // This related action needs to be made a minimum amount of time
                 if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
-                    $validationStep->setValid($validationStep->isValid() && $this->checkMinCount($gamificationAction->getAction(), $user, $sequenceItem->getMinCount()));
+                    $validationStep->setValidated($validationStep->isValidated() && $this->checkMinCount($gamificationAction->getAction(), $user, $sequenceItem->getMinCount()));
                 }
 
-                $validationSteps[] = $validationStep;
+                // Throw an event who says that a ValidationStep has been evaluated
+                $validationStepEvent = new ValidationStepEvent($validationStep);
+                $this->eventDispatcher->dispatch(ValidationStepEvent::NAME, $validationStepEvent);
             }
         }
-
-        return $validationSteps;
     }
 
     /**
@@ -216,5 +220,64 @@ class GamificationManager
         $badgesBoard->setBadges($badges);
 
         return $badgesBoard;
+    }
+
+    /**
+     * Take a ValidationStep and take the necessary actions about it (RewardStep, Badge...)
+     *
+     * @param ValidationStep $validationStep   The ValidationStep to treat
+     * @return void
+     */
+    public function handleValidationStep(ValidationStep $validationStep)
+    {
+        if ($validationStep->isValidated()) {
+            // The ValidationStep has been validated
+
+            // First we get the BadgesBoard of this User. With it, we can check if this particular step has alteady been validated
+            $badgesBoard = $this->getBadgesBoard($validationStep->getUser());
+            foreach ($badgesBoard->getBadges() as $badgeProgression) {
+                $badgeSummary = $badgeProgression->getBadgeSummary();
+
+                $currentSequenceValidation = []; // We will store the status of every SequenceItem
+                $newValidation = false;
+                foreach ($badgeSummary->getSequences() as $sequenceStatus) {
+
+                    // We found the right sequence
+                    if ($sequenceStatus->getSequenceItemId() == $validationStep->getSequenceItem()->getId()) {
+
+                        // If it's a new validation, We store it be inserting a line in RewardStep for the User
+                        if (!$sequenceStatus->isValidated()) {
+                            $newValidation = true;
+                            $rewardStep = new RewardStep();
+                            $rewardStep->setUser($validationStep->getUser());
+                            $rewardStep->setSequenceItem($validationStep->getSequenceItem());
+                            $this->entityManager->persist($rewardStep);
+
+                            // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
+                            $sequenceStatus->setValidated(true);
+                        }
+                    }
+                    // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
+                    $currentSequenceValidation[] = $sequenceStatus->isValidated();
+                }
+
+                if (!in_array(false, $currentSequenceValidation)) {
+                    // All steps are valid !
+                    if ($newValidation) {
+                        // There was a new validation, a new Badge is earned !
+                        // We get the badge involved and add a User owning this Badge (add a line in Reward table)
+                        $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
+                        $badge->addUser($validationStep->getUser());
+                        $this->entityManager->persist($badge);
+
+                        // TO DO : Maybe dispatch an Event ? It depends how we handle a new badge in front
+                    }
+                }
+            }
+
+
+
+            $this->entityManager->flush();
+        }
     }
 }

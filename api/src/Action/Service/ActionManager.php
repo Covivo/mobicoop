@@ -68,8 +68,14 @@ class ActionManager
     private $entityManager;
     private $eventDispatcher;
 
-    public function __construct(NotificationManager $notificationManager, DiaryManager $diaryManager, ActionRepository $actionRepository, Security $security, EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        NotificationManager $notificationManager,
+        DiaryManager $diaryManager,
+        ActionRepository $actionRepository,
+        Security $security,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->notificationManager = $notificationManager;
         $this->diaryManager = $diaryManager;
         $this->actionRepository = $actionRepository;

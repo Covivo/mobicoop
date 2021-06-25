@@ -47,7 +47,7 @@ class ValidationStep
     /**
      * @var boolean Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
      */
-    private $valid;
+    private $validated;
 
     public function getSequenceItem(): ?SequenceItem
     {
@@ -73,14 +73,14 @@ class ValidationStep
         return $this;
     }
     
-    public function isValid(): ?bool
+    public function isValidated(): ?bool
     {
-        return $this->valid;
+        return $this->validated;
     }
 
-    public function setValid(?bool $valid): self
+    public function setValidated(?bool $validated): self
     {
-        $this->valid = $valid;
+        $this->validated = $validated;
 
         return $this;
     }
