@@ -38,7 +38,6 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Geography\Entity\Address;
-use App\I18n\Entity\Language;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryDiaryEntry;
 use App\Solidary\Entity\SolidaryVolunteer;
@@ -555,7 +554,8 @@ class SolidaryUserManager
                 $user->setMusic($this->params['music']);
                 $user->setChat($this->params['chat']);
                 // To do : Dynamic Language
-                $user->setLanguage('fr_FR');
+                $language = $this->languageRepository->findOneBy(['code'=>'fr']);
+                $user->setLanguage($language);
 
                 // Set an encrypted password
                 $password = $this->userManager->randomString();
