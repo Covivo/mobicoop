@@ -188,23 +188,21 @@ class GamificationManager
             $badgeSummary->setBadgeName($activeBadge->getName());
             $badgeSummary->setBadgeTitle($activeBadge->getTitle());
 
-            // We get the rewardStep if this user and store the sequenceId already validated
-            $rewardSteps = $this->rewardStepRepository->findBy(['user'=>$user]);
-            $alreadyValidatedSequence = [];
-            foreach ($rewardSteps as $rewardStep) {
-                if ($rewardStep->getUser()->getId() == $user->getId()) {
-                    $alreadyValidatedSequence[] = $rewardStep->getSequenceItem()->getId();
-                }
-            }
-            
             // We get the sequence and check if the current user validated it
             $sequences = [];
             foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
                 $sequenceStatus = new SequenceStatus();
                 $sequenceStatus->setSequenceItemId($sequenceItem->getId());
+                
+                
+                // We look into the rewardSteps previously existing for this SequenceItem
+                // If there is one for the current User, we know that it has already been validated
                 $sequenceStatus->setValidated(false);
-                if (in_array($sequenceItem->getId(), $alreadyValidatedSequence)) {
-                    $sequenceStatus->setValidated(true);
+                foreach ($sequenceItem->getRewardSteps() as $rewardStep) {
+                    if ($rewardStep->getUser()->getId() == $user->getId()) {
+                        $sequenceStatus->setValidated(true);
+                        break;
+                    }
                 }
                 $sequences[] = $sequenceStatus;
             }
