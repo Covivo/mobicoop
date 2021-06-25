@@ -555,7 +555,8 @@ class SolidaryUserManager
                 $user->setMusic($this->params['music']);
                 $user->setChat($this->params['chat']);
                 // To do : Dynamic Language
-                $user->setLanguage('fr_FR');
+                $language = $this->languageRepository->findOneBy(['code'=>'fr']);
+                $user->setLanguage($language);
 
                 // Set an encrypted password
                 $password = $this->userManager->randomString();

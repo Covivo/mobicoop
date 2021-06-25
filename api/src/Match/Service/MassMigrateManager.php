@@ -48,6 +48,7 @@ use App\Community\Service\CommunityManager;
 use App\Import\Service\ImportManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
+use App\I18n\Repository\LanguageRepository;
 
 /**
  * Mass compute manager.
@@ -71,11 +72,12 @@ class MassMigrateManager
     private $importManager;
     private $proposalManager;
     private $logger;
+    private $languageRepository;
 
     const MOBIMATCH_IMPORT_PREFIX = "Mobimatch#";
     const LAUNCH_IMPORT = true;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, LanguageRepository $languageRepository, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -90,6 +92,7 @@ class MassMigrateManager
         $this->importManager = $importManager;
         $this->proposalManager = $proposalManager;
         $this->logger = $logger;
+        $this->languageRepository = $languageRepository;
     }
 
     /**
@@ -194,8 +197,9 @@ class MassMigrateManager
                     $user->setMusic($this->params['music']);
                     $user->setChat($this->params['chat']);
                     // To do : Dynamic Language
-                    $user->setLanguage('fr_FR');
-
+                    $language = $this->languageRepository->findOneBy(['code'=>'fr']);
+                    $user->setLanguage($language);
+    
                     // Set an encrypted password
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));
