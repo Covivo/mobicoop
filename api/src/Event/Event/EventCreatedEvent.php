@@ -31,7 +31,7 @@ use App\Event\Entity\Event as EventEntity;
  */
 class EventCreatedEvent extends Event
 {
-    public const NAME = 'validate_create_event';
+    public const NAME = 'event_created';
 
     protected $event;
 

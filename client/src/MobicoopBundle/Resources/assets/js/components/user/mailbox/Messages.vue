@@ -221,8 +221,8 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/mailbox/Messages/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/Messages/";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
@@ -235,6 +235,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -382,7 +383,7 @@ export default {
         messageToSend.proposalId = this.newThreadCarpool.proposalId;
         messageToSend.adIdToRespond = this.newThreadCarpool.adId;
       }
-      axios.post(this.$t("urlSend"), messageToSend).then(res => {
+      maxios.post(this.$t("urlSend"), messageToSend).then(res => {
         this.idMessage = (res.data.message !== null) ? res.data.message.id : res.data.id;
         this.currentIdAsk = (res.data.idAsk !== null) ? res.data.idAsk : this.currentIdAsk;
         this.loadingTypeText = false;
@@ -432,7 +433,7 @@ export default {
       }      
       // console.error(data);
       // console.error(params);
-      axios.post(this.$t("urlUpdateAsk"),params)
+      maxios.post(this.$t("urlUpdateAsk"),params)
         .then(response => {
           //console.error(response.data);
           this.refreshActions = true;

@@ -263,15 +263,16 @@
 
 <script>
 import {find} from "lodash";
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/solidary/SolidaryForm/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/solidary/SolidaryForm/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -307,7 +308,7 @@ export default {
   },
   data () {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       loading: false,
       valid: false,
       alert: {
@@ -410,7 +411,7 @@ export default {
       this.resetAlert();
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios.post(this.$t('ui.buttons.validate.route'), this.form)
+        maxios.post(this.$t('ui.buttons.validate.route'), this.form)
           .then(function (response) {
             console.log(response.data);
             if (response.data && response.data.message) {

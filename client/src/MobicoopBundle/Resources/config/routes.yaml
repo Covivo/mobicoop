@@ -14,12 +14,14 @@ home:
     path:
         fr: /
         en: /en/
+        nl: /en/
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
 
 home_logout:
     path:
         fr: /utilisateur/compte-supprimer
         en: /user/account-delete
+        nl: /user/account-delete
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::indexLogout
 
 #  set language selected in session (AJAX)
@@ -27,6 +29,7 @@ sessionLanguage:
     path:
         fr: /setLanguage
         en: /setLanguage
+        nl: /setLanguage
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::setSessionLanguage    
 
 
@@ -40,6 +43,7 @@ user_bank_coordinates:
     path:
         fr: /utilisateur/coordonnees-bancaires
         en: /user/bank-coordinates
+        nl: /user/bank-coordinates
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getBankCoordinates
 
 user_bank_coordinates_add:
@@ -47,6 +51,7 @@ user_bank_coordinates_add:
     path:
         fr: /utilisateur/coordonnees-bancaires/ajouter
         en: /user/bank-coordinates/add
+        nl: /user/bank-coordinates/add
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::addBankCoordinates
 
 user_bank_coordinates_delete:
@@ -54,12 +59,14 @@ user_bank_coordinates_delete:
     path:
         fr: /utilisateur/coordonnees-bancaires/supprimer
         en: /user/bank-coordinates/delete
+        nl: /user/bank-coordinates/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteBankCoordinates
 
 user_send_identity_validation_document:
     path:
         fr: /utilisateur/document-validation-identite/envoyer
         en: /user/identity-validation-document/send
+        nl: /user/identity-validation-document/send
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendIdentityValidationDocument
 
 # login
@@ -67,6 +74,7 @@ user_login:
     path:
         fr: /utilisateur/connexion
         en: /user/login
+        nl: /user/login
         de: /benutzer/anmeldung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
@@ -74,6 +82,7 @@ user_login_result:
     path:
         fr: /utilisateur/connexion/{proposalId}
         en: /user/login/{proposalId}
+        nl: /user/login/{proposalId}
         de: /benutzer/anmeldung/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
@@ -81,18 +90,21 @@ user_login_token:
     path:
         fr: /utilisateur/login-token
         en: /user/login-token
+        nl: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
 user_login_token_email:
     path:
         fr: /utilisateur/login-token/email
         en: /user/login-token/email
+        nl: /user/login-token/email
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userEmailValidationCheck
 
 user_login_delegate:
     path:
         fr: /login-admin/{email}/{delegateEmail}
         en: /login-admin/{email}/{delegateEmail}
+        nl: /login-admin/{email}/{delegateEmail}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::loginAdmin
     
 # logout
@@ -104,6 +116,7 @@ user_sign_up:
     path:
         fr: /utilisateur/inscription
         en: /user/signup
+        nl: /user/signup
         de: /benutzer/registrierung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
@@ -113,18 +126,21 @@ user_sign_up_community_list:
     path:
         fr: /utilisateur/inscription/liste-des-communautes
         en: /user/register/community-list
+        nl: /user/register/community-list
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityListForRegistration
 
 user_sign_up_result:
     path:
         fr: /utilisateur/inscription/{proposalId}
         en: /user/signup/{proposalId}
+        nl: /user/signup/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
 user_sign_up_validation:
     path:
         fr: /utilisateur/inscription/validation/{email}/{token}
         en: /user/signup/validation/{email}/{token}
+        nl: /user/signup/validation/{email}/{token}
     defaults:
         token: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
@@ -134,6 +150,7 @@ user_homeAddress_update:
     path:
         fr: /utilisateur/profil/modifier/adresse
         en: /user/profile/update/address
+        nl: /user/profile/update/address
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::UserAddressUpdate
 
 # profile update
@@ -141,12 +158,14 @@ user_profile_update:
     path:
         fr: /utilisateur/profil/modifier/{tabDefault?}
         en: /user/profile/update/{tabDefault?}
+        nl: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
 user_ads:
     path:
         fr: /getMyCarpools
         en: /getMyCarpools
+        nl: /getMyCarpools
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userAds
 
 # profile summary
@@ -155,6 +174,7 @@ user_profile_summary:
     path:
         fr: /utilisateur/profil/resume
         en: /user/profile/summary
+        nl: /user/profile/summary
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileSummary
 
 # public profile
@@ -163,6 +183,7 @@ user_profile_public:
     path:
         fr: /utilisateur/profil/public
         en: /user/profile/public
+        nl: /user/profile/public
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfilePublic
 
 # list of payments and carpools
@@ -170,6 +191,7 @@ list_payments_carpools:
     path:
         fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
         en: /user/profile/update/accepted-carpools/export
+        nl: /user/profile/update/accepted-carpools/export
         eu: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
 
@@ -178,6 +200,7 @@ user_delete:
     path:
         fr: /utilisateur/profil/supprimer
         en: /user/profil/delete
+        nl: /user/profil/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::deleteUser
 
 # phone validation
@@ -185,6 +208,7 @@ user_phone_validation:
     path:
         fr: /utilisateur/telephone/validation
         en: /user/phone/validation
+        nl: /user/phone/validation
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneValidation
 
 # send code phone validation
@@ -192,6 +216,7 @@ user_phone_token:
     path:
         fr: /utilisateur/telephone/token
         en: /user/phone/token
+        nl: /user/phone/token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::generatePhoneToken
 
 # send a validation email AJAX
@@ -199,6 +224,7 @@ user_email_validation:
     path:    
         fr: /utilisateur/email/validation
         en: /user/email/validation
+        nl: /user/email/validation
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendValidationEmail
 
 #user form email validation
@@ -206,6 +232,7 @@ user_email_form_validation:
     path:
         fr: /utilisateur/email/validation/{email}/{token}
         en: /user/signup/email/{email}/{token}
+        nl: /user/signup/email/{email}/{token}
     defaults:
         token: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
@@ -215,6 +242,7 @@ user_profile_image_delete:
     path:
         fr: /utilisateur/profil/avatar/supprimer
         en: /user/profile/avatar/delete
+        nl: /user/profile/avatar/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileAvatarDelete
 
 # password update
@@ -222,12 +250,14 @@ user_password_update:
     path:
         fr: /utilisateur/mot-de-passe/modifier
         en: /user/password/update
+        nl: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
 user_carpool_settings_update:
     path:
         fr: /utilisateur/preferences-covoiturage/modifier
         en: /user/carpool-settings/update
+        nl: /user/carpool-settings/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
 
 # password forgotten : ask for a new password
@@ -235,18 +265,21 @@ user_password_forgot:
     path:
         fr: /utilisateur/mot-de-passe/recuperation
         en: /user/password/recovery
+        nl: /user/password/recovery
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordRecovery
 
 user_password_for_recovery:
     path:
         fr: /utilisateur/mot-de-passe/recuperation/envoi
         en: /user/password/recovery/send
+        nl: /user/password/recovery/send
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordForRecovery
 
 user_update_password_reset:
     path:
         fr: /utilisateur/mot-de-passe/reset/update/{token}
         en: /user/password/reset/update/{token}
+        nl: /user/password/reset/update/{token}
     requirements:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdatePasswordReset
@@ -256,6 +289,7 @@ user_password_reset:
     path:
         fr: /utilisateur/mot-de-passe/reset/{token}
         en: /user/password/reset/{token}
+        nl: /user/password/reset/{token}
     requirements:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
@@ -265,6 +299,7 @@ user_update_alert:
     path:
         fr: /utilisateur/alerte/changement
         en: /user/alert/update
+        nl: /user/alert/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
 
 # messages
@@ -272,6 +307,7 @@ user_message_list:
     path:
         fr: /utilisateur/messages
         en: /user/messages
+        nl: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
 
@@ -280,30 +316,35 @@ user_message_list_new_thread_direct:
     path:
         fr: /utilisateur/messages/nouveau
         en: /user/messages/new
+        nl: /user/messages/new
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
 user_message_direct_threads_list:
     path:
         fr: /utilisateur/messages/direct
         en: /user/messages/direct
+        nl: /user/messages/direct
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageDirectThreadsList
 
 user_message_carpool_threads_list:
     path:
         fr: /utilisateur/messages/covoiturage
         en: /user/messages/carpool
+        nl: /user/messages/carpool
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCarpoolThreadsList
 
 user_message_solidary_threads_list:
     path:
         fr: /utilisateur/messages/solidaires
         en: /user/messages/solidary
+        nl: /user/messages/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSolidaryThreadsList
 
 user_message_complete_thread:
     path:
         fr: /utilisateur/messages/{idMessage}/fil
         en: /user/messages/{idMessage}/thread
+        nl: /user/messages/{idMessage}/thread
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
 
 user_message_actions_infos:
@@ -311,12 +352,14 @@ user_message_actions_infos:
     path:
         fr: /utilisateur/messages/actions/infos
         en: /user/messages/actions/infos
+        nl: /user/messages/actions/infos
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessagesActionsInfos
 
 user_message_carpool_selected:
     path:
         fr: /utilisateur/messages/covoiturage/{askId}
         en: /user/messages/carpool/{askId}
+        nl: /user/messages/carpool/{askId}
     defaults:
         askId: ""    
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
@@ -328,6 +371,7 @@ user_message_send:
     path:
         fr: /utilisateur/messages/envoyer
         en: /user/messages/send
+        nl: /user/messages/send
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSend
 
 # get a message thread
@@ -335,6 +379,7 @@ user_message_thread:
     path:
         fr: /utilisateur/messages/{idFirstMessage}
         en: /user/messages/{idFirstMessage}
+        nl: /user/messages/{idFirstMessage}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
     requirements:
         idFirstMessage: '\d+'
@@ -345,6 +390,7 @@ user_message_update_ask:
     path:
         fr: /utilisateur/messages/updateAsk
         en: /user/messages/updateAsk
+        nl: /user/messages/updateAsk
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
 
 # Connection by facebook (POST)
@@ -353,6 +399,7 @@ user_facebook_connect:
     path:
         fr: /utilisateur/facebook/connexion
         en: /user/facebook/connect
+        nl: /user/facebook/connect
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookConnect
 
 # Get SSO services of the platform (AJAX)
@@ -361,6 +408,7 @@ user_get_sso_services:
     path:
         fr: /user/getSsoServices
         en: /user/getSsoServices
+        nl: /user/getSsoServices
         de: /benutzer/getSsoService
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getSsoServices
 
@@ -369,12 +417,14 @@ user_return_sso:
     path:
         fr: /user/sso/login
         en: /user/sso/login
+        nl: /user/sso/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSO
 
 user_login_sso:
     path:
         fr: /user/sso/login/autolog
         en: /user/sso/login/autolog
+        nl: /user/sso/login/autolog
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userLoginSso
 
 # Logout form SSO
@@ -382,6 +432,7 @@ user_return_logout_sso:
     path:
         fr: /user/sso/logout
         en: /user/sso/logout
+        nl: /user/sso/logout
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnLogoutSSO
 
 # Get all communities of a user (POST)
@@ -390,6 +441,7 @@ user_communities:
     path:
         fr: /utilisateur/communautes
         en: /user/communities
+        nl: /user/communities
         eu: /erabiltzaile/komunitateak
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
 
@@ -399,6 +451,7 @@ user_check_email_exists:
     path:
         fr: /utilisateur/verif/email
         en: /user/check/email
+        nl: /user/check/email
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCheckEmailExists
 
 # Unsubscribe user from email
@@ -406,6 +459,7 @@ user_unsubscribe_email:
     path:
       fr: /utilisateur/unsubscribe/{token}
       en: /user/unsubscribe/{token}
+      nl: /user/unsubscribe/{token}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUnsubscribeFromEmail
 
 # Get communities owned by a user (POST)
@@ -414,6 +468,7 @@ user_communities_owned:
     path:
         fr: /user/communities/owned
         en: /user/communities/owned
+        nl: /user/communities/owned
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userOwnedCommunities
 
 # Get events created by a user (POST)
@@ -422,6 +477,7 @@ user_created_events:
     path:
         fr: /user/events/created
         en: /user/events/created
+        nl: /user/events/created
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCreatedEvents
 
 # Get events created by a user (POST)
@@ -430,6 +486,7 @@ user_block:
     path:
         fr: /user/block
         en: /user/block
+        nl: /user/block
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::blockUser
 
 # user resport
@@ -438,6 +495,7 @@ user_report:
     path:
         fr: /utilisateur/{id}/signaler
         en: /user/{id}/report
+        nl: /user/{id}/report
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReport
     requirements:
         id: '\d+'
@@ -447,6 +505,7 @@ user_review_dashboard:
     path:
         fr: /utilisateur/avis/tableau-de-bord
         en: /user/review/dashboard
+        nl: /user/review/dashboard
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewDashboard
 
 user_review_write:
@@ -454,6 +513,7 @@ user_review_write:
     path:
         fr: /utilisateur/avis/ecrire
         en: /user/review/write
+        nl: /user/review/write
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReviewWrite
 
 # Set User's language (AJAX)
@@ -462,6 +522,7 @@ user_update_language:
     path:
         fr: /user/updateLanguage
         en: /user/updateLanguage
+        nl: /user/updateLanguage
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdateLanguage
 
 ##################
@@ -476,6 +537,7 @@ carpool_ad_post_v1:
     path:
         fr: /covoiturage/annonce/poster
         en: /carpool/ad/post
+        nl: /carpool/ad/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
 # post an ad
@@ -483,6 +545,7 @@ carpool_ad_post:
     path:
         fr: /covoiturage/publierannonce
         en: /carpool/postad
+        nl: /carpool/postad
         eu: /covoiturage/publierannonce
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
@@ -491,6 +554,7 @@ carpool_ad_update:
     path:
         fr: /covoiturage/annonce/{id}/modifier
         en: /carpool/ad/{id}/update/
+        nl: /carpool/ad/{id}/update/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
 
 # delete an ad (AJAX)
@@ -498,6 +562,7 @@ carpool_ad_delete:
     path:
         fr: /covoiturage/annonce/supprimer
         en: /carpool/ad/delete
+        nl: /carpool/ad/delete
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDelete
 
 # post a first ad
@@ -505,6 +570,7 @@ carpool_first_ad_post_v1:
     path:
         fr: /covoiturage/annonce/poster/premiere
         en: /carpool/ad/post/first
+        nl: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a first ad
@@ -512,6 +578,7 @@ carpool_first_ad_post:
     path:
         fr: /covoiturage/publierannonce/premiere
         en: /carpool/ad/post/first
+        nl: /carpool/ad/post/first
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost
 
 # post a solidary exclusive ad
@@ -519,6 +586,7 @@ carpool_solidary_exclusive_ad_post_v1:
     path:
         fr: /covoiturage/annonce/poster/solidaire
         en: /carpool/ad/post/solidary
+        nl: /carpool/ad/post/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
     
 # post a solidary exclusive ad
@@ -526,6 +594,7 @@ carpool_solidary_exclusive_ad_post:
     path:
         fr: /covoiturage/publierannonce/solidaire
         en: /carpool/ad/post/solidary
+        nl: /carpool/ad/post/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
 
 # post an ad from a search
@@ -533,6 +602,7 @@ carpool_ad_post_search:
     path:
         fr: /covoiturage/recherche/poster
         en: /carpool/search/post
+        nl: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
 # results
@@ -543,6 +613,7 @@ carpool_ad_results:
     path:
         fr: /covoiturage/annonce/{id}/resultats
         en: /carpool/ad/{id}/results
+        nl: /carpool/ad/{id}/results
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResults
     requirements:
         id: '\d+'
@@ -552,6 +623,7 @@ carpool_ad_results_after_authentication:
     path:
         fr: /covoiturage/annonce/{id}/covoiturer
         en: /carpool/ad/{id}/carpool
+        nl: /carpool/ad/{id}/carpool
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResultsAfterAuthentication
     requirements:
         id: '\d+'
@@ -562,6 +634,7 @@ carpool_ad_detail:
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail
+        nl: /carpool/ad/{id}/detail
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
     requirements:
         id: '\d+'
@@ -572,6 +645,7 @@ carpool_ad_detail_filtered:
     path:
         fr: /covoiturage/annonce/{id}/detail
         en: /carpool/ad/{id}/detail
+        nl: /carpool/ad/{id}/detail
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetail
     requirements:
         id: '\d+'
@@ -582,6 +656,7 @@ carpool_ad_detail_external:
     path:
         fr: /covoiturage/annonce/{id}/externe
         en: /carpool/ad/{id}/external
+        nl: /carpool/ad/{id}/external
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetailExternal
 
 # ad result detail from an external link (with filters : POST) (AJAX json)
@@ -590,6 +665,7 @@ carpool_ad_detail_external_filtered:
     path:
         fr: /covoiturage/annonce/{id}/externe
         en: /carpool/ad/{id}/external
+        nl: /carpool/ad/{id}/external
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdDetailExternal
 
 # search results (POST) (full page)
@@ -598,6 +674,7 @@ carpool_search_result:
     path:
         fr: /covoiturage/recherche
         en: /carpool/search
+        nl: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
 # search results (GET) (full page)
@@ -606,6 +683,7 @@ carpool_search_result_get:
     path:
         fr: /covoiturage/recherche
         en: /carpool/search
+        nl: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultGet
 
 # search results (GET RDEX) (full page)
@@ -614,6 +692,7 @@ carpool_search_result_rdex:
     path:
         fr: /covoiturage/rdex/{externalId}
         en: /carpool/rdex/{externalId}
+        nl: /carpool/rdex/{externalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromRdexLink
 
 # search results for a community proposal (GET) (full page)
@@ -622,6 +701,7 @@ carpool_search_result_community:
     path:
         fr: /covoiturage/communaute/{communityName}/{proposalId}
         en: /carpool/community/{communityName}/{proposalId}
+        nl: /carpool/community/{communityName}/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResultFromCommunityProposal
 
 # search matching (POST) (AJAX json)
@@ -630,6 +710,7 @@ carpool_search_matching:
     path:
         fr: /covoiturage/recherche/matching
         en: /carpool/search/matching
+        nl: /carpool/search/matching
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchMatching
 
 # contact
@@ -641,6 +722,7 @@ carpool_contact:
     path:
         fr: /covoiturage/contact
         en: /carpool/contact
+        nl: /carpool/contact
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
 # carpool ask from results (POST) (AJAX json)
@@ -649,6 +731,7 @@ carpool_result_ask:
     path:
         fr: /covoiturage/demande
         en: /carpool/ask
+        nl: /carpool/ask
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAsk
 
 # rdex
@@ -659,6 +742,7 @@ rdex_provider:
     path:
         fr: /provider/rdex/
         en: /provider/rdex/
+        nl: /provider/rdex/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider
 
 # rdex journey (POST) (AJAX json)
@@ -667,6 +751,7 @@ rdex_journey:
     path:
         fr: /covoiturage/rdexJourney
         en: /carpool/rdexJourney
+        nl: /carpool/rdexJourney
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
 # rdex journey (POST) (AJAX json)
@@ -675,6 +760,7 @@ rdex_connection:
     path:
         fr: /covoiturage/rdexConnection
         en: /carpool/rdexConnection
+        nl: /carpool/rdexConnection
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexConnection
 
 # public transport journey (AJAX)
@@ -683,6 +769,7 @@ public_transport_journey:
     path:
         fr: /transport-public/recherche
         en: /public-transport/search
+        nl: /public-transport/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::PTSearch
 
 # city to city
@@ -694,6 +781,7 @@ cities:
     path:
         fr: /covoiturage-par-ville
         en: /carpool-from-city
+        nl: /carpool-from-city
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::cities
 
 cities_popular:
@@ -701,6 +789,7 @@ cities_popular:
     path:
         fr: /covoiturage-par-ville/populaires
         en: /carpool-from-city/popular
+        nl: /carpool-from-city/popular
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::citiesPopular
 
     # from a city
@@ -709,6 +798,7 @@ city_from:
     path:
         fr: /communes/covoiturage/{origin}/{page}/{perPage}
         en: /carpool-from-{origin}/{page}/{perPage}
+        nl: /carpool-from-{origin}/{page}/{perPage}
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCity
     defaults: { page: 1, perPage: 30 }
 
@@ -718,6 +808,7 @@ city_to:
     path:
         fr: /communes/covoiturage-vers-{destination}/{page}/{perPage}
         en: /carpool-to-{destination}/{page}/{perPage}
+        nl: /carpool-to-{destination}/{page}/{perPage}
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::toCity
     defaults: { page: 1, perPage: 30 }
 
@@ -727,6 +818,7 @@ city_to_city:
     path:
         fr: /covoiturage/{origin}/{destination}/{frequency}/{page}/{perPage}
         en: /carpool/{origin}/{destination}/{frequency}/{page}/{perPage}
+        nl: /carpool/{origin}/{destination}/{frequency}/{page}/{perPage}
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::fromCityToCity
     defaults: { frequency: 1, page: 1, perPage: 300 }
 
@@ -736,6 +828,7 @@ popular_journeys:
     path:
         fr: /covoiturages/populaires
         en: /carpool/popular
+        nl: /carpool/popular
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneys
 
 popular_journeys_home:
@@ -743,6 +836,7 @@ popular_journeys_home:
     path:
         fr: /covoiturages/populaires/home
         en: /carpool/popular/home
+        nl: /carpool/popular/home
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::popularJourneysHome
 
 # create a search ad from a proposal
@@ -751,6 +845,7 @@ carpool_create_search_from_proposal:
     path:
         fr: /covoiturage/creer-recherche/{proposalId}
         en: /carpool/create-search/{proposalId}
+        nl: /carpool/create-search/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\Journey\Controller\JourneyController::createSearchFromProposal
 
 ####################
@@ -762,6 +857,7 @@ community_create:
     path:
         fr: /communaute/creer
         en: /community/create
+        nl: /community/create
         eu: /communaute/creer
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityCreate
 
@@ -770,6 +866,7 @@ community_list:
     path:
         fr: /covoiturage-communaute
         en: /carpool-community
+        nl: /carpool-community
         eu: /autokidetza-komunitatea
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
@@ -778,6 +875,7 @@ community_list_v1:
     path:
         fr: /communautes
         en: /communities
+        nl: /communities
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # Get the communities (AJAX)
@@ -786,6 +884,7 @@ community_get_list:
     path:
         fr: /communaute/liste-des-communautes
         en: /community/getCommunityList
+        nl: /community/getCommunityList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityList
 
 # display the register form for a secured community
@@ -793,6 +892,7 @@ community_secured_register:
     path:
         fr: /communaute/{id}/securisee/inscription
         en: /community/{id}/secured/register
+        nl: /community/{id}/secured/register
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communitySecuredRegister
     requirements:
         id: '\d+'
@@ -802,6 +902,7 @@ community_join:
     path:
         fr: /communaute/{id}/rejoindre
         en: /community/{id}/join
+        nl: /community/{id}/join
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityJoin
     requirements:
         id: '\d+'
@@ -811,6 +912,7 @@ community_leave:
     path:
         fr: /communaute/{id}/quitter
         en: /community/{id}/leave
+        nl: /community/{id}/leave
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLeave
     requirements:
         id: '\d+'
@@ -820,6 +922,7 @@ community_show:
     path:
         fr: /covoiturage-communaute/{id}/{urlKey?}
         en: /carpool-community/{id}/{urlKey?}
+        nl: /carpool-community/{id}/{urlKey?}
         eu: /autokidetza-komunitatea/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
@@ -830,6 +933,7 @@ community_show_v1:
     path:
         fr: /communaute/{id}/{urlKey?}
         en: /community/{id}/{urlKey?}
+        nl: /community/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
@@ -840,6 +944,7 @@ community_user:
     path:
         fr: /community-user
         en: /community-user
+        nl: /community-user
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
     requirements:
         id: '\d+'
@@ -851,6 +956,7 @@ community_member_list:
     path:
         fr: /community/memberList
         en: /community/memberList
+        nl: /community/memberList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
         id: '\d+'
@@ -860,6 +966,7 @@ community_proposals:
     path:
         fr: /community-proposals/{id}
         en: /community-proposals/{id}
+        nl: /community-proposals/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
@@ -869,6 +976,7 @@ community_user_available:
     path:
         fr: /communautes/utilisateur/{userId}
         en: /communities/user/{userId}
+        nl: /communities/user/{userId}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
     requirements:
         userId: '\d+'
@@ -878,6 +986,7 @@ community_widget:
     path:
         fr: /communaute/widget/{id}
         en: /community/widget/{id}
+        nl: /community/widget/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityWidget
     requirements:
         id: '\d+'
@@ -887,6 +996,7 @@ community_get_widget:
     path:
         fr: /communaute/widget/get/{id}
         en: /community/widget/get/{id}
+        nl: /community/widget/get/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityGetWidget
     requirements:
         id: '\d+'        
@@ -897,6 +1007,7 @@ community_relay_point_map:
     path:
         fr: /communaute/point-relais/carte/
         en: /community/relay-point/map/
+        nl: /community/relay-point/map/
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getRelayPointsMap
 
 ##########################
@@ -908,6 +1019,7 @@ article_get:
     path:
         fr: /article/{id}
         en: /article/{id}
+        nl: /article/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::articleGet
     requirements:
         id: '\d+'
@@ -917,6 +1029,7 @@ article:
     path:
         fr: /article
         en: /article
+        nl: /article
         eu: /artikulua
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::article
 
@@ -926,6 +1039,7 @@ rss_feed_get_list:
     path:
         fr: /articles/home
         en: /articles/home
+        nl: /articles/home
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::getRssFeedList
 
 # display project page
@@ -933,6 +1047,7 @@ project:
     path:
         fr: /projet
         en: /project
+        nl: /project
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showProject
 
 # display CGU page
@@ -940,6 +1055,7 @@ cgu:
     path:
         fr: /cgu
         en: /cgu
+        nl: /cgu
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
 
 # display news page
@@ -947,6 +1063,7 @@ news:
     path:
         fr: /nouveautes
         en: /news
+        nl: /news
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
 
 # display data policy page
@@ -954,6 +1071,7 @@ data_policy:
     path:
         fr: /protection-donnees
         en: /data-policy
+        nl: /data-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
 
 # display insurance policy page
@@ -961,6 +1079,7 @@ insurance_policy:
     path:
         fr: /assurance
         en: /insurance
+        nl: /insurance
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showInsurancePolicy
 
 # display history page
@@ -968,6 +1087,7 @@ history:
     path:
         fr: /historique
         en: /history
+        nl: /history
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHistory
 
 # display actors page
@@ -975,6 +1095,7 @@ actors:
     path:
         fr: /les-acteurs
         en: /actors
+        nl: /actors
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showActors
 
 # display solidary carpool page
@@ -982,6 +1103,7 @@ solidary_carpool:
     path:
         fr: /covoiturage-solidaire
         en: /solidary-carpool
+        nl: /solidary-carpool
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showSolidaryCarpool
 
 # display become a partner page
@@ -989,6 +1111,7 @@ become_partner:
     path:
         fr: /devenir-partenaire
         en: /become-partner
+        nl: /become-partner
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showBecomePartner
 
 # display FAQ page
@@ -996,6 +1119,7 @@ FAQ:
     path:
         fr: /FAQ
         en: /FAQ
+        nl: /FAQ
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQ
 
 # display cookie page
@@ -1003,6 +1127,7 @@ cookies:
     path:
         fr: /cookies
         en: /cookies
+        nl: /cookies
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCookie    
 
 # display ToolBox page
@@ -1010,6 +1135,7 @@ ToolBox:
     path:
         fr: /boite-a-outils
         en: /toolBox
+        nl: /toolBox
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display CommunityInfos page
@@ -1017,6 +1143,7 @@ CommunityInfos:
     path:
         fr: /informations-communautes
         en: /community-infos
+        nl: /community-infos
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCommunityInfos
 
 # display LOM page
@@ -1024,6 +1151,7 @@ LOM:
     path:
         fr: /LOM
         en: /LOM
+        nl: /LOM
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showLOM
 
 # display GoodPractices page
@@ -1031,6 +1159,7 @@ GoodPractices:
     path:
         fr: /bonnes-pratiques
         en: /good-practices
+        nl: /good-practices
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPractices
 
 # display MoreAbout page
@@ -1038,6 +1167,7 @@ MoreAbout:
     path:
         fr: /en-savoir-plus
         en: /more-about
+        nl: /more-about
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAbout
 
 # display COVID-19 page
@@ -1045,6 +1175,7 @@ Covid19:
     path:
         fr: /covid-19
         en: /covid-19
+        nl: /covid-19
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovid19
 
 # display PrivacyPolicy page
@@ -1052,6 +1183,7 @@ PrivacyPolicy:
     path:
         fr: /politique-de-confidentialite
         en: /privacy-policy
+        nl: /privacy-policy
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPrivacyPolicy
 
 # display PrivacyPolicy page
@@ -1059,6 +1191,7 @@ AboutUs:
     path:
         fr: /qui-sommes-nous
         en: /about-us
+        nl: /about-us
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAboutUs
 
 # display Convention page
@@ -1066,6 +1199,7 @@ Covention:
     path:
         fr: /charte
         en: /covention
+        nl: /covention
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCovention
     
 # display HowItWorks page
@@ -1073,6 +1207,7 @@ HowItworks:
     path:
         fr: /comment-ca-marche
         en: /how-it-works
+        nl: /how-it-works
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showHowItWorks
     
 # display carpool page
@@ -1080,6 +1215,7 @@ Carpool:
     path:
         fr: /demarche-covoiturage
         en: /carpool
+        nl: /carpool
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpool
 
 # display Carpooling page
@@ -1087,6 +1223,7 @@ Carpooling:
     path:
         fr: /covoiturer
         en: /carpooling
+        nl: /carpooling
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpooling
 
 # display CarpoolingAreas page
@@ -1094,6 +1231,7 @@ CarpoolingAreas:
     path:
         fr: /aires-de-covoiturage
         en: /carpooling-areas
+        nl: /carpooling-areas
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCarpoolingAreas
 
 # display PDM page
@@ -1101,6 +1239,7 @@ Pdm:
     path:
         fr: /plan-de-mobilite
         en: /PDM
+        nl: /PDM
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showPDM
 
 # display talkAboutUs page
@@ -1108,6 +1247,7 @@ TalkAboutUs:
     path:
         fr: /parlez-de-nous
         en: /talk-about-us
+        nl: /talk-about-us
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showTalkAboutUs
 
 # display fees page
@@ -1115,6 +1255,7 @@ Fees:
     path:
         fr: /frais-du-covoiturage
         en: /fees
+        nl: /fees
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFees
 
 # display medias page
@@ -1122,6 +1263,7 @@ Medias:
     path:
         fr: /salle-de-presse
         en: /medias
+        nl: /medias
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMedias
 
 # display usefulLinks page
@@ -1129,6 +1271,7 @@ UsefulLinks:
     path:
         fr: /liens-utiles
         en: /useful-links
+        nl: /useful-links
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showUsefulLinks
 
 # display MobileApp page
@@ -1136,6 +1279,7 @@ MobileApp:
     path:
         fr: /sur-mobile-et-tablette
         en: /mobile-app
+        nl: /mobile-app
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobileApp
 
 # display accessibility page
@@ -1143,6 +1287,7 @@ Accessibility:
     path:
         fr: /accessibilite
         en: /accessibility
+        nl: /accessibility
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showAccessibility
 
 # display mobility package page
@@ -1150,7 +1295,16 @@ Mobility:
     path:
         fr: /forfait-mobilite-durable
         en: /mobility-package
+        nl: /mobility-package
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobility
+
+# display mobility package page
+LegalNotice:
+    path:
+        fr: /mentions-legales
+        en: /legal-notice
+        nl: /legal-notice
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showLegalNotice
 
 # Get the last external articles (AJAX)
 LastExternalArticles:
@@ -1158,6 +1312,7 @@ LastExternalArticles:
     path:
         fr: /articles/derniers/externes
         en: /articles/last/extern
+        nl: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
 
@@ -1170,6 +1325,7 @@ georouter:
     path:
         fr: /georoute
         en: /georoute
+        nl: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
 
 
@@ -1182,18 +1338,21 @@ contact:
     path:
         fr: /contact
         en: /contact
+        nl: /contact
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:showContact
 
 contact_get_items:
     path:
         fr: /contact/getItems
         en: /contact/getItems
+        nl: /contact/getItems
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:getContactItems
 
 contact_send:
     path:
         fr: /contact/send
         en: /contact/send
+        nl: /contact/send
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
 
 
@@ -1206,12 +1365,14 @@ solidary:
     path:
         fr: /solidarite
         en: /solidary
+        nl: /solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:index
 
 solidary_ask:
     path:
         fr: /solidarite/demande
         en: /solidary/ask
+        nl: /solidary/ask
     controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate
 
 
@@ -1225,6 +1386,7 @@ event_get_list:
     path:
         fr: /evenements/getEventList
         en: /events/getEventList
+        nl: /events/getEventList
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
 
 # display events
@@ -1232,6 +1394,7 @@ event_list:
     path:
         fr: /covoiturages-evenements/{tabDefault?}
         en: /carpools-events/{tabDefault?}
+        nl: /carpools-events/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # display events first version
@@ -1239,6 +1402,7 @@ event_list_v1:
     path:
         fr: /evenements/{tabDefault?}
         en: /events/{tabDefault?}
+        nl: /events/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventList    
 
 # create event
@@ -1246,6 +1410,7 @@ event_create:
     path:
         fr: /evenement/creer
         en: /event/create
+        nl: /event/create
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventCreate
 
 # display one event
@@ -1253,6 +1418,7 @@ event_show:
     path:
         fr: /covoiturages-evenements/{id}/{urlKey?}
         en: /carpools-events/{id}/{urlKey?}
+        nl: /carpools-events/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
@@ -1262,6 +1428,7 @@ event_show_v1:
     path:
         fr: /evenement/{id}/{urlKey?}
         en: /event/{id}/{urlKey?}
+        nl: /event/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
     requirements:
         id: '\d+'
@@ -1271,6 +1438,7 @@ event_widget:
     path:
         fr: /evenement/widget/{id}
         en: /event/widget/{id}
+        nl: /event/widget/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventWidget
     requirements:
         id: '\d+'
@@ -1280,6 +1448,7 @@ event_get_widget:
     path:
         fr: /evenement/widget/get/{id}/{urlKey?}
         en: /event/widget/get/{id}/{urlKey?}
+        nl: /event/widget/get/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
     requirements:
         id: '\d+'
@@ -1290,6 +1459,7 @@ event_report:
     path:
         fr: /evenement/{id}/signaler
         en: /event/{id}/report
+        nl: /event/{id}/report
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
     requirements:
         id: '\d+'
@@ -1305,6 +1475,7 @@ relay_point_get_list:
     path:
         fr: /points-relais/getRelayPointList
         en: /relay-points/getRelayPointList
+        nl: /relay-points/getRelayPointList
     controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::getRelayPointList
 
 # display relay points
@@ -1312,6 +1483,7 @@ relay_point_list:
     path:
         fr: /points-relais
         en: /relay-points
+        nl: /relay-points
     controller: Mobicoop\Bundle\MobicoopBundle\RelayPoint\Controller\RelayPointController::relayPointList    
 
 ###############
@@ -1324,6 +1496,7 @@ payment_items_list:
     path:
         fr: /payments/get
         en: /payments/get
+        nl: /payments/get
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getPaymentItems
 
 # Post payment items of a user (POST)
@@ -1332,6 +1505,7 @@ payment_payments_post:
     path:
         fr: /payments/post
         en: /payments/post
+        nl: /payments/post
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::postPayments
 
 # Landing page after online payment
@@ -1339,6 +1513,7 @@ payment_paid:
     path:
         fr: /paiements/paye
         en: /payments/paid
+        nl: /payments/paid
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::paymentPaid    
 
 # Post payment items of a user (POST)
@@ -1347,6 +1522,7 @@ payment_payment_status:
     path:
         fr: /payment/status
         en: /payment/status
+        nl: /payment/status
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCarpoolPaymentStatus
 
     # payment 
@@ -1354,6 +1530,7 @@ payment_list:
     path:
         fr: /paiements/{id?}/{frequency?}/{type?}
         en: /payments/{id?}/{frequency?}/{type?}
+        nl: /payments/{id?}/{frequency?}/{type?}
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::payment  
 
 # Get weeks to pay (POST) AJAX
@@ -1362,6 +1539,7 @@ payment_weeks_list:
     path:
         fr: /getWeeks
         en: /getWeeks
+        nl: /getWeeks
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getWeeks      
 
 # Get payment periods to pay/collect (POST) AJAX
@@ -1370,6 +1548,7 @@ payment_periods_list:
     path:
         fr: /getCalendar
         en: /getCalendar
+        nl: /getCalendar
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getCalendar    
 
 # Get the first non validated week (POST) AJAX
@@ -1378,6 +1557,7 @@ payment_week_first:
     path:
         fr: /getFirstWeek
         en: /getFirstWeek
+        nl: /getFirstWeek
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
 ###############
@@ -1389,6 +1569,7 @@ round_price:
     path:
         fr: /prix/arrondir
         en: /price/round
+        nl: /price/round
     controller: Mobicoop\Bundle\MobicoopBundle\Price\Controller\PriceController::roundPrice
 
 # Get the platform widget
@@ -1396,6 +1577,7 @@ get_platform_widget:
     path:
         fr: /widget/get
         en: /widget/get
+        nl: /widget/get
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPlatformWidget
 
 # The platform widget
@@ -1403,6 +1585,7 @@ platform_widget:
     path:
         fr: /widget
         en: /widget
+        nl: /widget
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::platformWidget
 
 # Default page when no longer exists
@@ -1410,4 +1593,5 @@ page_no_longer_exists:
     path:
         fr: /page-no-longer-exists
         en: /page-no-longer-exists
+        nl: /page-no-longer-exists
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPageNoLongerExists

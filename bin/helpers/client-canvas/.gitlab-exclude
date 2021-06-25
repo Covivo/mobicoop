@@ -82,8 +82,12 @@ mobicoop-platform/api/public/import/Avatar/*.*
 mobicoop-platform/api/public/import/Community/*.*
 mobicoop-platform/api/public/import/Event/*.*
 mobicoop-platform/api/public/import/RelaisPoint/*.*
-mobicoop-platform/api/public/upload/masscommunication/
-mobicoop-platform/api/public/upload/masscommunication/*.*
+mobicoop-platform/api/public/upload/masscommunication/images/*.jpg
+mobicoop-platform/api/public/upload/masscommunication/images/*.jpeg
+mobicoop-platform/api/public/upload/masscommunication/images/*.png
+mobicoop-platform/api/public/upload/masscommunication/images/versions/*.jpg
+mobicoop-platform/api/public/upload/masscommunication/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/masscommunication/images/versions/*.png
 mobicoop-platform/client/.env.dev.local
 mobicoop-platform/client/.env.test.local
 mobicoop-platform/client/.env.prod.local

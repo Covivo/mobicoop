@@ -17,5 +17,6 @@
     "join": "Join the community",
     "protected": "This community is only visible by its members",
     "yes": "yes",
-    "no": "no"
+    "no": "no",
+    "members":"{members} membres"
 }

@@ -141,7 +141,7 @@
 
 <script>
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/journey/JourneyResultRegular/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/journey/JourneyResultRegular/";
 
 export default {
   components: {
@@ -150,6 +150,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },

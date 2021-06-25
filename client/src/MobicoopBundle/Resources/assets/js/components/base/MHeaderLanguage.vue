@@ -39,13 +39,14 @@
   </v-menu>
 </template>
 <script>
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MHeaderLanguage/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeaderLanguage/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -72,13 +73,24 @@ export default {
       enabled: Object.keys(this.languages).length > 1
     }
   },
+  mounted(){
+    if(localStorage.getItem('X-LOCALE') && localStorage.getItem('X-LOCALE') !== ''){
+      this.selectedLanguage = localStorage.getItem('X-LOCALE');
+      this.displayedLanguage = localStorage.getItem('X-LOCALE');
+      if(this.language !== this.selectedLanguage){
+        // If not the default language of the platform, we change it
+        this.$emit('languageSelected', this.selectedLanguage);
+      }
+    }
+  },
   methods:{
     selectLanguage(item, key) {
       this.selectedLanguage = item;
       this.displayedLanguage = key;
+      localStorage.setItem('X-LOCALE',key);
+
       this.$emit('languageSelected', key);
-      axios.post(this.$t('urlToSelectLanguage'), {locale:key});
-      axios.post(this.$t('urlToUpdateLanguage'), {language:key});
+      maxios.post(this.$t('urlToUpdateLanguage'), {language:key});
     },
   }
 }

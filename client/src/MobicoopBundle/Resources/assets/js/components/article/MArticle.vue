@@ -45,13 +45,14 @@
 
 <script>
 
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/article/MArticle/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/article/MArticle/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -71,7 +72,7 @@ export default {
     let params = {
       'articleId':this.articleId
     }
-    axios.post(this.$t("getArticle"), params)
+    maxios.post(this.$t("getArticle"), params)
       .then(res => {
         this.article = res.data;
       });

@@ -1,0 +1,6 @@
+{
+    "sendBy": "Verzonden via {name}",
+    "messageDelete": "Bericht verwijderd",
+    "urlCompleteThread": "/utilisateur/messages/{idMessage}/fil",
+    "notThreadSelected": "Geen thread geselecteerd"
+}

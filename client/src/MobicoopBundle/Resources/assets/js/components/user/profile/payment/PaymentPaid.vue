@@ -45,13 +45,14 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/payment/PaymentPaid/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/PaymentPaid/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -106,7 +107,7 @@ export default {
         let params = {
           "paymentPaymentId":self.paymentPaymentId
         }
-        axios.post(self.$t("checkUrl"),params)
+        maxios.post(self.$t("checkUrl"),params)
           .then(response => {
             //console.log(response.data);
             self.paymentStatus = response.data.status;

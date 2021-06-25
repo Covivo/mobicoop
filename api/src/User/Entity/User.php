@@ -100,6 +100,7 @@ use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
+use App\Gamification\Entity\Badge;
 use App\Match\Entity\MassPerson;
 use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
@@ -1144,6 +1145,15 @@ class User implements UserInterface, EquatableInterface
     private $import;
 
     /**
+     * @var ArrayCollection|null The Badges earned by this User.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Gamification\Entity\Badge", mappedBy="users")
+     * @ORM\JoinTable(name="reward")
+     * @Groups({"readGamification"})
+     */
+    private $badges;
+
+    /**
      * @var array|null The avatars of the user
      * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
@@ -1445,6 +1455,7 @@ class User implements UserInterface, EquatableInterface
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
+        $this->badges = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -3191,6 +3202,27 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getBadges()
+    {
+        return $this->badges->getValues();
+    }
+
+    public function addBadge(Badge $badge): self
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges[] = $badge;
+        }
+        
+        return $this;
+    }
+    
+    public function removeBadge(Badge $badge): self
+    {
+        if ($this->badges->contains($badge)) {
+            $this->badges->removeElement($badge);
+        }
+        return $this;
+    }
     
     // DOCTRINE EVENTS
 

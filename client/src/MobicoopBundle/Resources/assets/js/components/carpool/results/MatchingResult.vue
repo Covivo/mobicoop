@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingResult/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/MatchingResult/";
 import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
 import JourneySummary from "@components/carpool/utilities/JourneySummary"
 import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
@@ -107,6 +107,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -141,7 +142,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
     }
   },
   computed: {

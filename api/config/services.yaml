@@ -54,6 +54,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
     
+    # Article Load Listener
+    mobicoop.article.article_load_listener:
+        class: App\Article\EventListener\ArticleLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    mobicoop.article.section_load_listener:
+        class: App\Article\EventListener\SectionLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    mobicoop.article.paragraph_load_listener:
+        class: App\Article\EventListener\ParagraphLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:
         class: App\Geography\EventListener\DirectionLoadListener
@@ -465,6 +479,7 @@ services:
             $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
             $dataPath: '%env(resolve:DATA_URI)%'
             $defaultSigResultNumber: '%env(resolve:GEOCOMPLETE_SIG_DEFAULT_RESULTS)%'
+            $defaultSigReturnedResultNumber: '%env(resolve:GEOCOMPLETE_SIG_RETURNED_RESULTS)%'
             $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
             $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
             $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
@@ -529,6 +544,11 @@ services:
     App\Journey\Repository\JourneyRepository:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    # Translation
+    App\I18n\Service\LanguageManager:
+        arguments:
+            $defaultLanguage: '%env(int:DEFAULT_LANGUAGE)%'
 
     # Mass Communication
     App\MassCommunication\Controller\:

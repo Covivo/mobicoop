@@ -801,6 +801,8 @@ class AdManager
         $ad->setSeatsDriver($proposal->getCriteria()->getSeatsDriver());
         $ad->setSeatsPassenger($proposal->getCriteria()->getSeatsPassenger());
         $ad->setPaused($proposal->isPaused());
+        $ad->setOutwardWaypoints($proposal->getWaypoints());
+
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
         }

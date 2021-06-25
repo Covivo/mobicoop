@@ -103,6 +103,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Event/Entity'
                 prefix: 'App\Event\Entity'
                 alias: Event
+            Gamification:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Gamification/Entity'
+                prefix: 'App\Gamification\Entity'
+                alias: Gamification
             Geography:
                 is_bundle: false
                 type: annotation

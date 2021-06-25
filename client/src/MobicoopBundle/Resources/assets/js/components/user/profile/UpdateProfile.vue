@@ -50,7 +50,7 @@
           <v-row justify="center">
             <v-col >
               <v-avatar
-                color="grey lighten-3"
+                color="lighten-3"
                 size="225px"
               >
                 <img
@@ -527,15 +527,16 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/UpdateProfile/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/user/profile/UpdateProfile/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -543,6 +544,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     },
@@ -654,7 +656,7 @@ export default {
       hasOwnedCommunities: false,
       disabledOwnedCommunities: false,
       disabledCreatedEvents: false,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       emailChanged: false,
       dialogEmail: false
 
@@ -734,7 +736,7 @@ export default {
       updateUser.append("newsSubscription", this.newsSubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
 
-      axios
+      maxios
         .post(this.$t('route.update'), updateUser,
           {
             headers:{
@@ -762,7 +764,7 @@ export default {
     updateAddress () {
       this.loadingAddress = true;
       this.homeAddress.id = this.user.homeAddress ? this.user.homeAddress.id : null;
-      axios
+      maxios
         .post(this.$t('address.update.route'), this.homeAddress,
           {
             headers:{
@@ -777,7 +779,7 @@ export default {
     },
     avatarDelete () {
       this.loadingDelete = true;
-      axios
+      maxios
         .get(this.$t('avatar.delete.route'))
         .then(res => {
           this.errorUpdate = res.data.state;
@@ -843,7 +845,7 @@ export default {
     },
     validateToken() {
       this.loadingValidatePhone = true; 
-      axios
+      maxios
         .post(this.$t('phone.validation.route'),
         {
           token: this.token,
@@ -874,7 +876,7 @@ export default {
         'userId':this.user.id
       }
       this.disabledOwnedCommunities = true;
-      axios.post(this.$t("communities.route"), params)
+      maxios.post(this.$t("communities.route"), params)
         .then(res => {
           if (res.data.length > 0) {
             this.ownedCommunities = res.data;
@@ -888,7 +890,7 @@ export default {
         'userId':this.user.id
       }
       this.disabledCreatedEvents = true;
-      axios.post(this.$t("events.route"), params)
+      maxios.post(this.$t("events.route"), params)
         .then(res => {
           if (res.data.length > 0) {
             this.createdEvents = res.data;

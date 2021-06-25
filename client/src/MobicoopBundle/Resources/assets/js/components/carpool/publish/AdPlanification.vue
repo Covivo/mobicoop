@@ -486,12 +486,13 @@
 <script>
 import moment from "moment";
 import { isEmpty, remove, clone } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/publish/AdPlanification/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdPlanification/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -548,7 +549,7 @@ export default {
       menuReturnTime: false,
       returnTrip: !!(this.initReturnDate && this.initReturnTime),
       marginDuration: this.defaultMarginDuration,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       arrayDay : ['mon','tue','wed','thu','fri','sat','sun'],
       schedules: [],
       maxDateFromOutward : null,

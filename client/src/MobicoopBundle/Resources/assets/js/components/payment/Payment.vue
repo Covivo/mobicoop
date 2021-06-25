@@ -878,15 +878,16 @@
 </template>
 <script>
 
-import axios from 'axios';
+import maxios from "@utils/maxios";
 import moment from "moment";
 import DayListChips from "@components/utilities/DayListChips";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/payment/Payment/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/payment/Payment/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -922,7 +923,7 @@ export default {
   },
   data() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       message:null,
       ePay: this.paymentElectronicActive,
       regular: this.frequency == 1 ? false : true,
@@ -1012,7 +1013,7 @@ export default {
         'id':this.selectedId
       }
       // we get all paymentItems
-      axios.post(this.$t("payments.getFirstWeek"), params)
+      maxios.post(this.$t("payments.getFirstWeek"), params)
         .then(res => {
           this.selectedWeekNumber = res.data.week;
           this.selectedWeekDays = [
@@ -1030,7 +1031,7 @@ export default {
         'type':this.type
       }
       // we get all paymentItems
-      axios.post(this.$t("payments.getCalendar"), params)
+      maxios.post(this.$t("payments.getCalendar"), params)
         .then(res => {
           this.periods = res.data;
         });
@@ -1076,7 +1077,7 @@ export default {
         'week':(this.selectedWeekNumber && this.selectedWeekNumber.length == 5) ? '0'+this.selectedWeekNumber : this.selectedWeekNumber
       }
       // we get all paymentItems
-      axios.post(this.$t("payments.getPayments"), params)
+      maxios.post(this.$t("payments.getPayments"), params)
         .then(res => {
           var items = res.data;
           items.forEach((item, key) => {
@@ -1177,7 +1178,7 @@ export default {
         }
       });
       //we post datas
-      axios.post(this.$t("payments.postPayments"), {
+      maxios.post(this.$t("payments.postPayments"), {
         "type": this.type,  
         "items": payments
       })
@@ -1224,7 +1225,7 @@ export default {
       }
 
       // we post data
-      axios.post(this.$t("payments.postPayments"), {
+      maxios.post(this.$t("payments.postPayments"), {
         "type": this.type,  
         "items": payments
       })

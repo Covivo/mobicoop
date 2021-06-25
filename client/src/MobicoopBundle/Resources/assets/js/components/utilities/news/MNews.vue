@@ -8,7 +8,7 @@
     >
       <v-col
         cols="7"
-        class="text-right"
+        class="text-right align-self-center"
       >
         <h3 class="primary--text font-italic">
           {{ $t('news.title') }}
@@ -24,16 +24,20 @@
           color="secondary"
           :href="this.$t('news.button.route')"
           class="white--text"
+          target="_blank"
         >
           {{ $t('news.button.label') }}
         </v-btn>
       </v-col>
       <v-spacer />
 
-      <v-col cols="4">
+
+      <v-col 
+        cols="4"           
+        class="align-self-center"
+      >
         <v-img
           :src="imageLink + '210112_MBP_VisuelSite.png'"
-          class="align-self-center"
           cover
         />
       </v-col>
@@ -43,7 +47,7 @@
 <script>
 
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MNews/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/MNews/";
 
 let MessagesMergedEn = merge(messages_en);
 let MessagesMergedFr = merge(messages_fr);

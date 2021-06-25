@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import Translations from "@translations/components/user/profile/CarpoolSettings/CarpoolSettings.js";
 
 export default {
@@ -132,7 +132,7 @@ export default {
       const self = this;
       this.resetAlert();
       this.loading = true;
-      axios.put(this.$t('button.route'), {
+      maxios.put(this.$t('button.route'), {
         smoke: this.form.smoke.value,
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,

@@ -88,13 +88,13 @@
               class="text-left"
             >
               <v-switch
-                v-if="role!=3"
+                v-if="role!=3 && externalId==''"
                 v-model="includePassenger"
                 class="ma-2"
                 :label="$t('includePassengers')"
               />
               <v-alert
-                v-else
+                v-else-if="externalId==''"
                 class="accent white--text"
                 dense
                 dismissible
@@ -241,8 +241,8 @@
 </template>
 <script>
 
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/Matching/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
@@ -264,6 +264,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -356,7 +357,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       carpoolDialog: false,
       loginOrRegisterDialog: false,
       results: null,
@@ -495,7 +496,7 @@ export default {
         let postParams = {
           "filters": this.filters,
         };
-        axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
+        maxios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -530,7 +531,7 @@ export default {
         let postParams = {
           "filters": this.filters
         };
-        axios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
+        maxios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -538,7 +539,7 @@ export default {
           })
           .then((response) => {
             this.results = response.data;
-            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
+            this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : (!isNaN(response.data.length)) ? response.data.length : "-"
             this.lOrigin = {
               addressLocality:this.originLiteral
             }
@@ -580,7 +581,7 @@ export default {
           "filters": this.filters,
           "role": this.role
         };
-        axios.post(this.$t("matchingUrl"), postParams,
+        maxios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -614,7 +615,7 @@ export default {
         "to_latitude": this.destination.latitude,
         "to_longitude": this.destination.longitude
       };
-      axios.post(this.$t("externalJourneyUrl"), postParams,
+      maxios.post(this.$t("externalJourneyUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -639,7 +640,7 @@ export default {
         "to_longitude": this.destination.longitude,
         "date": this.date
       };
-      axios.post(this.$t("ptSearchUrl"), postParams,
+      maxios.post(this.$t("ptSearchUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -702,7 +703,7 @@ export default {
       form.submit();      
     },
     launchCarpool(params) {
-      axios.post(this.$t("carpoolUrl"), params,
+      maxios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
             'content-type': 'application/json'

@@ -356,15 +356,16 @@
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/event/EventCreate/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventCreate/";
 import GeoComplete from "@components/utilities/GeoComplete";
 import moment from "moment";
-import axios from "axios";
+import maxios from "@utils/maxios";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -400,7 +401,7 @@ export default {
       menuReturnDate: false,
       menuStartTime: false,
       menuEndTime: false,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
         v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
@@ -432,7 +433,7 @@ export default {
       snackbar: false,
       urlEvent: null,
       urlEventRules: [
-        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.urlEvent.error")
+        v => !v || /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(v) || this.$t("form.urlEvent.error")
       ],
       dialog: false,
       endDatePickerMinDate: null,
@@ -476,7 +477,7 @@ export default {
         if (this.endTime) newEvent.append("endTime", this.endTime);
         if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
-        axios 
+        maxios 
           .post(this.$t('buttons.create.route'), newEvent, {
             headers:{
               'content-type': 'multipart/form-data'

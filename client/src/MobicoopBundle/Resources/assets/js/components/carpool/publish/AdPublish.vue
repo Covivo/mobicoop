@@ -705,10 +705,10 @@
 </template>
 
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/publish/AdPublish/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/carpool/publish/AdPublish/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdPublish/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/publish/AdPublish/";
 
-import axios from "axios";
+import maxios from "@utils/maxios";
 import { merge, isEmpty, isEqual } from "lodash";
 import moment from 'moment';
 
@@ -720,6 +720,7 @@ import MMap from '@components/utilities/MMap/MMap'
 import L from "leaflet";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -727,6 +728,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     },
@@ -840,7 +842,7 @@ export default {
   },
   data() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       distance: 0, 
       duration: 0,
       outwardDate: this.initDate,
@@ -1208,7 +1210,7 @@ export default {
     postAd() {
       let postObject = this.buildAdObject();
       this.loading = true;
-      axios.post(this.buildUrl(this.$t('route.publish')),postObject,{
+      maxios.post(this.buildUrl(this.$t('route.publish')),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -1217,6 +1219,7 @@ export default {
           if (response.data) {
             if(response.data.result == undefined){
               this.snackErrorPublish.show = true;
+              this.loading = false;
             }
             else{
               window.location.href = this.$t('route.myAds');
@@ -1247,7 +1250,7 @@ export default {
         postObject.cancellationMessage = this.cancellationMessage;
       }
       this.loading = true;
-      axios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
+      maxios.put(this.buildUrl(this.$t('route.update', {id: this.ad.id})),postObject,{
         headers:{
           'content-type': 'application/json'
         }
@@ -1335,7 +1338,7 @@ export default {
     roundPrice (price, frequency, doneByUser = false) {
       if (price >= 0 && frequency > 0) {
         this.loadingPrice = true;
-        axios.post(this.$t('route.roundPrice'), {
+        maxios.post(this.$t('route.roundPrice'), {
           value: price,
           frequency: frequency
         }).then(resp => {

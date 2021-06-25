@@ -1,0 +1,7 @@
+{
+    "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}",
+    "urlCommunityList": "/covoiturage-communaute",
+    "availableCommunities": "Beschikbare community's",
+    "getCommunities": "/utilisateur/communautes",
+    "title": "Mijn community's"
+}

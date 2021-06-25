@@ -539,8 +539,8 @@
 
 <script>
 import moment from "moment";
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingJourney/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
@@ -561,6 +561,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -673,7 +674,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       lResult: this.result,
       contactLoading: false,
       carpoolLoading: false,
@@ -1133,7 +1134,7 @@ export default {
 
     },
     callSig(params, requester = null){
-      axios
+      maxios
         .get(`${this.geoRouteUrl}${params}`)
         .then(res => {
           if(requester == null){

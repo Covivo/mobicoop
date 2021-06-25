@@ -1,0 +1,6 @@
+{
+    "fail": "Fout bij het posten van de review",
+    "validate": "Bevestigen",
+    "leaveReviewUri": "/utilisateur/avis/ecrire",
+    "label": "U kunt uw commentaar schrijven"
+}

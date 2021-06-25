@@ -15,13 +15,19 @@
       </v-col>
       <v-col
         cols="2"        
-        class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
+        class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
           :href="$t('pad.mobility.link')"
           :alt="$t('pad.mobility.title')"
           target="_blank"
-        >{{ $t('pad.mobility.title') }}</a>
+        >{{ $t('pad.mobility.title') }}</a><br>
+        <a
+          :href="$t('pad.mobility.link')"
+          :alt="$t('pad.mobility.title')"
+          target="_blank"
+          class="font-italic text-lowercase"
+        >{{ $t('pad.mobility.subtitle') }}</a>
       </v-col>
       <v-col
         cols="2"        
@@ -100,7 +106,7 @@
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             alt="Mobicoop"
             height="50"
-            width="280"
+            width="210"
             contain
             eager
           >
@@ -153,6 +159,7 @@
         color="secondary"
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -171,6 +178,7 @@
         color="secondary"
         :href="$t('buttons.solidary.route')"
         class="hidden-md-and-down white--text mr-4"
+        small
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
@@ -264,6 +272,18 @@
               <v-btn
                 text
                 rounded
+                :disabled="!user"
+                :href="$t('buttons.solidary.route')"
+              >
+                {{ $t('buttons.solidary.label') }}
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn
+                text
+                rounded
                 :href="$t('buttons.messages.route')"
               >
                 {{ $t('buttons.messages.label') }}
@@ -345,8 +365,8 @@
 
 <script>
 import { merge, has } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MHeader/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/base/MHeader/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeader/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MHeader/";
 //import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
@@ -355,6 +375,7 @@ import MMessageBtn from "@components/base/MMessageBtn.vue";
 
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -362,6 +383,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     }
@@ -427,7 +449,10 @@ export default {
   },
   created() {
     this.$root.token = this.token;
-    this.$root.$i18n.locale = this.dlocale
+    if(this.user){
+      localStorage.setItem('X-LOCALE',this.dlocale);
+    }
+    this.$root.$i18n.locale = this.dlocale;
   },
   methods:{
     updateLanguage(language) {
@@ -444,6 +469,7 @@ export default {
   a{
     text-decoration: none;
     color:white;
+    font-family: Poppins, sans-serif !important;
   }
   .section{
     border-right: 1px solid white;

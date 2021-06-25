@@ -105,6 +105,12 @@ class Section
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
     
+    // List of the translatable items of this entity
+    const TRANSLATABLE_ITEMS = [
+        "title",
+        "subTitle"
+    ];
+
     /**
      * @var int The id of this section.
      *

@@ -31,7 +31,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class UserDeleteAccountWasDriverEvent extends Event
 {
-    public const NAME = 'user_delete_account_was_driver';
+    public const NAME = 'user_deleted_with_pending_passengers';
 
     protected $ask;
 

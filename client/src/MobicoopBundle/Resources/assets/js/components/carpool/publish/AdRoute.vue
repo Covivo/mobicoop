@@ -200,14 +200,15 @@
 </template>
 
 <script>
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/publish/AdRoute/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdRoute/";
 import GeoComplete from "@components/utilities/GeoComplete";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -322,7 +323,7 @@ export default {
         });
         nbWaypoints++;
         params += `&points[${nbWaypoints}][longitude]=${this.destination.longitude}&points[${nbWaypoints}][latitude]=${this.destination.latitude}`;
-        axios
+        maxios
           .get(`${this.geoRouteUrl}${params}`)
           .then(res => {
             this.direction = res.data.member[0];
@@ -374,7 +375,7 @@ export default {
       let params = {
         'userId':this.user.id
       }
-      axios.post(this.$t("communities.route"), params)
+      maxios.post(this.$t("communities.route"), params)
         .then(res => {
           this.communities = res.data;
         });
