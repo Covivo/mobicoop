@@ -419,7 +419,7 @@ class Log
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
 
     /**
