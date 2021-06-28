@@ -82,6 +82,7 @@ use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\I18n\Repository\LanguageRepository;
+use App\Action\Event\ActionEvent;
 
 /**
  * User manager service.
@@ -525,12 +526,15 @@ class UserManager
         if ($user->getPhoneValidatedDate()) {
             $user = $this->activateSmsNotification($user);
         }
+
+        $phoneUpdate = false;
         // check if the phone is updated and if so reset phoneToken and validatedDate
         if ($user->getTelephone() != $user->getOldTelephone()) {
             $user->setPhoneToken(null);
             $user->setPhoneValidatedDate(null);
             // deactivate sms notification since the phone is new
             $user = $this->deActivateSmsNotification($user);
+            $phoneUpdate = true;
         }
 
         $emailUpdate = false;
@@ -600,6 +604,13 @@ class UserManager
         if ($emailUpdate) {
             $event = new UserSendValidationEmailEvent($user);
             $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
+        }
+
+        if ($phoneUpdate) {
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'user_phone_updated']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
        
         // return the user
@@ -1256,6 +1267,12 @@ class UserManager
                 $userFound->setPhoneValidatedDate(new \Datetime());
                 $this->entityManager->persist($userFound);
                 $this->entityManager->flush();
+
+                //  we dispatch the gamification event associated
+                $action = $this->actionRepository->findOneBy(['name'=>'user_phone_validation']);
+                $actionEvent = new ActionEvent($action, $userFound);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        
                 return $userFound;
             } else {
                 // User found by token doesn't match with the given telephone. We return nothing.

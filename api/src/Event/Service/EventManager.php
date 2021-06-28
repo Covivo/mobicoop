@@ -23,11 +23,13 @@
 
 namespace App\Event\Service;
 
+use App\Action\Event\ActionEvent;
 use App\App\Repository\AppRepository;
 use App\DataProvider\Entity\ApidaeProvider;
 use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
+use App\Action\Repository\ActionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
@@ -49,6 +51,7 @@ class EventManager
     private $geoTools;
     private $provider;
     private $appRepository;
+    private $actionRepository;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
     const APP_ID = 1;
@@ -62,6 +65,7 @@ class EventManager
         EventDispatcherInterface $dispatcher,
         GeoTools $geoTools,
         AppRepository $appRepository,
+        ActionRepository $actionRepository,
         String $eventProvider,
         String $eventProviderApiKey,
         String $eventProviderProjectId,
@@ -76,6 +80,7 @@ class EventManager
         $this->eventProviderProjectId = $eventProviderProjectId;
         $this->eventProviderSelectionId = $eventProviderSelectionId;
         $this->appRepository = $appRepository;
+        $this->actionRepository = $actionRepository;
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
                 $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
@@ -104,6 +109,12 @@ class EventManager
 
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
+                
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'event_created']);
+        $actionEvent = new ActionEvent($action, $event->getUser());
+        $actionEvent->setEvent($event);
+        $this->dispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
         return $event;
     }

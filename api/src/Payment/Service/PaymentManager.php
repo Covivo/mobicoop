@@ -59,6 +59,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Action\Event\ActionEvent;
 
 /**
  * Payment manager service.
@@ -1150,6 +1151,11 @@ class PaymentManager
                 // we dispatch the event
                 $event = new IdentityProofAcceptedEvent($paymentProfile);
                 $this->eventDispatcher->dispatch(IdentityProofAcceptedEvent::NAME, $event);
+                //  we dispatch the gamification event associated
+                $action = $this->actionRepository->findOneBy(['name'=>'identity_proof_accepted']);
+                $actionEvent = new ActionEvent($action, $event->getPaymentProfile()->getUser());
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
             break;
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);

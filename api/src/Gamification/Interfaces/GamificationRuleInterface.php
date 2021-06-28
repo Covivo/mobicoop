@@ -23,7 +23,7 @@
 
 namespace App\Gamification\Interfaces;
 
-use App\Gamification\Entity\GamificationAction;
+use App\Action\Entity\Log;
 
 /**
  * Gamification Rule interface.
@@ -37,9 +37,8 @@ interface GamificationRuleInterface
      * Code to execute to validate the rule.
      *
      * @param User|App              $requester  The requester
-     * @param GamificationAction    $gamificationAction   The gamificationAction
-     * @param array                 $params     The params needed for the validation
+     * @param Log                   $log associated to the rule
      * @return bool True if the rule is validated, false either
      */
-    public function execute(object $requester, GamificationAction $gamificationAction, array $params);
+    public function execute(object $requester, Log $log);
 }

@@ -52,6 +52,7 @@ use App\User\Exception\BlockException;
 use App\User\Service\BlockManager;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
+use App\Action\Event\ActionEvent;
 
 /**
  * Ask manager service.
@@ -694,6 +695,12 @@ class AskManager
         } elseif (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
             $event = new AskAcceptedEvent($ad);
             $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
+            
+            //  we dispatch gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'carpool_ask_accepted']);
+            $actionEvent = new ActionEvent($action, $ask->getUser());
+            $actionEvent->setAsk($ask);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
             $event = new AskRefusedEvent($ad);
             $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
