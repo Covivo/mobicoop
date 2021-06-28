@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,46 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\EventSubscriber;
+namespace App\Gamification\EventSubscriber;
 
-use App\Action\Event\ActionEvent;
-use App\Action\Service\ActionManager;
+use App\Gamification\Event\ValidationStepEvent;
+use App\Gamification\Service\GamificationManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\User\Event\LoginDelegateEvent;
 
 /**
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class ActionSubscriber implements EventSubscriberInterface
+class ValidationStepSubscriber implements EventSubscriberInterface
 {
-    private $actionManager;
+    private $gamificationManager;
 
-    public function __construct(ActionManager $actionManager)
+    public function __construct(GamificationManager $gamificationManager)
     {
-        $this->actionManager = $actionManager;
+        $this->gamificationManager = $gamificationManager;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            LoginDelegateEvent::NAME => 'onLoginDelegate',
-            ActionEvent::NAME => 'onAction'
+            ValidationStepEvent::NAME => 'onValidationStepEvent'
         ];
     }
 
-    public function onLoginDelegate(LoginDelegateEvent $event)
+    public function onValidationStepEvent(ValidationStepEvent $event)
     {
-        $this->actionManager->handleAction(LoginDelegateEvent::NAME, $event);
-    }
-
-    /**
-     * Generic action handler
-     *
-     * @param ActionEvent $event
-     * @return void
-     */
-    public function onAction(ActionEvent $event)
-    {
-        $this->actionManager->onAction($event);
+        $this->gamificationManager->handleValidationStep($event->getValidationStep());
     }
 }

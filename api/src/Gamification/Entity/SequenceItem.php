@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -103,6 +104,20 @@ class SequenceItem
      * @MaxDepth(1)
      */
     private $gamificationAction;
+
+    /**
+     * @var ArrayCollection|null The RewarSteps where this SequenceItem is involved
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="sequenceItem", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
+     * @MaxDepth(1)
+     */
+    private $rewardSteps;
+
+    public function __construct()
+    {
+        $this->rewardSteps = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -185,6 +200,28 @@ class SequenceItem
     {
         $this->gamificationAction = $gamificationAction;
 
+        return $this;
+    }
+
+    public function getRewardSteps()
+    {
+        return $this->rewardSteps->getValues();
+    }
+
+    public function addRewardStep(RewardStep $rewardStep): self
+    {
+        if (!$this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps[] = $rewardStep;
+        }
+        
+        return $this;
+    }
+    
+    public function removeRewardStep(RewardStep $rewardStep): self
+    {
+        if ($this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps->removeElement($rewardStep);
+        }
         return $this;
     }
 }

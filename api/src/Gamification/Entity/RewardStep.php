@@ -52,7 +52,7 @@ class RewardStep
     /**
      * @var SequenceItem The SequenceItem's of this RewardStep
      *
-     * @ORM\Column(type="smallint")
+     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\SequenceItem", inversedBy="rewardSteps")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
@@ -61,7 +61,7 @@ class RewardStep
     /**
      * @var User The User who validated this RewardStep
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewardSteps")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
