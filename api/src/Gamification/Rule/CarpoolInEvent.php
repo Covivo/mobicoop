@@ -33,7 +33,7 @@ class CarpoolInEvent implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $item)
     {
         /** To do : implement the rule*/
         return true;
