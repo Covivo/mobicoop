@@ -41,6 +41,7 @@ use App\Gamification\Event\ValidationStepEvent;
 use App\Gamification\Resource\BadgesBoard;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
  * Gamification Manager
@@ -69,7 +70,6 @@ class GamificationManager
         $this->eventDispatcher = $eventDispatcher;
     }
     
-    
     /**
      * Get all the Badges of the instance
      * @param int $status  Get only the Badges of this status (default : null, every badges are returned)
@@ -84,7 +84,6 @@ class GamificationManager
         }
     }
     
-    
     /**
      * When a new log entry is detected, we treat it to determine if there is something to do (i.e Gamification)
      *
@@ -98,7 +97,7 @@ class GamificationManager
         if (is_array($gamificationActions) && count($gamificationActions)>0) {
             // This action has gamification action, we need to treat it
             foreach ($gamificationActions as $gamificationAction) {
-                $this->treatGamificationAction($gamificationAction, $log->getUser());
+                $this->treatGamificationAction($gamificationAction, $log);
             }
         }
     }
@@ -110,8 +109,21 @@ class GamificationManager
      * @param User $user
      * @return void
      */
-    private function treatGamificationAction(GamificationAction $gamificationAction, User $user)
+    private function treatGamificationAction(GamificationAction $gamificationAction, Log $log)
     {
+        if (!is_null($gamificationAction->getGamificationActionRule())) {
+            // at this point a rule is associated, we need to execute it
+            $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $gamificationAction->getGamificationActionRule()->getName();
+            /**
+             * @var GamificationRuleInterface $gamificationActionRule
+             */
+            $gamificationActionRule = new $gamificationActionRuleName;
+            if (!$gamificationActionRule->execute($log->getUser(), $log)) {
+                return;
+            }
+        }
+        
+
         // We check if this action is in a sequenceItem
         $validationSteps = [];
         $sequenceItems = $this->sequenceItemRepository->findBy(['gamificationAction'=>$gamificationAction]);
@@ -122,13 +134,18 @@ class GamificationManager
              */
             foreach ($sequenceItems as $sequenceItem) {
                 $validationStep = new ValidationStep();
-                $validationStep->setUser($user);
+                $validationStep->setUser($log->getUser());
                 $validationStep->setSequenceItem($sequenceItem);
                 $validationStep->setValidated(true); // By default, the sequenceItem is valid
 
                 // This related action needs to be made a minimum amount of time
                 if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
-                    $validationStep->setValidated($validationStep->isValidated() && $this->checkMinCount($gamificationAction->getAction(), $user, $sequenceItem->getMinCount()));
+                    $validationStep->setValidated($validationStep->isValidated() && $this->checkMinCount($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getMinCount()));
+                }
+
+                // this related action needs to be made in a range that range date
+                if (!is_null($sequenceItem->isInDateRange())) {
+                    $validationStep->setValidated($validationStep->isValidated() && $this->checkInDateRange($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getBadge()->getStartDate(), $sequenceItem->getBadge()->getEndDate(), $sequenceItem->getMinCount(), $sequenceItem->getMinUniqueCount()));
                 }
 
                 // Throw an event who says that a ValidationStep has been evaluated
@@ -154,6 +171,33 @@ class GamificationManager
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Check if the inDateRange criteria is verified
+     *
+     * @param Action $action            The action to check
+     * @param User $user                The User who made the action
+     * @param DateTime $startDate       The start date to be valid
+     * @param DateTime $endDate         The end date to be valid
+     * @param integer $minCount         The min count to be valid
+     * @param integer $minUniqueCount   not implemented The unique min count to be vali_d
+     * @return boolean  True for valid
+     */
+    private function checkInDateRange(Action $action, User $user, $startDate, $endDate, $minCount=0, $minUniqueCount = 0): bool
+    {
+        // We get in the log table all the Action $action made by this User $user
+        $logs = $this->logRepository->findBy(['action'=>$action, 'user'=>$user]);
+        $logIds = [];
+        foreach ($logs as $log) {
+            if ($startDate <= $log->getDate() && $log->getDate() <= $endDate) {
+                $logIds[] = $log->getId();
+            }
+        }
+        if (count($logIds)>$minCount) {
+            return true;
+        }
         return false;
     }
 
