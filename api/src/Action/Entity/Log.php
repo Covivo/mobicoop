@@ -216,14 +216,6 @@ class Log
      */
     private $campaign;
 
-    /**
-     * @var \DateTimeInterface Creation date of the log.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups({"readLog","writeLog"})
-     */
-    private $createdDate;
-
     public function getId(): ?int
     {
         return $this->id;
