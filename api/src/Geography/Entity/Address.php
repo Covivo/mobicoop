@@ -109,6 +109,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "post"={
  *              "method"="POST",
  *              "path"="/address",
+ *              "security"="is_granted('address_post',object)",
  *              "swagger_context" = {
  *                  "tags"={"Geography"}
  *              }
@@ -129,6 +130,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              }
  *          },
  *          "put"={
+ *              "security"="is_granted('address_update',object)",
  *              "swagger_context" = {
  *                  "tags"={"Geography"}
  *              }
