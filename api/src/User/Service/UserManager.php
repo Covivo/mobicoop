@@ -1270,7 +1270,12 @@ class UserManager
 
     public function unsubscribeFromEmail(User $user, $lang='fr_FR')
     {
-        $this->translator->setLocale($lang);
+        if (!is_null($user->getLanguage())) {
+            $lang = $user->getLanguage();
+            $this->translator->setLocale($lang->getCode());
+        } else {
+            $this->translator->setLocale($lang);
+        }
 
         $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
 
@@ -1607,7 +1612,7 @@ class UserManager
                 break;
             }
 
-            // We keep only the messages where the user was recipient
+            // We keep only the messages where the user was user
             if ($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()) {
                 $nbMessagesTotal++;
                 //We check if the User sent an anwser to this message
