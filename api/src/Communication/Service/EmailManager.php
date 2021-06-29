@@ -49,6 +49,7 @@ class EmailManager
     private $translator;
     private $emailAdditionalHeaders;
     private $emailSupport;
+    const LANG = 'fr_FR';
  
     /**
        * EmailManager constructor.
@@ -102,7 +103,12 @@ class EmailManager
         }
         
         $sessionLocale= $this->translator->getLocale();
-        $this->translator->setLocale($lang);
+
+        if ($lang == self::LANG) {
+            $this->translator->setLocale($lang);
+        } else {
+            $this->translator->setLocale($lang->getCode());
+        }
        
         $senderName = ($this->emailSenderNameDefault!=="") ? $this->emailSenderNameDefault : $senderEmail;
         $senderReplyToName = ($this->emailReplyToNameDefault!=="") ? $this->emailReplyToNameDefault : $replyToEmail;

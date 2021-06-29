@@ -1270,7 +1270,12 @@ class UserManager
 
     public function unsubscribeFromEmail(User $user, $lang='fr_FR')
     {
-        $this->translator->setLocale($lang);
+        if (!is_null($user->getLanguage())) {
+            $lang = $user->getLanguage();
+            $this->translator->setLocale($lang->getCode());
+        } else {
+            $this->translator->setLocale($lang);
+        }
 
         $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
 
