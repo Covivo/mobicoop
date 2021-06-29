@@ -111,18 +111,6 @@ class GamificationManager
      */
     private function treatGamificationAction(GamificationAction $gamificationAction, Log $log)
     {
-        if (!is_null($gamificationAction->getGamificationActionRule())) {
-            // at this point a rule is associated, we need to execute it
-            $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $gamificationAction->getGamificationActionRule()->getName();
-            /**
-             * @var GamificationRuleInterface $gamificationActionRule
-             */
-            $gamificationActionRule = new $gamificationActionRuleName;
-            if (!$gamificationActionRule->execute($log->getUser(), $log)) {
-                return;
-            }
-        }
-        
 
         // We check if this action is in a sequenceItem
         $validationSteps = [];
@@ -137,6 +125,16 @@ class GamificationManager
                 $validationStep->setUser($log->getUser());
                 $validationStep->setSequenceItem($sequenceItem);
                 $validationStep->setValidated(true); // By default, the sequenceItem is valid
+
+                if (!is_null($gamificationAction->getGamificationActionRule())) {
+                    // at this point a rule is associated, we need to execute it
+                    $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $gamificationAction->getGamificationActionRule()->getName();
+                    /**
+                     * @var GamificationRuleInterface $gamificationActionRule
+                     */
+                    $gamificationActionRule = new $gamificationActionRuleName;
+                    $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log->getUser(), $log, $sequenceItem));
+                }
 
                 // This related action needs to be made a minimum amount of time
                 if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {

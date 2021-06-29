@@ -24,6 +24,7 @@
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Payment\Entity\CarpoolItem;
 
 /**
  *  Check that the requester is the author of the related Ad
@@ -31,16 +32,25 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class HasOnlyOneElectronicPayment implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * Has only one electronic Payment
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
      */
-    public function execute($requester, $item)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        $carpoolItems = $log->getCarpoolPayment()->getCarpoolItems();
+        $payedCarpoolItems = [];
+        foreach ($carpoolItems as $carpoolItem) {
+            if ($carpoolItem->getDebtorUser()->getId() == $log->getUser()->getId() && $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_ONLINE) {
+                $payedCarpoolItems[] = $carpoolItem;
+            }
+        }
+        if (count($payedCarpoolItems) === 1) {
+            return true;
+        }
+        return false;
     }
 }

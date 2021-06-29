@@ -33,14 +33,11 @@ class IsSolidaryExclusive implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        if ($log->getProposal()->getCriteria()->isSolidaryExclusive()) {
+            return true;
+        }
+        return false;
     }
 }

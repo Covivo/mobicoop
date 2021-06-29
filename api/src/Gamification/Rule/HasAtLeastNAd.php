@@ -31,16 +31,26 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class HasAtLeastNAd implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * Has at least N proposal
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
      */
-    public function execute($requester, $item)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        $user = $log->getUser();
+        $proposals = $user->getProposals();
+        $publishedProposals = [];
+        foreach ($proposals as $proposal) {
+            if (!$proposal->isPrivate()) {
+                $publishedProposals[] = $proposal;
+            }
+        }
+        if (count($publishedProposals) >= $sequenceItem->getMinCount()) {
+            return true;
+        }
+        return false;
     }
 }

@@ -33,7 +33,7 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item)
+    public function execute($requester, $log, $sequenceItem)
     {
         /** To do : implement the rule*/
         return true;

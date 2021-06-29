@@ -24,6 +24,7 @@
 namespace App\Gamification\Interfaces;
 
 use App\Action\Entity\Log;
+use App\Gamification\Entity\SequenceItem;
 
 /**
  * Gamification Rule interface.
@@ -40,5 +41,5 @@ interface GamificationRuleInterface
      * @param Log                   $log associated to the rule
      * @return bool True if the rule is validated, false either
      */
-    public function execute(object $requester, Log $log);
+    public function execute(object $requester, Log $log, SequenceItem $sequenceItem);
 }

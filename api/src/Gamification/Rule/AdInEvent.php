@@ -31,16 +31,22 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class AdInEvent implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * Ad In Event rule
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
      */
-    public function execute($requester, $item)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        $user = $log->getUser();
+        $proposals = $user->getProposals();
+        foreach ($proposals as $proposal) {
+            if ($proposal->getEvent()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
