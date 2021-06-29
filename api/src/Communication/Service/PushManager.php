@@ -41,7 +41,8 @@ class PushManager
     private $logger;
     private $pushProvider;
     private $translator;
-  
+    const LANG = 'fr_FR';
+
     /**
      * PushManager constructor.
      *
@@ -78,7 +79,11 @@ class PushManager
     public function send(Push $push, $template, $context=[], $lang="fr_FR")
     {
         $sessionLocale= $this->translator->getLocale();
-        $this->translator->setLocale($lang);
+        if ($lang == self::LANG) {
+            $this->translator->setLocale($lang);
+        } else {
+            $this->translator->setLocale($lang->getCode());
+        }
         $push->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',

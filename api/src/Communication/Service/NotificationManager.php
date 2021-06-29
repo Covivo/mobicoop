@@ -451,9 +451,11 @@ class NotificationManager
         $lang = self::LANG;
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
+            $this->translator->setLocale($lang->getCode());
+        } else {
+            $this->translator->setLocale($lang);
         }
         
-        $this->translator->setLocale($lang);
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
@@ -795,9 +797,10 @@ class NotificationManager
         $lang = self::LANG;
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
+            $this->translator->setLocale($lang->getCode());
+        } else {
+            $this->translator->setLocale($lang);
         }
-        
-        $this->translator->setLocale($lang);
         $push->setTitle($this->templating->render(
             $notification->getTemplateTitle() ? $this->pushTitleTemplatePath . $notification->getTemplateTitle() : $this->pushTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
