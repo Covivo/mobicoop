@@ -41,6 +41,7 @@ class SmsManager
     private $logger;
     private $smsProvider;
     private $translator;
+    const LANG = 'fr_FR';
   
     /**
      * SmsManager constructor.
@@ -73,7 +74,11 @@ class SmsManager
     public function send(Sms $sms, $template, $context=[], $lang="fr_FR")
     {
         $sessionLocale= $this->translator->getLocale();
-        $this->translator->setLocale($lang);
+        if ($lang == self::LANG) {
+            $this->translator->setLocale($lang);
+        } else {
+            $this->translator->setLocale($lang->getCode());
+        }
         $sms->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',
