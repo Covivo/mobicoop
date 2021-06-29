@@ -43,6 +43,7 @@ use App\Geography\Entity\Territory;
 use App\User\Entity\Car;
 use App\Communication\Entity\Message;
 use App\MassCommunication\Entity\Campaign;
+use App\Payment\Entity\CarpoolPayment;
 
 /**
  * User actions log.
@@ -215,6 +216,14 @@ class Log
      * @Groups({"readLog","writeLog"})
      */
     private $campaign;
+
+    /**
+     * @var CarpoolPayment|null The carpoolPayment if the action concerns a carpoolPayment.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment")
+     * @Groups({"readLog","writeLog"})
+     */
+    private $carpoolPayment;
 
     public function getId(): ?int
     {
@@ -404,6 +413,18 @@ class Log
     public function setCampaign(?Campaign $campaign): self
     {
         $this->campaign = $campaign;
+        
+        return $this;
+    }
+
+    public function getCarpoolPayment(): ?CarpoolPayment
+    {
+        return $this->carpoolPayment;
+    }
+    
+    public function setCarpoolPayment(?CarpoolPayment $carpoolPayment): self
+    {
+        $this->carpoolPayment = $carpoolPayment;
         
         return $this;
     }

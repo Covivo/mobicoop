@@ -106,6 +106,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                  "tags"={"Geography"}
  *              }
  *          },
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/address",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
  *          "ADMIN_search"={
  *              "method"="GET",
  *              "path"="/addresses/admin/search",

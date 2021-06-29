@@ -1122,6 +1122,14 @@ class PaymentManager
 
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
+
+        //  we dispatch the gamification event associated
+        if ($carpoolPayment->getStatus == CarpoolPayment::STATUS_SUCCESS) {
+            $action = $this->actionRepository->findOneBy(['name'=>'electronic_payment_made']);
+            $actionEvent = new ActionEvent($action, $carpoolPayment->getUser());
+            $actionEvent->setCarpoolPayment($carpoolPayment);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
     }
 
     /**

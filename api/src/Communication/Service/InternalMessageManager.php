@@ -38,6 +38,7 @@ use App\Communication\Exception\MessageNotFoundException;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Solidary\Entity\SolidaryAskHistory;
+use App\Action\Event\ActionEvent;
 
 /**
  * Internal message manager
@@ -225,6 +226,12 @@ class InternalMessageManager
         
         $this->entityManager->flush();
 
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'communication_internal_message_received']);
+        $actionEvent = new ActionEvent($action, $message->getUser());
+        $actionEvent->setMessage($message);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        
         return $message;
     }
 }
