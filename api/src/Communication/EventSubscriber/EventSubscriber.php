@@ -25,15 +25,22 @@ namespace App\Communication\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Event\Event\EventCreatedEvent;
+use App\Action\Event\ActionEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Action\Repository\ActionRepository;
 
 class EventSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
+    private $eventDispatcher;
+    private $actionRepository;
 
 
-    public function __construct(NotificationManager $notificationManager)
+    public function __construct(NotificationManager $notificationManager, EventDispatcherInterface $eventDispatcher, ActionRepository $actionRepository)
     {
         $this->notificationManager = $notificationManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->actionRepository = $actionRepository;
     }
 
     public static function getSubscribedEvents()
@@ -46,5 +53,11 @@ class EventSubscriber implements EventSubscriberInterface
     public function onEventCreated(EventCreatedEvent $event)
     {
         $this->notificationManager->notifies(EventCreatedEvent::NAME, $event->getEvent()->getUser(), $event->getEvent());
+
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'event_created']);
+        $actionEvent = new ActionEvent($action, $event->getEvent()->getUser());
+        $actionEvent->setEvent($event->getEvent());
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 }

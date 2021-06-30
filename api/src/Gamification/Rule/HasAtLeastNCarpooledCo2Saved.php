@@ -49,6 +49,7 @@ class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has at least saved N CO²
         $savedCo2 = $this->userManager->getProfileSummary($log->getUser())->getSavedCo2();
         if ($savedCo2 >= $sequenceItem->getMinCount()) {
             return true;

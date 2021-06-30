@@ -56,6 +56,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Import\Entity\UserImport;
 use App\User\Entity\User;
 use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Proposal manager service.
@@ -85,6 +86,7 @@ class ProposalManager
     private $params;
     private $internalMessageManager;
     private $criteriaRepository;
+    private $actionRepository;
 
     /**
      * Constructor.
@@ -113,6 +115,7 @@ class ProposalManager
         FormatDataManager $formatDataManager,
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
+        ActionRepository $actionRepository,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -133,6 +136,7 @@ class ProposalManager
         $this->params = $params;
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
+        $this->actionRepository = $actionRepository;
     }
 
     /**

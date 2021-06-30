@@ -41,9 +41,12 @@ class CarpoolInEvent implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has at least one proposal carpooled and published in an event
         $user = $log->getUser();
+        // we get all user's proposals and for each proposal we check if he's associated with an event
         $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
+            // for each proposal we check if he's carpooled
             $asks = $proposal->getAsks();
             $isCarpooled = false;
             foreach ($asks as $ask) {
@@ -51,6 +54,7 @@ class CarpoolInEvent implements GamificationRuleInterface
                     $isCarpooled = true;
                 }
             }
+            // if a proposal he's carpooled and associated to an event we return true
             if ($isCarpooled && $proposal->getEvent()) {
                 return true;
             }

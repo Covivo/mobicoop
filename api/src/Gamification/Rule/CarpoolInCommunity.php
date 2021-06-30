@@ -41,10 +41,13 @@ class CarpoolInCommunity implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has at least one proposal carpooled and published in a community
         $user = $log->getUser();
+        // we get all user's proposals and for each proposal we check if he's associated with a community
         $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
             $communities = $proposal->getCommunities();
+            // for each proposal we check if he's carpooled
             $asks = $proposal->getAsks();
             $isCarpooled = false;
             foreach ($asks as $ask) {
@@ -52,6 +55,7 @@ class CarpoolInCommunity implements GamificationRuleInterface
                     $isCarpooled = true;
                 }
             }
+            // if a proposal he's carpooled and associated to a community we return true
             if ($isCarpooled && count($communities) > 0) {
                 return true;
             }

@@ -40,9 +40,11 @@ class HasAtLeastNAd implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has at least N proposals published
         $user = $log->getUser();
         $proposals = $user->getProposals();
         $publishedProposals = [];
+        // we check that the proposal is a published proposal and not a search
         foreach ($proposals as $proposal) {
             if (!$proposal->isPrivate()) {
                 $publishedProposals[] = $proposal;

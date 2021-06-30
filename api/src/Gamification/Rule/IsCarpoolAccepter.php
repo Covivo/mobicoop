@@ -36,9 +36,12 @@ class IsCarpoolAccepter implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user accpeted at least a carpool
         $user = $log->getUser();
+        // we get all proposals of the user
         $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
+            // for each proposal we check if a carpool is associated and carpooled
             $asks = $proposal->getAsks();
             $isCarpooled = false;
             foreach ($asks as $ask) {

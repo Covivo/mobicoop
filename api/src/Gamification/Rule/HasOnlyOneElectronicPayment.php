@@ -41,8 +41,10 @@ class HasOnlyOneElectronicPayment implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has only one electronic payement
         $carpoolItems = $log->getCarpoolPayment()->getCarpoolItems();
         $payedCarpoolItems = [];
+        // we check if the user is the debtor and that he payed
         foreach ($carpoolItems as $carpoolItem) {
             if ($carpoolItem->getDebtorUser()->getId() == $log->getUser()->getId() && $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_ONLINE) {
                 $payedCarpoolItems[] = $carpoolItem;

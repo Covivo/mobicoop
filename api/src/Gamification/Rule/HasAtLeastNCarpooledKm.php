@@ -23,7 +23,9 @@
 
 namespace App\Gamification\Rule;
 
+use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Payment\Entity\CarpoolItem;
 
 /**
  *  Check that the requester is the author of the related Ad
@@ -31,16 +33,40 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class HasAtLeastNCarpooledKm implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * has at least N carpooled Km rule
+     *
+     * @param $requester
+     * @param $log
+     * @param $sequenceItem
+     * @return bool
      */
     public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        // we check if the user has carpool at least N Km
+        $user = $log->getUser();
+        // we get all user's proposals and for each proposal
+        $proposals = $user->getProposals();
+        foreach ($proposals as $proposal) {
+            // for each proposal we check if he's carpooled and get the common distance carpooled
+            $asks = $proposal->getAsks();
+            $carpooledKm = null;
+            foreach ($asks as $ask) {
+                if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                    $carpoolItems = $ask->getCarpoolItems();
+                    $numberOfTravel = null;
+                    foreach ($carpoolItems as $carpoolItem) {
+                        if ($carpoolItem->getStatus() == CarpoolItem::STATUS_REALIZED) {
+                            $numberOfTravel = + 1;
+                        }
+                    }
+                    $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
+                }
+            }
+            // if a proposal he's carpooled and associated to a community we return true
+            if (($carpooledKm / 1000) >= $sequenceItem->getMinCount()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

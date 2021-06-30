@@ -41,8 +41,11 @@ class AdInEvent implements GamificationRuleInterface
     public function execute($requester, $log, $sequenceItem)
     {
         $user = $log->getUser();
+        // we check if the user has at least one proposal published for an event
+        // we get all user's proposals and for each proposal we check if he's associated with an event
         $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
+            // at the first proposal associated to an event we return true since we need at least one proposal associated to an event
             if ($proposal->getEvent()) {
                 return true;
             }

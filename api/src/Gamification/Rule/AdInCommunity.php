@@ -40,10 +40,13 @@ class AdInCommunity implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        // we check if the user has at least one proposal published in a community
         $user = $log->getUser();
         $proposals = $user->getProposals();
+        // we get all user's proposals and for each proposal we check if he's associated with a community
         foreach ($proposals as $proposal) {
             $communities = $proposal->getCommunities();
+            // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
             if (count($communities) > 0) {
                 return true;
             }
