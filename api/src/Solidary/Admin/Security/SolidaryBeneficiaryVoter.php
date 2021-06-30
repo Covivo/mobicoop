@@ -28,6 +28,8 @@ use App\Auth\Service\AuthManager;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SolidaryBeneficiaryVoter extends Voter
@@ -44,11 +46,13 @@ class SolidaryBeneficiaryVoter extends Voter
     const SOLIDARY_BENEFICIARY_LIST = 'solidary_beneficiary_list';
 
     private $authManager;
+    private $solidaryUserRepository;
     private $request;
  
-    public function __construct(RequestStack $requestStack, AuthManager $authManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->authManager = $authManager;
+        $this->solidaryUserRepository = $solidaryUserRepository;
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -80,6 +84,9 @@ class SolidaryBeneficiaryVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        if (is_null($subject)) {
+            $subject = $this->solidaryUserRepository->find($this->request->get('id'));
+        }
         switch ($attribute) {
             case self::ADMIN_SOLIDARY_BENEFICIARY_CREATE:
                 return $this->canCreateSolidaryBeneficiary();
@@ -100,17 +107,17 @@ class SolidaryBeneficiaryVoter extends Voter
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_CREATE);
     }
 
-    private function canReadSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary)
+    private function canReadSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_READ, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
     }
 
-    private function canUpdateSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary)
+    private function canUpdateSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_UPDATE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
     }
 
-    private function canDeleteSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary)
+    private function canDeleteSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_DELETE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
     }

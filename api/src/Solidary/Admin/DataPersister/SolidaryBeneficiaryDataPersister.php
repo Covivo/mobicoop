@@ -50,7 +50,7 @@ final class SolidaryBeneficiaryDataPersister implements ContextAwareDataPersiste
     {
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
-            $data = $this->solidaryBeneficiaryManager->patchSolidaryBeneficiary($data, json_decode($this->request->getContent(), true));
+            $data = $this->solidaryBeneficiaryManager->patchSolidaryBeneficiary($this->request->get('id'), json_decode($this->request->getContent(), true));
         }
         return $data;
     }

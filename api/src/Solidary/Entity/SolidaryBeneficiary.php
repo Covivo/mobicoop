@@ -97,6 +97,7 @@ use App\User\Entity\User;
  *          "ADMIN_patch"={
  *              "path"="/admin/solidary_beneficiaries/{id}",
  *              "method"="PATCH",
+ *              "read"=false,
  *              "normalization_context"={"groups"={"aReadItem"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_solidary_beneficiary_update',object)",

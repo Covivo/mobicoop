@@ -744,6 +744,9 @@ class SolidaryManager
             if (isset($fields['beneficiary']['birthDate']) && $fields['beneficiary']['birthDate'] != $beneficiary->getBirthDate()) {
                 $beneficiary->setBirthDate(new DateTime($fields['beneficiary']['birthDate']));
             }
+            if (isset($fields['beneficiary']['newsSubscription']) && $fields['beneficiary']['newsSubscription'] != $beneficiary->hasNewsSubscription()) {
+                $beneficiary->setNewsSubscription($fields['beneficiary']['newsSubscription']);
+            }
             // check if beneficiary home address has been updated
             if (isset($fields['beneficiary']['homeAddress'])) {
                 // we search the original home address

@@ -35,6 +35,7 @@ use App\Service\FormatDataManager;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use DateTime;
 
 /**
  * Solidary beneficiary manager in admin context.
@@ -105,6 +106,7 @@ class SolidaryBeneficiaryManager
         $solidaryBeneficiary->setFamilyName($solidaryUser->getUser()->getFamilyName());
         $solidaryBeneficiary->setGender($solidaryUser->getUser()->getGender());
         $solidaryBeneficiary->setBirthDate($solidaryUser->getUser()->getBirthDate());
+        $solidaryBeneficiary->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
         $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress()->jsonSerialize());
         $solidaryBeneficiary->setAvatar($solidaryUser->getUser()->getAvatar());
         
@@ -215,32 +217,136 @@ class SolidaryBeneficiaryManager
     /**
      * Patch a solidary beneficiary.
      *
-     * @param SolidaryBeneficiary      $solidaryBeneficiary               The solidaryBeneficiary to update
-     * @param array         $fields                 The updated fields
-     * @return SolidaSolidaryBeneficiaryry     The solidaryBeneficiary updated
+     * @param int   $id         The id of the solidaryBeneficiary to update
+     * @param array $fields     The updated fields
+     * @return SolidaryBeneficiary     The solidaryBeneficiary updated
      */
-    public function patchSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary, array $fields)
+    public function patchSolidaryBeneficiary(int $id, array $fields)
     {
+        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
+            throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
+        }
+        
         // check if a new validation has been made
         if (array_key_exists('validation', $fields)) {
-            return $this->treatValidation($solidaryBeneficiary, $fields['validation']);
+            return $this->treatValidation($solidaryUser, $fields['validation']);
+        }
+
+        // check if beneficiary informations have been updated
+        if (isset($fields['givenName']) && $fields['givenName'] != $solidaryUser->getUser()->getGivenName()) {
+            $solidaryUser->getUser()->setGivenName($fields['givenName']);
+        }
+        if (isset($fields['familyName']) && $fields['familyName'] != $solidaryUser->getUser()->getFamilyName()) {
+            $solidaryUser->getUser()->setFamilyName($fields['familyName']);
+        }
+        if (isset($fields['email']) && $fields['email'] != $solidaryUser->getUser()->getEmail()) {
+            $solidaryUser->getUser()->setEmail($fields['email']);
+        }
+        if (isset($fields['telephone']) && $fields['telephone'] != $solidaryUser->getUser()->getTelephone()) {
+            $solidaryUser->getUser()->setTelephone($fields['telephone']);
+        }
+        if (isset($fields['gender']) && $fields['gender'] != $solidaryUser->getUser()->getGender()) {
+            $solidaryUser->getUser()->setGender($fields['gender']);
+        }
+        if (isset($fields['birthDate']) && $fields['birthDate'] != $solidaryUser->getUser()->getBirthDate()) {
+            $solidaryUser->getUser()->setBirthDate(new DateTime($fields['birthDate']));
+        }
+        if (isset($fields['newsSubscription']) && $fields['newsSubscription'] != $solidaryUser->getUser()->hasNewsSubscription()) {
+            $solidaryUser->getUser()->setNewsSubscription($fields['newsSubscription']);
+        }
+        // check if beneficiary home address has been updated
+        if (isset($fields['homeAddress'])) {
+            // we search the original home address
+            $homeAddress = null;
+            foreach ($solidaryUser->getUser()->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $homeAddress = $address;
+                    break;
+                }
+            }
+            if (!is_null($homeAddress)) {
+                // we have to update each field...
+                /**
+                * @var Address $homeAddress
+                */
+                $updated = false;
+                if (isset($fields['homeAddress']['streetAddress']) && $homeAddress->getStreetAddress() != $fields['homeAddress']['streetAddress']) {
+                    $updated = true;
+                    $homeAddress->setStreetAddress($fields['homeAddress']['streetAddress']);
+                }
+                if (isset($fields['homeAddress']['postalCode']) && $homeAddress->getPostalCode() != $fields['homeAddress']['postalCode']) {
+                    $updated = true;
+                    $homeAddress->setPostalCode($fields['homeAddress']['postalCode']);
+                }
+                if (isset($fields['homeAddress']['addressLocality']) && $homeAddress->getAddressLocality() != $fields['homeAddress']['addressLocality']) {
+                    $updated = true;
+                    $homeAddress->setAddressLocality($fields['homeAddress']['addressLocality']);
+                }
+                if (isset($fields['homeAddress']['addressCountry']) && $homeAddress->getAddressCountry() != $fields['homeAddress']['addressCountry']) {
+                    $updated = true;
+                    $homeAddress->setAddressCountry($fields['homeAddress']['addressCountry']);
+                }
+                if (isset($fields['homeAddress']['latitude']) && $homeAddress->getLatitude() != $fields['homeAddress']['latitude']) {
+                    $updated = true;
+                    $homeAddress->setLatitude($fields['homeAddress']['latitude']);
+                }
+                if (isset($fields['homeAddress']['longitude']) && $homeAddress->getLongitude() != $fields['homeAddress']['longitude']) {
+                    $updated = true;
+                    $homeAddress->setLongitude($fields['homeAddress']['longitude']);
+                }
+                if (isset($fields['homeAddress']['houseNumber']) && $homeAddress->getHouseNumber() != $fields['homeAddress']['houseNumber']) {
+                    $updated = true;
+                    $homeAddress->setHouseNumber($fields['homeAddress']['houseNumber']);
+                }
+                if (isset($fields['homeAddress']['subLocality']) && $homeAddress->getSubLocality() != $fields['homeAddress']['subLocality']) {
+                    $updated = true;
+                    $homeAddress->setSubLocality($fields['homeAddress']['subLocality']);
+                }
+                if (isset($fields['homeAddress']['localAdmin']) && $homeAddress->getLocalAdmin() != $fields['homeAddress']['localAdmin']) {
+                    $updated = true;
+                    $homeAddress->setLocalAdmin($fields['homeAddress']['localAdmin']);
+                }
+                if (isset($fields['homeAddress']['county']) && $homeAddress->getCounty() != $fields['homeAddress']['county']) {
+                    $updated = true;
+                    $homeAddress->setCounty($fields['homeAddress']['county']);
+                }
+                if (isset($fields['homeAddress']['macroCounty']) && $homeAddress->getMacroCounty() != $fields['homeAddress']['macroCounty']) {
+                    $updated = true;
+                    $homeAddress->setMacroCounty($fields['homeAddress']['macroCounty']);
+                }
+                if (isset($fields['homeAddress']['region']) && $homeAddress->getRegion() != $fields['homeAddress']['region']) {
+                    $updated = true;
+                    $homeAddress->setRegion($fields['homeAddress']['region']);
+                }
+                if (isset($fields['homeAddress']['macroRegion']) && $homeAddress->getMacroRegion() != $fields['homeAddress']['macroRegion']) {
+                    $updated = true;
+                    $homeAddress->setMacroRegion($fields['homeAddress']['macroRegion']);
+                }
+                if (isset($fields['homeAddress']['countryCode']) && $homeAddress->getCountryCode() != $fields['homeAddress']['countryCode']) {
+                    $updated = true;
+                    $homeAddress->setCountryCode($fields['homeAddress']['countryCode']);
+                }
+                if ($updated) {
+                    $this->entityManager->persist($homeAddress);
+                }
+            }
         }
         
         // persist the solidary beneficiary
-        $this->entityManager->persist($solidaryBeneficiary);
+        $this->entityManager->persist($solidaryUser->getUser());
         $this->entityManager->flush();
 
-        return $solidaryBeneficiary;
+        return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }
 
     /**
      * Treat a validation for a solidary beneficiary.
      *
-     * @param SolidaryBeneficiary   $solidaryBeneficiary    The solidaryBeneficiary to update
+     * @param SolidaryUser          $solidaryUser           The solidaryUser corresponding to the solidarybeneficiary to update
      * @param array                 $validation             The validation fields
      * @return SolidaryBeneficiary  The solidaryBeneficiary updated
      */
-    private function treatValidation(SolidaryBeneficiary $solidaryBeneficiary, array $validation)
+    private function treatValidation(SolidaryUser $solidaryUser, array $validation)
     {
         if (!array_key_exists('validate', $validation)) {
             throw new SolidaryException(SolidaryException::BENEFICIARY_VALIDATION_VALUE_REQUIRED);
@@ -256,6 +362,6 @@ class SolidaryBeneficiaryManager
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
 
-        return $this->getSolidaryBeneficiary($solidaryBeneficiary->getId());
+        return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }
 }
