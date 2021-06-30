@@ -947,7 +947,8 @@ class DataProvider
             }
             // var_dump("put special");
             // var_dump($uri);
-            // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));die;
+            // var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]));
+            // die;
 
             $headers = $this->getHeaders();
             $clientResponse = $this->client->put($uri, [

@@ -1,0 +1,6 @@
+badge_id
+name
+title
+text
+status
+public
