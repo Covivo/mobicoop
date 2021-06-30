@@ -64,7 +64,7 @@ class GamificationAction
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="gamificationAction", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"writeGamification"})
      * @MaxDepth(1)
      */
     private $sequenceItems;

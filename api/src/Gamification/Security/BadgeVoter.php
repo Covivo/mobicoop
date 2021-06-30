@@ -117,7 +117,7 @@ class BadgeVoter extends Voter
     private function canList()
     {
         return $this->authManager->isAuthorized(self::BADGE_LIST);
-    }    
+    }
 
     private function canGetBoard()
     {
