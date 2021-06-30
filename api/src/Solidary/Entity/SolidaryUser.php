@@ -73,6 +73,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ * @ApiFilter(NumericFilter::class, properties={"id"})
+ * @ApiFilter(SearchFilter::class, properties={"user.email":"partial", "user.givenName":"partial", "user.familyName":"partial", "user.telephone" : "exact"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "user.givenName", "user.familyName", "user.email", "user.telephone"}, arguments={"orderParameterName"="order"})
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryUser
@@ -408,6 +411,12 @@ class SolidaryUser
      * @Groups({"readSolidary"})
      */
     private $updatedDate;
+
+    /**
+     * @var string|null The first name of the user.
+     * @Groups({"aReadCol"})
+     */
+    private $givenName;
 
     public function __construct()
     {

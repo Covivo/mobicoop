@@ -54,7 +54,19 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidary_volunteers",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_volunteer_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -91,14 +103,14 @@ class SolidaryVolunteer
      * @var int The id of this solidary user.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
      * @var string The email of the user.
      *
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $email;
 
@@ -122,13 +134,13 @@ class SolidaryVolunteer
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $familyName;
 
@@ -158,7 +170,7 @@ class SolidaryVolunteer
 
     /**
      * @var array The home address of this User
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
@@ -189,165 +201,171 @@ class SolidaryVolunteer
 
     /**
      * @var \DateTimeInterface|null Morning min time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
     /**
      * @var \DateTimeInterface|null Morning max time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
     /**
      * @var \DateTimeInterface|null Afternoon min time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
     /**
      * @var \DateTimeInterface|null Afternoon max time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
     /**
      * @var \DateTimeInterface|null Evening min time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
     /**
      * @var \DateTimeInterface|null Evening max time.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
     /**
      * @var bool|null Available on monday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mMon;
     
     /**
      * @var bool|null Available on monday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aMon;
     
     /**
      * @var bool|null Available on monday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eMon;
     
     /**
      * @var bool|null Available on tuesday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mTue;
     
     /**
      * @var bool|null Available on tuesday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aTue;
     
     /**
      * @var bool|null Available on tuesday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eTue;
     
     /**
      * @var bool|null Available on wednesday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mWed;
     
     /**
      * @var bool|null Available on wednesday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aWed;
     
     /**
      * @var bool|null Available on wednesday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eWed;
     
     /**
      * @var bool|null Available on thursday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mThu;
     
     /**
      * @var bool|null Available on thursday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aThu;
     
     /**
      * @var bool|null Available on thursday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eThu;
     
     /**
      * @var bool|null Available on friday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mFri;
     
     /**
      * @var bool|null Available on friday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aFri;
     
     /**
      * @var bool|null Available on friday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eFri;
     
     /**
      * @var bool|null Available on saturday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mSat;
     
     /**
      * @var bool|null Available on saturday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aSat;
     
     /**
      * @var bool|null Available on saturday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eSat;
     
     /**
      * @var bool|null Available on sunday morning.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $mSun;
     
     /**
      * @var bool|null Available on sunday afternoon.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $aSun;
     
     /**
      * @var bool|null Available on sunday evening.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","readSolidary","writeSolidary"})
      */
     private $eSun;
+
+    /**
+     * @var array The solidary structures of this user
+     * @Groups("aReadCol")
+     */
+    private $structures;
 
     /**
      * @var Structure The solidary structures of this user only in POST context
@@ -897,6 +915,18 @@ class SolidaryVolunteer
     public function setESun(?bool $eSun): self
     {
         $this->eSun = $eSun;
+
+        return $this;
+    }
+
+    public function getStructures(): ?array
+    {
+        return $this->structures;
+    }
+
+    public function setStructures(?array $structures): self
+    {
+        $this->structures = $structures;
 
         return $this;
     }

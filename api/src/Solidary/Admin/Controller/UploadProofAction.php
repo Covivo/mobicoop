@@ -72,7 +72,7 @@ final class UploadProofAction
         if (!empty($request->request->get('filename'))) {
             $fileName = $this->fileManager->sanitize($request->request->get('filename'));
         } else {
-            $fileName = microtime();
+            $fileName = $this->fileManager->sanitize(microtime());
         }
         $proof->setFileName($solidary->getId()."-".$fileName);
   

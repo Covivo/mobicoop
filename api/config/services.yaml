@@ -629,7 +629,7 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
-    #Payment
+    # Payment
     App\Payment\Controller\:
         resource: '../src/Payment/Controller'
         tags: ['controller.service_arguments']
@@ -726,9 +726,21 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    'App\Solidary\Admin\DataProvider\SolidaryBeneficiaryCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Solidary\Admin\DataProvider\SolidaryVolunteerCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     App\Solidary\Admin\Service\SolidaryManager:
         tags:
             - { name: monolog.logger, channel: solidary }
+
+    App\Solidary\Admin\Service\SolidaryBeneficiaryManager:
+        arguments:
+            $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
 
     # User
     App\User\Admin\Service\UserManager:

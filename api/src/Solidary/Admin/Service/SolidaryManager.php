@@ -63,7 +63,6 @@ use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Action\Entity\Animation;
-use App\Carpool\Entity\Ask;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Communication\Repository\MessageRepository;
@@ -383,7 +382,7 @@ class SolidaryManager
                         $asolution[$way]['destination'] = $waypoint->getAddress()->jsonSerialize();
                     }
                 }
-                // check for a matchnig return
+                // check for a matching return
                 if ($solution->getSolidaryMatching()->getSolidaryMatchingLinked()) {
                     if ($way == 'outward') {
                         $way = 'return';
