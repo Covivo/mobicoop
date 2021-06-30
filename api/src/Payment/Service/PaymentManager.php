@@ -60,6 +60,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Payment manager service.
@@ -90,6 +91,7 @@ class PaymentManager
     private $validationDocsPath;
     private $validationDocsAuthorizedExtensions;
     private $eventDispatcher;
+    private $actionRepository;
     private $logger;
 
     /**
@@ -123,7 +125,8 @@ class PaymentManager
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
         string $exportPath,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ActionRepository $actionRepository
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -145,6 +148,7 @@ class PaymentManager
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->exportPath = $exportPath;
         $this->eventDispatcher = $eventDispatcher;
+        $this->actionRepository = $actionRepository;
         $this->logger = $logger;
     }
 

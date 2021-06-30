@@ -29,6 +29,7 @@ use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Address management service.
@@ -42,19 +43,21 @@ class AddressManager
     private $addressRepository;
     private $geoSearcher;
     private $logger;
+    private $actionRepository;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->addressRepository = $addressRepository;
         $this->geoSearcher = $geoSearcher;
         $this->logger = $logger;
+        $this->actionRepository = $actionRepository;
     }
 
     /**

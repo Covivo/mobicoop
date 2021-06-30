@@ -83,6 +83,7 @@ use App\User\Ressource\PublicProfile;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\I18n\Repository\LanguageRepository;
 use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * User manager service.
@@ -117,6 +118,7 @@ class UserManager
     private $reviewManager;
     private $paymentActive;
     private $languageRepository;
+    private $actionRepository;
 
     // Default carpool settings
     private $chat;
@@ -172,7 +174,8 @@ class UserManager
         string $paymentActive,
         PaymentProfileRepository $paymentProfileRepository,
         GeoTools $geoTools,
-        LanguageRepository $languageRepository
+        LanguageRepository $languageRepository,
+        ActionRepository $actionRepository
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -209,6 +212,7 @@ class UserManager
         $this->paymentActive = $paymentActive;
         $this->geoTools = $geoTools;
         $this->languageRepository = $languageRepository;
+        $this->actionRepository = $actionRepository;
     }
 
     /**

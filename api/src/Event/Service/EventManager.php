@@ -63,7 +63,6 @@ class EventManager
         EventDispatcherInterface $dispatcher,
         GeoTools $geoTools,
         AppRepository $appRepository,
-        ActionRepository $actionRepository,
         String $eventProvider,
         String $eventProviderApiKey,
         String $eventProviderProjectId,

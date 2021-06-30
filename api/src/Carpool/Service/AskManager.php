@@ -53,6 +53,7 @@ use App\User\Service\BlockManager;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
 use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Ask manager service.
@@ -73,6 +74,7 @@ class AskManager
     private $paymentActive;
     private $paymentActiveDate;
     private $blockManager;
+    private $actionRepository;
 
     /**
      * Constructor.
@@ -90,6 +92,7 @@ class AskManager
         CarpoolItemRepository $carpoolItemRepository,
         CarpoolProofRepository $carpoolProofRepository,
         BlockManager $blockManager,
+        ActionRepository $actionRepository,
         string $paymentActive
     ) {
         $this->eventDispatcher = $eventDispatcher;
@@ -107,6 +110,7 @@ class AskManager
             $this->paymentActive = true;
         }
         $this->blockManager = $blockManager;
+        $this->actionRepository = $actionRepository;
     }
 
     /**
@@ -698,7 +702,7 @@ class AskManager
             
             //  we dispatch gamification event associated
             $action = $this->actionRepository->findOneBy(['name'=>'carpool_ask_accepted']);
-            $actionEvent = new ActionEvent($action, $ask->getUser());
+            $actionEvent = new ActionEvent($action, $ask->getUserRelated());
             $actionEvent->setAsk($ask);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
