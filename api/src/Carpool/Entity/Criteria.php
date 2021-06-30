@@ -1490,7 +1490,7 @@ class Criteria
 
     public function getDriverComputedRoundedPrice(): ?string
     {
-        return $this->driverComputedRoundedPrice;
+        return round($this->driverComputedRoundedPrice, 2);
     }
     
     public function setDriverComputedRoundedPrice(?string $driverComputedRoundedPrice)
@@ -1530,7 +1530,7 @@ class Criteria
 
     public function getPassengerComputedRoundedPrice(): ?string
     {
-        return $this->passengerComputedRoundedPrice;
+        return round($this->passengerComputedRoundedPrice, 2);
     }
     
     public function setPassengerComputedRoundedPrice(?string $passengerComputedRoundedPrice)
