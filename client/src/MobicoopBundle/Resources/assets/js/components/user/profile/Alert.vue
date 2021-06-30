@@ -2,10 +2,11 @@
   <v-card
     :height="cardHeight"
     flat
+    color="grey lighten-4"
   >
     <v-row no-gutters>
       <v-col class="cols-12 ma-2 text-center">
-        <p class="mb-0 mt-2">
+        <p class="mb-0 mt-2 font-weight-bold">
           {{ $t("alerts."+alert) }}
         </p>
       </v-col>
