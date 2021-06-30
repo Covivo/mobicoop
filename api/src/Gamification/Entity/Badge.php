@@ -96,7 +96,7 @@ class Badge
     private $public;
 
     /**
-     * @var Image The Badges Icon
+     * @var Image|null The Badges Icon
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge")
      * @Groups({"readGamification"})
@@ -105,7 +105,7 @@ class Badge
     private $icon;
 
     /**
-     * @var Image The Badges reward Image
+     * @var Image|null The Badges reward Image
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage")
      * @Groups({"readGamification"})
@@ -114,7 +114,7 @@ class Badge
     private $image;
 
     /**
-     * @var Image The Badges reward Image
+     * @var Image|null The Badges reward Image
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight")
      * @Groups({"readGamification"})

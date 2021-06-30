@@ -341,27 +341,27 @@ class Image
     private $relayPointType;
 
     /**
-     * @var Badge The Badge for which this image is used as icon
+     * @var Badge|null The Badge for which this image is used as icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readGamification"})
      * @MaxDepth(1)
      */
     private $badge;
 
     /**
-     * @var Badge The Badge for which this image is used as reward image
+     * @var Badge|null The Badge for which this image is used as reward image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readGamification"})
      * @MaxDepth(1)
      */
     private $badgeImage;
 
     /**
-     * @var Badge The Badge for which this image is used as reward image light
+     * @var Badge|null The Badge for which this image is used as reward image light
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"readGamification"})
      * @MaxDepth(1)
      */

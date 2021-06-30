@@ -101,6 +101,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Gamification\Entity\Badge;
+use App\Gamification\Entity\RewardStep;
 use App\Match\Entity\MassPerson;
 use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
@@ -1154,6 +1155,15 @@ class User implements UserInterface, EquatableInterface
     private $badges;
 
     /**
+     * @var ArrayCollection|null The RewardSteps earned by this User.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user")
+     * @ORM\JoinTable(name="reward")
+     * @Groups({"readGamification"})
+     */
+    private $rewardSteps;
+
+    /**
      * @var array|null The avatars of the user
      * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
@@ -1456,6 +1466,7 @@ class User implements UserInterface, EquatableInterface
         $this->operates = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
         $this->badges = new ArrayCollection();
+        $this->rewardSteps = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -3220,6 +3231,28 @@ class User implements UserInterface, EquatableInterface
     {
         if ($this->badges->contains($badge)) {
             $this->badges->removeElement($badge);
+        }
+        return $this;
+    }
+
+    public function getRewardSteps()
+    {
+        return $this->rewardSteps->getValues();
+    }
+
+    public function addRewardStep(RewardStep $rewardStep): self
+    {
+        if (!$this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps[] = $rewardStep;
+        }
+        
+        return $this;
+    }
+    
+    public function removeRewardStep(RewardStep $rewardStep): self
+    {
+        if ($this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps->removeElement($rewardStep);
         }
         return $this;
     }

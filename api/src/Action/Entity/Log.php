@@ -401,7 +401,7 @@ class Log
         return $this->campaign;
     }
     
-    public function setCampaign(?Message $campaign): self
+    public function setCampaign(?Campaign $campaign): self
     {
         $this->campaign = $campaign;
         

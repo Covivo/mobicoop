@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,45 +20,40 @@
  *    LICENSE
  **************************/
 
-namespace App\Community\DataProvider;
+namespace App\Gamification\DataProvider;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Community\Entity\Community;
-use App\Community\Service\CommunityManager;
+use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\Gamification\Resource\BadgesBoard;
+use App\Gamification\Service\GamificationManager;
 use App\User\Entity\User;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Item data provider for Community
- * We use this provider to add on a communtiy the last 3 members, and the add so we can have only 1 request in front
- *
- * @author Julien Deschampt <julien.deschampt@mobicoop.org>
- *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class CommunityGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class BadgesBoardCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
-    private $communityManager;
     private $security;
-
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
+    private $reviewManager;
+    
+    public function __construct(Security $security, GamificationManager $gamificationManager)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->communityManager = $communityManager;
-
         $this->security = $security;
+        $this->gamificationManager = $gamificationManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "get";
+        return BadgesBoard::class === $resourceClass && $operationName === "get";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Community
+    public function getCollection(string $resourceClass, string $operationName = null)
     {
-        $user = ($this->security->getUser() && $this->security->getUser() instanceof User) ? $this->security->getUser()  : null;
-        return $this->communityManager->getCommunity($id, $user);
+        if (!($this->security->getUser() instanceof User)) {
+            throw new \LogicException("Only a User can get Reviews");
+        }
+        return $this->gamificationManager->getBadgesBoard($this->security->getUser());
     }
 }
