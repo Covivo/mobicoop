@@ -551,7 +551,7 @@ class Criteria
     /**
     * @var float|null The total price selected by the user as a driver.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $driverPrice;
@@ -559,7 +559,7 @@ class Criteria
     /**
     * @var float|null The total price computed by the system, using the user price per km, not rounded, as a driver.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $driverComputedPrice;
@@ -567,7 +567,7 @@ class Criteria
     /**
     * @var float|null The driver computed price rounded using the rounding rules.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $driverComputedRoundedPrice;
@@ -581,7 +581,7 @@ class Criteria
     /**
     * @var float|null The total price selected by the user as a passenger.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $passengerPrice;
@@ -589,7 +589,7 @@ class Criteria
     /**
     * @var float|null The total price computed by the system, using the user price per km, not rounded, as a passenger.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $passengerComputedPrice;
@@ -597,7 +597,7 @@ class Criteria
     /**
     * @var float|null The passenger computed price rounded using the rounding rules.
     *
-    * @ORM\Column(type="decimal", precision=6, scale=2, nullable=true)
+    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
     * @Groups({"read","results","write","thread"})
     */
     private $passengerComputedRoundedPrice;
