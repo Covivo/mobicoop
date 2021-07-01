@@ -82,6 +82,14 @@ export default {
         this.$emit('languageSelected', this.selectedLanguage);
       }
     }
+    else{
+      // Init local storage if there is no previous setup
+      // To do : Make it customable by instance
+      localStorage.setItem('X-LOCALE','fr');
+      this.selectedLanguage = localStorage.getItem('X-LOCALE');
+      this.displayedLanguage = localStorage.getItem('X-LOCALE');
+      this.$emit('languageSelected', localStorage.getItem('X-LOCALE'));
+    }
   },
   methods:{
     selectLanguage(item, key) {
