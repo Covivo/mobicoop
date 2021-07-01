@@ -403,7 +403,7 @@ class CommunityManager
 
         //  we dispatch the gamification event associated
         $action = $this->actionRepository->findOneBy(['name'=>'community_joined']);
-        $actionEvent = new ActionEvent($action, $community->getUser());
+        $actionEvent = new ActionEvent($action, $communityUser->getUser());
         $actionEvent->setCommunity($community);
         $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 

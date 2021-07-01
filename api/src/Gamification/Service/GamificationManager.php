@@ -106,7 +106,7 @@ class GamificationManager
      * Treatment and evaluation of a GamificationAction
      *
      * @param GamificationAction $gamificationAction
-     * @param User $user
+     * @param Log $log
      * @return void
      */
     private function treatGamificationAction(GamificationAction $gamificationAction, Log $log)

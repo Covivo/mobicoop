@@ -25,12 +25,20 @@ namespace App\Gamification\Rule;
 
 use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Carpool\Repository\ProposalRepository;
 
 /**
  *  Check that the requester is the author of the related Ad
  */
 class CarpoolInCommunity implements GamificationRuleInterface
 {
+    private $proposalRepository;
+
+    public function __construct(ProposalRepository $proposalRepository)
+    {
+        $this->proposalRepository = $proposalRepository;
+    }
+
     /**
      * Carpool In Community rule
      *
@@ -41,23 +49,18 @@ class CarpoolInCommunity implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
-        // we check if the user has at least one proposal carpooled and published in a community
+        // we check if the user has at least one proposal carpooled and published in an event
         $user = $log->getUser();
-        // we get all user's proposals and for each proposal we check if he's associated with a community
-        $proposals = $user->getProposals();
+        // we get all user's proposals and for each proposal we check if he's associated with an event
+        $proposals = $this->proposalRepository->findUserCommunityProposals($user);
         foreach ($proposals as $proposal) {
-            $communities = $proposal->getCommunities();
-            // for each proposal we check if he's carpooled
-            $asks = $proposal->getAsks();
-            $isCarpooled = false;
-            foreach ($asks as $ask) {
-                if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                    $isCarpooled = true;
+            $matchings=[];
+            $matchings[]=$proposal->getMatchingOffers();
+            $matchings[]=$proposal->getMatchingRequests();
+            foreach ($matchings as $matching) {
+                if ($matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                    return true;
                 }
-            }
-            // if a proposal he's carpooled and associated to a community we return true
-            if ($isCarpooled && count($communities) > 0) {
-                return true;
             }
         }
         return false;

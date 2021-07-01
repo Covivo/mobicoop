@@ -829,7 +829,7 @@ export default {
     },
     sendValidationEmail() {
     this.loadingEmail = true;   
-    axios 
+    maxios 
       .get(this.$t('email.verificationRoute'))
       .then(res => {
           if (res.data.state) {
