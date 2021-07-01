@@ -10,7 +10,7 @@
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
                         <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> a demandé à rejoindre la communauté <b>{{context.community.name}}</b></p>
                         <p> Rendez-vous dans le module d'administration pour valider son adhésion : <a href="{{ api_env('URL_ADMIN') }}">en cliquant ici</a> </p>
-                        <p>{{ "Merci, l'équipe" ~ ({'%instanceName%':api_env('EMAILS_PLATFORM_NAME')}) }}</p>
+                        <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>
                 </tr>
             </table>

@@ -2,7 +2,7 @@ import axios from 'axios';
 class MAxios {
   get(route,params) {
     return axios
-      .post(route, params,{
+      .get(route, params,{
         headers:{
           'content-type': 'application/json',
           'X-LOCALE': localStorage.getItem('X-LOCALE')
