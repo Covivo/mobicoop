@@ -90,7 +90,6 @@ class SequenceItem
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="sequenceItems")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $badge;
@@ -109,7 +108,6 @@ class SequenceItem
      * @var ArrayCollection|null The RewarSteps where this SequenceItem is involved
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="sequenceItem", cascade={"persist","remove"})
-     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $rewardSteps;
