@@ -92,7 +92,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createStructures($tab);
                 }
             }
@@ -107,7 +106,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createStructureTerritories($tab);
                 }
             }
@@ -122,11 +120,11 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createStructureProofs($tab);
                 }
             }
         }
+
         // Needs
         $finder = new Finder();
         $finder->in(__DIR__ . '/Csv/Solidary/Needs/');
@@ -136,7 +134,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createNeeds($tab);
                 }
             }
@@ -151,7 +148,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createStructureNeeds($tab);
                 }
             }
@@ -166,7 +162,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createSubjects($tab);
                 }
             }
@@ -181,7 +176,6 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createOperates($tab);
                 }
             }
@@ -196,8 +190,35 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
             echo "Importing : {$file->getBasename()} " . PHP_EOL;
             if ($file = fopen($file, "r")) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    // create the community user
                     $this->fixturesManager->createSolidaryUsers($tab);
+                }
+            }
+        }
+
+        // Link SolidaryUsers and Structures
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/SolidaryUserStructures/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    $this->fixturesManager->createSolidaryUserStructure($tab);
+                }
+            }
+        }
+
+        // SolidaryUsers proofs
+        $finder = new Finder();
+        $finder->in(__DIR__ . '/Csv/Solidary/Proofs/');
+        $finder->name('*.csv');
+        $finder->files();
+        foreach ($finder as $file) {
+            echo "Importing : {$file->getBasename()} " . PHP_EOL;
+            if ($file = fopen($file, "r")) {
+                while ($tab = fgetcsv($file, 4096, ';')) {
+                    $this->fixturesManager->createProof($tab);
                 }
             }
         }

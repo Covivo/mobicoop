@@ -457,7 +457,7 @@ class BasicFixturesManager
         echo "Import icon " . $tab[0] . " - " . $tab[2] . PHP_EOL;
         $icon = new Icon();
         $icon->setId($tab[0]);
-        if ($tab[1] !== "NULL") {
+        if ($tab[1] !== "") {
             $linkedIcon = $this->iconRepository->find($tab[1]);
             if (!is_null($linkedIcon)) {
                 $icon->setPrivateIconLinked($linkedIcon);
@@ -483,7 +483,7 @@ class BasicFixturesManager
         $relayPointType = new RelayPointType();
         $relayPointType->setId($tab[0]);
         $relayPointType->setName($tab[1]);
-        if ($tab[2] !== "NULL") {
+        if ($tab[2] !== "") {
             $icon = $this->iconRepository->find($tab[2]);
             if (!is_null($icon)) {
                 $relayPointType->setIcon($icon);

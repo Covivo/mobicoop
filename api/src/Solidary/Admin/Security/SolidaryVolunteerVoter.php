@@ -25,10 +25,11 @@ namespace App\Solidary\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
+use App\Solidary\Entity\SolidaryUser;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SolidaryVolunteerVoter extends Voter
@@ -45,11 +46,13 @@ class SolidaryVolunteerVoter extends Voter
     const SOLIDARY_VOLUNTEER_LIST = 'solidary_volunteer_list';
 
     private $authManager;
+    private $solidaryUserRepository;
     private $request;
  
-    public function __construct(RequestStack $requestStack, AuthManager $authManager)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->authManager = $authManager;
+        $this->solidaryUserRepository = $solidaryUserRepository;
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -81,6 +84,9 @@ class SolidaryVolunteerVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        if (is_null($subject)) {
+            $subject = $this->solidaryUserRepository->find($this->request->get('id'));
+        }
         switch ($attribute) {
             case self::ADMIN_SOLIDARY_VOLUNTEER_CREATE:
                 return $this->canCreateSolidaryVolunteer();
@@ -101,17 +107,17 @@ class SolidaryVolunteerVoter extends Voter
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_CREATE);
     }
 
-    private function canReadSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer)
+    private function canReadSolidaryVolunteer(SolidaryUser $solidaryVolunteer)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_READ, ['solidaryVolunteer'=>$solidaryVolunteer]);
     }
 
-    private function canUpdateSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer)
+    private function canUpdateSolidaryVolunteer(SolidaryUser $solidaryVolunteer)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_UPDATE, ['solidaryVolunteer'=>$solidaryVolunteer]);
     }
 
-    private function canDeleteSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer)
+    private function canDeleteSolidaryVolunteer(SolidaryUser $solidaryVolunteer)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_DELETE, ['solidaryVolunteer'=>$solidaryVolunteer]);
     }

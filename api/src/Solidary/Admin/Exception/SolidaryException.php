@@ -32,6 +32,11 @@ class SolidaryException extends \LogicException
     const BENEFICIARY_NOT_FOUND = "Beneficiary #%s not found";
     const BENEFICIARY_VALIDATION_VALUE_REQUIRED = "Validation value is required";
     const BENEFICIARY_VALIDATION_ID_REQUIRED = "Validation user structure id is required";
+
+    // volunteer
+    const VOLUNTEER_NOT_FOUND = "Volunteer #%s not found";
+    const VOLUNTEER_VALIDATION_VALUE_REQUIRED = "Validation value is required";
+    const VOLUNTEER_VALIDATION_ID_REQUIRED = "Validation user structure id is required";
     
     // structure
     const STRUCTURE_REQUIRED = "Structure is required";

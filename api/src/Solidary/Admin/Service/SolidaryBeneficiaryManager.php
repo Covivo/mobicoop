@@ -208,10 +208,13 @@ class SolidaryBeneficiaryManager
      */
     public function getSolidaryBeneficiary(int $id)
     {
-        if ($solidaryUser = $this->solidaryUserRepository->find($id)) {
-            return $this->createSolidaryBeneficiaryFromSolidaryUser($solidaryUser, true, true);
+        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
+            throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
-        throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
+        if (!$solidaryUser->isBeneficiary()) {
+            throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
+        }
+        return $this->createSolidaryBeneficiaryFromSolidaryUser($solidaryUser, true, true);
     }
 
     /**

@@ -23,17 +23,21 @@
 
 namespace App\DataFixtures\Service;
 
-use App\Carpool\Service\AdManager;
-use App\Community\Service\CommunityManager;
 use App\Geography\Entity\Address;
 use App\Geography\Service\TerritoryManager;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Operate;
+use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use App\Solidary\Entity\Subject;
 use App\Solidary\Repository\NeedRepository;
+use App\Solidary\Repository\SolidaryUserRepository;
+use App\Solidary\Repository\SolidaryUserStructureRepository;
+use App\Solidary\Repository\StructureProofRepository;
+use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Service\SolidaryManager;
 use App\Solidary\Service\StructureManager;
 use App\User\Service\UserManager;
@@ -53,6 +57,10 @@ class SolidaryFixturesManager
     private $fixturesSolidary;
     private $structureManager;
     private $solidaryManager;
+    private $solidaryUserRepository;
+    private $solidaryUserStructureRepository;
+    private $structureRepository;
+    private $structureProofRepository;
 
     /**
      * Constructor
@@ -64,6 +72,10 @@ class SolidaryFixturesManager
         StructureManager $structureManager,
         SolidaryManager $solidaryManager,
         NeedRepository $needRepository,
+        SolidaryUserRepository $solidaryUserRepository,
+        SolidaryUserStructureRepository $solidaryUserStructureRepository,
+        StructureRepository $structureRepository,
+        StructureProofRepository $structureProofRepository,
         bool $fixturesSolidary
     ) {
         $this->entityManager = $entityManager;
@@ -73,6 +85,10 @@ class SolidaryFixturesManager
         $this->structureManager= $structureManager;
         $this->solidaryManager = $solidaryManager;
         $this->needRepository = $needRepository;
+        $this->solidaryUserRepository = $solidaryUserRepository;
+        $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
+        $this->structureRepository = $structureRepository;
+        $this->structureProofRepository = $structureProofRepository;
     }
 
     /**
@@ -111,7 +127,6 @@ class SolidaryFixturesManager
             $stmt = $conn->prepare($sql);
             $stmt->execute();
         }
-
 
         $sql = "
         SET FOREIGN_KEY_CHECKS = 1;";
@@ -236,7 +251,7 @@ class SolidaryFixturesManager
         $need = new Need();
         $need->setId($tab[0]);
         
-        if ($tab[1] !== "NULL") {
+        if ($tab[1] !== "") {
             if (!is_null($solidary = $this->solidaryManager->getSolidary($tab[1]))) {
                 $need->setSolidary($solidary);
             } else {
@@ -342,94 +357,94 @@ class SolidaryFixturesManager
 
             $solidaryUser->setBeneficiary($tab[7]);
             $solidaryUser->setVolunteer($tab[8]);
-            if ("NULL" !== $tab[9]) {
+            if ("" !== $tab[9]) {
                 $solidaryUser->setMMinTime(\Datetime::createFromFormat("H:i:s", $tab[9]));
             }
-            if ("NULL" !== $tab[10]) {
+            if ("" !== $tab[10]) {
                 $solidaryUser->setMMaxTime(\Datetime::createFromFormat("H:i:s", $tab[10]));
             }
-            if ("NULL" !== $tab[11]) {
+            if ("" !== $tab[11]) {
                 $solidaryUser->setAMinTime(\Datetime::createFromFormat("H:i:s", $tab[11]));
             }
-            if ("NULL" !== $tab[12]) {
+            if ("" !== $tab[12]) {
                 $solidaryUser->setAMaxTime(\Datetime::createFromFormat("H:i:s", $tab[12]));
             }
-            if ("NULL" !== $tab[13]) {
+            if ("" !== $tab[13]) {
                 $solidaryUser->setEMinTime(\Datetime::createFromFormat("H:i:s", $tab[13]));
             }
-            if ("NULL" !== $tab[14]) {
+            if ("" !== $tab[14]) {
                 $solidaryUser->setEMaxTime(\Datetime::createFromFormat("H:i:s", $tab[14]));
             }
             
-            if ("NULL" !== $tab[15]) {
+            if ("" !== $tab[15]) {
                 $solidaryUser->setMMon($tab[15]);
             }
-            if ("NULL" !== $tab[16]) {
+            if ("" !== $tab[16]) {
                 $solidaryUser->setAMon($tab[16]);
             }
-            if ("NULL" !== $tab[17]) {
+            if ("" !== $tab[17]) {
                 $solidaryUser->setEMon($tab[17]);
             }
-            if ("NULL" !== $tab[18]) {
+            if ("" !== $tab[18]) {
                 $solidaryUser->setMTue($tab[18]);
             }
-            if ("NULL" !== $tab[19]) {
+            if ("" !== $tab[19]) {
                 $solidaryUser->setATue($tab[19]);
             }
-            if ("NULL" !== $tab[20]) {
+            if ("" !== $tab[20]) {
                 $solidaryUser->setETue($tab[20]);
             }
-            if ("NULL" !== $tab[21]) {
+            if ("" !== $tab[21]) {
                 $solidaryUser->setMWed($tab[21]);
             }
-            if ("NULL" !== $tab[22]) {
+            if ("" !== $tab[22]) {
                 $solidaryUser->setAWed($tab[22]);
             }
-            if ("NULL" !== $tab[23]) {
+            if ("" !== $tab[23]) {
                 $solidaryUser->setEWed($tab[23]);
             }
-            if ("NULL" !== $tab[24]) {
+            if ("" !== $tab[24]) {
                 $solidaryUser->setMThu($tab[24]);
             }
-            if ("NULL" !== $tab[25]) {
+            if ("" !== $tab[25]) {
                 $solidaryUser->setAThu($tab[25]);
             }
-            if ("NULL" !== $tab[26]) {
+            if ("" !== $tab[26]) {
                 $solidaryUser->setEThu($tab[26]);
             }
-            if ("NULL" !== $tab[27]) {
+            if ("" !== $tab[27]) {
                 $solidaryUser->setMFri($tab[27]);
             }
-            if ("NULL" !== $tab[28]) {
+            if ("" !== $tab[28]) {
                 $solidaryUser->setAFri($tab[28]);
             }
-            if ("NULL" !== $tab[29]) {
+            if ("" !== $tab[29]) {
                 $solidaryUser->setEFri($tab[29]);
             }
-            if ("NULL" !== $tab[30]) {
+            if ("" !== $tab[30]) {
                 $solidaryUser->setMSat($tab[30]);
             }
-            if ("NULL" !== $tab[31]) {
+            if ("" !== $tab[31]) {
                 $solidaryUser->setASat($tab[31]);
             }
-            if ("NULL" !== $tab[32]) {
+            if ("" !== $tab[32]) {
                 $solidaryUser->setESat($tab[32]);
             }
-            if ("NULL" !== $tab[33]) {
+            if ("" !== $tab[33]) {
                 $solidaryUser->setMSun($tab[33]);
             }
-            if ("NULL" !== $tab[34]) {
+            if ("" !== $tab[34]) {
                 $solidaryUser->setASun($tab[34]);
             }
-            if ("NULL" !== $tab[35]) {
+            if ("" !== $tab[35]) {
                 $solidaryUser->setESun($tab[35]);
             }
 
-            if ("NULL" !== $tab[36]) {
+            if ("" !== $tab[36]) {
                 $solidaryUser->setMaxDistance($tab[36]);
             }
             
-            if ("NULL" !== $tab[37]) {
+            if ("" !== $tab[37]) {
                 $solidaryUser->setVehicle($tab[37]);
             }
             $solidaryUser->setComment($tab[38]);
@@ -440,5 +455,65 @@ class SolidaryFixturesManager
         } else {
             echo "User not found !" . PHP_EOL;
         }
+    }
+
+    /**
+     * Link SolidaryUsers and Structures
+     *
+     * @param array $tab    The array containing the links (model in ../Csv/Solidary/SolidaryUserStructures/solidaryUserStructures.txt)
+     * @return void
+     */
+    public function createSolidaryUserStructure(array $tab)
+    {
+        echo "Link SolidaryUser " . $tab[1] . " with structure : " . $tab[2] . PHP_EOL;
+        if ($solidaryUser = $this->solidaryUserRepository->find($tab[1])) {
+            if ($structure = $this->structureRepository->find($tab[2])) {
+                $solidaryUserStructure = new SolidaryUserStructure();
+                $solidaryUserStructure->setId($tab[0]);
+                $solidaryUserStructure->setSolidaryUser($solidaryUser);
+                $solidaryUserStructure->setStructure($structure);
+                $solidaryUserStructure->setStatus($tab[3]);
+                if ("" !== $tab[4]) {
+                    $solidaryUserStructure->setAcceptedDate(\Datetime::createFromFormat("Y-m-d H:i:s", $tab[4]));
+                }
+                if ("" !== $tab[5]) {
+                    $solidaryUserStructure->setRefusedDate(\Datetime::createFromFormat("Y-m-d H:i:s", $tab[5]));
+                }
+                $this->entityManager->persist($solidaryUserStructure);
+                $this->entityManager->flush();
+            } else {
+                echo "Structure not found !" . PHP_EOL;
+            }
+        } else {
+            echo "SolidaryUser not found !" . PHP_EOL;
+        }
+    }
+
+    /**
+     * Create the proofs
+     *
+     * @param array $tab    The array containing the proofs (model in ../Csv/Solidary/Proofs/proofs.txt)
+     * @return void
+     */
+    public function createProof(array $tab)
+    {
+        echo "Import proof for SolidaryUserStructure" . $tab[2] . " and StructureProof " . $tab[0] . PHP_EOL;
+        $proof = new Proof();
+        if ($solidaryUserStructure = $this->solidaryUserStructureRepository->find($tab[2])) {
+            $proof->setSolidaryUserStructure($solidaryUserStructure);
+        } else {
+            echo "SolidaryUserStructure not found !" . PHP_EOL;
+        }
+        if ($structureProof = $this->structureProofRepository->find($tab[0])) {
+            $proof->setStructureProof($structureProof);
+        } else {
+            echo "StructureProof not found !" . PHP_EOL;
+        }
+        $proof->setValue($tab[1]);
+        if ($structureProof->isCheckbox()) {
+            $proof->setValue(filter_var($tab[1], FILTER_VALIDATE_BOOLEAN));
+        }
+        $this->entityManager->persist($proof);
+        $this->entityManager->flush();
     }
 }

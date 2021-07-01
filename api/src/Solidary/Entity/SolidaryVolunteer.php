@@ -86,7 +86,30 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidary_volunteers/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadItem"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_volunteer_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/solidary_volunteers/{id}",
+ *              "method"="PATCH",
+ *              "read"=false,
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_volunteer_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *
  *      }
  * )
@@ -103,14 +126,14 @@ class SolidaryVolunteer
      * @var int The id of this solidary user.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
      * @var string The email of the user.
      *
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $email;
 
@@ -122,31 +145,31 @@ class SolidaryVolunteer
 
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","aReadItem","writeSolidary"})
      */
     private $gender;
 
     /**
      * @var string|null The telephone number of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"readSolidary","aReadItem","writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $familyName;
 
     /**
      * @var \DateTimeInterface|null The birth date of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
      * @ApiProperty(
      *     attributes={
@@ -158,7 +181,7 @@ class SolidaryVolunteer
 
     /**
      * @var boolean|null The user accepts to receive news about the platform.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $newsSubscription;
 
@@ -170,7 +193,7 @@ class SolidaryVolunteer
 
     /**
      * @var array The home address of this User
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
@@ -182,6 +205,12 @@ class SolidaryVolunteer
     private $comment;
 
     /**
+     * @var array The proofs associated to this user
+     * @Groups({"aReadItem"})
+     */
+    private $proofs;
+
+    /**
      * @var bool|null If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -189,7 +218,7 @@ class SolidaryVolunteer
 
     /**
      * @var array The diaries associated to this user
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $diaries;
 
@@ -201,169 +230,169 @@ class SolidaryVolunteer
 
     /**
      * @var \DateTimeInterface|null Morning min time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMinTime;
     
     /**
      * @var \DateTimeInterface|null Morning max time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMaxTime;
     
     /**
      * @var \DateTimeInterface|null Afternoon min time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMinTime;
     
     /**
      * @var \DateTimeInterface|null Afternoon max time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMaxTime;
     
     /**
      * @var \DateTimeInterface|null Evening min time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMinTime;
     
     /**
      * @var \DateTimeInterface|null Evening max time.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMaxTime;
     
     /**
      * @var bool|null Available on monday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mMon;
     
     /**
      * @var bool|null Available on monday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aMon;
     
     /**
      * @var bool|null Available on monday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eMon;
     
     /**
      * @var bool|null Available on tuesday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mTue;
     
     /**
      * @var bool|null Available on tuesday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aTue;
     
     /**
      * @var bool|null Available on tuesday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eTue;
     
     /**
      * @var bool|null Available on wednesday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mWed;
     
     /**
      * @var bool|null Available on wednesday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aWed;
     
     /**
      * @var bool|null Available on wednesday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eWed;
     
     /**
      * @var bool|null Available on thursday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mThu;
     
     /**
      * @var bool|null Available on thursday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aThu;
     
     /**
      * @var bool|null Available on thursday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eThu;
     
     /**
      * @var bool|null Available on friday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mFri;
     
     /**
      * @var bool|null Available on friday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aFri;
     
     /**
      * @var bool|null Available on friday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eFri;
     
     /**
      * @var bool|null Available on saturday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mSat;
     
     /**
      * @var bool|null Available on saturday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aSat;
     
     /**
      * @var bool|null Available on saturday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eSat;
     
     /**
      * @var bool|null Available on sunday morning.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $mSun;
     
     /**
      * @var bool|null Available on sunday afternoon.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $aSun;
     
     /**
      * @var bool|null Available on sunday evening.
-     * @Groups({"aReadCol","readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $eSun;
 
     /**
      * @var array The solidary structures of this user
-     * @Groups("aReadCol")
+     * @Groups({"aReadCol","aReadItem"})
      */
     private $structures;
 
@@ -407,12 +436,26 @@ class SolidaryVolunteer
      */
     private $updatedDate;
 
+    /**
+     * @var string|null The avatar of the solidary beneficiary
+     *
+     * @Groups({"aReadItem"})
+     */
+    private $avatar;
+
+    /**
+     * @var int|null The userId of the solidary user
+     * @Groups({"aReadItem"})
+     */
+    private $userId;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
         $this->diaries = [];
         $this->solidaries = [];
         $this->needs = [];
+        $this->proofs = [];
     }
     
     public function getId(): ?int
@@ -559,6 +602,18 @@ class SolidaryVolunteer
         return $this;
     }
 
+    public function getProofs(): ?array
+    {
+        return $this->proofs;
+    }
+
+    public function setProofs(?array $proofs): self
+    {
+        $this->proofs = $proofs;
+
+        return $this;
+    }
+    
     public function isValidatedCandidate(): ?bool
     {
         return $this->validatedCandidate;
@@ -999,6 +1054,30 @@ class SolidaryVolunteer
     public function setNeeds(?array $needs): self
     {
         $this->needs = $needs;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }

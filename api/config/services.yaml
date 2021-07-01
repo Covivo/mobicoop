@@ -742,6 +742,10 @@ services:
         arguments:
             $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
 
+    App\Solidary\Admin\Service\SolidaryVolunteerManager:
+        arguments:
+            $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
+
     # User
     App\User\Admin\Service\UserManager:
         arguments:
