@@ -1262,8 +1262,8 @@ class ProposalRepository
     public function findUserCommunityProposals(User $user)
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->where("p.community IS NOT NULL")
-        ->andWhere("p.user = :user")
+        ->join("p.communities", "co")
+        ->where("p.user = :user")
         ->setParameter("user", $user);
         return $query->getQuery()->getResult();
     }

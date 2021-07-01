@@ -13,6 +13,9 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
@@ -20,13 +23,17 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     private $jwtTokenManagerInterface;
     private $refreshTokenManager;
     private $params;
+    private $actionRepository;
+    private $eventDispatcher;
 
-    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params)
+    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->em = $em;
         $this->jwtTokenManagerInterface = $jwtTokenManagerInterface;
         $this->refreshTokenManager = $refreshTokenManager;
         $this->params = $params;
+        $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -110,6 +117,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         if ($user->getEmailToken() != null) {
             $user->setValidatedDate($now);
             $user->setEmailToken(null);
+
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'user_mail_validation']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            
         //Password token is not null = we reset password -> we set password token and the asking reset date at null
         } elseif ($user->getPwdToken() != null) {
             $user->setPwdToken(null);
@@ -117,7 +130,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         }
         $this->em->persist($user);
         $this->em->flush();
-
+        
         // on success, let the request continue
         return new JsonResponse([
           'token'=>$this->jwtTokenManagerInterface->create($token->getUser()),

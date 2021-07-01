@@ -30,6 +30,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Address management service.
@@ -44,13 +45,14 @@ class AddressManager
     private $geoSearcher;
     private $logger;
     private $actionRepository;
+    private $eventDispatcher;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
@@ -58,6 +60,7 @@ class AddressManager
         $this->geoSearcher = $geoSearcher;
         $this->logger = $logger;
         $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -208,7 +211,7 @@ class AddressManager
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $address->getUser());
-            $this->dispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         return $address;
@@ -224,12 +227,12 @@ class AddressManager
     {
         $this->entityManager->persist($address);
         $this->entityManager->flush();
-
+        
         if ($address->isHome()) {
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $address->getUser());
-            $this->dispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         return $address;

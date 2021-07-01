@@ -64,6 +64,7 @@ class ActionEvent extends Event
     private $message;
     private $campaign;
     private $carpoolPayment;
+    private $carpoolItem;
 
     public function __construct(Action $action, User $user)
     {

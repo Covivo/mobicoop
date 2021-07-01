@@ -142,7 +142,7 @@ class GamificationManager
                 }
 
                 // this related action needs to be made in a range that range date
-                if (!is_null($sequenceItem->isInDateRange())) {
+                if (($sequenceItem->isInDateRange())) {
                     $validationStep->setValidated($validationStep->isValidated() && $this->checkInDateRange($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getBadge()->getStartDate(), $sequenceItem->getBadge()->getEndDate(), $sequenceItem->getMinCount(), $sequenceItem->getMinUniqueCount()));
                 }
 
