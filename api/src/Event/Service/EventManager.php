@@ -28,6 +28,7 @@ use App\DataProvider\Entity\ApidaeProvider;
 use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
+use App\Action\Repository\ActionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
@@ -104,7 +105,7 @@ class EventManager
 
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
-
+                
         return $event;
     }
 

@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Rule;
 
+use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
@@ -33,14 +34,21 @@ class IsCarpoolAccepter implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        // we check if the user accpeted at least a carpool
+        $user = $log->getUser();
+        // we get all asks of the user
+        $asks = $user->getAsks();
+        $isCarpooled = false;
+        foreach ($asks as $ask) {
+            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                $isCarpooled = true;
+            }
+        }
+        if ($isCarpooled) {
+            return true;
+        }
+        return false;
     }
 }

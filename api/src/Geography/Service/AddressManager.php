@@ -28,6 +28,9 @@ use App\Geography\Repository\AddressRepository;
 use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Address management service.
@@ -41,19 +44,23 @@ class AddressManager
     private $addressRepository;
     private $geoSearcher;
     private $logger;
+    private $actionRepository;
+    private $eventDispatcher;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->addressRepository = $addressRepository;
         $this->geoSearcher = $geoSearcher;
         $this->logger = $logger;
+        $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -184,6 +191,48 @@ class AddressManager
             $address->setMacroRegion($reversedGeocodeAddress->getMacroRegion());
             $address->setCountryCode($reversedGeocodeAddress->getCountryCode());
             $address->setVenue($reversedGeocodeAddress->getVenue());
+        }
+
+        return $address;
+    }
+
+    /**
+    * Create an Address.
+    *
+    * @param Address $address  The address
+    * @return Address          The address
+    */
+    public function createAddress(Address $address)
+    {
+        $this->entityManager->persist($address);
+        $this->entityManager->flush();
+
+        if ($address->isHome()) {
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $actionEvent = new ActionEvent($action, $address->getUser());
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
+
+        return $address;
+    }
+
+    /**
+     * Update an address.
+     *
+     * @param Address $address  The address data used to update the address
+     * @return Address The address updated
+     */
+    public function updateAddress(Address $address)
+    {
+        $this->entityManager->persist($address);
+        $this->entityManager->flush();
+        
+        if ($address->isHome()) {
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $actionEvent = new ActionEvent($action, $address->getUser());
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         return $address;

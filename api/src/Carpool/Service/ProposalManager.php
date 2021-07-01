@@ -53,9 +53,10 @@ use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use App\Import\Entity\UserImport;
 use App\User\Entity\User;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Proposal manager service.
@@ -85,6 +86,7 @@ class ProposalManager
     private $params;
     private $internalMessageManager;
     private $criteriaRepository;
+    private $actionRepository;
 
     /**
      * Constructor.
@@ -113,6 +115,7 @@ class ProposalManager
         FormatDataManager $formatDataManager,
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
+        ActionRepository $actionRepository,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -133,6 +136,7 @@ class ProposalManager
         $this->params = $params;
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
+        $this->actionRepository = $actionRepository;
     }
 
     /**
@@ -277,6 +281,12 @@ class ProposalManager
             $this->entityManager->persist($proposal);
             $this->entityManager->flush();
             $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            //  we dispatch gamification event associated
+            $action = $this->actionRepository->findOneBy(['name'=>'carpool_ad_posted']);
+            $actionEvent = new ActionEvent($action, $proposal->getUser());
+            $actionEvent->setProposal($proposal);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
 

@@ -24,23 +24,36 @@
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\User\Service\UserManager;
 
 /**
  *  Check that the requester is the author of the related Ad
  */
 class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
-    {
-        /** To do : implement the rule*/
-        return true;
+    private $userManager;
 
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+    public function __construct(UserManager $userManager)
+    {
+        $this->userManager = $userManager;
+    }
+
+
+    /**
+     * Has at least N saved CO²
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
+     */
+    public function execute($requester, $log, $sequenceItem)
+    {
+        // we check if the user has at least saved N CO²
+        $savedCo2 = $this->userManager->getProfileSummary($log->getUser())->getSavedCo2();
+        if ($savedCo2 >= $sequenceItem->getMinCount()) {
+            return true;
+        }
+        return false;
     }
 }

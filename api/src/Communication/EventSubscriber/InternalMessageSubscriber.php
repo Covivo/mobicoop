@@ -23,17 +23,24 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\Action\Event\ActionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Communication\Event\InternalMessageReceivedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Action\Repository\ActionRepository;
 
 class InternalMessageSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
+    private $eventDispatcher;
+    private $actionRepository;
 
-    public function __construct(NotificationManager $notificationManager)
+    public function __construct(NotificationManager $notificationManager, EventDispatcherInterface $eventDispatcher, ActionRepository $actionRepository)
     {
         $this->notificationManager = $notificationManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->actionRepository = $actionRepository;
     }
 
     public static function getSubscribedEvents()
@@ -46,5 +53,11 @@ class InternalMessageSubscriber implements EventSubscriberInterface
     public function onInternalMessageReceived(InternalMessageReceivedEvent $event)
     {
         $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
+
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'communication_internal_message_received']);
+        $actionEvent = new ActionEvent($action, $event->getRecipient()->getMessage()->getUser());
+        $actionEvent->setMessage($event->getRecipient()->getMessage());
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 }

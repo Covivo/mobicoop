@@ -1252,4 +1252,34 @@ class ProposalRepository
         return $query->getQuery()->getResult();
         ;
     }
+
+    /**
+     * get proposals of a user linked to a community
+     *
+     * @param User $user
+     * @return Proposal[]|null
+     */
+    public function findUserCommunityProposals(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->join("p.communities", "co")
+        ->where("p.user = :user")
+        ->setParameter("user", $user);
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * get proposals of a user linked to an event
+     *
+     * @param User $user
+     * @return Proposal[]|null
+     */
+    public function findUserEventProposals(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->where("p.event IS NOT NULL")
+        ->andWhere("p.user = :user")
+        ->setParameter("user", $user);
+        return $query->getQuery()->getResult();
+    }
 }

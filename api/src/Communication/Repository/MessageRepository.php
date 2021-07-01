@@ -100,4 +100,20 @@ class MessageRepository
         ->setParameter('user', $user);
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find all answered messages of a user
+     *
+     * @param User $user
+     * @return Message[]|null
+     */
+    public function findAnswers(User $user)
+    {
+        $this->repository = $this->entityManager->getRepository(Message::class);
+        $query = $this->repository->createQueryBuilder('m')
+        ->where('m.message is not null and (m.user = :user)')
+        ->setParameter('user', $user);
+
+        return $query->getQuery()->getResult();
+    }
 }

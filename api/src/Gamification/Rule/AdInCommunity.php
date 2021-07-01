@@ -31,16 +31,27 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class AdInCommunity implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * Ad in Community rule
+     *
+     * @param $requester
+     * @param $log
+     * @param $sequenceItem
+     * @return bool
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        // we check if the user has at least one proposal published in a community
+        $user = $log->getUser();
+        $proposals = $user->getProposals();
+        // we get all user's proposals and for each proposal we check if he's associated with a community
+        $communities = [];
+        foreach ($proposals as $proposal) {
+            $communities[] = $proposal->getCommunities();
+            // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
+            if (count($communities) > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

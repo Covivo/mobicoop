@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,36 +21,31 @@
  *    LICENSE
  **************************/
 
- namespace App\Payment\DataPersister;
+ namespace App\Geography\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Payment\Ressource\ElectronicPayment;
-use App\Payment\Service\PaymentManager;
+use App\Geography\Entity\Address;
+use App\Geography\Service\AddressManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class ElectronicPaymentDataPersister implements ContextAwareDataPersisterInterface
+final class AddressPostDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $paymentManager;
-    private $security;
+    private $AddressManager;
     
-    public function __construct(PaymentManager $paymentManager, Security $security)
+    public function __construct(AddressManager $addressManager)
     {
-        $this->paymentManager = $paymentManager;
-        $this->security = $security;
+        $this->addressManager = $addressManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof ElectronicPayment && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof Address && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        return $this->paymentManager->createElectronicPayment($data);
+        return $this->addressManager->createAddress($data);
     }
 
     public function remove($data, array $context = [])
