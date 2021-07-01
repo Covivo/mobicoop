@@ -371,6 +371,9 @@ class ActionManager
             if (!is_null($actionEvent->getCarpoolPayment())) {
                 $log->setCarpoolPayment($actionEvent->getCarpoolPayment());
             }
+            if (!is_null($actionEvent->getCarpoolItem())) {
+                $log->setCarpoolItem($actionEvent->getCarpoolItem());
+            }
 
             $this->entityManager->persist($log);
             $this->entityManager->flush();

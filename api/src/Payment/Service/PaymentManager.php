@@ -929,6 +929,18 @@ class PaymentManager
             }
         }
         $this->entityManager->flush();
+
+        // we dispatch the gamification event associated to the carpoolItem
+        // we dispatch for the debtor
+        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+        $actionEvent = new ActionEvent($action, $carpoolItem->getDebtorUser());
+        $actionEvent->setCarpoolItem($carpoolItem);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        // we also dispatch for the creditor
+        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+        $actionEvent = new ActionEvent($action, $carpoolItem->getCreditorUser());
+        $actionEvent->setCarpoolItem($carpoolItem);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 
     /**

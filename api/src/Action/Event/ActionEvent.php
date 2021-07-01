@@ -38,6 +38,7 @@ use App\User\Entity\Car;
 use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 use App\Payment\Entity\CarpoolPayment;
+use App\Payment\Entity\CarpoolItem;
 
 /**
  * Event sent when an Action is made
@@ -234,6 +235,17 @@ class ActionEvent extends Event
     public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
+        return $this;
+    }
+
+    public function getCarpoolItem(): ?CarpoolItem
+    {
+        return $this->carpoolItem;
+    }
+    
+    public function setCarpoolItem(CarpoolItem $carpoolItem): self
+    {
+        $this->carpoolItem = $carpoolItem;
         return $this;
     }
 }
