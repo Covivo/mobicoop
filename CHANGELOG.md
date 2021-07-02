@@ -1,3 +1,8 @@
+# Release 1.31.0
+* Gamification : Resources and API treatment of gamification actions
+* More precision in prices (especially price per km) to avoid rounding issues when computing final prices
+* No more build of admin (ReactAdmin) via postdeploy.sh. This part of the projet **will be removed entirely**. From now on, the official backoffice of Mobicoop Platform is https://gitlab.com/mobicoop/mobicoop-admin.
+
 # Release 1.30.0
 * Rework of journey's details : Map, new layout...
 * Number of members in communities list
