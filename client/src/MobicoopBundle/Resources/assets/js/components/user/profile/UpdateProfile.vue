@@ -812,7 +812,7 @@ export default {
     },
     generateToken() {
     this.loadingToken = true;   
-    axios 
+    maxios 
       .get(this.$t('phone.token.route'))
       .then(res => {
           if (res.data.state) {
@@ -829,7 +829,7 @@ export default {
     },
     sendValidationEmail() {
     this.loadingEmail = true;   
-    axios 
+    maxios 
       .get(this.$t('email.verificationRoute'))
       .then(res => {
           if (res.data.state) {
