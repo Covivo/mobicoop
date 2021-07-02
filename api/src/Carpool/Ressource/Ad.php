@@ -30,6 +30,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskGet;
 use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
+use App\Solidary\Entity\Solidary;
 
 /**
  * Carpooling : an ad.
@@ -613,6 +614,11 @@ class Ad
      */
     private $carpoolProofId;
 
+    /**
+     * @var Solidary|null The solidary record if the ad concerns a solidary record.
+     */
+    private $solidaryRecord;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1151,6 +1157,18 @@ class Ad
     public function setAskId(int $askId): self
     {
         $this->askId = $askId;
+
+        return $this;
+    }
+
+    public function getSolidaryRecord(): ?Solidary
+    {
+        return $this->solidaryRecord;
+    }
+
+    public function setSolidaryRecord(Solidary $solidaryRecord): self
+    {
+        $this->solidaryRecord = $solidaryRecord;
 
         return $this;
     }

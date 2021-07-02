@@ -1250,6 +1250,5 @@ class ProposalRepository
         }
 
         return $query->getQuery()->getResult();
-        ;
     }
 }

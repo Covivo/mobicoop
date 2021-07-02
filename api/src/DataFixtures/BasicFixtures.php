@@ -119,9 +119,9 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     while ($tab = fgetcsv($file, 4096, ';')) {
                         // create the ad
                         if ($ad = $this->fixturesManager->createAd($tab)) {
-                            $outwardProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+                            $outwardProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()));
                             if (!$ad->isOneWay()) {
-                                $returnProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($outwardProposal->getProposalLinked()->getId()), false);
+                                $returnProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($outwardProposal->getProposalLinked()->getId()));
                                 $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
                             }
                             if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {

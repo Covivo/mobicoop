@@ -286,6 +286,9 @@ class AdManager
 
         // solidary
         $outwardCriteria->setSolidary($ad->isSolidary());
+        if ($ad->getSolidaryRecord()) {
+            $outwardProposal->setSolidary($ad->getSolidaryRecord());
+        }
         $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
 
         // prices
@@ -370,7 +373,7 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
         }
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -486,7 +489,7 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
             }
             $this->entityManager->persist($returnProposal);
         }

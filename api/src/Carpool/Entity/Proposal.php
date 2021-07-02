@@ -39,6 +39,7 @@ use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
 use App\Communication\Entity\Notified;
+use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\Subject;
 
 /**
@@ -372,6 +373,13 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $subject;
+
+    /**
+     * @var Solidary The solidary linked with this proposal
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
+     */
+    private $solidary;
 
     /**
      * @var bool Use search time or not
@@ -938,6 +946,7 @@ class Proposal
         $this->setUpdatedDate(new \Datetime());
     }
 
+
     public function getPrivate(): ?bool
     {
         return $this->private;
@@ -951,6 +960,18 @@ class Proposal
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
+
+        return $this;
+    }
+
+    public function getSolidary(): ?Solidary
+    {
+        return $this->solidary;
+    }
+
+    public function setSolidary(Solidary $solidary): self
+    {
+        $this->solidary = $solidary;
 
         return $this;
     }

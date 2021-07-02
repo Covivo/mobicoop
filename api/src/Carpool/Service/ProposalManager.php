@@ -176,12 +176,11 @@ class ProposalManager
      * Used when posting a proposal to populate default values like proposal validity.
      *
      * @param Proposal $proposal
-     * @param Boolean $sendEvent
      * @return Proposal
      */
-    public function prepareProposal(Proposal $proposal, bool $sendEvent=true): Proposal
+    public function prepareProposal(Proposal $proposal): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, true, $sendEvent);
+        return $this->treatProposal($this->setDefaults($proposal), true, true);
     }
 
     /**
@@ -252,10 +251,9 @@ class ProposalManager
      * @param Proposal  $proposal               The proposal to treat
      * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
      * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
-     * @param bool      $sendEvent              Send new matching event
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true, bool $sendEvent = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
     {
         $this->logger->info("ProposalManager : treatProposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -279,24 +277,13 @@ class ProposalManager
             $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
 
-
-        if (!$proposal->isPrivate() && !$proposal->isPaused() &&
-            ($proposal->getType() == Proposal::TYPE_ONE_WAY || $proposal->getType() == Proposal::TYPE_OUTWARD)
-        ) {
-            // TODO : see which events send !!!
-            $matchingOffers = [];
-            $matchingRequests = [];
-            if ($proposal->getCriteria()->isDriver()) {
-                $matchingOffers = $proposal->getMatchingOffers();
-            } else {
-                $matchingRequests = $proposal->getMatchingRequests();
-            }
-            $matchings=[];
-            while (($item = array_shift($matchingOffers)) !== null && array_push($matchings, $item));
-            while (($item = array_shift($matchingRequests)) !== null && array_push($matchings, $item));
+        // note : we sould not check here for the characteristics of the proposal BEFORE sending the event,
+        // it should be the subscriber that determines on reception wether the event is useful or not...
+        if (!$proposal->isPrivate() && !$proposal->isPaused()) {
+            $matchings = array_merge($proposal->getMatchingOffers(), $proposal->getMatchingRequests());
             if ($persist) {
                 foreach ($matchings as $matching) {
-                    $event = new MatchingNewEvent($matching, $proposal->getUser());
+                    $event = new MatchingNewEvent($matching, $proposal->getUser(), $proposal->getType());
                     $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
                 }
             }

@@ -23,6 +23,7 @@
 namespace App\Solidary\Repository;
 
 use App\Action\Entity\Diary;
+use App\Carpool\Entity\Proposal;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Entity\User;
@@ -135,5 +136,24 @@ class SolidaryRepository
         ->setParameter('solidaryUser', $solidaryUser);
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidary for a Proposal
+     *
+     * @param Proposal $proposal    The proposal
+     * @return Solidary|null        The solidary found or null if not found
+     */
+    public function findForProposal(Proposal $proposal): ?Solidary
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->where('s.proposal = :proposal')
+        ->setParameter('proposal', $proposal);
+
+        echo $query->getQuery()->getSQL();
+        echo $proposal->getId();
+        exit;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

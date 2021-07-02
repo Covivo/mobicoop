@@ -173,6 +173,9 @@ class SolidaryManager
     {
         $solidary = $this->solidaryRepository->find($id);
 
+        // link potential outward and return solidaryMatchings that would have not been made yet (as the link between Matchings are made after the SolidaryMatchings)
+        $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
+
         // create schedules
         $schedules = [];
         $days = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
@@ -671,7 +674,6 @@ class SolidaryManager
         // 5. create a Proposal, reflecting the journey needed for the beneficiary
         // 6. create a SolidaryRecord, linked to the SolidaryUserStructure, the Proposal, the Subject and Needs
 
-
         // first we perform some checkings !
 
         // check beneficiary
@@ -714,8 +716,6 @@ class SolidaryManager
         if (!$fields['regular'] && !in_array($fields['punctualOutwardTimeChoice'], Solidary::PUNCTUAL_TIME_CHOICES)) {
             throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_TIME_CHOICE_INVALID);
         }
-
-
 
         // 1 - create the SolidaryUser
         $beneficiary = null;
@@ -855,7 +855,6 @@ class SolidaryManager
             $solidaryUser->setBeneficiary(true);
         }
         $this->entityManager->persist($solidaryUser);
-
         
         // 2 - create the SolidaryUserStructure
         $solidaryUserStructure = null;
@@ -876,7 +875,6 @@ class SolidaryManager
         }
 
         $solidary->setSolidaryUserStructure($solidaryUserStructure);
-
         
         // 3 - create the proofs
         // we only set the basic proofs, not the files that would be sent on a separate call
@@ -905,7 +903,6 @@ class SolidaryManager
             }
         }
 
-
         // 4 - prepare the subject
         if (isset($fields['adminsubject'])) {
             if ($subject = $this->subjectRepository->find($fields['adminsubject'])) {
@@ -923,17 +920,49 @@ class SolidaryManager
             $solidary->setSubject($subject);
         }
 
+        // 5 - create the SolidaryRecord
+
+        // set original frequency
+        $solidary->setFrequency($fields['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+
+        // set status
+        $solidary->setStatus(Solidary::STATUS_ASKED);
+
+        // create needs
+        if (isset($fields['needs'])) {
+            foreach ($fields['needs'] as $need) {
+                if ($need = $this->needRepository->find($need)) {
+                    $solidary->addNeed($need);
+                } else {
+                    throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
+                }
+            }
+        }
+        if (isset($fields['additionalNeed'])) {
+            $need = new Need();
+            $need->setLabel($fields['additionalNeed']);
+            $need->setPrivate(true);
+            // set the solidary as origin
+            $need->setSolidary($solidary);
+            $this->entityManager->persist($need);
+            $solidary->addNeed($need);
+        }
+        
+        // persist the solidary record
+        $this->entityManager->persist($solidary);
+
         // we need to flush here as we are now about to post the ad => the users need to be persisted
         $this->entityManager->flush();
         
-        // 5 - create the proposal
+        // 6 - create the proposal
         $params = [
             'origin' => $fields['origin'],
             'destination' => isset($fields['destinationAny']) && $fields['destinationAny'] ? null : $fields['destination'],
             'regular' => $fields['regular'],
             'poster' => $this->poster->getId(),
             'beneficiary' => $beneficiary->getId(),
-            'subject' => $subject->getId()
+            'subject' => $subject->getId(),
+            'solidary' => $solidary
         ];
         if (isset($fields['punctualOutwardMinDate'])) {
             $params['punctualOutwardMinDate'] = $fields['punctualOutwardMinDate'];
@@ -974,67 +1003,8 @@ class SolidaryManager
         $ad = $this->createAdFromArray($params, $this->getTimeAndMarginForStructure($structure));
         $solidary->setProposal($this->proposalRepository->find($ad->getId()));
 
-
-        // 6 - create the SolidaryRecord
-
-        // set original frequency
-        $solidary->setFrequency($fields['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
-
-        // set status
-        $solidary->setStatus(Solidary::STATUS_ASKED);
-
-        // create needs
-        if (isset($fields['needs'])) {
-            foreach ($fields['needs'] as $need) {
-                if ($need = $this->needRepository->find($need)) {
-                    $solidary->addNeed($need);
-                } else {
-                    throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
-                }
-            }
-        }
-        if (isset($fields['additionalNeed'])) {
-            $need = new Need();
-            $need->setLabel($fields['additionalNeed']);
-            $need->setPrivate(true);
-            // set the solidary as origin
-            $need->setSolidary($solidary);
-            $this->entityManager->persist($need);
-            $solidary->addNeed($need);
-        }
-
-        // create the solidary matchings
-        foreach ($solidary->getProposal()->getMatchingOffers() as $matchingOffer) {
-            /**
-             * @var Matching $matchingOffer
-             */
-            $solidaryMatching = new SolidaryMatching();
-            $solidaryMatching->setMatching($matchingOffer);
-            $solidaryMatching->setSolidary($solidary);
-            $solidary->addSolidaryMatching($solidaryMatching);
-            $this->entityManager->persist($solidaryMatching);
-            $this->logger->info("SolidaryManager : persist the SolidaryMatching outward for matching " . $matchingOffer->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        }
-        if ($solidary->getProposal()->getProposalLinked()) {
-            foreach ($solidary->getProposal()->getProposalLinked()->getMatchingOffers() as $matchingOffer) {
-                /**
-                 * @var Matching $matchingOffer
-                 */
-                $solidaryMatchingReturn = new SolidaryMatching();
-                $solidaryMatchingReturn->setMatching($matchingOffer);
-                $solidaryMatchingReturn->setSolidary($solidary);
-                $solidary->addSolidaryMatching($solidaryMatchingReturn);
-                $this->entityManager->persist($solidaryMatchingReturn);
-                $this->logger->info("SolidaryManager : persist the SolidaryMatching return for matching " . $matchingOffer->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            }
-        }
-        
-        // persist the solidary record
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
-
-        // link potential outward and return solidaryMatchings
-        $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
 
         // send an event to warn that a SolidaryRecord has been created
         $event = new SolidaryCreatedEvent($beneficiary, $this->poster, $solidary);
@@ -1042,6 +1012,25 @@ class SolidaryManager
 
         // read the solidary record again to get the last data (events should have update it !)
         return $this->solidaryRepository->find($solidary->getId());
+    }
+
+    /**
+     * Create a new SolidaryMatching from a carpool Matching
+     *
+     * @param Matching  $matching   The matching
+     * @param Solidary  $solidary   The solidary record
+     * @return void
+     */
+    public function createSolidaryMatchingFromCarpoolMatching(Matching $matching, Solidary $solidary)
+    {
+        $solidaryMatching = new SolidaryMatching();
+        $solidaryMatching->setMatching($matching);
+        $solidaryMatching->setSolidary($solidary);
+        $solidary->addSolidaryMatching($solidaryMatching);
+        $this->entityManager->persist($solidaryMatching);
+        $this->entityManager->persist($solidary);
+        $this->entityManager->flush();
+        $this->logger->info("SolidaryManager : persist the SolidaryMatching for matching " . $matching->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
     /**
@@ -1422,6 +1411,7 @@ class SolidaryManager
         
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
+        $ad->setSolidaryRecord($aad['solidary']);
 
         // initialize to one way for now
         $ad->setOneWay(true);
@@ -1453,6 +1443,7 @@ class SolidaryManager
                 $ad->setReturnLimitDate(new DateTime($aad['regularMaxDate']));
             }
         } else {
+            $ad->setStrictDate(true);
             $ad->setOutwardDate(new DateTime($aad['punctualOutwardMinDate']));
             $schedule = null;
             switch ($aad['punctualOutwardDateChoice']) {

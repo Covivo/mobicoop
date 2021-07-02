@@ -363,7 +363,6 @@ class Solidary
      * @var Proposal The proposal.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
@@ -710,7 +709,7 @@ class Solidary
         return $this;
     }
 
-    public function getProposal(): Proposal
+    public function getProposal(): ?Proposal
     {
         return $this->proposal;
     }
