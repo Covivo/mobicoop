@@ -134,6 +134,7 @@ api_platform:
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'
         - '%kernel.project_dir%/src/User/Ressource'
+        - '%kernel.project_dir%/src/User/Admin/Resource'
         - '%kernel.project_dir%/src/User/Interoperability/Ressource'
         - '%kernel.project_dir%/src/Utility/Entity'
         - '%kernel.project_dir%/src/DataProvider/Ressource'
