@@ -41,6 +41,7 @@ use App\Gamification\Entity\SequenceStatus;
 use App\Gamification\Event\BadgeEarnedEvent;
 use App\Gamification\Event\RewardStepEarnedEvent;
 use App\Gamification\Event\ValidationStepEvent;
+use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\Gamification\Resource\BadgesBoard;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -333,5 +334,16 @@ class GamificationManager
 
             $this->entityManager->flush();
         }
+    }
+
+    /**
+     * Add a Gamification notification to the current pool that will be return at the end of the request
+     *
+     * @param GamificationNotificationInterface $gamificationNotification
+     * @return void
+     */
+    public function handleGamificationNotification(GamificationNotificationInterface $gamificationNotification)
+    {
+        $this->gamificationNotifier->addNotification($gamificationNotification);
     }
 }

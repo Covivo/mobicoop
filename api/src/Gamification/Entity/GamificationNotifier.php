@@ -48,7 +48,7 @@ class GamificationNotifier
         return $this->notifications;
     }
 
-    public function addNotifications(GamificationNotificationInterface $notification): self
+    public function addNotification(GamificationNotificationInterface $notification): self
     {
         $this->notifications[] = $notification;
 
