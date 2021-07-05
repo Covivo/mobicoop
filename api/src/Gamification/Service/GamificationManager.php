@@ -35,8 +35,11 @@ use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
 use App\Gamification\Entity\BadgeSummary;
+use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Entity\SequenceStatus;
+use App\Gamification\Event\BadgeEarnedEvent;
+use App\Gamification\Event\RewardStepEarnedEvent;
 use App\Gamification\Event\ValidationStepEvent;
 use App\Gamification\Resource\BadgesBoard;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,19 +58,22 @@ class GamificationManager
     private $badgeRepository;
     private $entityManager;
     private $eventDispatcher;
+    private $gamificationNotifier;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
         LogRepository $logRepository,
         BadgeRepository $badgeRepository,
         EntityManagerInterface $entityManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        GamificationNotifier $gamificationNotifier
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
         $this->badgeRepository = $badgeRepository;
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->gamificationNotifier = $gamificationNotifier;
     }
     
     /**
@@ -146,7 +152,7 @@ class GamificationManager
                     $validationStep->setValidated($validationStep->isValidated() && $this->checkInDateRange($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getBadge()->getStartDate(), $sequenceItem->getBadge()->getEndDate(), $sequenceItem->getMinCount(), $sequenceItem->getMinUniqueCount()));
                 }
 
-                // Throw an event who says that a ValidationStep has been evaluated
+                // Dispatch an event who says that a ValidationStep has been evaluated
                 $validationStepEvent = new ValidationStepEvent($validationStep);
                 $this->eventDispatcher->dispatch(ValidationStepEvent::NAME, $validationStepEvent);
             }
@@ -297,6 +303,10 @@ class GamificationManager
 
                             // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
                             $sequenceStatus->setValidated(true);
+
+                            // Dispatch the event
+                            $validationStepEvent = new RewardStepEarnedEvent($rewardStep);
+                            $this->eventDispatcher->dispatch(RewardStepEarnedEvent::NAME, $validationStepEvent);
                         }
                     }
                     // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
@@ -312,7 +322,9 @@ class GamificationManager
                         $badge->addUser($validationStep->getUser());
                         $this->entityManager->persist($badge);
 
-                        // TO DO : Maybe dispatch an Event ? It depends how we handle a new badge in front
+                        // Dispatch the event
+                        $badgeEvent = new BadgeEarnedEvent($badge);
+                        $this->eventDispatcher->dispatch(BadgeEarnedEvent::NAME, $badgeEvent);
                     }
                 }
             }
