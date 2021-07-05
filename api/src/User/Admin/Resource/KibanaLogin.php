@@ -39,7 +39,8 @@ use App\User\Entity\User;
  *          "normalization_context"={"groups"={"readKibanaLogin"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
- *          "get"={
+ *          "ADMIN_kibana_logins"={
+ *              "method"="GET",
  *              "security"="is_granted('access_admin',object)",
  *              "path"="/admin/kibana_logins",
  *              "swagger_context" = {
@@ -62,14 +63,34 @@ use App\User\Entity\User;
  */
 class KibanaLogin
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
-     * @var int The id of the User
+     * @var int The id of this KibanaLogin
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readKibanaLogin"})
      */
     private $id;
 
+    /**
+     * @var string Username
+     *
+     * @Groups({"readKibanaLogin"})
+     */
+    private $username;
+
+    /**
+     * @var string Password
+     *
+     * @Groups({"readKibanaLogin"})
+     */
+    private $password;
+
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
 
     public function getId(): ?int
     {
@@ -79,6 +100,30 @@ class KibanaLogin
     public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+        
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
         
         return $this;
     }

@@ -74,6 +74,4 @@ class KibanaLoginVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::ACCESS_ADMIN);
     }
-
-
 }
