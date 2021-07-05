@@ -84,7 +84,11 @@ class KibanaLoginManager
             $logins[] = $kibanaLogin;
         }
 
-        if (in_array("ROLE_COMMUNITY_MANAGER", $rights) || in_array("ROLE_ADMIN", $rights)) {
+        if (
+            in_array("ROLE_COMMUNITY_MANAGER", $rights) ||
+            in_array("ROLE_COMMUNITY_MANAGER_PUBLIC", $rights) ||
+            in_array("ROLE_COMMUNITY_MANAGER_PRIVATE", $rights) ||
+            in_array("ROLE_ADMIN", $rights)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
             $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
