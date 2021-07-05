@@ -51,7 +51,7 @@
           vertical
         >
           <div>
-            {{ $t('snackbar-account-delete') }}
+            {{ $t('snackbar-account-logout') }}
           </div>
           <v-btn
             color="info"

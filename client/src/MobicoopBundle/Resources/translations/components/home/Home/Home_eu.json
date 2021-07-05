@@ -20,7 +20,7 @@
     "urlArticle": "#",
     "myProfile": "Perfila",
     "snackbar-unsubscribe-email": "Gure emailing zerrendatik desabonatua zira",
-    "snackbar-account-delete": "Zure kontua kendua izan da.",
+    "snackbar-account-logout": "Zure kontua kendua izan da.",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
     "snackbar2": ", zure autokideak lasaitzeo eta zure abisuak SMS-en bidez errezibitzeko.",
     "snackbar1": "Zure telefono zenbakia komunikatu duzu. Egiazta ezazu, egiaztatze kode bat igorriz webguneko orrialdetik",
