@@ -62,36 +62,36 @@ class KibanaLoginManager
     {
         $logins = [];
 
-        if(!($this->security->getUser() instanceof User)){
+        if (!($this->security->getUser() instanceof User)) {
             return $logins;
         }
 
         /**
-         * @var User $user 
+         * @var User $user
          */
         $user = $this->security->getUser();
 
         $authItems = $user->getUserAuthAssignments();
         $rights = [];
-        foreach($authItems as $authItem){
+        foreach ($authItems as $authItem) {
             $rights[] = $authItem->getAuthItem()->getName();
         }
 
-        if(in_array("ROLE_ADMIN",$rights)){
+        if (in_array("ROLE_ADMIN", $rights)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsAdmin['username']);
             $kibanaLogin->setPassword($this->loginsAdmin['password']);
             $logins[] = $kibanaLogin;
         }
 
-        if(in_array("ROLE_COMMUNITY_MANAGER",$rights) || in_array("ROLE_ADMIN",$rights)){
+        if (in_array("ROLE_COMMUNITY_MANAGER", $rights) || in_array("ROLE_ADMIN", $rights)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
             $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
             $logins[] = $kibanaLogin;
         }
 
-        if(in_array("ROLE_SOLIDARY_OPERATOR",$rights) || in_array("ROLE_ADMIN",$rights)){
+        if (in_array("ROLE_SOLIDARY_MANAGER", $rights) || in_array("ROLE_ADMIN", $rights)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsSolidaryOperator['username']);
             $kibanaLogin->setPassword($this->loginsSolidaryOperator['password']);
