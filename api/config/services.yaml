@@ -36,6 +36,10 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    # SERIALIZER
+    'App\Serializer\ApiNormalizer':
+        # By default .inner is passed as argument
+        decorates: 'api_platform.jsonld.normalizer.item'    
 
     # EVENT LISTENERS
 

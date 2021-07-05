@@ -67,7 +67,8 @@ class GamificationManager
         BadgeRepository $badgeRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        GamificationNotifier $gamificationNotifier
+        GamificationNotifier $gamificationNotifier,
+        RewardStepRepository $rewardStepRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
