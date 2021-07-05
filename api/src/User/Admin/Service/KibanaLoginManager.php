@@ -24,6 +24,7 @@
 namespace App\User\Admin\Service;
 
 use App\User\Admin\Resource\KibanaLogin;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -61,20 +62,41 @@ class KibanaLoginManager
     {
         $logins = [];
 
-        $kibanaLogin = new KibanaLogin();
-        $kibanaLogin->setUsername($this->loginsAdmin['username']);
-        $kibanaLogin->setPassword($this->loginsAdmin['password']);
-        $logins[] = $kibanaLogin;
+        if(!($this->security->getUser() instanceof User)){
+            return $logins;
+        }
 
-        $kibanaLogin = new KibanaLogin();
-        $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
-        $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
-        $logins[] = $kibanaLogin;
+        /**
+         * @var User $user 
+         */
+        $user = $this->security->getUser();
 
-        $kibanaLogin = new KibanaLogin();
-        $kibanaLogin->setUsername($this->loginsSolidaryOperator['username']);
-        $kibanaLogin->setPassword($this->loginsSolidaryOperator['password']);
-        $logins[] = $kibanaLogin;
+        $authItems = $user->getUserAuthAssignments();
+        $rights = [];
+        foreach($authItems as $authItem){
+            $rights[] = $authItem->getAuthItem()->getName();
+        }
+
+        if(in_array("ROLE_ADMIN",$rights)){
+            $kibanaLogin = new KibanaLogin();
+            $kibanaLogin->setUsername($this->loginsAdmin['username']);
+            $kibanaLogin->setPassword($this->loginsAdmin['password']);
+            $logins[] = $kibanaLogin;
+        }
+
+        if(in_array("ROLE_COMMUNITY_MANAGER",$rights) || in_array("ROLE_ADMIN",$rights)){
+            $kibanaLogin = new KibanaLogin();
+            $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
+            $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
+            $logins[] = $kibanaLogin;
+        }
+
+        if(in_array("ROLE_SOLIDARY_OPERATOR",$rights) || in_array("ROLE_ADMIN",$rights)){
+            $kibanaLogin = new KibanaLogin();
+            $kibanaLogin->setUsername($this->loginsSolidaryOperator['username']);
+            $kibanaLogin->setPassword($this->loginsSolidaryOperator['password']);
+            $logins[] = $kibanaLogin;
+        }
 
         return $logins;
     }
