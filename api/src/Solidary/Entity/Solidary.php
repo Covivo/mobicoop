@@ -361,6 +361,8 @@ class Solidary
 
     /**
      * @var Proposal The proposal.
+     * The proposal is set as nullable but is in fact mandatory : we create the solidary record *before* the proposal for technical reasons.
+     * The proposal will then be set a short time after the solidary record is created.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @Groups({"writeSolidary"})
@@ -1456,7 +1458,7 @@ class Solidary
      */
     public function getAdminproposalType(): string
     {
-        return $this->getProposal()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'return';
+        return $this->getProposal()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'roundtrip';
     }
 
     /**

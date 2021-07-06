@@ -79,6 +79,20 @@ class SolidaryMatching
     private $id;
 
     /**
+     * @var int|null The solidary matching type.
+     *
+     * 1 : matching for a one way trip
+     * 2 : matching for the outward of a return trip
+     * 3 : matching for the return of a round trip
+     *
+     * This property is necessary for volunteers, as once the Solidary Matching is computed, there is no way to determine wether the Solidary Matching is for an outward or a return using linked data
+     * (as opposed to carpool matching where the information is available following the linked Matching).
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $type;
+
+    /**
      * @var Matching|null The carpool matching if there is any
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist","remove"})
@@ -156,6 +170,18 @@ class SolidaryMatching
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getStatus(): ?int

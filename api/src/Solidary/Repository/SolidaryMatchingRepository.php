@@ -70,7 +70,7 @@ class SolidaryMatchingRepository
     }
 
     /**
-     * Link related solidary matchings for a Solidary
+     * Link related carpool solidary matchings for a Solidary
      * (link outward and return matchings)
      *
      * @param integer $solidaryId   The solidary id
