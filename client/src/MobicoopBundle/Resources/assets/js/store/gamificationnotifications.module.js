@@ -1,7 +1,7 @@
 export const gamificationNotifications = {
   namespaced: true,
   state: {
-    gamificationNotifications: {}
+    gamificationNotifications: []
   },
   mutations: {
     updateGamificationNotifications (state, gamificationNotifications) {
