@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { store } from '../store';
+
 class MAxios {
   get(route,params) {
     return axios
@@ -9,6 +11,9 @@ class MAxios {
         }
       })
       .then( response => {
+        if(response.data.gamificationNotifications){
+          this.updateStore(response.data.gamificationNotifications);
+        }
         return response;
       })
   };
@@ -21,6 +26,9 @@ class MAxios {
         }
       })
       .then( response => {
+        if(response.data.gamificationNotifications){
+          this.updateStore(response.data.gamificationNotifications);
+        }
         return response;
       })
   };
@@ -33,6 +41,9 @@ class MAxios {
         }
       })
       .then( response => {
+        if(response.data.gamificationNotifications){
+          this.updateStore(response.data.gamificationNotifications);
+        }
         return response;
       })
   };
@@ -45,9 +56,15 @@ class MAxios {
         }
       })
       .then( response => {
+        if(response.data.gamificationNotifications){
+          this.updateStore(response.data.gamificationNotifications);
+        }
         return response;
       })
-  };  
+  };
+  updateStore(gamificationNotifications){
+    store.commit('gn/updateGamificationNotifications',gamificationNotifications);
+  }
 }
 
 export default new MAxios();
