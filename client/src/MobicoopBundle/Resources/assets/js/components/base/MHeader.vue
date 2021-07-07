@@ -440,9 +440,6 @@ export default {
   computed:{
     unreadMessageNumber(){
       return this.user.unreadCarpoolMessageNumber + this.user.unreadDirectMessageNumber + this.user.unreadSolidaryMessageNumber; 
-    },
-    gamificationNotifications(){
-      return this.$store.getters['gn/gamificationNotifications'];
     }
   },
   mounted() {

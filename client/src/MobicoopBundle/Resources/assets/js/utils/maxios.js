@@ -11,9 +11,7 @@ class MAxios {
         }
       })
       .then( response => {
-        if(response.data.gamificationNotifications){
-          this.updateStore(response.data.gamificationNotifications);
-        }
+        this.updateStore(response);
         return response;
       })
   };
@@ -26,9 +24,7 @@ class MAxios {
         }
       })
       .then( response => {
-        if(response.data.gamificationNotifications){
-          this.updateStore(response.data.gamificationNotifications);
-        }
+        this.updateStore(response);
         return response;
       })
   };
@@ -41,9 +37,7 @@ class MAxios {
         }
       })
       .then( response => {
-        if(response.data.gamificationNotifications){
-          this.updateStore(response.data.gamificationNotifications);
-        }
+        this.updateStore(response);
         return response;
       })
   };
@@ -56,14 +50,20 @@ class MAxios {
         }
       })
       .then( response => {
-        if(response.data.gamificationNotifications){
-          this.updateStore(response.data.gamificationNotifications);
-        }
+        this.updateStore(response);
         return response;
       })
   };
-  updateStore(gamificationNotifications){
-    store.commit('gn/updateGamificationNotifications',gamificationNotifications);
+  updateStore(response){
+    if(response.data.gamificationNotifications){
+      if(localStorage.getItem('gamificationInLocalStorage')=='1'){
+        localStorage.setItem('gamificationNotifications',JSON.stringify(response.data.gamificationNotifications));
+        localStorage.removeItem('gamificationInLocalStorage');
+      }
+      else{
+        store.commit('gn/updateGamificationNotifications',response.data.gamificationNotifications);
+      }
+    }
   }
 }
 

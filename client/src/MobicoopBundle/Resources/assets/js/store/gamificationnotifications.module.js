@@ -11,6 +11,6 @@ export const gamificationNotifications = {
   getters: {
     gamificationNotifications (state) {
       return state.gamificationNotifications;
-    },      
-  }
+    }
+  } 
 }

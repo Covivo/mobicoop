@@ -46,18 +46,18 @@ export default {
       return this.$store.getters['gn/gamificationNotifications'];
     },
     rewardSteps(){
-      let rewardStep = [];
-      this.gamificationNotifications.forEach((item, index) => {
-        if(item.type == "RewardStep"){
-          rewardStep.push(item);
-        }
-      });
-      return rewardStep;
+      return this.gamificationNotifications.filter( item => item.type == "RewardStep" );
     }
   },
   watch:{
     gamificationNotifications(newVersion, oldVersion){
       this.snackbar = true;
+    }
+  },
+  mounted(){
+    if(localStorage.getItem("gamificationNotifications")){
+      this.$store.commit('gn/updateGamificationNotifications',JSON.parse(localStorage.getItem("gamificationNotifications")));
+      localStorage.removeItem("gamificationNotifications");
     }
   }
 }
