@@ -6,7 +6,7 @@
       v-model="snackbar"
       timeout="-1"
     >
-      {{ $t("gamification") }} : {{ $t(rewardStep.name) }}
+      {{ $t("gamification") }} : {{ $t(rewardStep.title) }}
 
       <template v-slot:action="{ attrs }">
         <v-btn

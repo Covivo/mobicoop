@@ -51,13 +51,13 @@ class GamificationAction
     private $id;
 
     /**
-     * @var string The GamificationAction's name (for internal purpose)
+     * @var string The GamificationAction's title (can be translated)
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
-    private $name;
+    private $title;
 
     /**
      * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
@@ -105,14 +105,14 @@ class GamificationAction
         return $this;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(?string $name): self
+    public function setTitle(?string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
