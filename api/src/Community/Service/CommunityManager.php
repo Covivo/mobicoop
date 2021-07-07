@@ -38,6 +38,11 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Service\AdManager;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
+use App\Community\Event\CommunityMembershipPendingEvent;
+use App\Community\Event\CommunityMembershipRefusedEvent;
+use App\Community\Event\CommunityMembershipAcceptedEvent;
+use App\Community\Event\CommunityNewMemberEvent;
+use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Resource\MCommunity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -330,10 +335,9 @@ class CommunityManager
         $this->entityManager->flush();
 
         //  we dispatch the gamification event associated
-        $action = $this->actionRepository->findOneBy(['name'=>'community_created']);
-        $actionEvent = new ActionEvent($action, $community->getUser());
-        $actionEvent->setCommunity($community);
-        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
+        $event = new CommunityCreatedEvent($community);
+        $this->eventDispatcher->dispatch($event, CommunityCreatedEvent::NAME);
 
         return $community;
     }
@@ -395,10 +399,17 @@ class CommunityManager
         $community = $communityUser->getCommunity();
         $user = $community->getUser();
 
-        // We use event to send notifications if community has a status pending
-        if ($communityUser->getStatus()== CommunityUser::STATUS_PENDING) {
-            $event = new CommunityNewMembershipRequestEvent($community, $user);
-            $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
+        switch ($communityUser->getStatus()) {
+            case CommunityUser::STATUS_PENDING:
+                $event = new CommunityNewMembershipRequestEvent($community, $user);
+                $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
+                $event = new CommunityMembershipPendingEvent($community, $communityUser->getUser());
+                $this->eventDispatcher->dispatch(CommunityMembershipPendingEvent::NAME, $event);
+                break;
+            case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
+                $event = new CommunityNewMemberEvent($community, $user);
+                $this->eventDispatcher->dispatch(CommunityNewMemberEvent::NAME, $event);
+                break;
         }
 
         //  we dispatch the gamification event associated
@@ -420,6 +431,23 @@ class CommunityManager
     {
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
+
+        $community = $communityUser->getCommunity();
+        $user = $communityUser->getUser();
+
+        var_dump(get_class($community));
+        die;
+
+        switch ($communityUser->getStatus()) {
+            case CommunityUser::STATUS_REFUSED:
+                $event = new CommunityMembershipRefusedEvent($community, $user);
+                $this->eventDispatcher->dispatch(CommunityMembershipRefusedEvent::NAME, $event);
+                break;
+            case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
+                $event = new CommunityMembershipAcceptedEvent($community, $user);
+                $this->eventDispatcher->dispatch(CommunityMembershipAcceptedEvent::NAME, $event);
+                break;
+        }
 
         return $communityUser;
     }
