@@ -48,17 +48,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                     $data['gamificationNotifications'][] = [
                         "type" => "RewardStep",
                         "id" => $gamificationNotification->getId(),
-                        "sequenceItem" => [
-                            "id" => $gamificationNotification->getSequenceItem()->getId(),
-                            "gamification_action" => [
-                                "id" => $gamificationNotification->getSequenceItem()->getGamificationAction()->getId(),
-                                "name" => $gamificationNotification->getSequenceItem()->getGamificationAction()->getName(),
-                            ]
-                            ],
-                            "badge" => [
-                                "id" => $gamificationNotification->getSequenceItem()->getBadge()->getId(),
-                                "name" => $gamificationNotification->getSequenceItem()->getBadge()->getName()
-                            ]
+                        "name" => $gamificationNotification->getSequenceItem()->getGamificationAction()->getName(),
+                        "badge" => [
+                            "id" => $gamificationNotification->getSequenceItem()->getBadge()->getId(),
+                            "name" => $gamificationNotification->getSequenceItem()->getBadge()->getName()
+                        ]
                     ];
                 }
             }
