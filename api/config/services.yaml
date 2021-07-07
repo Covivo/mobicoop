@@ -426,6 +426,17 @@ services:
         arguments:
             $fixturesSolidary: '%env(bool:FIXTURES_SOLIDARY)%'
 
+    # Gamification
+    mobicoop.gamification.badge_load_listener:
+        class: App\Gamification\EventListener\BadgeLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    mobicoop.gamification.gamification_action_load_listener:
+        class: App\Gamification\EventListener\GamificationActionLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    
+    
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 

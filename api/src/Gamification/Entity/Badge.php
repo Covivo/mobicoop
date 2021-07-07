@@ -71,6 +71,11 @@ class Badge implements GamificationNotificationInterface
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
 
+    const TRANSLATABLE_ITEMS = [
+        "title",
+        "text"
+    ];
+
     /**
      * @var int The Badge's id
      *
