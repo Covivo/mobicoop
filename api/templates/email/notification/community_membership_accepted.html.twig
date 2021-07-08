@@ -8,8 +8,8 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p>Votre adhésion à la communauté  {{context.community.name}}  a été validée.</p>
-                        <p> Retrouvez les covoiturages de votre communauté sur la page dédiée et sécurisée ci-dessous : <a href="{{api_env('EMAILS_PLATFORM_URL') ~ '/communaute/' ~ contect.community.id ~ '/' ~ context.community.urlKey}}">en cliquant ici</a> </p>
+                        <p>Votre adhésion à la communauté  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b>  a été validée.</p>
+                        <p> Retrouvez les covoiturages de votre communauté sur la page dédiée et sécurisée ci-dessous : <a href="{{api_env('EMAILS_PLATFORM_URL') ~ '/communaute/' ~ context.community.id ~ '/' ~ context.community.urlKey}}" style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">en cliquant ici</a> </p>
                         <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>
                 </tr>

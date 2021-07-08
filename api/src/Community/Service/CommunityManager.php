@@ -39,8 +39,6 @@ use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Service\AdManager;
 use App\Community\Event\CommunityNewMembershipRequestEvent;
 use App\Community\Event\CommunityMembershipPendingEvent;
-use App\Community\Event\CommunityMembershipRefusedEvent;
-use App\Community\Event\CommunityMembershipAcceptedEvent;
 use App\Community\Event\CommunityNewMemberEvent;
 use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Resource\MCommunity;
@@ -422,7 +420,7 @@ class CommunityManager
     }
 
     /**
-     * Update communityUser
+     * Update communityUser #### used only by old admin ####
      *
      * @param CommunityUser $communityUser
      * @return void
@@ -431,23 +429,6 @@ class CommunityManager
     {
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
-
-        $community = $communityUser->getCommunity();
-        $user = $communityUser->getUser();
-
-        var_dump(get_class($community));
-        die;
-
-        switch ($communityUser->getStatus()) {
-            case CommunityUser::STATUS_REFUSED:
-                $event = new CommunityMembershipRefusedEvent($community, $user);
-                $this->eventDispatcher->dispatch(CommunityMembershipRefusedEvent::NAME, $event);
-                break;
-            case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
-                $event = new CommunityMembershipAcceptedEvent($community, $user);
-                $this->eventDispatcher->dispatch(CommunityMembershipAcceptedEvent::NAME, $event);
-                break;
-        }
 
         return $communityUser;
     }

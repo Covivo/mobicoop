@@ -8,7 +8,7 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p>Votre demande d'adhésion à la communauté  {{context.community.name}}  a bien été prise en compte.</p>
+                        <p>Votre demande d'adhésion à la communauté  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b></b> a bien été prise en compte.</p>
                         <p> Vous recevrez un nouvel email quand nous aurons validé vos informations, et pourrez profiter ensuite de tous les avantages du service.</p>
                         <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>

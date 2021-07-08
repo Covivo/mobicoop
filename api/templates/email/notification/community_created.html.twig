@@ -8,7 +8,7 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p>La communauté {{context.community.name}} a été créée et vous êtes le/la référent(e).</p>
+                        <p>La communauté <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b> a été créée et vous êtes le/la référent(e).</p>
                         <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>
                 </tr>

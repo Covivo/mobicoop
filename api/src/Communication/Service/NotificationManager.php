@@ -59,6 +59,7 @@ use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\User\Entity\Review;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * Notification manager
@@ -228,7 +229,7 @@ class NotificationManager
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
-            switch (get_class($object)) {
+            switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
