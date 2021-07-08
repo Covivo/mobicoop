@@ -1202,10 +1202,7 @@ export default {
       let payments = [];
       // if punctual 
       if (this.frequency == 1) {
-        // we check if we have made an action of payment on the currentItem and we send it only if that's the case
-        if (this.currentItem.mode) {
-          payments.push({"id":this.currentItem.id, "mode":2, "status":3});
-        }
+        payments.push({"id":this.currentItem.id, "mode":2, "status":3});
       } else {
         // if regular 
         // we add all available days of the outward travel
