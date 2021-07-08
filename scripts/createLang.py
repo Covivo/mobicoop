@@ -101,9 +101,9 @@ def path_leaf(path):
     return tail or ntpath.basename(head)
 
 # 0 - check that language does not exist yet !
-if os.path.isfile(api_translations_path+"/messages+intl-icu."+lang+".yaml"):
-    print("Language already exists !")
-    exit()
+# if os.path.isfile(api_translations_path+"/messages+intl-icu."+lang+".yaml"):
+#     print("Language already exists !")
+#     exit()
 
 # 1 - create client components translation files 
 files = directory_spider(client_components_translation_path, "", "_en.json$")
@@ -112,7 +112,8 @@ for file in files:
     fileWithoutExtension = os.path.splitext(file)[0]
     component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
     newFile = file.replace("_en.json", "_"+lang+".json")
-    copyfile(file, newFile)
+    if not os.path.isfile(newFile):
+        copyfile(file, newFile)
 
     # Open the file in append & read mode ('a+')
     with open(filePath+"/index.js", "a+") as file_object:
@@ -132,7 +133,8 @@ for file in files:
     fileWithoutExtension = os.path.splitext(file)[0]
     component_name = path_leaf(fileWithoutExtension.replace("_en", ""))
     newFile = file.replace("_en.json", "_"+lang+".json")
-    copyfile(file, newFile)
+    if not os.path.isfile(newFile):
+        copyfile(file, newFile)
 
     # Open the file in append & read mode ('a+')
     with open(filePath+"/index.js", "a+") as file_object:
@@ -166,7 +168,8 @@ for file in files:
             f.write(file_source)
 
 # 4 - create client ui translation files
-copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
+if not os.path.isfile(client_ui_path+"/ui."+lang+".yaml"):
+    copyfile(client_ui_path+"/ui.en.yaml", client_ui_path+"/ui."+lang+".yaml")
 
 # 5 - create client routes
 with open(client_route_file, 'r+') as f:
@@ -177,4 +180,5 @@ with open(client_route_file, 'r+') as f:
     f.write(file_source)
 
 # 6 - create api translation files
-copyfile(api_translations_path+"/messages+intl-icu.en.yaml", api_translations_path+"/messages+intl-icu."+lang+".yaml")
+if not os.path.isfile(api_translations_path+"/messages+intl-icu."+lang+".yaml"):
+    copyfile(api_translations_path+"/messages+intl-icu.en.yaml", api_translations_path+"/messages+intl-icu."+lang+".yaml")

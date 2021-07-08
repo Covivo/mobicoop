@@ -72,7 +72,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  */
 class Translate
 {
-   
+    /** For a better understanding, we will use Article as an example for each fields */
+
     /**
      * @var int The id of the relation between source and language
      *
@@ -95,19 +96,33 @@ class Translate
     private $language;
 
     /**
-     * @var Source The source concerned
+     * @var string The domain of the translation (i.e. Article)
      *
-     * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Source", inversedBy="translates")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=45)
      * @Groups({"aRead","read","write"})
-     * @MaxDepth(1)
      */
-    private $source;
+    private $domain;
 
     /**
-     * @var string The text of the source.
+     * @var int The id of the translated entity (i.e. 1 for the Article with an id = 1)
+     *
+     * @ORM\Column(type="string", length=45)
+     * @Groups({"aRead","read","write"})
+     */
+    private $idEntity;
+
+    /**
+     * @var string The translated property (i.e "title" for the title of the article of id = 1 for the given language)
      *
      * @ORM\Column(type="string", length=255)
+     * @Groups({"aRead","read","write"})
+     */
+    private $property;
+
+    /**
+     * @var string The translation (in the given language)
+     *
+     * @ORM\Column(type="text")
      * @Groups({"aRead","read","write"})
      */
     private $text;
@@ -136,15 +151,39 @@ class Translate
         return $this;
     }
 
-    public function getSource(): ?Source
+    public function getDomain(): string
     {
-        return $this->source;
+        return $this->domain;
     }
 
-    public function setSource(?Source $source): self
+    public function setDomain(string $domain): self
     {
-        $this->source = $source;
+        $this->domain = $domain;
+        
+        return $this;
+    }
 
+    public function getIdEntity(): string
+    {
+        return $this->idEntity;
+    }
+
+    public function setIdEntity(string $idEntity): self
+    {
+        $this->idEntity = $idEntity;
+        
+        return $this;
+    }
+
+    public function getProperty(): string
+    {
+        return $this->property;
+    }
+
+    public function setProperty(string $property): self
+    {
+        $this->property = $property;
+        
         return $this;
     }
 

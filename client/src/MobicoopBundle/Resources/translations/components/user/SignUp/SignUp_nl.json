@@ -1,0 +1,119 @@
+{
+    "rgpd": {
+        "socialServicesUnavailableWithoutConsent": "Om gebruikt te kunnen worden, moet de functie voor het aanmelden via sociale media aanvaard worden dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
+        "consent": "Om u te kunnen aanmelden, moet u zich akkoord verklaard hebben met 'Uw verbinding actief houden' dankzij de tool 'Cookiebeheer' die toegankelijk is via een link in de voettekst.",
+        "link": {
+            "route": "/cgu",
+            "label": "Voor meer informatie over het beheer van uw gegevens en uw rechten."
+        },
+        "infos": "De via dit formulier verzamelde gegevens zijn nodig om gebruik te kunnen maken van de diensten die door de Mobicoop-app worden aangeboden."
+    },
+    "button": {
+        "register": "Ik registreer me",
+        "next": "Volgende",
+        "previous": "Vorige"
+    },
+    "urlLogin": "/utilisateur/connexion/",
+    "login": "U hebt al een account? Meld u aan!",
+    "snackbar": {
+        "joinCommunity": {
+            "textError": "Er heeft zich een fout voorgedaan. Probeer opnieuw.",
+            "textOkAutoValidation": "Uw aanvraag tot lidmaatschap is gevalideerd.",
+            "textOkManualValidation": "Uw aanvraag tot lidmaatschap werd naar het aanspreekpunt verzonden. U zult per e-mail op de hoogte worden gehouden."
+        }
+    },
+    "steps": {
+        "5": "Gemeente waar u woont",
+        "4": "Geboortedatum",
+        "3": "Geslacht",
+        "2": "Identiteit",
+        "1": "Identificatoren"
+    },
+    "step": "Stap",
+    "communities": {
+        "route": "/utilisateur/inscription/liste-des-communautes",
+        "label": "Lid worden van een community"
+    },
+    "legalAge": {
+        "required": "Vereist",
+        "text": "Ik bevestig dat ik 18 jaar of ouder ben"
+    },
+    "newsSubscription": {
+        "text": "Ik ga akkoord met het ontvangen van nieuws over de dienst (nuttige informatie om te carpoolen, en nieuwe diensten of nieuwe functies)"
+    },
+    "chart": {
+        "required": "De validatie van het charter is vereist",
+        "route": "/cgu",
+        "link": "het charter van het platform en zijn privacybeleid",
+        "text": "Ik aanvaard "
+    },
+    "checkEmail": {
+        "error": "Dit e-mailadres is al in gebruik",
+        "url": "/utilisateur/verif/email"
+    },
+    "password": {
+        "errors": {
+            "number": "Het wachtwoord moet 1 cijfer bevatten.",
+            "lower": "Het wachtwoord moet 1 kleine letter bevatten.",
+            "upper": "Het wachtwoord moet 1 hoofdletter bevatten.",
+            "min": "Het wachtwoord moet minstens 8 tekens bevatten.",
+            "required": "Het wachtwoord is vereist"
+        },
+        "placeholder": "Wachtwoord"
+    },
+    "phone": {
+        "errors": {
+            "valid": "Het telefoonnummer moet geldig zijn",
+            "required": "Het telefoonnummer is vereist"
+        },
+        "placeholder": "Mobiele telefoon"
+    },
+    "email": {
+        "errors": {
+            "valid": "U moet een geldig e-mailadres opgeven",
+            "required": "Het e-mailadres is vereist"
+        },
+        "placeholder": "E-mail"
+    },
+    "homeTown": {
+        "placeholder": "Gemeente waar u woont"
+    },
+    "birthDay": {
+        "errors": {
+            "notadult": "U moet 16 jaar zijn om u te registreren op het platform",
+            "required": "De geboortedatum is vereist"
+        }
+    },
+    "birthDate": {
+        "placeholder": "Geboortedatum"
+    },
+    "familyName": {
+        "errors": {
+            "required": "De naam is vereist"
+        },
+        "placeholder": "Naam"
+    },
+    "givenName": {
+        "errors": {
+            "required": "De voornaam is vereist"
+        },
+        "placeholder": "Voornaam"
+    },
+    "gender": {
+        "errors": {
+            "required": "De aanspreektitel is vereist"
+        },
+        "values": {
+            "other": "Andere",
+            "female": "Mevrouw",
+            "male": "Mijnheer"
+        },
+        "placeholder": "Aanspreektitel",
+        "label": "Aanspreektitel"
+    },
+    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+    "urlSignUpResult": "/utilisateur/inscription/{id}",
+    "urlSignUp": "/utilisateur/inscription",
+    "title": "Registreren"
+}

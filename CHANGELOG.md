@@ -1,3 +1,8 @@
+# Release 1.30.0
+* Rework of journey's details : Map, new layout...
+* Number of members in communities list
+* New translation system for entities loaded from the database like articles
+
 # Release 1.29.0
 * POST an RDEX+ entity Journey
 * Rework of the API documentation

@@ -1,5 +1,4 @@
 <template>
-  <!-- Start of cartography experiment -->
   <v-row>
     <v-col class="col-12">
       <l-map
@@ -12,55 +11,32 @@
           :url="url"
           :attribution="attributionWithLinks"
         />
+        <!-- Markers in clusters -->
         <v-marker-cluster
+          v-if="clusters"
           :options="clusterOptions"
         >
-          <l-marker
+          <m-marker
             v-for="(point, index) in points"
             :key="index"
-            :lat-lng="point.latLng"
-            :draggable="markersDraggable"
-            @update:latLng="updateLatLng"
-            @click="clickOnPoint(point.address)"
-          >
-            <l-icon
-              v-if="point.icon.url!==undefined"
-              :icon-size="point.icon.size"
-              :icon-anchor="point.icon.anchor"
-              :icon-url="point.icon.url"
-            />
-            <l-tooltip
-              v-if="point.title!==''"
-            >
-              <p
-                class="font-weight-bold"
-                v-html="point.title"
-              />
-              <p
-                v-if="point.popup && point.misc"
-                id="description-tooltip"
-                v-html="point.popup.description"
-              />
-              <MMapRelayPointDescription
-                v-if="relayPoints && point.misc"
-                :data="point.misc"
-              />
-            </l-tooltip>
-
-            <l-popup v-if="point.popup">
-              <h3 v-html="point.popup.title" />
-              <img
-                v-if="point.popup.images && point.popup.images[0]"
-                :src="point.popup.images[0]['versions']['square_100']"
-                alt="avatar"
-              >
-              <p v-html="point.popup.description" />
-              <p v-if="point.popup.date_begin && point.popup.date_end">
-                {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
-              </p>
-            </l-popup>
-          </l-marker>
+            :point="point"
+            :markers-draggable="markersDraggable"
+            @updateLatLng="updateLatLng"
+            @clickOnPoint="clickOnPoint(point.address)"
+          />
         </v-marker-cluster>
+        <!-- Only markers, no cluster -->
+        <m-marker
+          v-for="(point, index) in points"
+          v-else
+          :key="index"
+          :point="point"
+          :color="point.color"
+          :markers-draggable="markersDraggable"
+          :circle-marker="(point.circleMarker) ? point.circleMarker : false"
+          @updateLatLng="updateLatLng"
+          @clickOnPoint="clickOnPoint(point.address)"
+        />        
         <v-dialog
           v-model="dialog"
           max-width="400"
@@ -93,6 +69,7 @@
           :key="'w'+i"
           :lat-lngs="way.latLngs"
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
+          :dash-array="(way.dashArray) ? way.dashArray : ''"
           @click="clickOnPolyline"
         >        
           <l-tooltip v-if="way.title !==undefined && way.title!==''">
@@ -107,26 +84,26 @@
       </l-map>
     </v-col>
   </v-row>
-  <!-- end of cartography experiment -->
 </template>
 
 <script>
 import L from "leaflet";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
-import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/MMap/MMap";
+import MMarker from "@components/utilities/MMap/MMarker"
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/MMap/MMap";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
   },
   components: {
     VMarkerCluster,
-    MMapRelayPointDescription
+    MMarker
   },
   props: {
     provider: {
@@ -173,6 +150,14 @@ export default {
     relayPoints: {
       type: Boolean,
       default: false
+    },
+    clusters: {
+      type: Boolean,
+      default: true
+    },
+    dashArray:{
+      type: String,
+      default: null
     }
   },
   data() {

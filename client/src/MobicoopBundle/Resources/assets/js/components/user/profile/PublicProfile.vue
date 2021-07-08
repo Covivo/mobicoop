@@ -135,16 +135,17 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import Report from "@components/utilities/Report";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/PublicProfile/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/PublicProfile/";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -176,7 +177,7 @@ export default {
     return{
       publicProfile:null,
       loading:true,
-      locale: this.$i18n.locale
+      locale: localStorage.getItem("X-LOCALE")
     }
   },
   computed:{
@@ -249,7 +250,7 @@ export default {
   },
   methods:{
     getPublicProfile(){
-      axios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
+      maxios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
         .then(response => {
           //console.log(response.data);
           this.publicProfile = response.data;

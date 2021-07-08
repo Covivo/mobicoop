@@ -18,9 +18,6 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-card v-if="fraudWarningDisplay">
-      <v-card-text>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</v-card-text>
-    </v-card>
     <v-stepper
       v-model="step"
       alt-labels
@@ -29,165 +26,215 @@
       <v-stepper-items>
         <!-- Step 1 : journey detail -->
         <v-stepper-content step="1">
-          <v-card-text>
-            <!-- Date / seats / price -->
-            <v-row
-              align="center"
-              dense
-            >
-              <!-- Date -->
-              <v-col
-                v-if="!regular"
-                cols="5"
-                class="text-h6 text-center"
-              >
-                {{ computedDate }}
-              </v-col>
+          <!-- Journey details and carpooler -->
+          <v-row dense>
+            <v-col cols="8">
+              <!-- Journey Details -->
+              <v-row dense>
+                <v-col cols="12">
+                  <v-card
+                    v-if="fraudWarningDisplay"
+                    flat
+                  >
+                    <v-card-text>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
 
-              <v-col
-                v-else
-                cols="5"
-                class="text-h6 text-center"
-              >
-                <regular-days-summary 
-                  :mon-active="lResult.monCheck"
-                  :tue-active="lResult.tueCheck"
-                  :wed-active="lResult.wedCheck"
-                  :thu-active="lResult.thuCheck"
-                  :fri-active="lResult.friCheck"
-                  :sat-active="lResult.satCheck"
-                  :sun-active="lResult.sunCheck"
-                />
-              </v-col>
-
-              <!-- Seats -->
-              <v-col
-                cols="3"
-                class="text-h6 text-center"
-              >
-                {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
-              </v-col>
-
-              <!-- Price -->
-              <v-col
-                cols="4"
-                class="text-h6 text-center"
-              >
-                {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
-                <v-tooltip
-                  slot="append"
-                  right
-                  color="info"
-                  :max-width="'35%'"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-icon
-                      justify="left"
-                      v-on="on"
-                    >
-                      mdi-help-circle-outline
-                    </v-icon>
-                  </template>
-                  <span>{{ $t('priceTooltip') }}</span>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-
-            <!-- Route / carpooler -->
-            <v-row
-              align="center"
-              dense
-            > 
-              <!-- Route -->
-              <v-col
-                cols="8"
-              >
-                <v-row>
-                  <v-col>
-                    <v-journey
-                      :time="lResult.time || lResult.outwardTime ? true : false"
-                      :waypoints="waypoints"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row 
-                  v-if="lResult.comment"
-                >
-                  <v-col>
-                    <v-card
-                      outlined
-                      class="mx-auto"
-                    > 
-                      <v-card-text class="pre-formatted">
-                        {{ lResult.comment }}
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-col>
-
-              <!-- Carpooler -->
-              <v-col
-                cols="4"
-              >
-                <v-card>
-                  <ProfileSummary
-                    :user-id="result.carpooler.id"
-                    :refresh="profileSummaryRefresh"
-                    :age-display="ageDisplay"
-                    @showProfile="step=4"
-                    @profileSummaryRefresh="refreshProfileSummary"
-                  />
+              <v-row dense>
+                <v-col cols="12">
                   <v-card-text>
+                    <!-- Date / seats / price -->
                     <v-row
+                      align="center"
                       dense
                     >
-                      <v-col  
-                        cols="12"
-                        class="text-center"
+                      <!-- Date -->
+                      <v-col
+                        v-if="!regular"
+                        cols="7"
+                        class="text-h6 text-center"
                       >
-                        <v-btn
-                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-                          color="primary"
-                          :disabled="contactDisabled"
-                          :loading="contactLoading"
-                          @click="contact"
+                        {{ computedDate }}
+                      </v-col>
+
+                      <v-col
+                        v-else
+                        cols="7"
+                        class="text-h6 text-center"
+                      >
+                        <regular-days-summary 
+                          :mon-active="lResult.monCheck"
+                          :tue-active="lResult.tueCheck"
+                          :wed-active="lResult.wedCheck"
+                          :thu-active="lResult.thuCheck"
+                          :fri-active="lResult.friCheck"
+                          :sat-active="lResult.satCheck"
+                          :sun-active="lResult.sunCheck"
+                        />
+                      </v-col>
+
+                      <!-- Seats -->
+                      <v-col
+                        cols="2"
+                        class="text-h6 text-center"
+                      >
+                        {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
+                      </v-col>
+
+                      <!-- Price -->
+                      <v-col
+                        cols="3"
+                        class="text-h6 text-center"
+                      >
+                        {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
+                        <v-tooltip
+                          slot="append"
+                          right
+                          color="info"
+                          :max-width="'35%'"
                         >
-                          <v-icon>
-                            mdi-email
-                          </v-icon>
-                          {{ $t('contact') }}
-                        </v-btn>
-                        <v-card
-                          v-else
-                          flat
+                          <template v-slot:activator="{ on }">
+                            <v-icon
+                              justify="left"
+                              v-on="on"
+                            >
+                              mdi-help-circle-outline
+                            </v-icon>
+                          </template>
+                          <span>{{ $t('priceTooltip') }}</span>
+                        </v-tooltip>
+                      </v-col>
+                    </v-row>
+
+                    <!-- Route / carpooler -->
+                    <v-row
+                      align="top"
+                      dense
+                    > 
+                      <!-- Route -->
+                      <v-col
+                        cols="12"
+                      >
+                        <v-row
+                          v-if="lResult.noticeableDetour"
+                          class="subtitle-2"
+                          dense
                         >
-                          <v-card-text
-                            v-if="lResult.acceptedAsk"
-                            class="success--text"
-                          >
-                            {{ $t('contactTips.acceptedAsk') }}
-                          </v-card-text>
-                          <v-card-text
-                            v-else-if="lResult.pendingAsk"
-                            class="warning--text"
-                          >
-                            {{ $t('contactTips.pendingAsk') }}
-                          </v-card-text>
-                          <v-card-text
-                            v-else-if="lResult.initiatedAsk"
-                            class="warning--text"
-                          >
-                            {{ $t('contactTips.initiatedAsk') }}
-                          </v-card-text>
-                        </v-card>
+                          <v-col v-if="lResult.role == 1">
+                            <v-icon>mdi-clock</v-icon> {{ $t('detour.onlyDriver') }}
+                          </v-col>
+                          <v-col v-else>
+                            <v-icon>mdi-clock</v-icon> {{ $t('detour.default') }}
+                          </v-col>
+                        </v-row>
+
+                        <v-row dense>
+                          <v-col>
+                            <v-journey
+                              :time="lResult.time || lResult.outwardTime ? true : false"
+                              :waypoints="waypoints"
+                              :noticeable-detour="lResult.noticeableDetour"
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-row 
+                          v-if="lResult.comment"
+                        >
+                          <v-col>
+                            <v-card
+                              outlined
+                              class="mx-auto"
+                            > 
+                              <v-card-text class="pre-formatted">
+                                {{ lResult.comment }}
+                              </v-card-text>
+                            </v-card>
+                          </v-col>
+                        </v-row>
                       </v-col>
                     </v-row>
                   </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="4">
+              <!-- Carpooler -->
+              <v-card
+                outlined
+              >
+                <ProfileSummary
+                  :user-id="result.carpooler.id"
+                  :refresh="profileSummaryRefresh"
+                  :age-display="ageDisplay"
+                  @showProfile="step=4"
+                  @profileSummaryRefresh="refreshProfileSummary"
+                />
+                <v-card-text>
+                  <v-row
+                    dense
+                  >
+                    <v-col  
+                      cols="12"
+                      class="text-center"
+                    >
+                      <v-btn
+                        v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                        color="primary"
+                        :disabled="contactDisabled"
+                        :loading="contactLoading"
+                        @click="contact"
+                      >
+                        <v-icon>
+                          mdi-email
+                        </v-icon>
+                        {{ $t('contact') }}
+                      </v-btn>
+                      <v-card
+                        v-else
+                        flat
+                      >
+                        <v-card-text
+                          v-if="lResult.acceptedAsk"
+                          class="success--text"
+                        >
+                          {{ $t('contactTips.acceptedAsk') }}
+                        </v-card-text>
+                        <v-card-text
+                          v-else-if="lResult.pendingAsk"
+                          class="warning--text"
+                        >
+                          {{ $t('contactTips.pendingAsk') }}
+                        </v-card-text>
+                        <v-card-text
+                          v-else-if="lResult.initiatedAsk"
+                          class="warning--text"
+                        >
+                          {{ $t('contactTips.initiatedAsk') }}
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+          <!-- end Journey details and carpooler -->
+          <!-- Map -->
+          <v-row dense>
+            <v-col cols="12">
+              <m-map
+                ref="mmap"
+                type-map="community"
+                :points="pointsToMap"
+                :ways="directionWay"
+                :markers-draggable="false"
+                :clusters="false"
+                class="pa-4 mt-5"
+                :relay-points="true"
+              />
+            </v-col>
+          </v-row>
         </v-stepper-content>
 
         <!-- Step 2 : outward and date range -->
@@ -492,12 +539,15 @@
 
 <script>
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/MatchingJourney/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import MMap from "@components/utilities/MMap/MMap";
+import L from "leaflet";
 
 export default {
   components: {
@@ -505,11 +555,13 @@ export default {
     RegularDaysSummary,
     RegularAsk,
     ProfileSummary,
-    PublicProfile
+    PublicProfile,
+    MMap
   },
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -614,11 +666,15 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    refreshMap: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       lResult: this.result,
       contactLoading: false,
       carpoolLoading: false,
@@ -647,7 +703,16 @@ export default {
       returnSunTime: this.defaultReturnSunTime,
       outwardTrip: this.defaultOutwardTrip,
       returnTrip: this.defaultReturnTrip,
-      refreshPublicProfile: false
+      refreshPublicProfile: false,
+      pointsToMap: [],
+      relayPointsMap: [],
+      directionWay: [],
+      primaryColor: this.$vuetify.theme.themes.light.primary,
+      secondaryColor: this.$vuetify.theme.themes.light.secondary,
+      geoRouteUrl:"/georoute",
+      route:[],
+      routeRequester:[],
+      routeCarpooler:[]
     }
   },
   computed: {
@@ -741,11 +806,29 @@ export default {
       if(this.step==4){
         this.refreshPublicProfile = true;
       }
+    },
+    route(){
+      if(this.route.directPoints) this.buildJourney(this.route);
+    },
+    routeCarpooler(){
+      if(this.routeCarpooler.directPoints) this.buildJourney(this.routeCarpooler, false);
+    },
+    routeRequester(){
+      if(this.routeRequester.directPoints) this.buildJourney(this.routeRequester, true);
+    },
+    refreshMap(){
+      if(this.refreshMap){
+        this.cleanMap();
+        this.getRoute();
+        this.buildMarkers();
+      }
     }
   },
   mounted() {
     this.computeMaxDate();
     this.computeTimes();
+    this.getRoute();
+    this.buildMarkers();
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -923,8 +1006,162 @@ export default {
     },
     refreshProfileSummary(data){
       this.$emit("profileSummaryRefresh",data);
+    },
+    getIcon(type,role) {
+      if (role == 'driver') {
+        if (type == 'origin') return "/images/cartography/pictos/home.svg";
+        if (type == 'destination') return "/images/cartography/pictos/flag.svg";
+        if (type == 'step') return "";
+      } else {
+        if (type == 'origin') return "pickup";
+        if (type == 'destination') return "dropoff";
+        if (type == 'step') return "";
+      }
+    },    
+    buildMarkers(){
+      this.waypoints.forEach((waypoint, index) => {
+
+        // Determine the icon
+        let icon = this.getIcon(waypoint.type,waypoint.role);
+        
+        this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,"",icon,[36, 42],[10, 25]));
+      });
+      this.$refs.mmap.redrawMap();
+    },
+    getColorCircleMarker(){
+      return this.primaryColor;
+    },
+    getColorJourney(requester = null){
+      if(requester == null){
+        if(this.lResult.role == 1 || this.lResult.role == 2){
+          return this.secondaryColor;
+        }
+      }
+      else if(requester){
+        return this.primaryColor;
+      }
+      else{
+        return this.secondaryColor;
+      }
+      return this.primaryColor;
+    },
+    buildJourney(route, requester = null){
+      let currentProposal = {
+        latLngs:route.directPoints,
+        color:this.getColorJourney(requester),
+        dashArray:(requester !== null && requester) ? '12' : null
+      };
+
+      this.directionWay.push(currentProposal);
+      this.$refs.mmap.redrawMap();
+      this.$emit('mapRefreshed');
+    },
+    buildPoint: function(
+      lat,
+      lng,
+      title = "",
+      pictoUrl = "",
+      size = [],
+      anchor = [],
+      popupDesc = ""
+    ) {
+      let point = {
+        title: title,
+        latLng: L.latLng(lat, lng),
+        icon: {},
+      };
+
+      if(pictoUrl == "pickup" || pictoUrl == "dropoff"){
+        point.circleMarker = true;
+        point.color = this.getColorCircleMarker();
+      }
+
+      if (pictoUrl !== "" && !point.circleMarker) {
+        point.icon = {
+          url: pictoUrl,
+          size: size,
+          anchor: anchor,
+        };
+      }
+
+      if (popupDesc !== "") {
+        point.popup = {
+          title: title,
+          description: popupDesc,
+        };
+      }
+
+      return point;
+    },
+    getRoute() {
+
+      if(this.lResult.role == 3){
+        console.log('peu importe');
+
+        let paramsRequester = "?";
+        let paramsCarpooler = "?";
+        let nbWaypointsRequester = 0;
+        let nbWaypointsCarpooler = 0;
+        this.waypoints.forEach((item,key) => {
+          if (item.address) {
+            if(item.person=="carpooler"){
+              nbWaypointsCarpooler++;
+              paramsCarpooler += `&points[${nbWaypointsCarpooler}][longitude]=${item.address.longitude}&points[${nbWaypointsCarpooler}][latitude]=${item.address.latitude}`;
+            }
+            else{
+              nbWaypointsRequester++;
+              paramsRequester += `&points[${nbWaypointsRequester}][longitude]=${item.address.longitude}&points[${nbWaypointsRequester}][latitude]=${item.address.latitude}`;
+            }
+          }
+        });
+
+        this.callSig(paramsCarpooler,false);
+        this.callSig(paramsRequester,true);
+
+      }
+      else{
+        let params = "?";
+        let nbWaypoints = 0;
+        this.waypoints.forEach((item,key) => {
+          if (item.address) {
+            nbWaypoints++;
+            params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+          }
+        });
+        this.callSig(params);
+        nbWaypoints++;
+      }
+
+    },
+    callSig(params, requester = null){
+      maxios
+        .get(`${this.geoRouteUrl}${params}`)
+        .then(res => {
+          if(requester == null){
+            this.route = res.data.member[0];
+          }
+          else if(requester){
+            this.routeRequester = res.data.member[0];
+          }
+          else{
+            this.routeCarpooler = res.data.member[0];
+          }
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    cleanMap(){
+      this.route = [];
+      this.routeCarpooler = [];
+      this.routeRequester = [];
+      this.pointsToMap = [];
+      this.relayPointsMap = [];
+      this.directionWay = [];
+      this.$refs.mmap.redrawMap();      
     }
-  }
+
+  },
 };
 </script>
 <style lang="scss" scoped>

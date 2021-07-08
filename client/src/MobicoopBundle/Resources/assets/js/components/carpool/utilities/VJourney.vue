@@ -46,7 +46,9 @@
           <v-icon v-if="waypoint.avatar">
             {{ getIcon(waypoint.type,waypoint.role) }} 
           </v-icon>
-          <span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          <v-icon v-if="noticeableDetour && waypoint.role=='passenger'">
+            mdi-clock
+          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>
     </v-timeline-item>
@@ -55,12 +57,13 @@
 
 <script>
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/utilities/VJourney/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/VJourney/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -80,10 +83,14 @@ export default {
       type: String,
       default: null
     },
+    noticeableDetour:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       message:null
     };
   },

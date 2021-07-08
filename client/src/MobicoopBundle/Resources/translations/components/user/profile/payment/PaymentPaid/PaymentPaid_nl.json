@@ -1,0 +1,16 @@
+{
+    "tipsEncouragement": {
+        "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre",
+        "textLink": "hier een schenking te doen",
+        "text": "{platformName} is een gratis dienst, zonder commissie en zonder reclame. Maar om bij te dragen aan het in stand houden van het platform, kunt u ons een handje helpen door"
+    },
+    "paymentFailed": "Er heeft zich een fout voorgedaan. Uw betaling werd niet geregistreerd.",
+    "paymentSucceeded": "Uw betaling werd geregistreerd.",
+    "noPaymentPaymentId": "De status van deze betaling kan niet worden teruggevonden.",
+    "checkUrl": "/payment/status",
+    "wait": {
+        "line2": "Even geduld tijdens de validatie van de transactie.",
+        "line1": "Bedankt voor uw online betaling"
+    },
+    "title": "Online betaling"
+}

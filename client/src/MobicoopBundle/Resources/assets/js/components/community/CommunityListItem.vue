@@ -35,7 +35,15 @@
         <v-card-title>
           <div>
             <h4>
-              <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
+              <a :href="linkToCommunityShow(item)">{{ item.name }}</a><br>
+              <v-chip
+                v-if="item.nbMembers"
+                color="secondary"
+                small
+                label
+              >
+                {{ $t('members', {members:item.nbMembers}) }}
+              </v-chip>              
             </h4>
           </div>
         </v-card-title>
@@ -117,13 +125,14 @@
 </template>
 <script>
 
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/community/CommunityListItem/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityListItem/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -156,7 +165,7 @@ export default {
     },
     postLeavingRequest() {
       this.loading = true;
-      axios
+      maxios
         .post(this.$t('leaveCommunity.route',{id:this.item.id}),
           {
             headers: {

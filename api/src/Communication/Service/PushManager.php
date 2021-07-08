@@ -42,7 +42,7 @@ class PushManager
     private $pushProvider;
     private $translator;
     const LANG = 'fr_FR';
-
+  
     /**
      * PushManager constructor.
      *

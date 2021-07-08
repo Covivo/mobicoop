@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import UpdateProfile from "@components/user/profile/UpdateProfile";
 import Ads from "@components/user/profile/ad/Ads";
 import Carpools from "@components/user/profile/carpool/Carpools";
@@ -189,12 +189,13 @@ import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/Profile/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Profile/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -277,7 +278,7 @@ export default {
     }
   },
   mounted(){
-    axios.get(this.$t("getMyCarpools"))
+    maxios.get(this.$t("getMyCarpools"))
       .then(res => {
         this.publishedAds = res.data.published;
         this.acceptedAds = res.data.accepted;
