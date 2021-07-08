@@ -19,6 +19,14 @@ api_platform:
     - /auth
     
     
+    The API response contains a **token**. Every request will need this token in its header as an **Authorization** field with a **Bearer** prefix such as :
+    
+
+    ```
+    'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImN0eSI...'
+    ```
+
+    
     The body of this request must be a JSON object based on this definition :
 
 
@@ -126,6 +134,7 @@ api_platform:
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'
         - '%kernel.project_dir%/src/User/Ressource'
+        - '%kernel.project_dir%/src/User/Admin/Resource'
         - '%kernel.project_dir%/src/User/Interoperability/Ressource'
         - '%kernel.project_dir%/src/Utility/Entity'
         - '%kernel.project_dir%/src/DataProvider/Ressource'

@@ -1,0 +1,15 @@
+{
+    "hourMinute": "UU[u]mm",
+    "shortCompleteDate": "DD/MM/YYYY",
+    "date": {
+        "the": "Op",
+        "at": "om",
+        "to": "Tot",
+        "from": "Van"
+    },
+    "join": "Deelnemen aan het evenement",
+    "eventDetails": "Details van het evenement",
+    "routes": {
+        "event": "/covoiturages-evenements/{id}/{urlKey}"
+    }
+}

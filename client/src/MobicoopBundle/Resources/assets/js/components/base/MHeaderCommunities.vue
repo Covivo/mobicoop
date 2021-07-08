@@ -39,11 +39,12 @@
 </template>
 <script>
 import { merge } from "lodash";
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/base/MHeaderCommunities/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/base/MHeaderCommunities/"
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/base/MHeaderCommunities/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/base/MHeaderCommunities/"
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
@@ -51,6 +52,7 @@ export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     }
@@ -78,7 +80,7 @@ export default {
     let params = {
       'userId':this.userId,
     }
-    axios.post(this.$t("getCommunities"), params)
+    maxios.post(this.$t("getCommunities"), params)
       .then(res => {
         this.items = res.data;
       })

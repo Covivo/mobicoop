@@ -1,0 +1,18 @@
+{
+    "title": "Connexion en tant que {user} ",
+    "Bad credentials.": "Nom d'utilisateur ou mot de passe incorrect.",
+    "Unable to get an API token.": "Erreur lors de la connexion.",
+    "connection": "Je confirme me connecter en tant que {user}",
+    "password": "Mon mot de passe",
+    "userEmail": "Email de l'utilisateur",
+    "userEmailRequired": "L'adresse email de l'utilisateur est requise",
+    "userEmailInvalid": "L'adresse email de l'utilisateur doit être valide",
+    "adminEmail": "Mon email",
+    "adminEmailRequired": "Mon adresse email est requise",
+    "adminEmailInvalid": "Mon adresse email doit être valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "checkbox": {
+        "text": "<p>En cochant la case, vous garantissez avoir vérifié l'identité et collecté le consentement de <span class='secondary--text'> {user} </span> pour effectuer les opérations prévues par procuration, notamment via la signature d'un mandat entre vous (ou votre organisation) et <span class='secondary--text'> {user} </span>.</p>",
+        "required": "Vous devez cocher cette case pour vous connecter en tant que {user}"
+    }
+}

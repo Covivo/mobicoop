@@ -54,6 +54,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
     
+    # Article Load Listener
+    mobicoop.article.article_load_listener:
+        class: App\Article\EventListener\ArticleLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    mobicoop.article.section_load_listener:
+        class: App\Article\EventListener\SectionLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+    mobicoop.article.paragraph_load_listener:
+        class: App\Article\EventListener\ParagraphLoadListener
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # Direction Load Listener
     mobicoop.direction.direction_load_listener:
         class: App\Geography\EventListener\DirectionLoadListener
@@ -256,6 +270,8 @@ services:
     App\Carpool\Service\ResultManager:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
+            $carpoolNoticeableDetourDurationPercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%'
+            $carpoolNoticeableDetourDistancePercent: '%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%'
 
     # Communication
     App\Communication\Controller\: 
@@ -523,6 +539,11 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    # Translation
+    App\I18n\Service\LanguageManager:
+        arguments:
+            $defaultLanguage: '%env(int:DEFAULT_LANGUAGE)%'
+
     # Mass Communication
     App\MassCommunication\Controller\:
         resource: '../src/MassCommunication/Controller'
@@ -697,6 +718,12 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
+
+    App\User\Admin\Service\KibanaLoginManager:
+        arguments:
+            $loginsAdmin: '%env(json:KIBANA_LOGINS_ADMIN)%'
+            $loginsCommunityManager: '%env(json:KIBANA_LOGINS_COMMUNITY_MANAGER)%'
+            $loginsSolidaryOperator: '%env(json:KIBANA_LOGINS_SOLIDARY_OPERATOR)%'
             
     App\User\Controller\:
         resource: '../src/User/Controller'

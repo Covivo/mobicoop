@@ -249,10 +249,10 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/event/EventList/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventList/";
 import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
@@ -264,6 +264,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -304,7 +305,7 @@ export default {
   },
   data () {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       search: '',
       searchPassed : '',
       itemsPerPageOptions: [1,10, 20, 50, 100],
@@ -429,7 +430,7 @@ export default {
           'name':this.searchPassed
         }
       }
-      axios
+      maxios
         .post(this.$t('routes.getList'),params)
         .then(response => {
           //console.error(response.data);

@@ -194,15 +194,16 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import formData from "../../../../utils/request";
 import AdPayment from '@components/user/profile/ad/AdPayment.vue';
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/ad/AdHeader/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/AdHeader/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -295,7 +296,7 @@ export default {
       this.resetAlert();
       const self = this;
       this.loading = true;
-      axios.delete(this.$t('delete.route'), {
+      maxios.delete(this.$t('delete.route'), {
         data: {
           adId: this.adId,
           deletionMessage: this.deleteMessage
@@ -328,7 +329,7 @@ export default {
         id: this.adId,
         paused: this.paused
       };
-      axios
+      maxios
         .put(this.$t('update.route', {id : this.adId}), ad,
           {
             headers:{

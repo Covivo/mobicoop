@@ -50,14 +50,15 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/Reviews/WriteReview";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/Reviews/WriteReview";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Report from "@components/utilities/Report";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -132,7 +133,7 @@ export default {
         "reviewedId": this.reviewed.id,
         "content":this.content
       };
-      axios.post(this.$t("leaveReviewUri"), reviewData)
+      maxios.post(this.$t("leaveReviewUri"), reviewData)
         .then(response => {
           // console.error(response.data);
           this.loading = false;

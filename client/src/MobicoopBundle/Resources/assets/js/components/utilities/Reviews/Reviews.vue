@@ -30,12 +30,13 @@
   </v-container>
 </template>
 <script>
-import {messages_en, messages_fr, messages_eu} from "@translations/components/utilities/Reviews/Reviews/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/Reviews/Reviews/";
 import Review from "@components/utilities/Reviews/Review";
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }

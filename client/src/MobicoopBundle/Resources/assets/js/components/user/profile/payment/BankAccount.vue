@@ -277,9 +277,9 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import moment from "moment";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/payment/BankAccount/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/BankAccount/";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
@@ -288,6 +288,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -364,7 +365,7 @@ export default {
   methods:{
     getBankCoordinates(){
       this.loading = true;
-      axios.post(this.$t("uri.getCoordinates"))
+      maxios.post(this.$t("uri.getCoordinates"))
         .then(response => {
           // console.error(response.data);
           if(response.data){
@@ -384,7 +385,7 @@ export default {
       let params = {
         "bankAccountId":this.bankCoordinates.id
       }
-      axios.post(this.$t("uri.deleteCoordinates"),params)
+      maxios.post(this.$t("uri.deleteCoordinates"),params)
         .then(response => {
           if(response.data.error){
             this.error = true;
@@ -413,7 +414,7 @@ export default {
         "bic":this.form.bic,
         "address":this.form.formAddress
       }
-      axios.post(this.$t("uri.addCoordinates"),params)
+      maxios.post(this.$t("uri.addCoordinates"),params)
         .then(response => {
           if(response.data.error){
             this.error = true;

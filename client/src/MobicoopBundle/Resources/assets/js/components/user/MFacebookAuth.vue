@@ -20,14 +20,15 @@
 </template>
 <script>
 
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/MFacebookAuth/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/MFacebookAuth/";
 import facebookLogin from 'facebook-login-vuejs';
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -80,7 +81,7 @@ export default {
             this.email = userInformation.email;
             this.name = userInformation.name;
 
-            axios.post(this.$t('urlFacebookConnect'),
+            maxios.post(this.$t('urlFacebookConnect'),
               {
                 email:this.email,
                 personalID:this.personalID,

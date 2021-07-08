@@ -196,10 +196,11 @@ class MassMigrateManager
                     $user->setSmoke($this->params['smoke']);
                     $user->setMusic($this->params['music']);
                     $user->setChat($this->params['chat']);
+
                     // To do : Dynamic Language
                     $language = $this->languageRepository->findOneBy(['code'=>'fr']);
                     $user->setLanguage($language);
-    
+
                     // Set an encrypted password
                     $password = $this->randomPassword();
                     $user->setPassword($this->encoder->encodePassword($user, $password));

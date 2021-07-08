@@ -104,11 +104,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import JourneyResultPunctual from './JourneyResultPunctual';
 import JourneyResultRegular from './JourneyResultRegular';
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
-import {messages_en, messages_fr, messages_eu} from "@translations/components/journey/JourneyResult/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/journey/JourneyResult/";
 
 export default {
   components: {
@@ -119,6 +119,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -181,7 +182,7 @@ export default {
       if(undefined !== data.proposalId && this.logged){
         // Create a "search" with the original proposal parameters
         this.loading = true;
-        axios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
+        maxios.post(this.$t("createSearchFromProposalUrl", {proposalId:data.proposalId}))
           .then(response => {
             // console.log(response.data);
             if(undefined !== response.data.proposalId){

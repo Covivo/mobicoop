@@ -490,23 +490,25 @@
 </template>
 
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
 import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/SignUp/";
-import {messages_client_en, messages_client_fr, messages_client_eu} from "@clientTranslations/components/user/SignUp/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/SignUp/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/SignUp/";
 import MFacebookAuth from "@components/user/MFacebookAuth";
 import SsoLogins from '@components/user/SsoLogins';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
 let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 export default {
   i18n: {
     messages: {
       'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
       'fr': MessagesMergedFr,
       'eu': MessagesMergedEu
     },
@@ -704,7 +706,7 @@ export default {
       },
       communities: [],
       selectedCommunity: null,
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       consent:false,
       consentSocial: false
     };
@@ -777,7 +779,7 @@ export default {
     },
     validate: function(e) {
       this.loading = true;
-      axios
+      maxios
         .post(
           this.action,
           {
@@ -855,7 +857,7 @@ export default {
     },
     checkEmail() {
       this.loadingCheckEmailAldreadyTaken = true;
-      axios
+      maxios
         .post(
           this.$t("checkEmail.url"),
           {
@@ -913,7 +915,7 @@ export default {
 
     // should be get all communities
     getCommunities() {
-      axios.post(this.$t("communities.route")).then((res) => {
+      maxios.post(this.$t("communities.route")).then((res) => {
         this.communities = res.data;
       });
     },

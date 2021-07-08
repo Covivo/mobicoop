@@ -212,7 +212,7 @@
     <!-- carpool dialog -->
     <v-dialog
       v-model="carpoolDialog"
-      max-width="800"
+      max-width="900"
     >
       <matching-journey
         :result="result"
@@ -221,11 +221,13 @@
         :profile-summary-refresh="profileSummaryRefresh"
         :fraud-warning-display="fraudWarningDisplay"
         :age-display="ageDisplay"
+        :refresh-map="refreshMapMatchingJourney"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
         @resetStepMatchingJourney="resetStepMatchingJourney = false"
         @profileSummaryRefresh="refreshProfileSummary"
+        @mapRefreshed="mapRefreshed"
       />
     </v-dialog>
     
@@ -239,8 +241,8 @@
 </template>
 <script>
 
-import axios from "axios";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/results/Matching/";
+import maxios from "@utils/maxios";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/Matching/";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
 import MatchingResults from "@components/carpool/results/MatchingResults";
@@ -262,6 +264,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -354,7 +357,7 @@ export default {
   },
   data : function() {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       carpoolDialog: false,
       loginOrRegisterDialog: false,
       results: null,
@@ -386,7 +389,8 @@ export default {
       lCommunityIdBak: this.communityId,
       resetStepMatchingJourney: false,
       profileSummaryRefresh: false,
-      page:1
+      page:1,
+      refreshMapMatchingJourney: false
     };
   },
   computed: {
@@ -450,6 +454,7 @@ export default {
     carpool(carpool) {
       this.result = carpool;
       // open the dialog
+      this.refreshMapMatchingJourney = true;
       this.carpoolDialog = true;
       this.resetStepMatchingJourney = true;
       this.profileSummaryRefresh = true;
@@ -491,7 +496,7 @@ export default {
         let postParams = {
           "filters": this.filters,
         };
-        axios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
+        maxios.post(this.$t("proposalUrl",{id: Number(this.lProposalId)}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -526,7 +531,7 @@ export default {
         let postParams = {
           "filters": this.filters
         };
-        axios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
+        maxios.post(this.$t("externalUrl",{id: this.lExternalId}),postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -576,7 +581,7 @@ export default {
           "filters": this.filters,
           "role": this.role
         };
-        axios.post(this.$t("matchingUrl"), postParams,
+        maxios.post(this.$t("matchingUrl"), postParams,
           {
             headers:{
               'content-type': 'application/json'
@@ -610,7 +615,7 @@ export default {
         "to_latitude": this.destination.latitude,
         "to_longitude": this.destination.longitude
       };
-      axios.post(this.$t("externalJourneyUrl"), postParams,
+      maxios.post(this.$t("externalJourneyUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -635,7 +640,7 @@ export default {
         "to_longitude": this.destination.longitude,
         "date": this.date
       };
-      axios.post(this.$t("ptSearchUrl"), postParams,
+      maxios.post(this.$t("ptSearchUrl"), postParams,
         {
           headers:{
             'content-type': 'application/json'
@@ -698,7 +703,7 @@ export default {
       form.submit();      
     },
     launchCarpool(params) {
-      axios.post(this.$t("carpoolUrl"), params,
+      maxios.post(this.$t("carpoolUrl"), params,
         {
           headers:{
             'content-type': 'application/json'
@@ -737,6 +742,9 @@ export default {
     },
     refreshProfileSummary(){
       this.profileSummaryRefresh = false;
+    },
+    mapRefreshed(){
+      this.refreshMapMatchingJourney = false;
     }
   }
 };

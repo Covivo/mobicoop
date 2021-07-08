@@ -51,7 +51,7 @@
 </template>
 <script>
 
-import {messages_en, messages_fr, messages_eu} from "@translations/components/community/Community/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/Community/";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
 import moment from "moment";
@@ -64,6 +64,7 @@ export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -104,7 +105,7 @@ export default {
   },
   data () {
     return {
-      locale: this.$i18n.locale,
+      locale: localStorage.getItem("X-LOCALE"),
       params: { 'communityId' : this.community.id },
       defaultDestination: this.community.address,
     }

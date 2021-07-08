@@ -214,12 +214,13 @@
 <script>
 import moment from "moment";
 import GeoComplete from "@components/utilities/GeoComplete";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/carpool/search/SearchJourney/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     },
@@ -287,6 +288,7 @@ export default {
   },
   data() {
     return {
+      locale: localStorage.getItem("X-LOCALE"),
       date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
@@ -299,7 +301,6 @@ export default {
       requiredErrorOrigin: this.$t("origin.error"),
       requiredErrorDestination: this.$t("destination.error"),
       requiredErrorOutwardDate: this.$t("outwardDate.error"),
-      locale: this.$i18n.locale,
       origin: this.initOrigin,
       destination: this.initDestination,
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,

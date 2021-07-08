@@ -38,14 +38,15 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
+import maxios from "@utils/maxios";
 import Alert from "@components/user/profile/Alert";
-import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/Alerts/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Alerts/";
 
 export default {
   i18n: {
     messages: {
       'en': messages_en,
+      'nl': messages_nl,
       'fr': messages_fr,
       'eu':messages_eu
     }
@@ -72,7 +73,7 @@ export default {
         active:data.active
       }
       // Todo create axios method to get alerts to be able to refresh this component
-      axios.post(this.$t("urlUpdate"), params)
+      maxios.post(this.$t("urlUpdate"), params)
         .then(res => {
           if(res.data.error !== undefined){
             this.snackbarText = this.$t(res.data.error);

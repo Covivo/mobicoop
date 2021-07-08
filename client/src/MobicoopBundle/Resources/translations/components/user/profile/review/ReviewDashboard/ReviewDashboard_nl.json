@@ -1,0 +1,11 @@
+{
+    "tabs":{
+        "givenReviews":"Avis donné(s)",
+        "receivedReviews":"Avis reçu(s)",
+        "reviewsToGive":"Avis à donner"
+    },
+    "getDashboardUri":"/user/review/dashboard",
+    "noReviewToGive":"Aucun avis à donner",
+    "noReceivedReviews":"Aucun avis reçu",
+    "noGivenReviews":"Aucun avis donné"
+}

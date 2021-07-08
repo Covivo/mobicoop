@@ -1,0 +1,46 @@
+{
+    "route": {
+        "user": {
+            "message": "/utilisateur/messages"
+        }
+    },
+    "inDev": "In ontwikkeling.",
+    "needTobeConnected": "U moet aangemeld zijn om deze actie uit te voeren.",
+    "externalResult": {
+        "contact": {
+            "return": {
+                "error": "Het bericht kon niet worden verzonden door een technisch probleem",
+                "ok": "Het bericht werd verzonden."
+            },
+            "urlSendContact": "/covoiturage/rdexConnection",
+            "popup": {
+                "send": "Verzenden",
+                "textarea": {
+                    "content": {
+                        "seeya": "Tot binnenkort",
+                        "phone": "Mijn telefoonnummer is {phone}",
+                        "email": "Mijn e-mailadres is {email}",
+                        "name": "Mijn naam is {name}",
+                        "carpool": "Uw carpooltraject tussen {origin} en {destination} kan interessant voor me zijn. We zijn geen lid van hetzelfde carpoolnetwerk. Daarom geef ik u rechtstreeks mijn contactgegevens door zodat we in contact kunnen treden",
+                        "hello": "Hallo"
+                    },
+                    "label": "Uw bericht"
+                },
+                "cancel": "Annuleren",
+                "instructions": {
+                    "line2": "Denk eraan minstens één contactmiddel na te laten, zoals uw e-mailadres en/of telefoonnummer zodat de carpooler van de partnerwebsite contact met u kan opnemen",
+                    "line1": "Vul het onderstaande bericht aan of wijzig het."
+                },
+                "intro": "Deze advertentie is niet afkomstig van onze carpoolwebsite maar van de partnerwebsite {origin}",
+                "title": "Contact opnemen"
+            },
+            "button": {
+                "tooltip": "U moet aangemeld zijn om contact op te nemen met een carpooler",
+                "label": "Contact opnemen"
+            }
+        },
+        "go": "Ernaar toegaan"
+    },
+    "seeDetails": "details weergeven",
+    "birthYears": "jaar"
+}

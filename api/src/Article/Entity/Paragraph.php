@@ -103,6 +103,11 @@ class Paragraph
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;
     
+    // List of the translatable items of this entity
+    const TRANSLATABLE_ITEMS = [
+        "text"
+    ];
+
     /**
      * @var int The id of this paragraph.
      *
