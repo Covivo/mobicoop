@@ -30,8 +30,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Solidary volunteer manager in admin context.
@@ -44,6 +46,7 @@ class SolidaryVolunteerManager
     private $solidaryUserRepository;
     private $solidaryUserStructureRepository;
     private $formatDataManager;
+    private $eventDispatcher;
     private $fileFolder;
     
     /**
@@ -56,12 +59,14 @@ class SolidaryVolunteerManager
         SolidaryUserRepository $solidaryUserRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
         FormatDataManager $formatDataManager,
+        EventDispatcherInterface $eventDispatcher,
         string $fileFolder
     ) {
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
         $this->formatDataManager = $formatDataManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->fileFolder = $fileFolder;
     }
 
@@ -252,6 +257,10 @@ class SolidaryVolunteerManager
         $solidaryUserStructure->setStatus($validation['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
+
+        // dispatch the event
+        $event = new VolunteerStatusChangedEvent($solidaryUserStructure);
+        $this->eventDispatcher->dispatch($event, VolunteerStatusChangedEvent::NAME);
 
         return $this->getSolidaryVolunteer($solidaryUser->getId());
     }

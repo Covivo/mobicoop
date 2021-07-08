@@ -518,6 +518,11 @@ class Ad
     private $paused;
 
     /**
+    * @var boolean Ad without destination.
+    */
+    private $noDestination;
+
+    /**
      * @var int The Id of the proposal associated to the ad.
      *
      * @Groups({"read","write"})
@@ -1205,6 +1210,18 @@ class Ad
     public function setPaused(?bool $paused): self
     {
         $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function hasNoDestination(): bool
+    {
+        return $this->noDestination ? true : false;
+    }
+
+    public function setNoDestination(?bool $noDestination): self
+    {
+        $this->noDestination = $noDestination;
 
         return $this;
     }

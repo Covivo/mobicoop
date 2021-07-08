@@ -187,6 +187,14 @@ class Proposal
     private $paused;
 
     /**
+     * @var boolean Proposal without destination.
+     * Used for solidary.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $noDestination;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -538,6 +546,18 @@ class Proposal
     public function setPaused(?bool $paused): self
     {
         $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function hasNoDestination(): bool
+    {
+        return $this->noDestination ? true : false;
+    }
+
+    public function setNoDestination(?bool $noDestination): self
+    {
+        $this->noDestination = $noDestination;
 
         return $this;
     }

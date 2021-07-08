@@ -291,6 +291,9 @@ class AdManager
         }
         $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
 
+        // no destination ?
+        $outwardProposal->setNoDestination($ad->hasNoDestination());
+
         // prices
         $outwardCriteria->setPriceKm($ad->getPriceKm());
         $outwardCriteria->setDriverPrice($ad->getOutwardDriverPrice());
@@ -403,6 +406,9 @@ class AdManager
             // solidary
             $returnCriteria->setSolidary($outwardCriteria->isSolidary());
             $returnCriteria->setSolidaryExclusive($outwardCriteria->isSolidaryExclusive());
+
+            // no destination ?
+            $returnProposal->setNoDestination($outwardProposal->hasNoDestination());
 
             // prices
             $returnCriteria->setPriceKm($outwardCriteria->getPriceKm());

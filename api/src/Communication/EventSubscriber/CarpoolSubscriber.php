@@ -168,18 +168,21 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onNewMatching(MatchingNewEvent $event)
     {
+        $this->logger->info('onNewMatching');
         // the recipient is the user that is not the "sender" of the matching
         // we check if it's not an anonymous proposal, and that it's only on an outward (as we notifiy only once for a return trip)
         if (
             $event->getMatching()->getProposalOffer()->getUser() &&
             $event->getMatching()->getProposalRequest()->getUser() &&
-            !$event->getWay() == Proposal::TYPE_RETURN
+            $event->getWay() != Proposal::TYPE_RETURN
             ) {
+            $this->logger->info('onNewMatching 2');
             $askRecipient =
             ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ?
             $event->getMatching()->getProposalOffer()->getUser() :
             $event->getMatching()->getProposalRequest()->getUser();
             if ($this->canNotify($event->getSender(), $askRecipient)) {
+                $this->logger->info('onNewMatching 3');
                 $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
             }
         }

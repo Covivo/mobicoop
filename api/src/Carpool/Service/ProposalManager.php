@@ -283,6 +283,7 @@ class ProposalManager
             $matchings = array_merge($proposal->getMatchingOffers(), $proposal->getMatchingRequests());
             if ($persist) {
                 foreach ($matchings as $matching) {
+                    $this->logger->info("ProposalManager : sending MatchingNewEvent for matching " . $matching->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $event = new MatchingNewEvent($matching, $proposal->getUser(), $proposal->getType());
                     $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
                 }

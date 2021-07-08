@@ -1690,6 +1690,7 @@ class SolidaryManager
                 $destination->setLongitude($aad['destination']['longitude']);
             }
         } else {
+            $ad->setNoDestination(true);
             $destination = clone $origin;
         }
 
