@@ -337,9 +337,11 @@ export default {
 
         proposal.waypoints.forEach((waypoint, index) => {
           currentProposal.latLngs.push(waypoint.latLng);
-          infosForPopUp.origin = waypoint.title;
-          infosForPopUp.originLat = waypoint.latLng.lat;
-          infosForPopUp.originLon = waypoint.latLng.lon;
+          if(index==0){
+            infosForPopUp.origin = waypoint.title;
+            infosForPopUp.originLat = waypoint.latLng.lat;
+            infosForPopUp.originLon = waypoint.latLng.lon;
+          }
           this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
         });
 
