@@ -52,7 +52,7 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
     public function getCollection(string $resourceClass, string $operationName = null)
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can get Reviews");
+            throw new \LogicException("Only a User can get its board");
         }
         return $this->gamificationManager->getBadgesBoard($this->security->getUser());
     }

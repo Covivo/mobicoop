@@ -23,24 +23,46 @@
 
 namespace App\Gamification\Rule;
 
+use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Carpool\Repository\ProposalRepository;
 
 /**
  *  Check that the requester is the author of the related Ad
  */
 class CarpoolInCommunity implements GamificationRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
-    {
-        /** To do : implement the rule*/
-        return true;
+    private $proposalRepository;
 
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+    public function __construct(ProposalRepository $proposalRepository)
+    {
+        $this->proposalRepository = $proposalRepository;
+    }
+
+    /**
+     * Carpool In Community rule
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
+     */
+    public function execute($requester, $log, $sequenceItem)
+    {
+        // we check if the user has at least one proposal carpooled and published in an event
+        $user = $log->getUser();
+        // we get all user's proposals and for each proposal we check if he's associated with an event
+        $proposals = $this->proposalRepository->findUserCommunityProposals($user);
+        foreach ($proposals as $proposal) {
+            $matchings=[];
+            $matchings[]=$proposal->getMatchingOffers();
+            $matchings[]=$proposal->getMatchingRequests();
+            foreach ($matchings as $matching) {
+                if ($matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

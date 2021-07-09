@@ -39,6 +39,7 @@ use App\Gamification\Entity\BadgeProgression;
  *     },
  *     collectionOperations={
  *          "get"={
+ *              "security"="is_granted('badges_board',object)",
  *              "swagger_context" = {
  *                  "summary"="Get the badges board of the User who make the call",
  *                  "tags"={"Gamification"}

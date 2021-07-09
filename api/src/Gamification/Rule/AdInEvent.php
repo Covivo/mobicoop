@@ -31,16 +31,25 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 class AdInEvent implements GamificationRuleInterface
 {
     /**
-     * {@inheritdoc}
+     * Ad In Event rule
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $log, $sequenceItem)
     {
-        /** To do : implement the rule*/
-        return true;
-
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+        $user = $log->getUser();
+        // we check if the user has at least one proposal published for an event
+        // we get all user's proposals and for each proposal we check if he's associated with an event
+        $proposals = $user->getProposals();
+        foreach ($proposals as $proposal) {
+            // at the first proposal associated to an event we return true since we need at least one proposal associated to an event
+            if ($proposal->getEvent()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -106,6 +106,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                  "tags"={"Geography"}
  *              }
  *          },
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/address",
+ *              "security"="is_granted('address_post',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Geography"}
+ *              }
+ *          },
  *          "ADMIN_search"={
  *              "method"="GET",
  *              "path"="/addresses/admin/search",
@@ -122,6 +130,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              }
  *          },
  *          "put"={
+ *              "security"="is_granted('address_update',object)",
  *              "swagger_context" = {
  *                  "tags"={"Geography"}
  *              }

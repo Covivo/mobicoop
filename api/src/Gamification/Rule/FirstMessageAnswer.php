@@ -24,23 +24,34 @@
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Communication\Repository\MessageRepository;
 
 /**
  *  Check that the requester is the author of the related Ad
  */
 class FirstMessageAnswer implements GamificationRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function execute($requester, $item, $params)
-    {
-        /** To do : implement the rule*/
-        return true;
+    private $messageRepository;
 
-        // We check if there is the right object
-        // if (!isset($params['ad'])) {
-        //     return false;
-        // }
+    public function __construct(MessageRepository $messageRepository)
+    {
+        $this->messageRepository = $messageRepository;
+    }
+
+    /**
+     * First Message Answer rule
+     *
+     * @param  $requester
+     * @param  $log
+     * @param  $sequenceItem
+     * @return bool
+     */
+    public function execute($requester, $log, $sequenceItem)
+    {
+        $answers = $this->messageRepository->findAnswers($log->getUser());
+        if (count($answers)===1) {
+            return true;
+        }
+        return false;
     }
 }

@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Login delegate
+ * Gamification : test action right
  */
 final class Version20210624114700 extends AbstractMigration
 {

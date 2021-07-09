@@ -23,6 +23,8 @@
 
 namespace App\Gamification\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Territory;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -37,7 +39,31 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 *
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
-*/
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('badge_list',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get the badges list of the instance",
+ *                  "tags"={"Gamification"}
+ *               }
+ *           }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('badge_read',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get a Badge",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          }
+ *      }
+ * )
+ */
 class Badge
 {
     const STATUS_DRAFT = 0;
@@ -47,6 +73,7 @@ class Badge
     /**
      * @var int The Badge's id
      *
+     * @ApiProperty(identifier=true)
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -160,7 +187,6 @@ class Badge
      *
      * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="users")
      * @ORM\JoinTable(name="reward")
-     * @Groups({"readGamification"})
      */
     private $users;
 

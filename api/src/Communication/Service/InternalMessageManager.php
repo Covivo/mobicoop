@@ -224,7 +224,7 @@ class InternalMessageManager
         }
         
         $this->entityManager->flush();
-
+        
         return $message;
     }
 }

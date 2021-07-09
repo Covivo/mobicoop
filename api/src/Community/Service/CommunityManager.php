@@ -41,6 +41,8 @@ use App\Community\Event\CommunityNewMembershipRequestEvent;
 use App\Community\Resource\MCommunity;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Community manager.
@@ -63,6 +65,7 @@ class CommunityManager
     private $userManager;
     private $adManager;
     private $eventDispatcher;
+    private $actionRepository;
 
     /**
      * Constructor
@@ -80,7 +83,8 @@ class CommunityManager
         AuthItemRepository $authItemRepository,
         UserManager $userManager,
         AdManager $adManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ActionRepository $actionRepository
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -92,6 +96,7 @@ class CommunityManager
         $this->userManager = $userManager;
         $this->adManager = $adManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->actionRepository = $actionRepository;
     }
 
     /**
@@ -324,6 +329,12 @@ class CommunityManager
         $this->entityManager->persist($community);
         $this->entityManager->flush();
 
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'community_created']);
+        $actionEvent = new ActionEvent($action, $community->getUser());
+        $actionEvent->setCommunity($community);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
         return $community;
     }
 
@@ -389,6 +400,13 @@ class CommunityManager
             $event = new CommunityNewMembershipRequestEvent($community, $user);
             $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
         }
+
+        //  we dispatch the gamification event associated
+        $action = $this->actionRepository->findOneBy(['name'=>'community_joined']);
+        $actionEvent = new ActionEvent($action, $communityUser->getUser());
+        $actionEvent->setCommunity($community);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
         return $communityUser;
     }
 

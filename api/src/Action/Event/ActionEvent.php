@@ -37,6 +37,8 @@ use App\Solidary\Entity\Solidary;
 use App\User\Entity\Car;
 use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
+use App\Payment\Entity\CarpoolPayment;
+use App\Payment\Entity\CarpoolItem;
 
 /**
  * Event sent when an Action is made
@@ -61,6 +63,8 @@ class ActionEvent extends Event
     private $car;
     private $message;
     private $campaign;
+    private $carpoolPayment;
+    private $carpoolItem;
 
     public function __construct(Action $action, User $user)
     {
@@ -221,6 +225,28 @@ class ActionEvent extends Event
     public function setCampaign(Campaign $campaign): self
     {
         $this->campaign = $campaign;
+        return $this;
+    }
+
+    public function getCarpoolPayment(): ?CarpoolPayment
+    {
+        return $this->carpoolPayment;
+    }
+    
+    public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        $this->carpoolPayment = $carpoolPayment;
+        return $this;
+    }
+
+    public function getCarpoolItem(): ?CarpoolItem
+    {
+        return $this->carpoolItem;
+    }
+    
+    public function setCarpoolItem(CarpoolItem $carpoolItem): self
+    {
+        $this->carpoolItem = $carpoolItem;
         return $this;
     }
 }

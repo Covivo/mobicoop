@@ -402,7 +402,7 @@ class MyAd
 
     public function getPrice(): ?string
     {
-        return $this->price;
+        return round($this->price, 2);
     }
 
     public function setPrice(?string $price)

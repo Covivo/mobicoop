@@ -661,7 +661,7 @@ class Result
 
     public function getRoundedPrice(): ?string
     {
-        return $this->roundedPrice;
+        return round($this->roundedPrice, 2);
     }
     
     public function setRoundedPrice(?string $roundedPrice)

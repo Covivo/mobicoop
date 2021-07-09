@@ -29,17 +29,24 @@ use App\Image\Service\ImageManager;
 use App\Image\Entity\Image;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class CreateImageAction
 {
     use TranslatorTrait;
     private $imageManager;
     private $logger;
+    private $actionRepository;
+    private $eventDispatcher;
     
-    public function __construct(ImageManager $imageManager, LoggerInterface $logger)
+    public function __construct(ImageManager $imageManager, LoggerInterface $logger, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->imageManager = $imageManager;
         $this->logger = $logger;
+        $this->actionRepository = $actionRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
     
     public function __invoke(Request $request): Image
@@ -105,6 +112,13 @@ final class CreateImageAction
             if (is_null($image->getName())) {
                 $image->setName($image->getFileName());
             }
+        }
+
+        //  we dispatch the gamification event associated
+        if ($image->getUser()) {
+            $action = $this->actionRepository->findOneBy(['name'=>'user_avatar_uploaded']);
+            $actionEvent = new ActionEvent($action, $image->getUser());
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         return $image;
