@@ -78,6 +78,10 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
                                     $newContext['filters']['order']['subject.label']= $value;
                                     unset($newContext['filters']['order']['subject']);
                                     break;
+                                case 'fromDate':
+                                    $newContext['filters']['order']['proposal.criteria.fromDate']= $value;
+                                    unset($newContext['filters']['order']['fromDate']);
+                                    break;
                             }
                         }
                         break;
@@ -89,6 +93,10 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
                         $newContext['filters']['solidaryUserStructure.solidaryUser.user.familyName'] = $filter;
                         unset($newContext['filters']['familyName']);
                         break;
+                    case 'progression':
+                        // progression filter is rewritten from "progression equals xx" to "progression lower than xx"
+                        $newContext['filters']['progression'] = ['lt'=>$filter];
+                        // no break
                     default:
                         break;
                 }

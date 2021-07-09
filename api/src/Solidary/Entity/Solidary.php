@@ -35,6 +35,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
 use DateTime;
@@ -174,6 +175,12 @@ use DateTime;
  *      }
  * )
  * @ApiFilter(
+ *      RangeFilter::class,
+ *      properties={
+ *          "progression"
+ *      }
+ * )
+ * @ApiFilter(
  *      OrderFilter::class,
  *      properties={
  *          "id",
@@ -181,11 +188,13 @@ use DateTime;
  *          "familyName",
  *          "telephone",
  *          "subject",
+ *          "progression",
  *          "lastActionDate",
  *          "solidaryUserStructure.solidaryUser.user.givenName",
  *          "solidaryUserStructure.solidaryUser.user.familyName",
  *          "solidaryUserStructure.solidaryUser.user.telephone",
- *          "subject.label"
+ *          "subject.label",
+ *          "proposal.criteria.fromDate"
  *      },
  *      arguments={"orderParameterName"="order"}
  * )
@@ -434,7 +443,9 @@ class Solidary
 
     /**
      * @var float Progression of this solidary
-     * @Groups({"readSolidary", "writeSolidary"})
+     *
+     * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Groups({"aReadCol","aReadItem","readSolidary", "writeSolidary"})
      */
     private $progression;
 
@@ -809,12 +820,12 @@ class Solidary
         return $this->diaries->getValues();
     }
 
-    public function getProgression(): ?string
+    public function getProgression(): float
     {
         return $this->progression;
     }
 
-    public function setProgression(?string $progression): self
+    public function setProgression(float $progression): self
     {
         $this->progression = $progression;
 
@@ -1391,17 +1402,6 @@ class Solidary
     }
 
     /**
-     * @var string|null Progression of the solidary record
-     * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
-     */
-    public function getAdminprogression(): ?string
-    {
-        return $this->getDiaries()[0]->getProgression();
-    }
-
-    /**
      * @var string|null Last action for the solidary record
      * @Groups({"aReadCol", "aReadItem"})
      *
@@ -1480,7 +1480,7 @@ class Solidary
 
     /**
      * @var DateTime Start date for the solidary record
-     * @Groups("aReadItem")
+     * @Groups({"aReadItem", "aReadCol"})
      */
     public function getAdminfromDate(): ?DateTime
     {

@@ -52,7 +52,7 @@ use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
-use App\Solidary\Event\SolidaryCreatedEvent;
+use App\Solidary\Admin\Event\SolidaryCreatedEvent;
 use App\Solidary\Repository\NeedRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
@@ -1211,6 +1211,9 @@ class SolidaryManager
         // set status
         $solidary->setStatus(Solidary::STATUS_ASKED);
 
+        // set progression
+        $solidary->setProgression(0);
+
         // create needs
         if (isset($fields['needs'])) {
             foreach ($fields['needs'] as $need) {
@@ -1296,7 +1299,7 @@ class SolidaryManager
         $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
         
         // send an event to warn that a SolidaryRecord has been created
-        $event = new SolidaryCreatedEvent($beneficiary, $this->poster, $solidary);
+        $event = new SolidaryCreatedEvent($this->poster, $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
         // read the solidary record again to get the last data (events should have update it !)
@@ -1404,6 +1407,15 @@ class SolidaryManager
         // send event to warn that an animation has been made
         $event = new AnimationMadeEvent($newAnimation);
         $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
+
+        // check again for progression to set the solidary progression
+        if (array_key_exists('progression', $animation)) {
+            if ($animation['progression']>0) {
+                $solidary->setProgression($animation['progression']);
+                $this->entityManager->persist($solidary);
+                $this->entityManager->flush();
+            }
+        }
         
         // we don't go further, the event subscribers have done the job to persist the data, although we need a complete solidary !
         return $this->getSolidary($solidary->getId());

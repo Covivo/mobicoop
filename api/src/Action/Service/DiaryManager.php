@@ -75,6 +75,10 @@ class DiaryManager
             $diary->setProgression($progression);
         } elseif ((float)$action->getProgression()>0) {
             $diary->setProgression($action->getProgression());
+            if (!is_null($solidary)) {
+                $solidary->setProgression($action->getProgression());
+                $this->entityManager->persist($solidary);
+            }
         } elseif ($solidary && (float)$action->getProgression()<0) {
             // set progression to last progression
             if ($lastEntry = $this->diaryRepository->findLastEntryForSolidary($solidary)) {
