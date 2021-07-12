@@ -82,6 +82,18 @@ final class CreateImageAction
             // Campaign image
             $image->setCampaignFile($request->files->get('campaignFile'));
             $image->setCampaignId($request->request->get('campaignId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeId')) {
+            // Badge icon
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeId($request->request->get('badgeId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageId')) {
+            // Badge image
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageId($request->request->get('badgeImageId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageLightId')) {
+            // Badge image light
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageLightId($request->request->get('badgeImageLightId'));
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
