@@ -6,6 +6,10 @@ namespace App\Serializer;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\RewardStep;
+use App\Gamification\Repository\RewardStepRepository;
+use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
@@ -15,54 +19,68 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 {
     private $decorated;
     private $gamificationNotifier;
+    private $rewardStepRepository;
+    private $security;
+    private $entityManager;
     private $dataUri;
 
-    public function __construct(NormalizerInterface $decorated, GamificationNotifier $gamificationNotifier, string $dataUri)
-    {
+    public function __construct(
+        NormalizerInterface $decorated,
+        GamificationNotifier $gamificationNotifier,
+        RewardStepRepository $rewardStepRepository,
+        Security $security,
+        EntityManagerInterface $entityManager,
+        string $dataUri
+    ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
         }
 
         $this->decorated = $decorated;
         $this->gamificationNotifier = $gamificationNotifier;
+        $this->rewardStepRepository = $rewardStepRepository;
+        $this->security = $security;
+        $this->entityManager = $entityManager;
         $this->dataUri = $dataUri;
     }
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->decorated->supportsNormalization($data, $format);
+        return $this->decorated->supportsNormalization($data, $format) && $this->security->getUser() instanceof User;
     }
 
     public function normalize($object, $format = null, array $context = [])
     {
         $data = $this->decorated->normalize($object, $format, $context);
-
-        if (is_array($data) && count($this->gamificationNotifier->getNotifications())>0) {
+        
+        // We check if there is some gamificationNotifications entities in waiting for the current User
+        $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
+        if (is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps)>0) {
             $data['gamificationNotifications'] = [];
+            foreach ($waitingRewardSteps as $waitingRewardStep) {
+                $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
+
+                // We update the RewardStep and flag it as notified
+                $waitingRewardStep->setNotifiedDate(new \DateTime('now'));
+                //$this->entityManager->persist($waitingRewardStep);
+            }
+
+            //$this->entityManager->flush();
+        }
+
+        // New gamification notifications
+        if (is_array($data) && count($this->gamificationNotifier->getNotifications())>0) {
+            
+            // We init the array only if it's not already filled
+            if (!isset($data['gamificationNotifications'])) {
+                $data['gamificationNotifications'] = [];
+            }
+
             foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                 if ($gamificationNotification instanceof Badge) {
-                    $data['gamificationNotifications'][] = [
-                        "type" => "Badge",
-                        "id" => $gamificationNotification->getId(),
-                        "name" => $gamificationNotification->getName(),
-                        "title" => $gamificationNotification->getTitle(),
-                        "text" => $gamificationNotification->getText(),
-                        "pictures" => [
-                            "icon" => $this->dataUri."/".$gamificationNotification->getIcon()->getFileName(),
-                            "image" => $this->dataUri."/".$gamificationNotification->getImage()->getFileName(),
-                            "imageLight" => $this->dataUri."/".$gamificationNotification->getImageLight()->getFileName()
-                        ]
-                    ];
+                    $data['gamificationNotifications'][] = $this->formatBadge($gamificationNotification);
                 } elseif ($gamificationNotification instanceof RewardStep) {
-                    $data['gamificationNotifications'][] = [
-                        "type" => "RewardStep",
-                        "id" => $gamificationNotification->getId(),
-                        "title" => $gamificationNotification->getSequenceItem()->getGamificationAction()->getTitle(),
-                        "badge" => [
-                            "id" => $gamificationNotification->getSequenceItem()->getBadge()->getId(),
-                            "name" => $gamificationNotification->getSequenceItem()->getBadge()->getName()
-                        ]
-                    ];
+                    $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
                 }
             }
         }
@@ -85,5 +103,46 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         if ($this->decorated instanceof SerializerAwareInterface) {
             $this->decorated->setSerializer($serializer);
         }
+    }
+
+    /**
+     * Format a RewardStep to be notified
+     *
+     * @param RewardStep $rewardStep
+     * @return array
+     */
+    private function formatRewardStep(RewardStep $rewardStep): array
+    {
+        return [
+            "type" => "RewardStep",
+            "id" => $rewardStep->getId(),
+            "title" => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
+            "badge" => [
+                "id" => $rewardStep->getSequenceItem()->getBadge()->getId(),
+                "name" => $rewardStep->getSequenceItem()->getBadge()->getName()
+            ]
+        ];
+    }
+
+    /**
+     * Format a Badge to be notified
+     *
+     * @param Badge $badge
+     * @return array
+     */
+    private function formatBadge(Badge $badge): array
+    {
+        return [
+            "type" => "Badge",
+            "id" => $badge->getId(),
+            "name" => $badge->getName(),
+            "title" => $badge->getTitle(),
+            "text" => $badge->getText(),
+            "pictures" => [
+                "icon" => $this->dataUri."/".$badge->getIcon()->getFileName(),
+                "image" => $this->dataUri."/".$badge->getImage()->getFileName(),
+                "imageLight" => $this->dataUri."/".$badge->getImageLight()->getFileName()
+            ]
+        ];
     }
 }

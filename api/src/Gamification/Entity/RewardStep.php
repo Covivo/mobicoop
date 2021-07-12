@@ -69,6 +69,14 @@ class RewardStep implements GamificationNotificationInterface
     private $user;
 
     /**
+     * @var \DateTimeInterface RewardStep's notification date. Determine if this RewardStep has been notified to the user.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification"})
+     */
+    private $notifiedDate;
+
+    /**
      * @var \DateTimeInterface RewardStep's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -116,6 +124,18 @@ class RewardStep implements GamificationNotificationInterface
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getNotifiedDate(): ?\DateTimeInterface
+    {
+        return $this->notifiedDate;
+    }
+
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate): self
+    {
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }

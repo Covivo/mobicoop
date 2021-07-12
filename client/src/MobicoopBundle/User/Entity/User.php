@@ -35,11 +35,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * A user.
  */
-class User implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
+class User extends GamificationEntity implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -1329,7 +1330,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
             'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
             'savedCo2'   => $this->getSavedCo2(),
-            'language'              => $this->getLanguage()
+            'language'              => $this->getLanguage(),
+            'gamificationNotifications' => $this->getGamificationNotifications()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
