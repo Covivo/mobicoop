@@ -24,8 +24,7 @@
 namespace App\Community\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
-use App\Community\Entity\Community;
-use App\User\Entity\User;
+use App\Community\Entity\CommunityUser;
 
 /**
  * Event sent when a user join a community with no validation
@@ -35,22 +34,16 @@ class CommunityNewMemberEvent extends Event
 {
     public const NAME = 'community_new_member';
 
-    protected $community;
+    protected $communityUser;
     protected $user;
 
-    public function __construct(Community $community, User $user)
+    public function __construct(CommunityUser $communityUser)
     {
-        $this->community = $community;
-        $this->user = $user;
+        $this->communityUser = $communityUser;
     }
 
-    public function getCommunity()
+    public function getCommunityUser()
     {
-        return $this->community;
-    }
-    
-    public function getUser()
-    {
-        return $this->user;
+        return $this->communityUser;
     }
 }

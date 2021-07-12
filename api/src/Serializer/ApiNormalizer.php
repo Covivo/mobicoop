@@ -47,11 +47,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                         "name" => $gamificationNotification->getName(),
                         "title" => $gamificationNotification->getTitle(),
                         "text" => $gamificationNotification->getText(),
-                        "pictures" => [
-                            "icon" => $this->dataUri."/".$gamificationNotification->getIcon()->getFileName(),
-                            "image" => $this->dataUri."/".$gamificationNotification->getImage()->getFileName(),
-                            "imageLight" => $this->dataUri."/".$gamificationNotification->getImageLight()->getFileName()
-                        ]
+                        // "pictures" => [
+                        //     "icon" => $this->dataUri."/".$gamificationNotification->getIcon()->getFileName(),
+                        //     "image" => $this->dataUri."/".$gamificationNotification->getImage()->getFileName(),
+                        //     "imageLight" => $this->dataUri."/".$gamificationNotification->getImageLight()->getFileName()
+                        // ]
                     ];
                 } elseif ($gamificationNotification instanceof RewardStep) {
                     $data['gamificationNotifications'][] = [
