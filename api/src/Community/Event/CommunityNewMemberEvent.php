@@ -35,7 +35,6 @@ class CommunityNewMemberEvent extends Event
     public const NAME = 'community_new_member';
 
     protected $communityUser;
-    protected $user;
 
     public function __construct(CommunityUser $communityUser)
     {
