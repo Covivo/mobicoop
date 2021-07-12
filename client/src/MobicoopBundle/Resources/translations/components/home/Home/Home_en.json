@@ -4,7 +4,7 @@
     "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
     "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
-    "snackbar-account-delete": "Votre compte à été supprimé avec succès.",
+    "snackbar-account-logout": "Vous êtes déconnecté.",
     "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
     "myProfile": "Profil",
     "urlArticle": "#",
