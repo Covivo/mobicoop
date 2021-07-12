@@ -25,6 +25,7 @@ namespace App\Gamification\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\Geography\Entity\Territory;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -64,11 +65,16 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      }
  * )
  */
-class Badge
+class Badge implements GamificationNotificationInterface
 {
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+
+    const TRANSLATABLE_ITEMS = [
+        "title",
+        "text"
+    ];
 
     /**
      * @var int The Badge's id

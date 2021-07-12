@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Entity;
 
+use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
 */
-class RewardStep
+class RewardStep implements GamificationNotificationInterface
 {
 
     /**
