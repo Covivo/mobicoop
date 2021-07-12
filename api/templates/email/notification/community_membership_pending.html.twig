@@ -8,8 +8,8 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.senderGivenName|capitalize}}  {{context.senderShortFamilyName|capitalize}} </b> a demandé à rejoindre la communauté <b><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b></b></p>
-                        <p> Rendez-vous dans le module d'administration pour valider son adhésion : <a href="{{ api_env('URL_ADMIN') }}">en cliquant ici</a> </p>
+                        <p>Votre demande d'adhésion à la communauté  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b></b> a bien été prise en compte.</p>
+                        <p> Vous recevrez un nouvel email quand nous aurons validé vos informations, et pourrez profiter ensuite de tous les avantages du service.</p>
                         <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>
                 </tr>

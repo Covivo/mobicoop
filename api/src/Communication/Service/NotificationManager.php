@@ -59,6 +59,7 @@ use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\User\Entity\Review;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * Notification manager
@@ -228,7 +229,7 @@ class NotificationManager
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
-            switch (get_class($object)) {
+            switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
@@ -328,11 +329,13 @@ class NotificationManager
                             }
                         }
                     }
-                    $titleContext = [];
-                    $bodyContext = [
-                        'recipient'=>$recipient,
+                    $titleContext = [
                         'community' => $object,
-                        'senderGivenName'=>$senderGivenName,
+                    ];
+                    $bodyContext = [
+                        'recipient'=> $recipient,
+                        'community' => $object,
+                        'senderGivenName'=> $senderGivenName,
                         'senderShortFamilyName'=> $senderShortFamilyName
                     ];
                     break;
@@ -462,7 +465,7 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
-
+        
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }
