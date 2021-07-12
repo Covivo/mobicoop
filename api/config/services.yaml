@@ -38,7 +38,8 @@ services:
 
     # SERIALIZER
     'App\Serializer\ApiNormalizer':
-        # By default .inner is passed as argument
+        arguments:
+            $dataUri: '%env(string:DATA_URI)%'
         decorates: 'api_platform.jsonld.normalizer.item'    
 
     # EVENT LISTENERS
