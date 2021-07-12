@@ -28,7 +28,7 @@ use App\Community\Entity\Community;
 use App\User\Entity\User;
 
 /**
- * Event sent when a user join a community with no validation
+ * Event sent when a user ask to join a community with a validation
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CommunityMembershipPendingEvent extends Event
