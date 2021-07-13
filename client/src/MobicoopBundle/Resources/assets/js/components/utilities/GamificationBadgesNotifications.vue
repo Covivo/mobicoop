@@ -1,12 +1,15 @@
 <template>
   <v-row justify="center">
     <v-dialog
+      v-if="badges.lenght > 0"
       v-model="dialog"
       persistent
       transition="dialog-bottom-transition"
       max-width="500"
     >
       <v-card
+        v-for="badge in badges"
+        :key="badge.id"
         max-width="500"
       >
         <v-row>
@@ -17,12 +20,12 @@
             >
               WAHOU!!!
             </v-card-title>
-            <v-card-subtitle>Vous venez de gagner le badge <b>{{ badgeName }}</b></v-card-subtitle>
+            <v-card-subtitle>Vous venez de gagner le badge <b>{{ badge.text }}</b></v-card-subtitle>
           </v-col>
           <v-col cols="5">
             <v-img
               height="150"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+              :src="badge.pictures.icon"
             />
           </v-col>
         </v-row>
@@ -33,14 +36,14 @@
           >
             <v-img
               height="250"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+              :src="badge.pictures.image"
             />
           </v-row>
           <v-row
             align="center"
           >
             <div class="my-4 text-subtitle-1 text-center">
-              chapeau votre communauté est créée
+              {{ badge.title }}
             </div>
           </v-row>
           <v-row
