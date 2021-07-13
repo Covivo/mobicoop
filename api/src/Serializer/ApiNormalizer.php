@@ -6,6 +6,7 @@ namespace App\Serializer;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\RewardStep;
+use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,6 +21,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $decorated;
     private $gamificationNotifier;
     private $rewardStepRepository;
+    private $rewardRepository;
     private $security;
     private $entityManager;
     private $dataUri;
@@ -28,6 +30,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         NormalizerInterface $decorated,
         GamificationNotifier $gamificationNotifier,
         RewardStepRepository $rewardStepRepository,
+        RewardRepository $rewardRepository,
         Security $security,
         EntityManagerInterface $entityManager,
         string $dataUri
@@ -39,6 +42,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->decorated = $decorated;
         $this->gamificationNotifier = $gamificationNotifier;
         $this->rewardStepRepository = $rewardStepRepository;
+        $this->rewardRepository = $rewardRepository;
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->dataUri = $dataUri;
@@ -54,6 +58,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $data = $this->decorated->normalize($object, $format, $context);
         
         // We check if there is some gamificationNotifications entities in waiting for the current User
+
+        // Waiting RewardSteps
         $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
         if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps)>0) {
             $data['gamificationNotifications'] = [];
@@ -63,6 +69,19 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 // We update the RewardStep and flag it as notified
                 $waitingRewardStep->setNotifiedDate(new \DateTime('now'));
                 $this->entityManager->persist($waitingRewardStep);
+            }
+        }
+
+        // Waiting Rewards
+        $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
+        if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards)>0) {
+            $data['gamificationNotifications'] = [];
+            foreach ($waitingRewards as $waitingReward) {
+                $data['gamificationNotifications'][] = $this->formatBadge($waitingReward->getBadge());
+
+                // We update the RewardStep and flag it as notified
+                $waitingReward->setNotifiedDate(new \DateTime('now'));
+                $this->entityManager->persist($waitingReward);
             }
         }
 
