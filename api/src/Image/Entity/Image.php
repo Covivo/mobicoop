@@ -344,14 +344,12 @@ class Image
      * @var Badge|null The Badge for which this image is used as icon
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badge;
 
     /**
      * @var int|null The badge id associated with the image (icon).
-     * @Groups({"write","results"})
+     * @Groups({"write","read"})
      */
     private $badgeId;
 
@@ -365,14 +363,12 @@ class Image
      * @var Badge|null The Badge for which this image is used as reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImage;
 
     /**
      * @var int|null The badge id associated with the image.
-     * @Groups({"write","results"})
+     * @Groups({"write","read"})
      */
     private $badgeImageId;
 
@@ -386,14 +382,12 @@ class Image
      * @var Badge|null The Badge for which this image is used as reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImageLight;
 
     /**
      * @var int|null The badge id associated with the image light.
-     * @Groups({"write","results"})
+     * @Groups({"write","read"})
      */
     private $badgeImageLightId;
 
@@ -988,6 +982,9 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
+        $this->setBadgeFile(null);
+        $this->setBadgeImageFile(null);
+        $this->setBadgeImageLightFile(null);
     }
     
     // DOCTRINE EVENTS
