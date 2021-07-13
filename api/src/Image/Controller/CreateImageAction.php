@@ -97,7 +97,7 @@ final class CreateImageAction
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
-                
+        
         $image->setName($request->request->get('name'));
         $image->setOriginalName($request->request->get('originalName'));
         $image->setTitle($request->request->get('title'));
@@ -109,8 +109,17 @@ final class CreateImageAction
 
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
-            // we associate the owner and the image
-            $owner->addImage($image);
+            if (!is_null($image->getBadgeId())) {
+                $owner->setIcon($image);
+            } elseif (!is_null($image->getBadgeImageId())) {
+                $owner->setImage($image);
+            } elseif (!is_null($image->getBadgeImageLightId())) {
+                $owner->setImageLight($image);
+            } else {
+                // we associate the owner and the image
+                $owner->addImage($image);
+            }
+            
             // we search the position of the image if not provided
             if (is_null($image->getPosition())) {
                 $image->setPosition($this->imageManager->getNextPosition($image));

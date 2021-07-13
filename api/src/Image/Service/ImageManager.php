@@ -30,6 +30,7 @@ use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
+use App\Gamification\Entity\Badge;
 use App\Community\Entity\Community;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,6 +47,7 @@ use App\Image\Exception\ImageException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use ProxyManager\Exception\FileNotWritableException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Gamification\Repository\BadgeRepository;
 
 /**
  * Image manager.
@@ -70,6 +72,7 @@ class ImageManager
     private $logger;
     private $entityManager;
     private $dataUri;
+    private $badgeRepository;
 
 
     /**
@@ -96,7 +99,8 @@ class ImageManager
         LoggerInterface $logger,
         array $types,
         CampaignRepository $campaignRepository,
-        string $dataUri
+        string $dataUri,
+        BadgeRepository $badgeRepository
     ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -112,6 +116,7 @@ class ImageManager
         $this->dataManager = $container->get('liip_imagine.data.manager');
         $this->logger = $logger;
         $this->dataUri = $dataUri;
+        $this->badgeRepository = $badgeRepository;
     }
     
     /**
@@ -151,6 +156,15 @@ class ImageManager
         } elseif (!is_null($image->getCampaignId())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaignId());
+        } elseif (!is_null($image->getBadgeId())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeId());
+        } elseif (!is_null($image->getBadgeImageId())) {
+            // the image is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImageId());
+        } elseif (!is_null($image->getBadgeImageLightId())) {
+            // the imageLight is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImageLightId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -208,6 +222,14 @@ class ImageManager
                 }
                 break;
             case Campaign::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+
+                break;
+            case Badge::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
