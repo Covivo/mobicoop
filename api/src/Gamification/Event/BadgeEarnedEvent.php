@@ -23,7 +23,7 @@
 
 namespace App\Gamification\Event;
 
-use App\Gamification\Entity\Badge;
+use App\Gamification\Entity\Reward;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -34,15 +34,15 @@ class BadgeEarnedEvent extends Event
 {
     public const NAME = 'badge_earned';
 
-    protected $badge;
+    protected $reward;
 
-    public function __construct(Badge $badge)
+    public function __construct(Reward $reward)
     {
-        $this->badge = $badge;
+        $this->reward = $reward;
     }
 
-    public function getBadge()
+    public function getReward()
     {
-        return $this->badge;
+        return $this->reward;
     }
 }

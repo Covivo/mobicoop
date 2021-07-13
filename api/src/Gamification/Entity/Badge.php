@@ -217,6 +217,7 @@ class Badge implements GamificationNotificationInterface
         $this->sequenceItems = new ArrayCollection();
         $this->territories = new ArrayCollection();
         $this->badges = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -397,24 +398,24 @@ class Badge implements GamificationNotificationInterface
         return $this;
     }
     
-    public function getUsers()
+    public function getRewards()
     {
-        return $this->users->getValues();
+        return $this->rewards->getValues();
     }
 
-    public function addUser(User $user): self
+    public function addReward(Reward $reward): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards[] = $reward;
         }
         
         return $this;
     }
     
-    public function removeUser(User $user): self
+    public function removeReward(Reward $reward): self
     {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
         }
         return $this;
     }

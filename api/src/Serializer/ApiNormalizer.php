@@ -140,9 +140,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             "title" => $badge->getTitle(),
             "text" => $badge->getText(),
             "pictures" => [
-                "icon" => $this->dataUri."/".$badge->getIcon()->getFileName(),
-                "image" => $this->dataUri."/".$badge->getImage()->getFileName(),
-                "imageLight" => $this->dataUri."/".$badge->getImageLight()->getFileName()
+                "icon" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getIcon()->getFileName() : null,
+                "image" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getImage()->getFileName() : null,
+                "imageLight" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getImageLight()->getFileName() : null
             ]
         ];
     }

@@ -56,6 +56,6 @@ class GamificationNotificationSubscriber implements EventSubscriberInterface
 
     public function onBadgeEarnedEvent(BadgeEarnedEvent $event)
     {
-        $this->gamificationManager->handleGamificationNotification($event->getBadge());
+        $this->gamificationManager->handleGamificationNotification($event->getReward());
     }
 }

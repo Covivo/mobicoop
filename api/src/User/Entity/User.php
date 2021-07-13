@@ -101,6 +101,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Gamification\Entity\Badge;
+use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Match\Entity\MassPerson;
 use App\Payment\Ressource\BankAccount;
@@ -1463,7 +1464,7 @@ class User implements UserInterface, EquatableInterface
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
-        $this->badges = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
         $this->rewardSteps = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
@@ -3211,24 +3212,24 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getBadges()
+    public function getRewards()
     {
-        return $this->badges->getValues();
+        return $this->rewards->getValues();
     }
 
-    public function addBadge(Badge $badge): self
+    public function addReward(Reward $reward): self
     {
-        if (!$this->badges->contains($badge)) {
-            $this->badges[] = $badge;
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards[] = $reward;
         }
         
         return $this;
     }
     
-    public function removeBadge(Badge $badge): self
+    public function removeReward(Reward $reward): self
     {
-        if ($this->badges->contains($badge)) {
-            $this->badges->removeElement($badge);
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
         }
         return $this;
     }

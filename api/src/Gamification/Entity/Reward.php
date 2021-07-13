@@ -94,7 +94,7 @@ class Reward
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readGamification"})
      */
-    private $notifiedDate;    
+    private $notifiedDate;
 
     public function __construct()
     {
