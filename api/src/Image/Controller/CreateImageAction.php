@@ -110,11 +110,11 @@ final class CreateImageAction
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
             if (!is_null($image->getBadgeId())) {
-                $owner->setIcon($image);
+                $image->setBadge($owner);
             } elseif (!is_null($image->getBadgeImageId())) {
-                $owner->setImage($image);
+                $image->setBadgeImage($owner);
             } elseif (!is_null($image->getBadgeImageLightId())) {
-                $owner->setImageLight($image);
+                $image->setBadgeImageLight($owner);
             } else {
                 // we associate the owner and the image
                 $owner->addImage($image);
