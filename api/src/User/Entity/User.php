@@ -1146,13 +1146,11 @@ class User implements UserInterface, EquatableInterface
     private $import;
 
     /**
-     * @var ArrayCollection|null The Badges earned by this User.
+     * @var ArrayCollection|null The Rewards (Badges...) earned by this User.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Gamification\Entity\Badge", mappedBy="users")
-     * @ORM\JoinTable(name="reward")
-     * @Groups({"readGamification"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="user")
      */
-    private $badges;
+    private $rewards;
 
     /**
      * @var ArrayCollection|null The RewardSteps earned by this User.

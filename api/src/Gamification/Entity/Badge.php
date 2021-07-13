@@ -191,10 +191,10 @@ class Badge implements GamificationNotificationInterface
     /**
      * @var ArrayCollection|null The Users owning this Badge
      *
-     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="users")
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="badge")
      * @ORM\JoinTable(name="reward")
      */
-    private $users;
+    private $rewards;
 
     /**
      * @var \DateTimeInterface Badge's creation date
