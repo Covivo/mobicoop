@@ -24,13 +24,14 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an ad.
  * All actions related to a carpooling should be related to this entity.
  */
-class Ad implements ResourceInterface, \JsonSerializable
+class Ad extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     const ROLE_DRIVER = 1;
     const ROLE_PASSENGER = 2;
@@ -1172,7 +1173,8 @@ class Ad implements ResourceInterface, \JsonSerializable
                 'paymentStatus' => $this->getPaymentStatus(),
                 'paymentItemId' => $this->getPaymentItemId(),
                 'paymentItemWeek' => $this->getPaymentItemWeek(),
-                'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null
+                'unpaidDate' => !is_null($this->getUnpaidDate()) ? $this->getUnpaidDate()->format('Y-m-d') : null,
+                'gamificationNotifications' => $this->getGamificationNotifications()
             ];
     }
 }

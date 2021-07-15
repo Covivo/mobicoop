@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -35,7 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 /**
  * An event.
  */
-class Event implements ResourceInterface, \JsonSerializable
+class Event extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this event.
@@ -381,23 +382,24 @@ class Event implements ResourceInterface, \JsonSerializable
     {
         return
             [
-                'id'                => $this->getId(),
-                'iri'               => $this->getIri(),
-                'name'              => $this->getName(),
-                'urlKey'            => $this->getUrlKey(),
-                'status'            => $this->getStatus(),
-                'private'           => $this->isPrivate(),
-                'fullDescription'   => $this->getFullDescription(),
-                'description'       => $this->getDescription(),
-                'fromDate'          => $this->getFromDate(),
-                'toDate'            => $this->getToDate(),
-                'useTime'           => $this->getUseTime(),
-                'url'               => $this->getUrl(),
-                'address'           => $this->getAddress(),
-                'user'              => $this->getUser(),
-                'images'            => $this->getImages(),
-                'defaultAvatar'     => $this->getDefaultAvatar(),
-                'externalImageUrl'  => $this->getExternalImageUrl()
+                'id'                        => $this->getId(),
+                'iri'                       => $this->getIri(),
+                'name'                      => $this->getName(),
+                'urlKey'                    => $this->getUrlKey(),
+                'status'                    => $this->getStatus(),
+                'private'                   => $this->isPrivate(),
+                'fullDescription'           => $this->getFullDescription(),
+                'description'               => $this->getDescription(),
+                'fromDate'                  => $this->getFromDate(),
+                'toDate'                    => $this->getToDate(),
+                'useTime'                   => $this->getUseTime(),
+                'url'                       => $this->getUrl(),
+                'address'                   => $this->getAddress(),
+                'user'                      => $this->getUser(),
+                'images'                    => $this->getImages(),
+                'defaultAvatar'             => $this->getDefaultAvatar(),
+                'externalImageUrl'          => $this->getExternalImageUrl(),
+                'gamificationNotifications' => $this->getGamificationNotifications()
             ];
     }
 }

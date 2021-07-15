@@ -15,9 +15,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 {
     private $decorated;
     private $gamificationNotifier;
-    private $dataUri;
+    private $badgeImageUri;
 
-    public function __construct(NormalizerInterface $decorated, GamificationNotifier $gamificationNotifier, string $dataUri)
+    public function __construct(NormalizerInterface $decorated, GamificationNotifier $gamificationNotifier, string $badgeImageUri)
     {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -25,7 +25,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
         $this->decorated = $decorated;
         $this->gamificationNotifier = $gamificationNotifier;
-        $this->dataUri = $dataUri;
+        $this->badgeImageUri = $badgeImageUri;
     }
 
     public function supportsNormalization($data, $format = null)
@@ -48,9 +48,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                         "title" => $gamificationNotification->getTitle(),
                         "text" => $gamificationNotification->getText(),
                         "pictures" => [
-                            "icon" => $this->dataUri."/".$gamificationNotification->getIcon()->getFileName(),
-                            "image" => $this->dataUri."/".$gamificationNotification->getImage()->getFileName(),
-                            "imageLight" => $this->dataUri."/".$gamificationNotification->getImageLight()->getFileName()
+                            "icon" => $this->badgeImageUri.$gamificationNotification->getIcon()->getFileName(),
+                            "image" => $this->badgeImageUri.$gamificationNotification->getImage()->getFileName(),
+                            "imageLight" => $this->badgeImageUri.$gamificationNotification->getImageLight()->getFileName()
                         ]
                     ];
                 } elseif ($gamificationNotification instanceof RewardStep) {

@@ -24,13 +24,14 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A payment or a validation of a payment.
  *  @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class PaymentPayment implements ResourceInterface, \JsonSerializable
+class PaymentPayment extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     const TYPE_PAY = 1;
     const TYPE_VALIDATE = 2;
@@ -141,7 +142,8 @@ class PaymentPayment implements ResourceInterface, \JsonSerializable
                 'type'                      => $this->getType(),
                 'items'                     => $this->getItems(),
                 'status'                    => $this->getstatus(),
-                'redirectUrl'               => $this->getRedirectUrl()
+                'redirectUrl'               => $this->getRedirectUrl(),
+                'gamificationNotifications' => $this->getGamificationNotifications(),
             ];
     }
 }

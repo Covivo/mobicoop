@@ -1,4 +1,11 @@
 {
-    "gamification":"Action de ludification",
-    "community_joined":"Vous avez rejoins une communauté"
+    "wow":"WAHOU!!",
+    "youWonABadge":"Vous venez de gagner le badge",
+    "button": {
+        "label":"Voir 'Badges'"
+    },
+    "checkbox": {
+        "label":"Ne plus voir ces messages"
+    },
+    "close":"Fermer"
 }

@@ -24,11 +24,12 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * Carpooling : an ad fo a user.
  */
-class MyAd implements ResourceInterface, \JsonSerializable
+class MyAd extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     const RESOURCE_NAME = "my_carpools";
 
@@ -506,6 +507,7 @@ class MyAd implements ResourceInterface, \JsonSerializable
                 'passengers' => $this->getPassengers(),
                 'carpoolers' => $this->getCarpoolers(),
                 'paymentStatus' => $this->getPaymentStatus(),
+                'gamificationNotifications' => $this->getGamificationNotifications(),
             ];
     }
 }
