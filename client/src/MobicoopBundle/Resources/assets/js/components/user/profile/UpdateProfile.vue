@@ -812,7 +812,7 @@ export default {
     },
     generateToken() {
     this.loadingToken = true;   
-    axios 
+    maxios 
       .get(this.$t('phone.token.route'))
       .then(res => {
           if (res.data.state) {

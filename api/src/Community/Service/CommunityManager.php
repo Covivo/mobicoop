@@ -132,13 +132,21 @@ class CommunityManager
         if (!$authorized) {
             return false;
         }
-        if ($checkDomain) {
-            // check validation domain
-            if ($community->getValidationType() == Community::DOMAIN_VALIDATION &&
-            (str_replace("@", "", $community->getDomain()) != (explode("@", $communityUser->getUser()->getEmail()))[1])) {
-                $authorized = false;
+        if ($checkDomain && $community->getValidationType() == Community::DOMAIN_VALIDATION) {
+            $authorized = false; // Unauthorized by default.
+
+            $userDomain = explode("@", $communityUser->getUser()->getEmail())[1];
+
+            $communityDomains = explode(";", str_replace("@", "", $community->getDomain()));
+
+            foreach ($communityDomains as $communityDomain) {
+                if ($communityDomain == $userDomain) {
+                    $authorized = true;
+                    break;
+                }
             }
         }
+        
         return $authorized;
     }
 

@@ -1640,9 +1640,8 @@ class UserManager
                         break;
                     }
                 }
+                $nbMessageConsidered++;
             }
-
-            $nbMessageConsidered++;
         }
         $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? $this->profile['experiencedTagMinAnswerPctDefault'] : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
         
