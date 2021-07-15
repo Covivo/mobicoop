@@ -63,7 +63,7 @@ class SolidaryTransportMatcher
         $outwardVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
 
         // then we get the volunteers for the return (if relevant)
-        $returnVolunteers = null;
+        $returnVolunteers = [];
         if ($solidary->getProposal()->getProposalLinked()) {
             $returnVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getProposalLinked()->getType());
         }
