@@ -36,7 +36,6 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use DateTime;
-use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * A user.
