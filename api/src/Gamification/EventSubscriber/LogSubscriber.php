@@ -50,6 +50,8 @@ class LogSubscriber implements EventSubscriberInterface
 
     public function onLogEvent(LogEvent $event)
     {
-        if($this->active) $this->gamificationManager->handleLog($event->getLog());
+        if ($this->active) {
+            $this->gamificationManager->handleLog($event->getLog());
+        }
     }
 }
