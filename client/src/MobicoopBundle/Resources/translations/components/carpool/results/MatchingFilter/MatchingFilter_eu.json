@@ -30,7 +30,7 @@
     },
     "select": {
         "hour": {
-            "help": "Iragarkien afitxaketak hautatutako orduarentzat bakarrik ",
+            "help": "Iragarkiak jarriko ditugu, hautatu duzun ordutik aitzina.",
             "label": "Ordua"
         },
         "filter": {
