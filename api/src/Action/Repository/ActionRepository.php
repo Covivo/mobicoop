@@ -62,4 +62,19 @@ class ActionRepository
     {
         return $this->repository->findOneBy($criteria);
     }
+
+    /**
+     * Get manually triggerd solidary action
+     *
+     * @return array|null
+     */
+    public function getSolidaryActions()
+    {
+        return $this->repository->createQueryBuilder('a')
+        ->where('a.type IN (:types)')
+        ->orderBy('a.type', 'ASC')
+        ->setParameter('types', Action::TYPE_FILTER[Action::DOMAIN_TYPE_SOLIDARY])
+        ->getQuery()
+        ->getResult();
+    }
 }

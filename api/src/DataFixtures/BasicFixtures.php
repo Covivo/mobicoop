@@ -23,6 +23,8 @@
 
 namespace App\DataFixtures;
 
+use App\Carpool\Repository\MatchingRepository;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\ProposalManager;
 use App\DataFixtures\Service\BasicFixturesManager;
 use App\Geography\Service\TerritoryManager;
@@ -44,10 +46,12 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     private $fixturesEnabled;
     private $fixturesClearBase;
     private $fixturesBasic;
+    private $matchingRepository;
 
     public function __construct(
         BasicFixturesManager $fixturesManager,
         ProposalManager $proposalManager,
+        MatchingRepository $matchingRepository,
         TerritoryManager $territoryManager,
         ImageManager $imageManager,
         bool $fixturesEnabled,
@@ -56,6 +60,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     ) {
         $this->fixturesManager = $fixturesManager;
         $this->proposalManager = $proposalManager;
+        $this->matchingRepository = $matchingRepository;
         $this->fixturesEnabled = $fixturesEnabled;
         $this->fixturesClearBase = $fixturesClearBase;
         $this->fixturesBasic = $fixturesBasic;
@@ -118,7 +123,19 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     while ($tab = fgetcsv($file, 4096, ';')) {
                         // create the ad
                         if ($ad = $this->fixturesManager->createAd($tab)) {
-                            $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()), false);
+                            $outwardProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($ad->getId()));
+                            if (!$ad->isOneWay()) {
+                                $returnProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($outwardProposal->getProposalLinked()->getId()));
+                                $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
+                            }
+                            if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
+                                // linking for the outward
+                                $this->matchingRepository->linkOppositeMatchings($outwardProposal->getId());
+                                if (!$ad->isOneWay()) {
+                                    // linking for the return
+                                    $this->matchingRepository->linkOppositeMatchings($returnProposal->getId());
+                                }
+                            }
                         }
                     }
                 }

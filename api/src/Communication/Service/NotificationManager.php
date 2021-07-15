@@ -54,11 +54,13 @@ use App\User\Entity\PushToken;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\User\Entity\Review;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * Notification manager
@@ -147,15 +149,19 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+        // check if notification system is enabled
         if (!$this->enabled) {
             return;
         }
+
         // Check if the user is anonymised if yes we don't send notifications
         if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
             return;
         }
 
+        // check if there's a notification associated with the given action
         $notifications = null;
+
         // we check the user notifications
         $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
        
@@ -176,7 +182,7 @@ class NotificationManager
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
+                            if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             }
                         }
@@ -228,7 +234,7 @@ class NotificationManager
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
-            switch (get_class($object)) {
+            switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
                     $titleContext = [];
                     $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
@@ -320,23 +326,23 @@ class NotificationManager
                     break;
                 case Community::class:
                     $sender = null;
-                    if (count($object->getCommunityUsers()) > 0) {
-                        foreach ($object->getCommunityUsers() as $communityUser) {
-                            if ($communityUser->getCommunity()->getId() === $object->getId()) {
-                                $senderGivenName = $communityUser->getUser()->getGivenName();
-                                $senderShortFamilyName = $communityUser->getUser()->getShortFamilyName();
-                            }
-                        }
-                    }
-                    $titleContext = [];
-                    $bodyContext = [
-                        'recipient'=>$recipient,
+                    $titleContext = [
                         'community' => $object,
-                        'senderGivenName'=>$senderGivenName,
-                        'senderShortFamilyName'=> $senderShortFamilyName
+                    ];
+                    $bodyContext = [
+                        'recipient'=> $recipient,
+                        'community' => $object
                     ];
                     break;
-                    
+                case CommunityUser::class:
+                    $sender = null;
+                    $bodyContext = [
+                        'recipient'=> $recipient,
+                        'community' => $object->getCommunity(),
+                        'senderGivenName'=> $object->getUser()->getGivenName(),
+                        'senderShortFamilyName'=> $object->getUser()->getShortFamilyName()
+                    ];
+                    break;
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
@@ -462,7 +468,7 @@ class NotificationManager
                 'context' => $titleContext
             ]
         ));
-
+        
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
     }

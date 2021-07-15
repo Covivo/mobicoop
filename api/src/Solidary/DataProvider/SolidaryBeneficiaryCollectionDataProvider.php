@@ -50,7 +50,8 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return SolidaryBeneficiary::class === $resourceClass;
+        return SolidaryBeneficiary::class === $resourceClass && $operationName === 'get';
+        ;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)

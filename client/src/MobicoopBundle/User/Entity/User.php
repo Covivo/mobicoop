@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
@@ -1295,43 +1296,43 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function jsonSerialize()
     {
         $userSerialized = [
-            'id'                    => $this->getId(),
-            'givenName'             => $this->getGivenName(),
-            'familyName'            => $this->getFamilyName(),
-            'shortFamilyName'       => $this->getShortFamilyName(),
-            'gender'                => $this->getGender(),
-            'status'                => $this->getStatus(),
-            'email'                 => $this->getEmail(),
-            'telephone'             => $this->getTelephone(),
-            'token'                 => $this->getToken(),
-            'birthYear'             => $this->getBirthYear(),
-            'birthDate'             => $this->getBirthDate(),
-            'homeAddress'           => $this->getHomeAddress(),
-            'images'                => $this->getImages(),
-            'avatars'               => $this->getAvatars(),
-            'smoke'                 => $this->getSmoke(),
-            'chat'                  => $this->hasChat(),
-            'chatFavorites'         => $this->getChatFavorites(),
-            'music'                 => $this->hasMusic(),
-            'musicFavorites'        => $this->getMusicFavorites(),
-            'newsSubscription'      => $this->hasNewsSubscription(),
-            'phoneDisplay'          => $this->getPhoneDisplay(),
-            'phoneValidatedDate'    => $this->getPhoneValidatedDate(),
-            'phoneToken'            => $this->getPhoneToken(),
-            'unsubscribeMessage'    => $this->getUnsubscribeMessage(),
-            'communityId'           => $this->getCommunityId(),
-            'bankAccounts'          => $this->getBankAccounts(),
-            'carpoolExport'         => $this->getCarpoolExport(),
-            'canReceiveReview'      => $this->getCanReceiveReview(),
-            'userReviewsActive'     => $this->isUserReviewsActive(),
-            'experienced'           => $this->isExperienced(),
-            'validatedDate'         => $this->getValidatedDate(),
+            'id'                            => $this->getId(),
+            'givenName'                     => $this->getGivenName(),
+            'familyName'                    => $this->getFamilyName(),
+            'shortFamilyName'               => $this->getShortFamilyName(),
+            'gender'                        => $this->getGender(),
+            'status'                        => $this->getStatus(),
+            'email'                         => $this->getEmail(),
+            'telephone'                     => $this->getTelephone(),
+            'token'                         => $this->getToken(),
+            'birthYear'                     => $this->getBirthYear(),
+            'birthDate'                     => $this->getBirthDate(),
+            'homeAddress'                   => $this->getHomeAddress(),
+            'images'                        => $this->getImages(),
+            'avatars'                       => $this->getAvatars(),
+            'smoke'                         => $this->getSmoke(),
+            'chat'                          => $this->hasChat(),
+            'chatFavorites'                 => $this->getChatFavorites(),
+            'music'                         => $this->hasMusic(),
+            'musicFavorites'                => $this->getMusicFavorites(),
+            'newsSubscription'              => $this->hasNewsSubscription(),
+            'phoneDisplay'                  => $this->getPhoneDisplay(),
+            'phoneValidatedDate'            => $this->getPhoneValidatedDate(),
+            'phoneToken'                    => $this->getPhoneToken(),
+            'unsubscribeMessage'            => $this->getUnsubscribeMessage(),
+            'communityId'                   => $this->getCommunityId(),
+            'bankAccounts'                  => $this->getBankAccounts(),
+            'carpoolExport'                 => $this->getCarpoolExport(),
+            'canReceiveReview'              => $this->getCanReceiveReview(),
+            'userReviewsActive'             => $this->isUserReviewsActive(),
+            'experienced'                   => $this->isExperienced(),
+            'validatedDate'                 => $this->getValidatedDate(),
             'unreadCarpoolMessageNumber'    => $this->getUnreadCarpoolMessageNumber(),
             'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
             'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
-            'savedCo2'   => $this->getSavedCo2(),
-            'language'              => $this->getLanguage(),
-            'gamificationNotifications' => $this->getGamificationNotifications()
+            'savedCo2'                      => $this->getSavedCo2(),
+            'language'                      => $this->getLanguage(),
+            'gamificationNotifications'     => $this->getGamificationNotifications()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

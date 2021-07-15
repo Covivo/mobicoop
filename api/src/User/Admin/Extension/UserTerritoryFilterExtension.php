@@ -59,7 +59,9 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        if ($resourceClass == User::class && $operationName == 'ADMIN_get') {
+            $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
+        }
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void

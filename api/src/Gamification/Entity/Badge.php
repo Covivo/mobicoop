@@ -131,8 +131,8 @@ class Badge
     /**
      * @var Image|null The Badges Icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $icon;
@@ -140,8 +140,8 @@ class Badge
     /**
      * @var Image|null The Badges reward Image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $image;
@@ -149,8 +149,8 @@ class Badge
     /**
      * @var Image|null The Badges reward Image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $imageLight;
@@ -297,7 +297,7 @@ class Badge
         return $this->icon;
     }
 
-    public function setIcon(?Image $icon): self
+    public function setIcon(Image $icon): self
     {
         $this->icon = $icon;
 
@@ -309,7 +309,7 @@ class Badge
         return $this->image;
     }
 
-    public function setImage(?Image $image): self
+    public function setImage(Image $image): self
     {
         $this->image = $image;
 
@@ -321,7 +321,7 @@ class Badge
         return $this->imageLight;
     }
 
-    public function setImageLight(?Image $imageLight): self
+    public function setImageLight(Image $imageLight): self
     {
         $this->imageLight = $imageLight;
 

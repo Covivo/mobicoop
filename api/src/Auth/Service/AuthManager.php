@@ -25,6 +25,7 @@ namespace App\Auth\Service;
 
 use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\AuthItemFilter;
 use App\Auth\Entity\Permission;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Interfaces\AuthRuleInterface;

@@ -42,7 +42,7 @@ final class SolidaryBeneficiaryItemDataProvider implements ItemDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SolidaryBeneficiary::class === $resourceClass;
+        return SolidaryBeneficiary::class === $resourceClass && $operationName === 'get';
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?SolidaryBeneficiary

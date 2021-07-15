@@ -42,7 +42,6 @@ use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\SolidaryDiaryEntry;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Entity\Structure;
-use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Event\SolidaryUserCreatedEvent;
 use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
 use App\Solidary\Event\SolidaryUserStructureRefusedEvent;

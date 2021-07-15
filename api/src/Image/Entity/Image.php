@@ -344,28 +344,58 @@ class Image
      * @var Badge|null The Badge for which this image is used as icon
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badge;
+
+    /**
+     * @var int|null The badge id associated with the image (icon).
+     * @Groups({"write","read"})
+     */
+    private $badgeId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImage;
+
+    /**
+     * @var int|null The badge id associated with the image.
+     * @Groups({"write","read"})
+     */
+    private $badgeImageId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeImageFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImageLight;
+
+    /**
+     * @var int|null The badge id associated with the image light.
+     * @Groups({"write","read"})
+     */
+    private $badgeImageLightId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeImageLightFile;
     
     /**
      * @var File|null
@@ -763,6 +793,18 @@ class Image
         
         return $this;
     }
+
+    public function getBadgeId(): ?int
+    {
+        return $this->badgeId;
+    }
+    
+    public function setBadgeId(?int $badgeId): self
+    {
+        $this->badgeId = $badgeId;
+        
+        return $this;
+    }
     
     public function getBadge(): ?Badge
     {
@@ -772,6 +814,28 @@ class Image
     public function setBadge(?Badge $badge): self
     {
         $this->badge = $badge;
+        
+        return $this;
+    }
+
+    public function getBadgeFile(): ?File
+    {
+        return $this->badgeFile;
+    }
+    
+    public function setBadgeFile(?File $badgeFile)
+    {
+        $this->badgeFile = $badgeFile;
+    }
+
+    public function getBadgeImageId(): ?int
+    {
+        return $this->badgeImageId;
+    }
+    
+    public function setBadgeImageId(?int $badgeImageId): self
+    {
+        $this->badgeImageId = $badgeImageId;
         
         return $this;
     }
@@ -788,6 +852,16 @@ class Image
         return $this;
     }
 
+    public function getBadgeImageFile(): ?File
+    {
+        return $this->badgeImageFile;
+    }
+    
+    public function setBadgeImageFile(?File $badgeImageFile)
+    {
+        $this->badgeImageFile = $badgeImageFile;
+    }
+
     public function getBadgeImageLight(): ?Badge
     {
         return $this->badgeImageLight;
@@ -798,6 +872,28 @@ class Image
         $this->badgeImageLight = $badgeImageLight;
         
         return $this;
+    }
+
+    public function getBadgeImageLightId(): ?int
+    {
+        return $this->badgeImageLightId;
+    }
+    
+    public function setBadgeImageLightId(?int $badgeImageLightId): self
+    {
+        $this->badgeImageLightId = $badgeImageLightId;
+        
+        return $this;
+    }
+
+    public function getBadgeImageLightFile(): ?File
+    {
+        return $this->badgeImageLightFile;
+    }
+    
+    public function setBadgeImageLightFile(?File $badgeImageLightFile)
+    {
+        $this->badgeImageLightFile = $badgeImageLightFile;
     }
 
     public function getRelayPointTypeFile(): ?File
@@ -886,6 +982,9 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
+        $this->setBadgeFile(null);
+        $this->setBadgeImageFile(null);
+        $this->setBadgeImageLightFile(null);
     }
     
     // DOCTRINE EVENTS

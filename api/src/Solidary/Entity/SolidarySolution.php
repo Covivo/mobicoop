@@ -118,6 +118,15 @@ class SolidarySolution
     private $comment;
 
     /**
+     * @var SolidarySolution|null The linked solidary solution for return trips.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @MaxDepth(1)
+     */
+    private $solidarySolutionLinked;
+
+    /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
@@ -187,6 +196,24 @@ class SolidarySolution
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getSolidarySolutionLinked(): ?self
+    {
+        return $this->solidarySolutionLinked;
+    }
+
+    public function setSolidarySolutionLinked(?self $solidarySolutionLinked): self
+    {
+        $this->solidarySolutionLinked = $solidarySolutionLinked;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newSolidarySolutionLinked = $solidarySolutionLinked === null ? null : $this;
+        if (!is_null($solidarySolutionLinked) && $newSolidarySolutionLinked !== $solidarySolutionLinked->getSolidarySolutionLinked()) {
+            $solidarySolutionLinked->setSolidarySolutionLinked($newSolidarySolutionLinked);
+        }
 
         return $this;
     }

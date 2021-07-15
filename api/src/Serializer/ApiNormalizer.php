@@ -24,7 +24,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $rewardRepository;
     private $security;
     private $entityManager;
-    private $dataUri;
+    private $badgeImageUri;
 
     public function __construct(
         NormalizerInterface $decorated,
@@ -33,7 +33,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         RewardRepository $rewardRepository,
         Security $security,
         EntityManagerInterface $entityManager,
-        string $dataUri
+        string $badgeImageUri
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -45,7 +45,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->rewardRepository = $rewardRepository;
         $this->security = $security;
         $this->entityManager = $entityManager;
-        $this->dataUri = $dataUri;
+        $this->badgeImageUri = $badgeImageUri;
     }
 
     public function supportsNormalization($data, $format = null)
@@ -158,10 +158,10 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             "title" => $badge->getTitle(),
             "text" => $badge->getText(),
             "pictures" => [
-                "icon" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getIcon()->getFileName() : null,
-                "image" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getImage()->getFileName() : null,
-                "imageLight" => (!is_null($badge->getIcon())) ? $this->dataUri."/".$badge->getImageLight()->getFileName() : null
-            ]
+                "icon" => (!is_null($badge->getIcon())) ? $this->badgeImageUri.$badge->getIcon()->getFileName() : null,
+                "image" => (!is_null($badge->getImage())) ? $this->badgeImageUri.$badge->getImage()->getFileName() : null,
+                "imageLight" => (!is_null($badge->getImageLight())) ? $this->badgeImageUri.$badge->getImageLight()->getFileName() : null
+]
         ];
     }
 }

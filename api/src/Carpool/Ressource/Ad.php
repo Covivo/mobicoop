@@ -30,6 +30,7 @@ use App\Carpool\Controller\AdAskPost;
 use App\Carpool\Controller\AdAskGet;
 use App\User\Entity\User;
 use App\Carpool\Controller\UpdateCarpoolsLimits;
+use App\Solidary\Entity\Solidary;
 
 /**
  * Carpooling : an ad.
@@ -517,6 +518,11 @@ class Ad
     private $paused;
 
     /**
+    * @var boolean Ad without destination.
+    */
+    private $noDestination;
+
+    /**
      * @var int The Id of the proposal associated to the ad.
      *
      * @Groups({"read","write"})
@@ -612,6 +618,11 @@ class Ad
      * @Groups("read")
      */
     private $carpoolProofId;
+
+    /**
+     * @var Solidary|null The solidary record if the ad concerns a solidary record.
+     */
+    private $solidaryRecord;
 
     public function __construct()
     {
@@ -1155,6 +1166,18 @@ class Ad
         return $this;
     }
 
+    public function getSolidaryRecord(): ?Solidary
+    {
+        return $this->solidaryRecord;
+    }
+
+    public function setSolidaryRecord(Solidary $solidaryRecord): self
+    {
+        $this->solidaryRecord = $solidaryRecord;
+
+        return $this;
+    }
+
     public function getCanUpdateAsk(): ?bool
     {
         return $this->canUpdateAsk;
@@ -1187,6 +1210,18 @@ class Ad
     public function setPaused(?bool $paused): self
     {
         $this->paused = $paused;
+
+        return $this;
+    }
+
+    public function hasNoDestination(): bool
+    {
+        return $this->noDestination ? true : false;
+    }
+
+    public function setNoDestination(?bool $noDestination): self
+    {
+        $this->noDestination = $noDestination;
 
         return $this;
     }

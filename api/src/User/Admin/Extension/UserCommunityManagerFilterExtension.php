@@ -68,6 +68,11 @@ final class UserCommunityManagerFilterExtension implements QueryCollectionExtens
             return;
         }
 
+        if ($this->authManager->isAuthorized('ROLE_SOLIDARY_OPERATOR')) {
+            // user is solidary operator => not concerned
+            return;
+        }
+
         $user = $this->security->getUser();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder

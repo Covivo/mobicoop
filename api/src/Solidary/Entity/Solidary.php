@@ -32,6 +32,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Entity\Proposal;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use App\Carpool\Entity\Criteria;
+use App\Geography\Entity\Address;
+use DateTime;
 
 /**
  * A solidary record.
@@ -73,8 +80,41 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
- *
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidaries",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_actions_get"={
+ *              "path"="/admin/solidaries/actions",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/solidaries",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aReadCreated"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -103,8 +143,60 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidaries/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "security"="is_granted('admin_solidary_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/solidaries/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      }
+ * )
+ * @ApiFilter(
+ *      SearchFilter::class,
+ *      properties={
+ *          "givenName":"partial",
+ *          "familyName":"partial",
+ *          "solidaryUserStructure.solidaryUser.user.givenName":"partial",
+ *          "solidaryUserStructure.solidaryUser.user.familyName":"partial"
+ *      }
+ * )
+ * @ApiFilter(
+ *      RangeFilter::class,
+ *      properties={
+ *          "progression"
+ *      }
+ * )
+ * @ApiFilter(
+ *      OrderFilter::class,
+ *      properties={
+ *          "id",
+ *          "givenName",
+ *          "familyName",
+ *          "telephone",
+ *          "subject",
+ *          "progression",
+ *          "lastActionDate",
+ *          "solidaryUserStructure.solidaryUser.user.givenName",
+ *          "solidaryUserStructure.solidaryUser.user.familyName",
+ *          "solidaryUserStructure.solidaryUser.user.telephone",
+ *          "subject.label",
+ *          "proposal.criteria.fromDate"
+ *      },
+ *      arguments={"orderParameterName"="order"}
  * )
  *
  *  Exemples for regular :
@@ -139,10 +231,65 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class Solidary
 {
     const DEFAULT_ID = 999999999999;
+
+    const STATUS_ASKED = 0;
+    const STATUS_REFUSED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_LOOKING_FOR_SOLUTION = 3;
+    const STATUS_FOLLOW_UP = 4;
+    const STATUS_CLOSED = 5;
+
+    const STATUSES = [
+        self::STATUS_ASKED,
+        self::STATUS_REFUSED,
+        self::STATUS_PENDING,
+        self::STATUS_LOOKING_FOR_SOLUTION,
+        self::STATUS_FOLLOW_UP,
+        self::STATUS_CLOSED
+    ];
+
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_DATE = 1;    // chosen date
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_7 = 2;       // in the next 7 days
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_15 = 3;      // in the next 15 days
+    const PUNCTUAL_OUTWARD_DATE_CHOICE_30 = 4;      // in the next 30 days
+
+    const PUNCTUAL_OUTWARD_DATE_CHOICES = [
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_DATE,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_7,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_15,
+        self::PUNCTUAL_OUTWARD_DATE_CHOICE_30
+    ];
+
+    const PUNCTUAL_TIME_CHOICE_TIME = 1;    // chosen time
+    const PUNCTUAL_TIME_CHOICE_M = 2;       // structure morning range
+    const PUNCTUAL_TIME_CHOICE_A = 3;       // structure afternoon range
+    const PUNCTUAL_TIME_CHOICE_E = 4;       // structure evening range
+
+    const PUNCTUAL_TIME_CHOICES = [
+        self::PUNCTUAL_TIME_CHOICE_TIME,
+        self::PUNCTUAL_TIME_CHOICE_M,
+        self::PUNCTUAL_TIME_CHOICE_A,
+        self::PUNCTUAL_TIME_CHOICE_E
+    ];
+
+    const PUNCTUAL_RETURN_DATE_CHOICE_NULL = 1;     // no return
+    const PUNCTUAL_RETURN_DATE_CHOICE_1 = 2;        // one hour later
+    const PUNCTUAL_RETURN_DATE_CHOICE_2 = 3;        // 2 hours later
+    const PUNCTUAL_RETURN_DATE_CHOICE_3 = 4;        // 3 hours later
+    const PUNCTUAL_RETURN_DATE_CHOICE_DATE = 5;     // chosen date and time
+
+    const PUNCTUAL_RETURN_DATE_CHOICES = [
+        self::PUNCTUAL_RETURN_DATE_CHOICE_NULL,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_1,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_2,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_3,
+        self::PUNCTUAL_RETURN_DATE_CHOICE_DATE
+    ];
 
     /**
      * @var int $id The id of this solidary record.
@@ -150,18 +297,26 @@ class Solidary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @Groups({"aReadItem","aReadCol","aReadCreated","readSolidary","writeSolidary","readSolidarySearch"})
      */
     private $id;
 
     /**
-     * @var int Ask status (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
+     * @var int Status of the record (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"writeSolidary"})
      * @ORM\Column(type="smallint")
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $status;
+
+    /**
+     * @var int Original frequency of the proposal (a punctual proposal could be transformed to a regular proposal in case of a flexible demand).
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"readSolidary","writeSolidary"})
+     */
+    private $frequency;
 
     /**
      * @var string Detail for regular ask.
@@ -196,6 +351,15 @@ class Solidary
     private $updatedDate;
 
     /**
+     * @var ArrayCollection|null Diary entry.
+     * Ordered desc to get the last entry first.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "DESC"})
+     */
+    private $diaries;
+
+    /**
      * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
@@ -206,9 +370,10 @@ class Solidary
 
     /**
      * @var Proposal The proposal.
+     * The proposal is set as nullable but is in fact mandatory : we create the solidary record *before* the proposal for technical reasons.
+     * The proposal will then be set a short time after the solidary record is created.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
@@ -217,10 +382,10 @@ class Solidary
     /**
      * @var Subject Subject of the solidary record.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"writeSolidary"})
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aRead","readSolidary","writeSolidary"})
      */
     private $subject;
 
@@ -228,7 +393,7 @@ class Solidary
      * @var ArrayCollection|null The special needs for this solidary record.
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $needs;
@@ -253,8 +418,42 @@ class Solidary
     private $solidaryMatchings;
 
     /**
+     * @var int Punctual outward date choice.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups("aReadItem")
+     */
+    private $punctualOutwardDateChoice;
+
+    /**
+     * @var int Punctual outward time choice.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups("aReadItem")
+     */
+    private $punctualOutwardTimeChoice;
+
+    /**
+     * @var int Punctual return date choice.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups("aReadItem")
+     */
+    private $punctualReturnDateChoice;
+
+    /**
+     * @var int Regular date choice.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups("aReadItem")
+     */
+    private $regularDateChoice;
+
+    /**
      * @var float Progression of this solidary
-     * @Groups({"readSolidary", "writeSolidary"})
+     *
+     * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Groups({"aReadCol","aReadItem","readSolidary", "writeSolidary"})
      */
     private $progression;
 
@@ -265,7 +464,7 @@ class Solidary
     private $asksList;
 
     /**
-     * @var SolidaryUser SolidaryUser associated ti the ask
+     * @var SolidaryUser SolidaryUser associated to the ask
      * @Groups ({"writeSolidary", "readSolidary"})
      * @MaxDepth(1)
      */
@@ -375,12 +574,6 @@ class Solidary
     private $structure;
 
     /**
-     * @var Int|null frequency of the solidary demand
-     * @Groups ({"writeSolidary", "readSolidary"})
-     */
-    private $frequency;
-
-    /**
      * @var Array|null Days for the solidary if it's regular
      * @Groups ({"writeSolidary", "readSolidary"})
      */
@@ -444,10 +637,11 @@ class Solidary
      * @Groups ({"readSolidary"})
      */
     private $solutions;
-    
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
+        $this->diaries = new ArrayCollection();
         $this->needs = new ArrayCollection();
         $this->solidarySolutions = new ArrayCollection();
         $this->solidaryMatchings = new ArrayCollection();
@@ -458,7 +652,7 @@ class Solidary
         $this->homeAddress = [];
         $this->solutions = [];
     }
-
+    
     public function getId(): int
     {
         return $this->id;
@@ -536,7 +730,7 @@ class Solidary
         return $this;
     }
 
-    public function getProposal(): Proposal
+    public function getProposal(): ?Proposal
     {
         return $this->proposal;
     }
@@ -629,12 +823,17 @@ class Solidary
         return $this;
     }
 
-    public function getProgression(): ?string
+    public function getDiaries()
+    {
+        return $this->diaries->getValues();
+    }
+
+    public function getProgression(): float
     {
         return $this->progression;
     }
 
-    public function setProgression(?string $progression): self
+    public function setProgression(float $progression): self
     {
         $this->progression = $progression;
 
@@ -882,6 +1081,54 @@ class Solidary
         return $this;
     }
 
+    public function getPunctualOutwardDateChoice(): ?int
+    {
+        return $this->punctualOutwardDateChoice;
+    }
+    
+    public function setPunctualOutwardDateChoice(?int $punctualOutwardDateChoice): self
+    {
+        $this->punctualOutwardDateChoice = $punctualOutwardDateChoice;
+        
+        return $this;
+    }
+
+    public function getPunctualOutwardTimeChoice(): ?int
+    {
+        return $this->punctualOutwardTimeChoice;
+    }
+    
+    public function setPunctualOutwardTimeChoice(?int $punctualOutwardTimeChoice): self
+    {
+        $this->punctualOutwardTimeChoice = $punctualOutwardTimeChoice;
+        
+        return $this;
+    }
+
+    public function getPunctualReturnDateChoice(): ?int
+    {
+        return $this->punctualReturnDateChoice;
+    }
+    
+    public function setPunctualReturnDateChoice(?int $punctualReturnDateChoice): self
+    {
+        $this->punctualReturnDateChoice = $punctualReturnDateChoice;
+        
+        return $this;
+    }
+
+    public function getRegularDateChoice(): ?int
+    {
+        return $this->regularDateChoice;
+    }
+    
+    public function setRegularDateChoice(?int $regularDateChoice): self
+    {
+        $this->regularDateChoice = $regularDateChoice;
+        
+        return $this;
+    }
+
     public function getDays(): ?array
     {
         return $this->days;
@@ -1025,5 +1272,511 @@ class Solidary
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \Datetime());
+    }
+
+
+
+
+    // ADMIN CUSTOM PROPERTIES
+    
+    /**
+     * @var string|null Subject of the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminsubject(): ?string
+    {
+        return $this->getSubject()->getLabel();
+    }
+
+    /**
+     * @var int|null Subject id of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminsubjectId(): ?int
+    {
+        return $this->getSubject()->getId();
+    }
+
+    /**
+     * @var int|null Id of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminuserId(): int
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId();
+    }
+
+    /**
+     * @var string|null Given name of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdmingivenName(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGivenName();
+    }
+
+    /**
+     * @var string|null Family name of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminfamilyName(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getFamilyName();
+    }
+
+    /**
+     * @var string|null Email of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminemail(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getEmail();
+    }
+
+    /**
+     * @var string|null Avatar of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminavatar(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getAvatar();
+    }
+
+    /**
+     * @var int|null Gender of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdmingender(): ?int
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGender();
+    }
+
+    /**
+     * @var DateTimeInterface|null Birthdate of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminbirthDate(): ?\DateTimeInterface
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getBirthDate();
+    }
+
+    /**
+     * @var bool|null News subscription for the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function hasAdminnewsSubscription(): bool
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->hasNewsSubscription() ? true : false;
+    }
+
+    /**
+     * @var array|null Home address of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminhomeAddress(): ?array
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize();
+    }
+    
+    /**
+     * @var string|null Given name of the operator
+     * @Groups("aReadItem")
+     */
+    private $adminoperatorGivenName;
+    public function getAdminoperatorGivenName(): ?string
+    {
+        return $this->adminoperatorGivenName;
+    }
+    public function setAdminoperatorGivenName(string $adminoperatorGivenName): self
+    {
+        $this->adminoperatorGivenName = $adminoperatorGivenName;
+
+        return $this;
+    }
+
+    /**
+     * @var string|null Family name of the operator
+     * @Groups("aReadItem")
+     */
+    private $adminoperatorFamilyName;
+    public function getAdminoperatorFamilyName(): ?string
+    {
+        return $this->adminoperatorFamilyName;
+    }
+    public function setAdminoperatorFamilyName(string $adminoperatorFamilyName): self
+    {
+        $this->adminoperatorFamilyName = $adminoperatorFamilyName;
+
+        return $this;
+    }
+
+    /**
+     * @var string|null Avatar of the operator
+     * @Groups("aReadItem")
+     */
+    private $adminoperatorAvatar;
+    public function getAdminoperatorAvatar(): ?string
+    {
+        return $this->adminoperatorAvatar;
+    }
+    public function setAdminoperatorAvatar(string $adminoperatorAvatar): self
+    {
+        $this->adminoperatorAvatar = $adminoperatorAvatar;
+
+        return $this;
+    }
+
+    /**
+     * @var string|null Telephone of the beneficiary
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdmintelephone(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getTelephone();
+    }
+
+    /**
+     * @var string|null Structure of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminstructure(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getStructure()->getName();
+    }
+
+    /**
+     * @var string|null Structure id of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminstructureId(): ?int
+    {
+        return $this->getSolidaryUserStructure()->getStructure()->getId();
+    }
+
+    /**
+     * @var int Mode of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminmode(): int
+    {
+        return $this->getSolidaryUserStructure()->getStructure()->getMode() ? $this->getSolidaryUserStructure()->getStructure()->getMode() : 0;
+    }
+
+    /**
+     * @var string|null Last action for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminlastAction(): ?string
+    {
+        return $this->getDiaries()[0]->getAction()->getName();
+    }
+
+    /**
+     * @var DateTime|null Last action date for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminlastActionDate(): ?DateTime
+    {
+        return $this->getDiaries()[0]->getCreatedDate();
+    }
+
+    /**
+     * @var Address|null Origin for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdminorigin(): ?Address
+    {
+        return $this->getProposal()->getWaypoints()[0]->getAddress();
+    }
+
+    /**
+     * @var Address|null Destination for the solidary record
+     * @Groups({"aReadCol", "aReadItem"})
+     */
+    public function getAdmindestination(): ?Address
+    {
+        foreach ($this->getProposal()->getWaypoints() as $waypoint) {
+            if ($waypoint->isDestination()) {
+                return $waypoint->getAddress();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @var string Proposal type for the solidary record
+     * @Groups({"aReadCol","aReadItem"})
+     */
+    public function getAdminproposalType(): string
+    {
+        return $this->getProposal()->getType() == Proposal::TYPE_ONE_WAY ? 'oneway' : 'roundtrip';
+    }
+
+    /**
+     * @var int Original frequency for the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminfrequency(): int
+    {
+        if ($this->frequency == $this->getProposal()->getCriteria()->getFrequency()) {
+            // original and proposal frequency are the same
+            return $this->getProposal()->getCriteria()->getFrequency();
+        } else {
+            // original frequency is punctual, but proposal frequency is regular => flexible
+            return Criteria::FREQUENCY_FLEXIBLE;
+        }
+    }
+
+    /**
+     * @var DateTime Start date for the solidary record
+     * @Groups({"aReadItem", "aReadCol"})
+     */
+    public function getAdminfromDate(): ?DateTime
+    {
+        return $this->getProposal()->getCriteria()->getFromDate();
+    }
+
+    /**
+     * @var DateTime|null End date for the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdmintoDate(): ?DateTime
+    {
+        return $this->getProposal()->getCriteria()->getToDate();
+    }
+
+    /**
+     * @var DateTime Outward date for the solidary record, if punctual
+     * @Groups("aReadItem")
+     */
+    public function getAdminoutwardDate(): ?DateTime
+    {
+        return $this->getProposal()->getCriteria()->getFromDate();
+    }
+
+    /**
+     * @var DateTime|null Return date for the solidary record, if punctual
+     * @Groups("aReadItem")
+     */
+    public function getAdminreturnDate(): ?DateTime
+    {
+        return $this->getProposal()->getProposalLinked() ? $this->getProposal()->getProposalLinked()->getCriteria()->getFromDate() : null;
+    }
+
+    /**
+     * @var DateTime Outward time for the solidary record, if punctual
+     * @Groups("aReadItem")
+     */
+    private $adminoutwardTime;
+    public function getAdminoutwardTime(): ?DateTime
+    {
+        return $this->adminoutwardTime;
+    }
+    public function setAdminoutwardTime(DateTime $adminoutwardTime): self
+    {
+        $this->adminoutwardTime = $adminoutwardTime;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime|null Return time for the solidary record, if punctual
+     * @Groups("aReadItem")
+     */
+    private $adminreturnTime;
+    public function getAdminreturnTime(): ?DateTime
+    {
+        return $this->adminreturnTime;
+    }
+    public function setAdminreturnTime(DateTime $adminreturnTime): self
+    {
+        $this->adminreturnTime = $adminreturnTime;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime Outward min time for the solidary record, if flexible
+     * @Groups("aReadItem")
+     */
+    private $adminoutwardMinTime;
+    public function getAdminoutwardMinTime(): ?DateTime
+    {
+        return $this->adminoutwardMinTime;
+    }
+    public function setAdminoutwardMinTime(DateTime $adminoutwardMinTime): self
+    {
+        $this->adminoutwardMinTime = $adminoutwardMinTime;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime Outward max time for the solidary record, if flexible
+     * @Groups("aReadItem")
+     */
+    private $adminoutwardMaxTime;
+    public function getAdminoutwardMaxTime(): ?DateTime
+    {
+        return $this->adminoutwardMaxTime;
+    }
+    public function setAdminoutwardMaxTime(DateTime $adminoutwardMaxTime): self
+    {
+        $this->adminoutwardMaxTime = $adminoutwardMaxTime;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime Return min time for the solidary record, if flexible
+     * @Groups("aReadItem")
+     */
+    private $adminreturnMinTime;
+    public function getAdminreturnMinTime(): ?DateTime
+    {
+        return $this->adminreturnMinTime;
+    }
+    public function setAdminreturnMinTime(DateTime $adminreturnMinTime): self
+    {
+        $this->adminreturnMinTime = $adminreturnMinTime;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime Return max time for the solidary record, if flexible
+     * @Groups("aReadItem")
+     */
+    private $adminreturnMaxTime;
+    public function getAdminreturnMaxTime(): ?DateTime
+    {
+        return $this->adminreturnMaxTime;
+    }
+    public function setAdminreturnMaxTime(DateTime $adminreturnMaxTime): self
+    {
+        $this->adminreturnMaxTime = $adminreturnMaxTime;
+
+        return $this;
+    }
+
+    /**
+     * @var array Regular schedule for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminschedules;
+    public function getAdminschedules(): ?array
+    {
+        return $this->adminschedules;
+    }
+    public function setAdminschedules(array $adminschedules): self
+    {
+        $this->adminschedules = $adminschedules;
+
+        return $this;
+    }
+
+    /**
+     * @var DateTime|null Creation date for the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdmincreatedDate(): ?DateTime
+    {
+        return $this->getCreatedDate();
+    }
+
+    /**
+     * @var array Diary entries for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admindiary;
+    public function getAdmindiary(): array
+    {
+        return $this->admindiary;
+    }
+    public function setAdmindiary(array $admindiary): self
+    {
+        $this->admindiary = $admindiary;
+
+        return $this;
+    }
+
+    /**
+     * @var array Carpools for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admincarpools;
+    public function getAdmincarpools(): array
+    {
+        return $this->admincarpools;
+    }
+    public function setAdmincarpools(array $admincarpools): self
+    {
+        $this->admincarpools = $admincarpools;
+
+        return $this;
+    }
+
+    /**
+     * @var array Transporters for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $admintransporters;
+    public function getAdmintransporters(): array
+    {
+        return $this->admintransporters;
+    }
+    public function setAdmintransporters(array $admintransporters): self
+    {
+        $this->admintransporters = $admintransporters;
+
+        return $this;
+    }
+
+    /**
+     * @var array Solutions for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminsolutions;
+    public function getAdminsolutions(): array
+    {
+        return $this->adminsolutions;
+    }
+    public function setAdminsolutions(array $adminsolutions): self
+    {
+        $this->adminsolutions = $adminsolutions;
+
+        return $this;
+    }
+
+    /**
+     * @var array Proofs for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminproofs;
+    public function getAdminproofs(): ?array
+    {
+        return $this->adminproofs;
+    }
+    public function setAdminproofs(array $adminproofs): self
+    {
+        $this->adminproofs = $adminproofs;
+
+        return $this;
+    }
+
+    /**
+     * @var bool True if the solidary is deeply editable (ie. journey is editable without side effects)
+     * @Groups("aReadItem")
+     */
+    private $admineditable;
+    public function isAdmineditable(): ?bool
+    {
+        return $this->admineditable;
+    }
+    public function setAdmineditable(bool $admineditable): self
+    {
+        $this->admineditable = $admineditable;
+
+        return $this;
     }
 }

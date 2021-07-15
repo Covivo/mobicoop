@@ -261,14 +261,14 @@ class CommunityUser extends GamificationEntity implements ResourceInterface, \Js
     {
         return
         [
-            'id'            => $this->getId(),
-            'iri'           => $this->getIri(),
-            'user'          => $this->getUser(),
-            'admin'         => $this->getAdmin(),
-            'createdDate'   => $this->getCreatedDate(),
-            'acceptedDate'  => $this->getAcceptedDate(),
-            'refusedDate'   => $this->getRefusedDate(),
-            'status'        => $this->getStatus(),
+            'id'                        => $this->getId(),
+            'iri'                       => $this->getIri(),
+            'user'                      => $this->getUser(),
+            'admin'                     => $this->getAdmin(),
+            'createdDate'               => $this->getCreatedDate(),
+            'acceptedDate'              => $this->getAcceptedDate(),
+            'refusedDate'               => $this->getRefusedDate(),
+            'status'                    => $this->getStatus(),
             'gamificationNotifications' => $this->getGamificationNotifications(),
         ];
     }
