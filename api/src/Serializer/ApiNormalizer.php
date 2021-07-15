@@ -3,8 +3,8 @@
 
 namespace App\Serializer;
 
-use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationNotifier;
+use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
@@ -77,7 +77,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards)>0) {
             $data['gamificationNotifications'] = [];
             foreach ($waitingRewards as $waitingReward) {
-                $data['gamificationNotifications'][] = $this->formatBadge($waitingReward->getBadge());
+                $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
 
                 // We update the RewardStep and flag it as notified
                 $waitingReward->setNotifiedDate(new \DateTime('now'));
@@ -94,8 +94,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
 
             foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
-                if ($gamificationNotification instanceof Badge) {
-                    $data['gamificationNotifications'][] = $this->formatBadge($gamificationNotification);
+                if ($gamificationNotification instanceof Reward) {
+                    $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
                 } elseif ($gamificationNotification instanceof RewardStep) {
                     $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
                     $this->entityManager->persist($gamificationNotification);
@@ -144,23 +144,23 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     }
 
     /**
-     * Format a Badge to be notified
+     * Format a Reward to be notified
      *
-     * @param Badge $badge
+     * @param Reward $reward
      * @return array
      */
-    private function formatBadge(Badge $badge): array
+    private function formatReward(Reward $reward): array
     {
         return [
             "type" => "Badge",
-            "id" => $badge->getId(),
-            "name" => $badge->getName(),
-            "title" => $badge->getTitle(),
-            "text" => $badge->getText(),
+            "id" => $reward->getBadge()->getId(),
+            "name" => $reward->getBadge()->getName(),
+            "title" => $reward->getBadge()->getTitle(),
+            "text" => $reward->getBadge()->getText(),
             "pictures" => [
-                "icon" => (!is_null($badge->getIcon())) ? $this->badgeImageUri.$badge->getIcon()->getFileName() : null,
-                "image" => (!is_null($badge->getImage())) ? $this->badgeImageUri.$badge->getImage()->getFileName() : null,
-                "imageLight" => (!is_null($badge->getImageLight())) ? $this->badgeImageUri.$badge->getImageLight()->getFileName() : null
+                "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
+                "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
+                "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
 ]
         ];
     }
