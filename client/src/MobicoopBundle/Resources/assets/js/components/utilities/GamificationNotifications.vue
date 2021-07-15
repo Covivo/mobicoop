@@ -22,10 +22,14 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <GamificationBadgesNotifications 
+      :badges="badges"
+    />
   </div>
 </template>
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/gamification/GamificationNotifications/";
+import GamificationBadgesNotifications from "@components/utilities/GamificationBadgesNotifications";
 
 export default {
   i18n: {
@@ -35,6 +39,9 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     },
+  },
+  components: {
+    GamificationBadgesNotifications
   },
   data () {
     return {
@@ -47,6 +54,9 @@ export default {
     },
     rewardSteps(){
       return this.gamificationNotifications.filter( item => item.type == "RewardStep" );
+    },
+    badges(){
+      return this.gamificationNotifications.filter( item => item.type == "Badge" );
     }
   },
   watch:{
