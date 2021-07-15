@@ -23,16 +23,16 @@
 
 namespace App\Gamification\Repository;
 
-use App\Gamification\Entity\RewardStep;
+use App\Gamification\Entity\Reward;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Gamification : RewardStep Repository
+ * Gamification : Reward Repository
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class RewardStepRepository
+class RewardRepository
 {
     /**
      * @var EntityRepository
@@ -44,10 +44,10 @@ class RewardStepRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(RewardStep::class);
+        $this->repository = $entityManager->getRepository(Reward::class);
     }
 
-    public function find(int $id): ?RewardStep
+    public function find(int $id): ?Reward
     {
         return $this->repository->find($id);
     }
@@ -62,22 +62,22 @@ class RewardStepRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function findOneBy(array $criteria): ?RewardStep
+    public function findOneBy(array $criteria): ?Reward
     {
         return $this->repository->findOneBy($criteria);
     }
 
     /**
-     * Get the RewardStep that has not been notified yet
+     * Get the Rewards that has not been notified yet
      *
-     * @var User $user  The User we want to get the RewardStep in waiting
+     * @var User $user  The User we want to get the Rewards in waiting
      * @return array|null
      */
     public function findWaiting(User $user): ?array
     {
-        $query = $this->repository->createQueryBuilder('rs')
-        ->where('rs.notifiedDate is null')
-        ->andWhere('rs.user = :user')
+        $query = $this->repository->createQueryBuilder('r')
+        ->where('r.notifiedDate is null')
+        ->andWhere('r.user = :user')
         ->setParameter('user', $user)
         ;
                 

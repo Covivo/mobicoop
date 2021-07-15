@@ -360,7 +360,7 @@
         </v-list>
       </v-menu>
     </v-toolbar>
-    <GamificationNotifications />
+    <GamificationNotifications :user-gamification-notifications="(user && user.gamificationNotifications) ? user.gamificationNotifications : null" />
   </div>
 </template>
 

@@ -31,6 +31,7 @@ use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use App\Event\Entity\Event;
+use App\Event\Repository\EventRepository;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Repository\BadgeRepository;
@@ -39,8 +40,13 @@ use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Icon;
+use App\Image\Entity\Image;
 use App\Image\Repository\IconRepository;
+use App\Image\Service\ImageManager;
+use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPointType;
+use App\RelayPoint\Repository\RelayPointRepository;
+use App\RelayPoint\Repository\RelayPointTypeRepository;
 use App\User\Service\UserManager;
 use DateInterval;
 use DateTime;
@@ -65,6 +71,12 @@ class BasicFixturesManager
     private $fixturesBasic;
     private $badgeRepository;
     private $gamificationActionRepository;
+    private $eventRepository;
+    private $relayPointRepository;
+    private $relayPointTypeRepository;
+    private $campaignRepository;
+    private $imageManager;
+    private $dataUri;
 
     /**
      * Constructor
@@ -78,7 +90,13 @@ class BasicFixturesManager
         IconRepository $iconRepository,
         BadgeRepository $badgeRepository,
         GamificationActionRepository $gamificationActionRepository,
-        bool $fixturesBasic
+        EventRepository $eventRepository,
+        RelayPointRepository $relayPointRepository,
+        RelayPointTypeRepository $relayPointTypeRepository,
+        CampaignRepository $campaignRepository,
+        ImageManager $imageManager,
+        bool $fixturesBasic,
+        string $dataUri
     ) {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
@@ -89,6 +107,12 @@ class BasicFixturesManager
         $this->fixturesBasic = $fixturesBasic;
         $this->badgeRepository = $badgeRepository;
         $this->gamificationActionRepository = $gamificationActionRepository;
+        $this->eventRepository = $eventRepository;
+        $this->relayPointRepository = $relayPointRepository;
+        $this->relayPointTypeRepository = $relayPointTypeRepository;
+        $this->campaignRepository = $campaignRepository;
+        $this->imageManager = $imageManager;
+        $this->dataUri = $dataUri;
     }
 
     /**
@@ -130,6 +154,7 @@ class BasicFixturesManager
             TRUNCATE `event`;
             TRUNCATE `event_import`;
             TRUNCATE `icon`;
+            TRUNCATE `image`;
             TRUNCATE `matching`;
             TRUNCATE `message`;
             TRUNCATE `notified`;
@@ -333,12 +358,12 @@ class BasicFixturesManager
      */
     public function createEvent(array $tab)
     {
-        echo "Import event : " . $tab[2] . PHP_EOL;
-        if ($user = $this->userManager->getUserByEmail($tab[0])) {
+        echo "Import event : " . $tab[3] . PHP_EOL;
+        if ($user = $this->userManager->getUserByEmail($tab[1])) {
             $event = new Event();
             $event->setStatus(Event::STATUS_ACTIVE);
             $event->setUser($user);
-            $addresses = $this->geoSearcher->geoCode($tab[1]);
+            $addresses = $this->geoSearcher->geoCode($tab[2]);
             if (count($addresses)>0) {
                 /**
                  * @var Address $address
@@ -350,14 +375,15 @@ class BasicFixturesManager
                 echo "Address not found !" . PHP_EOL;
                 return;
             }
-            $event->setName($tab[2]);
-            $event->setDescription($tab[3]);
-            $event->setFullDescription($tab[4]);
-            $event->setFromDate(DateTime::createFromFormat("Y-m-d H:i", $tab[5]));
-            $event->setToDate(DateTime::createFromFormat("Y-m-d H:i", $tab[6]));
-            $event->setUseTime($tab[7] === "1");
-            $event->setUrl($tab[8]);
-            $event->setPrivate($tab[9] === "1");
+            $event->setId($tab[0]);
+            $event->setName($tab[3]);
+            $event->setDescription($tab[4]);
+            $event->setFullDescription($tab[5]);
+            $event->setFromDate(DateTime::createFromFormat("Y-m-d H:i", $tab[6]));
+            $event->setToDate(DateTime::createFromFormat("Y-m-d H:i", $tab[7]));
+            $event->setUseTime($tab[8] === "1");
+            $event->setUrl($tab[9]);
+            $event->setPrivate($tab[10] === "1");
             $this->entityManager->persist($event);
             $this->entityManager->flush();
         } else {
@@ -560,6 +586,111 @@ class BasicFixturesManager
             }
         }
         $this->entityManager->persist($sequenceItem);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Create the Images
+     *
+     * @param array $tab    The array containing the Images (model in ../Csv/Basic/Images/images.txt)
+     * @return void
+     */
+    public function createImages(array $tab)
+    {
+        echo "Import Image " . $tab[0] . PHP_EOL;
+        $image = new Image();
+        $owner = null;
+        $toDirectory = "";
+        if ($tab[1] !== '') {
+            if ($owner = $this->eventRepository->find($tab[1])) {
+                $image->setEvent($owner);
+                $toDirectory = "events";
+            } else {
+                echo "Event not found for image ".$tab[0];
+            }
+        }
+        if ($tab[2] !== '') {
+            if ($owner = $this->communityManager->getCommunity($tab[2])) {
+                $image->setCommunity($owner);
+                $toDirectory = "communities";
+            } else {
+                echo "Community not found for image ".$tab[0];
+            }
+        }
+        if ($tab[3] !== '') {
+            if ($owner = $this->relayPointRepository->find($tab[3])) {
+                $image->setRelayPoint($owner);
+                $toDirectory = "relaypoints";
+            } else {
+                echo "RelayPoint not found for image ".$tab[0];
+            }
+        }
+        if ($tab[4] !== '') {
+            if ($owner = $this->relayPointTypeRepository->find($tab[4])) {
+                $image->setRelayPointType($owner);
+                $toDirectory = "relaypointstypes";
+            } else {
+                echo "RelayPointType not found for image ".$tab[0];
+            }
+        }
+        if ($tab[5] !== '') {
+            if ($owner = $this->userManager->getUser($tab[5])) {
+                $image->setUser($owner);
+                $$toDirectory = "users";
+            } else {
+                echo "User not found for image ".$tab[0];
+            }
+        }
+        if ($tab[6] !== '') {
+            if ($owner = $this->campaignRepository->find($tab[6])) {
+                $image->setCampaign($owner);
+                $toDirectory = "masscommunication";
+            } else {
+                echo "Campaign not found for image ".$tab[0];
+            }
+        }
+        if ($tab[7] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[7])) {
+                $image->setBadge($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for icon ".$tab[0];
+            }
+        }
+        if ($tab[8] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[8])) {
+                $image->setBadgeImage($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for image ".$tab[0];
+            }
+        }
+        if ($tab[9] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[9])) {
+                $image->setBadgeImageLight($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for image light ".$tab[0];
+            }
+        }
+
+        $file = __DIR__."/images/".$tab[0];
+
+        $image->setName($owner->getName());
+        $image->setOriginalName($tab[0]);
+        $image->setFileName($this->imageManager->generateFilename($image).".jpg");
+        $image->setPosition(1);
+
+        $infos = getimagesize($file);
+
+        $image->setMimeType($infos['mime']);
+        $image->setWidth($infos[0]);
+        $image->setHeight($infos[1]);
+        $image->setSize(filesize($file));
+        
+        copy($file, dirname(__FILE__)."/../../../public/upload/".$toDirectory."/images/".$image->getFileName());
+        
+        $this->entityManager->persist($image);
         $this->entityManager->flush();
     }
 }

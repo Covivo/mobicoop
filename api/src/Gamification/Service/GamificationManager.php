@@ -36,6 +36,7 @@ use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
 use App\Gamification\Entity\BadgeSummary;
 use App\Gamification\Entity\GamificationNotifier;
+use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Entity\SequenceStatus;
 use App\Gamification\Event\BadgeEarnedEvent;
@@ -228,8 +229,8 @@ class GamificationManager
             
             // Determine if the badge is already earned
             $badgeProgression->setEarned(false);
-            foreach ($activeBadge->getUsers() as $userInReward) {
-                if ($userInReward->getId() == $user->getId()) {
+            foreach ($activeBadge->getRewards() as $reward) {
+                if ($reward->getUser()->getId() == $user->getId()) {
                     $badgeProgression->setEarned(true);
                     break;
                 }
@@ -320,11 +321,14 @@ class GamificationManager
                         // There was a new validation, a new Badge is earned !
                         // We get the badge involved and add a User owning this Badge (add a line in Reward table)
                         $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
-                        $badge->addUser($validationStep->getUser());
-                        $this->entityManager->persist($badge);
+                        $reward = new Reward();
+                        $reward->setUser($validationStep->getUser());
+                        $reward->setBadge($badge);
+                        $this->entityManager->persist($reward);
+
 
                         // Dispatch the event
-                        $badgeEvent = new BadgeEarnedEvent($badge);
+                        $badgeEvent = new BadgeEarnedEvent($reward);
                         $this->eventDispatcher->dispatch(BadgeEarnedEvent::NAME, $badgeEvent);
                     }
                 }

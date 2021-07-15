@@ -23,24 +23,28 @@
 
 namespace App\Gamification\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Gamification\Interfaces\GamificationNotificationInterface;
+use App\Geography\Entity\Territory;
+use App\Image\Entity\Image;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A RewarStep. A previously validated sequenceItem on the way to earn a Badge.
+* Gamification : A Reward of a Badge to a User
 * @author Maxime Bardot <maxime.bardot@mobicoop.org>
 *
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
-*/
-class RewardStep implements GamificationNotificationInterface
+ */
+class Reward implements GamificationNotificationInterface
 {
-
     /**
-     * @var int The RewardStep's id
+     * @var int The Reward's id
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -51,33 +55,25 @@ class RewardStep implements GamificationNotificationInterface
     private $id;
 
     /**
-     * @var SequenceItem The SequenceItem's of this RewardStep
+     * @var Badge Reward's Badge
      *
-     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\SequenceItem", inversedBy="rewardSteps")
+     * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="badges")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readGamification","writeGamification"})
-     * @MaxDepth(1)
      */
-    private $sequenceItem;
+    private $badge;
 
     /**
-     * @var User The User who validated this RewardStep
+     * @var User The User who has been rewarded by a Badge
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewardSteps")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewards")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readGamification","writeGamification"})
-     * @MaxDepth(1)
      */
     private $user;
 
     /**
-     * @var \DateTimeInterface RewardStep's notification date. Determine if this RewardStep has been notified to the user.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readGamification"})
-     */
-    private $notifiedDate;
-
-    /**
-     * @var \DateTimeInterface RewardStep's creation date
+     * @var \DateTimeInterface Reward's creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readGamification"})
@@ -85,13 +81,25 @@ class RewardStep implements GamificationNotificationInterface
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface RewardStep's update date
+     * @var \DateTimeInterface Reward's update date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readGamification"})
      */
     private $updatedDate;
 
+    /**
+     * @var \DateTimeInterface Reward's notified date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification"})
+     */
+    private $notifiedDate;
+
+    public function __construct()
+    {
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -104,14 +112,14 @@ class RewardStep implements GamificationNotificationInterface
         return $this;
     }
 
-    public function getSequenceItem(): ?SequenceItem
+    public function getBadge(): ?Badge
     {
-        return $this->sequenceItem;
+        return $this->badge;
     }
 
-    public function setSequenceItem(?SequenceItem $sequenceItem): self
+    public function setBadge(?Badge $badge): self
     {
-        $this->sequenceItem = $sequenceItem;
+        $this->badge = $badge;
 
         return $this;
     }
@@ -124,18 +132,6 @@ class RewardStep implements GamificationNotificationInterface
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getNotifiedDate(): ?\DateTimeInterface
-    {
-        return $this->notifiedDate;
-    }
-
-    public function setNotifiedDate(?\DateTimeInterface $notifiedDate): self
-    {
-        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }
@@ -160,6 +156,18 @@ class RewardStep implements GamificationNotificationInterface
     public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getNotifiedDate(): ?\DateTimeInterface
+    {
+        return $this->notifiedDate;
+    }
+
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate): self
+    {
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }

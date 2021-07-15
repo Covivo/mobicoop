@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-snackbar
-      v-for="rewardStep in rewardSteps"
-      :key="rewardStep.id"
       v-model="snackbar"
+      top
       timeout="-1"
+      style="white-space: pre-line;"
     >
-      {{ $t("gamification") }} : {{ $t(rewardStep.title) }}
+      {{ rewardStepsText }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -43,6 +43,12 @@ export default {
   components: {
     GamificationBadgesNotifications
   },
+  props:{
+    userGamificationNotifications:{
+      type: Array,
+      default: null
+    }
+  },
   data () {
     return {
       snackbar: false,
@@ -54,6 +60,13 @@ export default {
     },
     rewardSteps(){
       return this.gamificationNotifications.filter( item => item.type == "RewardStep" );
+    },
+    rewardStepsText(){
+      let text = [];
+      this.rewardSteps.forEach((item, index) => {
+        text.push(this.$t(item.title));
+      });
+      return text.join("\n ");
     },
     badges(){
       return this.gamificationNotifications.filter( item => item.type == "Badge" );
@@ -68,6 +81,9 @@ export default {
     if(localStorage.getItem("gamificationNotifications")){
       this.$store.commit('gn/updateGamificationNotifications',JSON.parse(localStorage.getItem("gamificationNotifications")));
       localStorage.removeItem("gamificationNotifications");
+    }
+    if(this.userGamificationNotifications){
+      this.$store.commit('gn/updateGamificationNotifications',this.userGamificationNotifications);
     }
   }
 }
