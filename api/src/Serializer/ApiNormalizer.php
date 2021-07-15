@@ -98,7 +98,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                     $data['gamificationNotifications'][] = $this->formatBadge($gamificationNotification);
                 } elseif ($gamificationNotification instanceof RewardStep) {
                     $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
-                    $gamificationNotification->setNotifiedDate(new \DateTime('now'));
                     $this->entityManager->persist($gamificationNotification);
                 }
             }
