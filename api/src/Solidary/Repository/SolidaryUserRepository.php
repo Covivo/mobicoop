@@ -78,6 +78,22 @@ class SolidaryUserRepository
     }
 
     /**
+     * Get a SolidaryUser by its User id
+     *
+     * @param int $id               The user id
+     * @return SolidaryUser|null    The SolidaryUser if found, null if not found
+     */
+    public function findByUserId(int $id)
+    {
+        $query = $this->repository->createQueryBuilder('su')
+        ->join('su.user', 'u')
+        ->where('u.id = :id')
+        ->setParameter('id', $id);
+
+        return $query->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * Get a SolidaryUser by its email
      *
      * @param string $email

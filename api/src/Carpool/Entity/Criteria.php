@@ -77,6 +77,7 @@ class Criteria
     
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
+    const FREQUENCY_FLEXIBLE = 3; // only for solidary records, not stored
 
     /**
      * @var int The id of this criteria.

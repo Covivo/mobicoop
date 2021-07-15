@@ -89,7 +89,7 @@ class Need
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"readUser","readSolidary","readNeeds"})
+     * @Groups({"aRead","aReadItem","readUser","readSolidary","readNeeds"})
      */
     private $id;
 
@@ -98,10 +98,17 @@ class Need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @MaxDepth(1)
-     * @Groups({"readUser","readSolidary","writeSolidary","readNeeds"})
+     * @Groups({"aRead","aReadItem","readUser","readSolidary","writeSolidary","readNeeds"})
      */
     private $label;
+
+    /**
+     * @var string Label of the need from the volunteer point of view.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","readNeeds"})
+     */
+    private $labelVolunteer;
 
     /**
      * @var bool The need is not publicly available.
@@ -131,6 +138,20 @@ class Need
     private $structures;
 
     /**
+    * @var ArrayCollection|null The volunteers associated to the need.
+    *
+    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\SolidaryUser", mappedBy="needs")
+    */
+    private $volunteers;
+
+    /**
+    * @var ArrayCollection|null The solidaries associated to the need.
+    *
+    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="needs")
+    */
+    private $solidaries;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -146,9 +167,18 @@ class Need
      */
     private $updatedDate;
 
+    /**
+     * @var bool The need is removable (not removable if it is used for a solidary or a volunteer).
+     *
+     * @Groups("aRead")
+     */
+    private $removable;
+
     public function __construct()
     {
         $this->structures = new ArrayCollection();
+        $this->volunteers = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -171,6 +201,18 @@ class Need
     public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getLabelVolunteer(): ?string
+    {
+        return $this->labelVolunteer ? $this->labelVolunteer : $this->label;
+    }
+
+    public function setLabelVolunteer(?string $labelVolunteer): self
+    {
+        $this->labelVolunteer = $labelVolunteer;
 
         return $this;
     }
@@ -227,6 +269,48 @@ class Need
         return $this;
     }
 
+    public function getVolunteers()
+    {
+        return $this->volunteers->getValues();
+    }
+
+    public function addVolunteer(SolidaryUser $volunteer): self
+    {
+        if (!$this->volunteers->contains($volunteer)) {
+            $this->volunteers->add($volunteer);
+        }
+        return $this;
+    }
+
+    public function removeVolunteer(SolidaryUser $volunteer): self
+    {
+        if ($this->volunteers->contains($volunteer)) {
+            $this->volunteers->removeElement($volunteer);
+        }
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+        }
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+        }
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -249,6 +333,11 @@ class Need
         $this->updatedDate = $updatedDate;
 
         return $this;
+    }
+
+    public function isRemovable(): ?bool
+    {
+        return (count($this->getVolunteers())+count($this->getSolidaries()))==0;
     }
 
     // DOCTRINE EVENTS

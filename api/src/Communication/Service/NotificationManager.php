@@ -149,15 +149,19 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+        // check if notification system is enabled
         if (!$this->enabled) {
             return;
         }
+
         // Check if the user is anonymised if yes we don't send notifications
         if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
             return;
         }
 
+        // check if there's a notification associated with the given action
         $notifications = null;
+
         // we check the user notifications
         $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
        
@@ -178,7 +182,7 @@ class NotificationManager
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
+                            if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             }
                         }

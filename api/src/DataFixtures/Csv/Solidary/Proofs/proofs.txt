@@ -1,0 +1,3 @@
+structure_proof_id          (int)
+value                       (string, use 'true' or 'false' for boolean)
+solidary_user_structure_id  (int)

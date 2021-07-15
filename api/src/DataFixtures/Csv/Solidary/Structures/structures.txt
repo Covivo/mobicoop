@@ -35,3 +35,5 @@ e_min_range_time
 e_max_range_time
 email
 telephone
+beneficiaryAutoApproval
+mode

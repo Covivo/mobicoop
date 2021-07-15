@@ -1,12 +1,12 @@
-structure_id
-label
-type
-position
-checkbox
-input
-selectbox
-radio
-options
-accepted_values
-file
-mandatory
+structure_id    (int)
+label           (string)
+type            (1=beneficiary;2=volunteer)
+position        (int)
+checkbox        (0/1)
+input           (0/1)
+selectbox       (0/1)
+radio           (0/1)
+options         (semi-colon separated list)
+accepted_values (semi-colon separated list)
+file            (0/1)
+mandatory       (0/1)

@@ -286,7 +286,13 @@ class AdManager
 
         // solidary
         $outwardCriteria->setSolidary($ad->isSolidary());
+        if ($ad->getSolidaryRecord()) {
+            $outwardProposal->setSolidary($ad->getSolidaryRecord());
+        }
         $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
+
+        // no destination ?
+        $outwardProposal->setNoDestination($ad->hasNoDestination());
 
         // prices
         $outwardCriteria->setPriceKm($ad->getPriceKm());
@@ -315,7 +321,7 @@ class AdManager
                 || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
                 || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
             if (!$hasSchedule && !$ad->isSearch()) {
-                // for a post, we need aschedule !
+                // for a post, we need a schedule !
                 throw new AdException('At least one day should be selected for a regular trip');
             } elseif (!$hasSchedule) {
                 // for a search we set the schedule to every day
@@ -370,7 +376,7 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
         }
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -400,6 +406,9 @@ class AdManager
             // solidary
             $returnCriteria->setSolidary($outwardCriteria->isSolidary());
             $returnCriteria->setSolidaryExclusive($outwardCriteria->isSolidaryExclusive());
+
+            // no destination ?
+            $returnProposal->setNoDestination($outwardProposal->hasNoDestination());
 
             // prices
             $returnCriteria->setPriceKm($outwardCriteria->getPriceKm());
@@ -486,7 +495,7 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
             }
             $this->entityManager->persist($returnProposal);
         }
@@ -502,6 +511,7 @@ class AdManager
         if (!$ad->isOneWay()) {
             $this->logger->info("AdManager : start related link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
+            $this->matchingRepository->linkRelatedMatchings($returnProposal->getId());
             $proposalRefresh = true;
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
@@ -647,7 +657,6 @@ class AdManager
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
-        // var_dump($schedules);die;
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
@@ -687,7 +696,6 @@ class AdManager
                 }
             }
         }
-
         return $criteria;
     }
 
@@ -2239,7 +2247,7 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 if ($ad->getReturnTime()) {
-                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));

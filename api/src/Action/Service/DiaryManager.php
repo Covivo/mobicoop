@@ -24,6 +24,8 @@ namespace App\Action\Service;
 
 use App\Action\Entity\Action;
 use App\Action\Entity\Diary;
+use App\Action\Entity\Animation;
+use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
@@ -32,10 +34,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class DiaryManager
 {
     private $entityManager;
+    private $diaryRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, DiaryRepository $diaryRepository)
     {
         $this->entityManager = $entityManager;
+        $this->diaryRepository = $diaryRepository;
     }
 
     /**
@@ -67,9 +71,47 @@ class DiaryManager
             $diary->setSolidarySolution($solidarySolution);
         }
 
-        (!is_null($progression)) ? $diary->setProgression($progression) : $diary->setProgression($action->getProgression());
+        if (!is_null($progression)) {
+            $diary->setProgression($progression);
+        } elseif ((float)$action->getProgression()>0) {
+            $diary->setProgression($action->getProgression());
+            if (!is_null($solidary)) {
+                $solidary->setProgression($action->getProgression());
+                $this->entityManager->persist($solidary);
+            }
+        } elseif ($solidary && (float)$action->getProgression()<0) {
+            // set progression to last progression
+            if ($lastEntry = $this->diaryRepository->findLastEntryForSolidary($solidary)) {
+                $diary->setProgression((string)$lastEntry->getProgression());
+            }
+        }
 
         $this->entityManager->persist($diary);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Handle an animation
+     *
+     * @param Animation $animation    The animation that has been made
+     * @return void
+     */
+    public function handleAnimation(Animation $animation)
+    {
+        // if the action linked with the animation is not meant to be logged in the diary, we exit immediately
+        if (!$animation->getAction()->isInDiary()) {
+            return;
+        }
+
+        // add an entry in diary
+        $this->addDiaryEntry(
+            $animation->getAction(),
+            $animation->getUser(),
+            $animation->getAuthor(),
+            $animation->getComment(),
+            $animation->getSolidary(),
+            $animation->getSolidarySolution(),
+            $animation->getProgression()
+        );
     }
 }

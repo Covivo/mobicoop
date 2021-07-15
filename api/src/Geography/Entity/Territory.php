@@ -90,6 +90,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                  "tags"={"Geography"}
  *              }
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/territories",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('territory_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -109,10 +118,16 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Geography"}
  *              }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/territories/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('territory_read',object)"
  *          }
  *      }
  * )
- * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact","name": "partial"})
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
 class Territory
@@ -124,7 +139,7 @@ class Territory
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","read"})
      */
     private $id;
 
@@ -132,14 +147,15 @@ class Territory
      * @var string The name of the territory.
      *
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $name;
 
     /**
      * @var string The geoJson details of the territory.
+     * /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
      *
-     * @ORM\Column(type="multipolygon")
+     * ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
      */
     private $geoJsonDetail;

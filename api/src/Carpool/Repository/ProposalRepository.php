@@ -86,11 +86,13 @@ class ProposalRepository
      * - a dynamic passenger ad can match with any driver ad
      *
      * We can also filter with communities.
-     * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
+     * TODO : limit to the drivers that have enough seats left in their car for the passenger's needs.
      *
      * We also filter solidary proposals :
      * - a solidary exclusive proposal can only match with a solidary proposal
      * - a solidary proposal can match with any proposal
+     *
+     * On the other hand, filters for bearing, passenger proportion and distance to passenger's waypoints are disabled for a solidary proposal without destination.
      *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
@@ -177,7 +179,7 @@ class ProposalRepository
         }
 
         // exclude private proposals
-        $query->andWhere('(p.private IS NULL or p.private = 0)');
+        $query->andWhere('p.private IS NULL or p.private = 0');
 
         // // exclude paused proposals
         // $query->andWhere('(p.paused IS NULL or p.paused = 0)');
@@ -188,7 +190,7 @@ class ProposalRepository
             $query->andWhere('p.dynamic = 1 AND p.active=1 AND p.finished=0');
         } elseif ($proposal->getCriteria()->isPassenger() && $proposal->isDynamic() && $proposal->isActive() && !$proposal->isFinished()) {
             // for dynamic passengers, match with any driver (not only dynamic) or valid dynamic drivers
-            $query->andWhere('((p.dynamic = 0) OR (p.dynamic = 1 AND p.active=1 AND p.finished=0))');
+            $query->andWhere('(p.dynamic = 0) OR (p.dynamic = 1 AND p.active=1 AND p.finished=0)');
         }
 
         // SOLIDARY
@@ -197,12 +199,12 @@ class ProposalRepository
             $query->andWhere('c.solidary = 1');
         } elseif (!$proposal->getCriteria()->isSolidary()) {
             // not a solidary proposal => solidary exclusive are excluded
-            $query->andWhere('(c.solidaryExclusive IS NULL or c.solidaryExclusive = 0)');
+            $query->andWhere('c.solidaryExclusive IS NULL or c.solidaryExclusive = 0');
         }
 
         // COMMUNITIES
         // here we exclude the proposals that are posted in communities for which the user is not member
-        $filterUserCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";
+        $filterUserCommunities = "(co.proposalsHidden = 0 OR co.proposalsHidden is null)";
         // this function returns the id of a Community object
         $fCommunities = function (Community $community) {
             return $community->getId();
@@ -213,7 +215,6 @@ class ProposalRepository
             // we finally implode this array for filtering
             $filterUserCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";
         }
-        $filterUserCommunities .= ")";
         $query->andWhere($filterUserCommunities);
 
         // here we filter to the given proposal communities
@@ -240,6 +241,7 @@ class ProposalRepository
             $zonePassengerWhere = "";
             
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            // restriction not applied for solidary proposals without destination
             if ($this->use_bearing) {
                 if ($zonePassengerWhere != "") {
                     $zonePassengerWhere .= " and ";
@@ -247,12 +249,12 @@ class ProposalRepository
                 $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionDriver()->getBearing(), $this->bearing_range);
                 if ($range['min']<=$range['max']) {
                     // usual case, eg. 140 to 160
-                    $zonePassengerWhere .= '(dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
+                    $zonePassengerWhere .= '(p.noDestination = 1 or dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
                     $query->setParameter('minDriverRange', $range['min']);
                     $query->setParameter('maxDriverRange', $range['max']);
                 } elseif ($range['min']>$range['max']) {
                     // the range is like between 350 and 10
-                    $zonePassengerWhere .= '(dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
+                    $zonePassengerWhere .= '(p.noDestination = 1 or dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
                     $query->setParameter('minDriverRange', $range['min']);
                     $query->setParameter('maxDriverRange', $range['max']);
                 }
@@ -287,11 +289,12 @@ class ProposalRepository
             }
 
             // passenger proportion
+            // restriction not applied for solidary proposals without destination
             if ($this->use_passenger_proportion) {
                 if ($zonePassengerWhere != "") {
                     $zonePassengerWhere .= " and ";
                 }
-                $zonePassengerWhere .= '(dp.distance >= ' . $proposal->getCriteria()->getDirectionDriver()->getDistance()*$this->passenger_proportion . ')';
+                $zonePassengerWhere .= '(p.noDestination = 1 or dp.distance >= ' . $proposal->getCriteria()->getDirectionDriver()->getDistance()*$this->passenger_proportion . ')';
             }
 
             // distance to passenger
@@ -314,10 +317,11 @@ class ProposalRepository
                 $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
             }
         }
+
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
-            $zoneDriverWhere = "";
-            
+
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
+            // restriction not applied for solidary proposals without destination
             if ($this->use_bearing && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
                 if ($zoneDriverWhere != "") {
                     $zoneDriverWhere .= " and ";
@@ -400,7 +404,7 @@ class ProposalRepository
                 $zoneDriverWhere .= ")";
             }
         }
-
+        
         // SEATS AVAILABLE
         // $seatsDriverWhere = '(1=1)';
         // if ($proposal->getCriteria()->isDriver()) {
@@ -410,11 +414,11 @@ class ProposalRepository
         // we search if the user can be passenger and/or driver
         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             // $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ' and ' . $seatsDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
-            $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
+            $query->andWhere('(c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . ')');
         } elseif ($proposal->getCriteria()->isDriver()) {
-            $query->andWhere('(c.passenger = 1 and ' . $zonePassengerWhere . ')');
+            $query->andWhere('c.passenger = 1 and ' . $zonePassengerWhere);
         } elseif ($proposal->getCriteria()->isPassenger()) {
-            $query->andWhere('(c.driver = 1 and ' . $zoneDriverWhere . ')');
+            $query->andWhere('c.driver = 1 and ' . $zoneDriverWhere);
         }
         
         // FREQUENCIES
@@ -1250,7 +1254,6 @@ class ProposalRepository
         }
 
         return $query->getQuery()->getResult();
-        ;
     }
 
     /**

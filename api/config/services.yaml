@@ -134,6 +134,12 @@ services:
                 userReview: '%env(bool:USER_REVIEW)%'
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+
+    mobicoop.geography.territory_event_listener:
+        class: App\Geography\EventListener\TerritoryEventListener
+        tags:
+            - { name: doctrine.event_listener, event: onSchemaAlterTableRemoveColumn }
+            - { name: doctrine.event_listener, event: onSchemaAlterTableAddColumn }
             
     # CONTROLLERS AND SERVICES
 
@@ -639,7 +645,7 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
-    #Payment
+    # Payment
     App\Payment\Controller\:
         resource: '../src/Payment/Controller'
         tags: ['controller.service_arguments']
@@ -707,6 +713,10 @@ services:
         resource: '../src/Solidary/Controller'
         tags: ['controller.service_arguments']
 
+    App\Solidary\Admin\Controller\:
+        resource: '../src/Solidary/Admin/Controller'
+        tags: ['controller.service_arguments']
+
     App\Solidary\Service\SolidaryMatcher:
         arguments:
             $params:
@@ -727,6 +737,30 @@ services:
                 chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
                 music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
                 smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'  
+
+    'App\Solidary\Admin\DataProvider\SolidaryCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Solidary\Admin\DataProvider\SolidaryBeneficiaryCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Solidary\Admin\DataProvider\SolidaryVolunteerCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    App\Solidary\Admin\Service\SolidaryManager:
+        tags:
+            - { name: monolog.logger, channel: solidary }
+
+    App\Solidary\Admin\Service\SolidaryBeneficiaryManager:
+        arguments:
+            $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
+
+    App\Solidary\Admin\Service\SolidaryVolunteerManager:
+        arguments:
+            $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
 
     # User
     App\User\Admin\Service\UserManager:

@@ -79,6 +79,20 @@ class SolidaryMatching
     private $id;
 
     /**
+     * @var int|null The solidary matching type.
+     *
+     * 1 : matching for a one way trip
+     * 2 : matching for the outward of a return trip
+     * 3 : matching for the return of a round trip
+     *
+     * This property is necessary for volunteers, as once the Solidary Matching is computed, there is no way to determine wether the Solidary Matching is for an outward or a return using linked data
+     * (as opposed to carpool matching where the information is available following the linked Matching).
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $type;
+
+    /**
      * @var Matching|null The carpool matching if there is any
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist","remove"})
@@ -124,6 +138,15 @@ class SolidaryMatching
     private $solidarySolution;
 
     /**
+     * @var SolidaryMatching|null The linked solidary matching for return trips.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @MaxDepth(1)
+     */
+    private $solidaryMatchingLinked;
+
+    /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
      * @ORM\Column(type="datetime")
@@ -147,6 +170,18 @@ class SolidaryMatching
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getStatus(): ?int
@@ -210,6 +245,24 @@ class SolidaryMatching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    public function getSolidaryMatchingLinked(): ?self
+    {
+        return $this->solidaryMatchingLinked;
+    }
+
+    public function setSolidaryMatchingLinked(?self $solidaryMatchingLinked): self
+    {
+        $this->solidaryMatchingLinked = $solidaryMatchingLinked;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newSolidaryMatchingLinked = $solidaryMatchingLinked === null ? null : $this;
+        if (!is_null($solidaryMatchingLinked) && $newSolidaryMatchingLinked !== $solidaryMatchingLinked->getSolidaryMatchingLinked()) {
+            $solidaryMatchingLinked->setSolidaryMatchingLinked($newSolidaryMatchingLinked);
+        }
 
         return $this;
     }
