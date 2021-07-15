@@ -54,6 +54,7 @@ use App\User\Entity\PushToken;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
@@ -321,25 +322,23 @@ class NotificationManager
                     break;
                 case Community::class:
                     $sender = null;
-                    if (count($object->getCommunityUsers()) > 0) {
-                        foreach ($object->getCommunityUsers() as $communityUser) {
-                            if ($communityUser->getCommunity()->getId() === $object->getId()) {
-                                $senderGivenName = $communityUser->getUser()->getGivenName();
-                                $senderShortFamilyName = $communityUser->getUser()->getShortFamilyName();
-                            }
-                        }
-                    }
                     $titleContext = [
                         'community' => $object,
                     ];
                     $bodyContext = [
                         'recipient'=> $recipient,
-                        'community' => $object,
-                        'senderGivenName'=> $senderGivenName,
-                        'senderShortFamilyName'=> $senderShortFamilyName
+                        'community' => $object
                     ];
                     break;
-                    
+                case CommunityUser::class:
+                    $sender = null;
+                    $bodyContext = [
+                        'recipient'=> $recipient,
+                        'community' => $object->getCommunity(),
+                        'senderGivenName'=> $object->getUser()->getGivenName(),
+                        'senderShortFamilyName'=> $object->getUser()->getShortFamilyName()
+                    ];
+                    break;
                 case Message::class:
                     $titleContext = ['user'=>$object->getUser()];
                     $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];

@@ -399,13 +399,13 @@ class CommunityManager
 
         switch ($communityUser->getStatus()) {
             case CommunityUser::STATUS_PENDING:
-                $event = new CommunityNewMembershipRequestEvent($community, $user);
+                $event = new CommunityNewMembershipRequestEvent($communityUser);
                 $this->eventDispatcher->dispatch(CommunityNewMembershipRequestEvent::NAME, $event);
                 $event = new CommunityMembershipPendingEvent($community, $communityUser->getUser());
                 $this->eventDispatcher->dispatch(CommunityMembershipPendingEvent::NAME, $event);
                 break;
             case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
-                $event = new CommunityNewMemberEvent($community, $user);
+                $event = new CommunityNewMemberEvent($communityUser);
                 $this->eventDispatcher->dispatch(CommunityNewMemberEvent::NAME, $event);
                 break;
         }
