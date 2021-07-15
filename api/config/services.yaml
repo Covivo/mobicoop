@@ -39,7 +39,7 @@ services:
     # SERIALIZER
     'App\Serializer\ApiNormalizer':
         arguments:
-            $dataUri: '%env(string:DATA_URI)%'
+            $badgeImageUri: '%env(string:BADGE_IMAGE_URI)%'
         decorates: 'api_platform.jsonld.normalizer.item'    
 
     # EVENT LISTENERS
