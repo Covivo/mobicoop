@@ -60,6 +60,12 @@ mobicoop-platform/api/public/upload/users/images/*.png
 mobicoop-platform/api/public/upload/users/images/versions/*.jpg
 mobicoop-platform/api/public/upload/users/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/users/images/versions/*.png
+mobicoop-platform/api/public/upload/badges/images/*.jpg
+mobicoop-platform/api/public/upload/badges/images/*.jpeg
+mobicoop-platform/api/public/upload/badges/images/*.png
+mobicoop-platform/api/public/upload/badges/images/versions/*.jpg
+mobicoop-platform/api/public/upload/badges/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/badges/images/versions/*.png
 mobicoop-platform/api/public/upload/communities/security/*
 mobicoop-platform/api/public/upload/communities/images/*.jpg
 mobicoop-platform/api/public/upload/communities/images/*.jpeg
