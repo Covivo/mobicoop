@@ -52,6 +52,7 @@ class SolidaryException extends \LogicException
     const REGULAR_MAX_DATE_REQUIRED = "Regular max date is required";
     const FREQUENCY_REQUIRED = "Frequency (as 'regular' boolean) is required";
     const REGULAR_SCHEDULES_REQUIRED = "Regular schedules are required";
+    const REGULAR_DATE_CHOICE_REQUIRED = "Regular date choice is required";
     const PUNCTUAL_OUTWARD_DATE_CHOICE_REQUIRED = "Punctual date choice is required";
     const PUNCTUAL_OUTWARD_DATE_CHOICE_INVALID = "Punctual date choice is invalid";
     const PUNCTUAL_OUTWARD_TIME_CHOICE_REQUIRED = "Punctual time choice is required";

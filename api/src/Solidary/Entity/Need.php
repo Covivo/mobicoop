@@ -89,7 +89,7 @@ class Need
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
-     * @Groups({"aRead","readUser","readSolidary","readNeeds"})
+     * @Groups({"aRead","aReadItem","readUser","readSolidary","readNeeds"})
      */
     private $id;
 

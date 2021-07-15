@@ -33,6 +33,7 @@ use App\Solidary\Entity\Solidary;
 use App\Action\Entity\Diary;
 use App\Service\FormatDataManager;
 use App\Solidary\Entity\Proof;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use DateTime;
@@ -126,67 +127,11 @@ class SolidaryBeneficiaryManager
             ];
             // get the diary
             if ($withDiary) {
-                foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
-                    /**
-                     * @var Solidary $solidary
-                     */
-                    foreach ($solidary->getDiaries() as $diary) {
-                        /**
-                         * @var Diary $diary
-                         */
-                        $diaries[] = [
-                            'action' => $diary->getAction()->getName(),
-                            'comment' => $diary->getComment(),
-                            'progression' => $diary->getProgression(),
-                            'authorGivenName' => $diary->getAuthor()->getGivenName(),
-                            'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
-                            'authorAvatar' => $diary->getAuthor()->getAvatar(),
-                            'userId' => $diary->getUser()->getId(),
-                            'givenName' => $diary->getUser()->getGivenName(),
-                            'familyName' => $diary->getUser()->getFamilyName(),
-                            'avatar' => $diary->getUser()->getAvatar(),
-                            'date' => $diary->getCreatedDate(),
-                            'solidary' => $solidary->getId(),
-                            'origin' => $solidary->getAdminorigin()->jsonSerialize(),
-                            'destination' => $solidary->getAdmindestination()->jsonSerialize()
-                        ];
-                    }
-                }
+                $diaries = $this->getDiaryForSolidaryUserStructure($solidaryUserStructure);
             }
             // get the proofs
             if ($withProofs) {
-                foreach ($solidaryUserStructure->getProofs() as $proof) {
-                    /**
-                     * @var Proof $proof
-                     */
-                    // get the real value for checkbox, selectbox, radio
-                    $value = $proof->getValue();
-                    if ($proof->getStructureProof()->isCheckbox()) {
-                        $value = (bool)$proof->getValue();
-                    } elseif ($proof->getStructureProof()->isRadio() || $proof->getStructureProof()->isSelectbox()) {
-                        $options = explode(';', $proof->getStructureProof()->getOptions());
-                        $values = explode(';', $proof->getStructureProof()->getAcceptedValues());
-                        if ($key = array_search($proof->getValue(), $values)) {
-                            $value = $options[$key];
-                        }
-                    }
-                    $proofs[] = [
-                        'structure' => $solidaryUserStructure->getStructure()->getName(),
-                        'structureId' => $solidaryUserStructure->getStructure()->getId(),
-                        'userStructureId' => $solidaryUserStructure->getId(),
-                        'status' => $solidaryUserStructure->getStatus(),
-                        'label' => $proof->getStructureProof()->getLabel(),
-                        'checkbox' => $proof->getStructureProof()->isCheckbox(),
-                        'input' => $proof->getStructureProof()->isInput(),
-                        'selectbox' => $proof->getStructureProof()->isSelectbox(),
-                        'radio' => $proof->getStructureProof()->isRadio(),
-                        'file' => $proof->getStructureProof()->isFile(),
-                        'value' => $value,
-                        'originalName' => $proof->getStructureProof()->isFile() ? $proof->getOriginalName() : null,
-                        'fileName' => $proof->getStructureProof()->isFile() ? $this->fileFolder.rawurlencode($proof->getFileName()) : null,
-                        'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null
-                    ];
-                }
+                $proofs = $this->getProofsForSolidaryUserStructure($solidaryUserStructure);
             }
         }
         $solidaryBeneficiary->setStructures($beneficiaryStructures);
@@ -198,6 +143,93 @@ class SolidaryBeneficiaryManager
         $solidaryBeneficiary->setProofs($proofs);
 
         return $solidaryBeneficiary;
+    }
+
+    /**
+     * Get the diary entries for a solidaryUserStructure
+     *
+     * @param SolidaryUserStructure         $solidaryUserStructure  The solidaryUserStructure
+     * @return array    The proofs
+     */
+    private function getDiaryForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
+    {
+        $diaries = [];
+        foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
+            /**
+             * @var Solidary $solidary
+             */
+            foreach ($solidary->getDiaries() as $diary) {
+                /**
+                 * @var Diary $diary
+                 */
+                $diaries[] = [
+                    'action' => $diary->getAction()->getName(),
+                    'comment' => $diary->getComment(),
+                    'progression' => $diary->getProgression(),
+                    'authorGivenName' => $diary->getAuthor()->getGivenName(),
+                    'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
+                    'authorAvatar' => $diary->getAuthor()->getAvatar(),
+                    'userId' => $diary->getUser()->getId(),
+                    'givenName' => $diary->getUser()->getGivenName(),
+                    'familyName' => $diary->getUser()->getFamilyName(),
+                    'avatar' => $diary->getUser()->getAvatar(),
+                    'date' => $diary->getCreatedDate(),
+                    'solidary' => $solidary->getId(),
+                    'origin' => $solidary->getAdminorigin()->jsonSerialize(),
+                    'destination' => $solidary->getAdmindestination()->jsonSerialize()
+                ];
+            }
+        }
+        return $diaries;
+    }
+
+    /**
+     * Get the proofs for a solidaryUserStructure
+     *
+     * @param SolidaryUserStructure $solidaryUserStructure  The solidaryUserStructure
+     * @param Structure|null        $structure              The structure if we want the proofs for a given structure only
+     * @return array    The proofs
+     */
+    public function getProofsForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure, ?Structure $structure = null)
+    {
+        $proofs = [];
+        foreach ($solidaryUserStructure->getProofs() as $proof) {
+            /**
+             * @var Proof $proof
+             */
+            if (is_null($structure) || ($proof->getSolidaryUserStructure()->getStructure()->getId() === $structure->getId())) {
+                // get the real value for checkbox, selectbox, radio
+                $value = $proof->getValue();
+                if ($proof->getStructureProof()->isCheckbox()) {
+                    $value = (bool)$proof->getValue();
+                } elseif ($proof->getStructureProof()->isRadio() || $proof->getStructureProof()->isSelectbox()) {
+                    $options = explode(';', $proof->getStructureProof()->getOptions());
+                    $values = explode(';', $proof->getStructureProof()->getAcceptedValues());
+                    if ($key = array_search($proof->getValue(), $values)) {
+                        $value = $options[$key];
+                    }
+                }
+                $proofs[] = [
+                    'proofId' => $proof->getId(),
+                    'structure' => $solidaryUserStructure->getStructure()->getName(),
+                    'structureId' => $solidaryUserStructure->getStructure()->getId(),
+                    'structureProofId' => $proof->getStructureProof()->getId(),
+                    'userStructureId' => $solidaryUserStructure->getId(),
+                    'status' => $solidaryUserStructure->getStatus(),
+                    'label' => $proof->getStructureProof()->getLabel(),
+                    'checkbox' => $proof->getStructureProof()->isCheckbox(),
+                    'input' => $proof->getStructureProof()->isInput(),
+                    'selectbox' => $proof->getStructureProof()->isSelectbox(),
+                    'radio' => $proof->getStructureProof()->isRadio(),
+                    'file' => $proof->getStructureProof()->isFile(),
+                    'value' => $value,
+                    'originalName' => $proof->getStructureProof()->isFile() ? $proof->getOriginalName() : null,
+                    'fileName' => $proof->getStructureProof()->isFile() ? $this->fileFolder.rawurlencode($proof->getFileName()) : null,
+                    'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null
+                ];
+            }
+        }
+        return $proofs;
     }
 
     /**

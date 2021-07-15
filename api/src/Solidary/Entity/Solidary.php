@@ -442,6 +442,14 @@ class Solidary
     private $punctualReturnDateChoice;
 
     /**
+     * @var int Regular date choice.
+     *
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups("aReadItem")
+     */
+    private $regularDateChoice;
+
+    /**
      * @var float Progression of this solidary
      *
      * @ORM\Column(type="decimal", precision=6, scale=2)
@@ -1109,6 +1117,18 @@ class Solidary
         return $this;
     }
 
+    public function getRegularDateChoice(): ?int
+    {
+        return $this->regularDateChoice;
+    }
+    
+    public function setRegularDateChoice(?int $regularDateChoice): self
+    {
+        $this->regularDateChoice = $regularDateChoice;
+        
+        return $this;
+    }
+
     public function getDays(): ?array
     {
         return $this->days;
@@ -1262,8 +1282,6 @@ class Solidary
     /**
      * @var string|null Subject of the solidary record
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
      */
     public function getAdminsubject(): ?string
     {
@@ -1271,10 +1289,17 @@ class Solidary
     }
 
     /**
-     * @var string|null Id of the beneficiary
+     * @var int|null Subject id of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminsubjectId(): ?int
+    {
+        return $this->getSubject()->getId();
+    }
+
+    /**
+     * @var int|null Id of the beneficiary
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return int
      */
     public function getAdminuserId(): int
     {
@@ -1284,8 +1309,6 @@ class Solidary
     /**
      * @var string|null Given name of the beneficiary
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
      */
     public function getAdmingivenName(): ?string
     {
@@ -1295,8 +1318,6 @@ class Solidary
     /**
      * @var string|null Family name of the beneficiary
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
      */
     public function getAdminfamilyName(): ?string
     {
@@ -1304,21 +1325,62 @@ class Solidary
     }
 
     /**
+     * @var string|null Email of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminemail(): ?string
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getEmail();
+    }
+
+    /**
      * @var string|null Avatar of the beneficiary
      * @Groups("aReadItem")
-     *
-     * @return string|null
      */
     public function getAdminavatar(): ?string
     {
         return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getAvatar();
     }
+
+    /**
+     * @var int|null Gender of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdmingender(): ?int
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getGender();
+    }
+
+    /**
+     * @var DateTimeInterface|null Birthdate of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminbirthDate(): ?\DateTimeInterface
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getBirthDate();
+    }
+
+    /**
+     * @var bool|null News subscription for the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function hasAdminnewsSubscription(): bool
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->hasNewsSubscription() ? true : false;
+    }
+
+    /**
+     * @var array|null Home address of the beneficiary
+     * @Groups("aReadItem")
+     */
+    public function getAdminhomeAddress(): ?array
+    {
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize();
+    }
     
     /**
      * @var string|null Given name of the operator
      * @Groups("aReadItem")
-     *
-     * @return string|null
      */
     private $adminoperatorGivenName;
     public function getAdminoperatorGivenName(): ?string
@@ -1335,8 +1397,6 @@ class Solidary
     /**
      * @var string|null Family name of the operator
      * @Groups("aReadItem")
-     *
-     * @return string|null
      */
     private $adminoperatorFamilyName;
     public function getAdminoperatorFamilyName(): ?string
@@ -1353,8 +1413,6 @@ class Solidary
     /**
      * @var string|null Avatar of the operator
      * @Groups("aReadItem")
-     *
-     * @return string|null
      */
     private $adminoperatorAvatar;
     public function getAdminoperatorAvatar(): ?string
@@ -1371,8 +1429,6 @@ class Solidary
     /**
      * @var string|null Telephone of the beneficiary
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
      */
     public function getAdmintelephone(): ?string
     {
@@ -1382,8 +1438,6 @@ class Solidary
     /**
      * @var string|null Structure of the solidary record
      * @Groups("aReadItem")
-     *
-     * @return string|null
      */
     public function getAdminstructure(): ?string
     {
@@ -1391,10 +1445,17 @@ class Solidary
     }
 
     /**
+     * @var string|null Structure id of the solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminstructureId(): ?int
+    {
+        return $this->getSolidaryUserStructure()->getStructure()->getId();
+    }
+
+    /**
      * @var int Mode of the solidary record
      * @Groups("aReadItem")
-     *
-     * @return int
      */
     public function getAdminmode(): int
     {
@@ -1404,8 +1465,6 @@ class Solidary
     /**
      * @var string|null Last action for the solidary record
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return string|null
      */
     public function getAdminlastAction(): ?string
     {
@@ -1415,8 +1474,6 @@ class Solidary
     /**
      * @var DateTime|null Last action date for the solidary record
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return DateTime|null
      */
     public function getAdminlastActionDate(): ?DateTime
     {
@@ -1426,8 +1483,6 @@ class Solidary
     /**
      * @var Address|null Origin for the solidary record
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return Address|null
      */
     public function getAdminorigin(): ?Address
     {
@@ -1437,8 +1492,6 @@ class Solidary
     /**
      * @var Address|null Destination for the solidary record
      * @Groups({"aReadCol", "aReadItem"})
-     *
-     * @return Address|null
      */
     public function getAdmindestination(): ?Address
     {
@@ -1453,8 +1506,6 @@ class Solidary
     /**
      * @var string Proposal type for the solidary record
      * @Groups({"aReadCol","aReadItem"})
-     *
-     * @return string
      */
     public function getAdminproposalType(): string
     {
@@ -1464,8 +1515,6 @@ class Solidary
     /**
      * @var int Original frequency for the solidary record
      * @Groups("aReadItem")
-     *
-     * @return int
      */
     public function getAdminfrequency(): int
     {
@@ -1695,6 +1744,38 @@ class Solidary
     public function setAdminsolutions(array $adminsolutions): self
     {
         $this->adminsolutions = $adminsolutions;
+
+        return $this;
+    }
+
+    /**
+     * @var array Proofs for the solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminproofs;
+    public function getAdminproofs(): ?array
+    {
+        return $this->adminproofs;
+    }
+    public function setAdminproofs(array $adminproofs): self
+    {
+        $this->adminproofs = $adminproofs;
+
+        return $this;
+    }
+
+    /**
+     * @var bool True if the solidary is deeply editable (ie. journey is editable without side effects)
+     * @Groups("aReadItem")
+     */
+    private $admineditable;
+    public function isAdmineditable(): ?bool
+    {
+        return $this->admineditable;
+    }
+    public function setAdmineditable(bool $admineditable): self
+    {
+        $this->admineditable = $admineditable;
 
         return $this;
     }

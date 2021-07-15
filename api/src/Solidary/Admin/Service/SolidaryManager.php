@@ -109,6 +109,7 @@ class SolidaryManager
     private $solidarySolutionRepository;
     private $messageRepository;
     private $solidaryTransportMatcher;
+    private $solidaryBeneficiaryManager;
     private $logger;
 
 
@@ -140,7 +141,8 @@ class SolidaryManager
         SolidaryMatchingRepository $solidaryMatchingRepository,
         SolidarySolutionRepository $solidarySolutionRepository,
         MessageRepository $messageRepository,
-        SolidaryTransportMatcher $solidaryTransportMatcher
+        SolidaryTransportMatcher $solidaryTransportMatcher,
+        SolidaryBeneficiaryManager $solidaryBeneficiaryManager
     ) {
         $this->logger = $logger;
         $this->poster = $security->getUser();
@@ -165,6 +167,7 @@ class SolidaryManager
         $this->solidarySolutionRepository = $solidarySolutionRepository;
         $this->messageRepository = $messageRepository;
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
+        $this->solidaryBeneficiaryManager = $solidaryBeneficiaryManager;
     }
 
     /**
@@ -225,6 +228,9 @@ class SolidaryManager
                 }
             }
         }
+
+        // set proofs
+        $solidary->setAdminproofs($this->solidaryBeneficiaryManager->getProofsForSolidaryUserStructure($solidary->getSolidaryUserStructure(), $solidary->getSolidaryUserStructure()->getStructure()));
 
         // set carpools and transporters
         $carpools = [
@@ -790,6 +796,17 @@ class SolidaryManager
         }
         $solidary->setAdmindiary($diaries);
 
+        // check if the solidary is deeply editable => the journey can be updated without side effects (matchnigs, asks...)
+        $solidary->setAdmineditable(true);
+        // there's already a solution ? => not editable
+        if (count($solidary->getAdminsolutions()['drivers'])>0) {
+            $solidary->setAdmineditable(false);
+        }
+        // there are already solidary matchings ? => not editable
+        if (count($solidary->getSolidaryMatchings())>0) {
+            $solidary->setAdmineditable(false);
+        }
+
         return $solidary;
     }
 
@@ -986,6 +1003,9 @@ class SolidaryManager
         }
         if ($fields['regular'] && !isset($fields['regularSchedules'])) {
             throw new SolidaryException(SolidaryException::REGULAR_SCHEDULES_REQUIRED);
+        }
+        if ($fields['regular'] && !isset($fields['regularDateChoice'])) {
+            throw new SolidaryException(SolidaryException::REGULAR_DATE_CHOICE_REQUIRED);
         }
         if (!$fields['regular'] && !isset($fields['punctualOutwardDateChoice'])) {
             throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_DATE_CHOICE_REQUIRED);
@@ -1276,6 +1296,9 @@ class SolidaryManager
         }
         if (isset($fields['punctualReturnTime'])) {
             $params['punctualReturnTime'] = $fields['punctualReturnTime'];
+        }
+        if (isset($fields['regularDateChoice'])) {
+            $solidary->setRegularDateChoice($fields['regularDateChoice']);
         }
         if (isset($fields['regularMinDate'])) {
             $params['regularMinDate'] = $fields['regularMinDate'];

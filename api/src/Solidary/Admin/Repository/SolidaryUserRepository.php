@@ -28,6 +28,7 @@ use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
+use App\Carpool\Entity\Waypoint;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -52,12 +53,35 @@ class SolidaryUserRepository
     public function getMatchingVolunteers(Solidary $solidary, int $type)
     {
         $structure = $solidary->getSolidaryUserStructure()->getStructure();
+        $centerPointOrigin = $centerPointDestination = null;
         if ($type !== Proposal::TYPE_RETURN) {
             $criteria = $solidary->getProposal()->getCriteria();
-            $centerPoint = $solidary->getProposal()->getWaypoints()[0]->getAddress();
+            $centerPointOrigin = $solidary->getProposal()->getWaypoints()[0]->getAddress();
+            if (!$solidary->getProposal()->hasNoDestination()) {
+                foreach ($solidary->getProposal()->getWaypoints() as $waypoint) {
+                    /**
+                     * @var Waypoint $waypoint
+                     */
+                    if ($waypoint->isDestination()) {
+                        $centerPointDestination = $waypoint->getAddress();
+                        break;
+                    }
+                }
+            }
         } else {
             $criteria = $solidary->getProposal()->getProposalLinked()->getCriteria();
-            $centerPoint = $solidary->getProposal()->getProposalLinked()->getWaypoints()[0]->getAddress();
+            $centerPointOrigin = $solidary->getProposal()->getProposalLinked()->getWaypoints()[0]->getAddress();
+            if (!$solidary->getProposal()->getProposalLinked()->hasNoDestination()) {
+                foreach ($solidary->getProposal()->getProposalLinked()->getWaypoints() as $waypoint) {
+                    /**
+                     * @var Waypoint $waypoint
+                     */
+                    if ($waypoint->isDestination()) {
+                        $centerPointDestination = $waypoint->getAddress();
+                        break;
+                    }
+                }
+            }
         }
         
         // we want to get accepted volunteers only for the given structure, and that are not already in the matchings
@@ -160,9 +184,15 @@ class SolidaryUserRepository
             }
         }
 
-        $sqlDistance = '(6378000 * acos(cos(radians(' . $centerPoint->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPoint->getLongitude() . ')) + sin(radians(' . $centerPoint->getLatitude() . ')) * sin(radians(a.latitude))))';
-        $query->andWhere($sqlDistance . " <= su.maxDistance");
-
+        if ($centerPointOrigin) {
+            $sqlDistanceOrigin = '(6378000 * acos(cos(radians(' . $centerPointOrigin->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPointOrigin->getLongitude() . ')) + sin(radians(' . $centerPointOrigin->getLatitude() . ')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistanceOrigin . " <= su.maxDistance");
+        }
+        if ($centerPointDestination) {
+            $sqlDistanceDestination = '(6378000 * acos(cos(radians(' . $centerPointDestination->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPointDestination->getLongitude() . ')) + sin(radians(' . $centerPointDestination->getLatitude() . ')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistanceDestination . " <= su.maxDistance");
+        }
+        
         $acceptedVolunteers = $query->getQuery()->getResult();
 
         // we remove the volunteers that are already in the matchings (maybe find a way to do it in the sql request ???)
