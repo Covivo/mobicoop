@@ -283,10 +283,12 @@ class ProposalManager
             $this->logger->info("ProposalManager : end persist " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
             //  we dispatch gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'carpool_ad_posted']);
-            $actionEvent = new ActionEvent($action, $proposal->getUser());
-            $actionEvent->setProposal($proposal);
-            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            if (!$proposal->isPrivate()) {
+                $action = $this->actionRepository->findOneBy(['name'=>'carpool_ad_posted']);
+                $actionEvent = new ActionEvent($action, $proposal->getUser());
+                $actionEvent->setProposal($proposal);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            }
         }
 
 
