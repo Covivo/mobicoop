@@ -107,17 +107,19 @@ class LanguageManager
             // We check if the user has a language and if it's not de default language of the platform
             // Otherwise, we return the original object and do nothing
             // Get the user language
-            $userLanguage = $this->security->getUser()->getLanguage();
-            if (is_null($userLanguage)) {
-                // The user has no specific language. We do nothing.
-                return $object;
-            } else {
-                if ($userLanguage->getId() == $this->defaultLanguage) {
-                    // The user and the platform use the same language. We do nothing.
+            if ($this->security->getUser()) {
+                $userLanguage = $this->security->getUser()->getLanguage();
+                if (is_null($userLanguage)) {
+                    // The user has no specific language. We do nothing.
                     return $object;
                 } else {
-                    // The user and the platform use different language. We set the User's language and try to find translation
-                    $idLanguage = $userLanguage->getId();
+                    if ($userLanguage->getId() == $this->defaultLanguage) {
+                        // The user and the platform use the same language. We do nothing.
+                        return $object;
+                    } else {
+                        // The user and the platform use different language. We set the User's language and try to find translation
+                        $idLanguage = $userLanguage->getId();
+                    }
                 }
             }
         }
