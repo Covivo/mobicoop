@@ -1,0 +1,10 @@
+file_name
+event_id
+community_id
+relay_point_id
+relay_point_type_id
+user_id
+campaign_id
+badge_id
+badge_image_id
+badge_image_light_id

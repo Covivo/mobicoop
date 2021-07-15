@@ -30,6 +30,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Symfony\Component\Finder\Finder;
+use App\Image\Service\ImageManager;
 
 class BasicFixtures extends Fixture implements FixtureGroupInterface
 {
@@ -38,6 +39,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     private $fixturesManager;
     private $proposalManager;
     private $territoryManager;
+    private $imageManager;
 
     private $fixturesEnabled;
     private $fixturesClearBase;
@@ -47,6 +49,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         BasicFixturesManager $fixturesManager,
         ProposalManager $proposalManager,
         TerritoryManager $territoryManager,
+        ImageManager $imageManager,
         bool $fixturesEnabled,
         bool $fixturesClearBase,
         bool $fixturesBasic
@@ -57,6 +60,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         $this->fixturesClearBase = $fixturesClearBase;
         $this->fixturesBasic = $fixturesBasic;
         $this->territoryManager = $territoryManager;
+        $this->imageManager = $imageManager;
     }
 
     public function load(ObjectManager $manager)
@@ -221,6 +225,21 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                     while ($tab = fgetcsv($file, 4096, ';')) {
                         // create the community user
                         $this->fixturesManager->createSequenceItems($tab);
+                    }
+                }
+            }
+
+            // load Images infos from csv file
+            $finder = new Finder();
+            $finder->in(__DIR__ . '/Csv/Basic/Images/');
+            $finder->name('*.csv');
+            $finder->files();
+            foreach ($finder as $file) {
+                echo "Importing : {$file->getBasename()} " . PHP_EOL;
+                if ($file = fopen($file, "r")) {
+                    while ($tab = fgetcsv($file, 4096, ';')) {
+                        // create the community user
+                        $this->fixturesManager->createImages($tab);
                     }
                 }
             }

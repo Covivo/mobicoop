@@ -422,6 +422,7 @@ services:
     App\DataFixtures\Service\BasicFixturesManager:
         arguments:
             $fixturesBasic: '%env(bool:FIXTURES_BASIC)%'
+            $dataUri: '%env(resolve:DATA_URI)%'
     
     App\DataFixtures\Service\SolidaryFixturesManager:
         arguments:

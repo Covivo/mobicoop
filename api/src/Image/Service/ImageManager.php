@@ -368,11 +368,10 @@ class ImageManager
         string $prefix
     ) {
         $versionName = $prefix . $fileName . "." . $extension;
-
-        if (file_exists($baseFolder.$folderOrigin.$image->getFileName())) {
+        if (file_exists(dirname(__FILE__)."/../../../public/".$baseFolder.$folderOrigin.$image->getFileName())) {
             $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
             $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-            $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
+            $this->saveImage($resized, $versionName, dirname(__FILE__)."/../../../public/".$baseFolder.$folderDestination);
         }
         return $versionName;
     }

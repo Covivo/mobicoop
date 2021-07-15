@@ -220,6 +220,9 @@ class ArticleManager
      */
     private function getRssFeeds(): array
     {
+        if ($this->articleFeed == "") {
+            return [];
+        }
         $rssElements = [];
 
         $articleFeed = $this->articleFeed;
