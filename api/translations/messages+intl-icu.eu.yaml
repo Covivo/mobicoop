@@ -13,7 +13,7 @@ EmailsAlerts: Zure e-mezu alertak kudea itzazu
 FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
-youHaveAMessage: Mezu berri bat jaso duzu
+youHaveAMessage: Mezu berri bat errezibitu duzu
 updatedCarpoolDetails: X-(e)k zure {origin}-tik {destination}-rako autokidetzaren
   xehetasun batzuk aldatu ditu
 clickNewSearch: Zure bilaketa berrabiarazteko loturan klik egizu
@@ -273,8 +273,8 @@ emailValidation: Zure helbide elektronikoaren baieztapena
 yourPasswordHasBeenSendBySms: Zure pasahitza SMS-ez igorria izan zaizu.
 urlMobileEmailValidation: /#/confirm-registration/
 urlEmailValidation: /utilisateur/inscription/validation/
-orUseTheValidationCode: Edo zuzenean baieztapen kodea erabil ezazu webgunean
-clickHereToConfirm: Lotura honetan klika ezazu zure e-mezua baieztatzeko
+orUseTheValidationCode: Edo webgunean zuzenean baieztapen kodea erabil ezazu
+clickHereToConfirm: Lotura honetan klik egizu zure e-mezua baieztatzeko
 wellTakenIntoAccount: kontuan hartua izan da
 yourInscriptionAtByTiers: Zure izen ematea {instanceName} zerbitzuan beste norbaiten
   ganik
@@ -286,7 +286,7 @@ successfullyChanged: aldatua izan da
 yourPassword: Zure pasahitza
 urlUpdatePassword: /utilisateur/mot-de-passe/reset/
 linkChangePassword: Pasahitzaren aldatzeko lotura
-clickHereToChangePassword: Lotura honetan klika ezazu zure pasahitzaren aldatzeko
+clickHereToChangePassword: Lotura honetan klik egizu zure pasahitzaren aldatzeko
 askNewPassword: Pasahitz berri bat galdegin duzu
 askNewPasswordTitle: Pasahitz berria
 partnership: Partaidetza eskaera
