@@ -436,6 +436,9 @@ services:
         class: App\Gamification\EventListener\GamificationActionLoadListener
         tags:
             - { name: doctrine.event_listener, event: postLoad }
+    App\Gamification\EventSubscriber\LogSubscriber:
+        arguments:
+            $active: '%env(bool:GAMIFICATION_ACTIVE)%'
     
     
     # Geocoder; alias to allow this type to be autowired

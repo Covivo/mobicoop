@@ -65,7 +65,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      }
  * )
  */
-class Badge implements GamificationNotificationInterface
+class Badge
 {
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;

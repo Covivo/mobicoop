@@ -41,7 +41,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
  */
-class Reward
+class Reward implements GamificationNotificationInterface
 {
     /**
      * @var int The Reward's id
