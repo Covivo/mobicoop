@@ -97,7 +97,7 @@ parameters:
                 - {filterSet: 'square_800', prefix: '800-'}
                 - {filterSet: 'square_250', prefix: '250-'}
                 - {filterSet: 'square_100', prefix: '100-'}
-        # configuration for mass communication
+        # configuration for badges
         badge:
             # upload folders
             folder:

@@ -241,7 +241,7 @@ class ImageManager
                 break;
             case Badge::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
                     return $fileName;
                 }
