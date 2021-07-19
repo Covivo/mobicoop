@@ -47,7 +47,6 @@
               We use a combination of error, error-messages and blur -->
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      v-show="regular ? false : true"
                       id="date"
                       :value="computedDateFormat"
                       clearable
@@ -76,35 +75,15 @@
                 </v-menu>
               </v-col>
               <v-col col="2">
-                <v-row
-                  dense
-                  justify="center"
-                >
-                  <v-col
-                    cols="12"
-                    lg="2"
-                    class="text-center"
-                    align-self="center"
-                  >
-                    <v-switch
-                      v-model="regular"
-                      inset
-                      hide-details
-                      class="mt-0 ml-8 ml-lg-0"
-                      align-self="center"
-                      color="secondary"
-                      @change="switched"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    lg="9"
-                    class="mt-0 ml-1 text-left"
-                    align-self="center"
-                  >
-                    {{ $t('switch.regular.label') }}
-                  </v-col>
-                </v-row>          
+                <v-switch
+                  v-model="regular"
+                  inset
+                  hide-details
+                  color="secondary"
+                  class="mt-0"
+                  :label="$t('switch.regular.label')"
+                  @change="switched"
+                />
               </v-col>
               <v-col
                 cols="1 text-center"
