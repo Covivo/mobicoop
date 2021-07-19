@@ -235,6 +235,7 @@ export default {
       this.emitEvent();
     },
     switched: function(){
+      this.date = null;
       this.emitEvent();
     },
     dateChanged: function() {
