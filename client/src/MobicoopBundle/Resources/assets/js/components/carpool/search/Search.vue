@@ -15,6 +15,7 @@
         >
           <!--SearchJourney-->
           <search-journey
+            v-if="!horizontal"
             :geo-search-url="geoSearchUrl"
             :user="user"
             :init-regular="dataRegular"
@@ -32,6 +33,7 @@
 
       <!-- Buttons -->
       <v-row
+        v-if="!horizontal"
         justify="center"
       >
         <v-col
@@ -202,8 +204,11 @@ export default {
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
+    },
+    horizontal:{
+      type: Boolean,
+      default: false
     }
-
   },
   data() {
     return {
