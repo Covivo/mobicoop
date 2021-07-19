@@ -97,6 +97,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Community/Entity'
                 prefix: 'App\Community\Entity'
                 alias: Community
+            Editorial:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Editorial/Entity'
+                prefix: 'App\Editorial\Entity'
+                alias: Editorial    
             Event:
                 is_bundle: false
                 type: annotation

@@ -39,6 +39,7 @@ use App\Gamification\Entity\Badge;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
+use App\Editorial\Entity\Editorial;
 use App\Image\Controller\CreateImageAction;
 use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
@@ -427,6 +428,25 @@ class Image
      * @Groups({"read","write"})
      */
     private $campaignId;
+
+    /**
+     * @var Editotial|null The editorial associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
+     */
+    private $editorial;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="editorial", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $editorialFile;
+    
+    /**
+     * @var int|null The editorial id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $editorialId;
 
     /**
      * @var array|null The versions of with the image.
@@ -947,6 +967,38 @@ class Image
     {
         $this->campaignId = $campaignId;
     }
+
+    public function getEditorial(): ?Editorial
+    {
+        return $this->editorial;
+    }
+    
+    public function setEditorial(?Editorial $editorial): self
+    {
+        $this->editorial = $editorial;
+        
+        return $this;
+    }
+    
+    public function getEditorialFile(): ?File
+    {
+        return $this->editorialFile;
+    }
+    
+    public function setEditorialFile(?File $editorialFile)
+    {
+        $this->editorialFile = $editorialFile;
+    }
+    
+    public function getEditorialId(): ?int
+    {
+        return $this->editorialId;
+    }
+    
+    public function setEditorialId($editorialId)
+    {
+        $this->editorialId = $editorialId;
+    }
     
     public function getVersions(): ?array
     {
@@ -985,6 +1037,7 @@ class Image
         $this->setBadgeFile(null);
         $this->setBadgeImageFile(null);
         $this->setBadgeImageLightFile(null);
+        $this->setEditorialFile(null);
     }
     
     // DOCTRINE EVENTS

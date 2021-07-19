@@ -75,10 +75,18 @@ vich_uploader:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
 
-        # mapping for event images
+        # mapping for badge images
         badge:
             uri_prefix: /upload/badges/images/
             upload_destination: '%kernel.project_dir%/public/upload/badges/images/'
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
+
+        # mapping for editorial images
+        editorial:
+            uri_prefix: /upload/editorials/images/
+            upload_destination: '%kernel.project_dir%/public/upload/editorials/images/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}        
