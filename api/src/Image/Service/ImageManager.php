@@ -264,7 +264,7 @@ class ImageManager
             case Editorial::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getTitle() . " " . $image->getPosition())) {
                     return $fileName;
                 }
 
