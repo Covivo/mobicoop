@@ -113,6 +113,22 @@ parameters:
                 - {filterSet: 'square_800', prefix: '800-'}
                 - {filterSet: 'square_250', prefix: '250-'}
                 - {filterSet: 'square_100', prefix: '100-'}
+        # configuration for editorials
+        editorial:
+            # upload folders
+            folder:
+                base: 'upload/'
+                plain: 'editorials/images/'
+                versions: 'editorials/images/versions/'
+            # versions to generate
+            versions:
+                # versions sizes to be generated
+                # - filterSet : the LiipImagine filter set to apply
+                # - prefix : the prefix of the version
+                - {filterSet: 'max', prefix: ''}
+                - {filterSet: 'square_800', prefix: '800-'}
+                - {filterSet: 'square_250', prefix: '250-'}
+                - {filterSet: 'square_100', prefix: '100-'}        
         # icons
         icons:
             # upload folders
