@@ -1,16 +1,23 @@
 <template>
   <div fluid>
-    <v-row justify="center">
+    <v-row
+      justify="center"
+      dense
+    >
       <v-col cols="9">
-        <v-card class="px-5">
+        <v-card class="px-5 py-0">
           <v-form
             ref="form"
             v-model="valid"
           >
-            <v-row align="center">
+            <v-row
+              align="center"
+              dense
+            >
               <v-col
                 cols="4"
                 lg="3"
+                class="ma-0"
               >
                 <GeoComplete
                   id="from"
@@ -27,6 +34,7 @@
               <v-col
                 cols="4"
                 lg="3"
+                class="ma-0"
               >
                 <GeoComplete
                   id="to"
@@ -64,7 +72,7 @@
                       :disabled="regular"
                       :error="!date && regular && outwardDateClicked"
                       :error-messages="checkOutwardDate"
-                      :prepend-icon="prependIconOutwardDate"
+                      :prepend-inner-icon="prependIconOutwardDate"
                       v-on="on"
                       @click:clear="clearDate"
                       @blur="outwardDateBlur"

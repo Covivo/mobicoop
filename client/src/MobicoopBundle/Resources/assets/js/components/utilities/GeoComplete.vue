@@ -19,7 +19,7 @@
       :required="required"
       :rules="geoRules"
       :disabled="disabled"
-      :prepend-icon="prependIcon"
+      :prepend-inner-icon="prependIcon"
       @change="changedAddress()"
     >
       <!-- template for selected item  -->
