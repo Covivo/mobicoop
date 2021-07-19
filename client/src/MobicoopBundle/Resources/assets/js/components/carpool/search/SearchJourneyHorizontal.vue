@@ -1,14 +1,17 @@
 <template>
   <div fluid>
     <v-row justify="center">
-      <v-col cols="11">
+      <v-col cols="9">
         <v-card class="px-5">
           <v-form
             ref="form"
             v-model="valid"
           >
             <v-row align="center">
-              <v-col cols="3">
+              <v-col
+                cols="4"
+                lg="3"
+              >
                 <GeoComplete
                   id="from"
                   :url="geoSearchUrl"
@@ -21,7 +24,10 @@
                   @address-selected="originSelected"
                 />
               </v-col>
-              <v-col cols="3">
+              <v-col
+                cols="4"
+                lg="3"
+              >
                 <GeoComplete
                   id="to"
                   :url="geoSearchUrl"
@@ -34,7 +40,10 @@
                   @address-selected="destinationSelected"
                 />
               </v-col>
-              <v-col cols="3">
+              <v-col
+                cols="4"
+                lg="3"
+              >
                 <v-menu
                   v-model="menu"
                   :close-on-content-click="false"
@@ -74,7 +83,10 @@
                   />
                 </v-menu>
               </v-col>
-              <v-col col="2">
+              <v-col
+                cols="4"
+                lg="2"
+              >
                 <v-switch
                   v-model="regular"
                   inset
@@ -86,7 +98,9 @@
                 />
               </v-col>
               <v-col
-                cols="1 text-center"
+                cols="8"
+                lg="1"
+                class="text-left"
               >
                 <v-btn
                   :disabled="searchUnavailable || disableSearch"
