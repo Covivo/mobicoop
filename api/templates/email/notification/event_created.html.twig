@@ -7,7 +7,7 @@
             <table>
                 <tr>
                     <td>
-                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE ÉVÉNEMENT EST ENREGISTRÉ!</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE ÉVÉNEMENT EST ENREGISTRÉ !</b></p>
                         <hr>
                     </td>
                 </tr>
@@ -20,7 +20,7 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
-                        <p>Votre événement a bien été enregistré!</p>
+                        <p>Félicitations, votre événement a bien été créé !</p>
                     </td>
 
                 </tr>
@@ -32,6 +32,7 @@
                             <li>Adresse: {{ context.event.address.displayLabel[0] }} </li>
                             <li>Description: {{ context.event.description }} </li>
                         </ul>
+                        <p>Maintenant, partagez le lien de votre événement à votre public et sensibilisez-le au covoiturage ! {{api_env('EMAILS_PLATFORM_NAME')}} met à disposition un Kit de communication avec de nombreux conseils et supports visuels pour vous accompagner dans cette démarche. Pensez également à utiliser le widget disponible sur votre page événement pour l’intégrer sur votre vite dans la catégorie “Infos pratiques” par exemple.</p>
                     </td>
                 </tr>    
             </table>
