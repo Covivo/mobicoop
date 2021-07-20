@@ -186,6 +186,12 @@ class Editorial
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
+
+    /**
+     * @var string|null The editorial image
+     * @Groups("aRead")
+     */
+    private $image;
     
     
     public function __construct($id=null)
@@ -304,6 +310,14 @@ class Editorial
         $this->updatedDate = $updatedDate;
 
         return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+            return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
     }
 
     // DOCTRINE EVENTS
