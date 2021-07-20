@@ -7,5 +7,5 @@
     "journeyTo": " XXX-ra ",
     "journeyFrom": "Autokidetza XXX-tik ",
     "titleToCity": "Autoa partekatu{city}-rantz",
-    "titleFromCity": "Autoa partekatu{city}-tik"
+    "titleFromCity": "Autokidetza {city}-tik"
 }
