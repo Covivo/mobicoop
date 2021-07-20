@@ -30,7 +30,7 @@
         },
         "publish": {
             "route": "covoiturage/recherche/poster",
-            "label": "Iragarkia argitaratu"
+            "label": "Iragarki bat argitaratu"
         }
     },
     "leaveCommunity": {
@@ -42,7 +42,7 @@
             },
             "title": "Baietapen eskaera"
         },
-        "button": "Komunitatetik atera"
+        "button": "Komunitatea utzi"
     },
     "no": "ez",
     "yes": "bai",
