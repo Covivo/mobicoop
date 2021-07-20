@@ -9,7 +9,7 @@
             },
             "title": "Baietapen eskaera"
         },
-        "button": "Komunitatetik atera",
+        "button": "Komunitatea utzi",
         "route": "/communaute/{id}/quitter"
     },
     "snackbar": {
@@ -25,5 +25,5 @@
         "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
         "community": "/covoiturage-communaute/{id}/{urlKey}"
     },
-    "members":"{members} membres"
+    "members": "{members} membres"
 }
