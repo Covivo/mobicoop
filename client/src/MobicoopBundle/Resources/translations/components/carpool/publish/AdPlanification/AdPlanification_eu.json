@@ -1,23 +1,23 @@
 {
     "fullDate": "ddd Do MMMM YYYY",
     "optional": "hautuzkoa",
-    "errorReturnTime": "Itzultze ordua, abiatze ordutik hurbilegia da.",
+    "errorReturnTime": "Itzultze tenorea, abiatze tenoretik hurbilegia da.",
     "marginTooltip": "Zure iragarkia bilaketetan agertuko da, ordutegi honetako  {margin}  minutu inguruko malgutasunarekin",
     "addSchedule": "Denbora tarte bat gehitu",
     "returnTrip": {
         "label": "Itzultzea"
     },
     "regularReturnTime": {
-        "label": "Itzultze tokia"
+        "label": "Itzultzea"
     },
     "regularOutwardTime": {
-        "label": "Abiatze tokia"
+        "label": "Abiatzea"
     },
     "returnTime": {
-        "label": "Itzultze ordua"
+        "label": "Itzultze tenorea"
     },
     "outwardTime": {
-        "label": "Abiatze ordua"
+        "label": "Abiatze tenorea"
     },
     "returnDate": {
         "label": "Itzultze eguna"
