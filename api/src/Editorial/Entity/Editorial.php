@@ -192,6 +192,12 @@ class Editorial
      * @Groups("aRead")
      */
     private $image;
+
+    /**
+     * @var string|null The editorial avatar
+     * @Groups("aRead")
+     */
+    private $avatar;
     
     
     public function __construct($id=null)
@@ -316,6 +322,14 @@ class Editorial
     {
         if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
+        }
+        return null;
+    }
+
+    public function getAvatar(): ?string
+    {
+        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+            return $this->getImages()[0]->getVersions()['square_250'];
         }
         return null;
     }
