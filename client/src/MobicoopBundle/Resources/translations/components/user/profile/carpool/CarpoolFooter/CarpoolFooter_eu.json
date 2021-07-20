@@ -8,7 +8,7 @@
         "show": "Ikus bidaiaria|Ikus bidaiariak"
     },
     "seat": {
-        "booked": "0 | 1 leku erreserbatuak | {bookedSeats} / {seats} leku erreserbatuak"
+        "booked": "0 | leku 1 erreserbatua | {bookedSeats} / {seats} leku erreserbatuak"
     },
     "ui": {
         "button": {
