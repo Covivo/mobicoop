@@ -34,7 +34,7 @@
         },
         "publish": {
             "route": "covoiturage/recherche/poster",
-            "label": "Iragarkia argitaratu"
+            "label": "Iragarki bat argitaratu"
         }
     }
 }
