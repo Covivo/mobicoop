@@ -22,7 +22,8 @@
         "avatar": {
             "label": "Image de l'événement*",
             "required": "L'image de l'événement est requis",
-            "size": "Vous avez dépassé a taille maximale de l'image"
+            "size": "Vous avez dépassé a taille maximale de l'image",
+            "hint": "Favoriser une image de forme carrée"
         },
         "address": {
             "label": "Adresse de l'événement*",

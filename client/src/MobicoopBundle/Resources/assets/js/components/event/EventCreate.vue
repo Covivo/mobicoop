@@ -292,6 +292,8 @@
                 :rules="avatarRules"
                 accept="image/png, image/jpeg, image/bmp"
                 :label="$t('form.avatar.label')"
+                :hint="$t('form.avatar.hint')"
+                persistent-hint
                 prepend-icon="mdi-image"
               />
             </v-col>
