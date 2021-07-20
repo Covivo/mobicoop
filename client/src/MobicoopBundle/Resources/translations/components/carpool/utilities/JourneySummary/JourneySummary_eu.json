@@ -2,6 +2,6 @@
     "hourMinute": "HH[h]mm",
     "shortDate": "ddd DD/MM",
     "places": "{seats} toki | {seats} toki",
-    "priceTooltipSolidaryExclusive": "Elkartasunezko iragarki esklusiboak",
-    "priceTooltip": "Prezio adierazgarria"
+    "priceTooltipSolidaryExclusive": "Elkartasunezko iragarki esklusiboa",
+    "priceTooltip": "Prezio indikatiboa"
 }
