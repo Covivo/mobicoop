@@ -49,7 +49,7 @@
     "carpool": "Autokidetza egin",
     "places": "{seats} toki | {seats} toki",
     "detailTitle": "Autokidetzaren xehetasunak",
-    "priceTooltip": "Prezio adierazgarria",
+    "priceTooltip": "Prezio indikatiboa",
     "detour": {
         "onlyDriver": "Bidaia kalkulatu horrek tzulinguru bat badu. Gidariarekin harremanetan jar zaitez.",
         "default": "Bidaia kalkulatu horrek itzulinguru bat badu."
