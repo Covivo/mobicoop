@@ -21,43 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Editorial\Repository;
+namespace App\Editorial\Exception;
 
-use App\Editorial\Entity\Editorial;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-
-class EditorialRepository
+class EditorialException extends \LogicException
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->repository = $entityManager->getRepository(Editorial::class);
-        $this->entityManager = $entityManager;
-    }
-    
-    /**
-     * Find an editorial with an id
-     *
-     * @param integer $id
-     * @return Editorial|null
-     */
-    public function find(int $id): ?Editorial
-    {
-        return $this->repository->find($id);
-    }
-
-    /**
-     * Find All editorials
-     *
-     * @return Editorials|null
-     */
-    public function findAll(): ?array
-    {
-        return $this->repository->findAll();
-    }
 }

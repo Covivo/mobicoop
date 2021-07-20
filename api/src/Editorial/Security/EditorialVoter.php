@@ -31,11 +31,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class EditorialVoter extends Voter
 {
-    const EDITORIAL_CREATE = 'article_create';
-    const EDITORIAL_READ = 'article_read';
-    const EDITORIAL_UPDATE = 'article_update';
-    const EDITORIAL_DELETE = 'article_delete';
-    const EDITORIAL_LIST = 'article_list';
+    const EDITORIAL_CREATE = 'editorial_create';
+    const EDITORIAL_READ = 'editorial_read';
+    const EDITORIAL_UPDATE = 'editorial_update';
+    const EDITORIAL_DELETE = 'editorial_delete';
+    const EDITORIAL_LIST = 'editorial_list';
 
     private $authManager;
 

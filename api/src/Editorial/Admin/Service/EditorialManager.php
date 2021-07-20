@@ -24,9 +24,9 @@
 namespace App\Editorial\Admin\Service;
 
 use App\Editorial\Entity\Editorial;
+use App\Editorial\Exception\EditorialException;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Geography\Entity\Address;
-use App\User\Repository\UserRepository;
+use App\Editorial\Repository\EditorialRepository;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -37,6 +37,7 @@ use Doctrine\ORM\QueryBuilder;
 class EditorialManager
 {
     private $entityManager;
+    private $editorialRepository;
 
     /**
      * Constructor
@@ -44,9 +45,38 @@ class EditorialManager
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EditorialRepository $editorialRepository
     ) {
         $this->entityManager = $entityManager;
+        $this->editorialRepository = $editorialRepository;
+    }
+
+    /**
+     * Get an editorial
+     *
+     * @param int $id   The editorial's id
+     * @return Editorial
+     */
+    public function getEditorial(int $id): ?Editorial
+    {
+        if (!$editorial = $this->editorialRepository->find($id)) {
+            return new EditorialException('Editorial not found');
+        }
+        return $editorial;
+    }
+
+    /**
+     * Get all editorials
+     *
+     * @return Editorials[]|null
+     */
+    public function getEditorials(): ?array
+    {
+        if (!$editorials = $this->editorialRepository->findAll()) {
+            return new EditorialException('Editorials not found');
+        }
+        return $editorials;
     }
 
     /**

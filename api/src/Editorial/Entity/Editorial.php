@@ -52,7 +52,7 @@ use App\Image\Entity\Image;
  *                  "groups"={"aRead"},
  *                  "skip_null_values"=false
  *              },
- *              "security"="is_granted('admin_article_list',object)",
+ *              "security"="is_granted('admin_editorial_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -62,7 +62,7 @@ use App\Image\Entity\Image;
  *              "method"="POST",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_create',object)",
+ *              "security"="is_granted('admin_editorial_create',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -70,7 +70,7 @@ use App\Image\Entity\Image;
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('article_read',object)",
+ *              "security"="is_granted('editorial_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Editorials"}
  *              }
@@ -79,7 +79,7 @@ use App\Image\Entity\Image;
  *              "path"="/admin/editorials/{id}",
  *              "method"="GET",
  *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_article_read',object)",
+ *              "security"="is_granted('admin_editorial_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -89,7 +89,7 @@ use App\Image\Entity\Image;
  *              "method"="PATCH",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_update',object)",
+ *              "security"="is_granted('admin_editorial_update',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
@@ -99,7 +99,7 @@ use App\Image\Entity\Image;
  *              "method"="DELETE",
  *              "normalization_context"={"groups"={"aRead"}},
  *              "denormalization_context"={"groups"={"aWrite"}},
- *              "security"="is_granted('admin_article_delete',object)",
+ *              "security"="is_granted('admin_editorial_delete',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
