@@ -11,7 +11,7 @@
         },
         "publish": {
             "route": "covoiturage/recherche/poster",
-            "label": "Iragarkia argitaratu"
+            "label": "Iragarki bat argitaratu"
         }
     },
     "datePicker": {
@@ -27,6 +27,6 @@
     },
     "destination": "Iriste lekua",
     "origin": "Abiatze lekua",
-    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo bidaia bat proposa ezazu.",
     "title": "Mobicoop"
 }
