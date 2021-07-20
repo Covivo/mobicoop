@@ -11,5 +11,5 @@
     "urlEmailValidation": "/utilisateur/login-token/email",
     "urlSignUpValidation": "/utilisateur/login-token",
     "token": "Zure kodearen egiaztapena",
-    "title": "Zure emailaren egiaztapena"
+    "title": "Zure e-mezuaren egiaztatzea"
 }
