@@ -1,7 +1,7 @@
 {
     "intro": {
-        "part2": "Oharra erabiltzaile guziek ikusiko dute.",
-        "part1": "{user}-ri iritzi bat utzi iezaiozu"
+        "part2": "Erabiltzaile guziek ohar hau ikusiko dute.",
+        "part1": "{user}-ri iritzi bat utz diezaiokezu"
     },
     "tooltip": "Ebaluazio bat eman"
 }
