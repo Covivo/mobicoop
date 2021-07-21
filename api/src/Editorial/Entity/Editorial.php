@@ -79,6 +79,15 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *                  "tags"={"Editorials"}
  *              }
  *          },
+ *          "activated"={
+ *              "method"="GET",
+ *              "path"="/editorials/{id}/activated",
+ *              "security"="is_granted('editorial_read',object)",
+ *              "normalization_context"={"groups"={"readEditorial"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Editorials"}
+ *              }
+ *          },
  *          "ADMIN_get"={
  *              "path"="/admin/editorials/{id}",
  *              "method"="GET",

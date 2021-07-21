@@ -62,6 +62,17 @@ class EditorialRepository
     }
 
     /**
+     * Find One Editorial by criteria
+     *
+     * @param array $criteria
+     * @return Editorial|null
+     */
+    public function findOneBy(array $criteria): ?Editorial
+    {
+        return $this->repository->findOneBy($criteria);
+    }
+
+    /**
      * Inactive all editorials except the one activated
      *
      * @param Editorial $editorial
