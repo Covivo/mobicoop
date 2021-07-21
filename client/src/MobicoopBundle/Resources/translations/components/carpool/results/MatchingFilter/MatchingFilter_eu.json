@@ -71,9 +71,9 @@
         "order": {
             "date": {
                 "decreasing": "Data ttipienaren ordenean",
-                "increasing": "Data zaharrenaren ordenean"
+                "increasing": "Data zaharrenetik hasiz"
             },
-            "label": "Ordrea"
+            "label": "Sailkapena"
         }
     },
     "filters": "Iragazkiak"
