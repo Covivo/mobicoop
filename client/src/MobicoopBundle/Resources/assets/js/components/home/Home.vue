@@ -125,6 +125,7 @@
           :punctual-date-optional="punctualDateOptional"
           :publish-button-always-active="publishButtonAlwaysActive"
           :image-swap="$t('urlImageSwap')"
+          :horizontal="searchComponentHorizontal"
         />
       </v-col>
     </v-row>
@@ -238,6 +239,10 @@ export default {
     informativeMessageText: {
       type: String,
       default: null
+    },
+    searchComponentHorizontal: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
