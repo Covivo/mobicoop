@@ -22,8 +22,8 @@
     "snackbar-unsubscribe-email": "Gure emailing zerrendatik desabonatua zira",
     "snackbar-account-delete": "Zure kontua kendua izan da.",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
-    "snackbar2": ", zure autokideak lasaitzeo eta zure abisuak SMS-en bidez errezibitzeko.",
-    "snackbar1": "Zure telefono zenbakia komunikatu duzu. Egiazta ezazu, egiaztatze kode bat igorriz webguneko orrialdetik",
-    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo bidaia bat proposa ezazu.",
+    "snackbar2": ", zure autokideak lasaitzeko eta zure alertak SMS bidez ere errezibitzeko.",
+    "snackbar1": "Zure telefono zenbakia eman duzu. Egiaztaraz ezazu, egiaztatze kode bat orritik igorriz",
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo zure bidaia proposa ezazu.",
     "title": "Autokidetza librea, </br> komisiorik gabe eta kooperatiboa"
 }
