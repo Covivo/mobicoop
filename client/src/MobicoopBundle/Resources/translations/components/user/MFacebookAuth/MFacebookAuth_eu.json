@@ -1,7 +1,7 @@
 {
     "fillRemainingFields": "Eskertzen zaitugu baitezpadakoak diren ondoko eremuak betetzea.",
     "fillPublicInfos": "Formularioa aitzinetik betea izan da zure Facebook perfileko informazio publikoekin.",
-    "connection": "Konexioa facebook-etik",
-    "signup": "Izen ematea facebook-etik",
+    "connection": "Konexioa facebook-en bidez",
+    "signup": "Izen ematea facebook-en bidez",
     "urlFacebookConnect": "/utilisateur/facebook/connexion"
 }
