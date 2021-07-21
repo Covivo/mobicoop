@@ -4,6 +4,6 @@
     "hopOff": "Jaitsi",
     "hopOn": "Igo",
     "direction": "Norabidea",
-    "waiting": "Igurikatu{duration}",
-    "estimatedDuration": "Distantziaren estimazioa: {duration}"
+    "waiting": "Igurikatu {duration}",
+    "estimatedDuration": "Ustezko iraupena: {duration}"
 }
