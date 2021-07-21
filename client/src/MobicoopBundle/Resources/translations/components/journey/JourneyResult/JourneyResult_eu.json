@@ -2,7 +2,7 @@
     "redirectForCarpoolSearch": "/covoiturage/annonce/{proposalId}/resultats",
     "createSearchFromProposalUrl": "/covoiturage/creer-recherche/{proposalId}",
     "regular": "Bidaia erregularrak",
-    "punctual": "Ezohiko bidaia",
-    "nbResults": "Ez da iragarkirik autokitza atxemaneran | Iragarki 1 autokidetza atxemanetan| {nb} iragarki autokidetza atxemanetan",
+    "punctual": "Noiztenkako bidaia",
+    "nbResults": "Ez da autokitza iragarkirik atzeman | Autokidetza iragarki bat atzemana izan da| {nb}autokidetza iragarkiak atzemanak izan dira",
     "title": "Autokidetza{origin} -(e)tik{destination}-(e)ra"
 }
