@@ -15,7 +15,7 @@
       >
         <v-img
           v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_100']"
+          :src="item['images'][0]['versions']['square_250']"
           class="grey lighten-2"
         />
         <v-img
