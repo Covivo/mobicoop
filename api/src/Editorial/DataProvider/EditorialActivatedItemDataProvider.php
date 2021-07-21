@@ -52,7 +52,7 @@ final class EditorialActivatedItemDataProvider implements ItemDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Editorial::class === $resourceClass && $operationName === "activated";
+        return Editorial::class === $resourceClass && $operationName === "get";
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Editorial

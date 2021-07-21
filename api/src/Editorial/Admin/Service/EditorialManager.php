@@ -61,7 +61,7 @@ class EditorialManager
     public function getEditorial(int $id): ?Editorial
     {
         if (!$editorial = $this->editorialRepository->find($id)) {
-            return new EditorialException('Editorial not found');
+            throw new EditorialException('Editorial not found');
         }
         return $editorial;
     }
@@ -74,7 +74,7 @@ class EditorialManager
     public function getEditorials(): ?array
     {
         if (!$editorials = $this->editorialRepository->findAll()) {
-            return new EditorialException('Editorials not found');
+            throw new EditorialException('Editorials not found');
         }
         return $editorials;
     }

@@ -36,7 +36,6 @@ use Doctrine\ORM\QueryBuilder;
  */
 class EditorialManager
 {
-    private $entityManager;
     private $editorialRepository;
 
     /**
@@ -45,10 +44,8 @@ class EditorialManager
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
         EditorialRepository $editorialRepository
     ) {
-        $this->entityManager = $entityManager;
         $this->editorialRepository = $editorialRepository;
     }
 
@@ -60,7 +57,7 @@ class EditorialManager
     public function getActivatedEditorial(): ?Editorial
     {
         if (!$editorial = $this->editorialRepository->findOneBy(['status' => Editorial::STATUS_ACTIVE])) {
-            return new EditorialException('Editorial not found');
+            throw new EditorialException('No activated editorial content');
         }
         return $editorial;
     }

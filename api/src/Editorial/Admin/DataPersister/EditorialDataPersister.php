@@ -62,7 +62,7 @@ final class EditorialDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
+        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'ADMIN_post') {
             $data = $this->editorialManager->addEditorial($data);
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
@@ -73,7 +73,7 @@ final class EditorialDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+        if (isset($context['item_operation_name']) && $context['item_operation_name'] == 'ADMIN_delete') {
             return $this->editorialManager->deleteEditorial($data);
         }
     }

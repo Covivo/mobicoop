@@ -95,7 +95,7 @@ final class CreateImageAction
             $image->setBadgeFile($request->files->get('badgeFile'));
             $image->setBadgeImageLightId($request->request->get('badgeImageLightId'));
         } elseif ($request->files->get('editorialFile') && $request->request->get('editorialId')) {
-            // editorial image light
+            // editorial image
             $image->setEditorialFile($request->files->get('editorialFile'));
             $image->setEditorialId($request->request->get('editorialId'));
         } else {

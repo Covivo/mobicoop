@@ -45,7 +45,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"readEditorial"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={
@@ -74,14 +73,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('editorial_read',object)",
- *              "swagger_context" = {
- *                  "tags"={"Editorials"}
- *              }
- *          },
- *          "activated"={
- *              "method"="GET",
- *              "path"="/editorials/{id}/activated",
  *              "security"="is_granted('editorial_read',object)",
  *              "normalization_context"={"groups"={"readEditorial"}},
  *              "swagger_context" = {
@@ -141,7 +132,7 @@ class Editorial
      * @var string The title of the editorial.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readEditorial","write"})
+     * @Groups({"aRead","aWrite","readEditorial"})
      */
     private $title;
 
@@ -149,7 +140,7 @@ class Editorial
      * @var string The text of the editorial.
      *
      * @ORM\Column(type="string", length=512)
-     * @Groups({"aRead","aWrite","readEditorial","write"})
+     * @Groups({"aRead","aWrite","readEditorial"})
      */
     private $text;
 
@@ -157,7 +148,7 @@ class Editorial
      * @var string Label of the button of the editorial content
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readEditorial","write"})
+     * @Groups({"aRead","aWrite","readEditorial"})
      */
     private $label;
 
@@ -165,7 +156,7 @@ class Editorial
      * @var string The url linked to the editorial content
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readEditorial","write"})
+     * @Groups({"aRead","aWrite","readEditorial"})
      */
     private $link;
 
@@ -173,7 +164,7 @@ class Editorial
      * @var int The status of the editorial (active/inactive).
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"aRead","aWrite","readEditorial","write"})
+     * @Groups({"aRead","aWrite"})
      */
     private $status;
     

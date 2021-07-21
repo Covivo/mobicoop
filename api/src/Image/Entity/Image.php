@@ -430,7 +430,7 @@ class Image
     private $campaignId;
 
     /**
-     * @var Editotial|null The editorial associated with the image.
+     * @var Editorial|null The editorial associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
      */
