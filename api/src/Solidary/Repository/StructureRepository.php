@@ -89,10 +89,16 @@ class StructureRepository
      */
     public function findByPoint(float $longitude, float $latitude)
     {
-        $query = $this->repository->createQueryBuilder('s')
-        ->join('s.territories', 't')
-        ->where('ST_INTERSECTS(t.geoJsonDetail,ST_GEOMFROMTEXT(\'POINT('.$longitude.' '.$latitude.')\'))=1');
+        $conn = $this->entityManager->getConnection();
 
-        return $query->getQuery()->getResult();
+        $sql = "SELECT s.* FROM structure s
+        INNER JOIN structure_territory st ON st.structure_id = s.id
+        INNER JOIN territory t ON t.id = st.territory_id
+        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        return $results;
     }
 }
