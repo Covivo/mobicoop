@@ -76,6 +76,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "security"="is_granted('editorial_read',object)",
  *              "normalization_context"={"groups"={"readEditorial"}},
  *              "swagger_context" = {
+ *                  "summary"="Get THE ONLY ONE activated editorial",
  *                  "tags"={"Editorials"}
  *              }
  *          },
