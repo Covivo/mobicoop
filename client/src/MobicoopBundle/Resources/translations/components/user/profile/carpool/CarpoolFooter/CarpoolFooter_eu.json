@@ -4,7 +4,7 @@
         "show": "Ikus gidaria"
     },
     "passengers": {
-        "hide": "bidaiaria kukutu|bidaiariak kukutu",
+        "hide": "bidaiaria maskaratu | bidaiariak maskaratu",
         "show": "Ikus bidaiaria|Ikus bidaiariak"
     },
     "seat": {
