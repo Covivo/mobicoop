@@ -37,10 +37,10 @@
         "route": "/communaute/{id}/quitter",
         "popup": {
             "content": {
-                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
+                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu oraino, iragarki hauek ezabatuak izanen dira. <br>Baieztatzen duzu?",
                 "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
             },
-            "title": "Baietapen eskaera"
+            "title": "Baieztapen eskaera"
         },
         "button": "Komunitatea utzi"
     },
