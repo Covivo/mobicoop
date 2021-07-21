@@ -47,7 +47,7 @@
     "carpoolAsPassenger": "Autokidetza egin bidaiari gisa",
     "carpoolAsDriver": "Autokidetza egin gidari gisa",
     "carpool": "Autokidetza egin",
-    "places": "{seats} toki | {seats} toki",
+    "places": "{seats} leku | {seats} leku",
     "detailTitle": "Autokidetzaren xehetasunak",
     "priceTooltip": "Prezio indikatiboa",
     "detour": {
