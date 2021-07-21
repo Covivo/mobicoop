@@ -1,3 +1,7 @@
+# Release 1.33.0
+* Alternate horizontal version of Search component
+* Add editabled editorial content
+
 # Release 1.31.0
 * Gamification : Resources and API treatment of gamification actions
 * More precision in prices (especially price per km) to avoid rounding issues when computing final prices
