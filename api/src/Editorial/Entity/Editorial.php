@@ -24,19 +24,23 @@
 namespace App\Editorial\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Image\Entity\Image;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Image\Entity\Image;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * An editorial
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"App\Editorial\EntityListener\EditorialListener"})
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -106,6 +110,8 @@ use App\Image\Entity\Image;
  *          },
  *      }
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "title", "status"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact", "status":"exact","title":"partial"})
  */
 class Editorial
 {

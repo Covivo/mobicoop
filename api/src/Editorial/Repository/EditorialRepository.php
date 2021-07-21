@@ -60,4 +60,21 @@ class EditorialRepository
     {
         return $this->repository->findAll();
     }
+
+    /**
+     * Inactive all editorials except the one activated
+     *
+     * @param Editorial $editorial
+     * @return void
+     */
+    public function setInactive(Editorial $editorial)
+    {
+        // we use raw sql as the request
+        $conn = $this->entityManager->getConnection();
+
+        // set editorial's status to 0 except the one updated
+        $sql = "UPDATE `editorial` SET `status`= 0 WHERE `id`!=" . $editorial->getId();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+    }
 }

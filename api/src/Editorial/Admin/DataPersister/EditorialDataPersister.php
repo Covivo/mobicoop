@@ -20,7 +20,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Editorial\Admin\EditorialDataPersister;
+namespace App\Editorial\Admin\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Editorial\Admin\Service\EditorialManager;

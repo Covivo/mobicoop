@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Editorial\Admin\EditorialDataProvider;
+namespace App\Editorial\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;

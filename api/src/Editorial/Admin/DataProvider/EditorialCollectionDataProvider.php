@@ -21,14 +21,15 @@
  *    LICENSE
  **************************/
 
-namespace App\Editorial\Admin\EditorialDataProvider;
+namespace App\Editorial\Admin\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Editorial\Entity\Editorial;
-use App\Editorial\Admin\Service\EditorialManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * Collection editorial data provider in admin context.
@@ -39,14 +40,14 @@ use Symfony\Component\Security\Core\Security;
 final class EditorialCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    private $editorialManager;
-    private $security;
+    private $managerRegistry;
+    private $collectionExtensions;
 
-    public function __construct(RequestStack $requestStack, EditorialManager $editorialManager, Security $security)
+    public function __construct(RequestStack $requestStack, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->editorialManager = $editorialManager;
-        $this->security = $security;
+        $this->managerRegistry = $managerRegistry;
+        $this->collectionExtensions = $collectionExtensions;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -56,6 +57,20 @@ final class EditorialCollectionDataProvider implements CollectionDataProviderInt
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        return $this->editorialManager->getEditorials($this->security->getUser());
+        $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+        $repository = $manager->getRepository($resourceClass);
+        /**
+         * @var EntityRepository $repository
+         */
+        $queryBuilder = $repository->createQueryBuilder('ed');
+        $queryNameGenerator = new QueryNameGenerator();
+
+        foreach ($this->collectionExtensions as $extension) {
+            $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
+                $editorials = $extension->getResult($queryBuilder, $resourceClass, $operationName);
+            }
+        }
+        return $editorials;
     }
 }
