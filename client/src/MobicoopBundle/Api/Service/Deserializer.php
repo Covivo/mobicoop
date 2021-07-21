@@ -91,6 +91,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Review;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
+use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
 
 /**
  * Custom deserializer service.
@@ -249,6 +250,9 @@ class Deserializer
                 break;
             case Language::class:
                 return $this->deserializeLanguage($data) ;
+                break;
+            case Editorial::class:
+                return $this->deserializeEditorial($data) ;
                 break;
             default:
                 break;
@@ -1033,6 +1037,18 @@ class Deserializer
             }
         }
         return $language;
+    }
+
+    private function deserializeEditorial(array $data): ?Editorial
+    {
+        $editorial = new Editorial();
+        $editorial = $this->autoSet($editorial, $data);
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $editorial->addImage($this->deserializeImage($image));
+            }
+        }
+        return $editorial;
     }
 
     private function autoSet($object, $data)
