@@ -1,6 +1,6 @@
 {
     "urlCompleteThread": "/utilisateur/messages/{idMessage}/fil",
     "sendBy": "{name}-(e)k igorria",
-    "messageDelete": "Mezuak ezabatuak",
+    "messageDelete": "Mezua ezabatua izan da",
     "notThreadSelected": "Ez da jariorik hautatu"
 }
