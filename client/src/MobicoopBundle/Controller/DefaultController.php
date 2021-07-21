@@ -33,6 +33,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
+    private $searchComponentHorizontal;
+
+    public function __construct(bool $searchComponentHorizontal)
+    {
+        $this->searchComponentHorizontal = $searchComponentHorizontal;
+    }
 
     /**
      * HomePage
@@ -42,7 +48,8 @@ class DefaultController extends AbstractController
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
-                'baseUri' => $_ENV['API_URI']
+                'baseUri' => $_ENV['API_URI'],
+                'searchComponentHorizontal' => $this->searchComponentHorizontal
             ]
         );
     }
@@ -57,6 +64,7 @@ class DefaultController extends AbstractController
             [
                 'baseUri' => $_ENV['API_URI'],
                 'logout' => 1,
+                'searchComponentHorizontal' => $this->searchComponentHorizontal
             ]
         );
     }

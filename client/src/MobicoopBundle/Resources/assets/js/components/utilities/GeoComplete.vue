@@ -19,6 +19,7 @@
       :required="required"
       :rules="geoRules"
       :disabled="disabled"
+      :prepend-inner-icon="prependIcon"
       @change="changedAddress()"
     >
       <!-- template for selected item  -->
@@ -106,6 +107,10 @@ export default {
     initAddress: {
       type: Object,
       default: null
+    },
+    prependIcon:{
+      type: String,
+      default: ""
     }
   },
   data() {
