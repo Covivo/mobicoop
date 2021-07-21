@@ -101,6 +101,23 @@ class EventController extends AbstractController
         }
     }
 
+     /**
+     * Get last events created.
+     */
+    public function getLastEventCreated(EventManager $eventManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $apiEvents = $eventManager->getLastEventsCreated("createdDate", "desc", $data['perPage'], $data['page']);
+            $events = $apiEvents->getMember();
+
+            return new JsonResponse([
+                'eventComing' => ($data['coming']) ? $events : null
+            ]);
+        }
+    }
+
     /**
      * Create an event.
      */

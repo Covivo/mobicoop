@@ -3,7 +3,7 @@
     "urlBackground3": "/images/pages/home/background_bottom.svg",
     "urlBackground2": "/images/pages/home/background_middle.svg",
     "routes": {
-        "getList": "/events/getEventList"
+        "getList": "/events/getLastEventsCreated"
     },
     "items": [
         {
