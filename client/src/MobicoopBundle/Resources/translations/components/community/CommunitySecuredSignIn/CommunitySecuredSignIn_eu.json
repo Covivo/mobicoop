@@ -1,6 +1,6 @@
 {
     "urlSignIn": "/communaute/{id}/securisee/inscription",
-    "credential2": "2.erabiltzaile izena",
+    "credential2": "2. erabiltzailearen izena",
     "errors": {
         "notLogged": "Konektua izan behar zira",
         "badCredentials": "Erabiltzaile izena okerra da",
