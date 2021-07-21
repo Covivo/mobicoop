@@ -5,7 +5,7 @@
     "nbResults": "Ez da bidairik atzeman | autokidetza bidaia 1 atxeman da| {nb} autokitza bidaia atxeman dira",
     "listJourneys": "Autokidetzen zerrenda",
     "journeyTo": " XXX-ra ",
-    "journeyFrom": "Autokidetza XXX-tik ",
-    "titleToCity": "Autoa partekatu{city}-rantz",
+    "journeyFrom": "Autokidetza leku honetatik ",
+    "titleToCity": "Autokidetza {city}-rantz",
     "titleFromCity": "Autokidetza {city}-tik"
 }
