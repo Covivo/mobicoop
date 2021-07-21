@@ -16,7 +16,7 @@
     "urlLogin": "/utilisateur/connexion",
     "userFBNotFound": "Facebook erabiltzaile honek ez du izena eman plataforman",
     "errorCredentialsFacebook": "Akats bat gertatu da Facebook-en bidez konektatzean",
-    "Unable to get an API token.": "Akats bat gertatu da konektatzean.",
+    "Unable to get an API token.": "Akats bat gertatu da konektatzerakoan.",
     "Bad credentials.": "Erabiltzaile izena edo pasahitz okerra.",
     "title": "Konexioa"
 }
