@@ -184,6 +184,7 @@ class Editorial
     * @var \DateTimeInterface Creation date of the editorial.
     *
     * @ORM\Column(type="datetime")
+    * @Groups({"aRead"})
     */
     private $createdDate;
 
@@ -191,6 +192,7 @@ class Editorial
      * @var \DateTimeInterface Updated date of the editorial.
      *
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead"})
      */
     private $updatedDate;
 
