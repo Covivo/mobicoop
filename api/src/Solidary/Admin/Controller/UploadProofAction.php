@@ -23,62 +23,29 @@
 
 namespace App\Solidary\Admin\Controller;
 
-use App\Service\FileManager;
-use App\Solidary\Admin\Exception\SolidaryException;
+use App\Solidary\Admin\Service\SolidaryManager;
 use App\Solidary\Entity\Proof;
-use App\Solidary\Repository\SolidaryRepository;
-use App\Solidary\Repository\StructureProofRepository;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Upload a proof in solidary admin context.
+ * Used both for creating a new solidary record and updating an existing solidary record.
+ */
 final class UploadProofAction
 {
-    private $structureProofRepository;
-    private $solidaryRepository;
-    private $fileManager;
-    
     public function __construct(
-        SolidaryRepository $solidaryRepository,
-        StructureProofRepository $structureProofRepository,
-        FileManager $fileManager
+        SolidaryManager $solidaryManager
     ) {
-        $this->solidaryRepository = $solidaryRepository;
-        $this->structureProofRepository = $structureProofRepository;
-        $this->fileManager = $fileManager;
+        $this->solidaryManager = $solidaryManager;
     }
     
     public function __invoke(Request $request): Proof
     {
-        $proof = new Proof();
-        if (!$solidaryId = $request->request->get('solidaryId')) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_ID_REQUIRED);
-        }
-        if (!$solidary = $this->solidaryRepository->find($solidaryId)) {
-            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_NOT_FOUND, $solidaryId));
-        }
-
-        if (!$structureProofId = $request->request->get('proofId')) {
-            throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_ID_REQUIRED);
-        }
-        if (!$structureProof = $this->structureProofRepository->find($structureProofId)) {
-            throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_NOT_FOUND, $structureProofId));
-        }
-
-        if ($structureProof->isFile() && !$file = $request->files->get('file')) {
-            throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_FILE_REQUIRED, $structureProofId));
-        }
-
-        $proof->setFile($file);
-
-        if (!empty($request->request->get('filename'))) {
-            $fileName = $this->fileManager->sanitize($request->request->get('filename'));
-        } else {
-            $fileName = $this->fileManager->sanitize(microtime());
-        }
-        $proof->setFileName($solidary->getId()."-".$fileName);
-  
-        $proof->setStructureProof($structureProof);
-        $proof->setSolidaryUserStructure($solidary->getSolidaryUserStructure());
-
-        return $proof;
+        return $this->solidaryManager->createProof(
+            $request->files->get('file'),
+            $request->files->get('filename'),
+            $request->request->get('solidaryId'),
+            $request->request->get('proofId')
+        );
     }
 }

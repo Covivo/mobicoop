@@ -67,6 +67,7 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Service\InternalMessageManager;
+use App\Service\FileManager;
 use App\Solidary\Repository\SolidaryMatchingRepository;
 use App\Solidary\Repository\SolidarySolutionRepository;
 use App\User\Admin\Service\UserManager;
@@ -76,6 +77,7 @@ use DateInterval;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Solidary manager in admin context.
@@ -110,6 +112,7 @@ class SolidaryManager
     private $messageRepository;
     private $solidaryTransportMatcher;
     private $solidaryBeneficiaryManager;
+    private $fileManager;
     private $logger;
 
 
@@ -142,7 +145,8 @@ class SolidaryManager
         SolidarySolutionRepository $solidarySolutionRepository,
         MessageRepository $messageRepository,
         SolidaryTransportMatcher $solidaryTransportMatcher,
-        SolidaryBeneficiaryManager $solidaryBeneficiaryManager
+        SolidaryBeneficiaryManager $solidaryBeneficiaryManager,
+        FileManager $fileManager
     ) {
         $this->logger = $logger;
         $this->poster = $security->getUser();
@@ -168,6 +172,7 @@ class SolidaryManager
         $this->messageRepository = $messageRepository;
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
         $this->solidaryBeneficiaryManager = $solidaryBeneficiaryManager;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -1029,104 +1034,7 @@ class SolidaryManager
                 throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $fields['beneficiary']['id']));
             }
             // check if beneficiary informations have been updated
-            if (isset($fields['beneficiary']['givenName']) && $fields['beneficiary']['givenName'] != $beneficiary->getGivenName()) {
-                $beneficiary->setGivenName($fields['beneficiary']['givenName']);
-            }
-            if (isset($fields['beneficiary']['familyName']) && $fields['beneficiary']['familyName'] != $beneficiary->getFamilyName()) {
-                $beneficiary->setFamilyName($fields['beneficiary']['familyName']);
-            }
-            if (isset($fields['beneficiary']['email']) && $fields['beneficiary']['email'] != $beneficiary->getEmail()) {
-                $beneficiary->setEmail($fields['beneficiary']['email']);
-            }
-            if (isset($fields['beneficiary']['telephone']) && $fields['beneficiary']['telephone'] != $beneficiary->getTelephone()) {
-                $beneficiary->setTelephone($fields['beneficiary']['telephone']);
-            }
-            if (isset($fields['beneficiary']['gender']) && $fields['beneficiary']['gender'] != $beneficiary->getGender()) {
-                $beneficiary->setGender($fields['beneficiary']['gender']);
-            }
-            if (isset($fields['beneficiary']['birthDate']) && $fields['beneficiary']['birthDate'] != $beneficiary->getBirthDate()) {
-                $beneficiary->setBirthDate(new DateTime($fields['beneficiary']['birthDate']));
-            }
-            if (isset($fields['beneficiary']['newsSubscription']) && $fields['beneficiary']['newsSubscription'] != $beneficiary->hasNewsSubscription()) {
-                $beneficiary->setNewsSubscription($fields['beneficiary']['newsSubscription']);
-            }
-            // check if beneficiary home address has been updated
-            if (isset($fields['beneficiary']['homeAddress'])) {
-                // we search the original home address
-                $homeAddress = null;
-                foreach ($beneficiary->getAddresses() as $address) {
-                    if ($address->isHome()) {
-                        $homeAddress = $address;
-                        break;
-                    }
-                }
-                if (!is_null($homeAddress)) {
-                    // we have to update each field...
-                    /**
-                    * @var Address $homeAddress
-                    */
-                    $updated = false;
-                    if (isset($fields['beneficiary']['homeAddress']['streetAddress']) && $homeAddress->getStreetAddress() != $fields['beneficiary']['homeAddress']['streetAddress']) {
-                        $updated = true;
-                        $homeAddress->setStreetAddress($fields['beneficiary']['homeAddress']['streetAddress']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['postalCode']) && $homeAddress->getPostalCode() != $fields['beneficiary']['homeAddress']['postalCode']) {
-                        $updated = true;
-                        $homeAddress->setPostalCode($fields['beneficiary']['homeAddress']['postalCode']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['addressLocality']) && $homeAddress->getAddressLocality() != $fields['beneficiary']['homeAddress']['addressLocality']) {
-                        $updated = true;
-                        $homeAddress->setAddressLocality($fields['beneficiary']['homeAddress']['addressLocality']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['addressCountry']) && $homeAddress->getAddressCountry() != $fields['beneficiary']['homeAddress']['addressCountry']) {
-                        $updated = true;
-                        $homeAddress->setAddressCountry($fields['beneficiary']['homeAddress']['addressCountry']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['latitude']) && $homeAddress->getLatitude() != $fields['beneficiary']['homeAddress']['latitude']) {
-                        $updated = true;
-                        $homeAddress->setLatitude($fields['beneficiary']['homeAddress']['latitude']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['longitude']) && $homeAddress->getLongitude() != $fields['beneficiary']['homeAddress']['longitude']) {
-                        $updated = true;
-                        $homeAddress->setLongitude($fields['beneficiary']['homeAddress']['longitude']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['houseNumber']) && $homeAddress->getHouseNumber() != $fields['beneficiary']['homeAddress']['houseNumber']) {
-                        $updated = true;
-                        $homeAddress->setHouseNumber($fields['beneficiary']['homeAddress']['houseNumber']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['subLocality']) && $homeAddress->getSubLocality() != $fields['beneficiary']['homeAddress']['subLocality']) {
-                        $updated = true;
-                        $homeAddress->setSubLocality($fields['beneficiary']['homeAddress']['subLocality']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['localAdmin']) && $homeAddress->getLocalAdmin() != $fields['beneficiary']['homeAddress']['localAdmin']) {
-                        $updated = true;
-                        $homeAddress->setLocalAdmin($fields['beneficiary']['homeAddress']['localAdmin']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['county']) && $homeAddress->getCounty() != $fields['beneficiary']['homeAddress']['county']) {
-                        $updated = true;
-                        $homeAddress->setCounty($fields['beneficiary']['homeAddress']['county']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['macroCounty']) && $homeAddress->getMacroCounty() != $fields['beneficiary']['homeAddress']['macroCounty']) {
-                        $updated = true;
-                        $homeAddress->setMacroCounty($fields['beneficiary']['homeAddress']['macroCounty']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['region']) && $homeAddress->getRegion() != $fields['beneficiary']['homeAddress']['region']) {
-                        $updated = true;
-                        $homeAddress->setRegion($fields['beneficiary']['homeAddress']['region']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['macroRegion']) && $homeAddress->getMacroRegion() != $fields['beneficiary']['homeAddress']['macroRegion']) {
-                        $updated = true;
-                        $homeAddress->setMacroRegion($fields['beneficiary']['homeAddress']['macroRegion']);
-                    }
-                    if (isset($fields['beneficiary']['homeAddress']['countryCode']) && $homeAddress->getCountryCode() != $fields['beneficiary']['homeAddress']['countryCode']) {
-                        $updated = true;
-                        $homeAddress->setCountryCode($fields['beneficiary']['homeAddress']['countryCode']);
-                    }
-                    if ($updated) {
-                        $this->entityManager->persist($homeAddress);
-                    }
-                }
-            }
+            $beneficiary = $this->updateBeneficiary($beneficiary, $fields['beneficiary']);
         } else {
             // new user
             $beneficiary = $this->userManager->createUserFromArray($fields['beneficiary']);
@@ -1192,7 +1100,7 @@ class SolidaryManager
                 if (!$structureProof = $this->structureProofRepository->find($aproof['id'])) {
                     throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_NOT_FOUND, $aproof['id']));
                 }
-                if (is_null($aproof['value']) && $structureProof->isMandatory()) {
+                if (is_null($aproof['value']) && $structureProof->isMandatory() && !$structureProof->isFile()) {
                     throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_VALUE_REQUIRED);
                 }
                 // we skip null values (meaning the proof is not mandatory and has been omitted during the edition)
@@ -1329,6 +1237,63 @@ class SolidaryManager
         return $this->solidaryRepository->find($solidary->getId());
     }
 
+
+    /**
+     * Create a proof related to a solidary record
+     *
+     * @param $file                         The file representing the proof
+     * @param string $filename              The filename of the file
+     * @param integer $solidaryId           The solidary record id
+     * @param integer $structureProofId     The structure proof id
+     * @return Proof
+     */
+    public function createProof(?File $file = null, ?string $filename = null, ?int $solidaryId = null, ?int $structureProofId = null)
+    {
+        if (!$solidaryId) {
+            throw new SolidaryException(SolidaryException::SOLIDARY_ID_REQUIRED);
+        }
+        if (!$solidary = $this->solidaryRepository->find($solidaryId)) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_NOT_FOUND, $solidaryId));
+        }
+        if (!$structureProofId) {
+            throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_ID_REQUIRED);
+        }
+        if (!$structureProof = $this->structureProofRepository->find($structureProofId)) {
+            throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_NOT_FOUND, $structureProofId));
+        }
+        if ($structureProof->isFile() && !$file) {
+            throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_FILE_REQUIRED, $structureProofId));
+        }
+
+        // check if the proof is an update of an existing proof
+        foreach ($solidary->getSolidaryUserStructure()->getProofs() as $proof) {
+            /**
+             * @var Proof $proof
+             */
+            if ($proof->getStructureProof()->getId() == $structureProofId) {
+                // update an existing proof => remove the old proof
+                $solidary->getSolidaryUserStructure()->removeProof($proof);
+                break;
+            }
+        }
+
+        $proof = new Proof();
+        $proof->setFile($file);
+
+        if (!is_null($filename)) {
+            $fileName = $this->fileManager->sanitize($filename);
+        } else {
+            $fileName = $this->fileManager->sanitize(microtime());
+        }
+        $proof->setFileName($solidary->getId()."-".$fileName);
+  
+        $proof->setStructureProof($structureProof);
+        $proof->setSolidaryUserStructure($solidary->getSolidaryUserStructure());
+
+        return $proof;
+    }
+
+
     /**
      * Create a new SolidaryMatching from a carpool Matching
      *
@@ -1373,11 +1338,163 @@ class SolidaryManager
             return $this->addMessage($solidary, $fields['message']);
         }
 
+        // check if new proofs were posted
+        if (array_key_exists('proofs', $fields)) {
+            $this->updateProofs($solidary, $fields['proofs']);
+        }
+
+        // check if new needs were posted
+        if (array_key_exists('needs', $fields)) {
+            $this->updateNeeds($solidary, $fields['needs'], array_key_exists('additionalNeed', $fields) ? $fields['additionalNeed'] : false);
+        }
+
+        // check if subject has changed
+        if (array_key_exists('adminsubject', $fields)) {
+            if ($subject = $this->subjectRepository->find($fields['adminsubject'])) {
+                // check if current subject is private => if so, remove it !
+                if ($solidary->getSubject()->isPrivate()) {
+                    $this->entityManager->remove($solidary->getSubject());
+                }
+                $solidary->setSubject($subject);
+            } else {
+                throw new SolidaryException(sprintf(SolidaryException::SUBJECT_NOT_FOUND, $fields['adminsubject']));
+            }
+        } elseif (isset($fields['additionalSubject'])) {
+            if ($solidary->getSubject()->isPrivate()) {
+                // update an existing additional subject
+                $solidary->getSubject()->setLabel($fields['additionalSubject']);
+            } else {
+                $subject = new Subject();
+                $subject->setLabel($fields['additionalSubject']);
+                $subject->setStructure($solidary->getSolidaryUserStructure()->getStructure());
+                $subject->setPrivate(true);
+                $this->entityManager->persist($subject);
+                $solidary->setSubject($subject);
+            }
+        }
+
+        // check if beneficiary was updated
+        if (isset($fields['beneficiary'])) {
+            $solidary->getSolidaryUserStructure()->getSolidaryUser()->setUser($this->updateBeneficiary($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $fields['beneficiary']));
+        }
+        
         // persist the solidary record
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();
 
-        return $solidary;
+        // we need a complete solidary
+        return $this->getSolidary($solidary->getId());
+    }
+
+    /**
+     * Update a given beneficiary with the given array
+     *
+     * @param User $beneficiary     The beneficiary as a User
+     * @param array $abeneficiary   The array that contains the fields to update the properties of the beneficiary
+     * @return User                 The updated beneficiary
+     */
+    private function updateBeneficiary(User $beneficiary, array $abeneficiary)
+    {
+        // check if beneficiary informations have been updated
+        if (isset($abeneficiary['givenName']) && $abeneficiary['givenName'] != $beneficiary->getGivenName()) {
+            $beneficiary->setGivenName($abeneficiary['givenName']);
+        }
+        if (isset($abeneficiary['familyName']) && $abeneficiary['familyName'] != $beneficiary->getFamilyName()) {
+            $beneficiary->setFamilyName($abeneficiary['familyName']);
+        }
+        if (isset($abeneficiary['email']) && $abeneficiary['email'] != $beneficiary->getEmail()) {
+            $beneficiary->setEmail($abeneficiary['email']);
+        }
+        if (isset($abeneficiary['telephone']) && $abeneficiary['telephone'] != $beneficiary->getTelephone()) {
+            $beneficiary->setTelephone($abeneficiary['telephone']);
+        }
+        if (isset($abeneficiary['gender']) && $abeneficiary['gender'] != $beneficiary->getGender()) {
+            $beneficiary->setGender($abeneficiary['gender']);
+        }
+        if (isset($abeneficiary['birthDate']) && $abeneficiary['birthDate'] != $beneficiary->getBirthDate()) {
+            $beneficiary->setBirthDate(new DateTime($abeneficiary['birthDate']));
+        }
+        if (isset($abeneficiary['newsSubscription']) && $abeneficiary['newsSubscription'] != $beneficiary->hasNewsSubscription()) {
+            $beneficiary->setNewsSubscription($abeneficiary['newsSubscription']);
+        }
+        // check if beneficiary home address has been updated
+        if (isset($abeneficiary['homeAddress'])) {
+            // we search the original home address
+            $homeAddress = null;
+            foreach ($beneficiary->getAddresses() as $address) {
+                if ($address->isHome()) {
+                    $homeAddress = $address;
+                    break;
+                }
+            }
+            if (!is_null($homeAddress)) {
+                // we have to update each field...
+                /**
+                * @var Address $homeAddress
+                */
+                $updated = false;
+                if (isset($abeneficiary['homeAddress']['streetAddress']) && $homeAddress->getStreetAddress() != $abeneficiary['homeAddress']['streetAddress']) {
+                    $updated = true;
+                    $homeAddress->setStreetAddress($abeneficiary['homeAddress']['streetAddress']);
+                }
+                if (isset($abeneficiary['homeAddress']['postalCode']) && $homeAddress->getPostalCode() != $abeneficiary['homeAddress']['postalCode']) {
+                    $updated = true;
+                    $homeAddress->setPostalCode($abeneficiary['homeAddress']['postalCode']);
+                }
+                if (isset($abeneficiary['homeAddress']['addressLocality']) && $homeAddress->getAddressLocality() != $abeneficiary['homeAddress']['addressLocality']) {
+                    $updated = true;
+                    $homeAddress->setAddressLocality($abeneficiary['homeAddress']['addressLocality']);
+                }
+                if (isset($abeneficiary['homeAddress']['addressCountry']) && $homeAddress->getAddressCountry() != $abeneficiary['homeAddress']['addressCountry']) {
+                    $updated = true;
+                    $homeAddress->setAddressCountry($abeneficiary['homeAddress']['addressCountry']);
+                }
+                if (isset($abeneficiary['homeAddress']['latitude']) && $homeAddress->getLatitude() != $abeneficiary['homeAddress']['latitude']) {
+                    $updated = true;
+                    $homeAddress->setLatitude($abeneficiary['homeAddress']['latitude']);
+                }
+                if (isset($abeneficiary['homeAddress']['longitude']) && $homeAddress->getLongitude() != $abeneficiary['homeAddress']['longitude']) {
+                    $updated = true;
+                    $homeAddress->setLongitude($abeneficiary['homeAddress']['longitude']);
+                }
+                if (isset($abeneficiary['homeAddress']['houseNumber']) && $homeAddress->getHouseNumber() != $abeneficiary['homeAddress']['houseNumber']) {
+                    $updated = true;
+                    $homeAddress->setHouseNumber($abeneficiary['homeAddress']['houseNumber']);
+                }
+                if (isset($abeneficiary['homeAddress']['subLocality']) && $homeAddress->getSubLocality() != $abeneficiary['homeAddress']['subLocality']) {
+                    $updated = true;
+                    $homeAddress->setSubLocality($abeneficiary['homeAddress']['subLocality']);
+                }
+                if (isset($abeneficiary['homeAddress']['localAdmin']) && $homeAddress->getLocalAdmin() != $abeneficiary['homeAddress']['localAdmin']) {
+                    $updated = true;
+                    $homeAddress->setLocalAdmin($abeneficiary['homeAddress']['localAdmin']);
+                }
+                if (isset($abeneficiary['homeAddress']['county']) && $homeAddress->getCounty() != $abeneficiary['homeAddress']['county']) {
+                    $updated = true;
+                    $homeAddress->setCounty($abeneficiary['homeAddress']['county']);
+                }
+                if (isset($abeneficiary['homeAddress']['macroCounty']) && $homeAddress->getMacroCounty() != $abeneficiary['homeAddress']['macroCounty']) {
+                    $updated = true;
+                    $homeAddress->setMacroCounty($abeneficiary['homeAddress']['macroCounty']);
+                }
+                if (isset($abeneficiary['homeAddress']['region']) && $homeAddress->getRegion() != $abeneficiary['homeAddress']['region']) {
+                    $updated = true;
+                    $homeAddress->setRegion($abeneficiary['homeAddress']['region']);
+                }
+                if (isset($abeneficiary['homeAddress']['macroRegion']) && $homeAddress->getMacroRegion() != $abeneficiary['homeAddress']['macroRegion']) {
+                    $updated = true;
+                    $homeAddress->setMacroRegion($abeneficiary['homeAddress']['macroRegion']);
+                }
+                if (isset($abeneficiary['homeAddress']['countryCode']) && $homeAddress->getCountryCode() != $abeneficiary['homeAddress']['countryCode']) {
+                    $updated = true;
+                    $homeAddress->setCountryCode($abeneficiary['homeAddress']['countryCode']);
+                }
+                if ($updated) {
+                    $this->entityManager->persist($homeAddress);
+                }
+            }
+        }
+        return $beneficiary;
     }
 
     /**
@@ -1572,6 +1689,130 @@ class SolidaryManager
 
         // we need a complete solidary
         return $this->getSolidary($solidarySolution->getSolidary()->getId());
+    }
+
+    /**
+     * Update proofs for a solidary record.
+     *
+     * @param Solidary      $solidary               The solidary to update
+     * @param array         $proofs                 The proof fields
+     * @return void
+     */
+    private function updateProofs(Solidary $solidary, array $proofs)
+    {
+        foreach ($proofs as $aproof) {
+            if (!isset($aproof['id'])) {
+                throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_ID_REQUIRED);
+            }
+            // if (!isset($aproof['value'])) {
+            //     throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_VALUE_REQUIRED, $proof['id']));
+            // }
+            if (!$structureProof = $this->structureProofRepository->find($aproof['id'])) {
+                throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_NOT_FOUND, $aproof['id']));
+            }
+            if (is_null($aproof['value']) && $structureProof->isMandatory() && !$structureProof->isFile()) {
+                throw new SolidaryException(sprintf(SolidaryException::STRUCTURE_PROOF_VALUE_REQUIRED, $aproof['id']));
+            }
+            // we check for each proof if it's a new proof or an updated one
+            $found = false;
+            foreach ($solidary->getSolidaryUserStructure()->getProofs() as $proof) {
+                /**
+                 * @var Proof $proof
+                 */
+                if ($proof->getStructureProof()->getId() == $aproof['id']) {
+                    // updated proof
+                    $found = true;
+                    if (!is_null($proof->getValue()) && is_null($aproof['value']) && !$structureProof->isFile()) {
+                        // the proof was deleted, and it's not a file
+                        $solidary->getSolidaryUserStructure()->removeProof($proof);
+                        $this->entityManager->persist($solidary);
+                    } elseif (is_null($proof->getValue()) && !isset($aproof['fileName']) && $structureProof->isFile()) {
+                        // the proof was deleted, and it's a file
+                        $solidary->getSolidaryUserStructure()->removeProof($proof);
+                        $this->entityManager->persist($solidary);
+                    } elseif (!is_null($aproof['value']) && $aproof['value'] !== $proof->getValue()) {
+                        // the proof was updated
+                        $proof->setValue($aproof['value']);
+                        $this->entityManager->persist($proof);
+                    }
+                    break;
+                }
+            }
+            if (!$found && !$structureProof->isFile()) {
+                // new proof (only for non files)
+                $proof = new Proof();
+                $proof->setStructureProof($structureProof);
+                $proof->setValue($aproof['value']);
+                $solidary->getSolidaryUserStructure()->addProof($proof);
+                $this->entityManager->persist($proof);
+            }
+        }
+    }
+
+    /**
+     * Update needs for a solidary record.
+     *
+     * @param Solidary              $solidary               The solidary to update
+     * @param array                 $needs                  The need fields
+     * @param string|boolean|null   $additionalNeed         A potential additional need
+     * @return void
+     */
+    private function updateNeeds(Solidary $solidary, array $needs, $additionalNeed = false)
+    {
+        $existingAdditionalNeed = false;
+
+        // check for removed needs
+        foreach ($solidary->getNeeds() as $need) {
+            /**
+            * @var Need $need
+            */
+            if (!$need->isPrivate() && !in_array($need->getId(), $needs)) {
+                $solidary->removeNeed($need);
+            } elseif ($need->isPrivate() && (is_null($additionalNeed) || $additionalNeed === '')) {
+                $solidary->removeNeed($need);
+                $this->entityManager->remove($need);
+            } elseif ($need->isPrivate()) {
+                $existingAdditionalNeed = $need;
+            }
+        }
+
+        // check for added needs
+        foreach ($needs as $aneed) {
+            if ($need = $this->needRepository->find($aneed)) {
+                // check if need already exists in the solidary record
+                $found = false;
+                foreach ($solidary->getNeeds() as $sneed) {
+                    /**
+                     * @var Need $sneed
+                     */
+                    if ($sneed->getId() === $need->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $solidary->addNeed($need);
+                }
+            } else {
+                throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
+            }
+        }
+        
+        // check for additional need
+        if (!is_null($additionalNeed) && $additionalNeed !== '' && $additionalNeed !== false) {
+            if (!$existingAdditionalNeed) {
+                $need = new Need();
+                $need->setLabel($additionalNeed);
+                $need->setPrivate(true);
+                // set the solidary as origin
+                $need->setSolidary($solidary);
+                $this->entityManager->persist($need);
+                $solidary->addNeed($need);
+            } elseif ($existingAdditionalNeed->getLabel() !== $additionalNeed) {
+                $existingAdditionalNeed->setLabel($additionalNeed);
+                $this->entityManager->persist($need);
+            }
+        }
     }
 
     /**
