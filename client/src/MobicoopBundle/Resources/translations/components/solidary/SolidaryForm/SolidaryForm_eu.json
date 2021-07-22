@@ -1,7 +1,7 @@
 {
     "email": {
         "errors": {
-            "required": "Helbide elektronikoa baitezpadakoa da",
+            "required": "Helbide elektronikoa beharrezkoa da",
             "valid": "Helbide elektrioa bali izan behar da"
         },
         "placeholder": "Helbide elektronikoa"
@@ -14,13 +14,13 @@
     },
     "familyName": {
         "errors": {
-            "required": "Deitura baitezpadakoa da"
+            "required": "Deitura beharrezkoa da"
         },
         "placeholder": "Deitura"
     },
     "gender": {
         "errors": {
-            "required": "Zibilitatea baitezpadakoa da"
+            "required": "Zibilitatea beharrezkoa da"
         },
         "values": {
             "other": "Beste",
