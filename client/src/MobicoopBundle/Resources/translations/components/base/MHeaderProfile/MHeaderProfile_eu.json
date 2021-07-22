@@ -9,7 +9,7 @@
     },
     "myProfile": {
         "route": "/utilisateur/profil/modifier/mon-profil",
-        "label": "Perfila"
+        "label": "Profila"
     },
     "myAcceptedCarpools": {
         "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
