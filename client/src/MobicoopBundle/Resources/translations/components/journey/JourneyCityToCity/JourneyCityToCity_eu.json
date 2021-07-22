@@ -8,7 +8,7 @@
     "links": {
         "popular": {
             "uri": "/covoiturage-par-ville/populaires",
-            "title": "Autokidetzak arrakasta duten bidaiaka"
+            "title": "Autokidetzak bidaia arrakastatsuka"
         },
         "byCity": {
             "uri": "/covoiturage-par-ville",
