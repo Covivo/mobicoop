@@ -1,7 +1,7 @@
 {
     "routeToCity": "/communes/covoiturage-vers-{city}",
     "routeFromCity": "/communes/covoiturage/{city}",
-    "journeyToCity": "{city}-rantz autokidetza",
+    "journeyToCity": "Autokidetza {city}-rantz",
     "journeyFromCity": "{city}(e)-tik autokidetza",
     "toCity": "...herrira",
     "fromCity": "Herri honetatik...",
