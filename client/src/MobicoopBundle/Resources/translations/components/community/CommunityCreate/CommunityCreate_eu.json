@@ -32,12 +32,12 @@
             "label": "Elkargoaren avatar-a*"
         },
         "fullDescription": {
-            "required": "Komunitatearen aurkezpen zehatzak baitezpadakoa da",
-            "label": "Komunitatearen xehetsun zehatzak*"
+            "required": "Komunitatearen deskribapen zehatza beharrezkoa da",
+            "label": "Komunitatearen deskribapen zehatza*"
         },
         "description": {
-            "required": "Komunitatearen aurkezpen laburra baitezpadakoa da",
-            "label": "Komunitateaaren aurkezpen laburra*"
+            "required": "Komunitatearen deskribapen laburra beharrezkoa da",
+            "label": "*Komunitatearen deskribapen motza"
         },
         "name": {
             "required": "Komunitatearen izena beharrezkoa da",
