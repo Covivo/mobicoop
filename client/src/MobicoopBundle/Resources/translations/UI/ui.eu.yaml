@@ -55,7 +55,7 @@ user:
   profile_password_update:
     title: Nire pasahitza eguneratu
   profile_update:
-    title: Nire perfila eguneratu
+    title: Nire profila eguneratu
   profile:
     title: Nire profila
   login:
