@@ -48,7 +48,7 @@
     "event": {
         "button": {
             "route": "/covoiturages-evenements",
-            "label": "Ekitaldiak ikusi"
+            "label": "Ekitaldiak ikus"
         },
         "title": "EKITALDIAK",
         "text": "Ekitaldi berdinera dihoazten autokideak atzeman."
