@@ -2,7 +2,7 @@
     "update": {
         "popup": {
             "major_update_ads": {
-                "content": "Erabiltzaile batek zure iragarkia jadanik begiztatu du, bere behar bati erantzuten diolako eta SMS baten edo e-mezu baten bidez abisatua izan da. Zure aldaketak gaurko iragarkiaren bertsioa ezabatuko du eskaera berri baten sortzeko.",
+                "content": "Erabiltzaile batek zure iragarkia jadanik begiztatu du, bere beharrari erantzuten diolako eta SMS edo e-mezu baten bidez abisatua izan da. Zure aldaketak gaur eguneko iragarkiaren bertsioa ezabatuko du iragarki berri baten sortzeko.",
                 "title": "Erabiltzaile batek zure iragarkia jadanik begiztatu du"
             },
             "major_update_asks": {
@@ -10,8 +10,8 @@
                 "title": "Eskaera bat bederen bada iragarki honentzat"
             },
             "minor_update_asks": {
-                "title": "Iragarki honentzat eskaerak badaude",
-                "content": "Eskaera bat edo gehiago eginak izan dira iragarki honentzat. Zure aldaketen xehetasunak igorriak izanen dira eskaera egin dizuten erabiltzaileer. <br> Zure aldaketa baieztatzen ote duzu?"
+                "title": "Eskaerak badaude iragarki honentzat",
+                "content": "Iragarki honekin lotuak diren eskaera bat edo gehiago eginak izan dira . Zure aldaketaren xehetasunak igorriak izanen dira eskaera horiek egin dituzten erabiltzaile guziei. <br> Zure aldaketa baieztatzen ote duzu?"
             }
         },
         "title": "Zure iragarkia aldatu",
