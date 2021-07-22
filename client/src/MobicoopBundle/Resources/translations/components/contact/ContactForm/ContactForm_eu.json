@@ -37,14 +37,14 @@
     "email": {
         "errors": {
             "valid": "Zure helbide elektronikoa bali izan behar da.",
-            "required": "Helbide elektronikoa baitezpadakoa da"
+            "required": "Helbide elektronikoa beharrezkoa da"
         },
         "placeholder": "Zure helbide elektronikoa",
         "label": "Zure helbide elektronikoa"
     },
     "firstName": {
         "errors": {
-            "required": "Zure izena baitezpadakoa da"
+            "required": "Zure izena beharrezkoa da"
         },
         "placeholder": "Zure izena",
         "label": "Zure izena"
