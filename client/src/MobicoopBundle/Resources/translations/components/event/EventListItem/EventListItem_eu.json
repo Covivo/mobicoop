@@ -2,9 +2,9 @@
     "hourMinute": "HH[h]mm",
     "shortCompleteDate": "YYYY/MM/DD",
     "date": {
-        "the": "-(e)(a)n",
-        "at": "-ra",
-        "to": "-ra",
+        "the": "Egun honetan",
+        "at": "Ondoko egunean",
+        "to": "Ondoko egunera",
         "from": "Ondoko egunetik"
     },
     "join": "Ekitaldira joan",
