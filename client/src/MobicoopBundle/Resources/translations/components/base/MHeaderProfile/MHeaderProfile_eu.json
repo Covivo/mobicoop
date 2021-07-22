@@ -5,7 +5,7 @@
     },
     "reviews": {
         "route": "/utilisateur/profil/modifier/avis",
-        "label": "Abisu"
+        "label": "Iritziak"
     },
     "myProfile": {
         "route": "/utilisateur/profil/modifier/mon-profil",
