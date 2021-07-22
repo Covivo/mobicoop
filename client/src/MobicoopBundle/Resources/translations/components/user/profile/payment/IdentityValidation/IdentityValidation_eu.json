@@ -19,7 +19,7 @@
         "pending": "Dokumentua egiaztatzen ari da"
     },
     "fileInput": {
-        "tooltip": "Dokumentuak jpg, jpeg, png edo pdf formatuan izan behar dira eta ez dute 6MB gainditu behar",
+        "tooltip": "Dokumentua jpg, jpeg, png edo pdf formatuan izan behar da eta ez du 6MB gainditu behar",
         "error": "Dokumentuak ez ditu 6MB gainditu behar",
         "label": "Nortasun agiri eguneratua"
     },
