@@ -1,13 +1,13 @@
 {
     "urlSignIn": "/communaute/{id}/securisee/inscription",
-    "credential2": "2.erabiltzaile izena",
+    "credential2": "2. erabiltzailearen izena",
     "errors": {
         "notLogged": "Konektua izan behar zira",
         "badCredentials": "Erabiltzaile izena okerra da",
         "required": "Eremu hau baitezpadakoa da"
     },
-    "credential1": "1.erabiltzaile izena",
+    "credential1": "1. erabiltzaile izena",
     "titleWithName": "Komunitatean sartu",
-    "title": "Komunitate seguru batetan sartu",
+    "title": "Komunitate segurtatu batean sartu",
     "join": "Komunitatean sartu"
 }

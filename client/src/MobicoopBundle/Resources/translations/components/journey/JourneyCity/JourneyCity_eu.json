@@ -4,7 +4,7 @@
     "journeyToCity": "{city}-rantz autokidetza",
     "journeyFromCity": "{city}ko autokidetza",
     "toCity": "...herrira",
-    "fromCity": "Herritik...",
-    "subtitle": "Autokidetzak herrika atzitu",
+    "fromCity": "Herri honetatik...",
+    "subtitle": "Zure herriko autokitzak ikus itzazu",
     "title": "Autokidetzak herrika"
 }

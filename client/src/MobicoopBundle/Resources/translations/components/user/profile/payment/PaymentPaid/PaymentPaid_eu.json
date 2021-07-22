@@ -9,8 +9,8 @@
     "noPaymentPaymentId": "Ordainketa honen estatusa ezin da atxeman.",
     "checkUrl": "/payment/status",
     "wait": {
-        "line2": "Igurika ezazu transakzioa baieztatzen ari den bitartean.",
-        "line1": "Milesker ordainketa linean egiteagatik."
+        "line2": "Igurika ezazu transakzioa egiazkotzen ari den bitartean.",
+        "line1": "Milesker, zure ordainketa linean eginik."
     },
-    "title": "Ordainketa linean"
+    "title": "Linearen bidez ordaindu"
 }

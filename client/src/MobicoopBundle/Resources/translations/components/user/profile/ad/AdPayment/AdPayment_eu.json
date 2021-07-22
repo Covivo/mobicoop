@@ -3,15 +3,15 @@
     "route": "/paiements/{id}/{frequency}/{type}/{week}",
     "tooltip": {
         "paymentElectronicNotActive": "Ordainketa eta autokidetzaren gauzatzea baieztatu",
-        "paymentElectronicActive": "Ordainketa linean edo eskuz esku eginiko ordainketa baieztatu eta autokidetzaren gauzatzea baieztatu"
+        "paymentElectronicActive": "Linearen bidez pagatu edo eskuz eskuko ordainketa eta autokidetzaren gauzatzea baieztatu"
     },
     "passenger": {
         "pendingElectronicNotActive": "Baieztatu",
-        "pending": "Ordaindua edo baieztatua",
-        "paid": "Jadanik ordaindua"
+        "pending": "Pagatu edo baieztatu",
+        "paid": "Jadanik pagatua"
     },
     "driver": {
-        "pending": "Ordainketa baieztatua",
-        "paid": "Jadanik ordaindua"
+        "pending": "Ordainketa baieztatu",
+        "paid": "Jadanik pagatua"
     }
 }

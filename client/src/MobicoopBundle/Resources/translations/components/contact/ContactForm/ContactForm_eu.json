@@ -51,7 +51,7 @@
     },
     "lastName": {
         "errors": {
-            "required": "Deitura baitezpadakoa da"
+            "required": "Deitura beharrezkoa da"
         },
         "placeholder": "Zure deitura",
         "label": "Zure deitura"

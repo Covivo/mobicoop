@@ -1,7 +1,7 @@
 {
     "hourMinute": "HH[h]mm",
-    "fullMultiple": "Tenoreak desberdinak egunen arabera",
+    "fullMultiple": "Tenoreak desberdinak dira egunen arabera",
     "multiple": "anitz",
-    "return": "Etorri",
+    "return": "Itzultzea",
     "outward": "Joan"
 }
