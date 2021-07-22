@@ -18,11 +18,11 @@
         "label": "Abiatze data"
     },
     "switch": {
-        "help": "Komutadore honetan klikatu zure bidaia erregularra zehazteko",
+        "help": "Komutadore honetan klik egizu, zure bidaia erregularra dela adierazteko",
         "label": "Bidaia erregularra"
     },
     "swap": {
-        "help": "Abiatze eta iriste tokia gibelez aitzina ezartzeko klikatu",
+        "help": "Klik egizu abiapuntua eta helmuga gibelez aitzina ezartzeko",
         "alt": "Abiapuntua eta helmuga gibelez aitzina ezar"
     },
     "destination": "Heltze lekua",
