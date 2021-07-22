@@ -40,7 +40,7 @@
             "label": "Komunitateaaren aurkezpen laburra*"
         },
         "name": {
-            "required": "Komunitatearen izena baitezpadakoa da",
+            "required": "Komunitatearen izena beharrezkoa da",
             "label": "Komunitatearen* izena"
         }
     },
