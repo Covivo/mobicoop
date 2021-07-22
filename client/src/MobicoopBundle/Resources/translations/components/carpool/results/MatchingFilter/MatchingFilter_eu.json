@@ -70,7 +70,7 @@
         },
         "order": {
             "date": {
-                "decreasing": "Data ttipienaren ordenean",
+                "decreasing": "Data berrienetik hasiz",
                 "increasing": "Data zaharrenetik hasiz"
             },
             "label": "Sailkapena"
