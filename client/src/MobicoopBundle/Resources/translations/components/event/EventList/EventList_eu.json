@@ -10,9 +10,9 @@
     "all": "Denak",
     "seeAds": "Ikus iragarkiak",
     "linePerPage": "Linea kopurua orrialdeka",
-    "search": "Xerkatu",
+    "search": "Bilatu",
     "createEvent": "Ekitaldi bat sortu",
-    "eventsPassed": "Pasa diren ekitaldiak",
+    "eventsPassed": "Iragan diren ekitaldiak",
     "eventsAvailable": "Libre diren ekitaldiak",
-    "events": "Autokidetza ekitaldiak"
+    "events": "Ekitaldiak autokidetzan"
 }

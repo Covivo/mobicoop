@@ -38,9 +38,9 @@
         "tooltips": {
             "diverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
             "passenger": "Bidaiari izanen naiz",
-            "driver": "Gidari izanen naiz"
+            "driver": "Gidaria izanen naiz"
         },
-        "archived": "Iragarkia artxibatuak",
-        "ongoing": "Iragarkia egiten ari"
+        "archived": "Iragarki artxibatuak",
+        "ongoing": "Iragarkiak indarrean dira"
     }
 }

@@ -1,9 +1,9 @@
 {
-    "walkFromToDestination": "Ibili <span class='primary--text'>{departure}</span>-tik <span class='primary--text'>{arrival}</span>-ra",
-    "walkFromToStop": "Ibili <span class='primary--text'>{departure}</span> -tik <span class='primary--text'>{arrival}</span>-ra",
+    "walkFromToDestination": "oinez ibili <span class='primary--text'>{departure}</span>-(e)tik <span class='primary--text'>{arrival}</span>-(e)ra",
+    "walkFromToStop": "Oinez ibili <span class='primary--text'>{departure}</span> -(e)tik <span class='primary--text'>{arrival}</span>-(e)ra",
     "hopOff": "Jaitsi",
     "hopOn": "Igo",
     "direction": "Norabidea",
-    "waiting": "Igurikatu{duration}",
-    "estimatedDuration": "Distantziaren estimazioa: {duration}"
+    "waiting": "Igurikatu {duration}",
+    "estimatedDuration": "Ustezko iraupena: {duration}"
 }

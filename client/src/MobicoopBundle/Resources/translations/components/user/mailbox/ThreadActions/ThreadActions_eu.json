@@ -3,7 +3,7 @@
     "block": "Blokatu",
     "blocked": "Blokatua",
     "userDelete": "Erabiltzailea desinskriatua da",
-    "priceTooltip": "Prezio adierazgarria",
+    "priceTooltip": "Prezio indikatiboa",
     "price": "Prezioa",
     "seatsAvailable": "Libro diren tokiak",
     "distanceTooltip": "Autokidetzaren distantzia gidariaren itzulingurua kontatuz",
@@ -13,5 +13,5 @@
     },
     "urlGetAdAsk": "/utilisateur/messages/actions/infos",
     "roundTrip": "Joan-etorri bidaia",
-    "notLinkedToACarpool": "Solasaldi horrek ez du zerikusirik autokidetza batekin"
+    "notLinkedToACarpool": "Solasaldi hari hau ez da autokidetza bati lotua"
 }

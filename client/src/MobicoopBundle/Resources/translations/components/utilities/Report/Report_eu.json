@@ -33,8 +33,8 @@
         }
     },
     "snackbar": {
-        "error": "Huts bat agertu da seinalamendua egiterakoan",
-        "thankyou": "Milesker seinalamendu hori egiteagatik"
+        "error": "Akats bat gertatu da seinalamendu denboran",
+        "thankyou": "Milesker seinalamendu honentzat"
     },
     "button": "Seinalatu"
 }
