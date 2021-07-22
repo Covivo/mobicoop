@@ -42,8 +42,8 @@
         "route": "/utilisateur/messages",
         "label": "Ikus mezuak"
     },
-    "alreadyInitiatedCarpool": "Iragarki honentzat jadanik harremanetan jarri zira.",
-    "alreadyAskCarpool": "Iragarki honentzat jadanik eskaera bat egin duzu.",
+    "alreadyInitiatedCarpool": "Harremanetan jadanik jarri zira iragarki honentzat.",
+    "alreadyAskCarpool": "Eskaera bat egina duzu iragarki honentzat.",
     "carpoolAsPassenger": "Autokidetza egin bidaiari gisa",
     "carpoolAsDriver": "Autokidetza egin gidari gisa",
     "carpool": "Autokidetza egin",
