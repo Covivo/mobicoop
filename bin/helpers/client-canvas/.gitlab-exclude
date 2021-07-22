@@ -97,6 +97,7 @@ mobicoop-platform/api/public/upload/masscommunication/images/versions/*.png
 mobicoop-platform/client/.env.dev.local
 mobicoop-platform/client/.env.test.local
 mobicoop-platform/client/.env.prod.local
+mobicoop-platform/client/var/cache/
 mobicoop-platform/client/var/log/
 mobicoop-platform/client/public/google*.html
 mobicoop-platform/client/public/robots.txt
