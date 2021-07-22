@@ -60,7 +60,7 @@
             "label": "Ekitaldiaren aurkezpen laburra*"
         },
         "name": {
-            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "required": "Ekitaldiaren izena beharrezkoa da",
             "label": "Ekitaldiaren izena*"
         }
     },
