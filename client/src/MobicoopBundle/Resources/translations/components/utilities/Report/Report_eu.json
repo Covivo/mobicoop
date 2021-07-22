@@ -24,11 +24,11 @@
             }
         },
         "user": {
-            "content": "\"<strong>{userName}</strong>\"-ren jarrera desegoki bat seinalatu nahi zenuke? ",
-            "title": "Erabiltzaile baten seinalamendua"
+            "content": "\"<strong>{userName}</strong>\"-ren jarrera desegokia seinalatu nahi zenuke? ",
+            "title": "Erabiltzaile baten seinalatzea"
         },
         "event": {
-            "content": "Eduki ezegoki bat ikusi duzu \"<strong>{eventName}</strong>\" ? ekitaldian <br/> Gure taldeari seinala ezazu beharrezko neurriak har ditzan.<br/><br/> Milesker desegokia zaizuna zehazteagatik:",
+            "content": "Eduki ezegoki bat ikusi duzu \"<strong>{eventName}</strong>\" ? ekitaldian <br/> Gure taldeari seinala ezazu, beharrezko neurriak har ditzagun.<br/><br/> Milesker desegokia zaizuna zehazteagatik:",
             "title": "Ekitaldi seinalatzea"
         }
     },
