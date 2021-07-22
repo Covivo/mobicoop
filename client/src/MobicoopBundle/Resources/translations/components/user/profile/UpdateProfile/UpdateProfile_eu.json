@@ -28,7 +28,7 @@
         "phoneValidated": "Zure telefonoa egiaztatua izan da.",
         "phoneUpdate": "Huts bat zure telefonoa ez da egiaztatua izan.",
         "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua da.",
-        "errorProfileUpdate": "Huts bat, zure perfila ez da eguneratua izan",
+        "errorProfileUpdate": "Akats bat bada, zure profila ez da eguneratua izan.",
         "profileUpdated": "Zure profila eguneratua izan da!"
     },
     "titles": {
