@@ -38,7 +38,7 @@
         "popup": {
             "content": {
                 "isProposalsHidden": "Komunitate pribatu honi lotuak diren iragarki baliodunak baldin badituzu oraino, iragarki hauek ezabatuak izanen dira. <br>Baieztatzen duzu?",
-                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu oraino, iragarki horiek ez dira gehiago komunitatekoak balire bezala markatuak izanen, komunitatetik ateratzen bazira.<br>Baieztatzen duzu?"
             },
             "title": "Baieztapen eskaera"
         },

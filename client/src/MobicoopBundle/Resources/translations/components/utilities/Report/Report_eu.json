@@ -29,7 +29,7 @@
         },
         "event": {
             "content": "Eduki ezegoki bat ikusi duzu \"<strong>{eventName}</strong>\" ? ekitaldian <br/> Gure taldeari seinala ezazu beharrezko neurriak har ditzan.<br/><br/> Milesker desegokia zaizuna zehazteagatik:",
-            "title": "Ekitaldi baten seinalamendua"
+            "title": "Ekitaldi seinalatzea"
         }
     },
     "snackbar": {
