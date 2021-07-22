@@ -5,8 +5,8 @@
     "userDelete": "Erabiltzailea desinskriatua da",
     "priceTooltip": "Prezio indikatiboa",
     "price": "Prezioa",
-    "seatsAvailable": "Libro diren tokiak",
-    "distanceTooltip": "Autokidetzaren distantzia gidariaren itzulingurua kontatuz",
+    "seatsAvailable": "Libro diren lekuak",
+    "distanceTooltip": "Egina izan den autokidetzaren distantzia, gidariaren itzulingurua kontuan hartuz",
     "distance": "Distantzia",
     "regular": {
         "ask": "Autokidetza erregular bat proposatu"
