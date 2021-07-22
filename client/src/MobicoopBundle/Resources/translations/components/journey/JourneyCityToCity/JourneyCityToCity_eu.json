@@ -2,8 +2,8 @@
     "getPopularJourneysUrl": "/covoiturages/populaires/home",
     "popularJourneys": {
         "uri": "/covoiturage/{origin}/{destination}",
-        "to": "-ra",
-        "from": "Autokidetza"
+        "to": "leku honetara",
+        "from": "Ondoko autokidetza hau"
     },
     "links": {
         "popular": {
