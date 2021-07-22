@@ -2,9 +2,9 @@
     "button": {
         "refuse": "Ez onartu",
         "accept": "Onartu",
-        "askCarpoolAsPassenger": "Bidaiari gisa autokidetza bat galdetu",
-        "askCarpoolAsDriver": "Gidari gisa autokidetza bat galdetu",
-        "askCarpool": "Autokidetza eskaera bat"
+        "askCarpoolAsPassenger": "Autokidetza bat eska ezazu bidaiari gisa",
+        "askCarpoolAsDriver": "Autokidetza bat eska ezazu gidari gisa",
+        "askCarpool": "Autokidetza bat eskatu"
     },
     "askRefused": "Autokidetza ezeztatua izan da",
     "askAccepted": "Autokidetza onartua izan da",
