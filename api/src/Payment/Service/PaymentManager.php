@@ -59,6 +59,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 
 /**
  * Payment manager service.
@@ -89,6 +91,7 @@ class PaymentManager
     private $validationDocsPath;
     private $validationDocsAuthorizedExtensions;
     private $eventDispatcher;
+    private $actionRepository;
     private $logger;
 
     /**
@@ -122,7 +125,8 @@ class PaymentManager
         string $validationDocsPath,
         array $validationDocsAuthorizedExtensions,
         string $exportPath,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ActionRepository $actionRepository
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -144,6 +148,7 @@ class PaymentManager
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->exportPath = $exportPath;
         $this->eventDispatcher = $eventDispatcher;
+        $this->actionRepository = $actionRepository;
         $this->logger = $logger;
     }
 
@@ -924,6 +929,18 @@ class PaymentManager
             }
         }
         $this->entityManager->flush();
+
+        // we dispatch the gamification event associated to the carpoolItem
+        // we dispatch for the debtor
+        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+        $actionEvent = new ActionEvent($action, $carpoolItem->getDebtorUser());
+        $actionEvent->setCarpoolItem($carpoolItem);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        // we also dispatch for the creditor
+        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+        $actionEvent = new ActionEvent($action, $carpoolItem->getCreditorUser());
+        $actionEvent->setCarpoolItem($carpoolItem);
+        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
     }
 
     /**
@@ -1121,6 +1138,14 @@ class PaymentManager
 
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
+
+        //  we dispatch the gamification event associated
+        if ($carpoolPayment->getStatus == CarpoolPayment::STATUS_SUCCESS) {
+            $action = $this->actionRepository->findOneBy(['name'=>'electronic_payment_made']);
+            $actionEvent = new ActionEvent($action, $carpoolPayment->getUser());
+            $actionEvent->setCarpoolPayment($carpoolPayment);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
     }
 
     /**
@@ -1150,6 +1175,11 @@ class PaymentManager
                 // we dispatch the event
                 $event = new IdentityProofAcceptedEvent($paymentProfile);
                 $this->eventDispatcher->dispatch(IdentityProofAcceptedEvent::NAME, $event);
+                //  we dispatch the gamification event associated
+                $action = $this->actionRepository->findOneBy(['name'=>'identity_proof_accepted']);
+                $actionEvent = new ActionEvent($action, $event->getPaymentProfile()->getUser());
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+
             break;
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);

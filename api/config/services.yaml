@@ -725,6 +725,12 @@ services:
             $loginsCommunityManager: '%env(json:KIBANA_LOGINS_COMMUNITY_MANAGER)%'
             $loginsSolidaryOperator: '%env(json:KIBANA_LOGINS_SOLIDARY_OPERATOR)%'
             
+    App\User\Admin\Service\KibanaLoginManager:
+        arguments:
+            $loginsAdmin: '%env(json:KIBANA_LOGINS_ADMIN)%'
+            $loginsCommunityManager: '%env(json:KIBANA_LOGINS_COMMUNITY_MANAGER)%'
+            $loginsSolidaryOperator: '%env(json:KIBANA_LOGINS_SOLIDARY_OPERATOR)%'
+
     App\User\Controller\:
         resource: '../src/User/Controller'
         tags: ['controller.service_arguments']

@@ -3,7 +3,7 @@ nelmio_cors:
         origin_regex: true
         allow_origin: ['*']
         allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-        allow_headers: ['Content-Type', 'Authorization']
+        allow_headers: ['Content-Type', 'Authorization', 'X-LOCALE']
         expose_headers: ['Content-Disposition', 'Content-Length', 'Link']
         max_age: 3600
     paths:
@@ -11,6 +11,6 @@ nelmio_cors:
             origin_regex: true
             allow_origin: ['*']
             allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-            allow_headers: ['Content-Type', 'Authorization']
+            allow_headers: ['Content-Type', 'Authorization', 'X-LOCALE']
             expose_headers: [Content-Disposition', 'Content-Length', 'Link']
             max_age: 3600

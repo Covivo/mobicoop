@@ -920,7 +920,7 @@ export default {
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
       if (isNaN(this.pricePerKm)) pricePerKm = 0;
-      return pricePerKm+'€/km';
+      return pricePerKm.toFixed(2)+'€/km';
     },
     validWaypoints() {
       if (this.route && this.route.waypoints) {
@@ -1070,7 +1070,8 @@ export default {
   },
   watch: {
     price() {
-      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.pricePerKm);
+      //this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.pricePerKm);
+      this.pricePerKm = (this.distance>0 ? parseFloat(this.price) / this.distance * 100/100 : this.pricePerKm);
       (this.pricePerKm>this.pricesRanges.forbidden) ? this.priceForbidden = true : this.priceForbidden = false;
     },
     distance() {

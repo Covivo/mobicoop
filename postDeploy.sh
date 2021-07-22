@@ -90,11 +90,11 @@ then
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
 
     # Admin build
-    cd /var/www/$VERSION/$INSTANCE/admin;
-    rm -Rf node_modules;
-    rm package-lock.json;
-    npm install;
-    npm run build;
+    # cd /var/www/$VERSION/$INSTANCE/admin;
+    # rm -Rf node_modules;
+    # rm package-lock.json;
+    # npm install;
+    # npm run build;
 
     # clear cache
     cd /var/www/$VERSION/$INSTANCE/api;

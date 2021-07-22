@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,36 +20,38 @@
  *    LICENSE
  **************************/
 
- namespace App\Payment\DataPersister;
+namespace App\Gamification\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Payment\Ressource\ElectronicPayment;
-use App\Payment\Service\PaymentManager;
+use App\Action\Event\ActionEvent;
+use App\Gamification\Resource\TestAction;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class ElectronicPaymentDataPersister implements ContextAwareDataPersisterInterface
+final class TestActionDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $paymentManager;
     private $security;
-    
-    public function __construct(PaymentManager $paymentManager, Security $security)
+    private $eventDispatcher;
+
+    public function __construct(Security $security, EventDispatcherInterface $eventDispatcher)
     {
-        $this->paymentManager = $paymentManager;
         $this->security = $security;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof ElectronicPayment && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof TestAction && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
     {
-        // call your persistence layer to save $data
-        return $this->paymentManager->createElectronicPayment($data);
+        $event = new ActionEvent($data->getAction(), $this->security->getUser());
+        $this->eventDispatcher->dispatch(ActionEvent::NAME, $event);
+        return $data;
     }
 
     public function remove($data, array $context = [])

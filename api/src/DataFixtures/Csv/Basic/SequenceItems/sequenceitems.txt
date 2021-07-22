@@ -1,0 +1,6 @@
+badge_id
+gamification_action_id
+position
+min_count
+min_unique_count
+in_date_range

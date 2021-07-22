@@ -23,6 +23,7 @@
 
 namespace App\Action\EventSubscriber;
 
+use App\Action\Event\ActionEvent;
 use App\Action\Service\ActionManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\User\Event\LoginDelegateEvent;
@@ -42,12 +43,24 @@ class ActionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            LoginDelegateEvent::NAME => 'onLoginDelegate'
+            LoginDelegateEvent::NAME => 'onLoginDelegate',
+            ActionEvent::NAME => 'onAction'
         ];
     }
 
     public function onLoginDelegate(LoginDelegateEvent $event)
     {
         $this->actionManager->handleAction(LoginDelegateEvent::NAME, $event);
+    }
+
+    /**
+     * Generic action handler
+     *
+     * @param ActionEvent $event
+     * @return void
+     */
+    public function onAction(ActionEvent $event)
+    {
+        $this->actionManager->onAction($event);
     }
 }

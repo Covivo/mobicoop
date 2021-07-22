@@ -113,7 +113,7 @@
             "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
             "route": "/cgu"
         },
-        "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page.",
+        "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
         "socialServicesUnavailableWithoutConsent":"Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
     }
 }
