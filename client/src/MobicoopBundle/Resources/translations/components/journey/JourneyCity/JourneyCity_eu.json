@@ -2,7 +2,7 @@
     "routeToCity": "/communes/covoiturage-vers-{city}",
     "routeFromCity": "/communes/covoiturage/{city}",
     "journeyToCity": "{city}-rantz autokidetza",
-    "journeyFromCity": "{city}ko autokidetza",
+    "journeyFromCity": "{city}(e)-tik autokidetza",
     "toCity": "...herrira",
     "fromCity": "Herri honetatik...",
     "subtitle": "Zure herriko autokitzak ikus itzazu",
