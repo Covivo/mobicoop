@@ -112,6 +112,18 @@ class Indicator
         $this->id = self::DEFAULT_ID;
     }
     
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getLabel(): ?String
     {
         return $this->label;
