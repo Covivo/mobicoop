@@ -1088,7 +1088,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"write"})
      */
     private $logs;
 
@@ -1096,7 +1096,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs as an delegate.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"write"})
      */
     private $logsAsDelegate;
 
