@@ -85,6 +85,14 @@ class StatsManager
         return $indicators;
     }
 
+    /**
+     * Add an Indicator in the current array $indicators
+     *
+     * @param array $indicators Current array of Iindicators
+     * @param string $label     Indicator's label
+     * @param float $value      Indicator's value
+     * @return array Updated current array of Indicators
+     */
     private function addIndicator(array $indicators, string $label, float $value): array
     {
         $indicator = new Indicator();
