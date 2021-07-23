@@ -1595,3 +1595,14 @@ page_no_longer_exists:
         en: /page-no-longer-exists
         nl: /page-no-longer-exists
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPageNoLongerExists
+
+###############
+# stats routes #
+###############
+home_stats_indicators:
+    methods: [POST]
+    path:
+        fr: /stats/home
+        en: /stats/home
+        nl: /stats/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Stats\Controller\StatsController::getHomeStatsIndicators

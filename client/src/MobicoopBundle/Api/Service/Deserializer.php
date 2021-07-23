@@ -92,6 +92,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
+use Mobicoop\Bundle\MobicoopBundle\Stats\Entity\Indicator;
 
 /**
  * Custom deserializer service.
@@ -253,6 +254,9 @@ class Deserializer
                 break;
             case Editorial::class:
                 return $this->deserializeEditorial($data) ;
+                break;
+            case Indicator::class:
+                return $this->deserializeIndicator($data) ;
                 break;
             default:
                 break;
@@ -1049,6 +1053,13 @@ class Deserializer
             }
         }
         return $editorial;
+    }
+
+    private function deserializeIndicator(array $data): ?Indicator
+    {
+        $indicator = new Indicator();
+        $indicator = $this->autoSet($indicator, $data);
+        return $indicator;
     }
 
     private function autoSet($object, $data)
