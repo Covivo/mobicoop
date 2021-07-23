@@ -94,16 +94,24 @@ class CarpoolProofRepository
      * @param array $types          The possible types
      * @param DateTime $startDate   The start date of the period
      * @param DateTime $endDate     The end date of the period
+     * @param array $status         The possible status
      * @return CarpoolProof[] The carpool proofs found
      */
-    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate)
+    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate, array $status = null)
     {
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59, 999);
 
         $query = $this->repository->createQueryBuilder('cp')
         ->where('cp.type in (:types)')
-        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
+        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)');
+
+        if (!is_null($status)) {
+            $query->andWhere('cp.status in (:status)')
+            ->setParameter('status', $status);
+        }
+
+        $query
         ->setParameter('types', $types)
         ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
         ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));

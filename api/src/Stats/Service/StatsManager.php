@@ -22,8 +22,12 @@
 
 namespace App\Stats\Service;
 
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\ProposalRepository;
+use App\Community\Repository\CommunityRepository;
 use App\Stats\Entity\Indicator;
+use DateTime;
 
 /**
  * Statistics manager service.
@@ -33,10 +37,17 @@ use App\Stats\Entity\Indicator;
 class StatsManager
 {
     private $proposalRepository;
+    private $communityRepository;
+    private $carpoolProofRepository;
 
-    public function __construct(ProposalRepository $proposalRepository)
-    {
+    public function __construct(
+        ProposalRepository $proposalRepository,
+        CommunityRepository $communityRepository,
+        CarpoolProofRepository $carpoolProofRepository
+    ) {
         $this->proposalRepository = $proposalRepository;
+        $this->communityRepository = $communityRepository;
+        $this->carpoolProofRepository = $carpoolProofRepository;
     }
 
     /**
@@ -48,9 +59,38 @@ class StatsManager
     {
         // WARNING : It's a first version. We need to elaborate the system with a list of indicator, possibly in database
 
-        // last month published ad
+        $indicators = [];
 
+        // last month published ad
+        $now = new \DateTime();
+        $lastMonth = $now->modify('-1 months');
         
-        return [new Indicator()];
+        $startDate = DateTime::createFromFormat("d/n/Y h:i:s", "01/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
+        $endDate = DateTime::createFromFormat("d/n/Y h:i:s", $lastMonth->format('t')."/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
+        $proposals = $this->proposalRepository->findBetweenCreateDate($startDate, $endDate);
+        $indicators = $this->addIndicator($indicators, "proposals_last_month", (is_array($proposals)) ? count($proposals) : 0);
+
+        // Active users
+        // TO DO : What's an active User????
+        $indicators = $this->addIndicator($indicators, "users_active", 0);
+
+        // Number of communities
+        $communities = $this->communityRepository->findAll();
+        $indicators = $this->addIndicator($indicators, "communities_count", (is_array($communities)) ? count($communities) : 0);
+
+        // last month proofs
+        $proofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_LOW,CarpoolProof::TYPE_MID,CarpoolProof::TYPE_HIGH], $startDate, $endDate, [CarpoolProof::STATUS_SENT]);
+        $indicators = $this->addIndicator($indicators, "carpool_proofs_last_month", (is_array($proofs)) ? count($proofs) : 0);
+
+        return $indicators;
+    }
+
+    private function addIndicator(array $indicators, string $label, float $value): array
+    {
+        $indicator = new Indicator();
+        $indicator->setLabel($label);
+        $indicator->setValue($value);
+        $indicators[] = $indicator;
+        return $indicators;
     }
 }
