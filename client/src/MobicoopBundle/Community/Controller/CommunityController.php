@@ -439,25 +439,6 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Get available communities for the logged user
-     * Ajax
-     *
-     * @param UserManager $userManager
-     * @param CommunityManager $communityManager
-     * @return void
-     */
-    public function communityUserAvailable(int $userId, UserManager $userManager, CommunityManager $communityManager)
-    {
-        if ($user = $userManager->getUser($userId)) {
-            $communities = $communityManager->getAvailableUserCommunities($user)->getMember();
-
-            return new Response(json_encode($communities));
-        }
-
-        return new Response();
-    }
-
-    /**
      * Show a community widget.
      */
     public function communityWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
