@@ -63,11 +63,13 @@ use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Action\Entity\Animation;
+use App\Carpool\Service\ProposalMatcher;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Service\InternalMessageManager;
 use App\Service\FileManager;
+use App\Solidary\Admin\Event\SolidaryDeeplyUpdated;
 use App\Solidary\Repository\SolidaryMatchingRepository;
 use App\Solidary\Repository\SolidarySolutionRepository;
 use App\User\Admin\Service\UserManager;
@@ -113,6 +115,7 @@ class SolidaryManager
     private $solidaryTransportMatcher;
     private $solidaryBeneficiaryManager;
     private $fileManager;
+    private $proposalMatcher;
     private $logger;
 
 
@@ -146,7 +149,8 @@ class SolidaryManager
         MessageRepository $messageRepository,
         SolidaryTransportMatcher $solidaryTransportMatcher,
         SolidaryBeneficiaryManager $solidaryBeneficiaryManager,
-        FileManager $fileManager
+        FileManager $fileManager,
+        ProposalMatcher $proposalMatcher
     ) {
         $this->logger = $logger;
         $this->poster = $security->getUser();
@@ -173,15 +177,16 @@ class SolidaryManager
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
         $this->solidaryBeneficiaryManager = $solidaryBeneficiaryManager;
         $this->fileManager = $fileManager;
+        $this->proposalMatcher = $proposalMatcher;
     }
 
     /**
      * Get a Solidary record
      *
-     * @param int $id  The solidary id
-     * @return array|null The solidary record
+     * @param int $id   The solidary id
+     * @return Solidary The solidary record
      */
-    public function getSolidary(int $id)
+    public function getSolidary(int $id): Solidary
     {
         $solidary = $this->solidaryRepository->find($id);
 
@@ -801,17 +806,6 @@ class SolidaryManager
         }
         $solidary->setAdmindiary($diaries);
 
-        // check if the solidary is deeply editable => the journey can be updated without side effects (matchnigs, asks...)
-        $solidary->setAdmineditable(true);
-        // there's already a solution ? => not editable
-        if (count($solidary->getAdminsolutions()['drivers'])>0) {
-            $solidary->setAdmineditable(false);
-        }
-        // there are already solidary matchings ? => not editable
-        if (count($solidary->getSolidaryMatchings())>0) {
-            $solidary->setAdmineditable(false);
-        }
-
         return $solidary;
     }
 
@@ -1233,7 +1227,7 @@ class SolidaryManager
         $event = new SolidaryCreatedEvent($this->poster, $solidary);
         $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
 
-        // read the solidary record again to get the last data (events should have update it !)
+        // read the solidary record again to get the last data (events should have updated it !)
         return $this->solidaryRepository->find($solidary->getId());
     }
 
@@ -1323,6 +1317,8 @@ class SolidaryManager
      */
     public function patchSolidary(Solidary $solidary, array $fields)
     {
+        // 1 - check for non destructive updates (no need to create a new solidary record)
+
         // check if a new animation has been made
         if (array_key_exists('animation', $fields)) {
             return $this->addAnimation($solidary, $fields['animation']);
@@ -1338,28 +1334,35 @@ class SolidaryManager
             return $this->addMessage($solidary, $fields['message']);
         }
 
+        $updated = false;
+
         // check if new proofs were posted
         if (array_key_exists('proofs', $fields)) {
+            $updated = true;
             $this->updateProofs($solidary, $fields['proofs']);
         }
 
         // check if new needs were posted
-        if (array_key_exists('needs', $fields)) {
-            $this->updateNeeds($solidary, $fields['needs'], array_key_exists('additionalNeed', $fields) ? $fields['additionalNeed'] : false);
+        if (array_key_exists('needs', $fields) || array_key_exists('additionalNeed', $fields)) {
+            $updated = true;
+            $this->updateNeeds($solidary, array_key_exists('needs', $fields) ? $fields['needs'] : null, array_key_exists('additionalNeed', $fields) ? $fields['additionalNeed'] : false);
         }
 
         // check if subject has changed
         if (array_key_exists('adminsubject', $fields)) {
+            $updated = true;
             if ($subject = $this->subjectRepository->find($fields['adminsubject'])) {
                 // check if current subject is private => if so, remove it !
                 if ($solidary->getSubject()->isPrivate()) {
                     $this->entityManager->remove($solidary->getSubject());
                 }
                 $solidary->setSubject($subject);
+                $solidary->getProposal()->setSubject($subject);
             } else {
                 throw new SolidaryException(sprintf(SolidaryException::SUBJECT_NOT_FOUND, $fields['adminsubject']));
             }
         } elseif (isset($fields['additionalSubject'])) {
+            $updated = true;
             if ($solidary->getSubject()->isPrivate()) {
                 // update an existing additional subject
                 $solidary->getSubject()->setLabel($fields['additionalSubject']);
@@ -1370,6 +1373,7 @@ class SolidaryManager
                 $subject->setPrivate(true);
                 $this->entityManager->persist($subject);
                 $solidary->setSubject($subject);
+                $solidary->getProposal()->setSubject($subject);
             }
         }
 
@@ -1377,13 +1381,293 @@ class SolidaryManager
         if (isset($fields['beneficiary'])) {
             $solidary->getSolidaryUserStructure()->getSolidaryUser()->setUser($this->updateBeneficiary($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $fields['beneficiary']));
         }
+
+        if ($updated) {
+            $this->entityManager->flush();
+        }
+
+        // 2 - check for potentially destructive updates (need to create a new solidary record)
         
-        // persist the solidary record
-        $this->entityManager->persist($solidary);
+        // we need a complete solidary to check
+        $solidary = $this->getSolidary($solidary->getId());
+
+        // check if (origin / destination has changed)
+        foreach ($solidary->getProposal()->getWaypoints() as $waypoint) {
+            /**
+             * @var Waypoint $waypoint
+             */
+            if ($waypoint->getPosition() == 0) {
+                if (isset($fields['origin'])) {
+                    if (!$waypoint->getAddress()->isSame($fields['origin'])) {
+                        return $this->duplicateSolidary($solidary, $fields);
+                    }
+                }
+            } elseif ($waypoint->isDestination()) {
+                if (isset($fields['destination'])) {
+                    if (!$waypoint->getAddress()->isSame($fields['destination'])) {
+                        return $this->duplicateSolidary($solidary, $fields);
+                    }
+                }
+            }
+        }
+
+        // check if dates/times have changed
+        if (isset($fields['regular'])) {
+            // frequency has changed, we perform some checkings
+            if ($fields['regular'] && !isset($fields['regularSchedules'])) {
+                throw new SolidaryException(SolidaryException::REGULAR_SCHEDULES_REQUIRED);
+            }
+            if ($fields['regular'] && !isset($fields['regularDateChoice'])) {
+                throw new SolidaryException(SolidaryException::REGULAR_DATE_CHOICE_REQUIRED);
+            }
+            if (!$fields['regular'] && !isset($fields['punctualOutwardDateChoice'])) {
+                throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_DATE_CHOICE_REQUIRED);
+            }
+            if (!$fields['regular'] && !in_array($fields['punctualOutwardDateChoice'], Solidary::PUNCTUAL_OUTWARD_DATE_CHOICES)) {
+                throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_DATE_CHOICE_INVALID);
+            }
+            if (!$fields['regular'] && !isset($fields['punctualOutwardTimeChoice'])) {
+                throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_TIME_CHOICE_REQUIRED);
+            }
+            if (!$fields['regular'] && !in_array($fields['punctualOutwardTimeChoice'], Solidary::PUNCTUAL_TIME_CHOICES)) {
+                throw new SolidaryException(SolidaryException::PUNCTUAL_OUTWARD_TIME_CHOICE_INVALID);
+            }
+            return $this->duplicateSolidary($solidary, $fields);
+        }
+        if (
+            (isset($fields['regularSchedules']) && $solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) ||
+            (isset($fields['punctualOutwardDateChoice'])) ||
+            (isset($fields['punctualOutwardTimeChoice'])) ||
+            (isset($fields['punctualReturnDateChoice'])) ||
+            (isset($fields['punctualOutwardMinDate'])) ||
+            (isset($fields['punctualOutwardMinTime'])) ||
+            (isset($fields['punctualReturnDate'])) ||
+            (isset($fields['punctualReturnTime']))
+            ) {
+            return $this->duplicateSolidary($solidary, $fields);
+        }
+
+        return $solidary;
+    }
+
+    /**
+     * Duplicate a solidary record, when the original solidary record needs to be deeply updated.
+     *
+     * @param Solidary      $solidary               The solidary to duplicate
+     * @param array         $fields                 The fields to update the solidary
+     * @return Solidary     The new solidary
+     */
+    private function duplicateSolidary(Solidary $solidary, array $fields): Solidary
+    {
+        $newSolidary = clone $solidary;
+        $newSolidary->setSolidary($solidary);
+        $newSolidary->setProgression(0);
+
+        $regular = $solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR;
+        if (isset($fields['regular'])) {
+            if ($fields['regular'] && $solidary->getProposal()->getCriteria()->getFrequency() != Criteria::FREQUENCY_REGULAR) {
+                $regular = true;
+            } elseif (!$fields['regular'] && $solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $regular = false;
+            }
+        }
+
+        $newSolidary->setFrequency($regular ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+
+        // check subject
+        if ($solidary->getSubject()->isPrivate()) {
+            $newSolidary->setSubject(clone $solidary->getSubject());
+        }
+
+        // check needs
+        foreach ($solidary->getNeeds() as $need) {
+            /**
+             *  @var Need $need
+             */
+            if ($need->isPrivate()) {
+                $newNeed = clone $need;
+                $newNeed->setSolidary($newSolidary);
+                $newSolidary->addNeed($newNeed);
+            } else {
+                $newSolidary->addNeed($need);
+            }
+        }
+
+        $this->entityManager->persist($newSolidary);
         $this->entityManager->flush();
 
-        // we need a complete solidary
-        return $this->getSolidary($solidary->getId());
+        // create the new proposal
+        // origin and destination
+        $origin = isset($fields['origin']) ? $fields['origin'] : null;
+        $destination = isset($fields['destination']) ? $fields['destination'] : null;
+        if (!$origin || !$destination) {
+            foreach ($solidary->getProposal()->getWaypoints() as $waypoint) {
+                /**
+                 * @var Waypoint $waypoint
+                 */
+                if ($waypoint->getPosition() == 0 && !$origin) {
+                    $origin = $waypoint->getAddress()->jsonSerialize();
+                } elseif ($waypoint->isDestination() && !$destination) {
+                    $destination = $waypoint->getAddress()->jsonSerialize();
+                }
+            }
+        }
+        $params = [
+            'origin' => $origin,
+            'destination' => $destination,
+            'regular' => $regular,
+            'poster' => $this->poster->getId(),
+            'beneficiary' => $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId(),
+            'subject' => $newSolidary->getSubject()->getId(),
+            'solidary' => $newSolidary
+        ];
+        // create the dates and times (mix from potential new dates and times and original dates and times)
+        if (!$regular) {
+            if (isset($fields['punctualOutwardMinDate'])) {
+                $params['punctualOutwardMinDate'] = $fields['punctualOutwardMinDate'];
+            } else {
+                $params['punctualOutwardMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+            }
+            if (isset($fields['punctualOutwardMaxDate'])) {
+                $params['punctualOutwardMaxDate'] = $fields['punctualOutwardMaxDate'];
+            } elseif ($solidary->getProposal()->getCriteria()->getToDate()) {
+                $params['punctualOutwardMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+            }
+            if (isset($fields['punctualOutwardMinTime'])) {
+                $params['punctualOutwardMinTime'] = $fields['punctualOutwardMinTime'];
+            } else {
+                // we use the criteria time if it's set, otherwise we use the monTime (as in this case it should be a flexible proposal, all days are checked)
+                if ($solidary->getProposal()->getCriteria()->getFromTime()) {
+                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getFromTime()->format('H:i');
+                } else {
+                    $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getMonTime()->format('H:i');
+                }
+            }
+            if (isset($fields['punctualOutwardDateChoice'])) {
+                $params['punctualOutwardDateChoice'] = $fields['punctualOutwardDateChoice'];
+                $newSolidary->setPunctualOutwardDateChoice($fields['punctualOutwardDateChoice']);
+            } else {
+                $params['punctualOutwardDateChoice'] = $newSolidary->getPunctualOutwardDateChoice();
+                $params['punctualOutwardMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+                switch ($params['punctualOutwardDateChoice']) {
+                    case Solidary::PUNCTUAL_OUTWARD_DATE_CHOICE_DATE:
+                        break;
+                    default:
+                        $params['punctualOutwardMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+                        break;
+                }
+            }
+            if (isset($fields['punctualOutwardTimeChoice'])) {
+                $params['punctualOutwardTimeChoice'] = $fields['punctualOutwardTimeChoice'];
+                $newSolidary->setPunctualOutwardTimeChoice($fields['punctualOutwardTimeChoice']);
+            } else {
+                $params['punctualOutwardTimeChoice'] = $newSolidary->getPunctualOutwardTimeChoice();
+                $params['punctualOutwardMinTime'] = $solidary->getProposal()->getCriteria()->getFromTime()->format('H:i');
+            }
+            if (isset($fields['punctualReturnDate'])) {
+                $params['punctualReturnDate'] = $fields['punctualReturnDate'];
+            } elseif ($solidary->getProposal()->getProposalLinked()) {
+                $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format('Y-m-d');
+            }
+            if (isset($fields['punctualReturnTime'])) {
+                $params['punctualReturnTime'] = $fields['punctualReturnTime'];
+            } elseif ($solidary->getProposal()->getProposalLinked()) {
+                // we use the criteria time if it's set, otherwise we use the monTime (as in this case it should be a flexible proposal, all days are checked)
+                if ($solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()) {
+                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('H:i');
+                } else {
+                    $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('H:i');
+                }
+            }
+            if (isset($fields['punctualReturnDateChoice'])) {
+                $params['punctualReturnDateChoice'] = $fields['punctualReturnDateChoice'];
+                $newSolidary->setPunctualReturnDateChoice($fields['punctualReturnDateChoice']);
+            } else {
+                $params['punctualReturnDateChoice'] = $newSolidary->getPunctualReturnDateChoice();
+                switch ($params['punctualReturnDateChoice']) {
+                    case Solidary::PUNCTUAL_RETURN_DATE_CHOICE_NULL:
+                        break;
+                    default:
+                        $params['punctualReturnDate'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate()->format('Y-m-d');
+                        $params['punctualReturnTime'] = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromTime()->format('H:i');
+                        break;
+                }
+            }
+        } else {
+            if (isset($fields['regularDateChoice'])) {
+                $params['regularDateChoice'] = $fields['regularDateChoice'];
+                $newSolidary->setRegularDateChoice($fields['regularDateChoice']);
+            } else {
+                $params['regularDateChoice'] = $newSolidary->getRegularDateChoice();
+            }
+            if (isset($fields['regularMinDate'])) {
+                $params['regularMinDate'] = $fields['regularMinDate'];
+            } else {
+                $params['regularMinDate'] = $solidary->getProposal()->getCriteria()->getFromDate()->format('Y-m-d');
+            }
+            if (isset($fields['regularMaxDate'])) {
+                $params['regularMaxDate'] = $fields['regularMaxDate'];
+            } else {
+                $params['regularMaxDate'] = $solidary->getProposal()->getCriteria()->getToDate()->format('Y-m-d');
+            }
+            if (isset($fields['regularSchedules'])) {
+                $params['regularSchedules'] = $fields['regularSchedules'];
+            } else {
+                // create schedules
+                $schedules = [];
+                $days = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
+                foreach ($days as $num => $day) {
+                    $this->treatDay($solidary->getProposal(), $num, $day, $schedules);
+                }
+                $params['regularSchedules'] = $schedules;
+            }
+        }
+                
+        $ad = $this->createAdFromArray($params, $this->getTimeAndMarginForStructure($newSolidary->getSolidaryUserStructure()->getStructure()));
+        $newSolidary->setProposal($this->proposalRepository->find($ad->getId()));
+
+        $this->solidaryTransportMatcher->match($newSolidary);
+
+        // close original solidary
+        $solidary->setStatus(Solidary::STATUS_CLOSED_FOR_EDITION);
+
+        $this->entityManager->persist($solidary);
+        $this->entityManager->persist($newSolidary);
+        $this->entityManager->flush();
+
+        // link potential outward and return solidaryMatchings that would have not been made yet (as the link between Matchings are made after the SolidaryMatchings)
+        $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($newSolidary->getId());
+        
+        // send an event to warn that a SolidaryRecord has been created
+        $event = new SolidaryCreatedEvent($this->poster, $newSolidary);
+        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+
+        // send an event to warn that the old SolidaryRecord has been deeply updated
+        $event = new SolidaryDeeplyUpdated($this->poster, $solidary);
+        $this->eventDispatcher->dispatch(SolidaryDeeplyUpdated::NAME, $event);
+
+        return $this->getSolidary($newSolidary->getId());
+
+        // $newProposal = clone $solidary->getProposal();
+        // $newCriteria = clone $solidary->getProposal()->getCriteria();
+        // $newProposal->setCriteria($newCriteria);
+        // $newProposal->setSubject($newSolidary->getSubject());
+
+        // if ($solidary->getProposal()->getProposalLinked()) {
+        //     $newProposalLinked = clone $solidary->getProposal()->getProposalLinked();
+        //     $newCriteriaLinked = clone $solidary->getProposal()->getProposalLinked()->getCriteria();
+        //     $newProposalLinked->setCriteria($newCriteriaLinked);
+        //     $newProposalLinked->setSubject($newSolidary->getSubject());
+        //     $newProposal->setProposalLinked($newProposalLinked);
+        // }
+
+        // $newSolidary->setProposal($newProposal);
+
+        // $this->entityManager->persist($newProposal);
+        // $this->entityManager->persist($newSolidary);
+        $this->entityManager->flush();
+
+        return $newSolidary;
     }
 
     /**
@@ -1593,7 +1877,7 @@ class SolidaryManager
         $solidary->addSolidarySolution($solidarySolution);
         $this->entityManager->persist($solidarySolution);
 
-        // if auto link a possible return solution
+        // if we choose to auto link (= automatically link outward and return)
         if ($solidaryMatching->getSolidaryMatchingLinked()) {
             $solidarySolutionLinked = new SolidarySolution();
             $solidarySolutionLinked->setSolidaryMatching($solidaryMatching->getSolidaryMatchingLinked());
@@ -1753,11 +2037,11 @@ class SolidaryManager
      * Update needs for a solidary record.
      *
      * @param Solidary              $solidary               The solidary to update
-     * @param array                 $needs                  The need fields
+     * @param array|null            $needs                  The need fields
      * @param string|boolean|null   $additionalNeed         A potential additional need
      * @return void
      */
-    private function updateNeeds(Solidary $solidary, array $needs, $additionalNeed = false)
+    private function updateNeeds(Solidary $solidary, ?array $needs = null, $additionalNeed = false)
     {
         $existingAdditionalNeed = false;
 
@@ -1766,7 +2050,7 @@ class SolidaryManager
             /**
             * @var Need $need
             */
-            if (!$need->isPrivate() && !in_array($need->getId(), $needs)) {
+            if (!$need->isPrivate() && is_array($needs) && !in_array($need->getId(), $needs)) {
                 $solidary->removeNeed($need);
             } elseif ($need->isPrivate() && (is_null($additionalNeed) || $additionalNeed === '')) {
                 $solidary->removeNeed($need);
@@ -1777,24 +2061,26 @@ class SolidaryManager
         }
 
         // check for added needs
-        foreach ($needs as $aneed) {
-            if ($need = $this->needRepository->find($aneed)) {
-                // check if need already exists in the solidary record
-                $found = false;
-                foreach ($solidary->getNeeds() as $sneed) {
-                    /**
-                     * @var Need $sneed
-                     */
-                    if ($sneed->getId() === $need->getId()) {
-                        $found = true;
-                        break;
+        if (is_array($needs)) {
+            foreach ($needs as $aneed) {
+                if ($need = $this->needRepository->find($aneed)) {
+                    // check if need already exists in the solidary record
+                    $found = false;
+                    foreach ($solidary->getNeeds() as $sneed) {
+                        /**
+                         * @var Need $sneed
+                         */
+                        if ($sneed->getId() === $need->getId()) {
+                            $found = true;
+                            break;
+                        }
                     }
+                    if (!$found) {
+                        $solidary->addNeed($need);
+                    }
+                } else {
+                    throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
                 }
-                if (!$found) {
-                    $solidary->addNeed($need);
-                }
-            } else {
-                throw new SolidaryException(sprintf(SolidaryException::NEED_NOT_FOUND, $need));
             }
         }
         
@@ -1859,6 +2145,13 @@ class SolidaryManager
      */
     private function createAdFromArray(array $aad, array $times): Ad
     {
+        // foreach ($aad as $key=>$value) {
+        //     if (substr($key,0,7) == "regular" || substr($key,0,8) == "punctual") {
+        //         echo $key . PHP_EOL;
+        //         var_dump($value);
+        //     }
+        // }
+        // exit;
         $ad = new Ad();
 
         // users
