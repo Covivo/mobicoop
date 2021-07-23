@@ -66,6 +66,10 @@ final class PostImageAction
             // Campaign image
             $image->setCampaignFile($request->files->get('campaignFile'));
             $image->setCampaignId($request->request->get('campaignId'));
+        } elseif ($request->files->get('editorialFile') && $request->request->get('editorialId')) {
+            // Editorial image
+            $image->setEditorialFile($request->files->get('editorialFile'));
+            $image->setEditorialId($request->request->get('editorialId'));
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
