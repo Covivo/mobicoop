@@ -109,7 +109,6 @@ class CommunityManager
         }
 
         $return['communitiesMember'] = $communities->getMember();
-        $return['communitiesView'] = $communities->getView();
         $return['communitiesTotalItems'] = $communities->getTotalItems();
 
         $return['communitiesUser'] = $returnCommunitiesUser;

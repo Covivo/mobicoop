@@ -412,7 +412,7 @@ export default {
       default: null,
     },
     lastUsers: {
-      type: Array,
+      type: Object,
       default: null,
     },
     avatarVersion: {

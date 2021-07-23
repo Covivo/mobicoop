@@ -73,7 +73,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *                      }
  *                  }
  *              },
- *              "normalization_context"={"groups"={"communities"}},
+ *              "normalization_context"={"groups"={"listCommunities"}},
  *              "security_post_denormalize"="is_granted('community_list',object)"
  *          },
  *          "post"={
@@ -85,7 +85,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *          "available"={
  *              "method"="GET",
  *              "path"="/communities/available",
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"readCommunity"}},
  *              "swagger_context" = {
  *                  "tags"={"Communities"},
  *                  "parameters" = {
@@ -179,6 +179,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *      itemOperations={
  *          "get"={
  *              "security"="is_granted('community_read',object)",
+ *              "normalization_context"={"groups"={"readCommunity"}},
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
  *              }
@@ -253,7 +254,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","communities","readUserAdmin"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","listCommunities","readUserAdmin"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -263,14 +264,14 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
     private $name;
 
     /**
      * @var string UrlKey of the community.
      *
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic","readUserAdmin","readUser"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
     private $urlKey;
 
@@ -286,7 +287,7 @@ class Community
      * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $membersHidden;
 
@@ -294,7 +295,7 @@ class Community
      * @var boolean|null Proposals are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $proposalsHidden;
 
@@ -319,7 +320,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $description;
 
@@ -328,7 +329,7 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
-     * @Groups({"aRead","aWrite","readCommunity","write","communities"})
+     * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $fullDescription;
 
@@ -344,7 +345,7 @@ class Community
      * @var \DateTimeInterface Updated date of the community.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"aRead", "readCommunity","communities"})
+     * @Groups({"aRead", "readCommunity"})
      */
     private $updatedDate;
 
@@ -355,7 +356,7 @@ class Community
      * @Assert\NotBlank(groups={"write"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      */
     private $user;
 
@@ -377,7 +378,7 @@ class Community
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"readCommunity","readCommunityUser","write","communities"})
+     * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -385,7 +386,7 @@ class Community
 
     /**
      * @var string $defaultAvatar Url of the default Avatar for a community
-     * @Groups({"readCommunity","readCommunityUser","write","communities"})
+     * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
      */
     private $defaultAvatar;
 
@@ -403,7 +404,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -413,7 +414,7 @@ class Community
      * @var ArrayCollection|null The security files of the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readCommunity","write","communities"})
+     * @Groups({"readCommunity","write","listCommunities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -430,19 +431,19 @@ class Community
 
     /**
      * @var boolean|null If the current user asking is member of the community
-     * @Groups({"readCommunity","communities"})
+     * @Groups({"readCommunity","listCommunities"})
      */
     private $member;
 
     /**
      * @var int|null Number of members of this community
-     * @Groups({"aRead","readCommunity","communities"})
+     * @Groups({"aRead","readCommunity","listCommunities"})
      */
     private $nbMembers;
     
     /**
      * @var array|null Store the ads of the community
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","communities","readCommunityPublic"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
      */
     private $ads;
 
@@ -450,7 +451,7 @@ class Community
      * @var Mass The community created after the migration of this mass users
      *
      * @ORM\OneToOne(targetEntity="App\Match\Entity\Mass", mappedBy="community")
-     * @Groups({"readCommunity","communities"})
+     * @Groups({"readCommunity"})
      */
     private $mass;
 

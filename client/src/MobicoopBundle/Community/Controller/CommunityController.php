@@ -170,7 +170,6 @@ class CommunityController extends AbstractController
 
             return new JsonResponse([
                 'communities' => $communities['communitiesMember'],
-                'communitiesView' => $communities['communitiesView'],
                 'totalItems' => $communities['communitiesTotalItems'],
                 'communitiesUser' => $communities['communitiesUser'],
                 'canCreate' => $this->createFromFront
