@@ -1,6 +1,6 @@
 # Release 1.33.0
 * Alternate horizontal version of Search component
-* Add editabled editorial content
+* Add editable editorial content
 
 # Release 1.31.0
 * Gamification : Resources and API treatment of gamification actions
