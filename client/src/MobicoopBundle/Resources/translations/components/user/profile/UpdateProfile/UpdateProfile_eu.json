@@ -24,11 +24,11 @@
         "emailOk": "Egiazkotzeko e-mezua igorria izan da.",
         "tokenError": "Huts bat kodea ez da bidalia izan",
         "tokenOk": "Egiazkotzeko kodea bidalia izan da.",
-        "unknown": "Egiazkotzeko kodea ez da zuzena.",
+        "unknown": "Egiazkotzeko kodea okerra da.",
         "phoneValidated": "Zure telefonoa egiaztatua izan da.",
-        "phoneUpdate": "Huts bat zure telefonoa ez da egiaztatua izan.",
-        "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua da.",
-        "errorProfileUpdate": "Huts bat, zure perfila ez da eguneratua izan",
+        "phoneUpdate": "Akats bat bada, zure telefonoa ez da egiaztatua izan.",
+        "phoneAlreadyVerified": "Zure telefonoa egiaztatua izan da.",
+        "errorProfileUpdate": "Akats bat bada, zure profila ez da eguneratua izan.",
         "profileUpdated": "Zure profila eguneratua izan da!"
     },
     "titles": {

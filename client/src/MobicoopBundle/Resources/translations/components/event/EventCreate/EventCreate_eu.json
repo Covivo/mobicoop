@@ -53,14 +53,14 @@
         },
         "fullDescription": {
             "required": "Ekitaldiaren aurkezpen xehea baitezpadakoa da",
-            "label": "Ekitaldiaren aurkezpen xehea*"
+            "label": "Ekitaldiaren aurkezpen zehatza*"
         },
         "description": {
-            "required": "Ekitaldiaren aurkezpen laburra baitezpadakoa da",
-            "label": "Ekitaldiaren aurkezpen laburra*"
+            "required": "Ekitaldiaren deskribapen laburra beharrezkoa da",
+            "label": "Ekitaldiaren deskribapen laburra*"
         },
         "name": {
-            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "required": "Ekitaldiaren izena beharrezkoa da",
             "label": "Ekitaldiaren izena*"
         }
     },

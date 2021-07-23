@@ -17,13 +17,13 @@
     "privacyPolicy": {
         "link": {
             "uri": "/datuen-babes",
-            "label": "Konfidentzialtasun politika"
+            "label": "Konfidentzialtasunezko politika"
         },
-        "text": "Gure datu kudeaketei buruzko xehetasun gehiago XXXX-an"
+        "text": "Xehetasun gehiago gure datuen kudeaketaz, bertan"
     },
     "working": {
-        "line2": "Aktibatu nahi zenituzken cookies-ak libroki hauta itzazu",
-        "line1": "Bere funtzionamenduarentzat, webguneak cookies-ak erabiltzen ditu"
+        "line2": "Aktibatu nahi dituzun cookies-ak libreki haut itzazu",
+        "line1": "Funtzionatzeko, webgune honek cookies-ak erabiltzen ditu"
     },
     "store": "Erregistratu",
     "yourBrowseryourChoice": "{appName} hautua ematen dauzu",

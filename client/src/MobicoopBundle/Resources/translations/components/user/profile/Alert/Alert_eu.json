@@ -20,19 +20,20 @@
         "driver_carpool_linked_ad_deleted": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "passenger_carpool_linked_ad_deleted_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "passenger_carpool_linked_ad_deleted": "Bidaiari gisa onartua izan zitzaidan autokidetzari loturiko iragarkia kendua izan da",
-
         "carpool_ad_deleted_with_pending_drivers_urgent": "Gidari gisa eta berehalakoa zen eta onartua izan zen autokidetzaren iragarkia kendua izan da",
         "carpool_ad_deleted_with_pending_drivers": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "carpool_ad_deleted_with_pending_passengers_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "carpool_ad_deleted_with_pending_passengers": "Bidaiari gisa onartua izan zitzaidan autokidetzari loturiko iragarkia kendua izan da",
-        "carpool_ask_linked_ad_deleted": "Nik galdegindako iragarkia ezeztatua",
+        "carpool_ask_linked_ad_deleted": "Nire eskaera aipatzen duen iragarkiaren ezabatzea",
         "*******": "Nire autokidea ebaluatzeko sustapena",
         "carpool_proposal_canceled": "Autokidetza baten ezeztatzea*",
         "carpool_ad_renewal": "Baliozkotasun bukaeran dauden bidaiak berrabiatu",
-        "carpool_ask_refused": "Autokidetza ez onartua",
+        "carpool_ask_refused": "Autokidetza ezeztatua da",
         "carpool_ask_accepted": "Autokidetza onartua",
         "carpool_matching_new": "Menturazko autokidetza berriak",
         "communication_internal_message_received": "Mezu berri bat mezutegian",
-        "carpool_ask_posted": "Autokidetza batentzako eskaera"
+        "carpool_ask_posted": "Autokidetza batentzako eskaera",
+        "carpool_ad_deleted": "Autokidetza baten ezeztatzea*",
+        "event_created": "Ekitaldi sortze baieztapena"
     }
 }

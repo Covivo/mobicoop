@@ -22,8 +22,8 @@
             "textDetails": {
                 "p3": "<span class=\"font-weight-bold\">Attention</span> : argitaratzeko tresna batzuk, Wordpress bezalako pluging berezi batzuk gehitu behar dituzte iFrame erabili ahal izateko.",
                 "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
-                "p1": "widget-a integratzeko, beheragoko testua kopiatu eta webgunean kolatu behar da..<br /> Lodiz diren elementuak aldatzen ahalko ditzu zure widget-ak pertsonalizatzeko.",
-                "title": "Widget-a integratu"
+                "p1": "widget-a sartzeko, azpiko testua kopiatu behar daeta webgunean kolatu.<br /> Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
+                "title": "Widget-a sartu"
             },
             "externalRoute": "/evenement/widget/{id}",
             "route": "/evenement/widget/get/{id}/{urlKey}",

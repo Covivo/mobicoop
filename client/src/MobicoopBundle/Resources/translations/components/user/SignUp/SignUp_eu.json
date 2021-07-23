@@ -6,7 +6,7 @@
         },
         "infos": "Formulario honetik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
         "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orrialde azpian eskuratu dezakezun \"cookies kudeaketa\" tresna onartu beharko duzu.",
-        "consent": "Konektatu ahal izateko orri azpian atxemnen duzu loturan \"konexio aktiboa mantendu\" onartu beharko duzu , \"cookies kudeaketa\" tresnari esker."
+        "consent": "Konektatzeko, \"Zure konexioa aktibo atxiki\" onartua izan behar duzu \"Cookies-en kudeaketa\" orri-oineko loturan eskuragarri den tresnari esker, eta orria erreberri ezazu."
     },
     "button": {
         "register": "Izena ematen dut",
@@ -71,7 +71,7 @@
     "email": {
         "errors": {
             "valid": "Helbide elektrioa bali izan behar da",
-            "required": "Helbide elektronikoa baitezpadakoa da"
+            "required": "Helbide elektronikoa beharrezkoa da"
         },
         "placeholder": "Helbide elektronikoa"
     },
@@ -89,7 +89,7 @@
     },
     "familyName": {
         "errors": {
-            "required": "Deitura baitezpadakoa da"
+            "required": "Deitura beharrezkoa da"
         },
         "placeholder": "Deitura"
     },
@@ -101,7 +101,7 @@
     },
     "gender": {
         "errors": {
-            "required": "Zibilitatea baitezpadakoa da"
+            "required": "Zibilitatea beharrezkoa da"
         },
         "values": {
             "other": "Beste",
