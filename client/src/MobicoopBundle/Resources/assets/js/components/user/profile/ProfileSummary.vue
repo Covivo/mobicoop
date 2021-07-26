@@ -43,7 +43,7 @@
               color="secondary"
             >
               <v-icon color="info">
-                mdi-seal-variant
+                mdi-seal
               </v-icon>
             </v-badge>
           </v-col>
