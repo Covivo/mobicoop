@@ -388,8 +388,8 @@ class UserManager
             $homeAddress->setHome(true);
             $homeAddress->setName(Address::HOME_ADDRESS);
             $homeAddress->setUser($user);
+            $this->entityManager->persist($homeAddress);
             if ($persist) {
-                $this->entityManager->persist($homeAddress);
                 $this->entityManager->flush();
             }
         }
