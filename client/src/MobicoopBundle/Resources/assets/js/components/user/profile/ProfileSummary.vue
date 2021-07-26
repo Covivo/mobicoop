@@ -28,10 +28,24 @@
           class="title"
         >
           <v-col
-            cols="12"
+            cols="11"
             class="text-center"
           >
             {{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}
+          </v-col>
+          <v-col
+            v-if="profileSummary.numberOfBadges > 0"
+            cols="1"
+            class="ml-n12"
+          >
+            <v-badge
+              :content="profileSummary.numberOfBadges"
+              color="secondary"
+            >
+              <v-icon color="info">
+                mdi-seal-variant
+              </v-icon>
+            </v-badge>
           </v-col>
         </v-row>
         <v-row

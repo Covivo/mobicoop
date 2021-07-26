@@ -29,7 +29,7 @@
 </template>
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/gamification/GamificationNotifications/";
-import GamificationBadgesNotifications from "@components/utilities/GamificationBadgesNotifications";
+import GamificationBadgesNotifications from "@components/utilities/gamification/GamificationBadgesNotifications";
 
 export default {
   i18n: {

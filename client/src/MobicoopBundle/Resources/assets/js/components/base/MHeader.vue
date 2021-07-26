@@ -373,7 +373,7 @@ import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 import MHeaderLanguage from "@components/base/MHeaderLanguage.vue";
 import MMessageBtn from "@components/base/MMessageBtn.vue";
-import GamificationNotifications from "@components/utilities/GamificationNotifications";
+import GamificationNotifications from "@components/utilities/gamification/GamificationNotifications";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
