@@ -17,7 +17,7 @@ final class Version20210723122200 extends AbstractMigration
 
         $this->addSql("
         INSERT INTO `action` (`id`, `name`, `in_diary`, `progression`, `position`, `type`) VALUES
-        (105, 'solidary_deeply_updated', 1, -1, 0, 0);
+        (105, 'solidary_deeply_updated', 1, -1, 0, 6);
         ");
     }
 

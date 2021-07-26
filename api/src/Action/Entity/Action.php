@@ -88,6 +88,8 @@ class Action
         self::TYPE_FREE => "Action libre"
     ];
 
+    const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
+
     /**
      * @var int The id of this action.
      *

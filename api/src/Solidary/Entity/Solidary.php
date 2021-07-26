@@ -237,21 +237,29 @@ class Solidary
 {
     const DEFAULT_ID = 999999999999;
 
-    const STATUS_ASKED = 0;
-    const STATUS_REFUSED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_LOOKING_FOR_SOLUTION = 3;
-    const STATUS_FOLLOW_UP = 4;
-    const STATUS_CLOSED = 5;
+    // status for a solidary record
+    const STATUS_CREATED = 0;
+    const STATUS_TAKEN_ACCOUNT = 1;
+    const STATUS_LOOKING_FOR_SOLUTION = 2;
+    const STATUS_FOLLOW_UP = 3;
+    const STATUS_CLOSED = 4;
     const STATUS_CLOSED_FOR_EDITION = 6;
 
+    // possible status
     const STATUSES = [
-        self::STATUS_ASKED,
-        self::STATUS_REFUSED,
-        self::STATUS_PENDING,
+        self::STATUS_CREATED,
         self::STATUS_LOOKING_FOR_SOLUTION,
         self::STATUS_FOLLOW_UP,
-        self::STATUS_CLOSED
+        self::STATUS_CLOSED,
+        self::STATUS_CLOSED_FOR_EDITION
+    ];
+
+    // status for a given progression (used for manual update of progression)
+    const STATUS_PROGRESSION = [
+        25 => self::STATUS_TAKEN_ACCOUNT,
+        50 => self::STATUS_LOOKING_FOR_SOLUTION,
+        75 => self::STATUS_FOLLOW_UP,
+        100 => self::STATUS_CLOSED
     ];
 
     const PUNCTUAL_OUTWARD_DATE_CHOICE_DATE = 1;    // chosen date
@@ -1430,7 +1438,7 @@ class Solidary
      */
     public function getAdminhomeAddress(): ?array
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize();
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress() ? $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize() : null;
     }
     
     /**

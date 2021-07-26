@@ -1136,7 +1136,7 @@ class SolidaryManager
         $solidary->setFrequency($fields['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
 
         // set status
-        $solidary->setStatus(Solidary::STATUS_ASKED);
+        $solidary->setStatus(Solidary::STATUS_CREATED);
 
         // set progression
         $solidary->setProgression(0);
@@ -1385,6 +1385,8 @@ class SolidaryManager
         // check if beneficiary was updated
         if (isset($fields['beneficiary'])) {
             $solidary->getSolidaryUserStructure()->getSolidaryUser()->setUser($this->updateBeneficiary($solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $fields['beneficiary']));
+            $this->entityManager->persist($solidary);
+            $updated = true;
         }
 
         if ($updated) {
@@ -1414,6 +1416,9 @@ class SolidaryManager
                     }
                 }
             }
+        }
+        if (isset($fields['destinationAny']) && $fields['destinationAny']) {
+            return $this->duplicateSolidary($solidary, $fields);
         }
 
         // check if dates/times have changed
@@ -1467,6 +1472,7 @@ class SolidaryManager
         $newSolidary = clone $solidary;
         $newSolidary->setSolidary($solidary);
         $newSolidary->setProgression(0);
+        $newSolidary->setStatus(Solidary::STATUS_CREATED);
 
         $regular = $solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR;
         if (isset($fields['regular'])) {
@@ -1505,6 +1511,7 @@ class SolidaryManager
         // origin and destination
         $origin = isset($fields['origin']) ? $fields['origin'] : null;
         $destination = isset($fields['destination']) ? $fields['destination'] : null;
+        $destinationAny = isset($fields['destinationAny']) && $fields['destinationAny'] ? true : false;
         if (!$origin || !$destination) {
             foreach ($solidary->getProposal()->getWaypoints() as $waypoint) {
                 /**
@@ -1516,6 +1523,9 @@ class SolidaryManager
                     $destination = $waypoint->getAddress()->jsonSerialize();
                 }
             }
+        }
+        if ($destinationAny) {
+            $destination = null;
         }
         $params = [
             'origin' => $origin,
@@ -1837,13 +1847,28 @@ class SolidaryManager
         $event = new AnimationMadeEvent($newAnimation);
         $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
 
+        $persist = false;
         // check again for progression to set the solidary progression
         if (array_key_exists('progression', $animation)) {
             if ($animation['progression']>0) {
                 $solidary->setProgression($animation['progression']);
-                $this->entityManager->persist($solidary);
-                $this->entityManager->flush();
+                $persist = true;
+                // special case, manual update of progression
+                if ($action->getId() == Action::ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY) {
+                    $solidary->setStatus(Solidary::STATUS_PROGRESSION[(int)$animation['progression']]);
+                }
             }
+        }
+
+        // update the status of the solidary record
+        if ($action->getType() && in_array($action->getType(), Solidary::STATUSES)) {
+            $solidary->setStatus($action->getType());
+            $persist = true;
+        }
+
+        if ($persist) {
+            $this->entityManager->persist($solidary);
+            $this->entityManager->flush();
         }
         
         // we don't go further, the event subscribers have done the job to persist the data, although we need a complete solidary !
