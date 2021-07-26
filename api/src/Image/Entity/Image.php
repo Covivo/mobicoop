@@ -122,7 +122,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","readRelayPoint"})
+     * @Groups({"aRead","read","readUser","communities","readRelayPoint","readEditorial"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -131,7 +131,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
      */
     private $name;
 
@@ -139,7 +139,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
      */
     private $title;
     
@@ -187,7 +187,7 @@ class Image
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","results","write","readUser","readRelayPoint"})
+     * @Groups({"read","results","write","readUser","readRelayPoint","readEditorial"})
      */
     private $fileName;
     
