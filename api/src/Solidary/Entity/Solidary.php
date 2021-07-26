@@ -237,20 +237,29 @@ class Solidary
 {
     const DEFAULT_ID = 999999999999;
 
-    const STATUS_ASKED = 0;
-    const STATUS_REFUSED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_LOOKING_FOR_SOLUTION = 3;
-    const STATUS_FOLLOW_UP = 4;
-    const STATUS_CLOSED = 5;
+    // status for a solidary record
+    const STATUS_CREATED = 0;
+    const STATUS_TAKEN_ACCOUNT = 1;
+    const STATUS_LOOKING_FOR_SOLUTION = 2;
+    const STATUS_FOLLOW_UP = 3;
+    const STATUS_CLOSED = 4;
+    const STATUS_CLOSED_FOR_EDITION = 6;
 
+    // possible status
     const STATUSES = [
-        self::STATUS_ASKED,
-        self::STATUS_REFUSED,
-        self::STATUS_PENDING,
+        self::STATUS_CREATED,
         self::STATUS_LOOKING_FOR_SOLUTION,
         self::STATUS_FOLLOW_UP,
-        self::STATUS_CLOSED
+        self::STATUS_CLOSED,
+        self::STATUS_CLOSED_FOR_EDITION
+    ];
+
+    // status for a given progression (used for manual update of progression)
+    const STATUS_PROGRESSION = [
+        25 => self::STATUS_TAKEN_ACCOUNT,
+        50 => self::STATUS_LOOKING_FOR_SOLUTION,
+        75 => self::STATUS_FOLLOW_UP,
+        100 => self::STATUS_CLOSED
     ];
 
     const PUNCTUAL_OUTWARD_DATE_CHOICE_DATE = 1;    // chosen date
@@ -302,11 +311,11 @@ class Solidary
     private $id;
 
     /**
-     * @var int Status of the record (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
+     * @var int Status of the record (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed, 6 = closed for update).
      *
      * @Assert\NotBlank(groups={"writeSolidary"})
      * @ORM\Column(type="smallint")
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","aReadCol","readSolidary","writeSolidary"})
      */
     private $status;
 
@@ -333,6 +342,16 @@ class Solidary
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $deadlineDate;
+
+    /**
+     * @var Solidary|null Original solidary record if updated solidary record.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups("aRead")
+     * @MaxDepth(1)
+     */
+    private $solidary;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
@@ -652,6 +671,13 @@ class Solidary
         $this->homeAddress = [];
         $this->solutions = [];
     }
+
+    public function __clone()
+    {
+        $this->needs = new ArrayCollection();
+        $this->setProposal(null);
+        $this->updatedDate = null;
+    }
     
     public function getId(): int
     {
@@ -691,6 +717,18 @@ class Solidary
     {
         $this->deadlineDate = $deadlineDate;
 
+        return $this;
+    }
+
+    public function getSolidary(): ?self
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidary(?self $solidary): self
+    {
+        $this->solidary = $solidary;
+                
         return $this;
     }
 
@@ -1278,6 +1316,31 @@ class Solidary
 
 
     // ADMIN CUSTOM PROPERTIES
+
+    /**
+     * @var int|null Solidary id of the parent solidary record
+     * @Groups("aReadItem")
+     */
+    public function getAdminsolidaryId(): ?int
+    {
+        return $this->getSolidary() ? $this->getSolidary()->getId() : null;
+    }
+
+    /**
+     * @var int|null Solidary id of the child solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminsolidaryChildId;
+    public function getAdminSolidaryChildId(): ?int
+    {
+        return $this->adminsolidaryChildId;
+    }
+    public function setAdminSolidaryChildId(int $adminsolidaryChildId): self
+    {
+        $this->adminsolidaryChildId = $adminsolidaryChildId;
+
+        return $this;
+    }
     
     /**
      * @var string|null Subject of the solidary record
@@ -1375,7 +1438,7 @@ class Solidary
      */
     public function getAdminhomeAddress(): ?array
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize();
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress() ? $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize() : null;
     }
     
     /**
@@ -1760,22 +1823,6 @@ class Solidary
     public function setAdminproofs(array $adminproofs): self
     {
         $this->adminproofs = $adminproofs;
-
-        return $this;
-    }
-
-    /**
-     * @var bool True if the solidary is deeply editable (ie. journey is editable without side effects)
-     * @Groups("aReadItem")
-     */
-    private $admineditable;
-    public function isAdmineditable(): ?bool
-    {
-        return $this->admineditable;
-    }
-    public function setAdmineditable(bool $admineditable): self
-    {
-        $this->admineditable = $admineditable;
 
         return $this;
     }

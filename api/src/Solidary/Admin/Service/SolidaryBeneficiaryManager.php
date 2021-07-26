@@ -108,7 +108,7 @@ class SolidaryBeneficiaryManager
         $solidaryBeneficiary->setGender($solidaryUser->getUser()->getGender());
         $solidaryBeneficiary->setBirthDate($solidaryUser->getUser()->getBirthDate());
         $solidaryBeneficiary->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
-        $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress()->jsonSerialize());
+        $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress() ? $solidaryUser->getUser()->getHomeAddress()->jsonSerialize() : null);
         $solidaryBeneficiary->setAvatar($solidaryUser->getUser()->getAvatar());
         
         // get the status of the beneficiary for each structure attached, and get the diary and proofs if asked
@@ -135,8 +135,11 @@ class SolidaryBeneficiaryManager
             }
         }
         $solidaryBeneficiary->setStructures($beneficiaryStructures);
-        // reorder diaries
+        // reorder diaries by date and solidary id
         usort($diaries, function ($a, $b) {
+            if ($a['date'] == $b['date']) {
+                return $b['solidary'] <=> $a['solidary'];
+            }
             return $b['date'] <=> $a['date'];
         });
         $solidaryBeneficiary->setDiaries($diaries);

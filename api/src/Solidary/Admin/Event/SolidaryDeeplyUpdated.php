@@ -21,31 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Admin\Controller;
+namespace App\Solidary\Admin\Event;
 
-use App\Solidary\Admin\Service\SolidaryManager;
-use App\Solidary\Entity\Proof;
-use Symfony\Component\HttpFoundation\Request;
+use App\Solidary\Entity\Solidary;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\User\Entity\User;
 
 /**
- * Upload a proof in solidary admin context.
- * Used both for creating a new solidary record and updating an existing solidary record.
+ * Event sent when a solidary is deeply updated => replaced by a new solidary
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-final class UploadProofAction
+class SolidaryDeeplyUpdated extends Event
 {
-    public function __construct(
-        SolidaryManager $solidaryManager
-    ) {
-        $this->solidaryManager = $solidaryManager;
-    }
-    
-    public function __invoke(Request $request): Proof
+    public const NAME = 'solidary_deeply_updated';
+
+    protected $poster;
+    protected $solidary;
+
+    public function __construct(User $poster, Solidary $solidary)
     {
-        return $this->solidaryManager->createProof(
-            $request->files->get('file'),
-            $request->files->get('filename'),
-            $request->request->get('solidaryId'),
-            $request->request->get('proofId')
-        );
+        $this->poster = $poster;
+        $this->solidary = $solidary;
+    }
+
+    public function getPoster()
+    {
+        return $this->poster;
+    }
+
+    public function getSolidary()
+    {
+        return $this->solidary;
     }
 }
