@@ -267,7 +267,12 @@ class Image implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $relayPointTypeId;
-        
+
+    /**
+     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     */
+    private $url;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -634,6 +639,16 @@ class Image implements ResourceInterface, \JsonSerializable
         $this->relayPointTypeId = $relayPointTypeId;
     }
 
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(?string $url)
+    {
+        $this->url = $url;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -643,6 +658,7 @@ class Image implements ResourceInterface, \JsonSerializable
             'name'              => $this->getName(),
             'fileName'          => $this->getFileName(),
             'versions'          => $this->getVersions(),
+            'url'               => $this->getUrl()
         ];
     }
 }
