@@ -462,7 +462,7 @@ class Image
 
     /**
      * @var string|null The default avatar
-     * @Groups({"aRead"})
+     * @Groups({"aRead","readPublicProfile"})
      */
     private $avatar;
         

@@ -99,6 +99,12 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
      */
     private $savedCo2;
 
+    /**
+     * @var int|null The number of earned badges by the User
+     *
+     */
+    private $numberOfBadges;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -255,6 +261,18 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getNumberOfBadges(): ?int
+    {
+        return $this->numberOfBadges;
+    }
+
+    public function setNumberOfBadges(?int $numberOfBadges): self
+    {
+        $this->numberOfBadges = $numberOfBadges;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         $userSerialized = [
@@ -270,7 +288,8 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
             'lastActivityDate'          => $this->getLastActivityDate(),
             'createdDate'               => $this->getCreatedDate(),
             'experienced'               => $this->isExperienced(),
-            'savedCo2'                  => $this->getSavedCo2()
+            'savedCo2'                  => $this->getSavedCo2(),
+            'numberOfBadges'              => $this->getNumberOfBadges()
         ];
 
         return $userSerialized;
