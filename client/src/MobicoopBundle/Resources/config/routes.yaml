@@ -1315,6 +1315,15 @@ LastExternalArticles:
         nl: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
+# Get the last external articles (AJAX)
+editorial:
+    methods: [POST]
+    path:
+        fr: /editorials
+        en: /editorials
+        nl: /editorials
+    controller: Mobicoop\Bundle\MobicoopBundle\Editorial\Controller\EditorialController::getEditorial
+
 
 ####################
 # geography routes #

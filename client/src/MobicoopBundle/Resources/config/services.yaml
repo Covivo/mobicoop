@@ -112,6 +112,14 @@ services:
         arguments:
             $searchComponentHorizontal: '%env(bool:CARPOOL_SEARCH_HORIZONTAL)%'
 
+
+    # Editorial
+    Mobicoop\Bundle\MobicoopBundle\Editorial\Controller\:
+        resource: '@MobicoopBundle/Editorial/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Editorial\Service\:
+        resource: '@MobicoopBundle/Editorial/Service/*'
+
     # Event
     Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
         resource: '@MobicoopBundle/Event/Controller/*'
