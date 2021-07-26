@@ -1315,6 +1315,22 @@ LastExternalArticles:
         nl: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
+# display "I'm a private person"
+iAmAPerson:
+    path:
+        fr: /je-suis-un-particulier
+        en: /i-am-private-person
+        nl: /i-am-private-person
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmPrivatePerson
+
+# display "I'm a private person"
+iAmASociety:
+    path:
+        fr: /je-suis-une-entreprise
+        en: /i-am-society
+        nl: /i-am-society
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmSociety
+
 # Get the last external articles (AJAX)
 editorial:
     methods: [POST]
