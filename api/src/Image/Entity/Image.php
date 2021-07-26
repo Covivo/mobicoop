@@ -466,6 +466,12 @@ class Image
      */
     private $avatar;
         
+    /**
+     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     * @Groups({"readEditorial"})
+     */
+    private $url;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -1026,6 +1032,16 @@ class Image
         return null;
     }
     
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(string $url)
+    {
+        $this->url = $url;
+    }
+
     public function preventSerialization()
     {
         $this->setEventFile(null);
