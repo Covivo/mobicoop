@@ -139,20 +139,16 @@ class SolidaryRepository
     }
 
     /**
-     * Find the solidary for a Proposal
+     * Get the potential solidary child of a solidary record
      *
-     * @param Proposal $proposal    The proposal
-     * @return Solidary|null        The solidary found or null if not found
+     * @param Solidary $solidary    The solidary record
+     * @return Solidary|null        The solidary child if found or null if not found
      */
-    public function findForProposal(Proposal $proposal): ?Solidary
+    public function getChild(Solidary $solidary): ?Solidary
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->where('s.proposal = :proposal')
-        ->setParameter('proposal', $proposal);
-
-        echo $query->getQuery()->getSQL();
-        echo $proposal->getId();
-        exit;
+        ->where('s.solidary = :solidary')
+        ->setParameter('solidary', $solidary);
 
         return $query->getQuery()->getOneOrNullResult();
     }

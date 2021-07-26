@@ -1317,6 +1317,22 @@ class Solidary
     {
         return $this->getSolidary() ? $this->getSolidary()->getId() : null;
     }
+
+    /**
+     * @var int|null Solidary id of the child solidary record
+     * @Groups("aReadItem")
+     */
+    private $adminsolidaryChildId;
+    public function getAdminSolidaryChildId(): ?int
+    {
+        return $this->adminsolidaryChildId;
+    }
+    public function setAdminSolidaryChildId(int $adminsolidaryChildId): self
+    {
+        $this->adminsolidaryChildId = $adminsolidaryChildId;
+
+        return $this;
+    }
     
     /**
      * @var string|null Subject of the solidary record

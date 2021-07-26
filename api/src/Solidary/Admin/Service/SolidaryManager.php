@@ -193,6 +193,11 @@ class SolidaryManager
         // link potential outward and return solidaryMatchings that would have not been made yet (as the link between Matchings are made after the SolidaryMatchings)
         $this->solidaryMatchingRepository->linkRelatedSolidaryMatchings($solidary->getId());
 
+        // check if the solidary record is the parent of another solidary record
+        if ($child = $this->solidaryRepository->getChild($solidary)) {
+            $solidary->setAdminSolidaryChildId($child->getId());
+        }
+
         // create schedules
         $schedules = [];
         $days = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ];
