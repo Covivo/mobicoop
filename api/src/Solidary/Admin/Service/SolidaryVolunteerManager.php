@@ -108,7 +108,7 @@ class SolidaryVolunteerManager
         $solidaryVolunteer->setGender($solidaryUser->getUser()->getGender());
         $solidaryVolunteer->setBirthDate($solidaryUser->getUser()->getBirthDate());
         $solidaryVolunteer->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
-        $solidaryVolunteer->setHomeAddress($solidaryUser->getUser()->getHomeAddress()->jsonSerialize());
+        $solidaryVolunteer->setHomeAddress($solidaryUser->getUser()->getHomeAddress() ? $solidaryUser->getUser()->getHomeAddress()->jsonSerialize() : null);
         $solidaryVolunteer->setAvatar($solidaryUser->getUser()->getAvatar());
         $solidaryVolunteer->setMMinTime($solidaryUser->getMMinTime());
         $solidaryVolunteer->setMMaxTime($solidaryUser->getMMaxTime());

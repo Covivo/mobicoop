@@ -1375,7 +1375,7 @@ class Solidary
      */
     public function getAdminhomeAddress(): ?array
     {
-        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize();
+        return $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress() ? $this->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getHomeAddress()->jsonSerialize() : null;
     }
     
     /**
