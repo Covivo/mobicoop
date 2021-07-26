@@ -27,6 +27,7 @@ use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Community\Repository\CommunityRepository;
 use App\Stats\Entity\Indicator;
+use App\User\Repository\UserRepository;
 use DateTime;
 
 /**
@@ -39,15 +40,18 @@ class StatsManager
     private $proposalRepository;
     private $communityRepository;
     private $carpoolProofRepository;
+    private $userRepository;
 
     public function __construct(
         ProposalRepository $proposalRepository,
         CommunityRepository $communityRepository,
-        CarpoolProofRepository $carpoolProofRepository
+        CarpoolProofRepository $carpoolProofRepository,
+        UserRepository $userRepository
     ) {
         $this->proposalRepository = $proposalRepository;
         $this->communityRepository = $communityRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -70,9 +74,9 @@ class StatsManager
         $proposals = $this->proposalRepository->findBetweenCreateDate($startDate, $endDate);
         $indicators = $this->addIndicator($indicators, "proposals_last_month", (is_array($proposals)) ? count($proposals) : 0);
 
-        // Active users
-        // TO DO : What's an active User????
-        $indicators = $this->addIndicator($indicators, "users_active", 0);
+        // Active users (connection in the last 6 months)
+        $users = $this->userRepository->findActiveUsers();
+        $indicators = $this->addIndicator($indicators, "users_active", (is_array($users)) ? count($users) : 0);
 
         // Number of communities
         $communities = $this->communityRepository->findAll();

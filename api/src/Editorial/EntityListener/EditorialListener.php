@@ -54,14 +54,4 @@ class EditorialListener
             $this->editorialRepository->setInactive($editorial);
         }
     }
-
-    /** @ORM\PostLoad */
-    public function postLoad(Editorial $editorial, LifecycleEventArgs $args)
-    {
-        if (is_array($editorial->getImages()) && count($editorial->getImages())>0) {
-            foreach ($editorial->getImages() as $image) {
-                $image->setFilename($this->dataUri."editorials/images/".$image->getFilename());
-            }
-        }
-    }
 }
