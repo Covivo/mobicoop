@@ -49,10 +49,10 @@
         "avatar": {
             "size": "Irudiaren tamaina maximoa gainditu duzu",
             "required": "Ekitaldiaren izena baitezpadakoa da",
-            "label": "Ekitaldiaren izena*"
+            "label": "Ekitaldiaren irudia*"
         },
         "fullDescription": {
-            "required": "Ekitaldiaren aurkezpen xehea baitezpadakoa da",
+            "required": "Ekitaldiaren aurkezpen xehea beharrezkoa da",
             "label": "Ekitaldiaren aurkezpen zehatza*"
         },
         "description": {
