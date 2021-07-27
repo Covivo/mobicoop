@@ -63,8 +63,8 @@
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Akats bat gertatu da berriz entsea zaitez",
-            "textOk": "Ez zira gehiago komunitatea honen kide"
+            "textError": "Akats bat gertatu da, berriz entsea zaitez",
+            "textOk": "Ez zira gehiago komunitate honen kide"
         },
         "joinCommunity": {
             "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
