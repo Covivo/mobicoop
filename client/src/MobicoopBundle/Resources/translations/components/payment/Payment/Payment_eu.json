@@ -1,7 +1,7 @@
 {
     "tipsEncouragement": {
         "link": "https://www.zeste.coop/fr/mobicoop",
-        "textLink": "emaitza bat eginez hemen",
+        "textLink": "emaitza bat hemen",
         "text": "{platformName}, komisiorik eta iragarkirik gabeko zerbitzu libre bat da. Aldiz, esku ukaldi bat eman zenezake plataforma indarrean atxikitzeko, ondoko hau eginez"
     },
     "loadingPageText": "Egin edo baieztatu behar diren ordainketen kargatzea",
@@ -49,8 +49,8 @@
     },
     "directPaymentReceived": "Ordainketa eskuz esku errezibitu dut | ordainketa eskuz errezibitua",
     "directPay": "Eskuz esku ordaindu dut",
-    "electronicPay": "Linean ordaintzen dut",
-    "sumToPay": "Orotara ondaintzekoa:{price} €",
+    "electronicPay": "Linean pagatzen dut",
+    "sumToPay": "Pagatzeko den diru zenbatekoa:{price} €",
     "price": "Diru zenbatekoa:{price} €",
     "return": "Itzultzea",
     "outward": "Joan",
