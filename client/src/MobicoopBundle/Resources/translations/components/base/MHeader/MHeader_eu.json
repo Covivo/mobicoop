@@ -13,7 +13,7 @@
         },
         "myProfile": {
             "route": "/utilisateur/profil/modifier",
-            "label": "Nire perfila"
+            "label": "Nire profila"
         },
         "messages": {
             "route": "/utilisateur/messages",
