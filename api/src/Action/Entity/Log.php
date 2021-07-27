@@ -125,7 +125,7 @@ class Log
     /**
      * @var Proposal|null The proposal if the action concerns a proposal.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $proposal;
