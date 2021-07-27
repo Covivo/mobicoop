@@ -423,6 +423,7 @@ class Proposal
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
         $this->results = [];
+        $this->setProposalLinked(null);
     }
 
     public function getId(): ?int
@@ -597,7 +598,7 @@ class Proposal
         
         // set (or unset) the owning side of the relation if necessary
         $newProposalLinked = $proposalLinked === null ? null : $this;
-        if ($newProposalLinked !== $proposalLinked->getProposalLinked()) {
+        if ($proposalLinked && $newProposalLinked !== $proposalLinked->getProposalLinked()) {
             $proposalLinked->setProposalLinked($newProposalLinked);
         }
         

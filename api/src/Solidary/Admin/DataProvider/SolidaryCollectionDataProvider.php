@@ -111,6 +111,12 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         $repository = $manager->getRepository($resourceClass);
         $queryBuilder = $repository->createQueryBuilder('s');
         $queryNameGenerator = new QueryNameGenerator();
+
+        // we limit to the solidary records that have not been closed for edition
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $queryBuilder
+            ->andWhere("$rootAlias.status != :status")
+            ->setParameter('status', Solidary::STATUS_CLOSED_FOR_EDITION);
         
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $newContext);

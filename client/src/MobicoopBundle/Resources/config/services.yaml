@@ -107,6 +107,11 @@ services:
             $tokenId: '%env(resolve:API_TOKEN_ID)%'
         shared: false
 
+    # Default Controller
+    Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController:
+        arguments:
+            $searchComponentHorizontal: '%env(bool:CARPOOL_SEARCH_HORIZONTAL)%'
+
     # Event
     Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
         resource: '@MobicoopBundle/Event/Controller/*'

@@ -10,6 +10,6 @@
     "tokenRequired": "zure egiaztapen kodea baitezpadakoa da",
     "urlEmailValidation": "/utilisateur/login-token/email",
     "urlSignUpValidation": "/utilisateur/login-token",
-    "token": "Zure kodearen egiaztapena",
-    "title": "Zure emailaren egiaztapena"
+    "token": "Zure egiaztapen kodea",
+    "title": "Zure e-mezuaren egiaztatzea"
 }

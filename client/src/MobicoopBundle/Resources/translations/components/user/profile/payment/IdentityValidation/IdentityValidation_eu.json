@@ -21,8 +21,8 @@
     "fileInput": {
         "tooltip": "Dokumentuak jpg, jpeg, png edo pdf formatuan izan behar dira eta ez dute 6MB gainditu behar",
         "error": "Dokumentuak ez ditu 6MB gainditu behar",
-        "label": "Nortasun agiria eguneratua"
+        "label": "Nortasun agiri eguneratua"
     },
-    "text": "<p>Nortasun egiaztapena eguneratua den nortasun agiri batetik (nortasun agiriaren aitzin eta gibelaldea, pasaportea, gidabaimena) egitea legezko betebehar bat da ordainketak eskuratu ahal izateko. Betebehar hori dirua zuritzeketak saihesteko egiten da..</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena zure perfilean komunikatu dituzun izen-deitura eta zure nortasun agiriko izen-deiturarekin konparatzen da. Beraz otoi informazio zuzenak eman itzazu zure perfilean.</p><p>Gure partaidearen dokumentuaren baieztapen baldintzak irakur ditzazkezu<a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
-    "title": "3.Nortasun egiaztatzea"
+    "text": "<p>Eguneratua den nortasun agiri bati oinarritua den nortasun egiaztapena (nortasun agiriaren aitzinaldea eta gibelaldea, pasaportea, gidabaimena) legezko betebehar bat da diruaren eskuratzeko. Betebehar hori egina da diru zuritzeen kontra borrokatzeko.</p><p>Ordainketarentzat beharrezkoa den nortasun egiaztapena egiten da, zure profilean sartuak diren izen-deiturak, zure nortasun agirian sartuak direnekin konparatuz. Ondorioz, segurta zaitez informazio zuzenak sartu dituzula zure profilean.</p><p>Nortasun agiri dokumentu baten egiazkotzeko baldintzak irakur ditzakezu gure partaidearen loturan <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
+    "title": "3. Nortasunaren egiaztatzea"
 }

@@ -24,6 +24,7 @@
         :url-mobile="{{urlMobile|json_encode}}"
         :informative-message-active="{{ informativeMessageActive is defined ? informativeMessageActive ? "true" : "false" : "false" }}"
         informative-message-text="{{ informativeMessageText is defined ? informativeMessageText : "" }}"
+        :search-component-horizontal="{{ searchComponentHorizontal is defined ? searchComponentHorizontal ? "true" : "false" : "false" }}"
     />
 {% endblock %}
 

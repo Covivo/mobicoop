@@ -135,8 +135,11 @@ class SolidaryBeneficiaryManager
             }
         }
         $solidaryBeneficiary->setStructures($beneficiaryStructures);
-        // reorder diaries
+        // reorder diaries by date and solidary id
         usort($diaries, function ($a, $b) {
+            if ($a['date'] == $b['date']) {
+                return $b['solidary'] <=> $a['solidary'];
+            }
             return $b['date'] <=> $a['date'];
         });
         $solidaryBeneficiary->setDiaries($diaries);

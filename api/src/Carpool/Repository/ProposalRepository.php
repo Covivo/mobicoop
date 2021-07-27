@@ -883,7 +883,7 @@ class ProposalRepository
         // echo '(' . $punctualAndWhere . ' or ' .$regularAndWhere . ')';
         // var_dump($query->getQuery()->getSql());
         // foreach ($query->getQuery()->getParameters() as $parameter) {
-        //     echo $parameter->getName() . " " . $parameter->getValue();
+        //     echo $parameter->getName() . " " . ($parameter->getValue() instanceof User ? $parameter->getValue()->getId() : $parameter->getValue());
         // }
         // exit;
         //var_dump(count($query->getQuery()->getParameters()));exit;
