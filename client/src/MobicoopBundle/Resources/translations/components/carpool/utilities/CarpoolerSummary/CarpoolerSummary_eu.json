@@ -22,7 +22,7 @@
                 },
                 "cancel": "Ezeztatu",
                 "instructions": {
-                    "line2": "Pentsa ezazu, harremanetan jartzeko modu bat bederen uztea; hots zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera izan dezan",
+                    "line2": "Pentsa ezazu, harremanetan jartzeko modu bat bederen uztea; hots, zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera izan dezan",
                     "line1": "Milesker azpi honetako mezua osatzea edo aldatzeagatik."
                 },
                 "intro": "Iragarki hau ez dator gure autokidetza webgunetik baina {origin} webgune partaidetik",
