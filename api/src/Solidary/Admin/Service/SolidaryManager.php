@@ -2441,7 +2441,8 @@ class SolidaryManager
             }
         }
 
-        return $this->adManager->createAd($ad);
+        // do not retrieve results to avoid unwanted side effects (as results can require data that is not present / not well formed on the current ad, eg. flexible ads)
+        return $this->adManager->createAd($ad, true, true, false);
     }
 
     private function getTimeAndMarginForStructure(Structure $structure)

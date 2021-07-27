@@ -229,8 +229,12 @@ class MyAdManager
             /**
              * @var Matching $matchingRequest
              */
-            // we exclude private proposals for the carpooler count
-            if (!$matchingRequest->getProposalRequest()->isPrivate() && !in_array($matchingRequest->getProposalRequest()->getUser()->getId(), $carpoolers)) {
+            // we exclude private proposals for the carpooler count, as well as solidaries
+            if (
+                !$matchingRequest->getProposalRequest()->isPrivate() &&
+                !$matchingRequest->getProposalRequest()->getSolidary() &&
+                !in_array($matchingRequest->getProposalRequest()->getUser()->getId(), $carpoolers)
+            ) {
                 $carpoolers[] = $matchingRequest->getProposalRequest()->getUser()->getId();
             }
             // check for asks (passengers)
