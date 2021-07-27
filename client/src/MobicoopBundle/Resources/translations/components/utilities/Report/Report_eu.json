@@ -18,13 +18,13 @@
             "email": {
                 "errors": {
                     "valid": "Helbide elektronikoa bali izan behar da.",
-                    "required": "Helbide elektronikoa baitezpadakoa da"
+                    "required": "Helbide elektronikoa beharrezkoa da"
                 },
                 "label": "Milesker zure helbide elektronikoa zehazteagatik"
             }
         },
         "user": {
-            "content": "\"<strong>{userName}</strong>\"-ren jarrera desegokia seinalatu nahi zenuke? ",
+            "content": "\"<strong>{userName}</strong>\"-ren jarrera desegokia seinalatu nahi duzu? ",
             "title": "Erabiltzaile baten seinalatzea"
         },
         "event": {
