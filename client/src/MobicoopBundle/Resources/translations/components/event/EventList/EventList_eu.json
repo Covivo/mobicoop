@@ -4,7 +4,7 @@
         "getList": "/evenements/getEventList",
         "event": "/covoiturages-evenements/{id}/{urlKey}"
     },
-    "noEvent": "Ez da ekitaldirik",
+    "noEvent": "Ekitaldirik ez",
     "endEvent": "Bukaera",
     "startEvent": "Hastapena",
     "all": "Denak",
