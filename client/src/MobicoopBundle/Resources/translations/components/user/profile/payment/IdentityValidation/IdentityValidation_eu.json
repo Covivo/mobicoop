@@ -12,9 +12,9 @@
             "3": "Dokumentua errefusatua faltsifikatua izan baita",
             "2": "Dokumentua errefusatu heldua izan behar zirelako",
             "1": "Zure datu pertsonalak aldatuak izan dira, zure nortasuna berriz egiazta ezazu",
-            "0": "Dokumentua errefusatua"
+            "0": "Dokumentu ez onartua"
         },
-        "outdated": "Dokumentua baliogabetua",
+        "outdated": "Epemugaz kanpoko dokumentua",
         "validated": "Nortasuna egiaztatua izan da",
         "pending": "Dokumentua egiaztatzen ari da"
     },
