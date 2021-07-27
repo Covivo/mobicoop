@@ -21,7 +21,7 @@
     "newSearch": "Bilaketa berria",
     "search3": "Igurika pixkat gehiago...",
     "search2": "Pazientzia, autokidetza potentzial ainiz badugu!",
-    "search": "Bilaketa eiten ari...",
+    "search": "Bilaketa egiten ari...",
     "ptSearchUrl": "/transport-public/recherche",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "mailboxUrl": "/utilisateur/messages/covoiturage/{askId}",
