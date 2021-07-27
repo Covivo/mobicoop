@@ -44,7 +44,7 @@
     },
     "firstName": {
         "errors": {
-            "required": "Zure izena beharrezkoa da"
+            "required": "Izena beharrezkoa da"
         },
         "placeholder": "Zure izena",
         "label": "Zure izena"
