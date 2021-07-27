@@ -14,8 +14,8 @@
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Akats bat gertatu da berriz entsea zaitez",
-            "textOk": "Ez zira gehiago komunitatea honen kide"
+            "textError": "Akats bat gertatu da, berriz entsea zaitez",
+            "textOk": "Ez zira gehiago komunitate honen kide"
         }
     },
     "protected": "Kideek ezin dute haien komunitatea ikusi",
