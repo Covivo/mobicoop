@@ -1,10 +1,10 @@
 {
     "tipsEncouragement": {
         "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre",
-        "textLink": "emaitza bat eginez hemen",
+        "textLink": "emaitza bat hemen",
         "text": "{platformName}, komisiorik eta iragarkirik gabeko zerbitzu libre bat da. Aldiz, esku ukaldi bat eman zenezake plataforma indarrean atxikitzeko, ondoko hau eginez"
     },
-    "paymentFailed": "Akats bat agertatu da, zure ordainketa ez da erregistratua izan.",
+    "paymentFailed": "Akats bat gertatu da, zure ordainketa ez da erregistratua izan.",
     "paymentSucceeded": "Zure ordainketa erregistratua izan da.",
     "noPaymentPaymentId": "Ordainketa honen estatusa ezin da atzeman.",
     "checkUrl": "/payment/status",
