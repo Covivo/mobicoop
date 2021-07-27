@@ -11,7 +11,7 @@
         },
         "connectionActive": {
             "mandatoryOrNot": "Beharrezko cookie-ak",
-            "desc": "Zure konexio aktiboa mantendu"
+            "desc": "Zure konexioa indarrean atxiki"
         }
     },
     "privacyPolicy": {
@@ -22,7 +22,7 @@
         "text": "Xehetasun gehiago gure datuen kudeaketaz, bertan"
     },
     "working": {
-        "line2": "Aktibatu nahi dituzun cookies-ak libreki haut itzazu",
+        "line2": "Aktibatu nahi dituzun cookies-ak libreki hauta itzazu",
         "line1": "Funtzionatzeko, webgune honek cookies-ak erabiltzen ditu"
     },
     "store": "Erregistratu",
