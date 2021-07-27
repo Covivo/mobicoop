@@ -17,7 +17,7 @@
                         "phone": "Nire telefono zenbakia {phone} da",
                         "email": "Nire e-maila {email} da",
                         "name": "Nire deitura {name} da",
-                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak zuzenki harremanetan jar gaitezen"
+                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak, zuzenean harremanetan jartzeko"
                     }
                 },
                 "cancel": "Ezeztatu",
