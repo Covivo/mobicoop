@@ -1,7 +1,7 @@
 {
     "logOut": {
         "route": "/user/logout",
-        "label": "Dekonexioa"
+        "label": "Deskonexioa"
     },
     "reviews": {
         "route": "/utilisateur/profil/modifier/avis",
