@@ -2,10 +2,10 @@
     "blockUrl": "/user/block",
     "block": "Blokatu",
     "blocked": "Blokatua",
-    "userDelete": "Erabiltzailea desinskriatua da",
+    "userDelete": "Erabiltzailea desinskribatua da",
     "priceTooltip": "Prezio indikatiboa",
     "price": "Prezioa",
-    "seatsAvailable": "Libro diren lekuak",
+    "seatsAvailable": "Libre diren lekuak",
     "distanceTooltip": "Egina izan den autokidetzaren distantzia, gidariaren itzulingurua kontuan hartuz",
     "distance": "Distantzia",
     "regular": {
