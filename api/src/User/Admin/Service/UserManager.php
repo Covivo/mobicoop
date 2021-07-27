@@ -275,7 +275,7 @@ class UserManager
      * Create a User object from an array
      *
      * @param array $auser      The user to create, as an array
-     * @param bool $persist     Should we persist the ne User immediately
+     * @param bool $persist     Should we persist the new User immediately
      * @return User             The User object
      */
     public function createUserFromArray(array $auser, bool $persist = false)

@@ -147,7 +147,7 @@ class Subject
     /**
      * @var ArrayCollection|null The solidary records for this subject.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject")
      * @Groups({"writeSolidary"})
      */
     private $solidaries;

@@ -869,6 +869,129 @@ class Address implements \JsonSerializable
         }
     }
 
+
+    /**
+     * Check if the current address is the same than the one given as an array.
+     * Note : the method checks only geographical data.
+     *
+     * @param array $compare    The array thant contains the address to compare
+     * @return boolean
+     */
+    public function isSame(array $compare, bool $replace = false)
+    {
+        if (isset($compare['streetAddress']) && $this->getStreetAddress() != $compare['streetAddress']) {
+            return false;
+        }
+        if (isset($compare['postalCode']) && $this->getPostalCode() != $compare['postalCode']) {
+            return false;
+        }
+        if (isset($compare['addressLocality']) && $this->getAddressLocality() != $compare['addressLocality']) {
+            return false;
+        }
+        if (isset($compare['addressCountry']) && $this->getAddressCountry() != $compare['addressCountry']) {
+            return false;
+        }
+        if (isset($compare['latitude']) && $this->getLatitude() != $compare['latitude']) {
+            return false;
+        }
+        if (isset($compare['longitude']) && $this->getLongitude() != $compare['longitude']) {
+            return false;
+        }
+        if (isset($compare['houseNumber']) && $this->getHouseNumber() != $compare['houseNumber']) {
+            return false;
+        }
+        if (isset($compare['subLocality']) && $this->getSubLocality() != $compare['subLocality']) {
+            return false;
+        }
+        if (isset($compare['localAdmin']) && $this->getLocalAdmin() != $compare['localAdmin']) {
+            return false;
+        }
+        if (isset($compare['county']) && $this->getCounty() != $compare['county']) {
+            return false;
+        }
+        if (isset($compare['macroCounty']) && $this->getMacroCounty() != $compare['macroCounty']) {
+            return false;
+        }
+        if (isset($compare['region']) && $this->getRegion() != $compare['region']) {
+            return false;
+        }
+        if (isset($compare['macroRegion']) && $this->getMacroRegion() != $compare['macroRegion']) {
+            return false;
+        }
+        if (isset($compare['countryCode']) && $this->getCountryCode() != $compare['countryCode']) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Replace elements of an address with the given array.
+     *
+     * @param array $fields The array thant contains the new address elements
+     * @return bool     True if the address was updated
+     */
+    public function replaceBy(array $fields): bool
+    {
+        $updated = false;
+        if (isset($fields['streetAddress']) && $this->getStreetAddress() != $fields['streetAddress']) {
+            $updated = true;
+            $this->setStreetAddress($fields['streetAddress']);
+        }
+        if (isset($fields['postalCode']) && $this->getPostalCode() != $fields['postalCode']) {
+            $updated = true;
+            $this->setPostalCode($fields['postalCode']);
+        }
+        if (isset($fields['addressLocality']) && $this->getAddressLocality() != $fields['addressLocality']) {
+            $updated = true;
+            $this->setAddressLocality($fields['addressLocality']);
+        }
+        if (isset($fields['addressCountry']) && $this->getAddressCountry() != $fields['addressCountry']) {
+            $updated = true;
+            $this->setAddressCountry($fields['addressCountry']);
+        }
+        if (isset($fields['latitude']) && $this->getLatitude() != $fields['latitude']) {
+            $updated = true;
+            $this->setLatitude($fields['latitude']);
+        }
+        if (isset($fields['longitude']) && $this->getLongitude() != $fields['longitude']) {
+            $updated = true;
+            $this->setLongitude($fields['longitude']);
+        }
+        if (isset($fields['houseNumber']) && $this->getHouseNumber() != $fields['houseNumber']) {
+            $updated = true;
+            $this->setHouseNumber($fields['houseNumber']);
+        }
+        if (isset($fields['subLocality']) && $this->getSubLocality() != $fields['subLocality']) {
+            $updated = true;
+            $this->setSubLocality($fields['subLocality']);
+        }
+        if (isset($fields['localAdmin']) && $this->getLocalAdmin() != $fields['localAdmin']) {
+            $updated = true;
+            $this->setLocalAdmin($fields['localAdmin']);
+        }
+        if (isset($fields['county']) && $this->getCounty() != $fields['county']) {
+            $updated = true;
+            $this->setCounty($fields['county']);
+        }
+        if (isset($fields['macroCounty']) && $this->getMacroCounty() != $fields['macroCounty']) {
+            $updated = true;
+            $this->setMacroCounty($fields['macroCounty']);
+        }
+        if (isset($fields['region']) && $this->getRegion() != $fields['region']) {
+            $updated = true;
+            $this->setRegion($fields['region']);
+        }
+        if (isset($fields['macroRegion']) && $this->getMacroRegion() != $fields['macroRegion']) {
+            $updated = true;
+            $this->setMacroRegion($fields['macroRegion']);
+        }
+        if (isset($fields['countryCode']) && $this->getCountryCode() != $fields['countryCode']) {
+            $updated = true;
+            $this->setCountryCode($fields['countryCode']);
+        }
+
+        return $updated;
+    }
     
     public function jsonSerialize()
     {

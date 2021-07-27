@@ -27,6 +27,7 @@ use App\Action\Exception\ActionException;
 use App\Action\Repository\ActionRepository;
 use App\Action\Service\DiaryManager;
 use App\Solidary\Admin\Event\SolidaryCreatedEvent;
+use App\Solidary\Admin\Event\SolidaryDeeplyUpdated;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -48,7 +49,8 @@ class SolidaryAdminSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            SolidaryCreatedEvent::NAME => 'onSolidaryCreated'
+            SolidaryCreatedEvent::NAME => 'onSolidaryCreated',
+            SolidaryDeeplyUpdated::NAME => 'onSolidaryDeeplyUpdated'
         ];
     }
 
@@ -65,6 +67,22 @@ class SolidaryAdminSubscriber implements EventSubscriberInterface
             $event->getSolidary(),
             null,
             0
+        );
+    }
+
+    public function onSolidaryDeeplyUpdated(SolidaryDeeplyUpdated $event)
+    {
+        if (!$action = $this->actionRepository->findOneBy(['name'=>SolidaryDeeplyUpdated::NAME])) {
+            throw new ActionException(ActionException::BAD_ACTION);
+        }
+        $this->diaryManager->addDiaryEntry(
+            $action,
+            $event->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser(),
+            $event->getPoster(),
+            null,
+            $event->getSolidary(),
+            null,
+            null
         );
     }
 }

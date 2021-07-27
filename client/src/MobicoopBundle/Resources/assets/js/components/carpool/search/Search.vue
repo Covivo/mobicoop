@@ -1,6 +1,7 @@
 <template>
   <v-main>
     <v-container
+      v-if="!horizontal"
       grid-list-md
       text-xs-center
     >
@@ -8,6 +9,7 @@
         justify="center"
       >
         <v-col
+          
           cols="12"
           :xl="fullSize ? 12 : results ? 12 : 6"
           :lg="fullSize ? 12 : results ? 12 : 6"
@@ -32,6 +34,7 @@
 
       <!-- Buttons -->
       <v-row
+        v-if="!horizontal"
         justify="center"
       >
         <v-col
@@ -102,6 +105,21 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-row v-else-if="horizontal">
+      <v-col
+          
+        cols="12"
+      >
+        <search-journey-horizontal
+          :geo-search-url="geoSearchUrl"
+          :user="user"
+          :init-regular="dataRegular"
+          :punctual-date-optional="punctualDateOptional"
+          @change="searchChanged"
+          @search="search"
+        />
+      </v-col>
+    </v-row>
   </v-main>
 </template>
 
@@ -111,6 +129,7 @@ import {merge} from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/Search/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/search/Search/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
+import SearchJourneyHorizontal from '@components/carpool/search/SearchJourneyHorizontal.vue';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -127,7 +146,8 @@ export default {
     }
   },
   components: {
-    SearchJourney
+    SearchJourney,
+    SearchJourneyHorizontal
   },
   props: {
     geoSearchUrl: {
@@ -202,8 +222,11 @@ export default {
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
+    },
+    horizontal:{
+      type: Boolean,
+      default: false
     }
-
   },
   data() {
     return {

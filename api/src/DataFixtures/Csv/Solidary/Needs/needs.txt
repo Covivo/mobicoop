@@ -2,3 +2,4 @@ id
 solidary_id
 label
 private
+label_volunteer

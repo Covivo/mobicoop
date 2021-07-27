@@ -106,6 +106,7 @@ class SolidaryFixturesManager
         if ($this->fixturesSolidary) {
             echo "Clearing Solidary database... " . PHP_EOL;
             $sql = "
+            TRUNCATE `need`;
             TRUNCATE `operate`;
             TRUNCATE `proof`;
             TRUNCATE `solidary`;
@@ -261,6 +262,7 @@ class SolidaryFixturesManager
         
         $need->setLabel($tab[2]);
         $need->setPrivate($tab[3]);
+        $need->setLabelVolunteer($tab[4]);
         $this->entityManager->persist($need);
         $this->entityManager->flush();
     }

@@ -77,6 +77,12 @@
 /api/public/upload/communities/images/versions/*.jpeg
 /api/public/upload/communities/images/versions/*.png
 /api/public/upload/communities/security/*
+/api/public/upload/editorials/images/*.jpg
+/api/public/upload/editorials/images/*.jpeg
+/api/public/upload/editorials/images/*.png
+/api/public/upload/editorials/images/versions/*.jpg
+/api/public/upload/editorials/images/versions/*.jpeg
+/api/public/upload/editorials/images/versions/*.png
 /api/public/upload/mass/files/*.csv
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
