@@ -16,7 +16,7 @@
         },
         "title": "Zure iragarkia aldatu",
         "unavailable": "Ezin duzu iragarki hori aldatu.",
-        "error": "Zure iragarkia aldatzerakoan akats bat agertu da.",
+        "error": "Akats bat gertatu da zure iragarkia aldatzerakoan",
         "success": "Zure iragarkia aldatua izan da."
     },
     "create": {
