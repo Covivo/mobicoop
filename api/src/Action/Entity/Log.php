@@ -141,7 +141,7 @@ class Log
     /**
      * @var Ask|null The ask if the action concerns an ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $ask;
@@ -205,7 +205,7 @@ class Log
     /**
      * @var Message|null The message if the action concerns a message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message")
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $message;
@@ -221,7 +221,7 @@ class Log
     /**
      * @var CarpoolPayment|null The carpoolPayment if the action concerns a carpoolPayment.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment")
+     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $carpoolPayment;
@@ -229,7 +229,7 @@ class Log
     /**
      * @var CarpoolItem|null The carpoolPayment if the action concerns a carpoolItem.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolItem")
+     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolItem", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $carpoolItem;
