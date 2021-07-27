@@ -95,7 +95,7 @@
     },
     "givenName": {
         "errors": {
-            "required": "Izena baitezpadakoa da"
+            "required": "Izena beharrezkoa da"
         },
         "placeholder": "Izena"
     },
