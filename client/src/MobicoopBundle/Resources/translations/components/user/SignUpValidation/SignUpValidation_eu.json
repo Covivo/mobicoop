@@ -1,6 +1,6 @@
 {
-    "canValid": "Zure kontua baiezta dezakezu <strong>e-mezuko edukian </strong> baieztapen estekan klikatuz edo <strong>kopiatu-kolatu kodea</strong> zuzenean beherean.",
-    "validationMailSend": "Baieztapen e-mezua igorria izan da.",
+    "canValid": "Zure kontua baiezta dezakezu <strong>e-mezuko edukian </strong> baieztapen loturan klikatuz edo <strong>kopiatu-kolatu kodea</strong> zuzenean beherean.",
+    "validationMailSend": "Baieztapen e-mezu bat igorria izan da.",
     "almostDone": "Izen ematea kasik bukatua da.",
     "unknown": "Kode hau ez da ezagutua",
     "updateError": "Kode hori ez da, erregistratua den neholako kontu bati lotua",
