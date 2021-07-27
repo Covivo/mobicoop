@@ -28,8 +28,8 @@
         },
         "avatar": {
             "size": "Avatar-aren neurri handiena gainditua da",
-            "required": "Elkargoaren avatar-a baitezpadakoa da",
-            "label": "Elkargoaren avatar-a*"
+            "required": "Komunitatearen abatarra beharrezkoa da",
+            "label": "Komunitatearen abatarra*"
         },
         "fullDescription": {
             "required": "Komunitatearen deskribapen zehatza beharrezkoa da",
@@ -37,7 +37,7 @@
         },
         "description": {
             "required": "Komunitatearen deskribapen laburra beharrezkoa da",
-            "label": "*Komunitatearen deskribapen motza"
+            "label": "Komunitatearen deskribapen motza*"
         },
         "name": {
             "required": "Komunitatearen izena beharrezkoa da",
