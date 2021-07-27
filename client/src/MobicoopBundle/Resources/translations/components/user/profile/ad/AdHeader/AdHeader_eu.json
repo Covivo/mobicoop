@@ -2,9 +2,9 @@
     "pause": {
         "error": {
             "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
-            "unpause": "Akats bat gertatu da zure iragarkia ez da aktibatua izan"
+            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan"
         },
-        "info": "Kasu iragarkia pausan da!",
+        "info": "Kasu iragarkia pausan ezarria da!",
         "success": {
             "unpause": "Zure iragarkia aktiboa da orain.",
             "pause": "Zure iragarkia pausan ezarria da."
