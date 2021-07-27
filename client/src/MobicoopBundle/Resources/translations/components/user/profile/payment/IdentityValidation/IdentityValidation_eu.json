@@ -12,14 +12,14 @@
             "3": "Dokumentua errefusatua faltsifikatua izan baita",
             "2": "Dokumentua errefusatu heldua izan behar zirelako",
             "1": "Zure datu pertsonalak aldatuak izan dira, zure nortasuna berriz egiazta ezazu",
-            "0": "Dokumentua errefusatua"
+            "0": "Dokumentu ez onartua"
         },
-        "outdated": "Dokumentua baliogabetua",
-        "validated": "Nortasuna egiaztatua",
+        "outdated": "Epemugaz kanpoko dokumentua",
+        "validated": "Nortasuna egiaztatua izan da",
         "pending": "Dokumentua egiaztatzen ari da"
     },
     "fileInput": {
-        "tooltip": "Dokumentuak jpg, jpeg, png edo pdf formatuan izan behar dira eta ez dute 6MB gainditu behar",
+        "tooltip": "Dokumentua jpg, jpeg, png edo pdf formatuan izan behar da eta ez du 6MB gainditu behar",
         "error": "Dokumentuak ez ditu 6MB gainditu behar",
         "label": "Nortasun agiri eguneratua"
     },

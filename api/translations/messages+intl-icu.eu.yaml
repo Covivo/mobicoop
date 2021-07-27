@@ -5,7 +5,7 @@ shortdayThursday: Og.
 shortdayWednesday: Az.
 shortdayTuesday: As.
 shortdayMonday: Al.
-signature: 'Ondoko hitzordua'
+signature: 'Ikus arte'
 FollowUs: Segi gaitzazu
 Download: <b>Android</b> ou <b>IOS</b> aplikazioa telekarga ezazu
 URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
@@ -14,7 +14,8 @@ FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
 youHaveAMessage: Mezu berri bat errezibitu duzu
-updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun batzuk aldatuak izan dira
+updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun
+  batzuk aldatuak izan dira
 clickNewSearch: Zure bilaketa berrabiarazteko loturan klik egizu
 ownerMessage: 'Hona iragarki-jabearen mezua:'
 cancelledCarpool: Autokidetza ezeztatua da

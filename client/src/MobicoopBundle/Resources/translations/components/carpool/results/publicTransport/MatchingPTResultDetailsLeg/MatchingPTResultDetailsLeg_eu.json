@@ -1,7 +1,7 @@
 {
     "walkFromToDestination": "oinez ibili <span class='primary--text'>{departure}</span>-(e)tik <span class='primary--text'>{arrival}</span>-(e)ra",
     "walkFromToStop": "Oinez ibili <span class='primary--text'>{departure}</span> -(e)tik <span class='primary--text'>{arrival}</span>-(e)ra",
-    "hopOff": "Jaitsi",
+    "hopOff": "Jautsi",
     "hopOn": "Igo",
     "direction": "Norabidea",
     "waiting": "Igurikatu {duration}",

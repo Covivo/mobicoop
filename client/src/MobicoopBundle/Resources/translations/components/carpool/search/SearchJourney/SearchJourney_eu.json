@@ -8,8 +8,8 @@
         }
     },
     "swap": {
-        "help": "Abiatze eta iriste tokia gibelez aitzina ezartzeko klikatu",
-        "alt": "Iriste eta abiatzea gibelez aitzina ezarri"
+        "help": "Klik egizu abiapuntua eta helmuga gibelez aitzina ezartzeko",
+        "alt": "Abiapuntua eta helmuga gibelez aitzina ezar"
     },
     "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo zure bidaia proposa ezazu.",
     "title": "Mobicoop",
@@ -39,8 +39,8 @@
         }
     },
     "destination": {
-        "error": "Beharrezkoa",
-        "label": "Iristeko gunea"
+        "error": "Baitezpadakoa",
+        "label": "Heltze lekua"
     },
     "origin": {
         "error": "Baitezpadakoa",

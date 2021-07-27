@@ -3,14 +3,14 @@
         "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
         "textLink": "Eskuz esku edo linean ",
         "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-        "part1": "Mobicoop-en, zure autokidetzen ordainketak gehieneta horrela egiten dira "
+        "part1": "Mobicoop-en, zure autokidetzen ordainketa gehienak horrela egiten dira "
     },
     "tooltip": {
-        "message": "Iragakiari lotuak ez diren mezuak"
+        "message": "Iragarki bati lotuak ez diren mezuak"
     },
     "headersCategories": {
         "titleSolidary": "Elkartasunezkoa",
-        "titleLive": "Zuzena",
+        "titleLive": "Zuzenean",
         "titleCarpool": "Autokidetza"
     },
     "urlUpdateAsk": "/utilisateur/messages/updateAsk",

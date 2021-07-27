@@ -5,7 +5,7 @@
         "popup": {
             "content": {
                 "isProposalsHidden": "Komunitate pribatu honi lotuak diren iragarki baliodunak baldin badituzu oraino, iragarki hauek ezabatuak izanen dira. <br>Baieztatzen duzu?",
-                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu oraino, iragarki horiek ez dira gehiago komunitatekoak balire bezala markatuak izanen, komunitatetik ateratzen bazira.<br>Baieztatzen duzu?"
             },
             "title": "Baieztapen eskaera"
         },
@@ -14,8 +14,8 @@
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Huts bat agertu da berriz entsea ezazu",
-            "textOk": "Ez zira gehiago komunitatearen parte"
+            "textError": "Akats bat gertatu da, berriz entsea zaitez",
+            "textOk": "Ez zira gehiago komunitate honen kide"
         }
     },
     "protected": "Kideek ezin dute haien komunitatea ikusi",

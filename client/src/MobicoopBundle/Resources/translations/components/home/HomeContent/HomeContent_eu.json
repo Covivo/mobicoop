@@ -40,15 +40,15 @@
         },
         "button": {
             "route": "/#/carpools/solidary/home/request",
-            "label": "Esku ukaldi baten eskaera"
+            "label": "Esku ukaldi bat galdegiten dut"
         },
-        "text": "Elkar lagundu lanbide bat atzemateko",
+        "text": "Elkar lagundu lan baten atzemateko",
         "title": "ELKARTASUNEZKO AUTOKIDETZA"
     },
     "event": {
         "button": {
             "route": "/covoiturages-evenements",
-            "label": "Ekitaldiak ikusi"
+            "label": "Ekitaldiak ikus"
         },
         "title": "EKITALDIAK",
         "text": "Ekitaldi berdinera dihoazten autokideak atzeman."

@@ -1,13 +1,13 @@
 {
     "pause": {
         "error": {
-            "pause": "Akats bat agertu da, zure iragarkia geldialdian ezarri da.",
-            "unpause": "Huts bat agertu da zure iragarkia ez da aktibatu"
+            "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
+            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan"
         },
-        "info": "Kasu iragarkia pausan da!",
+        "info": "Kasu iragarkia pausan ezarria da!",
         "success": {
-            "unpause": "Zure iragarkia orain aktiboa da.",
-            "pause": "Zure iragarkia geldialdian da orain."
+            "unpause": "Zure iragarkia aktiboa da orain.",
+            "pause": "Zure iragarkia pausan ezarria da."
         }
     },
     "update": {

@@ -3,7 +3,7 @@
         "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
         "textLink": "Eskuz esku edo linean ",
         "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-        "part1": "Mobicoop-en, zure autokidetzen ordainketak gehieneta horrela egiten dira "
+        "part1": "Mobicoop-en, zure autokidetzen ordainketa gehienak horrela egiten dira "
     },
     "i18n": {
         "time": {
@@ -42,8 +42,8 @@
         "route": "/utilisateur/messages",
         "label": "Ikus mezuak"
     },
-    "alreadyInitiatedCarpool": "Iragarki honentzat jadanik harremanetan jarri zira.",
-    "alreadyAskCarpool": "Iragarki honentzat jadanik eskaera bat egin duzu.",
+    "alreadyInitiatedCarpool": "Harremanetan jadanik jarri zira iragarki honentzat.",
+    "alreadyAskCarpool": "Eskaera bat jadanik egin duzu iragarki honetan.",
     "carpoolAsPassenger": "Autokidetza egin bidaiari gisa",
     "carpoolAsDriver": "Autokidetza egin gidari gisa",
     "carpool": "Autokidetza egin",

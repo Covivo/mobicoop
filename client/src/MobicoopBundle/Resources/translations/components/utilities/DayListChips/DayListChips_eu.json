@@ -26,13 +26,14 @@
         },
         "mon": {
             "longName": "Astelehena",
-            "shortName": "As."
+            "shortName": "Al."
         },
         "list": [
             "Al.",
             "As.",
             "Az.",
-            "Os."
+            "Os.",
+            "Ol."
         ]
     }
 }
