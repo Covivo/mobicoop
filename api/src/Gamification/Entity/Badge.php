@@ -52,6 +52,15 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "summary"="Get the badges list of the instance",
  *                  "tags"={"Gamification"}
  *               }
+ *           },
+ *          "earned"={
+ *              "method"="GET",
+ *              "path"="/badges/earned",
+ *              "security"="is_granted('badge_list',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get the badges earned by a user",
+ *                  "tags"={"Gamification"}
+ *               }
  *           }
  *      },
  *      itemOperations={
@@ -83,7 +92,7 @@ class Badge
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
     private $id;
@@ -100,7 +109,7 @@ class Badge
      * @var string Badge's title. Used for display.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"readGamification","writeGamification","readPublicProfile"})
      */
     private $title;
 
@@ -132,7 +141,7 @@ class Badge
      * @var Image|null The Badges Icon
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge", cascade={"persist","remove"})
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"readGamification","writeGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
     private $icon;

@@ -124,10 +124,27 @@
               :user="user"
             />
           </v-col>
-        </v-row>
-        <v-row v-if="publicProfile && publicProfile.reviewActive && publicProfile.reviews.length > 0">
-          <v-col cols="12">
-            <Reviews :reviews="publicProfile.reviews" />
+        </v-row> 
+        <v-row>
+          <v-col
+            cols="8"
+            sm="12"
+          >
+            <v-row v-if="publicProfile && publicProfile.reviewActive && publicProfile.reviews.length > 0">
+              <v-col cols="12">
+                <Reviews :reviews="publicProfile.reviews" />
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col
+            cols="4"
+            sm="12"
+          >
+            <v-row v-if="publicProfile && publicProfile.badges.length > 0">
+              <v-col cols="12">
+                <Badges :badges="publicProfile.badges" />
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-col>
@@ -139,6 +156,7 @@ import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Reviews from "@components/utilities/Reviews/Reviews";
+import Badges from "@components/utilities/gamification/Badges";
 import Report from "@components/utilities/Report";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/PublicProfile/";
 export default {
@@ -153,7 +171,8 @@ export default {
   components: {
     ProfileAvatar,
     Report,
-    Reviews
+    Reviews,
+    Badges
   },
   props:{
     user:{

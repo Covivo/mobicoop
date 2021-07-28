@@ -80,6 +80,7 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\I18n\Repository\LanguageRepository;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Gamification\Service\GamificationManager;
 
 /**
  * User manager service.
@@ -115,6 +116,7 @@ class UserManager
     private $paymentActive;
     private $languageRepository;
     private $actionRepository;
+    private $gamificationManager;
 
     // Default carpool settings
     private $chat;
@@ -171,7 +173,8 @@ class UserManager
         PaymentProfileRepository $paymentProfileRepository,
         GeoTools $geoTools,
         LanguageRepository $languageRepository,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        GamificationManager $gamificationManager
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -209,6 +212,7 @@ class UserManager
         $this->geoTools = $geoTools;
         $this->languageRepository = $languageRepository;
         $this->actionRepository = $actionRepository;
+        $this->gamificationManager = $gamificationManager;
     }
 
     /**
@@ -1659,6 +1663,9 @@ class UserManager
             }
         }
 
+        // Set number of earned badges
+        $profileSummary->setNumberOfBadges(count($this->gamificationManager->getBadgesEarned($user)));
+
         return $profileSummary;
     }
 
@@ -1684,6 +1691,9 @@ class UserManager
         // Get the reviews about this user
         $publicProfile->setReviewActive($this->profile['userReview']);
         $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
+
+        // Get the user's badges
+        $publicProfile->setBadges($this->gamificationManager->getBadgesEarned($user));
 
         return $publicProfile;
     }

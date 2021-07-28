@@ -273,6 +273,33 @@ class GamificationManager
     }
 
     /**
+     * Get the Badges earned by a User
+     *
+     * @param User $user
+     * @return array|null
+     */
+    public function getBadgesEarned(User $user): ?array
+    {
+        // Get all the active badges of the platform
+        $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
+        $badges = [];
+
+        /**
+         * @var Badge $activeBadge
+         */
+        foreach ($activeBadges as $activeBadge) {
+          
+            // Determine if the badge is already earned
+            foreach ($activeBadge->getRewards() as $reward) {
+                if ($reward->getUser()->getId() == $user->getId()) {
+                    $badges[]=$activeBadge;
+                }
+            }
+        }
+        return $badges;
+    }
+
+    /**
      * Take a ValidationStep and take the necessary actions about it (RewardStep, Badge...)
      *
      * @param ValidationStep $validationStep   The ValidationStep to treat
