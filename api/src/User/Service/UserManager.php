@@ -1664,7 +1664,7 @@ class UserManager
         }
 
         // Set number of earned badges
-        $profileSummary->SetNumberOfBadges(count($this->gamificationManager->getBadgesEarned($user)));
+        $profileSummary->setNumberOfBadges(count($this->gamificationManager->getBadgesEarned($user)));
 
         return $profileSummary;
     }
