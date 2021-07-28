@@ -29,13 +29,13 @@ communities:
 solidary:
   title: Elkartasunezko autokidetza eskaera bat egin
 contact:
-  title: Gurekin harremanetan sartu
+  title: Gurekin harremanetan jarri
 journey:
   from_to:
-    title2: ' -tik '
-    title1: 'Komisiorik gabeko autokidetzak '
+    title2: ' Ondoko lekura '
+    title1: 'Komisiorik gabeko autokidetza '
   to:
-    title: 'Autokidetzak ondoko tokitik iritsiz '
+    title: 'Autokidetza ondoko tokitik iritsiz '
   from:
     title: 'Autokidetzak ondoko tokitik abiatuz '
   cities:
