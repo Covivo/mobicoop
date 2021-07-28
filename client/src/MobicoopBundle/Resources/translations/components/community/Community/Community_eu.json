@@ -69,12 +69,12 @@
         "joinCommunity": {
             "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
             "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
-            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
+            "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
     "tooltips": {
-        "domain": "Helbide eletronikoak ondoko eremu baten parte izan behar da:",
-        "validation": "Egiaztapena igurikatzen",
+        "domain": "Zure helbide eletronikoa ondoko domeinu hauetarik batekoa izan behar da:",
+        "validation": "Egiaztatzen ari",
         "connected": "Konektatua izan behar zira"
     },
     "joinCommunity": {
