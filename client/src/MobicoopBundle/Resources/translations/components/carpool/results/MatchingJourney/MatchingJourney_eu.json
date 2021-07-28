@@ -1,6 +1,6 @@
 {
     "fraudWarningText": {
-        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
+        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzera, ardura iruzurrezko pratikei lotuak baitira. Erabiltzaile bat seinala diezagukezu bere profilaren bidez.",
         "textLink": "Eskuz esku edo linean ",
         "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
         "part1": "Mobicoop-en, zure autokidetzen ordainketa gehienak horrela egiten dira "
@@ -27,14 +27,14 @@
     ],
     "maxDate": "ondoko eguna arte",
     "fromDate": "Ondoko egunetik goiti",
-    "detail": "Xehetasunak",
+    "detail": "Xehetasuna",
     "previous": "Aitzinekoa",
-    "return": "Itzultzeko bidaia bat hautatu",
-    "outward": "Joateko bidaia bat hautatu",
+    "return": "Itzultzeko bidaiak hautatu",
+    "outward": "Joateko bidaiak hautatu",
     "contactTips": {
-        "initiatedAsk": "Autokide honen eskaera batek erantzun bat igurikatzen du",
-        "pendingAsk": "Autokide honek erantzun bat igurikatzen du",
-        "acceptedAsk": "Autokide honekin jadanik autokidetza bat planifikatu duzu"
+        "initiatedAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da",
+        "pendingAsk": "Autokide honi igorria izan den eskaera baten erantzuna igurikatua da",
+        "acceptedAsk": "Autokidetza bat jadanik planifikatu duzu autokide honekin"
     },
     "contact": "Harremanetan jarri",
     "birthYears": "urte",
