@@ -1204,7 +1204,7 @@ class ProposalRepository
     }
 
     /**
-     * Get the proposals (private only) valid for a specific date (optional : a specific user)
+     * Get the proposals (not private only) valid for a specific date (optional : a specific user)
      *
      * @param \Datetime $date                   The date we want the Proposal valid for
      * @param User $user                        Optional : A specific User
@@ -1283,6 +1283,26 @@ class ProposalRepository
         ->where("p.event IS NOT NULL")
         ->andWhere("p.user = :user")
         ->setParameter("user", $user);
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find proposals (only not private and of type 1 or 2) created between startDate and endDate
+     *
+     * @param \DateTime $startDate  Range start date
+     * @param \DateTime $endDate    Range end date
+     * @return Proposals[]|null
+     */
+    public function findBetweenCreateDate(\DateTime $startDate, \DateTime $endDate)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->where("p.createdDate between :startDate and :endDate ")
+        ->andWhere("p.private = 0")
+        ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
+        ->setParameter("startDate", $startDate)
+        ->setParameter("endDate", $endDate)
+        ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
+        ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
         return $query->getQuery()->getResult();
     }
 }

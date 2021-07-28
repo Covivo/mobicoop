@@ -62,11 +62,6 @@ class Editorial implements ResourceInterface, \JsonSerializable
     private $link;
 
     /**
-     * @var int The status of the editorial (active/inactive).
-     */
-    private $status;
-    
-    /**
      * @var Image[]|null The images of the event.
      */
     private $images;
@@ -138,16 +133,6 @@ class Editorial implements ResourceInterface, \JsonSerializable
         $this->link = $link;
     }
 
-    public function getStatus(): int
-    {
-        return $this->status;
-    }
-    
-    public function setStatus(int $status)
-    {
-        $this->status = $status;
-    }
-    
     public function getImages()
     {
         return $this->images->getValues();
@@ -209,7 +194,6 @@ class Editorial implements ResourceInterface, \JsonSerializable
                 'text'   => $this->getText(),
                 'label'  => $this->getLabel(),
                 'link'   => $this->getLink(),
-                'status' => $this->getStatus(),
                 'images' => $this->getImages(),
             ];
     }

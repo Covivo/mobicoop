@@ -71,6 +71,8 @@ class ArticleController extends AbstractController
     const ABOUT_US = 31;
     const MOBILITY = 32;
     const LEGAL_NOTICE = 33;
+    const I_AM_PRIVATE_PERSON = 34;
+    const I_AM_SOCIETY = 35;
 
 
     /**
@@ -372,6 +374,24 @@ class ArticleController extends AbstractController
     public function showLegalNotice(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::LEGAL_NOTICE));
+    }
+
+    /**
+    * Display of the I'M A PRIVATE PERSON page
+    *
+    */
+    public function showIAmPrivatePerson(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::I_AM_PRIVATE_PERSON));
+    }
+
+    /**
+    * Display of the I'M A SOCIETY page
+    *
+    */
+    public function showIAmSociety(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::I_AM_SOCIETY));
     }
 
     /**
