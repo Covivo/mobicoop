@@ -103,6 +103,21 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
         }
 
+        if (isset($data['gamificationNotifications'])) {
+            // we remove RewardStep if he's associated to a gained badge
+            $badgeIds = [];
+            foreach ($data["gamificationNotifications"] as $gamificationNotification) {
+                if ($gamificationNotification["type"] == "Badge") {
+                    $badgeIds[] = $gamificationNotification["id"];
+                }
+            }
+            foreach ($data["gamificationNotifications"] as $key => $gamificationNotification) {
+                if ($gamificationNotification["type"] == "RewardStep" && in_array($gamificationNotification["badge"]["id"], $badgeIds)) {
+                    unset($data["gamificationNotifications"][$key]);
+                }
+            }
+        }
+
         $this->entityManager->flush();
         return $data;
     }
@@ -161,7 +176,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
                 "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
                 "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
-]
+            ]
         ];
     }
 }

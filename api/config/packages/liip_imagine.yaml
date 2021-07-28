@@ -8,6 +8,7 @@ liip_imagine:
         max:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 downscale:
@@ -15,6 +16,7 @@ liip_imagine:
         square_800:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 
@@ -23,6 +25,7 @@ liip_imagine:
         square_250:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 
@@ -31,6 +34,7 @@ liip_imagine:
         square_100:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 
@@ -39,6 +43,7 @@ liip_imagine:
         169_800:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~ 
                 thumbnail: 
@@ -47,6 +52,7 @@ liip_imagine:
         169_250:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~ 
                 thumbnail: 
@@ -55,6 +61,7 @@ liip_imagine:
         169_100:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 
@@ -63,6 +70,7 @@ liip_imagine:
         43_800:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~ 
                 thumbnail: 
@@ -71,6 +79,7 @@ liip_imagine:
         43_250:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 
@@ -79,6 +88,7 @@ liip_imagine:
         43_100:
             jpeg_quality: 70
             png_compression_level: 8
+            animated: true             
             filters:
                 auto_rotate: ~
                 thumbnail: 

@@ -20,7 +20,7 @@
             >
               {{ $t("wow") }}
             </v-card-title>
-            <v-card-subtitle>{{ $t("youWonABadge") }} <b>{{ $t(badge.text) }}</b></v-card-subtitle>
+            <v-card-subtitle>{{ $t("youWonABadge") }} <b>{{ $t(badge.title) }}</b></v-card-subtitle>
           </v-col>
           <v-col cols="5">
             <v-img
@@ -45,52 +45,34 @@
             justify="center"
           >
             <div class="my-4 text-subtitle-1 text-center">
-              {{ $t(badge.title) }}
+              {{ $t(badge.text) }}
             </div>
           </v-row>
-          <v-row
+          <!--  Not developped yet 
+        <v-row
             align="center"
             justify="center"
             class="mt-4"
           >
-            <v-tooltip
-              color="info"
-              right
+            <v-btn
+              rounded
+              color="primary"
+              disabled
             >
-              <template v-slot:activator="{ on }">
-                <v-div v-on="on">
-                  <v-btn
-                    rounded
-                    color="primary"
-                    disabled
-                  >
-                    {{ $t("button.label") }}
-                  </v-btn>
-                </v-div>
-              </template>
-              <span>Développement à venir</span>
-            </v-tooltip>
+              {{ $t("button.label") }}
+            </v-btn>
           </v-row> 
           <v-row
             align="center"
             justify="center"
           >
-            <v-tooltip
-              color="info"
-              right
-            >
-              <template v-slot:activator="{ on }">
-                <v-div v-on="on">
-                  <v-checkbox
-                    v-model="checkbox"
-                    disabled
-                    :label="$t('checkbox.label')"
-                  />
-                </v-div>
-              </template>
-              <span>Développement à venir</span>
-            </v-tooltip>
+            <v-checkbox
+              v-model="checkbox"
+              disabled
+              :label="$t('checkbox.label')"
+            />
           </v-row>
+            -->
         </v-card-text>
         <v-card-actions class="justify-end">
           <v-btn
