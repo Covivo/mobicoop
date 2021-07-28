@@ -50,7 +50,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *              "normalization_context"={"groups"={"readStats"}},
  *              "method"="GET",
  *              "path"="/indicators/home",
- *              "security"="is_granted('article_read',object)",
+ *              "security"="is_granted('stats_list',object)",
  *              "swagger_context" = {
  *                  "summary"="Get the statistics indicators used on Home page",
  *                  "tags"={"Stats"},

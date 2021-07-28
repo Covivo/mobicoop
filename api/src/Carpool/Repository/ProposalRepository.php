@@ -1298,9 +1298,11 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
         ->where("p.createdDate between :startDate and :endDate ")
         ->andWhere("p.private = 0")
-        ->andWhere("p.type = 1 or p.type = 2")
+        ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
         ->setParameter("startDate", $startDate)
-        ->setParameter("endDate", $endDate);
+        ->setParameter("endDate", $endDate)
+        ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
+        ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
         return $query->getQuery()->getResult();
     }
 }
