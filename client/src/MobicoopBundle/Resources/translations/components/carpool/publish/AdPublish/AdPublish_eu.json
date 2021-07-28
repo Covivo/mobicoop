@@ -15,8 +15,8 @@
             }
         },
         "title": "Zure iragarkia aldatu",
-        "unavailable": "Ezin duzu iragarki hori aldatu.",
-        "error": "Akats bat gertatu da zure iragarkia aldatzerakoan",
+        "unavailable": "Iragarki hau ezin duzu aldatu.",
+        "error": "Akats bat gertatu da zure iragarkia aldatzerakoan.",
         "success": "Zure iragarkia aldatua izan da."
     },
     "create": {
@@ -72,14 +72,14 @@
                 },
                 "seats": {
                     "passengers": " Bidaiaria(k)",
-                    "question": "Tokiak baditut XXX-rentzat "
+                    "question": "Horrenbesteko leku bad(it)ut "
                 }
             }
         },
         "header": {
             "summary": "Laburbilduma",
             "message": "Mezua",
-            "participation": "Parte hartea",
+            "participation": "Parte hartzea",
             "passengers": "Bidaiariak",
             "map": "Bidaia",
             "planification": "Planifikazioa",
