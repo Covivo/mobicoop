@@ -24,6 +24,7 @@
 namespace App\Solidary\Admin\Service;
 
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use App\Paginator\MobicoopPaginator;
 use App\Service\FormatDataManager;
 use App\Solidary\Admin\Exception\SolidaryException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,7 +72,7 @@ class SolidaryVolunteerManager
     }
 
     /**
-     * Get Solidary Volunteer records
+     * Get Solidary Volunteer records (transform SolidaryUsers to SolidaryVolunteers)
      *
      * @param PaginatorInterface $solidaryUsers  The solidary user objects
      * @return array|null The solidary volunteer records
@@ -85,7 +86,8 @@ class SolidaryVolunteerManager
              */
             $solidaryVolunteers[] = $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser);
         }
-        return $solidaryVolunteers;
+        // we need to return a paginator, we already have all informations but we need to build a custom paginator object
+        return new MobicoopPaginator($solidaryVolunteers, $solidaryUsers->getCurrentPage(), $solidaryUsers->getItemsPerPage(), $solidaryUsers->getTotalItems());
     }
 
     /**
