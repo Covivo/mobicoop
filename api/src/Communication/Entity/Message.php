@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Action\Entity\Log;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\DataProvider\ThreadCollectionDataProvider;
@@ -207,6 +208,13 @@ class Message
      * @MaxDepth(1)
      */
     private $messages;
+
+    /**
+     * @var ArrayCollection The logs linked with the message.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="message", cascade={"remove"})
+     */
+    private $logs;
 
     /**
     * @var Message|null The last message of a thread
@@ -449,6 +457,34 @@ class Message
             // set the owning side to null (unless already changed)
             if ($message->getMessage() === $this) {
                 $message->setMessage(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setMessage($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getMessage() === $this) {
+                $log->setMessage(null);
             }
         }
         

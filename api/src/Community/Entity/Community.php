@@ -32,6 +32,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Action\Entity\Log;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
@@ -484,6 +485,13 @@ class Community
      */
     private $avatar;
 
+    /**
+     * @var ArrayCollection The logs linked with the Community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="community", cascade={"remove"})
+     */
+    private $logs;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -886,6 +894,33 @@ class Community
         return null;
     }
 
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setCommunity($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getCommunity() === $this) {
+                $log->setCommunity(null);
+            }
+        }
+        
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 

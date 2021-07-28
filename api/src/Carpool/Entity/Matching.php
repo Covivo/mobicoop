@@ -29,6 +29,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Action\Entity\Log;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -285,6 +286,13 @@ class Matching
      * @MaxDepth(1)
      */
     private $solidaryMatching;
+
+    /**
+     * @var ArrayCollection The logs linked with the Matching.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="matching", cascade={"remove"})
+     */
+    private $logs;
 
     public function __construct()
     {
@@ -686,6 +694,34 @@ class Matching
     {
         $this->solidaryMatching = $solidaryMatching;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setMatching($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getMatching() === $this) {
+                $log->setMatching(null);
+            }
+        }
+        
         return $this;
     }
 
