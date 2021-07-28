@@ -1,11 +1,11 @@
 {
     "snackbar": {
-        "needConnection": "Konekta zaitez edo izena eman iragarkia argitaratzeko"
+        "needConnection": "Konekta zaitez edo izena emazu iragarki baten argitaratzeko"
     },
     "buttons": {
         "solidary": {
             "route": "http://solidaires.mobicoop.fr/",
-            "label": "Elkartasunezko gidaria izan"
+            "label": "Elkartasunezko gidari bilakatu"
         },
         "logOut": {
             "route": "/user/logout",
