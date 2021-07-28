@@ -16,16 +16,16 @@
     "register": "Gorde",
     "form": {
         "errors": {
-            "bicRequired": "BIC zenbakia derrigorrezkoa da",
-            "bic": "BIC zebakia bali izan behar da",
-            "ibanRequired": "IBAN zenbakia derrigorrezkoa da",
+            "bicRequired": "BIC zenbakia baitezpadakoa da",
+            "bic": "BIC zenbakia bali izan behar da",
+            "ibanRequired": "IBAN zenbakia baitezpadakoa da",
             "iban": "IBAN zenbakia bali izan behar da",
             "cityRequired": "Hiria baitezpadakoa da",
             "cpRequired": "Posta kodea baitezpadakoa da",
             "wayRequired": "Zenbakia eta karrika baitezpadakoak dira"
         },
         "tooltip": {
-            "iban": "Zure IBAN-a eman tarterik gabe"
+            "iban": "Zure IBAN-a idatz ezazu, artekarik gabe"
         },
         "label": {
             "address": {
