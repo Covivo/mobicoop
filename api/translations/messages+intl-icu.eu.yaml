@@ -41,9 +41,9 @@ myAds: Nire iragarkiak
 askForCarpool: Autokidetza galde bat egin dizu.
 return: ITZULTZE
 outward: JOAN
-beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, atxiki dituzun bidaiak
-  ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek ez dituzte
-  ikusiko
+beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, erregistratu dituzun
+  bidaiak ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek
+  ez dituzte ikusiko
 contactInfos: Argibide eskaera berria
 canceledCarpool: ZURE AUTOKIDETZA EZEZTATUA DA.
 noPanic: Ez kexa, bidaia berri bat bila dezakezu edo iragarki bat argitara dezakezu.
