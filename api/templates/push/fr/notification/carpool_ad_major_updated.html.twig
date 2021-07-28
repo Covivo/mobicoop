@@ -1,0 +1,17 @@
+{% set new = context.object.new %}
+{% set old = context.object.old %}
+{% set ask = context.object.ask %}
+{% set sender = context.object.sender %}
+{% set recipient = context.user %}
+{% set outwardOrigin = context.origin %}
+{% set outwardDestination = context.destination %}
+
+Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
+
+Covoiturage annulé.
+
+Votre covoiturage : {{ outwardOrigin.address.displayLabel[0] }} - {{ outwardDestination.address.displayLabel[0] }}
+avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a été annulé car 
+{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} a modifié son annonce.
+
+A bientôt sur {{api_env('PUSH_PLATFORM_NAME')}}
