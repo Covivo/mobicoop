@@ -5,25 +5,25 @@
         "number": "Pasahitzak zifra bat ukan behar du.",
         "lower": "Pasahitzak minuskula bat ukan behar du.",
         "upper": "Pasahitzak maiuskula bat ukan behar du.",
-        "min": "Pasahitzak gutienez 8 karaktere behar ditu.",
-        "required": "Pasahitza baitezpadakoa da"
+        "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
+        "required": "Pasahitza beharrezkoa da"
     },
     "publicProfile": {
         "close": "Hetsi",
-        "see": "Ikus perfil publikoa",
-        "title": "Perfil publikoa"
+        "see": "Ikus profil publikoa",
+        "title": "Profil publikoa"
     },
     "snackBar": {
-        "textSnackError": "Huts bat bada pasahitzaren eguneraketan",
-        "passwordUpdated": "Pasahitz eguneratua"
+        "textSnackError": "Akats bat gertatu da pasahitzaren eguneraketan",
+        "passwordUpdated": "Pasahitza eguneratua izan da"
     },
     "form": {
         "errors": {
             "notIdentiquals": "Pasahitzak ez dira berdinak",
-            "required": "Pasahitza baitezpadakoa da"
+            "required": "Pasahitza beharrezkoa da"
         },
         "newPasswordRepeat": "Pasahitz berria (baieztapena)",
-        "newPassword": "Pasahitza berria"
+        "newPassword": "Pasahitz berria"
     },
     "tabs": {
         "reviews": "Iritziak",
