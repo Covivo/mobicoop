@@ -57,6 +57,7 @@ use App\Carpool\Repository\MatchingRepository;
 use App\Geography\Service\AddressManager;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
+use App\User\Entity\User;
 use DateTime;
 
 /**
