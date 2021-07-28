@@ -1,26 +1,26 @@
 {
     "email": {
         "errors": {
-            "required": "Helbide elektronikoa baitezpadakoa da",
-            "valid": "Helbide elektrioa bali izan behar da"
+            "required": "Helbide elektronikoa beharrezkoa da",
+            "valid": "Helbide elektronikoa bali izan behar da"
         },
         "placeholder": "Helbide elektronikoa"
     },
     "givenName": {
         "errors": {
-            "required": "Izena baitezpadakoa da"
+            "required": "Izena beharrezkoa da"
         },
         "placeholder": "Izena"
     },
     "familyName": {
         "errors": {
-            "required": "Deitura baitezpadakoa da"
+            "required": "Deitura beharrezkoa da"
         },
         "placeholder": "Deitura"
     },
     "gender": {
         "errors": {
-            "required": "Zibilitatea baitezpadakoa da"
+            "required": "Zibilitatea beharrezkoa da"
         },
         "values": {
             "other": "Beste",
@@ -47,8 +47,8 @@
         "label": "RSA hartzailea"
     },
     "yearOfBirth": {
-        "placeholder": "Sorturtea",
-        "label": "Sorturtea"
+        "placeholder": "Sortze urtea",
+        "label": "Sortze urtea"
     },
     "ui": {
         "buttons": {
@@ -57,15 +57,15 @@
             },
             "validate": {
                 "route": "/elkartasunezkoa/eskaera",
-                "label": "Balioztatu"
+                "label": "Egiazkotu"
             }
         }
     },
     "phone": {
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da",
-            "required": "Mugikor zenbakia baitezpadakoa da"
+            "valid": "Telefono zenbakia bali izan behar da",
+            "required": "Telefono zenbakia beharrezkoa da"
         },
-        "placeholder": "Mugikorra"
+        "placeholder": "Telefono mugikorra"
     }
 }

@@ -5,7 +5,7 @@
             "content": "Kasu, zerbitzuko berrietatik desinskribatuko zirelarik, ez duzu gehiago ondoko argibiderik errezibituko:br><ul><li>plataformaren funtzionalitate berriak eta zerbitzu berriak</li><li>zure lurraldeko autokidetzaren berriak </li><li>zure komunitateen berriak</li><li>laguntza pertsonalizatua </li></ul><br> Segur ote zira desinskribatu nahi duzula?"
         },
         "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da iragarkirik eginen.",
-        "label": "Zerbitzuaren berriak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
+        "label": "Zerbitzuaren aktualitateak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
     },
     "route": {
         "supprimer": "/utilisateur/profil/supprimer",
@@ -13,22 +13,22 @@
     },
     "avatar": {
         "delete": {
-            "label": "Irudia kendu",
+            "label": "Irudia ezabatu",
             "route": "/utilisateur/profil/avatar/supprimer"
         },
-        "size": "Avatar neurri handiena gainditu duzu",
+        "size": "Abatarraren gehieneko izaria gainditu duzu",
         "label": "Argazkia"
     },
     "snackBar": {
-        "emailError": "Huts bat e-mezua ez da bidalia izan",
-        "emailOk": "Egiazkotzeko e-mezua igorria izan da.",
-        "tokenError": "Huts bat kodea ez da bidalia izan",
-        "tokenOk": "Egiazkotzeko kodea bidalia izan da.",
-        "unknown": "Egiazkotzeko kodea ez da zuzena.",
+        "emailError": "Huts bat gertatu da, e-mezua ez da bidalia izan",
+        "emailOk": "Egiaztapen e-mezua igorria izan da.",
+        "tokenError": "Huts bat gertatu da, kodea ez da bidalia izan",
+        "tokenOk": "Egiaztatze-kodea bidalia izan da.",
+        "unknown": "Egiaztatze-kodea okerra da.",
         "phoneValidated": "Zure telefonoa egiaztatua izan da.",
-        "phoneUpdate": "Huts bat zure telefonoa ez da egiaztatua izan.",
-        "phoneAlreadyVerified": "Zure telefonoa jadanik egiaztatua da.",
-        "errorProfileUpdate": "Huts bat, zure perfila ez da eguneratua izan",
+        "phoneUpdate": "Akats bat bada, zure telefonoa ez da egiaztatua izan.",
+        "phoneAlreadyVerified": "Zure telefonoa egiaztatua izan da.",
+        "errorProfileUpdate": "Akats bat bada, zure profila ez da eguneratua izan.",
         "profileUpdated": "Zure profila eguneratua izan da!"
     },
     "titles": {
@@ -46,7 +46,7 @@
     "birthDay": {
         "errors": {
             "notadult": "16 urte behar dituzu plataforman izena emateko",
-            "required": "Sorteguna baitezpadakoa da"
+            "required": "Sorteguna beharrezkoa da"
         },
         "label": "Sorteguna"
     },
@@ -154,7 +154,7 @@
             "verified": "Zure mugikor zenbakia egiaztatua da"
         },
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da"
+            "valid": "Telefono zenbakia bali izan behar da"
         },
         "label": "Mugikorra"
     },

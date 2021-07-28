@@ -31,7 +31,7 @@
     "select": {
         "hour": {
             "help": "Iragarkiak jarriko ditugu, hautatu duzun ordutik aitzina.",
-            "label": "Ordua"
+            "label": "Tenorea"
         },
         "filter": {
             "gender": {
@@ -45,7 +45,7 @@
                 },
                 "other": {
                     "value": "3",
-                    "label": "Bestea"
+                    "label": "Beste"
                 },
                 "label": "Zibilitatea"
             },
@@ -70,7 +70,7 @@
         },
         "order": {
             "date": {
-                "decreasing": "Data ttipienaren ordenean",
+                "decreasing": "Data berrienetik hasiz",
                 "increasing": "Data zaharrenetik hasiz"
             },
             "label": "Sailkapena"

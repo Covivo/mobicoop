@@ -5,8 +5,8 @@
         "textDetails": {
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p3": "<span class=\"font-weight-bold\">Attention</span> : Wordpress bezala argitaratzeko tresna batzutan plugings bereziak gehitu begar dira iFrame bat erabili ahal izateko.",
-            "p1": "Widget-a integratzeko, beheragoko testua kopita eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
-            "title": "widget integratu"
+            "p1": "Widget-a sartzeko, azpiko testu hau kopiatu eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
+            "title": "widget-a sartu"
         },
         "label": "Ikus Widget-a"
     },
@@ -38,7 +38,7 @@
         "popup": {
             "content": {
                 "isProposalsHidden": "Komunitate pribatu honi lotuak diren iragarki baliodunak baldin badituzu oraino, iragarki hauek ezabatuak izanen dira. <br>Baieztatzen duzu?",
-                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
+                "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu oraino, iragarki horiek ez dira gehiago komunitatekoak balire bezala markatuak izanen, komunitatetik ateratzen bazira.<br>Baieztatzen duzu?"
             },
             "title": "Baieztapen eskaera"
         },
@@ -63,18 +63,18 @@
     },
     "snackbar": {
         "leaveCommunity": {
-            "textError": "Huts bat agertu da berriz entsea ezazu",
-            "textOk": "Ez zira gehiago komunitatearen parte"
+            "textError": "Akats bat gertatu da, berriz entsea zaitez",
+            "textOk": "Ez zira gehiago komunitate honen kide"
         },
         "joinCommunity": {
             "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
             "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
-            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
+            "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
     "tooltips": {
-        "domain": "Helbide eletronikoak ondoko eremu baten parte izan behar da:",
-        "validation": "Egiaztapena igurikatzen",
+        "domain": "Zure helbide eletronikoa ondoko domeinu hauetarik batekoa izan behar da:",
+        "validation": "Egiaztatzen ari",
         "connected": "Konektatua izan behar zira"
     },
     "joinCommunity": {

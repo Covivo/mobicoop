@@ -17,15 +17,15 @@
                         "phone": "Nire telefono zenbakia {phone} da",
                         "email": "Nire e-maila {email} da",
                         "name": "Nire deitura {name} da",
-                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak zuzenki harremanetan jar gaitezen"
+                        "carpool": "Zure {origin} eta {destination}arteko autokidetzak interesatzen ahal nau. Ez gira ber autokidetza sarean inskribatuak, horregatik uzten dizkizut nire deitura-helbideak, zuzenean harremanetan jartzeko"
                     }
                 },
                 "cancel": "Ezeztatu",
                 "instructions": {
-                    "line2": "Pentsa harremanetan jartzeko modu bat uztea gutienez, zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera ukan dezan",
-                    "line1": "Eskertzen zaitugu beheragoko mezua betetzea edo aldatzea."
+                    "line2": "Pentsa ezazu, harremanetan jartzeko modu bat bederen uztea; hots, zure helbide elektronikoa edo telefono zenbakia, webgune partaideko autokideak zurekin harremanetan jartzeko aukera izan dezan",
+                    "line1": "Milesker azpi honetako mezua osatzea edo aldatzeagatik."
                 },
-                "intro": "Iragarki hori ez dator gure autokidetza webgunetik baina webgune partaidetik {origin}",
+                "intro": "Iragarki hau ez dator gure autokidetza webgunetik baina {origin} webgune partaidetik",
                 "title": "Harremanetan jarri"
             },
             "return": {

@@ -5,7 +5,7 @@ shortdayThursday: Og.
 shortdayWednesday: Az.
 shortdayTuesday: As.
 shortdayMonday: Al.
-signature: 'Ondoko hitzordua'
+signature: 'Ikus arte'
 FollowUs: Segi gaitzazu
 Download: <b>Android</b> ou <b>IOS</b> aplikazioa telekarga ezazu
 URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
@@ -14,7 +14,8 @@ FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
 youHaveAMessage: Mezu berri bat errezibitu duzu
-updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun batzuk aldatuak izan dira
+updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun
+  batzuk aldatuak izan dira
 clickNewSearch: Zure bilaketa berrabiarazteko loturan klik egizu
 ownerMessage: 'Hona iragarki-jabearen mezua:'
 cancelledCarpool: Autokidetza ezeztatua da
@@ -40,9 +41,9 @@ myAds: Nire iragarkiak
 askForCarpool: Autokidetza galde bat egin dizu.
 return: ITZULTZE
 outward: JOAN
-beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, atxiki dituzun bidaiak
-  ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek ez dituzte
-  ikusiko
+beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, erregistratu dituzun
+  bidaiak ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek
+  ez dituzte ikusiko
 contactInfos: Argibide eskaera berria
 canceledCarpool: ZURE AUTOKIDETZA EZEZTATUA DA.
 noPanic: Ez kexa, bidaia berri bat bila dezakezu edo iragarki bat argitara dezakezu.

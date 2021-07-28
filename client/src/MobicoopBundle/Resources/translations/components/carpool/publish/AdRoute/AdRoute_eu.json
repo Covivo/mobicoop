@@ -2,9 +2,9 @@
     "distance": "Distantzia",
     "communities": {
         "route": "/utilisateur/communautes",
-        "label": "Komunitate horietan iragarkia argitaratu"
+        "label": "Iragarkia argitaratu komunitate hauetan"
     },
-    "avoidMotorway": "Autopista saihestua",
+    "avoidMotorway": "Autobidea saihestu",
     "waypoint4": {
         "label": "4. etapa"
     },
@@ -12,13 +12,13 @@
         "label": "3. etapa"
     },
     "waypoint2": {
-        "label": "Etapa 2"
+        "label": "2. etapa"
     },
     "waypoint1": {
-        "label": "Etapa 1"
+        "label": "1. etapa"
     },
     "destination": {
-        "error": "Beharrezkoa",
+        "error": "Baitezpadakoa",
         "label": "Helmuga"
     },
     "origin": {
