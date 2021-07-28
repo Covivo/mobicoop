@@ -7,16 +7,16 @@
     },
     "items": [
         {
-            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
+            "text": "Autokidetza aske baten baloreen oinordekoa, Mobiccoop doako autokidetza zerbitzu bat da; hots, webguneak ez du komisiorik hartzen bidaientzat eta ez du publizitaterik egiten! Bidaiak merkeagoak dira gastuak partekatzen dituzten bidaiarientzat.",
             "title": "Komisiorik gabeko autokidetza"
         },
         {
-            "text": "Libertate numerikoa, Mobicoop-en balore muinean da. Hautu eginez webgunea programa librean ekoitzea, autokidetza erabiltzailetzen dutenen burujabetasun numerikoa eta datuen babesa bermatzen dugu. Bakoitzak iturri kodean parte har dezake eta mugikortasun partekatua, denen ondasun egin dezake.",
-            "title": "Programa librea"
+            "text": "Libertate numerikoa, Mobicoop-en baloreen muinean dago. Webgunea programa librean ekoiztea hautatuz, autokidetza erabiltzaile guzien nagusitasun numerikoa eta datuen babesa bermatzen dugu. Denek parte har dezakete iturburu-kodean eta mugikortasun partekatua denen ondasuna bilakarazi.",
+            "title": "Programa libre bat"
         },
         {
-            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, bazkide 1 = boz 1 logikan. Estatus horrek, bazkide, soldatadun, plataforma erabiltzaile eta bezeroen gobernantza ireki bat ahalbideratzen du. Haatik, ez da bazkide izan behar autokidetza zerbitzua erabili ahal izateko.",
-            "title": "Autokidetza kooperatiboa"
+            "text": "Mobicoop kooperatiba bat da, ondorioz plataforma bere bazkideena da, logikan, bazkide 1 = boz 1. Araudi honek, bazkideen, langileen, plataforma erabiltzaileen eta bezeroen arteko gobernantza ireki bat ahalbidetzen du. Haatik, ez da bortxaz bazkide izan behar autokidetza zerbitzu honen erabiltzeko.",
+            "title": "Autokidetzaren kooperatiba"
         }
     ],
     "articles": {
@@ -31,7 +31,7 @@
             "route": "/evenements",
             "label": "Ekitaldiak ikusi"
         },
-        "title": "Zure ekitaldientzat autokidetza antolatu"
+        "title": "Autokidetza antola ezazu zure ekitaldientzat"
     },
     "solidary": {
         "button2": {
