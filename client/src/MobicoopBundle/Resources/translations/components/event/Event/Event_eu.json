@@ -4,11 +4,11 @@
         "origin": "Abiatzea"
     },
     "title": {
-        "searchCarpool": "Bidaia bat xerkatu ekitaldiarentzat"
+        "searchCarpool": "Bidaia bat bilatu ekitaldiarentzat"
     },
     "tooltips": {
-        "domain": "Helbide eletronikoak ondoko eremu baten parte izan behar da:",
-        "validation": "Egiaztapena igurikatzen",
+        "domain": "Zure helbide eletronikoa ondoko domeinu hauetarik batekoa izan behar da:",
+        "validation": "Egiaztatzen ari",
         "connected": "Konektatua izan behar zira"
     },
     "buttons": {
