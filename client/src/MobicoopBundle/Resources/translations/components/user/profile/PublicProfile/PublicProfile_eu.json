@@ -1,9 +1,9 @@
 {
     "params": {
-        "noSmokeInCar": "Ez dut erretzen autoan",
+        "noSmokeInCar": "Ez dut autoan erretzen",
         "noSmoke": "Ez dut erretzen",
         "smoke": "Erretzen dut",
-        "noMusic": "Nahiago dut gidatu giro musikarik gabe",
+        "noMusic": "Nahiago dut autoz ibili musikarik gabe",
         "music": "Irratia edo musika entzuten dut",
         "noChat": "Ez naiz kalakaria",
         "chat": "Ele egiten dut"
