@@ -19,7 +19,7 @@
         "joinCommunity": {
             "textError": "Huts bat agertu da, berriz saia ezazu.",
             "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
-            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
+            "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
     "steps": {
@@ -63,25 +63,25 @@
     },
     "phone": {
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da",
-            "required": "Mugikor zenbakia baitezpadakoa da"
+            "valid": "Telefono zenbakia bali izan behar da",
+            "required": "Telefono zenbakia beharrezkoa da"
         },
-        "placeholder": "Mugikorra"
+        "placeholder": "Telefono mugikorra"
     },
     "email": {
         "errors": {
-            "valid": "Helbide elektrioa bali izan behar da",
+            "valid": "Helbide elektronikoa bali izan behar da",
             "required": "Helbide elektronikoa beharrezkoa da"
         },
         "placeholder": "Helbide elektronikoa"
     },
     "homeTown": {
-        "placeholder": "Bzilekuaren herria"
+        "placeholder": "Bizileku herria"
     },
     "birthDay": {
         "errors": {
             "notadult": "16 urte behar dituzu plataforman izena emateko",
-            "required": "Sorteguna baitezpadakoa da"
+            "required": "Sorteguna beharrezkoa da"
         }
     },
     "birthDate": {
