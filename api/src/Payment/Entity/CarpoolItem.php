@@ -23,6 +23,7 @@
 
 namespace App\Payment\Entity;
 
+use App\Action\Entity\Log;
 use App\Carpool\Entity\Ask;
 use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
@@ -166,6 +167,13 @@ class CarpoolItem
      * @MaxDepth(1)
      */
     private $carpoolPayments;
+
+    /**
+     * @var ArrayCollection The logs linked with the carpoolitem.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem", cascade={"remove"})
+     */
+    private $logs;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -355,6 +363,34 @@ class CarpoolItem
     {
         $this->unpaidDate = $unpaidDate;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setCarpoolItem($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getCarpoolItem() === $this) {
+                $log->setCarpoolItem(null);
+            }
+        }
+        
         return $this;
     }
 

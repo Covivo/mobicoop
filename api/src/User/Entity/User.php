@@ -1417,6 +1417,20 @@ class User implements UserInterface, EquatableInterface
      */
     private $savedCo2;
 
+    /**
+     * @var ArrayCollection The Blocks made by this User
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="user", cascade={"remove"})
+     */
+    private $blocks;
+
+    /**
+     * @var ArrayCollection The Blocks where this User is blocked
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="blockedUser", cascade={"remove"})
+     */
+    private $blockBys;
+
     // ADMIN
 
     /**
@@ -3257,6 +3271,62 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
+    public function getBlocks()
+    {
+        return $this->blocks->getValues();
+    }
+    
+    public function addBlock(Block $block): self
+    {
+        if (!$this->blocks->contains($block)) {
+            $this->blocks[] = $block;
+            $block->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeBlock(Block $block): self
+    {
+        if ($this->blocks->contains($block)) {
+            $this->blocks->removeElement($block);
+            // set the owning side to null (unless already changed)
+            if ($block->getUser() === $this) {
+                $block->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getBlockBys()
+    {
+        return $this->blockBys->getValues();
+    }
+    
+    public function addBlockBy(Block $blockBy): self
+    {
+        if (!$this->blockBys->contains($blockBy)) {
+            $this->blockBys[] = $blockBy;
+            $blockBy->setBlockedUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeBlockBy(Block $blockBy): self
+    {
+        if ($this->blockBys->contains($blockBy)) {
+            $this->blockBys->removeElement($blockBy);
+            // set the owning side to null (unless already changed)
+            if ($blockBy->getBlockedUser() === $this) {
+                $blockBy->setBlockedUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**

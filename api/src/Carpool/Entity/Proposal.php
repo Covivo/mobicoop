@@ -31,6 +31,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use App\Action\Entity\Log;
 use App\App\Entity\App;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -377,6 +378,13 @@ class Proposal
      * @var bool Use search time or not
      */
     private $useTime;
+
+    /**
+     * @var ArrayCollection The logs linked with the Proposal.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="proposal", cascade={"remove"})
+     */
+    private $logs;
 
     public function __construct($id=null)
     {
@@ -914,6 +922,34 @@ class Proposal
     public function generateRandomId(int $int=15)
     {
         return bin2hex(random_bytes($int));
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getProposal() === $this) {
+                $log->setProposal(null);
+            }
+        }
+        
+        return $this;
     }
 
     // DOCTRINE EVENTS

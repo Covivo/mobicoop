@@ -56,7 +56,7 @@ class Block
     /**
      * @var User The User who made the Block
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blocks")
      * @ORM\JoinColumn(nullable=false)
     */
     private $user;
@@ -64,7 +64,7 @@ class Block
     /**
      * @var User The User blocked by $user
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blockBys")
      * @ORM\JoinColumn(nullable=false)
      */
     private $blockedUser;
@@ -87,7 +87,7 @@ class Block
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
@@ -99,7 +99,7 @@ class Block
         return $this->blockedUser;
     }
 
-    public function setBlockedUser(User $blockedUser): self
+    public function setBlockedUser(?User $blockedUser): self
     {
         $this->blockedUser = $blockedUser;
 

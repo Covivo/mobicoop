@@ -112,7 +112,7 @@ class Recipient
     /**
      * @var Message The message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients",  cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients",  cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write","threads"})
      * @MaxDepth(2)

@@ -23,6 +23,7 @@
 
 namespace App\Payment\Entity;
 
+use App\Action\Entity\Log;
 use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -137,6 +138,13 @@ class CarpoolPayment
      * @ORM\Column(type="integer", nullable=true)
      */
     private $origin;
+
+    /**
+     * @var ArrayCollection The logs linked with the carpool payment
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolPayment", cascade={"remove"})
+     */
+    private $logs;
 
     /**
     * @var float The amountOnline to be paid. Not persisted.
@@ -314,6 +322,34 @@ class CarpoolPayment
     {
         $this->origin = $origin;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setCarpoolPayment($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getCarpoolPayment() === $this) {
+                $log->setCarpoolPayment(null);
+            }
+        }
+        
         return $this;
     }
 
