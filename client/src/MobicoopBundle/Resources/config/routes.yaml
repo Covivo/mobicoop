@@ -1414,6 +1414,15 @@ event_get_list:
         nl: /events/getEventList
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
 
+get_last_events_created:
+    methods: [POST]
+    path:
+        fr: /evenements/getLastEventsCreated
+        en: /events/getLastEventsCreated
+        nl: /events/getLastEventsCreated
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getLastEventCreated
+
+
 # display events
 event_list:
     path:

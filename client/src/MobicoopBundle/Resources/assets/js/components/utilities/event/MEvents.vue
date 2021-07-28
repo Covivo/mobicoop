@@ -4,7 +4,7 @@
       dense
     >
       <v-col
-        v-for="item in eventscoming"
+        v-for="item in lastEventsCreated"
         :key="item.index"
         cols="12"
       >
@@ -52,7 +52,7 @@ export default {
       coming:true,
       perPage:3,
       page:1,
-      eventscoming:[]
+      lastEventsCreated:[]
     }
   },
   mounted() {
@@ -63,15 +63,13 @@ export default {
     getEvents(coming){
       let params = {
         'coming':coming,
-        'fromDate':this.fromDate,
         'perPage':this.perPage,
         'page':this.page
       }
       maxios
         .post(this.$t('routes.getList'),params)
         .then(response => {
-          // console.error(response.data);
-          this.eventscoming = response.data.eventComing;
+          this.lastEventsCreated = response.data.eventComing;
         })
         .catch(function (error) {
           console.error(error);

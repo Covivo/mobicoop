@@ -163,6 +163,19 @@ class EventManager
         }
         return $response->getValue();
     }
+
+
+    public function getLastEventsCreated(string $orderBy="createdDate", string $order="desc", int $limit=null, int $page=1) {
+        $params["order['.$orderBy']"] = $order;
+        $params['order[id]'] = $order;
+        $params['perPage'] = $limit;
+        $params['page'] = $page;
+        $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            return $response->getValue();
+        }
+        return $response->getValue();
+    }
     
     /**
      * Get an event
