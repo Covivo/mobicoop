@@ -11,16 +11,16 @@
         "carpools": "Autokidetzak {platform}"
     },
     "snackBar": {
-        "error": "Arazo tekniko baten ondorioz, ezin izan dugu harremanetan jartzeko eskera bidali",
-        "success": "Harremaneta jartzeko eskaera igorria izan da"
+        "error": "Arazo tekniko baten ondorioz, harremanetan jartzeko eskaera ez da bidalia izan",
+        "success": "Harremanetan jartzeko eskaera igorria izan da"
     },
     "alsoIncludePassengers": "Bilaketa honek bidaiari iragarkiak baditu ere",
-    "includePassengers": "Bidaiari iragarkiak ikusi",
-    "matchingNumber": "Ez da autokidetzarik atzeman... | {number} atzemandako autokidetza| {number} atzemandako autokidetza iragarki",
-    "AskNewSearch": "Berriz saia ezazu zure bilaketa aldatuz? Beste bidaia bat?",
+    "includePassengers": "Bidaiari iragarkiak ere ikusi",
+    "matchingNumber": "Ez da autokidetza iragarkirik atzeman... | autokidetza iragarki {number} atzeman da| {number} autokidetza iragarki atzeman dira",
+    "AskNewSearch": "Berriz saia zaitez zure bilaketa aldatuz? Beste ibilbide bat?",
     "newSearch": "Bilaketa berria",
-    "search3": "Igurika pixkat gehiago...",
-    "search2": "Pazientzia, autokidetza potentzial ainiz badugu!",
+    "search3": "Istant bat goaita ezazu...",
+    "search2": "Lasai, menturazko autokide anitz baditugu!",
     "search": "Bilaketa egiten ari...",
     "ptSearchUrl": "/transport-public/recherche",
     "externalJourneyUrl": "/covoiturage/rdexJourney",
