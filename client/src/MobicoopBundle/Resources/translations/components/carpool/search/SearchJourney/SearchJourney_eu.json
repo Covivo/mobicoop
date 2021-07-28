@@ -15,21 +15,21 @@
     "title": "Mobicoop",
     "fullDate": "ddd Do MMMM YYYY",
     "outwardDate": {
-        "error": "Beharrezkoa",
+        "error": "Baitezpadakoa",
         "label": "Abiatze eguna"
     },
     "switch": {
         "punctual": {
-            "help": "Komuntagailua klika ezazu zure bidaia erregularra zehazteko"
+            "help": "Komutagailu honetan klik egizu zure bidaia erregularra dela zehazteko"
         },
         "regular": {
-            "help": "Komutagaailuan klika ezazu zure noiztenkako bidaia zehazteko eta egun bat hauta ezazu",
+            "help": "Komutagailu honetan klik egizu zure bidaia noiztenkakoa dela zehazteko eta egun bat hauta ezazu",
             "label": "Bidaia erregularra"
         }
     },
     "radio": {
         "both": {
-            "label": "Bata ala bestea"
+            "label": "Berdin zait"
         },
         "passenger": {
             "label": "Bidaiaria naiz"
