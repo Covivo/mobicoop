@@ -86,7 +86,7 @@
                     <br>
                     <div class="mb-2">
                       <v-badge
-                        :value="(unreadMessages.currentUnreadDirectMessages>0) ? trcurrentUe : false"
+                        :value="(unreadMessages.currentUnreadDirectMessages>0) ? true : false"
                         :content="unreadMessages.currentUnreadDirectMessages"
                         color="secondary"
                         inline
@@ -117,7 +117,7 @@
                 >
                   <v-badge
                     :value="(unreadMessages.currentUnreadSolidaryMessages>0) ? true : false"
-                    :content="unreadMessages.currentUSolidaryMessages"
+                    :content="unreadMessages.currentUnreadSolidaryMessages"
                     color="secondary"
                     inline
                   >
