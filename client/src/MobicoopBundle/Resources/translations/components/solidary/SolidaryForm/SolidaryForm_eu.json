@@ -2,7 +2,7 @@
     "email": {
         "errors": {
             "required": "Helbide elektronikoa beharrezkoa da",
-            "valid": "Helbide elektrioa bali izan behar da"
+            "valid": "Helbide elektronikoa bali izan behar da"
         },
         "placeholder": "Helbide elektronikoa"
     },
@@ -47,8 +47,8 @@
         "label": "RSA hartzailea"
     },
     "yearOfBirth": {
-        "placeholder": "Sorturtea",
-        "label": "Sorturtea"
+        "placeholder": "Sortze urtea",
+        "label": "Sortze urtea"
     },
     "ui": {
         "buttons": {
@@ -57,15 +57,15 @@
             },
             "validate": {
                 "route": "/elkartasunezkoa/eskaera",
-                "label": "Balioztatu"
+                "label": "Egiazkotu"
             }
         }
     },
     "phone": {
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da",
-            "required": "Mugikor zenbakia baitezpadakoa da"
+            "valid": "Telefono zenbakia bali izan behar da",
+            "required": "Telefono zenbakia beharrezkoa da"
         },
-        "placeholder": "Mugikorra"
+        "placeholder": "Telefono mugikorra"
     }
 }
