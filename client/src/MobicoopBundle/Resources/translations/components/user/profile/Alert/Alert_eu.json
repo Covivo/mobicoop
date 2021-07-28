@@ -7,12 +7,12 @@
     "medium": {
         "media4": "Push",
         "media3": "SMS",
-        "media2": "Email",
+        "media2": "E-mezu",
         "media1": "Mezua"
     },
     "alerts": {
-        "confirm_direct_payment_regular": "Autokidetza aste baten pagatzea baieztatu",
-        "confirm_direct_payment": "Autokidetza baten pagatzea baieztatu",
+        "confirm_direct_payment_regular": "Autokidetza aste baten ordainketa baieztatu",
+        "confirm_direct_payment": "Autokidetza baten ordainketa baieztatu",
         "pay_after_carpool_regular": "Autokidetza aste bat pagatu",
         "pay_after_carpool": "Egindako autokidetza bat pagatu",
         "validate_create_event": "Gertakari baten sortzeko baieztapena",
@@ -20,9 +20,9 @@
         "driver_carpool_linked_ad_deleted": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "passenger_carpool_linked_ad_deleted_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
         "passenger_carpool_linked_ad_deleted": "Bidaiari gisa onartua izan zitzaidan autokidetzari loturiko iragarkia kendua izan da",
-        "carpool_ad_deleted_with_pending_drivers_urgent": "Gidari gisa eta berehalakoa zen eta onartua izan zen autokidetzaren iragarkia kendua izan da",
+        "carpool_ad_deleted_with_pending_drivers_urgent": "Gidari gisa onartua izan zen eta berehalakoa izan behar zen autokidetza bati loturiko iragarkia kendua izan da",
         "carpool_ad_deleted_with_pending_drivers": "Gidari gisa onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
-        "carpool_ad_deleted_with_pending_passengers_urgent": "Bidaiari gisa eta berehala abiatzekoa, onartua izan zen autokidetzari loturiko iragarkia kendua izan da",
+        "carpool_ad_deleted_with_pending_passengers_urgent": "Bidaiari gisa onartua izan zen eta berehalakoa izan behar zen autokidetza bati loturiko iragarkia kendua izan da",
         "carpool_ad_deleted_with_pending_passengers": "Bidaiari gisa onartua izan den autokidetzari loturiko iragarkiaren kentzea",
         "carpool_ask_linked_ad_deleted": "Nire eskaera aipatzen duen iragarkiaren ezabatzea",
         "*******": "Nire autokidea ebaluatzeko sustapena",
