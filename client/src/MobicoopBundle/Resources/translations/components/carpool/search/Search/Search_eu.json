@@ -1,7 +1,7 @@
 {
     "urlDate": "YMMDD",
     "tooltips": {
-        "needConnection": "Iragarkia argitaratzeko konekta zaitez edo izena eman"
+        "needConnection": "Iragarkia argitaratzeko konekta zaitez edo izena emazu"
     },
     "buttons": {
         "search": {
