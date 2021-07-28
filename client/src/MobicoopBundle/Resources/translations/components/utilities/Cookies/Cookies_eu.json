@@ -2,15 +2,15 @@
     "checkboxes": {
         "social": {
             "mandatoryOrNot": "Hautuzko cookie-a",
-            "desc": "Sare sozialeen bidez izena ematea eta konektatzea ahalbideratu"
+            "desc": "Izen ematea eta konexioa ahalbidetu sare sozialen bidez"
         },
         "stats": {
-            "details": "Estatistika horiek ez dute merkataritza helbururik. Zerbitzua hobetzen laguntzen gaituzte",
-            "mandatoryOrNot": "Hautuzko cookie-ak",
-            "desc": "Zure bisiten estatistika anonimoak partekatu"
+            "details": "Estatistika hauek ez dute helburu komertsialik. Zerbitzua hobetzen laguntzen gaituzte",
+            "mandatoryOrNot": "Menturazko cookie-a",
+            "desc": "Zure bisitaldiaren estatistika anonimoa parteka iezaguzu"
         },
         "connectionActive": {
-            "mandatoryOrNot": "Beharrezko cookie-ak",
+            "mandatoryOrNot": "Cookie beharrezkoa",
             "desc": "Zure konexioa indarrean atxiki"
         }
     },
