@@ -18,12 +18,12 @@
             "textOk": "Ez zira gehiago komunitate honen kide"
         }
     },
-    "protected": "Kideek ezin dute haien komunitatea ikusi",
+    "protected": "Kideek bakarrik ikus dezakete komunitate hau",
     "join": "Komunitatean sartu",
     "communityDetails": "Ikus komunitatea",
     "routes": {
         "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
         "community": "/covoiturage-communaute/{id}/{urlKey}"
     },
-    "members": "{members} membres"
+    "members": "{members} kide"
 }
