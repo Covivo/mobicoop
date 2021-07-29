@@ -1,7 +1,7 @@
 {
     "ok": "ADOS",
     "popup": {
-        "content": "Kasu, ez duzu gehiago kanpoko notifikaziorik aktibatua {alert}-ren kasuan. Gai honetaz informatua izateko plataforman konektatu beharko zira.",
+        "content": "Kasu, ez duzu gehiago kanpoko notifikazio aktibatuarik {alert}-ren kasuan. Gai honetaz jakinen duzu, plataforman zuhaurrek konektatuz.",
         "title": "Argibideak"
     },
     "medium": {
