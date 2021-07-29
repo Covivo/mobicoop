@@ -13,9 +13,9 @@
     "to": " arte ",
     "from": "-tik ",
     "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-    "regularInfo": "Zoinbait egunetan ez baduzu{driver} -ekin autokidetza egin, behereko laukia desmarka ezazu.",
+    "regularInfo": "Zenbait egunetan ez bazira {driver} -(r))ekin autokidetzan ibili, behereko laukian desmarka ezazu.",
     "tooltip": {
-        "message": "Ezin duzu linean ordaindu, gidariak ez baititu bere banku datuak sartu."
+        "message": "Ezin duzu linearen bidez pagatu, gidariak ez baititu bere banku datuak sartu."
     },
     "payments": {
         "getFirstWeek": "/getFirstWeek",
