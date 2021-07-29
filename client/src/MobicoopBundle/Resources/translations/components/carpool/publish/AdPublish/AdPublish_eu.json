@@ -46,9 +46,9 @@
             },
             "summary": "Laburbilduma",
             "message": {
-                "label": "Zure iragarkian, denek ikus dezaketen mezu bat utz ezazu",
+                "label": "Denek ikus dezaketen mezu bat utz ezazu zure iragarkian",
                 "title": {
-                    "passenger": "Nire mezua gidarieri",
+                    "passenger": "Nire mezua gidariei",
                     "driver": "Nire mezua bidaiariei",
                     "both": "Nire mezua"
                 }
