@@ -9,9 +9,9 @@
         }
     },
     "error": {
-        "image": "Irudia ez da gorde",
+        "image": "Irudia ez da erregistratua izan",
         "community": {
-            "required": "Izar batez markatuak diren eremu guziak baitezpadakoak dira",
+            "required": "Izar batez markatuak diren idatz-eremuak beharrezkoak dira",
             "create": "Komunitate sortzeak huts egin du",
             "name": "Komunitate hau bada jadanik, beste izen bat erabil ezazu"
         }
