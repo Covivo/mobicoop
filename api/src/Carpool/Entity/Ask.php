@@ -37,6 +37,7 @@ use App\Carpool\Controller\AskPost;
 use App\Carpool\Controller\AskPut;
 use App\Payment\Entity\CarpoolItem;
 use App\Solidary\Entity\SolidaryAsk;
+use App\Action\Entity\Log;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -349,6 +350,13 @@ class Ask
      * @Groups({"read","readPaymentStatus"})
      */
     private $unpaidDate;
+
+    /**
+     * @var ArrayCollection The logs linked with the Ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="ask", cascade={"remove"})
+     */
+    private $logs;
 
     public function __construct()
     {
@@ -742,6 +750,34 @@ class Ask
     {
         $this->unpaidDate = $unpaidDate;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setAsk($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getAsk() === $this) {
+                $log->setAsk(null);
+            }
+        }
+        
         return $this;
     }
 

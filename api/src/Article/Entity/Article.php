@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Action\Entity\Log;
 
 /**
  * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
@@ -216,6 +217,13 @@ class Article
     private $iFrame;
 
     /**
+     * @var ArrayCollection The logs linked with the Article.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="article", cascade={"remove"})
+     */
+    private $logs;
+    
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -348,6 +356,34 @@ class Article
     {
         $this->asections = $asections;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setArticle($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getArticle() === $this) {
+                $log->setArticle(null);
+            }
+        }
+        
         return $this;
     }
 

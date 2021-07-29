@@ -356,7 +356,7 @@ admin_test_deploy:
     # disable strict host key checking, to avoid error if server ip changes !
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     # ru docker container
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker run -d --env-file=/var/www/test/mobicoop/admin.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}"
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker pull ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}; docker run -d --env-file=/var/www/test/mobicoop/admin.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}"
   when: manual      # /!\ important : job executed manually /!\  
   except:
     refs:

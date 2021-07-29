@@ -125,7 +125,7 @@ class Log
     /**
      * @var Proposal|null The proposal if the action concerns a proposal.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $proposal;
@@ -133,7 +133,7 @@ class Log
     /**
      * @var Matching|null The matching if the action concerns a matching.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $matching;
@@ -141,7 +141,7 @@ class Log
     /**
      * @var Ask|null The ask if the action concerns an ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $ask;
@@ -149,7 +149,7 @@ class Log
     /**
      * @var Article|null The article if the action concerns an article.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article")
+     * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $article;
@@ -157,7 +157,7 @@ class Log
     /**
      * @var Event|null The event if the action concerns an event.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event")
+     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $event;
@@ -165,7 +165,7 @@ class Log
     /**
      * @var Community|null The community if the action concerns a community.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $community;
@@ -173,7 +173,7 @@ class Log
     /**
      * @var Solidary|null The solidary record if the action concerns a solidary record.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $solidary;
@@ -181,7 +181,7 @@ class Log
     /**
      * @var Territory|null The territory if the action concerns a territory.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $territory;
@@ -189,7 +189,7 @@ class Log
     /**
      * @var Car|null The car if the action concerns a car.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $car;
@@ -197,7 +197,7 @@ class Log
     /**
      * @var User|null The user if the action concerns a user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAsRelated")
      * @Groups({"readLog","writeLog"})
      */
     private $userRelated;
@@ -205,7 +205,7 @@ class Log
     /**
      * @var Message|null The message if the action concerns a message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message")
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $message;
@@ -213,7 +213,7 @@ class Log
     /**
      * @var Campaign|null The campaign if the action concerns a campaign.
      *
-     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $campaign;
@@ -221,7 +221,7 @@ class Log
     /**
      * @var CarpoolPayment|null The carpoolPayment if the action concerns a carpoolPayment.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment")
+     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $carpoolPayment;
@@ -229,7 +229,7 @@ class Log
     /**
      * @var CarpoolItem|null The carpoolPayment if the action concerns a carpoolItem.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolItem")
+     * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolItem", inversedBy="logs")
      * @Groups({"readLog","writeLog"})
      */
     private $carpoolItem;
