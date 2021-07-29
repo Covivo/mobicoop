@@ -1,6 +1,6 @@
 {
     "getMyCarpools": "/getMyCarpools",
-    "save": "Grabatu",
+    "save": "Erregistratu",
     "errors": {
         "number": "Pasahitzak zifra bat ukan behar du.",
         "lower": "Pasahitzak minuskula bat ukan behar du.",
