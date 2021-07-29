@@ -25,12 +25,14 @@ namespace App\Carpool\Service;
 
 use App\Carpool\Entity\AntiFraudResponse;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
 use App\User\Service\UserManager;
 use App\Carpool\Exception\AntiFraudException;
+use DateTime;
 
 /**
  * Anti-Fraud system manager service.
@@ -48,6 +50,8 @@ class AntiFraudManager
     private $nbCarpoolsMax;
     private $active;
     
+    private $sameDayProposals;
+
     /**
      * Constructor.
      *
@@ -108,11 +112,18 @@ class AntiFraudManager
             /****************** FIRST CHECK ********************** */
             $response = $this->validAdFirstCheck($ad);
             if (!$response->isValid()) {
-                return $response;
+                // we check if the arrival date if at least on same day proposal is after the start date of the proposal we are trying to post
+                foreach ($this->sameDayProposals as $sameDayProposal) {
+                    $response = $this->checkValidHours($ad, $sameDayProposal);
+                    if (!$response->isValid()) {
+                        return $response;
+                    }
+                }
             }
         }
 
-
+        var_dump($response);
+        die;
         return $response;
     }
 
@@ -141,7 +152,35 @@ class AntiFraudManager
         $proposals = $this->proposalRepository->findByDate($dateTime, $user, true, $this->distanceMinCheck*1000);
 
         if (!is_null($proposals) && is_array($proposals) && count($proposals)>=$this->nbCarpoolsMax) {
+            $this->sameDayProposals = $proposals;
             return new AntiFraudResponse(false, AntiFraudException::TOO_MANY_AD);
+        }
+
+        return new AntiFraudResponse(true, AntiFraudException::OK);
+    }
+
+    private function checkValidHours(Ad $ad, Proposal $sameDayProposal): AntiFraudResponse
+    {
+        if (!is_null($sameDayProposal->getCriteria()->getDirectionDriver())) {
+            $duration = $sameDayProposal->getCriteria()->getDirectionDriver()->getDuration();
+        } else {
+            $duration = $sameDayProposal->getCriteria()->getDirectionPassenger()->getDuration();
+        }
+
+        if ($sameDayProposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+           
+           // Punctual journey
+
+            $outwardDate = DateTime::createFromFormat("U", $ad->getOutwardDate()->getTimestamp());
+            $outwardTime = explode(":", $ad->getOutwardTime());
+            $outwardDate->setTime((int)$outwardTime[0], (int)$outwardTime[1]);
+            $arrivalDateTime = $sameDayProposal->getCriteria()->getArrivalDateTime();
+
+            if ($outwardDate <= $arrivalDateTime) {
+                return new AntiFraudResponse(false, AntiFraudException::INVALID_TIME);
+            }
+        } else {
+            // Regular journey
         }
 
         return new AntiFraudResponse(true, AntiFraudException::OK);

@@ -142,6 +142,12 @@ class Criteria
     private $fromDate;
 
     /**
+     * @var \DateTimeInterface The arrival date if punctual
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalDateTime;
+
+    /**
      * @var \DateTimeInterface|null The starting time.
      *
      * @Assert\Time()
@@ -821,6 +827,22 @@ class Criteria
 
         return $this;
     }
+
+    public function getArrivalDateTime(): ?\DateTimeInterface
+    {
+        $fromDate = clone $this->getFromDate();
+        $fromTime = $this->getFromTime();
+        $fromDate->setTime($fromTime->format("H"), $fromTime->format("i"), $fromTime->format("s"));
+
+        if (!is_null($this->getDirectionDriver())) {
+            $duration = $this->getDirectionDriver()->getDuration();
+        } else {
+            $duration = $this->getDirectionPassenger()->getDuration();
+        }
+
+        return $fromDate->modify($duration." seconds");
+    }
+
 
     public function getFromTime(): ?\DateTimeInterface
     {
