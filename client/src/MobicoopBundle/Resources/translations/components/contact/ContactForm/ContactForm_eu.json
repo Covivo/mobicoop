@@ -1,11 +1,11 @@
 {
     "getContactItemsUri": "/contact/getItems",
-    "error": "Akats bat agertu da.",
+    "error": "Akats bat gertatu da.",
     "success": "Zure mezua igorria izan da.",
     "dataPolicy": {
         "route": "/protection-donnees",
-        "link": "gure datuak babesteko politika",
-        "text": "Zure eskubideak ezagutu eta erabiltzeko, formulario honetan bildutako datuak erabiltzeko baimenaren kentzea barne, irakur ezazu"
+        "link": "datuen babesteko dugun politika",
+        "text": "Zure eskubideak ezagutzeko eta baliatzeko, batez ere formulario honetan bilduak diren datuen erabiltzeko zure baimenaren kentzeaz ari direnak, kontsulta ezazu"
     },
     "buttons": {
         "send": {
