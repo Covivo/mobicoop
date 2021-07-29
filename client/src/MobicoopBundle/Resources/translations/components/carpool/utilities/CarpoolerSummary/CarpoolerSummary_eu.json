@@ -29,7 +29,7 @@
                 "title": "Harremanetan jarri"
             },
             "return": {
-                "error": "Arazo tekniko batengatik mezua ez da igorria izan",
+                "error": "Arazo tekniko baten ondorioz, mezua ezin izan da igorri",
                 "ok": "Mezua igorria izan da."
             },
             "button": {
@@ -40,7 +40,7 @@
         "go": "Hara joan"
     },
     "inDev": "Garatzen ari da.",
-    "needTobeConnected": "Ekintza hori egin ahal izateko konektatua izan behar zira.",
+    "needTobeConnected": "Konektatua izan behar zira ekintza hau gauzatzeko.",
     "seeDetails": "Ikus xehetasunak",
     "birthYears": "urte"
 }
