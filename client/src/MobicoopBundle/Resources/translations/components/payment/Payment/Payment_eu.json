@@ -2,16 +2,16 @@
     "tipsEncouragement": {
         "link": "https://www.zeste.coop/fr/mobicoop",
         "textLink": "emaitza bat hemen",
-        "text": "{platformName}, komisiorik eta iragarkirik gabeko zerbitzu libre bat da. Aldiz, esku ukaldi bat eman zenezake plataforma indarrean atxikitzeko, ondoko hau eginez"
+        "text": "{platformName}, komisiorik eta iragarkirik gabeko zerbitzu libre bat da. Haatik, esku ukaldi bat diezagukezu plataforma indarrean atxikitzeko, ondoko hau eginez"
     },
-    "loadingPageText": "Egin edo baieztatu behar diren ordainketen kargatzea",
-    "noMoreItems": "Ez da ordainketarik egin edo baieztatze igurikatzerik.",
+    "loadingPageText": "Pagatzekoak direnak edo baieztatzekoak diren pagatzeen kargatzea",
+    "noMoreItems": "Ez da gehiago deus gelditzen pagatzeko, edo pagatzeko baieztatze goaitean denik.",
     "noOnlinePayment": {
-        "line2": "Zure helbide osoa bete bahar duzu (karrika izena, zenbakia...) adibidez, eta ez soilik zure bizilekuaren herria.",
-        "line1": "Zure perfila ez denez osoki betea ezin duzu linean ordaindu."
+        "line2": "Zure helbide osoa bete behar duzu (karrika izena, zenbakia...) adibidez, eta ez bakarrik zure bizilekuaren herria.",
+        "line1": "Zure profila ez da osoa, ondorioz ezin duzu linearen bidez pagatu."
     },
-    "to": " arte ",
-    "from": "-tik ",
+    "to": " Egun honetara ",
+    "from": "Egun honetakoa ",
     "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
     "regularInfo": "Zenbait egunetan ez bazira {driver} -(r))ekin autokidetzan ibili, behereko laukian desmarka ezazu.",
     "tooltip": {
