@@ -1,0 +1,62 @@
+{
+  "items": [
+    {
+      "key": "smoke",
+      "title": "En ce qui concerne le tabac en voiture...",
+      "radios": [
+        {
+          "label": "Je ne fume pas",
+          "value": 0
+        },
+        {
+          "label": "Je ne fume pas en voiture",
+          "value": 1
+        },
+        {
+          "label": "Je fume",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "key": "music",
+      "title": "En ce qui concerne la musique en voiture...",
+      "radios": [
+        {
+          "label": "Je préfère rouler sans fond sonore",
+          "value": 0
+        },
+        {
+          "label": "J’écoute la radio ou de la musique",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Radios et/ou musiques préférées"
+      }
+    },
+    {
+      "key": "chat",
+      "title": "En ce qui concerne le bavardage en voiture...",
+      "radios": [
+        {
+          "label": "Je ne suis pas bavard",
+          "value": 0
+        },
+        {
+          "label": "Je discute",
+          "value": 1
+        }
+      ],
+      "favorite": {
+        "label": "Sujets préférés"
+      }
+    }
+  ],
+  "button": {
+    "label": "Enregistrer",
+    "route": "/utilisateur/preferences-covoiturage/modifier"
+  },
+  "success": "Préférences de covoiturage mises à jour avec succès !",
+  "error":  "Une erreur est survenue."
+}
