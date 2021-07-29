@@ -1,17 +1,17 @@
 {
     "params": {
-        "noSmokeInCar": "Ez dut erretzen autoan",
+        "noSmokeInCar": "Ez dut autoan erretzen",
         "noSmoke": "Ez dut erretzen",
         "smoke": "Erretzen dut",
-        "noMusic": "Nahiago dut gidatu giro musikarik gabe",
+        "noMusic": "Nahiago dut autoz ibili musikarik gabe",
         "music": "Irratia edo musika entzuten dut",
         "noChat": "Ez naiz kalakaria",
-        "chat": "Mintzo naiz"
+        "chat": "Ele egiten dut"
     },
-    "savedCo2": " Aurreztua : {savedCo2} t",
-    "subscribedOn": "Izena eman duzu data",
+    "savedCo2": " Aurreztua: {savedCo2} t",
+    "subscribedOn": "Izena eman duzun data",
     "answerRate": "Erantzun tasa",
-    "lastConnection": "Azken konexioa",
+    "lastConnection": "Azken konexioaren data",
     "carpoolRealized": "Eginak izan diren autokidetzak",
     "yearsOld": "urte",
     "getPublicProfileUri": "/utilisateur/profil/public"

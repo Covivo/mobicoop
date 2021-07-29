@@ -5,7 +5,7 @@ shortdayThursday: Og.
 shortdayWednesday: Az.
 shortdayTuesday: As.
 shortdayMonday: Al.
-signature: 'Ondoko hitzordua'
+signature: 'Ikus arte'
 FollowUs: Segi gaitzazu
 Download: <b>Android</b> ou <b>IOS</b> aplikazioa telekarga ezazu
 URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
@@ -14,7 +14,8 @@ FAQ: FAQ
 AQuestion: Galdera bat?
 hello: Egun on
 youHaveAMessage: Mezu berri bat errezibitu duzu
-updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun batzuk aldatuak izan dira
+updatedCarpoolDetails: Zure {origin}-(e)tik {destination}-(e)rako autokidetzaren xehetasun
+  batzuk aldatuak izan dira
 clickNewSearch: Zure bilaketa berrabiarazteko loturan klik egizu
 ownerMessage: 'Hona iragarki-jabearen mezua:'
 cancelledCarpool: Autokidetza ezeztatua da
@@ -40,9 +41,9 @@ myAds: Nire iragarkiak
 askForCarpool: Autokidetza galde bat egin dizu.
 return: ITZULTZE
 outward: JOAN
-beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, atxiki dituzun bidaiak
-  ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek ez dituzte
-  ikusiko
+beCarefulFewDaysAnnouncementNotValid: Kasu, egun guti barne, erregistratu dituzun
+  bidaiak ez dira gehiago bali izanen zure profilean eta ondorioz, beste autokideek
+  ez dituzte ikusiko
 contactInfos: Argibide eskaera berria
 canceledCarpool: ZURE AUTOKIDETZA EZEZTATUA DA.
 noPanic: Ez kexa, bidaia berri bat bila dezakezu edo iragarki bat argitara dezakezu.
@@ -51,8 +52,8 @@ newCarpoolAsk: AUTOKIDETZA ESKAERA BAT BADUZU!
 indicativePrice: 'Prezio indikatiboa: '
 seatsSelected: 'Atxikia(k) d(ir)en lekua(k): '
 multipleShedules: Ordutegi anitzak
-regularCarpool: Zure bidaia erregular honen laburbilduma
-occasionalCarpool: Zure noiztenkako bidaia egun honen laburdilduma
+regularCarpool: Zure egun honetako bidaia erregularraren laburbilduma
+occasionalCarpool: Zure egun honetako noiztenkako bidaiaren laburdilduma
 isConfirmed: baieztatua da!
 acceptedCarpool: ZURE AUTOKIDETZA BAIEZTATUA DA!
 contactCommunity: Komunitate baten sortzeko eskaera
@@ -314,6 +315,6 @@ refusedOccasionalCarpool: ' autokideak ez du autokidetza baieztatu ondoko egun(a
 regularCarpoolAsk: 'Autokidetza erregularr(a)en eskaeraren laburbilduma '
 occasionalCarpoolAsk: 'Noiztenkako autokidetza eskaera egun honen laburbilduma '
 dropOff: 'Uzte lekua '
-to: xxxx-(e)ra
+to: Ondoko egunera
 yourCarpoolWith: Zure autokidea
 doNotReply: Milesker e-mezu honi ez erantzuteagatik zuzenean.
