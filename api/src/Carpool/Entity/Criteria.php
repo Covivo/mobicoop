@@ -280,6 +280,12 @@ class Criteria
     private $monTime;
 
     /**
+     * @var \DateTimeInterface The arrival time on Mondays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalMonTime;
+
+    /**
      * @var \DateTimeInterface|null Mondays min starting time (if regular).
      *
      * @Assert\Time()
@@ -305,6 +311,12 @@ class Criteria
      * @Groups({"read","results","write","thread"})
      */
     private $tueTime;
+
+    /**
+     * @var \DateTimeInterface The arrival time on Tuesdays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalTueTime;
 
     /**
      * @var \DateTimeInterface|null Tuesdays min starting time (if regular).
@@ -334,6 +346,12 @@ class Criteria
     private $wedTime;
 
     /**
+     * @var \DateTimeInterface The arrival time on Wednesdays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalWedTime;
+
+    /**
      * @var \DateTimeInterface|null Wednesdays min starting time (if regular).
      *
      * @Assert\Time()
@@ -359,6 +377,12 @@ class Criteria
      * @Groups({"read","results","write","thread"})
      */
     private $thuTime;
+
+    /**
+     * @var \DateTimeInterface The arrival time on Thursdays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalThuTime;
 
     /**
      * @var \DateTimeInterface|null Thursdays min starting time (if regular).
@@ -388,6 +412,12 @@ class Criteria
     private $friTime;
 
     /**
+     * @var \DateTimeInterface The arrival time on Friday
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalFriTime;
+
+    /**
      * @var \DateTimeInterface|null Fridays min starting time (if regular).
      *
      * @Assert\Time()
@@ -415,6 +445,12 @@ class Criteria
     private $satTime;
 
     /**
+     * @var \DateTimeInterface The arrival time on Saturdays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalSatTime;
+
+    /**
      * @var \DateTimeInterface|null Saturdays min starting time (if regular).
      *
      * @Assert\Time()
@@ -440,6 +476,12 @@ class Criteria
      * @Groups({"read","results","write","thread"})
      */
     private $sunTime;
+
+    /**
+     * @var \DateTimeInterface The arrival time on Sundays
+     * @Groups({"read","results","write","thread","threads"})
+     */
+    private $arrivalSunTime;
 
     /**
      * @var \DateTimeInterface|null Sundays min starting time (if regular).
@@ -715,6 +757,12 @@ class Criteria
     private $directionPassenger;
     
     /**
+     * @var int Journey's Duration in secondes based on DirectionDriver if it exists or else on DirectionPassenger
+     * @Groups({"read","results"})
+     */
+    private $duration;
+    
+    /**
      * @var PTJourney|null The public transport journey used.
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
@@ -834,13 +882,11 @@ class Criteria
         $fromTime = $this->getFromTime();
         $fromDate->setTime($fromTime->format("H"), $fromTime->format("i"), $fromTime->format("s"));
 
-        if (!is_null($this->getDirectionDriver())) {
-            $duration = $this->getDirectionDriver()->getDuration();
-        } else {
-            $duration = $this->getDirectionPassenger()->getDuration();
+        $duration = $this->getDuration();
+        if (!is_null($duration)) {
+            return $fromDate->modify($duration." seconds");
         }
-
-        return $fromDate->modify($duration." seconds");
+        return null;
     }
 
 
@@ -1042,6 +1088,18 @@ class Criteria
         return null;
     }
 
+    public function getArrivalMonTime(): ?\DateTimeInterface
+    {
+        if ($this->monTime) {
+            $monTime = clone $this->getMonTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $monTime->modify($duration." seconds");
+            }
+        }
+        return null;
+    }
+
     public function setMonTime(?\DateTimeInterface $monTime): self
     {
         $this->monTime = $monTime;
@@ -1094,6 +1152,18 @@ class Criteria
         return $this;
     }
 
+    public function getArrivalTueTime(): ?\DateTimeInterface
+    {
+        if ($this->tueTime) {
+            $tueTime = clone $this->getTueTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $tueTime->modify($duration." seconds");
+            }
+        }
+        return null;
+    }
+
     public function getTueMinTime(): ?\DateTimeInterface
     {
         if ($this->tueMinTime) {
@@ -1137,6 +1207,18 @@ class Criteria
         $this->wedTime = $wedTime;
 
         return $this;
+    }
+
+    public function getArrivalWedTime(): ?\DateTimeInterface
+    {
+        if ($this->wedTime) {
+            $wedTime = clone $this->getWedTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $wedTime->modify($duration." seconds");
+            }
+        }
+        return null;
     }
 
     public function getWedMinTime(): ?\DateTimeInterface
@@ -1184,6 +1266,18 @@ class Criteria
         return $this;
     }
 
+    public function getArrivalThuTime(): ?\DateTimeInterface
+    {
+        if ($this->thuTime) {
+            $thuTime = clone $this->getThuTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $thuTime->modify($duration." seconds");
+            }
+        }
+        return null;
+    }
+
     public function getThuMinTime(): ?\DateTimeInterface
     {
         if ($this->thuMinTime) {
@@ -1218,6 +1312,18 @@ class Criteria
     {
         if ($this->friTime) {
             return \DateTime::createFromFormat('His', $this->friTime->format('His'));
+        }
+        return null;
+    }
+
+    public function getArrivalFriTime(): ?\DateTimeInterface
+    {
+        if ($this->friTime) {
+            $friTime = clone $this->getFriTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $friTime->modify($duration." seconds");
+            }
         }
         return null;
     }
@@ -1274,6 +1380,18 @@ class Criteria
         return $this;
     }
 
+    public function getArrivalSatTime(): ?\DateTimeInterface
+    {
+        if ($this->satTime) {
+            $satTime = clone $this->getSatTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $satTime->modify($duration." seconds");
+            }
+        }
+        return null;
+    }
+    
     public function getSatMinTime(): ?\DateTimeInterface
     {
         if ($this->satMinTime) {
@@ -1317,6 +1435,18 @@ class Criteria
         $this->sunTime = $sunTime;
         
         return $this;
+    }
+
+    public function getArrivalSunTime(): ?\DateTimeInterface
+    {
+        if ($this->sunTime) {
+            $sunTime = clone $this->getSunTime();
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $sunTime->modify($duration." seconds");
+            }
+        }
+        return null;
     }
 
     public function getSunMinTime(): ?\DateTimeInterface
@@ -1723,6 +1853,17 @@ class Criteria
         return $this;
     }
     
+    public function getDuration(): ?int
+    {
+        if (!is_null($this->getDirectionDriver())) {
+            return $this->getDirectionDriver()->getDuration();
+        } elseif (!is_null($this->getDirectionPassenger())) {
+            return $this->getDirectionPassenger()->getDuration();
+        }
+
+        return null;
+    }
+
     public function getPTJourney(): ?PTJourney
     {
         return $this->ptjourney;
