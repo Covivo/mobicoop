@@ -27,10 +27,12 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Ressource\Ad;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
+use DateTime;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -1284,6 +1286,42 @@ class ProposalRepository
         ->andWhere("p.user = :user")
         ->setParameter("user", $user);
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Get the number of active ad for a given user and a given role
+     *
+     * @param int $userId    The user id
+     * @param int $role     The role
+     * @return int          The number of ads
+     */
+    public function getNbActiveAdsForUserAndRole(int $userId, int $role): int
+    {
+        $now = new DateTime();
+        $qb = $this->repository->createQueryBuilder('p')
+            ->leftJoin('p.criteria', 'c')
+            ->leftJoin('p.user', 'u')
+            ->select('count(c.id) as nb')
+            ->andWhere('u.id = :id and (p.private is null or p.private = 0)');
+        if ($role == Ad::ROLE_DRIVER) {
+            $qb->andWhere('c.driver = 1 and (
+                (c.frequency = 1 and c.fromDate >= :now) or
+                (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
+            )');
+        } elseif ($role == Ad::ROLE_PASSENGER) {
+            $qb->andWhere('c.passenger = 1 and (
+                (c.frequency = 1 and c.fromDate >= :now) or
+                (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
+            )');
+        }
+        $result = $qb->setParameter('id', $userId)
+            ->setParameter('now', $now->format('Y-m-d'))
+            ->getQuery()->getOneOrNullResult();
+
+        if (!is_null($result['nb'])) {
+            return (int)$result['nb'];
+        }
+        return 0;
     }
 
     /**

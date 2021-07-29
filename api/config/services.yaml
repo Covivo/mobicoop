@@ -846,6 +846,13 @@ services:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
 
+    App\User\Admin\DataProvider\UserCollectionDataProvider:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    App\User\Admin\Serializer\UsersNormalizer:
+        decorates: 'api_platform.jsonld.normalizer.item'
+
     # Utility
     App\Utility\Service\VersionManager:
         arguments:
