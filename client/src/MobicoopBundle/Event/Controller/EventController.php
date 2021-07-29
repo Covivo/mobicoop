@@ -101,9 +101,9 @@ class EventController extends AbstractController
         }
     }
 
-     /**
-     * Get last events created.
-     */
+    /**
+    * Get last events created.
+    */
     public function getLastEventCreated(EventManager $eventManager, Request $request)
     {
         if ($request->isMethod('POST')) {
