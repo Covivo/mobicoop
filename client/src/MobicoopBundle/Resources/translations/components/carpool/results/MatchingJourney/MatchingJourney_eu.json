@@ -51,7 +51,7 @@
     "detailTitle": "Autokidetzaren xehetasunak",
     "priceTooltip": "Prezio indikatiboa",
     "detour": {
-        "onlyDriver": "Bidaia kalkulatu horrek tzulinguru bat badu. Gidariarekin harremanetan jar zaitez.",
-        "default": "Bidaia kalkulatu horrek itzulinguru bat badu."
+        "onlyDriver": "Bidaia kalkulatu honek itzulinguru bat badu. Gidariarekin harremanetan jar zaitez.",
+        "default": "Bidaia kalkulatu honek itzulinguru bat badu."
     }
 }
