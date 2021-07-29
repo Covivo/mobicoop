@@ -18,7 +18,7 @@
     "snackbar": {
         "joinCommunity": {
             "textError": "Huts bat agertu da, berriz saia ezazu.",
-            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
+            "textOkAutoValidation": "Zure kide izateko eskaera onartua da.",
             "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
@@ -54,10 +54,10 @@
     "password": {
         "errors": {
             "number": "Pasahitzak zenbaki bat izan behar du.",
-            "lower": "Pasahitza minuskula bat izan behar du.",
+            "lower": "Pasahitzak minuskula bat izan behar du.",
             "upper": "Pasahitzak maiuskula bat izan behar du.",
-            "min": "Pasahitzak gutxienez 8 karaktere ditu.",
-            "required": "Pasahitza baitezpadakoa da"
+            "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
+            "required": "Pasahitza beharrezkoa da"
         },
         "placeholder": "Pasahitza"
     },
