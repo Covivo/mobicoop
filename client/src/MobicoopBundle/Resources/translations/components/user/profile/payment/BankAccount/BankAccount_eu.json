@@ -1,5 +1,5 @@
 {
-    "error": "Huts bat agertu da",
+    "error": "Akats bat gertatu da",
     "uri": {
         "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter",
         "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
@@ -8,12 +8,12 @@
     "modalSuppr": {
         "no": "ez",
         "yes": "bai",
-        "line3": "Ekintza hori baieztatzen ote duzu?",
-        "line2": "Ezingo duzu gehiago ordainketa elektronikorik errezibitu.",
+        "line3": "Ekintza hau baieztatzen ote duzu?",
+        "line2": "Ezingo duzu gehiago ordainketa elektronikorik ukaiten ahalko.",
         "line1": "Zure banku-datuak ezabatuak izanen dira.",
         "title": "Banku-datuak ezabatu nahi dituzu?"
     },
-    "register": "Gorde",
+    "register": "Erregistratu",
     "form": {
         "errors": {
             "bicRequired": "BIC zenbakia baitezpadakoa da",
