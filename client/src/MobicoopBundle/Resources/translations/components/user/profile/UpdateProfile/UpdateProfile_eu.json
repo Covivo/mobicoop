@@ -144,7 +144,7 @@
         },
         "buttons": {
             "label": {
-                "validate": "Bali egin",
+                "validate": "Egiazkotu",
                 "generateNewToken": "Kode berri bat bidali",
                 "generateToken": "Egiaztatze kode bat bidali"
             }
