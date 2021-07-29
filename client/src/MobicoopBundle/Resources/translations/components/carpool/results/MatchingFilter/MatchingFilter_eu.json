@@ -19,18 +19,18 @@
             },
             "label": "Mota"
         },
-        "hour": "Ordua",
+        "hour": "Tenorea",
         "date": {
             "value": {
-                "DESC": "Ttipituz doa",
-                "ASC": "Handituz doa"
+                "DESC": "Ttipituz doana",
+                "ASC": "handituz doa"
             },
             "label": "Eguna"
         }
     },
     "select": {
         "hour": {
-            "help": "Iragarkiak jarriko ditugu, hautatu duzun ordutik aitzina.",
+            "help": "Iragarkiak bistaratzea, hautatu duzun ordutik aitzina.",
             "label": "Tenorea"
         },
         "filter": {
