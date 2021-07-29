@@ -122,7 +122,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","readRelayPoint","readEditorial"})
+     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -131,7 +131,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      */
     private $name;
 
@@ -139,7 +139,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      */
     private $title;
     
@@ -450,7 +450,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities"})
+     * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities","listCommunities"})
      */
     private $versions;
 

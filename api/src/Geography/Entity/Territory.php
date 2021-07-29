@@ -31,6 +31,7 @@ use App\Geography\Controller\TerritoryPost;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Action\Entity\Log;
 use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -161,6 +162,13 @@ class Territory
     private $geoJsonDetail;
 
     /**
+     * @var ArrayCollection The logs linked with the Territory.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory", cascade={"remove"})
+     */
+    private $logs;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -233,6 +241,34 @@ class Territory
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setTerritory($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getTerritory() === $this) {
+                $log->setTerritory(null);
+            }
+        }
+        
         return $this;
     }
 

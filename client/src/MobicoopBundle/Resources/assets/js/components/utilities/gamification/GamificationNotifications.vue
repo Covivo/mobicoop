@@ -74,7 +74,7 @@ export default {
   },
   watch:{
     gamificationNotifications(newVersion, oldVersion){
-      this.snackbar = true;
+      this.snackbar = this.rewardSteps.length > 0 ? true : false;
     }
   },
   mounted(){

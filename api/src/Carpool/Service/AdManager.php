@@ -57,6 +57,7 @@ use App\Carpool\Repository\MatchingRepository;
 use App\Geography\Service\AddressManager;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
+use App\User\Entity\User;
 use DateTime;
 
 /**
@@ -814,7 +815,14 @@ class AdManager
 
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
+        } else {
+            // If the User is connected, we claim the search
+            if ($this->security->getUser() instanceof User) {
+                $this->claimAd($proposal->getId());
+                $ad->setUserId($this->security->getUser()->getId());
+            }
         }
+        
         $ad->setCreatedDate($proposal->getCreatedDate());
         $aFilters = [];
         if (!is_null($filters)) {

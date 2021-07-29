@@ -971,16 +971,6 @@ community_proposals:
     requirements:
         id: '\d+'
 
-# get all available communities for the logged user (AJAX)
-community_user_available:
-    path:
-        fr: /communautes/utilisateur/{userId}
-        en: /communities/user/{userId}
-        nl: /communities/user/{userId}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
-    requirements:
-        userId: '\d+'
-
 # display widget
 community_widget:
     path:
