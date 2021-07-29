@@ -3,10 +3,10 @@
     "loginUrl": "/utilisateur/connexion/{id}",
     "register": "Izen ematea",
     "login": "Konexioa",
-    "loginOrRegister": "Konektatu behar zira edo izena eman behar duzu segitzeko",
+    "loginOrRegister": "Konektatu edo izena eman behar duzu segitzeko",
     "loginOrRegisterTitle": "Konxexio edo izena ematea beharrezkoa da",
     "tabs": {
-        "ptresults": "Garraio publikoak",
+        "ptresults": "Garraio publikoa",
         "otherCarpools": "Beste autokidetzak",
         "carpools": "Autokidetzak {platform}"
     },
