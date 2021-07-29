@@ -7,25 +7,25 @@
         "title": "Ekitaldiaren sortzea baieztatu"
     },
     "endTime": {
-        "label": "Bukaerako ordua"
+        "label": "Bukaera tenorea"
     },
     "startTime": {
-        "label": "Hastapeneko ordua"
+        "label": "Hastapen tenorea"
     },
     "endDate": {
-        "error": "Beharrezkoa",
-        "label": "Bukaerako eguna*"
+        "error": "Baitezpadakoa",
+        "label": "Bukaera eguna*"
     },
     "startDate": {
-        "error": "Beharrezkoa",
-        "label": "Hastapeneko eguna*"
+        "error": "Baitezpadakoa",
+        "label": "Hastapen-eguna*"
     },
     "error": {
-        "image": "Irudia ez da gorde",
+        "image": "Irudia ez da erregistratua izan",
         "event": {
-            "required": "Izarrez markatutako eremu guziak baitezpadakoak dira",
+            "required": "Izarrez markatutako eremu guziak beharrezkoak dira",
             "create": "Ekitaldiaren sorrerak huts egin du",
-            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu",
+            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu",
             "length": "Aurkezpen motza luzeegia da (512 karaktere gehienez)."
         }
     },
@@ -34,33 +34,33 @@
     },
     "form": {
         "private": {
-            "tooltip": "Zuzenean errezibitu duzun baieztatze e-mezua eman dezakezu",
+            "tooltip": "Baieztapen e-mezuan ukan duzun lotura zuzena helarazten ahalko duzu",
             "label": "Ekitaldi pribatua (ez da ekitaldi zerrendan agertzen)"
         },
         "urlEvent": {
-            "error": "Bali den formatuan webgune bat eman",
+            "error": "Webgune bat idatz ezazu bali den formatuan",
             "tooltips": "Ekitaldiaren webgunearen helbidea",
-            "label": "Ekitaldiaren URLa"
+            "label": "Ekitaldiaren URL-a"
         },
         "address": {
-            "required": "Ekitaldiaren helbidea baitezpadakoa da",
+            "required": "Ekitaldiaren helbidea beharrezkoa da",
             "label": "Ekitaldiaren helbidea*"
         },
         "avatar": {
-            "size": "Irudiaren tamaina maximoa gainditu duzu",
-            "required": "Ekitaldiaren izena baitezpadakoa da",
-            "label": "Ekitaldiaren izena*"
+            "size": "Irudiaren gehieneko izaria gainditu duzu",
+            "required": "Ekitaldiaren irudia beharrezkoa da",
+            "label": "Ekitaldiaren irudia*"
         },
         "fullDescription": {
-            "required": "Ekitaldiaren aurkezpen xehea baitezpadakoa da",
-            "label": "Ekitaldiaren aurkezpen xehea*"
+            "required": "Ekitaldiaren aurkezpen xehea beharrezkoa da",
+            "label": "Ekitaldiaren aurkezpen zehatza*"
         },
         "description": {
-            "required": "Ekitaldiaren aurkezpen laburra baitezpadakoa da",
-            "label": "Ekitaldiaren aurkezpen laburra*"
+            "required": "Ekitaldiaren deskribapen laburra beharrezkoa da",
+            "label": "Ekitaldiaren deskribapen laburra*"
         },
         "name": {
-            "required": "Ekitaldiaren izena baitezpadakoa da",
+            "required": "Ekitaldiaren izena beharrezkoa da",
             "label": "Ekitaldiaren izena*"
         }
     },

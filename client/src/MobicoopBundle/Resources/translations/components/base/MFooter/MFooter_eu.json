@@ -42,11 +42,11 @@
         },
         "faq": {
             "link": "/FAQ",
-            "title": "Galderak"
+            "title": "FAQ"
         },
         "events": {
             "link": "/covoiturages-evenements",
-            "title": "Autokidetza ekiataldiak"
+            "title": "Autokidetza-ekitaldiak"
         },
         "map": {
             "link": "/points-relais",
@@ -70,12 +70,12 @@
         },
         "talkAboutUs": {
             "link": "https://pro.mobicoop.fr/cooperative/",
-            "title": "Nor gira?"
+            "title": "Nor ote gira?"
         }
     },
     "category": {
         "download": "MOBICOOP APLIKAZIOA TELEKARGA EZAZU",
-        "need": "Zure egitrurarentzat autokidetza aterabide baten beharra duzu?",
+        "need": "Zure egiturarentzat autokidetza aterabide bat beharra duzu?",
         "contacts": "Harremanak",
         "services": "Mobicoop zerbitzuak",
         "tools": "Tresnak",
