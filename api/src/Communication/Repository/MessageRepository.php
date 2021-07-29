@@ -66,8 +66,9 @@ class MessageRepository
         $query = $this->repository->createQueryBuilder('m')
         ->join('m.recipients', 'r')
         ->leftJoin('m.askHistory', 'ah')
+        ->leftJoin('m.solidaryAskHistory', 'sah')
         ->leftJoin('m.messages', 'ms')
-        ->where('m.message is null and ah.id is null and (m.user = :user or r.user = :user)')
+        ->where('m.message is null and ah.id is null and sah is null and (m.user = :user or r.user = :user)')
         ->setParameter('user', $user);
 
         return $query->getQuery()->getResult();
