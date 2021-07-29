@@ -29,22 +29,22 @@
         },
         "placeholder": "Zibilitatea"
     },
-    "success": "Zure esku ukaldiaren eskaera igorria izan da!",
+    "success": "Zure esku ukaldi eskaera igorria izan da!",
     "other": {
         "placeholder": "Beste",
         "label": "Beste"
     },
     "structure": {
-        "placeholder": "Laguntzen duen egitura",
-        "label": "Laguntzen duen egitura"
+        "placeholder": "Egitura laguntzailea",
+        "label": "Egitura laguntzailea"
     },
     "subject": {
-        "label": "Bidaiaren arrazoia",
-        "placeholder": "Bidaiaren arrazoia"
+        "label": "Bidaiaren helburua",
+        "placeholder": "Bidaiaren helburua"
     },
     "hasRSA": {
-        "placeholder": "RSA hartzailea",
-        "label": "RSA hartzailea"
+        "placeholder": "Elkartasun errenta aktiboa (RSA) laguntzaren hartzaile",
+        "label": "Elkartasun errenta aktiboa (RSA) laguntzaren hartzaile"
     },
     "yearOfBirth": {
         "placeholder": "Sortze urtea",
