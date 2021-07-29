@@ -122,7 +122,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","readRelayPoint"})
+     * @Groups({"aRead","read","readUser","communities","readRelayPoint","readEditorial"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -131,7 +131,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
      */
     private $name;
 
@@ -139,7 +139,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","readRelayPoint","readEditorial"})
      */
     private $title;
     
@@ -187,7 +187,7 @@ class Image
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","results","write","readUser","readRelayPoint"})
+     * @Groups({"read","results","write","readUser","readRelayPoint","readEditorial"})
      */
     private $fileName;
     
@@ -462,10 +462,16 @@ class Image
 
     /**
      * @var string|null The default avatar
-     * @Groups({"aRead"})
+     * @Groups({"aRead","readPublicProfile"})
      */
     private $avatar;
         
+    /**
+     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     * @Groups({"readEditorial"})
+     */
+    private $url;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -1026,6 +1032,16 @@ class Image
         return null;
     }
     
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(string $url)
+    {
+        $this->url = $url;
+    }
+
     public function preventSerialization()
     {
         $this->setEventFile(null);

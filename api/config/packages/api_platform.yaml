@@ -98,6 +98,7 @@ api_platform:
             '%kernel.project_dir%/src/RdexPlus/Entity',
             '%kernel.project_dir%/src/RelayPoint/Entity',
             '%kernel.project_dir%/src/Solidary/Entity',
+            '%kernel.project_dir%/src/Stats/Entity',
             '%kernel.project_dir%/src/Travel/Entity',
             '%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/Utility/Entity']

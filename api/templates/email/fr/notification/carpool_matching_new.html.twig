@@ -1,0 +1,26 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+<table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Une nouvelle annonce de covoiturage correspondant à votre trajet entre <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}"> {{ (context.matching.waypoints|first).address.addressLocality }}</span> et <span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">{{ (context.matching.waypoints|last).address.addressLocality }}</span> vient d'être publiée.</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>  
+           <p>Rendez-vous dans <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mes-annonces">"Mes annonces"</a> pour consulter les annonces correspondantes et prendre contact.</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+        </td>
+    </tr>
+    </table>    
+{% endblock %}
