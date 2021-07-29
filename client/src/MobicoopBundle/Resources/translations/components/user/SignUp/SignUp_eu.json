@@ -48,7 +48,7 @@
         "text": "Onartzen dut "
     },
     "checkEmail": {
-        "error": "Helbide elektroniko hori jadanik hartua da",
+        "error": "Helbide elektroniko hau jadanik erabilia da",
         "url": "/utilisateur/verif/email"
     },
     "password": {
