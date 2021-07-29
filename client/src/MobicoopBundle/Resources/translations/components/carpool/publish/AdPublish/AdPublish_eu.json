@@ -49,29 +49,29 @@
                 "label": "Zure iragarkian, denek ikus dezaketen mezu bat utz ezazu",
                 "title": {
                     "passenger": "Nire mezua gidarieri",
-                    "driver": "Nire mezua bidaiarieri",
+                    "driver": "Nire mezua bidaiariei",
                     "both": "Nire mezua"
                 }
             },
             "participation": {
-                "passengers": " Bidaiarika",
-                "price": "XXX-ren parte hartzea "
+                "passengers": " bidaiarika",
+                "price": "Ondoko(ar)en parte hartzea "
             },
             "passengers": {
                 "backSeats": {
-                    "help": "Lauki hori marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelaldean",
-                    "label": "Gehienez bi pertsona giblean"
+                    "help": "Lauki hau marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelean",
+                    "label": "Gehienez bi pertsona gibelean"
                 },
                 "bike": {
-                    "help": "Lauki hori marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
-                    "label": "Bizikleta bat garrai dezaket"
+                    "help": "Lauki hau marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
+                    "label": "Bizikleta bat garraia dezaket"
                 },
                 "luggage": {
-                    "help": "Lauki hau markatu zure ubilgailuak zaku lodiak garraitzen ahal baditu",
+                    "help": "Lauki hau marka ezazu, zure ibilgailuak zaku lodiak garraitzen ahal baditu",
                     "label": "Tokia badut zaku lodientzat"
                 },
                 "seats": {
-                    "passengers": " Bidaiaria(k)",
+                    "passengers": " bidaiaria(k)",
                     "question": "Horrenbesteko leku bad(it)ut "
                 }
             }
