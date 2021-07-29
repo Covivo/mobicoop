@@ -52,8 +52,8 @@ newCarpoolAsk: AUTOKIDETZA ESKAERA BAT BADUZU!
 indicativePrice: 'Prezio indikatiboa: '
 seatsSelected: 'Atxikia(k) d(ir)en lekua(k): '
 multipleShedules: Ordutegi anitzak
-regularCarpool: Zure bidaia erregular honen laburbilduma
-occasionalCarpool: Zure noiztenkako bidaia egun honen laburdilduma
+regularCarpool: Zure egun honetako bidaia erregularraren laburbilduma
+occasionalCarpool: Zure egun honetako noiztenkako bidaiaren laburdilduma
 isConfirmed: baieztatua da!
 acceptedCarpool: ZURE AUTOKIDETZA BAIEZTATUA DA!
 contactCommunity: Komunitate baten sortzeko eskaera
@@ -315,6 +315,6 @@ refusedOccasionalCarpool: ' autokideak ez du autokidetza baieztatu ondoko egun(a
 regularCarpoolAsk: 'Autokidetza erregularr(a)en eskaeraren laburbilduma '
 occasionalCarpoolAsk: 'Noiztenkako autokidetza eskaera egun honen laburbilduma '
 dropOff: 'Uzte lekua '
-to: xxxx-(e)ra
+to: Ondoko egunera
 yourCarpoolWith: Zure autokidea
 doNotReply: Milesker e-mezu honi ez erantzuteagatik zuzenean.
