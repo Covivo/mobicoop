@@ -27,10 +27,10 @@
         "label": "Garaia"
     },
     "buttons": {
-        "isConfirmed": "Eskuz eskuko ordainketa baieztatua",
-        "directPayConfirm": "Eskuz eskuko ordainketa baieztatu",
-        "directPay": "Eskuz esku ordaindu dut",
-        "validate": "Balioztatu",
+        "isConfirmed": "Eskuz eskuzko ordainketa baieztatua da",
+        "directPayConfirm": "Eskuz eskuzko ordainketa baieztatu",
+        "directPay": "Eskuz esku pagatu dut",
+        "validate": "Egiazkotu",
         "confirm": "Baieztatu",
         "back": {
             "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
