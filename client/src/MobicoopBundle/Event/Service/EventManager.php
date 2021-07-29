@@ -165,7 +165,8 @@ class EventManager
     }
 
 
-    public function getLastEventsCreated(string $orderBy="createdDate", string $order="desc", int $limit=null, int $page=1) {
+    public function getLastEventsCreated(string $orderBy="createdDate", string $order="desc", int $limit=null, int $page=1)
+    {
         $params["order['.$orderBy']"] = $order;
         $params['order[id]'] = $order;
         $params['perPage'] = $limit;
