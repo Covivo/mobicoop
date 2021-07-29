@@ -7,25 +7,25 @@
         "title": "Ekitaldiaren sortzea baieztatu"
     },
     "endTime": {
-        "label": "Bukaerako ordua"
+        "label": "Bukaera tenorea"
     },
     "startTime": {
-        "label": "Hastapeneko ordua"
+        "label": "Hastapen tenorea"
     },
     "endDate": {
-        "error": "Beharrezkoa",
-        "label": "Bukaerako eguna*"
+        "error": "Baitezpadakoa",
+        "label": "Bukaera eguna*"
     },
     "startDate": {
-        "error": "Beharrezkoa",
-        "label": "Hastapeneko eguna*"
+        "error": "Baitezpadakoa",
+        "label": "Hastapen-eguna*"
     },
     "error": {
-        "image": "Irudia ez da gorde",
+        "image": "Irudia ez da erregistratua izan",
         "event": {
-            "required": "Izarrez markatutako eremu guziak baitezpadakoak dira",
+            "required": "Izarrez markatutako eremu guziak beharrezkoak dira",
             "create": "Ekitaldiaren sorrerak huts egin du",
-            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu",
+            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu",
             "length": "Aurkezpen motza luzeegia da (512 karaktere gehienez)."
         }
     },
