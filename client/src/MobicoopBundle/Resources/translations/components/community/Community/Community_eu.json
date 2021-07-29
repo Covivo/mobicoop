@@ -53,13 +53,13 @@
         "search": {
             "label": "Honi loturiko autokidetzak bilatu"
         },
-        "regular": "Usaiazko bidaia",
+        "regular": "Bidaia erregularra",
         "destination": "Helmuga",
         "origin": "Abiatzea",
         "findMatchings": "<strong>Loturiko iragarkiak bilatu</strong>"
     },
     "title": {
-        "searchCarpool": "Komunitatean bidaia bat bilatu"
+        "searchCarpool": "Bidaia bat bilatu komunitatean"
     },
     "snackbar": {
         "leaveCommunity": {
@@ -67,8 +67,8 @@
             "textOk": "Ez zira gehiago komunitate honen kide"
         },
         "joinCommunity": {
-            "textError": "Huts bat agertu da, zure kide izateko eskaera ez da kontuan hartua izan.",
-            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
+            "textError": "Huts bat gertatu da, zure kide izateko eskaera ez da kontuan hartua izan.",
+            "textOkAutoValidation": "Zure kide izateko eskaera onartua da.",
             "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
