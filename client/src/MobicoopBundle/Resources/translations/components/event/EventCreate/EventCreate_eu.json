@@ -3,7 +3,7 @@
     "popUp": {
         "cancel": "Ezeztatu",
         "validation": "Ekitaldia argitaratu",
-        "label": "Ulertu dut funtzionalitate honek EZ du balio autokidetza pertsinal baten argitaratzeko, baina ekitaldi bat antolatzeko gune bat da (ekitaldira doazten edo itzultzen dirak bateratzeko).\nIragarki pertsonala argitaratzeko, izena eman (edo konekta zaitez jadanik izena eman baduzu) eta zure perfiletik iragarki berri bat sort ezazu.",
+        "label": "Ongi ulertu dut funtzionalitate honek EZ duela balio nire autokidetza pertsonal baten argitaratzeko, baina bai, ekitaldi baten antolatzeko gune bat dela (ekitaldira doazen edo itzultzen diren bidaien bateratzeko).\nZure iragarki pertsonalaren argitaratzeko, izena emazu (edo konekta zaitez izena jadanik eman baduzu) eta zure iragarki berria sor ezazu zure profiletik.",
         "title": "Ekitaldiaren sortzea baieztatu"
     },
     "endTime": {
