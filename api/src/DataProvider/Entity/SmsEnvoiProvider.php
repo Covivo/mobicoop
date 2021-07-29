@@ -62,6 +62,7 @@ class SmsEnvoiProvider implements ProviderInterface
             $headers['Session_key'] = explode(";", $response->getValue())[1];
             $body=[
                 "message_type"=> "PRM",
+                "encoding" => "ucs2",
                 "message"=> $sms->getMessage(),
                 "recipient"=> [
                     $sms->getRecipientTelephone()
