@@ -36,6 +36,12 @@ mobicoop-platform/api/public/robots.txt
 + mobicoop-platform/api/public/upload/icons/relaypoint-train.svg
 + mobicoop-platform/api/public/upload/icons/venue.svg
 - mobicoop-platform/api/public/upload/icons/*.svg
+mobicoop-platform/api/public/upload/editorials/images/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/*.png
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.png
 mobicoop-platform/api/public/upload/events/images/*.jpg
 mobicoop-platform/api/public/upload/events/images/*.jpeg
 mobicoop-platform/api/public/upload/events/images/*.png
